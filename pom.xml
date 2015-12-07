@@ -3,7 +3,13 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.nhl.launcher</groupId>
+	<parent>
+		<groupId>com.nhl.launcher</groupId>
+		<artifactId>launcher-parent</artifactId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+	
+	<groupId>com.nhl.launcher.core</groupId>
 	<artifactId>launcher-core</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
@@ -13,17 +19,7 @@
 		A simple framework for launching command-line Java applications.
 	</description>
 
-	<url>http://www.nhl.com/</url>
-	<organization>
-		<name>National Hockey League</name>
-	</organization>
-
 	<properties>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
 		<cayenne-version>4.0.M3.b9a79b7</cayenne-version>
 	</properties>
 
@@ -37,22 +33,12 @@
 			<uniqueVersion>false</uniqueVersion>
 			<id>launcher-libs</id>
 			<name>Launcher Integration Libraries Deployment Repository</name>
-			<url>http://maven.nhl.com/content/repositories/launcher/</url>
+			<url>http://maven.nhl.com/content/repositories/launcher</url>
 		</repository>
 	</distributionManagement>
 
 	<dependencyManagement>
 		<dependencies>
-			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>4.12</version>
-			</dependency>
-			<dependency>
-				<groupId>org.mockito</groupId>
-				<artifactId>mockito-core</artifactId>
-				<version>2.0.31-beta</version>
-			</dependency>
 			<dependency>
 				<groupId>org.apache.cayenne</groupId>
 				<artifactId>cayenne-di</artifactId>
@@ -110,17 +96,4 @@
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
-	<build>
-		<defaultGoal>verify</defaultGoal>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-release-plugin</artifactId>
-					<!-- Older versions of release plugin do not work with Git properly -->
-					<version>2.5.3</version>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-	</build>
 </project>
