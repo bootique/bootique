@@ -1,0 +1,10 @@
+.classpath
+.project
+.settings
+.externalToolBuilders
+.DS_Store
+.metadata
+.recommenders
+target
+*.iml
+.idea
