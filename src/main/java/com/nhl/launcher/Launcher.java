@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.apache.cayenne.di.DIBootstrap;
-import org.apache.cayenne.di.Injector;
-import org.apache.cayenne.di.Module;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.Module;
+import com.google.inject.multibindings.Multibinder;
 import com.nhl.launcher.command.Command;
 import com.nhl.launcher.command.CommandOutcome;
 
@@ -76,9 +77,9 @@ public class Launcher {
 	private Injector createInjector() {
 		Collection<Module> finalModules = new ArrayList<>(modules);
 		finalModules.add((binder) -> {
-			commands.forEach(c -> LauncherUtil.bindCommand(binder, c));
+			commands.forEach(c -> Multibinder.newSetBinder(binder, Command.class).addBinding().toInstance(c));
 		});
 
-		return DIBootstrap.createInjector(finalModules);
+		return Guice.createInjector(finalModules);
 	}
 }

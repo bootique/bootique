@@ -6,6 +6,6 @@ public class FailoverHelpCommand extends HelpCommand {
 
 	@Override
 	public CommandOutcome run(Options options) {
-		return  printHelp(options);
+		return printHelp(options);
 	}
 }

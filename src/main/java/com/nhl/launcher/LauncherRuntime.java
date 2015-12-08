@@ -4,9 +4,9 @@ import static java.util.stream.Collectors.joining;
 
 import java.util.Arrays;
 
-import org.apache.cayenne.di.Injector;
-
-import com.nhl.launcher.jopt.DefaultOptionsLoader;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.nhl.launcher.jopt.Args;
 
 /**
  * A wrapper around launcher DI container.
@@ -23,8 +23,12 @@ class LauncherRuntime {
 		return injector.getInstance(Runner.class);
 	}
 
+	public String[] getArgs() {
+		return injector.getInstance(Key.get(String[].class, Args.class));
+	}
+
 	public String getArgsAsString() {
-		return Arrays.asList(injector.getInstance(DefaultOptionsLoader.ARGS_KEY)).stream().collect(joining(" "));
+		return Arrays.asList(getArgs()).stream().collect(joining(" "));
 	}
 
 }

@@ -1,28 +1,29 @@
 package com.nhl.launcher;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.Set;
 
-import org.apache.cayenne.di.Inject;
-
+import com.google.inject.Inject;
 import com.nhl.launcher.command.Command;
 import com.nhl.launcher.command.CommandOutcome;
+import com.nhl.launcher.command.DefaultCommand;
 import com.nhl.launcher.jopt.Options;
-import com.nhl.launcher.jopt.OptionsLoader;
 
 public class DefaultRunner implements Runner {
 
-	private OptionsLoader optionsLoader;
-	private List<Command> commands;
+	private Options options;
+	private Collection<Command> commands;
+	private Command defaultCommand;
 
-	public DefaultRunner(@Inject OptionsLoader optionsLoader,
-			@Inject(BootstrapModule.COMMANDS_KEY) List<Command> commands) {
-		this.optionsLoader = optionsLoader;
+	@Inject
+	public DefaultRunner(Options options, Set<Command> commands, @DefaultCommand Command defaultCommand) {
+		this.options = options;
 		this.commands = commands;
+		this.defaultCommand = defaultCommand;
 	}
 
+	@Override
 	public CommandOutcome run() {
-
-		Options options = optionsLoader.loadOptions();
 
 		for (Command c : commands) {
 
@@ -33,7 +34,7 @@ public class DefaultRunner implements Runner {
 			}
 		}
 
-		return CommandOutcome.succeeded();
+		return defaultCommand.run(options);
 	}
 
 }
