@@ -24,7 +24,8 @@ public class ConfigCommand implements Command {
 		Map<String, OptionSpec<?>> existing = parser.recognizedOptions();
 
 		if (!existing.containsKey(CONFIG_OPTION)) {
-			parser.accepts(CONFIG_OPTION).withRequiredArg();
+			parser.accepts(CONFIG_OPTION, "Specifies YAML config file path.").withRequiredArg()
+					.describedAs("config_file");
 		}
 
 	}

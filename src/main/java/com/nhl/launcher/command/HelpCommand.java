@@ -32,8 +32,7 @@ public class HelpCommand implements Command {
 			LOGGER.warn("Error printing help", e);
 		}
 
-		LOGGER.info(out.toString());
-
+		System.out.println(out.toString());
 		return CommandOutcome.succeeded();
 	}
 
@@ -44,7 +43,7 @@ public class HelpCommand implements Command {
 		Map<String, OptionSpec<?>> existing = parser.recognizedOptions();
 
 		if (!existing.containsKey(HELP_OPTION)) {
-			parser.accepts(HELP_OPTION).forHelp();
+			parser.accepts(HELP_OPTION, "Prints this message.").forHelp();
 		}
 	}
 
