@@ -1,5 +1,9 @@
 package com.nhl.launcher.jopt;
 
+import static java.util.stream.Collectors.toList;
+
+import java.util.Collection;
+
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
@@ -19,5 +23,9 @@ public class Options {
 
 	public OptionSet getOptionSet() {
 		return optionSet;
+	}
+
+	public Collection<String> stringsFor(String optionName) {
+		return optionSet.valuesOf(optionName).stream().map(o -> String.valueOf(o)).collect(toList());
 	}
 }

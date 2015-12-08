@@ -76,7 +76,7 @@ public class Launcher {
 	private Injector createInjector() {
 		Collection<Module> finalModules = new ArrayList<>(modules);
 		finalModules.add((binder) -> {
-			binder.<Command> bindList(BootstrapModule.COMMANDS_KEY).addAll(commands);
+			commands.forEach(c -> LauncherUtil.bindCommand(binder, c));
 		});
 
 		return DIBootstrap.createInjector(finalModules);
