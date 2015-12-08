@@ -35,6 +35,11 @@ public class Launcher {
 		return this;
 	}
 
+	public Launcher modules(Module... modules) {
+		Arrays.asList(modules).forEach(m -> this.modules.add(m));
+		return this;
+	}
+
 	/**
 	 * Registers a custom {@link Command} object.
 	 */
