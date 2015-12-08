@@ -20,7 +20,7 @@ public class Launcher {
 	private Collection<Module> modules;
 	private Collection<Command> commands;
 
-	public static Launcher bootableApp(String[] args) {
+	public static Launcher app(String[] args) {
 		return new Launcher().module(new BootstrapModule(args));
 	}
 
