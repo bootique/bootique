@@ -9,7 +9,7 @@ import joptsimple.OptionSpec;
 
 public class ConfigCommand implements Command {
 
-	protected static final String CONFIG_OPTION = "config";
+	public static final String CONFIG_OPTION = "config";
 
 	@Override
 	public CommandOutcome run(Options options) {

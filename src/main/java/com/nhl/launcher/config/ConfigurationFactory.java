@@ -1,6 +1,6 @@
 package com.nhl.launcher.config;
 
-public interface ConfigSource {
+public interface ConfigurationFactory {
 
 	<T> T config(Class<T> type);
 
