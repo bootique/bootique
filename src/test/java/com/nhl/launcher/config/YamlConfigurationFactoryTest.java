@@ -8,24 +8,29 @@ import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.function.Function;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nhl.launcher.env.Environment;
 import com.nhl.launcher.jackson.JacksonService;
 
 public class YamlConfigurationFactoryTest {
 
 	private ConfigurationSource mockConfigSource;
 	private JacksonService mockJacksonService;
+	private Environment mockEnvironment;
 
 	@Before
 	public void before() {
 		mockConfigSource = mock(ConfigurationSource.class);
 		mockJacksonService = mock(JacksonService.class);
 		when(mockJacksonService.newObjectMapper()).thenReturn(new ObjectMapper());
+
+		mockEnvironment = mock(Environment.class);
 	}
 
 	@Test
@@ -40,12 +45,13 @@ public class YamlConfigurationFactoryTest {
 			return processor.apply(in);
 		});
 
-		Bean1 b1 = new YamlConfigurationFactory(mockConfigSource, mockJacksonService).config(Bean1.class);
+		Bean1 b1 = new YamlConfigurationFactory(mockConfigSource, mockEnvironment, mockJacksonService)
+				.config(Bean1.class);
 		assertNotNull(b1);
 		assertEquals("SS", b1.getS());
 		assertEquals(55, b1.getI());
 	}
-	
+
 	@Test
 	public void testConfig_Nested() {
 
@@ -58,13 +64,14 @@ public class YamlConfigurationFactoryTest {
 			return processor.apply(in);
 		});
 
-		Bean2 b2 = new YamlConfigurationFactory(mockConfigSource, mockJacksonService).config(Bean2.class);
+		Bean2 b2 = new YamlConfigurationFactory(mockConfigSource, mockEnvironment, mockJacksonService)
+				.config(Bean2.class);
 		assertNotNull(b2);
 		assertNotNull(b2.getB1());
 		assertEquals("SS", b2.getB1().getS());
 		assertEquals(55, b2.getB1().getI());
 	}
-	
+
 	@Test
 	public void testSubconfig() {
 
@@ -77,12 +84,13 @@ public class YamlConfigurationFactoryTest {
 			return processor.apply(in);
 		});
 
-		Bean1 b1 = new YamlConfigurationFactory(mockConfigSource, mockJacksonService).subconfig("b1", Bean1.class);
+		Bean1 b1 = new YamlConfigurationFactory(mockConfigSource, mockEnvironment, mockJacksonService).subconfig("b1",
+				Bean1.class);
 		assertNotNull(b1);
 		assertEquals("SS", b1.getS());
 		assertEquals(55, b1.getI());
 	}
-	
+
 	@Test
 	public void testSubconfig_MultiLevel() {
 
@@ -95,12 +103,13 @@ public class YamlConfigurationFactoryTest {
 			return processor.apply(in);
 		});
 
-		Bean1 b1 = new YamlConfigurationFactory(mockConfigSource, mockJacksonService).subconfig("b0.b1", Bean1.class);
+		Bean1 b1 = new YamlConfigurationFactory(mockConfigSource, mockEnvironment, mockJacksonService)
+				.subconfig("b0.b1", Bean1.class);
 		assertNotNull(b1);
 		assertEquals("SS", b1.getS());
 		assertEquals(55, b1.getI());
 	}
-	
+
 	@Test
 	public void testSubconfig_Missing() {
 
@@ -113,10 +122,68 @@ public class YamlConfigurationFactoryTest {
 			return processor.apply(in);
 		});
 
-		Bean1 b1 = new YamlConfigurationFactory(mockConfigSource, mockJacksonService).subconfig("no.such.path", Bean1.class);
+		Bean1 b1 = new YamlConfigurationFactory(mockConfigSource, mockEnvironment, mockJacksonService)
+				.subconfig("no.such.path", Bean1.class);
 		assertNotNull(b1);
 		assertEquals(null, b1.getS());
 		assertEquals(0, b1.getI());
+	}
+
+	@Test
+	public void testConfig_PropSubstitution() {
+
+		when(mockEnvironment.frameworkProperties()).thenReturn(new HashMap<String, String>() {
+			private static final long serialVersionUID = 1L;
+
+			{
+				put("s", "SS");
+				put("i", "55");
+			}
+		});
+
+		when(mockConfigSource.readConfig(any())).thenAnswer(i -> {
+
+			@SuppressWarnings("unchecked")
+			Function<InputStream, Object> processor = i.getArgumentAt(0, Function.class);
+			InputStream in = new ByteArrayInputStream("s: replace_me\ni: replace_me".getBytes());
+
+			return processor.apply(in);
+		});
+
+		Bean1 b1 = new YamlConfigurationFactory(mockConfigSource, mockEnvironment, mockJacksonService)
+				.config(Bean1.class);
+		assertNotNull(b1);
+		assertEquals("SS", b1.getS());
+		assertEquals(55, b1.getI());
+	}
+
+	@Test
+	public void testConfig_PropSubstitution_Nested() {
+
+		when(mockEnvironment.frameworkProperties()).thenReturn(new HashMap<String, String>() {
+			private static final long serialVersionUID = 1L;
+
+			{
+				put("b1.s", "SS");
+				put("b1.i", "55");
+			}
+		});
+
+		when(mockConfigSource.readConfig(any())).thenAnswer(i -> {
+
+			@SuppressWarnings("unchecked")
+			Function<InputStream, Object> processor = i.getArgumentAt(0, Function.class);
+			InputStream in = new ByteArrayInputStream("b1:\n  s: replace_me\n  i: replace_me".getBytes());
+
+			return processor.apply(in);
+		});
+
+		Bean1 b1 = new YamlConfigurationFactory(mockConfigSource, mockEnvironment, mockJacksonService).subconfig("b1",
+				Bean1.class);
+		assertNotNull(b1);
+		assertEquals("SS", b1.getS());
+		assertEquals(55, b1.getI());
+
 	}
 
 	public static class Bean1 {

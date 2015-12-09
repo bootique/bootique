@@ -5,11 +5,11 @@ import java.io.InputStream;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TreeTraversingParser;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
 import com.google.inject.Inject;
+import com.nhl.launcher.env.Environment;
 import com.nhl.launcher.jackson.JacksonService;
 
 public class YamlConfigurationFactory implements ConfigurationFactory {
@@ -27,9 +27,12 @@ public class YamlConfigurationFactory implements ConfigurationFactory {
 	}
 
 	@Inject
-	public YamlConfigurationFactory(ConfigurationSource configurationSource, JacksonService jacksonService) {
+	public YamlConfigurationFactory(ConfigurationSource configurationSource, Environment environment,
+			JacksonService jacksonService) {
 		this.mapper = jacksonService.newObjectMapper();
 		this.rootNode = configurationSource.readConfig(in -> readYaml(in, mapper));
+
+		JsonPropertiesResolver.resolve(rootNode, environment.frameworkProperties());
 	}
 
 	@Override
@@ -48,7 +51,7 @@ public class YamlConfigurationFactory implements ConfigurationFactory {
 
 	protected <T> T subconfig(JsonNode node, String prefix, Class<T> type) {
 
-		node = findChild(node, prefix);
+		node = JsonPropertiesResolver.findChild(node, prefix);
 
 		try {
 			return mapper.readValue(new TreeTraversingParser(node), type);
@@ -60,21 +63,4 @@ public class YamlConfigurationFactory implements ConfigurationFactory {
 		}
 	}
 
-	protected JsonNode findChild(JsonNode parent, String remainingPath) {
-
-		if (remainingPath.endsWith(".")) {
-			remainingPath = remainingPath.substring(0, remainingPath.length() - 1);
-		}
-
-		if ("".equals(remainingPath)) {
-			return parent;
-		}
-
-		int dot = remainingPath.indexOf('.');
-		String pre = dot > 0 ? remainingPath.substring(0, dot) : remainingPath;
-		String post = dot > 0 ? remainingPath.substring(dot + 1) : "";
-
-		JsonNode child = parent.get(pre);
-		return child == null ? new ObjectNode(null) : findChild(child, post);
-	}
 }
