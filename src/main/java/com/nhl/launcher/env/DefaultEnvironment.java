@@ -2,15 +2,29 @@ package com.nhl.launcher.env;
 
 import static java.util.stream.Collectors.toMap;
 
+import java.util.HashMap;
 import java.util.Map;
+
+import com.google.inject.Inject;
 
 public class DefaultEnvironment implements Environment {
 
-	private static final String FRAMEWORK_PROPERTIES_PREFIX = "bq";
+	public static final String FRAMEWORK_PROPERTIES_PREFIX = "bq";
+
+	private Map<String, String> properties;
+
+	@Inject
+	public DefaultEnvironment(@EnvironmentProperties Map<String, String> diProperties) {
+		this.properties = new HashMap<>(diProperties);
+
+		// override DI props from system...
+		System.getProperties().entrySet().stream()
+				.forEach(e -> properties.put((String) e.getKey(), (String) e.getValue()));
+	}
 
 	@Override
 	public String getProperty(String name) {
-		return System.getProperty(name);
+		return properties.get(name);
 	}
 
 	@Override
@@ -19,8 +33,8 @@ public class DefaultEnvironment implements Environment {
 		String lPrefix = prefix.endsWith(".") ? prefix : prefix + ".";
 		int len = lPrefix.length();
 
-		return System.getProperties().entrySet().stream().filter(e -> ((String) e.getKey()).startsWith(lPrefix))
-				.collect(toMap(e -> ((String) e.getKey()).substring(len), e -> (String) e.getValue()));
+		return properties.entrySet().stream().filter(e -> e.getKey().startsWith(lPrefix))
+				.collect(toMap(e -> e.getKey().substring(len), e -> e.getValue()));
 	}
 
 	@Override

@@ -26,7 +26,7 @@ class JsonPropertiesResolver {
 
 			PathTuple target = lastPathComponent(node, e.getKey()).get();
 
-			if (target.node == null) {
+			if (target.parent == null) {
 				LOGGER.info("Ignorning config property '{}'. No such path", e.getKey());
 				return;
 			}
