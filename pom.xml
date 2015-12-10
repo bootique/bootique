@@ -4,19 +4,20 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>com.nhl.launcher</groupId>
-		<artifactId>launcher-parent</artifactId>
+		<groupId>com.nhl.bootique.parent</groupId>
+		<artifactId>bootique-parent</artifactId>
 		<version>1.0-SNAPSHOT</version>
 	</parent>
 
-	<groupId>com.nhl.launcher.core</groupId>
-	<artifactId>launcher-core</artifactId>
+	<groupId>com.nhl.bootique</groupId>
+	<artifactId>bootique</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>Command launcher framework</name>
+	<name>Bootique Launcher Framework</name>
 	<description>
-		A simple framework for launching command-line Java applications.
+		Bootique is a simple DI-based framework for launching command-line Java applications
+		of any kind. Be it webservices, webapps, jobs, etc.
 	</description>
 
 	<properties>
@@ -25,18 +26,9 @@
 	</properties>
 
 	<scm>
-		<developerConnection>scm:git:ssh://git.nhl.com/repos/launcher/launcher-core</developerConnection>
+		<developerConnection>scm:git:ssh://git@github.com/nhl/bootique</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
-
-	<distributionManagement>
-		<repository>
-			<uniqueVersion>false</uniqueVersion>
-			<id>launcher-libs</id>
-			<name>Launcher Integration Libraries Deployment Repository</name>
-			<url>http://maven.nhl.com/content/repositories/launcher</url>
-		</repository>
-	</distributionManagement>
 
 	<dependencyManagement>
 		<dependencies>
@@ -80,20 +72,19 @@
 
 	<repositories>
 		<repository>
-			<id>nhl2upstream</id>
-			<name>NHL Artifacts</name>
-			<url>http://maven.nhl.com/content/groups/nhl2upstream</url>
+			<id>bootique-dependencies</id>
+			<name>Bootique Dependencies Repo</name>
+			<url>http://maven.objectstyle.org/nexus/content/groups/linkrest</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
 	</repositories>
-
 	<pluginRepositories>
 		<pluginRepository>
-			<id>nhl2upstream</id>
-			<name>NHL Artifacts</name>
-			<url>http://maven.nhl.com/content/groups/nhl2upstream/</url>
+			<id>bootique-dependencies</id>
+			<name>Bootique Dependencies Repo</name>
+			<url>http://maven.objectstyle.org/nexus/content/groups/linkrest</url>
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
