@@ -59,16 +59,16 @@ public class Launcher {
 	public void launch() {
 
 		LauncherRuntime runtime = new LauncherRuntime(createInjector());
-		CommandOutcome o = runtime.getRunner().run();
+		CommandOutcome o = runtime.run();
 
 		// report error
 		if (!o.isSuccess()) {
 
 			if (o.getMessage() != null) {
-				LOGGER.error(String.format("Error running command. Arguments: %s. Message: %s",
-						runtime.getArgsAsString(), o.getMessage()));
+				LOGGER.error(
+						String.format("Error running command '%s': %s", runtime.getArgsAsString(), o.getMessage()));
 			} else {
-				LOGGER.error(String.format("Error running command. Arguments: %s", runtime.getArgsAsString()));
+				LOGGER.error(String.format("Error running command '%s'", runtime.getArgsAsString()));
 			}
 
 			if (o.getException() != null) {
