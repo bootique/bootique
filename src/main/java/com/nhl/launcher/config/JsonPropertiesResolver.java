@@ -7,15 +7,11 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 class JsonPropertiesResolver {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(JsonPropertiesResolver.class);
 
 	static JsonNode findChild(JsonNode node, String path) {
 		return lastPathComponent(node, path).map(t -> t.node).orElse(new ObjectNode(null));
@@ -25,17 +21,13 @@ class JsonPropertiesResolver {
 		properties.entrySet().forEach(e -> {
 
 			PathTuple target = lastPathComponent(node, e.getKey()).get();
+			target.fillMissingParents();
 
-			if (target.parent == null) {
-				LOGGER.info("Ignorning config property '{}'. No such path", e.getKey());
-				return;
-			}
-
-			if (!(target.parent instanceof ObjectNode)) {
+			if (!(target.parent.node instanceof ObjectNode)) {
 				throw new IllegalArgumentException("Invalid property '" + e.getKey() + "'");
 			}
 
-			ObjectNode parentObjectNode = (ObjectNode) target.parent;
+			ObjectNode parentObjectNode = (ObjectNode) target.parent.node;
 			parentObjectNode.put(target.incomingPath, e.getValue());
 		});
 	}
@@ -54,15 +46,15 @@ class JsonPropertiesResolver {
 		String remainingPath;
 		String incomingPath;
 		JsonNode node;
-		JsonNode parent;
+		PathTuple parent;
 
 		PathTuple(JsonNode node, String remainingPath) {
 			this(node, null, null, remainingPath);
 		}
 
-		PathTuple(JsonNode node, JsonNode parentNode, String incomingPath, String remainingPath) {
+		PathTuple(JsonNode node, PathTuple parent, String incomingPath, String remainingPath) {
 			this.node = node;
-			this.parent = parentNode;
+			this.parent = parent;
 			this.incomingPath = incomingPath;
 
 			if (remainingPath != null && remainingPath.endsWith(".")) {
@@ -81,7 +73,28 @@ class JsonPropertiesResolver {
 			String post = dot > 0 ? remainingPath.substring(dot + 1) : "";
 
 			JsonNode child = node != null ? node.get(pre) : null;
-			return new PathTuple(child, node, pre, post);
+			return new PathTuple(child, this, pre, post);
+		}
+
+		void fillMissingParents() {
+			parent.fillMissingNodes(incomingPath, node, new JsonNodeFactory(true));
+		}
+
+		void fillMissingNodes(String field, JsonNode child, JsonNodeFactory nodeFactory) {
+
+			if (node == null) {
+				node = new ObjectNode(nodeFactory);
+				parent.fillMissingNodes(incomingPath, node, nodeFactory);
+			}
+
+			if (child != null) {
+				if (node instanceof ObjectNode) {
+					((ObjectNode) node).set(field, child);
+				} else {
+					throw new IllegalArgumentException(
+							"Node '" + incomingPath + "' is unexpected in the middle of the path");
+				}
+			}
 		}
 
 		@Override

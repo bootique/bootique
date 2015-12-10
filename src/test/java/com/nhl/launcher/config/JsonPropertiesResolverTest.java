@@ -28,6 +28,18 @@ public class JsonPropertiesResolverTest {
 			throw new RuntimeException("Error reading config file", e);
 		}
 	}
+	
+
+	@Test
+	public void testLastPathComponent_Root() {
+		JsonNode node = readYaml("a: b\nc: d");
+		Optional<PathTuple> last = JsonPropertiesResolver.lastPathComponent(node, "");
+		
+		assertNotNull(last);
+		assertNotNull(last.get());
+		assertEquals("b", last.get().node.get("a").asText());
+		assertEquals("d", last.get().node.get("c").asText());
+	}
 
 	@Test
 	public void testLastPathComponent() {
