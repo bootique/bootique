@@ -1,4 +1,4 @@
-package com.nhl.bootique;
+package com.nhl.bootique.run;
 
 import java.util.Collection;
 import java.util.Set;

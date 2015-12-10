@@ -14,28 +14,38 @@ import com.google.inject.multibindings.Multibinder;
 import com.nhl.bootique.command.Command;
 import com.nhl.bootique.command.CommandOutcome;
 
-public class Launcher {
+/**
+ * A main launcher class of Bootique. To start a Bootique app, you may write
+ * your main method as follows:
+ * 
+ * <pre>
+ * public static void main(String[] args) {
+ * 	Bootique.commands(_optional_commands_).modules(_optional_extensions_).run();
+ * }
+ * </pre>
+ */
+public class Bootique {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(Launcher.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(Bootique.class);
 
 	private Collection<Module> modules;
 	private Collection<Command> commands;
 
-	public static Launcher app(String[] args) {
-		return new Launcher().module(new BootstrapModule(args));
+	public static Bootique app(String[] args) {
+		return new Bootique().module(new BQModule(args));
 	}
 
-	private Launcher() {
+	private Bootique() {
 		this.modules = new ArrayList<>();
 		this.commands = new ArrayList<>();
 	}
 
-	public Launcher module(Module m) {
+	public Bootique module(Module m) {
 		modules.add(m);
 		return this;
 	}
 
-	public Launcher modules(Module... modules) {
+	public Bootique modules(Module... modules) {
 		Arrays.asList(modules).forEach(m -> this.modules.add(m));
 		return this;
 	}
@@ -43,7 +53,7 @@ public class Launcher {
 	/**
 	 * Registers a custom {@link Command} object.
 	 */
-	public Launcher command(Command command) {
+	public Bootique command(Command command) {
 		this.commands.add(command);
 		return this;
 	}
@@ -51,14 +61,14 @@ public class Launcher {
 	/**
 	 * Registers a custom {@link Command} object.
 	 */
-	public Launcher commands(Command... commands) {
+	public Bootique commands(Command... commands) {
 		Arrays.asList(commands).forEach(c -> command(c));
 		return this;
 	}
 
-	public void launch() {
+	public void run() {
 
-		LauncherRuntime runtime = new LauncherRuntime(createInjector());
+		BQRuntime runtime = new BQRuntime(createInjector());
 		CommandOutcome o = runtime.run();
 
 		// report error

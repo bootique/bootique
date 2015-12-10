@@ -1,4 +1,4 @@
-package com.nhl.bootique.config;
+package com.nhl.bootique.factory;
 
 /**
  * An object that has access to a tree of factories configuration data, and acts

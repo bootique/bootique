@@ -1,4 +1,4 @@
-package com.nhl.bootique.config;
+package com.nhl.bootique.factory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.node.TreeTraversingParser;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
 import com.google.inject.Inject;
+import com.nhl.bootique.config.ConfigurationSource;
 import com.nhl.bootique.env.Environment;
 import com.nhl.bootique.jackson.JacksonService;
 

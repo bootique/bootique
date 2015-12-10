@@ -9,17 +9,18 @@ import com.google.inject.Key;
 import com.google.inject.ProvisionException;
 import com.nhl.bootique.command.CommandOutcome;
 import com.nhl.bootique.jopt.Args;
+import com.nhl.bootique.run.Runner;
 
 import joptsimple.OptionException;
 
 /**
  * A wrapper around launcher DI container.
  */
-class LauncherRuntime {
+public class BQRuntime {
 
 	private Injector injector;
 
-	public LauncherRuntime(Injector injector) {
+	public BQRuntime(Injector injector) {
 		this.injector = injector;
 	}
 

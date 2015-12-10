@@ -12,27 +12,32 @@ import com.nhl.bootique.command.FailoverHelpCommand;
 import com.nhl.bootique.command.HelpCommand;
 import com.nhl.bootique.config.CliConfigurationSource;
 import com.nhl.bootique.config.ConfigurationSource;
-import com.nhl.bootique.config.FactoryConfigurationService;
-import com.nhl.bootique.config.YamlFactoryConfigurationService;
 import com.nhl.bootique.env.DefaultEnvironment;
 import com.nhl.bootique.env.Environment;
 import com.nhl.bootique.env.EnvironmentProperties;
+import com.nhl.bootique.factory.FactoryConfigurationService;
+import com.nhl.bootique.factory.YamlFactoryConfigurationService;
 import com.nhl.bootique.jackson.DefaultJacksonService;
 import com.nhl.bootique.jackson.JacksonService;
 import com.nhl.bootique.jopt.Args;
 import com.nhl.bootique.jopt.Options;
 import com.nhl.bootique.jopt.OptionsProvider;
+import com.nhl.bootique.run.DefaultRunner;
+import com.nhl.bootique.run.Runner;
 
-public class BootstrapModule implements Module {
+public class BQModule implements Module {
 
-	public static final String COMMANDS_KEY = "com.nhl.launcher.commands";
 	private String[] args;
 
+	/**
+	 * Utility method for the bundle modules to bind their own default
+	 * properties.
+	 */
 	public static MapBinder<String, String> propertiesBinder(Binder binder) {
 		return MapBinder.newMapBinder(binder, String.class, String.class, EnvironmentProperties.class);
 	}
 
-	public BootstrapModule(String[] args) {
+	public BQModule(String[] args) {
 		this.args = args;
 	}
 
@@ -55,7 +60,7 @@ public class BootstrapModule implements Module {
 		commands.addBinding().to(HelpCommand.class);
 		commands.addBinding().to(ConfigCommand.class);
 
-		// don't bind anything to properties yet, but declare the binding
+		// don't bind anything to properties yet, but still declare the binding
 		propertiesBinder(binder);
 	}
 }

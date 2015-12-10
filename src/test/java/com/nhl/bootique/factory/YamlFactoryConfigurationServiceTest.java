@@ -1,4 +1,4 @@
-package com.nhl.bootique.config;
+package com.nhl.bootique.factory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -16,8 +16,8 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhl.bootique.config.ConfigurationSource;
-import com.nhl.bootique.config.YamlFactoryConfigurationService;
 import com.nhl.bootique.env.Environment;
+import com.nhl.bootique.factory.YamlFactoryConfigurationService;
 import com.nhl.bootique.jackson.JacksonService;
 
 public class YamlFactoryConfigurationServiceTest {
