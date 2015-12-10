@@ -10,9 +10,9 @@ import com.nhl.launcher.command.DefaultCommand;
 import com.nhl.launcher.command.FailoverHelpCommand;
 import com.nhl.launcher.command.HelpCommand;
 import com.nhl.launcher.config.CliConfigurationSource;
-import com.nhl.launcher.config.ConfigurationFactory;
+import com.nhl.launcher.config.FactoryConfigurationService;
 import com.nhl.launcher.config.ConfigurationSource;
-import com.nhl.launcher.config.YamlConfigurationFactory;
+import com.nhl.launcher.config.YamlFactoryConfigurationService;
 import com.nhl.launcher.env.DefaultEnvironment;
 import com.nhl.launcher.env.Environment;
 import com.nhl.launcher.jackson.DefaultJacksonService;
@@ -38,7 +38,7 @@ public class BootstrapModule implements Module {
 		binder.bind(Runner.class).to(DefaultRunner.class).in(Singleton.class);
 		binder.bind(Options.class).toProvider(OptionsProvider.class).in(Singleton.class);
 		binder.bind(ConfigurationSource.class).to(CliConfigurationSource.class).in(Singleton.class);
-		binder.bind(ConfigurationFactory.class).to(YamlConfigurationFactory.class);
+		binder.bind(FactoryConfigurationService.class).to(YamlFactoryConfigurationService.class);
 		binder.bind(Environment.class).to(DefaultEnvironment.class);
 
 		binder.bind(Command.class).annotatedWith(DefaultCommand.class).to(FailoverHelpCommand.class)

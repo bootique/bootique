@@ -12,7 +12,10 @@ import com.google.inject.Inject;
 import com.nhl.launcher.env.Environment;
 import com.nhl.launcher.jackson.JacksonService;
 
-public class YamlConfigurationFactory implements ConfigurationFactory {
+/**
+ * {@link FactoryConfigurationService} based on YAML configs.
+ */
+public class YamlFactoryConfigurationService implements FactoryConfigurationService {
 
 	private JsonNode rootNode;
 	private ObjectMapper mapper;
@@ -27,7 +30,7 @@ public class YamlConfigurationFactory implements ConfigurationFactory {
 	}
 
 	@Inject
-	public YamlConfigurationFactory(ConfigurationSource configurationSource, Environment environment,
+	public YamlFactoryConfigurationService(ConfigurationSource configurationSource, Environment environment,
 			JacksonService jacksonService) {
 		this.mapper = jacksonService.newObjectMapper();
 		this.rootNode = configurationSource.readConfig(in -> readYaml(in, mapper));
@@ -36,12 +39,7 @@ public class YamlConfigurationFactory implements ConfigurationFactory {
 	}
 
 	@Override
-	public <T> T config(Class<T> type) {
-		return subconfig("", type);
-	}
-
-	@Override
-	public <T> T subconfig(String prefix, Class<T> type) {
+	public <T> T factory(Class<T> type, String prefix) {
 		if (rootNode == null) {
 			throw new IllegalStateException("No configuration data available..");
 		}
