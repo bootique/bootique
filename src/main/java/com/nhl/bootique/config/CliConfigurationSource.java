@@ -16,6 +16,8 @@ import com.nhl.bootique.jopt.Options;
 
 public class CliConfigurationSource implements ConfigurationSource {
 
+	// TODO: this logger is invoked before Logback is configured. Maybe use
+	// STDOUT?
 	private static final Logger LOGGER = LoggerFactory.getLogger(CliConfigurationSource.class);
 
 	private String location;

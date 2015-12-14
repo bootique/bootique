@@ -13,6 +13,7 @@ import com.google.inject.Module;
 import com.google.inject.multibindings.Multibinder;
 import com.nhl.bootique.command.Command;
 import com.nhl.bootique.command.CommandOutcome;
+import com.nhl.bootique.log.BQLogModule;
 
 /**
  * A main launcher class of Bootique. To start a Bootique app, you may write
@@ -28,14 +29,18 @@ public class Bootique {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(Bootique.class);
 
-	private Collection<Module> modules;
+	protected Collection<Module> modules;
 	private Collection<Command> commands;
+	private String[] args;
+	private String logConfigPrefix;
 
 	public static Bootique app(String[] args) {
-		return new Bootique().module(new BQModule(args));
+		return new Bootique(args);
 	}
 
-	private Bootique() {
+	private Bootique(String[] args) {
+		this.logConfigPrefix = "log";
+		this.args = args;
 		this.modules = new ArrayList<>();
 		this.commands = new ArrayList<>();
 	}
@@ -47,6 +52,11 @@ public class Bootique {
 
 	public Bootique modules(Module... modules) {
 		Arrays.asList(modules).forEach(m -> this.modules.add(m));
+		return this;
+	}
+
+	public Bootique logConfigPrefix(String logConfigPrefix) {
+		this.logConfigPrefix = logConfigPrefix;
 		return this;
 	}
 
@@ -89,12 +99,25 @@ public class Bootique {
 		o.exit();
 	}
 
-	private Injector createInjector() {
-		Collection<Module> finalModules = new ArrayList<>(modules);
+	protected Injector createInjector() {
+		Collection<Module> finalModules = new ArrayList<>(modules.size() + 3);
+
+		finalModules.add(createCoreModule());
+		finalModules.add(createLogModule());
+		finalModules.addAll(modules);
+
 		finalModules.add((binder) -> {
 			commands.forEach(c -> Multibinder.newSetBinder(binder, Command.class).addBinding().toInstance(c));
 		});
 
 		return Guice.createInjector(finalModules);
+	}
+	
+	protected Module createLogModule() {
+		return new BQLogModule(logConfigPrefix);
+	}
+	
+	protected Module createCoreModule() {
+		return new BQModule(args);
 	}
 }

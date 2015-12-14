@@ -63,4 +63,6 @@ public class BQModule implements Module {
 		// don't bind anything to properties yet, but still declare the binding
 		propertiesBinder(binder);
 	}
+
+	
 }
