@@ -51,10 +51,10 @@ public class YamlFactoryConfigurationService implements FactoryConfigurationServ
 
 	protected <T> T subconfig(JsonNode node, String prefix, Class<T> type) {
 
-		node = JsonPropertiesResolver.findChild(node, prefix);
+		JsonNode child = JsonPropertiesResolver.findChild(node, prefix);
 
 		try {
-			return mapper.readValue(new TreeTraversingParser(node), type);
+			return mapper.readValue(new TreeTraversingParser(child), type);
 		}
 		// TODO: implement better exception handling. See ConfigurationFactory
 		// in Dropwizard for inspiration
