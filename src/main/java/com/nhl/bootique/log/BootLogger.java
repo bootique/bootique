@@ -10,4 +10,6 @@ public interface BootLogger {
 	void stdout(String message);
 	
 	void stderr(String message);
+	
+	void stderr(String message, Throwable th);
 }

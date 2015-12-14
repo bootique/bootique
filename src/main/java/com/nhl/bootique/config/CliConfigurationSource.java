@@ -21,7 +21,7 @@ public class CliConfigurationSource implements ConfigurationSource {
 
 		Collection<String> configs = options.stringsFor(ConfigCommand.CONFIG_OPTION);
 		if (configs.isEmpty()) {
-			bootLogger.stdout("No configuration options specified");
+			// we are likely in boot sequence... so be quiet
 		} else if (configs.size() == 1) {
 			this.location = configs.iterator().next();
 			bootLogger.stdout("Using configuration at " + location);

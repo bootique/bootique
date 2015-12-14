@@ -4,19 +4,23 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.google.inject.Inject;
 import com.nhl.bootique.jopt.Options;
+import com.nhl.bootique.log.BootLogger;
 
 import joptsimple.OptionParser;
 import joptsimple.OptionSpec;
 
 public class HelpCommand implements Command {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(HelpCommand.class);
-
 	protected static final String HELP_OPTION = "help";
+
+	private BootLogger bootLogger;
+
+	@Inject
+	public HelpCommand(BootLogger bootLogger) {
+		this.bootLogger = bootLogger;
+	}
 
 	@Override
 	public CommandOutcome run(Options options) {
@@ -29,10 +33,10 @@ public class HelpCommand implements Command {
 		try {
 			options.getParser().printHelpOn(out);
 		} catch (IOException e) {
-			LOGGER.warn("Error printing help", e);
+			bootLogger.stderr("Error printing help", e);
 		}
 
-		System.out.println(out.toString());
+		bootLogger.stdout(out.toString());
 		return CommandOutcome.succeeded();
 	}
 
