@@ -1,7 +1,12 @@
 package com.nhl.bootique;
 
+import org.slf4j.ILoggerFactory;
+import org.slf4j.LoggerFactory;
+
 import com.google.inject.Binder;
+import com.google.inject.Inject;
 import com.google.inject.Module;
+import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.multibindings.MapBinder;
 import com.google.inject.multibindings.Multibinder;
@@ -22,12 +27,19 @@ import com.nhl.bootique.jackson.JacksonService;
 import com.nhl.bootique.jopt.Args;
 import com.nhl.bootique.jopt.Options;
 import com.nhl.bootique.jopt.OptionsProvider;
+import com.nhl.bootique.log.BootLogger;
+import com.nhl.bootique.log.DefaultBootLogger;
+import com.nhl.bootique.log.LogbackFactory;
 import com.nhl.bootique.run.DefaultRunner;
 import com.nhl.bootique.run.Runner;
+
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
 
 public class BQModule implements Module {
 
 	private String[] args;
+	private String logConfigPrefix;
 
 	/**
 	 * Utility method for the bundle modules to bind their own default
@@ -37,12 +49,22 @@ public class BQModule implements Module {
 		return MapBinder.newMapBinder(binder, String.class, String.class, EnvironmentProperties.class);
 	}
 
-	public BQModule(String[] args) {
+	public BQModule(String[] args, String logConfigPrefix) {
 		this.args = args;
+		this.logConfigPrefix = logConfigPrefix;
 	}
 
 	@Override
 	public void configure(Binder binder) {
+
+		// this logger is used during boot sequence
+		binder.bind(BootLogger.class).to(DefaultBootLogger.class);
+
+		// this logger is configured from YAML and is used by everybody...
+
+		// (binding a dummy class to trigger eager init of Logback as @Provides
+		// below can not be invoked eagerly)
+		binder.bind(LogInitTrigger.class).asEagerSingleton();
 
 		binder.bind(JacksonService.class).to(DefaultJacksonService.class);
 		binder.bind(String[].class).annotatedWith(Args.class).toInstance(args);
@@ -64,5 +86,41 @@ public class BQModule implements Module {
 		propertiesBinder(binder);
 	}
 
-	
+	@Provides
+	public Logger configLogbackRootLogger(FactoryConfigurationService factoryConfig) {
+		LoggerContext context = createLogbackContext();
+		return factoryConfig.factory(LogbackFactory.class, logConfigPrefix).createRootLogger(context);
+	}
+
+	// copied from Dropwizard. See DW DefaultLoggingFactory and
+	// http://jira.qos.ch/browse/SLF4J-167. Though presumably Bootique calls
+	// this from the main thread, so we should not be affected by the issue.
+	protected LoggerContext createLogbackContext() {
+		long startTime = System.nanoTime();
+		while (true) {
+			ILoggerFactory iLoggerFactory = LoggerFactory.getILoggerFactory();
+
+			if (iLoggerFactory instanceof LoggerContext) {
+				return (LoggerContext) iLoggerFactory;
+			}
+
+			if ((System.nanoTime() - startTime) > 10_000_000) {
+				throw new IllegalStateException("Unable to acquire the logger context");
+			}
+
+			try {
+				Thread.sleep(100_000);
+			} catch (InterruptedException e) {
+				throw new IllegalStateException(e);
+			}
+		}
+	}
+
+	static class LogInitTrigger {
+
+		@Inject
+		public LogInitTrigger(Logger rootLogger) {
+			rootLogger.info("Logback started");
+		}
+	}
 }

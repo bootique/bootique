@@ -13,7 +13,6 @@ import com.google.inject.Module;
 import com.google.inject.multibindings.Multibinder;
 import com.nhl.bootique.command.Command;
 import com.nhl.bootique.command.CommandOutcome;
-import com.nhl.bootique.log.BQLogModule;
 
 /**
  * A main launcher class of Bootique. To start a Bootique app, you may write
@@ -102,8 +101,7 @@ public class Bootique {
 	protected Injector createInjector() {
 		Collection<Module> finalModules = new ArrayList<>(modules.size() + 3);
 
-		finalModules.add(createCoreModule());
-		finalModules.add(createLogModule());
+		finalModules.add(createCoreModule(args, logConfigPrefix));
 		finalModules.addAll(modules);
 
 		finalModules.add((binder) -> {
@@ -112,12 +110,8 @@ public class Bootique {
 
 		return Guice.createInjector(finalModules);
 	}
-	
-	protected Module createLogModule() {
-		return new BQLogModule(logConfigPrefix);
-	}
-	
-	protected Module createCoreModule() {
-		return new BQModule(args);
+
+	protected Module createCoreModule(String[] args, String logConfigPrefix) {
+		return new BQModule(args, logConfigPrefix);
 	}
 }
