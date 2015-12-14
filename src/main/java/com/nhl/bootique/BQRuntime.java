@@ -9,6 +9,7 @@ import com.google.inject.Key;
 import com.google.inject.ProvisionException;
 import com.nhl.bootique.command.CommandOutcome;
 import com.nhl.bootique.jopt.Args;
+import com.nhl.bootique.log.BootLogger;
 import com.nhl.bootique.run.Runner;
 
 import joptsimple.OptionException;
@@ -22,6 +23,10 @@ public class BQRuntime {
 
 	public BQRuntime(Injector injector) {
 		this.injector = injector;
+	}
+	
+	public BootLogger getBootLogger() {
+		return injector.getInstance(BootLogger.class);
 	}
 
 	public Runner getRunner() {

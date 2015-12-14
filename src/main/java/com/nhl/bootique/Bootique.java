@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -25,8 +22,6 @@ import com.nhl.bootique.command.CommandOutcome;
  * </pre>
  */
 public class Bootique {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(Bootique.class);
 
 	protected Collection<Module> modules;
 	private Collection<Command> commands;
@@ -84,14 +79,14 @@ public class Bootique {
 		if (!o.isSuccess()) {
 
 			if (o.getMessage() != null) {
-				LOGGER.error(
+				runtime.getBootLogger().stderr(
 						String.format("Error running command '%s': %s", runtime.getArgsAsString(), o.getMessage()));
 			} else {
-				LOGGER.error(String.format("Error running command '%s'", runtime.getArgsAsString()));
+				runtime.getBootLogger().stderr(String.format("Error running command '%s'", runtime.getArgsAsString()));
 			}
 
 			if (o.getException() != null) {
-				LOGGER.error("Command exception", o.getException());
+				runtime.getBootLogger().stderr("Command exception", o.getException());
 			}
 		}
 
@@ -112,6 +107,6 @@ public class Bootique {
 	}
 
 	protected Module createCoreModule(String[] args, String logConfigPrefix) {
-		return new BQModule(args, logConfigPrefix);
+		return new BQModule(args);
 	}
 }
