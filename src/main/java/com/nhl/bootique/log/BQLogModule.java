@@ -22,7 +22,13 @@ public class BQLogModule implements Module {
 
 	@Override
 	public void configure(Binder binder) {
-		// binding a dummy class to trigger eager init of Logback
+
+		// this logger is used during boot sequence
+		binder.bind(BootLogger.class).to(DefaultBootLogger.class);
+
+		// this logger is configured from YAML and is used by the app...
+		// (binding a dummy class to trigger eager init of Logback as @Provides
+		// below can not be invoked eagerly)
 		binder.bind(LogInitTrigger.class).asEagerSingleton();
 	}
 

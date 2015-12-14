@@ -7,33 +7,27 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.function.Function;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.inject.Inject;
 import com.nhl.bootique.command.ConfigCommand;
 import com.nhl.bootique.jopt.Options;
+import com.nhl.bootique.log.BootLogger;
 
 public class CliConfigurationSource implements ConfigurationSource {
-
-	// TODO: this logger is invoked before Logback is configured. Maybe use
-	// STDOUT?
-	private static final Logger LOGGER = LoggerFactory.getLogger(CliConfigurationSource.class);
 
 	private String location;
 
 	@Inject
-	public CliConfigurationSource(Options options) {
+	public CliConfigurationSource(Options options, BootLogger bootLogger) {
 
 		Collection<String> configs = options.stringsFor(ConfigCommand.CONFIG_OPTION);
 		if (configs.isEmpty()) {
-			LOGGER.info("No configuration options specified");
+			bootLogger.stdout("No configuration options specified");
 		} else if (configs.size() == 1) {
 			this.location = configs.iterator().next();
-			LOGGER.info("Using configuration at " + location);
+			bootLogger.stdout("Using configuration at " + location);
 		} else {
 			this.location = configs.iterator().next();
-			LOGGER.info("Ignoring multiple configurations. Using configuration at " + location);
+			bootLogger.stdout("Ignoring multiple configurations. Using configuration at " + location);
 		}
 	}
 
