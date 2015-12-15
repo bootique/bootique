@@ -43,7 +43,7 @@ public class BQModule implements Module {
 	 * properties.
 	 */
 	public static void bindProperty(Binder binder, String key, String value) {
-		propsBinder(binder).addBinding(key).toInstance(key);
+		propsBinder(binder).addBinding(key).toInstance(value);
 	}
 
 	/**
