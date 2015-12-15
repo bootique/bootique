@@ -1,5 +1,8 @@
 package com.nhl.bootique;
 
+import java.util.Arrays;
+
+import com.google.common.base.Preconditions;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Singleton;
@@ -31,12 +34,26 @@ public class BQModule implements Module {
 
 	private String[] args;
 
+	private static MapBinder<String, String> propsBinder(Binder binder) {
+		return MapBinder.newMapBinder(binder, String.class, String.class, EnvironmentProperties.class);
+	}
+
 	/**
 	 * Utility method for the bundle modules to bind their own default
 	 * properties.
 	 */
-	public static MapBinder<String, String> propertiesBinder(Binder binder) {
-		return MapBinder.newMapBinder(binder, String.class, String.class, EnvironmentProperties.class);
+	public static void bindProperty(Binder binder, String key, String value) {
+		propsBinder(binder).addBinding(key).toInstance(key);
+	}
+
+	/**
+	 * Utility method for the bundle modules to bind their own default
+	 * properties.
+	 */
+	@SafeVarargs
+	public static void bindCommands(Binder binder, Class<? extends Command>... commands) {
+		Multibinder<Command> commandBinder = Multibinder.newSetBinder(binder, Command.class);
+		Arrays.asList(Preconditions.checkNotNull(commands)).forEach(ct -> commandBinder.addBinding().to(ct));
 	}
 
 	public BQModule(String[] args) {
@@ -58,12 +75,9 @@ public class BQModule implements Module {
 		binder.bind(Command.class).annotatedWith(DefaultCommand.class).to(FailoverHelpCommand.class)
 				.in(Singleton.class);
 
-		Multibinder<Command> commands = Multibinder.newSetBinder(binder, Command.class);
-
-		commands.addBinding().to(HelpCommand.class);
-		commands.addBinding().to(ConfigCommand.class);
+		BQModule.bindCommands(binder, HelpCommand.class, ConfigCommand.class);
 
 		// don't bind anything to properties yet, but still declare the binding
-		propertiesBinder(binder);
+		BQModule.propsBinder(binder);
 	}
 }
