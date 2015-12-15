@@ -127,7 +127,8 @@ Other needed POM additions:
 </build>
 ```
 Now you can run a Maven build and execute the jar:
-```mvn package
+```sh
+mvn package
 java -jar target/myapp-1.0.jar --server
 ```
 
