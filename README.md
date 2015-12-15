@@ -52,6 +52,8 @@ Add Bootique dependency:
 Write a main class that configures app's own DI Module, builds extensions Modules and starts Bootique app. In the example below we are setting up a JAX-RS application and the application class also serves as a JAX-RS resource:
 
 ```Java
+package com.example;
+
 import java.util.Arrays;
 
 import javax.inject.Singleton;
@@ -70,12 +72,11 @@ import com.nhl.bootique.logback.LogbackBundle;
 @Path("/hello")
 @Produces("text/plain")
 @Singleton
-public class LRApplication {
+public class Application {
 
 	public static void main(String[] args) throws Exception {
-
 		Module jetty = JettyBundle.create().context("/").port(3333).module();
-		Module jersey = JerseyBundle.create().packageRoot(LRApplication.class).module();
+		Module jersey = JerseyBundle.create().packageRoot(Application.class).module();
 		Module logback = LogbackBundle.logbackModule();
 
 		Bootique.app(args).modules(jetty, jersey, logback).run();
@@ -87,7 +88,6 @@ public class LRApplication {
 
 	@GET
 	public String get() {
-
 		String allArgs = Arrays.asList(args).stream().collect(joining(" "));
 		return "Hello! The app args were: " + allArgs;
 	}
@@ -97,6 +97,39 @@ public class LRApplication {
 Now you can run it in your IDE, you will see a list of supported options printed. Add ```--server``` option and run it again. Your webservice should start. Now you can open [http://127.0.0.1:3333/hello/](http://127.0.0.1:3333/hello/) in the browser and see it return a piece of text with program arguments.
 
 ## Runnable Jar
+
+It was easy to run the app from the IDE, as we have access to the ```main``` method. It is equally easy to build a runnable .jar file that can be used to run your app in deployment. The easiest way to achive it is to set ```bootique-parent``` as a parent of your app  pom.xml (this is not strictly required. if you don't want to inherit form Bootique POM, simply copy ```maven-shade-plugin``` configuration in your own POM) :
+
+```XML
+<parent>
+	<groupId>com.nhl.bootique.parent</groupId>
+	<artifactId>bootique-parent</artifactId>
+	<version>0.5</version>
+</parent>
+```
+Other needed POM additions:
+```XML
+<properties>
+	<main.class>com.example.Application</main.class>
+</properties>
+...
+<build>
+	<plugins>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-shade-plugin</artifactId>
+		</plugin>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-jar-plugin</artifactId>
+		</plugin>
+	</plugins>
+</build>
+```
+Now you can run a Maven build and execute the jar:
+```mvn package
+java -jar target/myapp-1.0.jar --server
+```
 
 ## YAML Config
 
