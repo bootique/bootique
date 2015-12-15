@@ -29,11 +29,44 @@ Add Bootique dependency:
 	<artifactId>bootique</artifactId>
 	<version>0.7</version>
 </dependency>
-<!-- Below any number of Bootique extensions -->
+<!-- 
+  Below add any number of Bootique extensions. We'll be building a JAX-RS webservice here, 
+  so the list may look like this:
+-->
+<dependency>
+	<groupId>com.nhl.bootique.jetty</groupId>
+	<artifactId>bootique-jetty</artifactId>
+	<version>0.5</version>
+</dependency>
+<dependency>
+	<groupId>com.nhl.bootique.jersey</groupId>
+	<artifactId>bootique-jersey</artifactId>
+	<version>0.6</version>
+</dependency>
+<dependency>
+	<groupId>com.nhl.bootique.logback</groupId>
+	<artifactId>bootique-logback</artifactId>
+	<version>0.5</version>
+</dependency>
 ```
 Write a main class that configures app's own DI Module, builds extensions Modules and starts Bootique app. In the example below we are setting up a JAX-RS application and the application class also serves as a JAX-RS resource:
 
 ```Java
+import java.util.Arrays;
+
+import javax.inject.Singleton;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+
+import com.google.inject.Inject;
+import com.google.inject.Module;
+import com.nhl.bootique.Bootique;
+import com.nhl.bootique.jersey.JerseyBundle;
+import com.nhl.bootique.jetty.JettyBundle;
+import com.nhl.bootique.jopt.Args;
+import com.nhl.bootique.logback.LogbackBundle;
+
 @Path("/hello")
 @Produces("text/plain")
 @Singleton
