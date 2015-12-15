@@ -37,6 +37,10 @@ public class YamlFactoryConfigurationService implements FactoryConfigurationServ
 		this.mapper = jacksonService.newObjectMapper();
 		this.rootNode = configurationSource.readConfig(in -> readYaml(in, mapper));
 
+		if (rootNode == null) {
+			rootNode = new ObjectNode(null);
+		}
+
 		JsonPropertiesResolver.resolve(rootNode, environment.frameworkProperties());
 	}
 
