@@ -98,7 +98,7 @@ Now you can run it in your IDE, you will see a list of supported options printed
 
 ## Runnable Jar
 
-It was easy to run the app from the IDE, as we have access to the ```main``` method. It is equally easy to build a runnable .jar file that can be used to run your app in deployment. The easiest way to achive it is to set ```bootique-parent``` as a parent of your app  pom.xml (this is not strictly required. if you don't want to inherit form Bootique POM, simply copy ```maven-shade-plugin``` configuration in your own POM) :
+It was easy to run the app from the IDE, as we have access to the ```main``` method. It is equally easy to build a runnable .jar file that can be used to run your app in deployment. The easiest way to achive it is to set ```bootique-parent``` as a parent of your app  pom.xml *(This is not strictly required. if you don't want to inherit form Bootique POM, simply copy ```maven-shade-plugin``` configuration in your own POM)* :
 
 ```XML
 <parent>
