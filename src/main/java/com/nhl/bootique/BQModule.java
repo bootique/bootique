@@ -1,14 +1,8 @@
 package com.nhl.bootique;
 
-import java.util.Arrays;
-import java.util.Collection;
-
-import com.google.common.base.Preconditions;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Singleton;
-import com.google.inject.multibindings.MapBinder;
-import com.google.inject.multibindings.Multibinder;
 import com.nhl.bootique.command.Command;
 import com.nhl.bootique.command.ConfigCommand;
 import com.nhl.bootique.command.DefaultCommand;
@@ -18,7 +12,6 @@ import com.nhl.bootique.config.CliConfigurationSource;
 import com.nhl.bootique.config.ConfigurationSource;
 import com.nhl.bootique.env.DefaultEnvironment;
 import com.nhl.bootique.env.Environment;
-import com.nhl.bootique.env.EnvironmentProperties;
 import com.nhl.bootique.factory.FactoryConfigurationService;
 import com.nhl.bootique.factory.YamlFactoryConfigurationService;
 import com.nhl.bootique.jackson.DefaultJacksonService;
@@ -34,42 +27,6 @@ import com.nhl.bootique.run.Runner;
 public class BQModule implements Module {
 
 	private String[] args;
-
-	private static MapBinder<String, String> propsBinder(Binder binder) {
-		return MapBinder.newMapBinder(binder, String.class, String.class, EnvironmentProperties.class);
-	}
-
-	/**
-	 * Utility method for the bundle modules to bind their own default
-	 * properties.
-	 */
-	public static void bindProperty(Binder binder, String key, String value) {
-		propsBinder(binder).addBinding(key).toInstance(value);
-	}
-
-	/**
-	 * Utility method for the bundle modules to bind their command types.
-	 */
-	@SafeVarargs
-	public static void bindCommandTypes(Binder binder, Class<? extends Command>... commands) {
-		bindCommandTypes(binder, Arrays.asList(Preconditions.checkNotNull(commands)));
-	}
-
-	/**
-	 * Utility method for the bundle modules to bind their command types.
-	 */
-	public static void bindCommandTypes(Binder binder, Collection<Class<? extends Command>> commands) {
-		Multibinder<Command> commandBinder = Multibinder.newSetBinder(binder, Command.class);
-		Preconditions.checkNotNull(commands).forEach(ct -> commandBinder.addBinding().to(ct));
-	}
-
-	/**
-	 * Utility method for the bundle modules to bind their commands.
-	 */
-	public static void bindCommands(Binder binder, Collection<? extends Command> commands) {
-		Multibinder<Command> commandBinder = Multibinder.newSetBinder(binder, Command.class);
-		Preconditions.checkNotNull(commands).forEach(c -> commandBinder.addBinding().toInstance(c));
-	}
 
 	public BQModule(String[] args) {
 		this.args = args;
@@ -90,9 +47,10 @@ public class BQModule implements Module {
 		binder.bind(Command.class).annotatedWith(DefaultCommand.class).to(FailoverHelpCommand.class)
 				.in(Singleton.class);
 
-		BQModule.bindCommandTypes(binder, HelpCommand.class, ConfigCommand.class);
+		BQContribBinder contribBinder = BQContribBinder.binder(binder);
 
 		// don't bind anything to properties yet, but still declare the binding
-		BQModule.propsBinder(binder);
+		contribBinder.propsBinder();
+		contribBinder.bindCommandTypes(HelpCommand.class, ConfigCommand.class);
 	}
 }

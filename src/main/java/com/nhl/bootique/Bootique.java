@@ -124,7 +124,7 @@ public class Bootique {
 		finalModules.add(createCoreModule(args));
 		finalModules.addAll(modules);
 		finalModules.addAll(moduleTypes.stream().map(mt -> createModule(mt)).collect(toList()));
-		finalModules.add((binder) -> BQModule.bindCommands(binder, commands));
+		finalModules.add((b) -> BQContribBinder.binder(b).bindCommands(commands));
 
 		return Guice.createInjector(finalModules);
 	}

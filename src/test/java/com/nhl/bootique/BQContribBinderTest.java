@@ -11,13 +11,13 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.nhl.bootique.env.EnvironmentProperties;
 
-public class BQModule_StaticsTest {
+public class BQContribBinderTest {
 
 	@Test
 	public void testBindProperty() {
 		Injector i = Guice.createInjector(b -> {
-			BQModule.bindProperty(b, "a", "b");
-			BQModule.bindProperty(b, "c", "d");
+			BQContribBinder.binder(b).bindProperty("a", "b");
+			BQContribBinder.binder(b).bindProperty("c", "d");
 
 			b.bind(MapInspector.class);
 		});
