@@ -1,6 +1,7 @@
 package com.nhl.bootique;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Binder;
@@ -47,13 +48,27 @@ public class BQModule implements Module {
 	}
 
 	/**
-	 * Utility method for the bundle modules to bind their own default
-	 * properties.
+	 * Utility method for the bundle modules to bind their command types.
 	 */
 	@SafeVarargs
-	public static void bindCommands(Binder binder, Class<? extends Command>... commands) {
+	public static void bindCommandTypes(Binder binder, Class<? extends Command>... commands) {
+		bindCommandTypes(binder, Arrays.asList(Preconditions.checkNotNull(commands)));
+	}
+
+	/**
+	 * Utility method for the bundle modules to bind their command types.
+	 */
+	public static void bindCommandTypes(Binder binder, Collection<Class<? extends Command>> commands) {
 		Multibinder<Command> commandBinder = Multibinder.newSetBinder(binder, Command.class);
-		Arrays.asList(Preconditions.checkNotNull(commands)).forEach(ct -> commandBinder.addBinding().to(ct));
+		Preconditions.checkNotNull(commands).forEach(ct -> commandBinder.addBinding().to(ct));
+	}
+
+	/**
+	 * Utility method for the bundle modules to bind their commands.
+	 */
+	public static void bindCommands(Binder binder, Collection<? extends Command> commands) {
+		Multibinder<Command> commandBinder = Multibinder.newSetBinder(binder, Command.class);
+		Preconditions.checkNotNull(commands).forEach(c -> commandBinder.addBinding().toInstance(c));
 	}
 
 	public BQModule(String[] args) {
@@ -75,7 +90,7 @@ public class BQModule implements Module {
 		binder.bind(Command.class).annotatedWith(DefaultCommand.class).to(FailoverHelpCommand.class)
 				.in(Singleton.class);
 
-		BQModule.bindCommands(binder, HelpCommand.class, ConfigCommand.class);
+		BQModule.bindCommandTypes(binder, HelpCommand.class, ConfigCommand.class);
 
 		// don't bind anything to properties yet, but still declare the binding
 		BQModule.propsBinder(binder);

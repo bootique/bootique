@@ -1,13 +1,17 @@
 package com.nhl.bootique;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.multibindings.Multibinder;
 import com.nhl.bootique.command.Command;
 import com.nhl.bootique.command.CommandOutcome;
 
@@ -23,34 +27,69 @@ import com.nhl.bootique.command.CommandOutcome;
  */
 public class Bootique {
 
+	protected Map<Class<? extends BQBundle>, String> bundleTypes;
 	protected Collection<Module> modules;
 	private Collection<Command> commands;
 	private String[] args;
-	private String logConfigPrefix;
 
 	public static Bootique app(String[] args) {
 		return new Bootique(args);
 	}
 
+	protected static Module createBundleModule(Class<? extends BQBundle> bundleType, String configPrefix) {
+		BQBundle bundle;
+		try {
+			bundle = bundleType.newInstance();
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw new RuntimeException("Error instantiating bundle of type: " + bundleType.getName(), e);
+		}
+
+		return configPrefix != null ? bundle.module(configPrefix) : bundle.module();
+	}
+
 	private Bootique(String[] args) {
-		this.logConfigPrefix = "log";
 		this.args = args;
+		this.bundleTypes = new HashMap<>();
 		this.modules = new ArrayList<>();
 		this.commands = new ArrayList<>();
 	}
 
+	/**
+	 * @since 0.8
+	 */
+	@SafeVarargs
+	public final Bootique bundles(Class<? extends BQBundle>... bundleTypes) {
+		Preconditions.checkNotNull(bundleTypes);
+		Arrays.asList(bundleTypes).forEach(bt -> bundle(bt));
+		return this;
+	}
+
+	/**
+	 * @since 0.8
+	 */
+	public Bootique bundle(Class<? extends BQBundle> bundleType) {
+		return bundle(bundleType, null);
+	}
+
+	/**
+	 * @since 0.8
+	 */
+	public Bootique bundle(Class<? extends BQBundle> bundleType, String configPrefix) {
+		Preconditions.checkNotNull(bundleType);
+		bundleTypes.put(bundleType, configPrefix);
+		return this;
+	}
+
 	public Bootique module(Module m) {
+
+		Preconditions.checkNotNull(m);
+
 		modules.add(m);
 		return this;
 	}
 
 	public Bootique modules(Module... modules) {
-		Arrays.asList(modules).forEach(m -> this.modules.add(m));
-		return this;
-	}
-
-	public Bootique logConfigPrefix(String logConfigPrefix) {
-		this.logConfigPrefix = logConfigPrefix;
+		Arrays.asList(modules).forEach(m -> module(m));
 		return this;
 	}
 
@@ -96,17 +135,19 @@ public class Bootique {
 	protected Injector createInjector() {
 		Collection<Module> finalModules = new ArrayList<>(modules.size() + 3);
 
-		finalModules.add(createCoreModule(args, logConfigPrefix));
+		finalModules.add(createCoreModule(args));
+		finalModules.addAll(createBundleModule());
 		finalModules.addAll(modules);
-
-		finalModules.add((binder) -> {
-			commands.forEach(c -> Multibinder.newSetBinder(binder, Command.class).addBinding().toInstance(c));
-		});
+		finalModules.add((binder) -> BQModule.bindCommands(binder, commands));
 
 		return Guice.createInjector(finalModules);
 	}
 
-	protected Module createCoreModule(String[] args, String logConfigPrefix) {
+	protected Collection<Module> createBundleModule() {
+		return bundleTypes.entrySet().stream().map(e -> createBundleModule(e.getKey(), e.getValue())).collect(toList());
+	}
+
+	protected Module createCoreModule(String[] args) {
 		return new BQModule(args);
 	}
 }
