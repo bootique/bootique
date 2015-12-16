@@ -11,14 +11,14 @@ import com.nhl.bootique.command.Command;
 import com.nhl.bootique.env.EnvironmentProperties;
 
 /**
- * A utility class that helps Bootique itself, integration modules, or custom
- * modules to contribute commands and properties to Bootique runtime.
+ * A utility class that helps Bootique, integration or custom modules to
+ * contribute commands and properties to Bootique runtime.
  * 
  * @since 0.8
  */
 public class BQContribBinder {
 
-	public static BQContribBinder binder(Binder binder) {
+	public static BQContribBinder contributeTo(Binder binder) {
 		return new BQContribBinder(binder);
 	}
 
@@ -33,32 +33,32 @@ public class BQContribBinder {
 	}
 
 	/**
-	 * Utility method to contribute environment properties to DI.
+	 * Utility method to contribute custom environment properties to DI.
 	 */
-	public void bindProperty(String key, String value) {
+	public void property(String key, String value) {
 		propsBinder().addBinding(key).toInstance(value);
 	}
 
 	/**
-	 * Utility method to contribute custom commands.
+	 * Utility method to contribute custom commands to DI.
 	 */
 	@SafeVarargs
-	public final void bindCommandTypes(Class<? extends Command>... commands) {
-		bindCommandTypes(Arrays.asList(Preconditions.checkNotNull(commands)));
+	public final void commandTypes(Class<? extends Command>... commands) {
+		commandTypes(Arrays.asList(Preconditions.checkNotNull(commands)));
 	}
 
 	/**
-	 * Utility method to contribute custom commands.
+	 * Utility method to contribute custom commands to DI.
 	 */
-	public void bindCommandTypes(Collection<Class<? extends Command>> commands) {
+	public void commandTypes(Collection<Class<? extends Command>> commands) {
 		Multibinder<Command> commandBinder = Multibinder.newSetBinder(binder, Command.class);
 		Preconditions.checkNotNull(commands).forEach(ct -> commandBinder.addBinding().to(ct));
 	}
 
 	/**
-	 * Utility method to contribute custom commands.
+	 * Utility method to contribute custom commands to DI.
 	 */
-	public void bindCommands(Collection<? extends Command> commands) {
+	public void commands(Collection<? extends Command> commands) {
 		Multibinder<Command> commandBinder = Multibinder.newSetBinder(binder, Command.class);
 		Preconditions.checkNotNull(commands).forEach(c -> commandBinder.addBinding().toInstance(c));
 	}

@@ -16,8 +16,8 @@ public class BQContribBinderTest {
 	@Test
 	public void testBindProperty() {
 		Injector i = Guice.createInjector(b -> {
-			BQContribBinder.binder(b).bindProperty("a", "b");
-			BQContribBinder.binder(b).bindProperty("c", "d");
+			BQContribBinder.contributeTo(b).property("a", "b");
+			BQContribBinder.contributeTo(b).property("c", "d");
 
 			b.bind(MapInspector.class);
 		});
