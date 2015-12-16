@@ -5,6 +5,7 @@ import java.io.InputStream;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TreeTraversingParser;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -38,7 +39,7 @@ public class YamlFactoryConfigurationService implements FactoryConfigurationServ
 		this.rootNode = configurationSource.readConfig(in -> readYaml(in, mapper));
 
 		if (rootNode == null) {
-			rootNode = new ObjectNode(null);
+			rootNode = new ObjectNode(new JsonNodeFactory(true));
 		}
 
 		JsonPropertiesResolver.resolve(rootNode, environment.frameworkProperties());

@@ -1,6 +1,21 @@
 package com.nhl.bootique.log;
 
+import java.util.function.Supplier;
+
 public class DefaultBootLogger implements BootLogger {
+
+	private boolean trace;
+
+	public DefaultBootLogger(boolean trace) {
+		this.trace = trace;
+	}
+
+	@Override
+	public void trace(Supplier<String> messageSupplier) {
+		if (trace) {
+			stderr(messageSupplier.get());
+		}
+	}
 
 	@Override
 	public void stdout(String message) {

@@ -13,6 +13,7 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.nhl.bootique.command.Command;
 import com.nhl.bootique.command.CommandOutcome;
+import com.nhl.bootique.env.DefaultEnvironment;
 import com.nhl.bootique.log.BootLogger;
 import com.nhl.bootique.log.DefaultBootLogger;
 
@@ -53,7 +54,7 @@ public class Bootique {
 		this.moduleTypes = new HashSet<>();
 		this.commands = new ArrayList<>();
 		this.autoLoadExtensions = false;
-		this.bootLogger = new DefaultBootLogger();
+		this.bootLogger = createBootLogger();
 	}
 
 	/**
@@ -137,6 +138,10 @@ public class Bootique {
 		o.exit();
 	}
 
+	protected BootLogger createBootLogger() {
+		return new DefaultBootLogger(System.getProperty(DefaultEnvironment.TRACE_PROPERTY) != null);
+	}
+
 	protected Injector createInjector() {
 		Collection<Module> finalModules = new ArrayList<>();
 
@@ -153,7 +158,7 @@ public class Bootique {
 			return Collections.emptyList();
 		}
 
-		bootLogger.stdout("Adding module with custom commands...");
+		bootLogger.trace(() -> "Adding module with custom commands...");
 		Module m = (b) -> BQContribBinder.binder(b).bindCommands(commands);
 		return Collections.singletonList(m);
 	}
@@ -162,13 +167,13 @@ public class Bootique {
 		Collection<Module> modules = new ArrayList<>();
 
 		this.modules.forEach(m -> {
-			bootLogger.stdout(String.format("Adding module '%s'...", m.getClass().getName()));
+			bootLogger.trace(() -> String.format("Adding module '%s'...", m.getClass().getName()));
 			modules.add(m);
 		});
 
 		this.moduleTypes.forEach(mt -> {
 			Module m = createModule(mt);
-			bootLogger.stdout(String.format("Adding module '%s'...", m.getClass().getName()));
+			bootLogger.trace(() -> String.format("Adding module '%s'...", m.getClass().getName()));
 			modules.add(m);
 		});
 
@@ -176,7 +181,7 @@ public class Bootique {
 	}
 
 	protected Module createCoreModule(String[] args, BootLogger bootLogger) {
-		bootLogger.stdout(String.format("Adding module '%s' (core)...", BQCoreModule.class.getName()));
+		bootLogger.trace(() -> String.format("Adding module '%s' (core)...", BQCoreModule.class.getName()));
 		return new BQCoreModule(args, bootLogger);
 	}
 
@@ -190,7 +195,7 @@ public class Bootique {
 			Module m = p.module();
 			modules.add(m);
 
-			bootLogger.stdout(String.format("Adding module '%s' provided by '%s' (auto-loaded)...",
+			bootLogger.trace(() -> String.format("Adding module '%s' provided by '%s' (auto-loaded)...",
 					m.getClass().getName(), p.getClass().getName()));
 		});
 		return modules;

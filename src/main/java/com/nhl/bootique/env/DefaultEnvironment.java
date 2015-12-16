@@ -11,6 +11,11 @@ public class DefaultEnvironment implements Environment {
 
 	public static final String FRAMEWORK_PROPERTIES_PREFIX = "bq";
 
+	/**
+	 * If present, enables boot sequence tracing to STDERR.
+	 */
+	public static final String TRACE_PROPERTY = "bq.trace";
+
 	private Map<String, String> properties;
 
 	@Inject
