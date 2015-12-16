@@ -160,7 +160,7 @@ public class Bootique {
 		}
 
 		bootLogger.trace(() -> "Adding module with custom commands...");
-		Module m = (b) -> BQContribBinder.contributeTo(b).commands(commands);
+		Module m = (b) -> BQBinder.contributeTo(b).commands(commands);
 		return Collections.singletonList(m);
 	}
 

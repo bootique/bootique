@@ -48,7 +48,7 @@ public class BQCoreModule implements Module {
 		binder.bind(Command.class).annotatedWith(DefaultCommand.class).to(FailoverHelpCommand.class)
 				.in(Singleton.class);
 
-		BQContribBinder contribBinder = BQContribBinder.contributeTo(binder);
+		BQBinder contribBinder = BQBinder.contributeTo(binder);
 
 		// don't bind anything to properties yet, but still declare the binding
 		contribBinder.propsBinder();

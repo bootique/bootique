@@ -11,21 +11,21 @@ import com.nhl.bootique.command.Command;
 import com.nhl.bootique.env.EnvironmentProperties;
 
 /**
- * A utility class that helps to contribute commands and properties to Bootique
+ * A helper class that allows to contribute commands and properties to Bootique
  * runtime. Create and invoke this binder insider your Module's "configure"
  * method to provide your own properties and/or Commands.
  * 
  * @since 0.8
  */
-public class BQContribBinder {
+public class BQBinder {
 
-	public static BQContribBinder contributeTo(Binder binder) {
-		return new BQContribBinder(binder);
+	public static BQBinder contributeTo(Binder binder) {
+		return new BQBinder(binder);
 	}
 
 	private Binder binder;
 
-	BQContribBinder(Binder binder) {
+	BQBinder(Binder binder) {
 		this.binder = binder;
 	}
 
