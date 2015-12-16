@@ -20,22 +20,23 @@ import com.nhl.bootique.jopt.Args;
 import com.nhl.bootique.jopt.Options;
 import com.nhl.bootique.jopt.OptionsProvider;
 import com.nhl.bootique.log.BootLogger;
-import com.nhl.bootique.log.DefaultBootLogger;
 import com.nhl.bootique.run.DefaultRunner;
 import com.nhl.bootique.run.Runner;
 
 public class BQCoreModule implements Module {
 
 	private String[] args;
+	private BootLogger bootLogger;
 
-	public BQCoreModule(String[] args) {
+	public BQCoreModule(String[] args, BootLogger bootLogger) {
 		this.args = args;
+		this.bootLogger = bootLogger;
 	}
 
 	@Override
 	public void configure(Binder binder) {
 
-		binder.bind(BootLogger.class).to(DefaultBootLogger.class);
+		binder.bind(BootLogger.class).toInstance(bootLogger);
 		binder.bind(JacksonService.class).to(DefaultJacksonService.class);
 		binder.bind(String[].class).annotatedWith(Args.class).toInstance(args);
 		binder.bind(Runner.class).to(DefaultRunner.class).in(Singleton.class);

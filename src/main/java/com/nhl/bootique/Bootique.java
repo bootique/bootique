@@ -1,7 +1,5 @@
 package com.nhl.bootique;
 
-import static java.util.stream.Collectors.toList;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -15,6 +13,8 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.nhl.bootique.command.Command;
 import com.nhl.bootique.command.CommandOutcome;
+import com.nhl.bootique.log.BootLogger;
+import com.nhl.bootique.log.DefaultBootLogger;
 
 /**
  * A main launcher class of Bootique. To start a Bootique app, you may write
@@ -41,6 +41,7 @@ public class Bootique {
 	private Collection<Command> commands;
 	private String[] args;
 	private boolean autoLoadExtensions;
+	private BootLogger bootLogger;
 
 	public static Bootique app(String[] args) {
 		return new Bootique(args);
@@ -52,6 +53,7 @@ public class Bootique {
 		this.moduleTypes = new HashSet<>();
 		this.commands = new ArrayList<>();
 		this.autoLoadExtensions = false;
+		this.bootLogger = new DefaultBootLogger();
 	}
 
 	/**
@@ -138,17 +140,44 @@ public class Bootique {
 	protected Injector createInjector() {
 		Collection<Module> finalModules = new ArrayList<>();
 
-		finalModules.add(createCoreModule(args));
-		finalModules.addAll(modules);
-		finalModules.addAll(moduleTypes.stream().map(mt -> createModule(mt)).collect(toList()));
+		finalModules.add(createCoreModule(args, bootLogger));
+		finalModules.addAll(createBuilderModules());
 		finalModules.addAll(createAutoLoadedExtensions());
-		finalModules.add((b) -> BQContribBinder.binder(b).bindCommands(commands));
+		finalModules.addAll(createCommandsModules());
 
 		return Guice.createInjector(finalModules);
 	}
 
-	protected Module createCoreModule(String[] args) {
-		return new BQCoreModule(args);
+	protected Collection<Module> createCommandsModules() {
+		if (commands.isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		bootLogger.stdout("Adding module with custom commands...");
+		Module m = (b) -> BQContribBinder.binder(b).bindCommands(commands);
+		return Collections.singletonList(m);
+	}
+
+	protected Collection<Module> createBuilderModules() {
+		Collection<Module> modules = new ArrayList<>();
+
+		this.modules.forEach(m -> {
+			bootLogger.stdout(String.format("Adding module '%s'...", m.getClass().getName()));
+			modules.add(m);
+		});
+
+		this.moduleTypes.forEach(mt -> {
+			Module m = createModule(mt);
+			bootLogger.stdout(String.format("Adding module '%s'...", m.getClass().getName()));
+			modules.add(m);
+		});
+
+		return modules;
+	}
+
+	protected Module createCoreModule(String[] args, BootLogger bootLogger) {
+		bootLogger.stdout(String.format("Adding module '%s' (core)...", BQCoreModule.class.getName()));
+		return new BQCoreModule(args, bootLogger);
 	}
 
 	protected Collection<Module> createAutoLoadedExtensions() {
@@ -157,7 +186,13 @@ public class Bootique {
 		}
 
 		Collection<Module> modules = new ArrayList<>();
-		ServiceLoader.load(BQModuleProvider.class).forEach(p -> modules.add(p.module()));
+		ServiceLoader.load(BQModuleProvider.class).forEach(p -> {
+			Module m = p.module();
+			modules.add(m);
+
+			bootLogger.stdout(String.format("Adding module '%s' provided by '%s' (auto-loaded)...",
+					m.getClass().getName(), p.getClass().getName()));
+		});
 		return modules;
 	}
 }
