@@ -24,11 +24,11 @@ import com.nhl.bootique.log.DefaultBootLogger;
 import com.nhl.bootique.run.DefaultRunner;
 import com.nhl.bootique.run.Runner;
 
-public class BQModule implements Module {
+public class BQCoreModule implements Module {
 
 	private String[] args;
 
-	public BQModule(String[] args) {
+	public BQCoreModule(String[] args) {
 		this.args = args;
 	}
 

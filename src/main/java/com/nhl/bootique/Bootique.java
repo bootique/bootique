@@ -130,6 +130,6 @@ public class Bootique {
 	}
 
 	protected Module createCoreModule(String[] args) {
-		return new BQModule(args);
+		return new BQCoreModule(args);
 	}
 }
