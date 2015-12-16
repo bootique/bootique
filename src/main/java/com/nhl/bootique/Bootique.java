@@ -5,7 +5,9 @@ import static java.util.stream.Collectors.toList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.ServiceLoader;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Guice;
@@ -38,6 +40,7 @@ public class Bootique {
 	protected Collection<Class<? extends Module>> moduleTypes;
 	private Collection<Command> commands;
 	private String[] args;
+	private boolean autoLoadExtensions;
 
 	public static Bootique app(String[] args) {
 		return new Bootique(args);
@@ -48,6 +51,20 @@ public class Bootique {
 		this.modules = new ArrayList<>();
 		this.moduleTypes = new HashSet<>();
 		this.commands = new ArrayList<>();
+		this.autoLoadExtensions = false;
+	}
+
+	/**
+	 * Instructs Bootique to load any {@link BQModuleProvider} providers
+	 * available on class-path using Java ServiceLoader mechanism. Note that
+	 * auto-loaded modules will be used in default configuration. Factories
+	 * within modules will of course be configured dynamically from YAML.
+	 * 
+	 * @see BQModuleProvider
+	 */
+	public Bootique autoLoadExtensions() {
+		this.autoLoadExtensions = true;
+		return this;
 	}
 
 	/**
@@ -124,6 +141,7 @@ public class Bootique {
 		finalModules.add(createCoreModule(args));
 		finalModules.addAll(modules);
 		finalModules.addAll(moduleTypes.stream().map(mt -> createModule(mt)).collect(toList()));
+		finalModules.addAll(createAutoLoadedExtensions());
 		finalModules.add((b) -> BQContribBinder.binder(b).bindCommands(commands));
 
 		return Guice.createInjector(finalModules);
@@ -131,5 +149,15 @@ public class Bootique {
 
 	protected Module createCoreModule(String[] args) {
 		return new BQCoreModule(args);
+	}
+
+	protected Collection<Module> createAutoLoadedExtensions() {
+		if (!autoLoadExtensions) {
+			return Collections.emptySet();
+		}
+
+		Collection<Module> modules = new ArrayList<>();
+		ServiceLoader.load(BQModuleProvider.class).forEach(p -> modules.add(p.module()));
+		return modules;
 	}
 }

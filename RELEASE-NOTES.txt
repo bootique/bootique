@@ -1,1 +1,2 @@
 #1 Merge bundles and modules into a single concept
+#2 Auto-load extensions
