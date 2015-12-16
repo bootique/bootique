@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.ServiceLoader;
+import java.util.Set;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Guice;
@@ -41,7 +42,7 @@ public class Bootique {
 	protected Collection<Class<? extends Module>> moduleTypes;
 	private Collection<Command> commands;
 	private String[] args;
-	private boolean autoLoadExtensions;
+	private boolean autoLoadModules;
 	private BootLogger bootLogger;
 
 	public static Bootique app(String[] args) {
@@ -53,7 +54,7 @@ public class Bootique {
 		this.modules = new ArrayList<>();
 		this.moduleTypes = new HashSet<>();
 		this.commands = new ArrayList<>();
-		this.autoLoadExtensions = false;
+		this.autoLoadModules = false;
 		this.bootLogger = createBootLogger();
 	}
 
@@ -65,8 +66,8 @@ public class Bootique {
 	 * 
 	 * @see BQModuleProvider
 	 */
-	public Bootique autoLoadExtensions() {
-		this.autoLoadExtensions = true;
+	public Bootique autoLoadModules() {
+		this.autoLoadModules = true;
 		return this;
 	}
 
@@ -147,7 +148,7 @@ public class Bootique {
 
 		finalModules.add(createCoreModule(args, bootLogger));
 		finalModules.addAll(createBuilderModules());
-		finalModules.addAll(createAutoLoadedExtensions());
+		finalModules.addAll(createAutoLoadModules(finalModules));
 		finalModules.addAll(createCommandsModules());
 
 		return Guice.createInjector(finalModules);
@@ -185,18 +186,27 @@ public class Bootique {
 		return new BQCoreModule(args, bootLogger);
 	}
 
-	protected Collection<Module> createAutoLoadedExtensions() {
-		if (!autoLoadExtensions) {
+	protected Collection<Module> createAutoLoadModules(Collection<Module> explicitModules) {
+		if (!autoLoadModules) {
 			return Collections.emptySet();
 		}
+
+		Set<Class<?>> knownModules = new HashSet<>();
+		explicitModules.forEach(m -> knownModules.add(m.getClass()));
 
 		Collection<Module> modules = new ArrayList<>();
 		ServiceLoader.load(BQModuleProvider.class).forEach(p -> {
 			Module m = p.module();
-			modules.add(m);
 
-			bootLogger.trace(() -> String.format("Adding module '%s' provided by '%s' (auto-loaded)...",
-					m.getClass().getName(), p.getClass().getName()));
+			if (knownModules.add(m.getClass())) {
+				modules.add(m);
+				bootLogger.trace(() -> String.format("Adding auto-loaded module '%s' provided by '%s'...",
+						m.getClass().getName(), p.getClass().getName()));
+			} else {
+				bootLogger.trace(
+						() -> String.format("Skipping auto-loaded module '%s' provided by '%s' - already present...",
+								m.getClass().getName(), p.getClass().getName()));
+			}
 		});
 		return modules;
 	}

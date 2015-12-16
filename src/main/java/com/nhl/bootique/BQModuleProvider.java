@@ -8,7 +8,7 @@ import com.google.inject.Module;
  * An interface that allows Bootique extensions to be loaded using Java
  * {@link ServiceLoader} mechanism.
  * 
- * @see Bootique#autoLoadExtensions()
+ * @see Bootique#autoLoadModules()
  * 
  * @since 0.8
  */
