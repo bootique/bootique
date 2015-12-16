@@ -1,1 +1,1 @@
-#1 Formalize Bundle API
+#1 Merge bundles and modules into a single concept

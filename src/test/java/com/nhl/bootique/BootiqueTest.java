@@ -1,6 +1,5 @@
 package com.nhl.bootique;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Set;
@@ -8,6 +7,7 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.inject.Binder;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
@@ -25,57 +25,45 @@ public class BootiqueTest {
 	}
 
 	@Test
-	public void testCreateInjector_Bundles() {
-		Injector i = bootique.bundles(TestBundle1.class, TestBundle2.class).createInjector();
-		Set<String> prefixes = i.getInstance(Key.get(setOf(String.class)));
-		assertTrue(prefixes.contains("testbundle1"));
-		assertTrue(prefixes.contains("testbundle2"));
+	public void testCreateInjector_Modules_Instances() {
+		Injector i = bootique.modules(new TestModule1(), new TestModule2()).createInjector();
+		Set<String> strings = setOf(i, String.class);
+
+		assertTrue(strings.contains("tm1"));
+		assertTrue(strings.contains("tm2"));
 	}
 
 	@Test
-	public void testCreateInjector_Bundle_DefaultPrefix() {
-		Injector i = bootique.bundle(TestBundle.class).createInjector();
-		assertEquals("test", i.getInstance(String.class));
+	public void testCreateInjector_Modules_Types() {
+		Injector i = bootique.modules(TestModule1.class, TestModule2.class).createInjector();
+		Set<String> strings = setOf(i, String.class);
+
+		assertTrue(strings.contains("tm1"));
+		assertTrue(strings.contains("tm2"));
 	}
 
-	@Test
-	public void testCreateInjector_Bundle_EmptyPrefix() {
-		Injector i = bootique.bundle(TestBundle.class, "").createInjector();
-		assertEquals("", i.getInstance(String.class));
-	}
-
-	@Test
-	public void testCreateInjector_Bundle_Prefix() {
-		Injector i = bootique.bundle(TestBundle.class, "some.prefix").createInjector();
-		assertEquals("some.prefix", i.getInstance(String.class));
+	static <T> Set<T> setOf(Injector injector, Class<T> type) {
+		return injector.getInstance(Key.get(setOf(type)));
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> TypeLiteral<Set<T>> setOf(Class<T> type) {
+	static <T> TypeLiteral<Set<T>> setOf(Class<T> type) {
 		return (TypeLiteral<Set<T>>) TypeLiteral.get(Types.setOf(type));
 	}
 
-	static class TestBundle implements BQBundle {
+	static class TestModule1 implements Module {
 
 		@Override
-		public Module module(String configPrefix) {
-			return b -> b.bind(String.class).toInstance(configPrefix);
+		public void configure(Binder binder) {
+			Multibinder.newSetBinder(binder, String.class).addBinding().toInstance("tm1");
 		}
 	}
 
-	static class TestBundle1 implements BQBundle {
+	static class TestModule2 implements Module {
 
 		@Override
-		public Module module(String configPrefix) {
-			return b -> Multibinder.newSetBinder(b, String.class).addBinding().toInstance(configPrefix);
-		}
-	}
-
-	static class TestBundle2 implements BQBundle {
-
-		@Override
-		public Module module(String configPrefix) {
-			return b -> Multibinder.newSetBinder(b, String.class).addBinding().toInstance(configPrefix);
+		public void configure(Binder binder) {
+			Multibinder.newSetBinder(binder, String.class).addBinding().toInstance("tm2");
 		}
 	}
 }
