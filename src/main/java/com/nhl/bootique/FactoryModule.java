@@ -1,5 +1,7 @@
 package com.nhl.bootique;
 
+import java.util.Objects;
+
 import com.google.common.base.Preconditions;
 import com.google.inject.Binder;
 import com.google.inject.Module;
@@ -13,6 +15,7 @@ import com.nhl.bootique.factory.FactoryConfigurationService;
  * 
  * @since 0.8
  */
+// TODO: deprecate per https://github.com/nhl/bootique/issues/5
 public abstract class FactoryModule<C> implements Module {
 
 	protected Class<C> factoryType;
@@ -41,7 +44,7 @@ public abstract class FactoryModule<C> implements Module {
 	}
 
 	protected C createFactory(FactoryConfigurationService configurationService) {
-		Preconditions.checkNotNull(configPrefix);
+		Objects.requireNonNull(configPrefix);
 		return configurationService.factory(factoryType, configPrefix);
 	}
 
