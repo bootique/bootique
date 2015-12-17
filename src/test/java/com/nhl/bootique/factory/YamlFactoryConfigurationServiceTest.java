@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -203,7 +202,7 @@ public class YamlFactoryConfigurationServiceTest {
 		});
 
 		List<Object> l = new YamlFactoryConfigurationService(mockConfigSource, mockEnvironment, mockJacksonService)
-				.factory(new TypeReference<ArrayList<Object>>() {
+				.factory(new TypeReference<List<Object>>() {
 				}, "");
 
 		assertNotNull(l);
@@ -224,7 +223,7 @@ public class YamlFactoryConfigurationServiceTest {
 		});
 
 		List<List<Object>> l = new YamlFactoryConfigurationService(mockConfigSource, mockEnvironment,
-				mockJacksonService).factory(new TypeReference<ArrayList<List<Object>>>() {
+				mockJacksonService).factory(new TypeReference<List<List<Object>>>() {
 				}, "");
 
 		assertNotNull(l);
@@ -254,7 +253,7 @@ public class YamlFactoryConfigurationServiceTest {
 		});
 
 		Map<String, Object> m = new YamlFactoryConfigurationService(mockConfigSource, mockEnvironment,
-				mockJacksonService).factory(new TypeReference<HashMap<String, Object>>() {
+				mockJacksonService).factory(new TypeReference<Map<String, Object>>() {
 				}, "");
 
 		assertNotNull(m);
@@ -275,7 +274,7 @@ public class YamlFactoryConfigurationServiceTest {
 		});
 
 		Map<String, Map<String, Object>> m = new YamlFactoryConfigurationService(mockConfigSource, mockEnvironment,
-				mockJacksonService).factory(new TypeReference<HashMap<String, Map<String, Object>>>() {
+				mockJacksonService).factory(new TypeReference<Map<String, Map<String, Object>>>() {
 				}, "");
 
 		assertNotNull(m);
