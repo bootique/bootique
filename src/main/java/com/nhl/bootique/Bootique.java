@@ -24,7 +24,15 @@ import com.nhl.bootique.log.DefaultBootLogger;
  * 
  * <pre>
  * public static void main(String[] args) {
- * 	Bootique.commands(_optional_commands_).modules(_optional_extensions_).run();
+ * 	Bootique.app(args)commands(_optional_commands_).modules(_optional_extensions_).run();
+ * }
+ * </pre>
+ * 
+ * or
+ * 
+ * <pre>
+ * public static void main(String[] args) {
+ * 	Bootique.app(args).commands(_optional_commands_).autoLoadModules().run();
  * }
  * </pre>
  */
@@ -59,10 +67,15 @@ public class Bootique {
 	}
 
 	/**
-	 * Instructs Bootique to load any {@link BQModuleProvider} providers
-	 * available on class-path using Java ServiceLoader mechanism. Note that
-	 * auto-loaded modules will be used in default configuration. Factories
-	 * within modules will of course be configured dynamically from YAML.
+	 * Instructs Bootique to load any modules available on class-path that
+	 * expose {@link BQModuleProvider} provider. Auto-loaded modules will be
+	 * used in default configuration. Factories within modules will of course be
+	 * configured dynamically from YAML.
+	 * <p>
+	 * <i>Use with caution, you may load more modules than you expected. Make
+	 * sure only needed Bootique dependencies are included on class-path. If in
+	 * doubt, switch to explicit Module loading via
+	 * {@link #modules(Class...)}</i>
 	 * 
 	 * @see BQModuleProvider
 	 */
