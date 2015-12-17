@@ -14,8 +14,8 @@ import com.nhl.bootique.factory.FactoryConfigurationService;
  * integration modules, etc.
  * 
  * @since 0.8
+ * @deprecated since 0.9 inherit from {@link ConfigModule} or {@link Module}.
  */
-// TODO: deprecate per https://github.com/nhl/bootique/issues/5
 public abstract class FactoryModule<C> implements Module {
 
 	protected Class<C> factoryType;

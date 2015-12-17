@@ -4,35 +4,32 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-@Deprecated
-public class FactoryModuleTest {
+public class ConfigModuleTest {
 
 	@Test
 	public void testDefaultConfigPrefix() {
 		assertEquals("testxyz", new TestXyzModule().defaultConfigPrefix());
 		assertEquals("xyz", new Xyz().defaultConfigPrefix());
 	}
-	
+
 	@Test
 	public void testConfigPrefix() {
 		assertEquals("testxyz", new TestXyzModule().configPrefix);
 		assertEquals("custom-prefix", new TestXyzModule("custom-prefix").configPrefix);
 	}
 
-	class TestXyzModule extends FactoryModule<Object> {
+	class TestXyzModule extends ConfigModule {
 
 		public TestXyzModule() {
-			super(Object.class);
+
 		}
-		
+
 		public TestXyzModule(String configPrefix) {
-			super(Object.class, configPrefix);
+			super(configPrefix);
 		}
 	}
 
-	class Xyz extends FactoryModule<Object> {
-		public Xyz() {
-			super(Object.class);
-		}
+	class Xyz extends ConfigModule {
+
 	}
 }
