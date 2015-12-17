@@ -3,6 +3,7 @@ package com.nhl.bootique.factory;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -48,15 +49,22 @@ public class YamlFactoryConfigurationService implements FactoryConfigurationServ
 	@Override
 	public <T> T factory(Class<T> type, String prefix) {
 
-		// allow no-config state
-		JsonNode rootNode = (this.rootNode == null) ? new ObjectNode(null) : this.rootNode;
+		JsonNode child = JsonPropertiesResolver.findChild(rootNode, prefix);
 
-		return subconfig(rootNode, prefix, type);
+		try {
+			return mapper.readValue(new TreeTraversingParser(child), type);
+		}
+		// TODO: implement better exception handling. See ConfigurationFactory
+		// in Dropwizard for inspiration
+		catch (IOException e) {
+			throw new RuntimeException("Error creating config", e);
+		}
 	}
 
-	protected <T> T subconfig(JsonNode node, String prefix, Class<T> type) {
+	@Override
+	public <T> T factory(TypeReference<? extends T> type, String prefix) {
 
-		JsonNode child = JsonPropertiesResolver.findChild(node, prefix);
+		JsonNode child = JsonPropertiesResolver.findChild(rootNode, prefix);
 
 		try {
 			return mapper.readValue(new TreeTraversingParser(child), type);

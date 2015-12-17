@@ -8,16 +8,19 @@ import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhl.bootique.config.ConfigurationSource;
 import com.nhl.bootique.env.Environment;
-import com.nhl.bootique.factory.YamlFactoryConfigurationService;
 import com.nhl.bootique.jackson.JacksonService;
 
 public class YamlFactoryConfigurationServiceTest {
@@ -36,7 +39,7 @@ public class YamlFactoryConfigurationServiceTest {
 	}
 
 	@Test
-	public void testCreateFactory() {
+	public void testFactory() {
 
 		when(mockConfigSource.readConfig(any())).thenAnswer(i -> {
 
@@ -55,7 +58,7 @@ public class YamlFactoryConfigurationServiceTest {
 	}
 
 	@Test
-	public void testCreateFactory_Nested() {
+	public void testFactory_Nested() {
 
 		when(mockConfigSource.readConfig(any())).thenAnswer(i -> {
 
@@ -75,7 +78,7 @@ public class YamlFactoryConfigurationServiceTest {
 	}
 
 	@Test
-	public void testCreateFactory_Subconfig() {
+	public void testFactory_Subconfig() {
 
 		when(mockConfigSource.readConfig(any())).thenAnswer(i -> {
 
@@ -94,7 +97,7 @@ public class YamlFactoryConfigurationServiceTest {
 	}
 
 	@Test
-	public void testCreateFactory_Subconfig_MultiLevel() {
+	public void testFactory_Subconfig_MultiLevel() {
 
 		when(mockConfigSource.readConfig(any())).thenAnswer(i -> {
 
@@ -113,7 +116,7 @@ public class YamlFactoryConfigurationServiceTest {
 	}
 
 	@Test
-	public void testCreateFactory_Subconfig_Missing() {
+	public void testFactory_Subconfig_Missing() {
 
 		when(mockConfigSource.readConfig(any())).thenAnswer(i -> {
 
@@ -132,7 +135,7 @@ public class YamlFactoryConfigurationServiceTest {
 	}
 
 	@Test
-	public void testCreateFactory_PropSubstitution() {
+	public void testFactory_PropSubstitution() {
 
 		when(mockEnvironment.frameworkProperties()).thenReturn(new HashMap<String, String>() {
 			private static final long serialVersionUID = 1L;
@@ -160,7 +163,7 @@ public class YamlFactoryConfigurationServiceTest {
 	}
 
 	@Test
-	public void testCreateFactory_PropSubstitution_Nested() {
+	public void testFactory_PropSubstitution_Nested() {
 
 		when(mockEnvironment.frameworkProperties()).thenReturn(new HashMap<String, String>() {
 			private static final long serialVersionUID = 1L;
@@ -185,7 +188,102 @@ public class YamlFactoryConfigurationServiceTest {
 		assertNotNull(b1);
 		assertEquals("SS", b1.getS());
 		assertEquals(55, b1.getI());
+	}
 
+	@Test
+	public void testList_SingleLevel() {
+
+		when(mockConfigSource.readConfig(any())).thenAnswer(i -> {
+
+			@SuppressWarnings("unchecked")
+			Function<InputStream, Object> processor = i.getArgumentAt(0, Function.class);
+			InputStream in = new ByteArrayInputStream("- SS\n- 55".getBytes());
+
+			return processor.apply(in);
+		});
+
+		List<Object> l = new YamlFactoryConfigurationService(mockConfigSource, mockEnvironment, mockJacksonService)
+				.factory(new TypeReference<ArrayList<Object>>() {
+				}, "");
+
+		assertNotNull(l);
+		assertEquals("SS", l.get(0));
+		assertEquals(55, l.get(1));
+	}
+
+	@Test
+	public void testList_MultiLevel() {
+
+		when(mockConfigSource.readConfig(any())).thenAnswer(i -> {
+
+			@SuppressWarnings("unchecked")
+			Function<InputStream, Object> processor = i.getArgumentAt(0, Function.class);
+			InputStream in = new ByteArrayInputStream("-\n  - SS\n  - 55\n-\n  - X".getBytes());
+
+			return processor.apply(in);
+		});
+
+		List<List<Object>> l = new YamlFactoryConfigurationService(mockConfigSource, mockEnvironment,
+				mockJacksonService).factory(new TypeReference<ArrayList<List<Object>>>() {
+				}, "");
+
+		assertNotNull(l);
+		assertEquals(2, l.size());
+
+		List<Object> sl1 = l.get(0);
+		assertEquals(2, sl1.size());
+		assertEquals("SS", sl1.get(0));
+		assertEquals(55, sl1.get(1));
+
+		List<Object> sl2 = l.get(1);
+		assertEquals(1, sl2.size());
+		assertEquals("X", sl2.get(0));
+
+	}
+
+	@Test
+	public void testMap_SingleLevel() {
+
+		when(mockConfigSource.readConfig(any())).thenAnswer(i -> {
+
+			@SuppressWarnings("unchecked")
+			Function<InputStream, Object> processor = i.getArgumentAt(0, Function.class);
+			InputStream in = new ByteArrayInputStream("b1: SS\ni: 55".getBytes());
+
+			return processor.apply(in);
+		});
+
+		Map<String, Object> m = new YamlFactoryConfigurationService(mockConfigSource, mockEnvironment,
+				mockJacksonService).factory(new TypeReference<HashMap<String, Object>>() {
+				}, "");
+
+		assertNotNull(m);
+		assertEquals("SS", m.get("b1"));
+		assertEquals(55, m.get("i"));
+	}
+
+	@Test
+	public void testMap_MultiLevel() {
+
+		when(mockConfigSource.readConfig(any())).thenAnswer(i -> {
+
+			@SuppressWarnings("unchecked")
+			Function<InputStream, Object> processor = i.getArgumentAt(0, Function.class);
+			InputStream in = new ByteArrayInputStream("b1:\n  k1: SS\n  i: 55".getBytes());
+
+			return processor.apply(in);
+		});
+
+		Map<String, Map<String, Object>> m = new YamlFactoryConfigurationService(mockConfigSource, mockEnvironment,
+				mockJacksonService).factory(new TypeReference<HashMap<String, Map<String, Object>>>() {
+				}, "");
+
+		assertNotNull(m);
+		Map<String, Object> subM = m.get("b1");
+		assertNotNull(subM);
+
+		assertEquals("SS", subM.get("k1"));
+		assertEquals(55, subM.get("i"));
 	}
 
 	public static class Bean1 {
