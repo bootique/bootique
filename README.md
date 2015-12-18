@@ -44,7 +44,7 @@ Add Bootique dependency:
 	<version>0.6</version>
 </dependency>
 ```
-Write a main class that configures app's own DI Module, builds extensions Modules and starts Bootique app. In the example below we are setting up a JAX-RS application and the application class also serves as a JAX-RS resource:
+Write a main class that rins Bootique. In this example we are creating a JAX-RS application and the main application class also serves as a JAX-RS resource:
 
 ```Java
 package com.example;
