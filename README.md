@@ -129,3 +129,21 @@ java -jar target/myapp-1.0.jar --server
 ## YAML Config
 
 ## YAML Config Property Overrides
+
+## Extending Bootique
+
+Bootique is just a small DI-based launcher that doesn't do much by itself. Its power comes from being a *command-line oriented plugin environment* that can run extensions. There's a significant and growing list of "standard" extensions, provided by Bootique development team. And you can easily write your own extensions. An extension is a piece of Java code that contains some code and a [Guice Module](https://google.github.io/guice/api-docs/latest/javadoc/index.html?com/google/inject/Module.html) that binds extension-specific services. Extension services can rely on services declared in the [Bootique core module](https://github.com/nhl/bootique/blob/master/src/main/java/com/nhl/bootique/BQCoreModule.java).
+
+## Standard Extensions
+
+Below is a growing list of "standard" Bootique extensions. They support various areas, like REST services, job containers, DB migration apps, etc.:
+
+* [Bootique Cayenne](https://github.com/nhl/bootique-cayenne)
+* [Bootique JDBC](https://github.com/nhl/bootique-jdbc)
+* [Bootique Jersey](https://github.com/nhl/bootique-jersey)
+* [Bootique Jetty](https://github.com/nhl/bootique-jetty)
+* [Bootique Job](https://github.com/nhl/bootique-job)
+* [Bootique Liquibase](https://github.com/nhl/bootique-liquibase)
+* [Bootique Logback](https://github.com/nhl/bootique-logback)
+* [Bootique Zookeeper](https://github.com/nhl/bootique-zookeeper)
+
