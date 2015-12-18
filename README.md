@@ -88,7 +88,7 @@ public class Application {
 }
 ```
 
-Now you can run it in your IDE, you will see a list of supported options printed. Add ```--server``` option and run it again. Your webservice should start. Now you can open [http://127.0.0.1:3333/hello/](http://127.0.0.1:3333/hello/) in the browser and see it return a piece of text with program arguments.
+Now you can run it in your IDE, you will see a list of supported options printed. Add ```--server``` option and run it again. Your webservice should start. Now you can open [http://127.0.0.1:8080/hello/](http://127.0.0.1:8080/hello/) in the browser and see it return a piece of text with program arguments.
 
 ## Runnable Jar
 
