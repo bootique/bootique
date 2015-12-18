@@ -137,7 +137,7 @@ Most modules can be autoloaded via ```Bootique.autoLoadModules()``` as long as t
 ```
 com.foo.MyOwnModuleProvider
 ```
-During autoloading modules are configured using YAML config (as described below). Some modules additionally allow configuration in the code (e.g. JerseyModule in the "Getting Started" example above).
+During autoloading modules are configured using YAML config (as described below). Some modules additionally allow configuration in the code (e.g. see [JerseyModule](https://github.com/nhl/bootique-jersey/blob/master/src/main/java/com/nhl/bootique/jersey/JerseyModule.java) shown in the "Getting Started" example above).
 
 ## Standard Modules
 
