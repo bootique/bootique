@@ -27,26 +27,21 @@ Add Bootique dependency:
 <dependency>
 	<groupId>com.nhl.bootique</groupId>
 	<artifactId>bootique</artifactId>
-	<version>0.7</version>
+	<version>0.9</version>
 </dependency>
 <!-- 
   Below add any number of Bootique extensions. We'll be building a JAX-RS webservice here, 
   so the list may look like this:
 -->
 <dependency>
-	<groupId>com.nhl.bootique.jetty</groupId>
-	<artifactId>bootique-jetty</artifactId>
-	<version>0.5</version>
-</dependency>
-<dependency>
 	<groupId>com.nhl.bootique.jersey</groupId>
 	<artifactId>bootique-jersey</artifactId>
-	<version>0.6</version>
+	<version>0.7</version>
 </dependency>
 <dependency>
 	<groupId>com.nhl.bootique.logback</groupId>
 	<artifactId>bootique-logback</artifactId>
-	<version>0.5</version>
+	<version>0.6</version>
 </dependency>
 ```
 Write a main class that configures app's own DI Module, builds extensions Modules and starts Bootique app. In the example below we are setting up a JAX-RS application and the application class also serves as a JAX-RS resource:
