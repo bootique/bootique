@@ -132,13 +132,10 @@ Bootique is just a small DI-based launcher that doesn't do much by itself. Its p
 
 As you see we are using the word "module" either to refer to a Guice Module class, or to a whole a code module. The meaning should be clear from the context.
 
-Most modules can be autoloaded via ```Bootique.autoLoadModules()``` as long as they are included in your aplication dependencies. Autloading is built on the Java [ServiceLoader mechanism](https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html). To support auto loading of your own modules, first implement ```com.nhl.bootique.BQModuleProvider``` interface to create a Module instance for your own extension, and then include a file ```META-INF/services/com.nhl.bootique.BQModuleProvider``` with the following contents:
+Most modules can be autoloaded via ```Bootique.autoLoadModules()``` as long as they are included in your aplication dependencies. Autloading is built on the Java [ServiceLoader mechanism](https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html). To support auto loading of your own modules, first implement ```com.nhl.bootique.BQModuleProvider``` interface to create a Module instance for your own extension, and then include a file ```META-INF/services/com.nhl.bootique.BQModuleProvider``` with the only line containing the name of your BQModuleProvider implementor. E.g.:
 
-```java
-com.foo.MyOwnModuleProvider
+```com.foo.MyOwnModuleProvider
 ```
-
-Of course the name of the class above should be your own class.
 
 ## Standard Modules
 
