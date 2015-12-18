@@ -56,13 +56,10 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
-import com.google.inject.Inject;
 import com.google.inject.Module;
 import com.nhl.bootique.Bootique;
-import com.nhl.bootique.jersey.JerseyBundle;
-import com.nhl.bootique.jetty.JettyBundle;
+import com.nhl.bootique.jersey.JerseyModule;
 import com.nhl.bootique.jopt.Args;
-import com.nhl.bootique.logback.LogbackBundle;
 
 @Path("/hello")
 @Produces("text/plain")
