@@ -75,11 +75,13 @@ import com.nhl.bootique.logback.LogbackBundle;
 public class Application {
 
 	public static void main(String[] args) throws Exception {
-		Module jetty = JettyBundle.create().context("/").port(3333).module();
-		Module jersey = JerseyBundle.create().packageRoot(Application.class).module();
-		Module logback = LogbackBundle.logbackModule();
-
-		Bootique.app(args).modules(jetty, jersey, logback).run();
+	
+		// Application itself is a JAX RS resource, so register it with Jersey
+		Module jersey = new JerseyModule().packageRoot(Application.class);
+		
+		// include our configured instance of JerseyModule, 
+		// all other modules will be included automatically from dependencies
+		Bootique.app(args).modules(jersey).autoLoadModules().run();
 	}
 	
 	@Args
