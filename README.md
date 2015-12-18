@@ -126,17 +126,16 @@ mvn package
 java -jar target/myapp-1.0.jar --server
 ```
 
-## YAML Config
+## Bootique Modules
 
-## YAML Config Property Overrides
+Bootique is just a small DI-based launcher that doesn't do much by itself. Its power comes from being a *command-line oriented plugin environment* that can run modules. There's a significant and growing list of "standard" modules, provided by Bootique development team. And you can easily write your own. An module is a piece of Java code (usually packaged in a single Maven module) that contains some code and a [Guice Module class](https://google.github.io/guice/api-docs/latest/javadoc/index.html?com/google/inject/Module.html) that binds module-specific services. Module services can rely on services declared in the [Bootique core module](https://github.com/nhl/bootique/blob/master/src/main/java/com/nhl/bootique/BQCoreModule.java). As you see, we are using the word "module" either to narrowly mean Guice Module, or to mean a code module. The meaning should be clear from the context.
 
-## Extending Bootique
+Modules can normally be autoloaded via ```Bootique.autoLoadModules()``` as long as they are availabale as you aplication dependencies. Add
+If you want your module to be included when 
 
-Bootique is just a small DI-based launcher that doesn't do much by itself. Its power comes from being a *command-line oriented plugin environment* that can run extensions. There's a significant and growing list of "standard" extensions, provided by Bootique development team. And you can easily write your own extensions. An extension is a piece of Java code that contains some code and a [Guice Module](https://google.github.io/guice/api-docs/latest/javadoc/index.html?com/google/inject/Module.html) that binds extension-specific services. Extension services can rely on services declared in the [Bootique core module](https://github.com/nhl/bootique/blob/master/src/main/java/com/nhl/bootique/BQCoreModule.java).
+## Standard Modules
 
-## Standard Extensions
-
-Below is a growing list of "standard" Bootique extensions. They support various areas, like REST services, job containers, DB migration apps, etc.:
+Below is a growing list of "standard" Bootique modules. With standard modules you can write apps of different kinds: REST services, job containers, DB migrations, etc.:
 
 * [Bootique Cayenne](https://github.com/nhl/bootique-cayenne)
 * [Bootique JDBC](https://github.com/nhl/bootique-jdbc)
@@ -147,3 +146,6 @@ Below is a growing list of "standard" Bootique extensions. They support various 
 * [Bootique Logback](https://github.com/nhl/bootique-logback)
 * [Bootique Zookeeper](https://github.com/nhl/bootique-zookeeper)
 
+## YAML Config
+
+## YAML Config Property Overrides
