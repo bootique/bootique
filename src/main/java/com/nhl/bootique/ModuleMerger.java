@@ -33,7 +33,7 @@ class ModuleMerger {
 				return u;
 			} , () -> new LinkedHashMap<>()));
 
-			// see who replaces who and who replaces already replaced modules
+			// see who replaces who, and who replaces already replaced modules
 			dedupedNodesByModuleType.forEach((k, v) -> {
 				v.getReplaces().ifPresent(rt -> {
 					ModuleMergeNode replaced = dedupedNodesByModuleType.get(rt);
@@ -61,6 +61,9 @@ class ModuleMerger {
 			}
 
 			if (n.getReplacedBy() != null) {
+
+				n.checkReplacementCycles();
+
 				bootLogger.trace(() -> String.format(
 						"Skipping module '%s' provided by '%s' (replaced by '%s' provided by '%s')...",
 						n.getModuleDescription(), n.getProviderDescription(), n.getReplacedBy().getModuleDescription(),

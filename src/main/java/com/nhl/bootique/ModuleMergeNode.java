@@ -41,6 +41,27 @@ class ModuleMergeNode {
 		return 37 + module.getClass().hashCode();
 	}
 
+	void checkReplacementCycles() {
+		checkReplacementCycles(getReplacedBy(), 100);
+	}
+
+	private void checkReplacementCycles(ModuleMergeNode rootNode, int depth) {
+
+		if (getReplacedBy() == null) {
+			return;
+		}
+
+		if (depth == 0) {
+			throw new RuntimeException("Replacement chain is too long: " + getModuleDescription());
+		}
+
+		if (this == rootNode) {
+			throw new RuntimeException("Replacement cycle detected: " + getModuleDescription());
+		}
+
+		getReplacedBy().checkReplacementCycles(rootNode, --depth);
+	}
+
 	Module getModule() {
 		return module;
 	}
