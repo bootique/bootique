@@ -100,6 +100,22 @@ public class ModuleMergerTest {
 		assertTrue(modules.contains(testModules.get(0)));
 	}
 
+	@Test
+	public void testGetModules_Four_Replaces_Chain() {
+
+		// 0 replaces 3 ; 3 replaces 4
+		mockProviders.set(0, createProvider(testModules.get(0), M3.class));
+		mockProviders.set(3, createProvider(testModules.get(3), M4.class));
+
+		Collection<BQModuleProvider> providers = Arrays.asList(mockProviders.get(4), mockProviders.get(0),
+				mockProviders.get(1), mockProviders.get(3));
+		Collection<Module> modules = new ModuleMerger(providers, mockLogger).getModules();
+		assertEquals(2, modules.size());
+
+		assertTrue(modules.contains(testModules.get(0)));
+		assertTrue(modules.contains(testModules.get(1)));
+	}
+
 	class M0 implements Module {
 
 		@Override
