@@ -3,12 +3,9 @@ package com.nhl.bootique;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.Objects;
 import java.util.ServiceLoader;
-import java.util.Set;
 
-import com.google.common.base.Preconditions;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -46,8 +43,7 @@ public class Bootique {
 		}
 	}
 
-	protected Collection<Module> modules;
-	protected Collection<Class<? extends Module>> moduleTypes;
+	protected Collection<BQModuleProvider> providers;
 	private Collection<Command> commands;
 	private String[] args;
 	private boolean autoLoadModules;
@@ -59,8 +55,7 @@ public class Bootique {
 
 	private Bootique(String[] args) {
 		this.args = args;
-		this.modules = new ArrayList<>();
-		this.moduleTypes = new HashSet<>();
+		this.providers = new ArrayList<>();
 		this.commands = new ArrayList<>();
 		this.autoLoadModules = false;
 		this.bootLogger = createBootLogger();
@@ -88,8 +83,8 @@ public class Bootique {
 	 * @since 0.8
 	 */
 	public Bootique module(Class<? extends Module> moduleType) {
-		Preconditions.checkNotNull(moduleType);
-		moduleTypes.add(moduleType);
+		Objects.requireNonNull(moduleType);
+		providers.add(() -> createModule(moduleType));
 		return this;
 	}
 
@@ -103,8 +98,8 @@ public class Bootique {
 	}
 
 	public Bootique module(Module m) {
-		Preconditions.checkNotNull(m);
-		modules.add(m);
+		Objects.requireNonNull(m);
+		providers.add(() -> m);
 		return this;
 	}
 
@@ -157,70 +152,43 @@ public class Bootique {
 	}
 
 	protected Injector createInjector() {
-		Collection<Module> finalModules = new ArrayList<>();
 
-		finalModules.add(createCoreModule(args, bootLogger));
-		finalModules.addAll(createBuilderModules());
-		finalModules.addAll(createAutoLoadModules(finalModules));
-		finalModules.addAll(createCommandsModules());
+		Collection<BQModuleProvider> providers = new ArrayList<>();
+		providers.add(coreModuleProvider(args, bootLogger));
 
-		return Guice.createInjector(finalModules);
-	}
-
-	protected Collection<Module> createCommandsModules() {
-		if (commands.isEmpty()) {
-			return Collections.emptyList();
+		if (!commands.isEmpty()) {
+			providers.add(commandsProvider());
 		}
 
-		bootLogger.trace(() -> "Adding module with custom commands...");
-		Module m = (b) -> BQBinder.contributeTo(b).commands(commands);
-		return Collections.singletonList(m);
-	}
+		providers.addAll(builderProviders());
 
-	protected Collection<Module> createBuilderModules() {
-		Collection<Module> modules = new ArrayList<>();
-
-		this.modules.forEach(m -> {
-			bootLogger.trace(() -> String.format("Adding module '%s'...", m.getClass().getName()));
-			modules.add(m);
-		});
-
-		this.moduleTypes.forEach(mt -> {
-			Module m = createModule(mt);
-			bootLogger.trace(() -> String.format("Adding module '%s'...", m.getClass().getName()));
-			modules.add(m);
-		});
-
-		return modules;
-	}
-
-	protected Module createCoreModule(String[] args, BootLogger bootLogger) {
-		bootLogger.trace(() -> String.format("Adding module '%s' (core)...", BQCoreModule.class.getName()));
-		return new BQCoreModule(args, bootLogger);
-	}
-
-	protected Collection<Module> createAutoLoadModules(Collection<Module> explicitModules) {
-		if (!autoLoadModules) {
-			return Collections.emptySet();
+		if (autoLoadModules) {
+			providers.addAll(autoLoadedProviders());
 		}
 
-		Set<Class<?>> knownModules = new HashSet<>();
-		explicitModules.forEach(m -> knownModules.add(m.getClass()));
+		Collection<Module> modules = new ModuleMerger(providers, bootLogger).getModules();
+		return Guice.createInjector(modules);
+	}
 
-		Collection<Module> modules = new ArrayList<>();
-		ServiceLoader.load(BQModuleProvider.class).forEach(p -> {
-			Module m = p.module();
+	protected BQModuleProvider commandsProvider() {
 
-			if (knownModules.add(m.getClass())) {
-				modules.add(m);
-				bootLogger.trace(() -> String.format("Adding auto-loaded module '%s' provided by '%s'...",
-						m.getClass().getName(), p.getClass().getName()));
-			} else {
-				bootLogger.trace(
-						() -> String.format("Skipping auto-loaded module '%s' provided by '%s' - already present...",
-								m.getClass().getName(), p.getClass().getName()));
-			}
-		});
+		return () -> {
+			bootLogger.trace(() -> "Adding module with custom commands...");
+			return (b) -> BQBinder.contributeTo(b).commands(commands);
+		};
+	}
+
+	protected Collection<BQModuleProvider> builderProviders() {
+		return providers;
+	}
+
+	protected BQModuleProvider coreModuleProvider(String[] args, BootLogger bootLogger) {
+		return () -> new BQCoreModule(args, bootLogger);
+	}
+
+	protected Collection<BQModuleProvider> autoLoadedProviders() {
+		Collection<BQModuleProvider> modules = new ArrayList<>();
+		ServiceLoader.load(BQModuleProvider.class).forEach(p -> modules.add(p));
 		return modules;
 	}
 }
