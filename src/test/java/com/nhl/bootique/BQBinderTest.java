@@ -11,7 +11,7 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.nhl.bootique.env.EnvironmentProperties;
 
-public class BQContribBinderTest {
+public class BQBinderTest {
 
 	@Test
 	public void testBindProperty() {
