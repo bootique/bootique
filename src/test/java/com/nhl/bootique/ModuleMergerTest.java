@@ -18,17 +18,20 @@ import org.junit.Test;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.nhl.bootique.log.BootLogger;
+import com.nhl.bootique.log.DefaultBootLogger;
 
 public class ModuleMergerTest {
 
-	private BootLogger mockLogger;
+	private BootLogger bootLogger;
 
 	private List<BQModuleProvider> mockProviders;
 	private List<Module> testModules;
 
 	@Before
 	public void before() {
-		this.mockLogger = mock(BootLogger.class);
+
+		// using real logger to better understand what's going on in the tests
+		this.bootLogger = new DefaultBootLogger(true);
 
 		// module types are used as keys in Bootique, so lets' define a bunch of
 		// distinct types without using mocks
@@ -49,7 +52,7 @@ public class ModuleMergerTest {
 
 	@Test
 	public void testGetModules_Empty() {
-		assertTrue(new ModuleMerger(Collections.emptyList(), mockLogger).getModules().isEmpty());
+		assertTrue(new ModuleMerger(bootLogger).getModules(Collections.emptyList()).isEmpty());
 	}
 
 	@Test
@@ -57,7 +60,7 @@ public class ModuleMergerTest {
 
 		Collection<BQModuleProvider> providers = Arrays.asList(mockProviders.get(2));
 
-		Collection<Module> modules = new ModuleMerger(providers, mockLogger).getModules();
+		Collection<Module> modules = new ModuleMerger(bootLogger).getModules(providers);
 		assertEquals(1, modules.size());
 
 		assertTrue(modules.contains(testModules.get(2)));
@@ -68,7 +71,7 @@ public class ModuleMergerTest {
 
 		Collection<BQModuleProvider> providers = Arrays.asList(mockProviders.get(2), mockProviders.get(1));
 
-		Collection<Module> modules = new ModuleMerger(providers, mockLogger).getModules();
+		Collection<Module> modules = new ModuleMerger(bootLogger).getModules(providers);
 		assertEquals(2, modules.size());
 
 		assertTrue(modules.contains(testModules.get(1)));
@@ -81,7 +84,7 @@ public class ModuleMergerTest {
 		Collection<BQModuleProvider> providers = Arrays.asList(mockProviders.get(2), mockProviders.get(1),
 				mockProviders.get(2));
 
-		Collection<Module> modules = new ModuleMerger(providers, mockLogger).getModules();
+		Collection<Module> modules = new ModuleMerger(bootLogger).getModules(providers);
 		assertEquals(2, modules.size());
 
 		assertTrue(modules.contains(testModules.get(1)));
@@ -94,7 +97,7 @@ public class ModuleMergerTest {
 		mockProviders.set(0, createProvider(testModules.get(0), M3.class));
 
 		Collection<BQModuleProvider> providers = Arrays.asList(mockProviders.get(0), mockProviders.get(3));
-		Collection<Module> modules = new ModuleMerger(providers, mockLogger).getModules();
+		Collection<Module> modules = new ModuleMerger(bootLogger).getModules(providers);
 		assertEquals(1, modules.size());
 
 		assertTrue(modules.contains(testModules.get(0)));
@@ -109,11 +112,50 @@ public class ModuleMergerTest {
 
 		Collection<BQModuleProvider> providers = Arrays.asList(mockProviders.get(4), mockProviders.get(0),
 				mockProviders.get(1), mockProviders.get(3));
-		Collection<Module> modules = new ModuleMerger(providers, mockLogger).getModules();
+		Collection<Module> modules = new ModuleMerger(bootLogger).getModules(providers);
 		assertEquals(2, modules.size());
 
 		assertTrue(modules.contains(testModules.get(0)));
 		assertTrue(modules.contains(testModules.get(1)));
+	}
+
+	@Test(expected = RuntimeException.class)
+	public void testGetModules_ReplacementCycle() {
+
+		// 0 replaces 3 ; 3 replaces 0
+		mockProviders.set(0, createProvider(testModules.get(0), M3.class));
+		mockProviders.set(3, createProvider(testModules.get(3), M0.class));
+
+		Collection<BQModuleProvider> providers = Arrays.asList(mockProviders.get(0), mockProviders.get(3));
+		new ModuleMerger(bootLogger).getModules(providers);
+	}
+
+	@Test(expected = RuntimeException.class)
+	public void testGetModules_ReplacementIndirectCycle() {
+
+		// 0 replaces 3 ; 3 replaces 4 ; 4 replaces 0
+		mockProviders.set(0, createProvider(testModules.get(0), M3.class));
+		mockProviders.set(3, createProvider(testModules.get(3), M4.class));
+		mockProviders.set(4, createProvider(testModules.get(4), M0.class));
+
+		Collection<BQModuleProvider> providers = Arrays.asList(mockProviders.get(0), mockProviders.get(4),
+				mockProviders.get(3));
+		new ModuleMerger(bootLogger).getModules(providers);
+	}
+
+	@Test
+	public void testGetModules_ReplacementDupe() {
+
+		// 0 replaces 3 ; 4 replaces 3
+		mockProviders.set(0, createProvider(testModules.get(0), M3.class));
+		mockProviders.set(4, createProvider(testModules.get(4), M3.class));
+
+		Collection<BQModuleProvider> providers = Arrays.asList(mockProviders.get(0), mockProviders.get(4),
+				mockProviders.get(3));
+		Collection<Module> modules = new ModuleMerger(bootLogger).getModules(providers);
+		assertEquals(1, modules.size());
+
+		assertTrue(modules.contains(testModules.get(0)));
 	}
 
 	class M0 implements Module {

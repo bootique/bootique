@@ -166,7 +166,7 @@ public class Bootique {
 			providers.addAll(autoLoadedProviders());
 		}
 
-		Collection<Module> modules = new ModuleMerger(providers, bootLogger).getModules();
+		Collection<Module> modules = new ModuleMerger(bootLogger).getModules(providers);
 		return Guice.createInjector(modules);
 	}
 

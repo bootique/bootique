@@ -4,58 +4,90 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import com.google.inject.Module;
 import com.nhl.bootique.log.BootLogger;
 
 class ModuleMerger {
 
-	private Collection<Module> modules;
+	private Function<Collection<BQModuleProvider>, Collection<ModuleMergeNode>> nodeMapper;
+	private Predicate<ModuleMergeNode> skippedNodesFilter;
+	private Function<ModuleMergeNode, Module> moduleMapper;
 
-	ModuleMerger(Collection<BQModuleProvider> providers, BootLogger bootLogger) {
-		Set<ModuleMergeNode> nodes = new HashSet<>();
+	ModuleMerger(BootLogger bootLogger) {
 
-		// immediately get rid of dupes...
-		providers.forEach(p -> {
+		this.nodeMapper = (providers) -> {
+			Collection<ModuleMergeNode> nodes = providers.stream().map(p -> new ModuleMergeNode(p.module(), p))
+					.collect(toList());
 
-			ModuleMergeNode n = new ModuleMergeNode(p.module(), p);
-			if (!nodes.add(n)) {
-				bootLogger.trace(() -> String.format("Skipping module '%s' provided by '%s' - already present...",
-						n.getModuleDescription(), n.getProviderDescription()));
-			}
-		});
+			// de-dupe modules and index by module type
 
-		// find modules replaced by other modules...
-		Map<Class<? extends Module>, ModuleMergeNode> replacements = nodes.stream()
-				.filter(ModuleMergeNode::isReplacement).collect(toMap(n -> n.getReplaces().get(), n -> n));
+			// need a map sorted in the order of node iteration
+			Map<Class<? extends Module>, ModuleMergeNode> dedupedNodesByModuleType = nodes.stream()
+					.collect(toMap(ModuleMergeNode::getModuleType, n -> n, (u, v) -> {
+				v.setDuplicateOf(u);
+				return u;
+			} , () -> new LinkedHashMap<>()));
 
-		// skip any replaced modules...
-		this.modules = nodes.stream().filter(n -> {
-			ModuleMergeNode replacedBy = replacements.get(n.getModule().getClass());
+			// see who replaces who and who replaces already replaced modules
+			dedupedNodesByModuleType.forEach((k, v) -> {
+				v.getReplaces().ifPresent(rt -> {
+					ModuleMergeNode replaced = dedupedNodesByModuleType.get(rt);
+					if (replaced != null) {
 
-			if (replacedBy == null) {
-				bootLogger.trace(() -> String.format("Adding module '%s' provided by '%s'...", n.getModuleDescription(),
-						n.getProviderDescription()));
+						if (replaced.getReplacedBy() != null) {
+							v.setDuplicateReplacementOf(replaced.getReplacedBy());
+						} else {
+							replaced.setReplacedBy(v);
+						}
+					}
+				});
+			});
 
-				return true;
-			} else {
+			return nodes;
+		};
+
+		this.skippedNodesFilter = (n) -> {
+
+			if (n.getDuplicateOf() != null) {
 				bootLogger.trace(() -> String.format(
-						"Skipping module '%s' provided by '%s' - replaced by '%s' provided by '%s'...",
-						n.getModuleDescription(), n.getProviderDescription(), replacedBy.getModuleDescription(),
-						replacedBy.getProviderDescription()));
+						"Skipping module '%s' provided by '%s' (already provided by '%s')...", n.getModuleDescription(),
+						n.getProviderDescription(), n.getDuplicateOf().getProviderDescription()));
 				return false;
 			}
-		}).map(ModuleMergeNode::getModule).collect(toList());
 
-		// TODO: detect replacement graph cycles
-		// TDOO: detect two modules replacing the same module..
+			if (n.getReplacedBy() != null) {
+				bootLogger.trace(() -> String.format(
+						"Skipping module '%s' provided by '%s' (replaced by '%s' provided by '%s')...",
+						n.getModuleDescription(), n.getProviderDescription(), n.getReplacedBy().getModuleDescription(),
+						n.getReplacedBy().getProviderDescription()));
+				return false;
+			}
+
+			if (n.getDuplicateReplacementOf() != null) {
+				bootLogger.trace(() -> String.format(
+						"Skipping module '%s' provided by '%s' (module it replaces is already replaced by '%s' provided by '%s')...",
+						n.getModuleDescription(), n.getProviderDescription(),
+						n.getDuplicateReplacementOf().getModuleDescription(),
+						n.getDuplicateReplacementOf().getProviderDescription()));
+				return false;
+			}
+
+			return true;
+		};
+
+		this.moduleMapper = (n) -> {
+			bootLogger.trace(() -> String.format("Adding module '%s' provided by '%s'...", n.getModuleDescription(),
+					n.getProviderDescription()));
+			return n.getModule();
+		};
 	}
 
-	Collection<Module> getModules() {
-		return modules;
+	Collection<Module> getModules(Collection<BQModuleProvider> providers) {
+		return nodeMapper.apply(providers).stream().filter(skippedNodesFilter).map(moduleMapper).collect(toList());
 	}
-
 }

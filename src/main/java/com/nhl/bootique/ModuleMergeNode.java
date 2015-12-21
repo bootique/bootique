@@ -9,6 +9,10 @@ class ModuleMergeNode {
 	private Module module;
 	private BQModuleProvider providedBy;
 
+	private ModuleMergeNode duplicateOf;
+	private ModuleMergeNode replacedBy;
+	private ModuleMergeNode duplicateReplacementOf;
+
 	ModuleMergeNode(Module module, BQModuleProvider providedBy) {
 		this.module = module;
 		this.providedBy = providedBy;
@@ -41,6 +45,10 @@ class ModuleMergeNode {
 		return module;
 	}
 
+	Class<? extends Module> getModuleType() {
+		return module.getClass();
+	}
+
 	String getModuleDescription() {
 		return module.getClass().getName();
 	}
@@ -53,7 +61,28 @@ class ModuleMergeNode {
 		return providedBy.replaces();
 	}
 
-	boolean isReplacement() {
-		return getReplaces().isPresent();
+	public ModuleMergeNode getDuplicateOf() {
+		return duplicateOf;
 	}
+
+	public void setDuplicateOf(ModuleMergeNode duplicateOf) {
+		this.duplicateOf = duplicateOf;
+	}
+
+	public ModuleMergeNode getReplacedBy() {
+		return replacedBy;
+	}
+
+	public void setReplacedBy(ModuleMergeNode replacedBy) {
+		this.replacedBy = replacedBy;
+	}
+
+	public ModuleMergeNode getDuplicateReplacementOf() {
+		return duplicateReplacementOf;
+	}
+
+	public void setDuplicateReplacementOf(ModuleMergeNode duplicateReplacementOf) {
+		this.duplicateReplacementOf = duplicateReplacementOf;
+	}
+
 }
