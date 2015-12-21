@@ -42,7 +42,9 @@ class ModuleMergeNode {
 	}
 
 	void checkReplacementCycles() {
-		checkReplacementCycles(getReplacedBy(), 100);
+		if (getReplacedBy() != null) {
+			getReplacedBy().checkReplacementCycles(this, 100);
+		}
 	}
 
 	private void checkReplacementCycles(ModuleMergeNode rootNode, int depth) {
