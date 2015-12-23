@@ -1,6 +1,7 @@
 package com.nhl.bootique;
 
-import java.util.Optional;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.ServiceLoader;
 
 import com.google.inject.Module;
@@ -21,14 +22,14 @@ public interface BQModuleProvider {
 	Module module();
 
 	/**
-	 * Returns an Optional with the type of the module overridden by this
-	 * Module.
+	 * Returns a potentially empty Collection with the types of the module
+	 * overridden by this Module.
 	 * 
 	 * @since 0.10
-	 * @return an Optional that may contain a type of the Module replaced by
-	 *         this Module.
+	 * @return a potentially empty collection of modules overridden by the
+	 *         Module created by this provider.
 	 */
-	default Optional<Class<? extends Module>> replaces() {
-		return Optional.empty();
+	default Collection<Class<? extends Module>> overrides() {
+		return Collections.emptyList();
 	}
 }

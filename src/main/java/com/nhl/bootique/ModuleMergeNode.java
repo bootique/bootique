@@ -1,6 +1,10 @@
 package com.nhl.bootique;
 
-import java.util.Optional;
+import static java.util.stream.Collectors.toList;
+
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Map;
 
 import com.google.inject.Module;
 
@@ -8,14 +12,12 @@ class ModuleMergeNode {
 
 	private Module module;
 	private BQModuleProvider providedBy;
-
-	private ModuleMergeNode duplicateOf;
-	private ModuleMergeNode replacedBy;
-	private ModuleMergeNode duplicateReplacementOf;
+	private Collection<ModuleMergeNode> overriddenBy;
 
 	ModuleMergeNode(Module module, BQModuleProvider providedBy) {
 		this.module = module;
 		this.providedBy = providedBy;
+		this.overriddenBy = new LinkedHashSet<>();
 	}
 
 	@Override
@@ -41,31 +43,24 @@ class ModuleMergeNode {
 		return 37 + module.getClass().hashCode();
 	}
 
-	void checkReplacementCycles() {
-		if (getReplacedBy() != null) {
-			getReplacedBy().checkReplacementCycles(this, 100);
-		}
-	}
-
-	private void checkReplacementCycles(ModuleMergeNode rootNode, int depth) {
-
-		if (getReplacedBy() == null) {
-			return;
-		}
-
-		if (depth == 0) {
-			throw new RuntimeException("Replacement chain is too long: " + getModuleDescription());
-		}
-
-		if (this == rootNode) {
-			throw new RuntimeException("Replacement cycle detected: " + getModuleDescription());
-		}
-
-		getReplacedBy().checkReplacementCycles(rootNode, --depth);
-	}
-
 	Module getModule() {
 		return module;
+	}
+
+	Collection<ModuleMergeNode> getModuleOverrides(Map<Class<? extends Module>, ModuleMergeNode> nodes) {
+		return providedBy.overrides().stream().map(t -> nodes.get(t)).filter(n -> n != null).collect(toList());
+	}
+
+	void checkCycles() {
+		overriddenBy.forEach(n -> n.checkCycles(this));
+	}
+
+	void checkCycles(ModuleMergeNode root) {
+		if (root == this) {
+			throw new RuntimeException("Circular override dependency: " + getModuleDescription());
+		}
+		
+		overriddenBy.forEach(n -> n.checkCycles(root));
 	}
 
 	Class<? extends Module> getModuleType() {
@@ -73,39 +68,18 @@ class ModuleMergeNode {
 	}
 
 	String getModuleDescription() {
-		return module.getClass().getName();
+		return module.getClass().getSimpleName();
 	}
 
 	String getProviderDescription() {
-		return providedBy.getClass().getName();
+		return providedBy.getClass().getSimpleName();
 	}
 
-	Optional<Class<? extends Module>> getReplaces() {
-		return providedBy.replaces();
+	Collection<ModuleMergeNode> getOverriddenBy() {
+		return overriddenBy;
 	}
 
-	public ModuleMergeNode getDuplicateOf() {
-		return duplicateOf;
+	void addOverriddenBy(ModuleMergeNode node) {
+		overriddenBy.add(node);
 	}
-
-	public void setDuplicateOf(ModuleMergeNode duplicateOf) {
-		this.duplicateOf = duplicateOf;
-	}
-
-	public ModuleMergeNode getReplacedBy() {
-		return replacedBy;
-	}
-
-	public void setReplacedBy(ModuleMergeNode replacedBy) {
-		this.replacedBy = replacedBy;
-	}
-
-	public ModuleMergeNode getDuplicateReplacementOf() {
-		return duplicateReplacementOf;
-	}
-
-	public void setDuplicateReplacementOf(ModuleMergeNode duplicateReplacementOf) {
-		this.duplicateReplacementOf = duplicateReplacementOf;
-	}
-
 }

@@ -1,6 +1,7 @@
 package com.nhl.bootique;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -10,7 +11,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -39,14 +39,19 @@ public class ModuleMergerTest {
 
 		this.mockProviders = new ArrayList<>();
 		testModules.forEach(m -> {
-			mockProviders.add(createProvider(m, null));
+			mockProviders.add(createProvider(m));
 		});
 	}
 
-	private BQModuleProvider createProvider(Module m, Class<? extends Module> replaces) {
+	private void assertOverrideModule(Module m) {
+		assertEquals("OverrideModule", m.getClass().getSimpleName());
+	}
+
+	@SafeVarargs
+	private final BQModuleProvider createProvider(Module m, Class<? extends Module>... overrides) {
 		BQModuleProvider providerMock = mock(BQModuleProvider.class);
 		when(providerMock.module()).thenReturn(m);
-		when(providerMock.replaces()).thenReturn(Optional.ofNullable(replaces));
+		when(providerMock.overrides()).thenReturn(Arrays.asList(overrides));
 		return providerMock;
 	}
 
@@ -92,21 +97,22 @@ public class ModuleMergerTest {
 	}
 
 	@Test
-	public void testGetModules_Two_Replaces() {
+	public void testGetModules_Overrides() {
 
+		// 0 overrides 3
 		mockProviders.set(0, createProvider(testModules.get(0), M3.class));
 
 		Collection<BQModuleProvider> providers = Arrays.asList(mockProviders.get(0), mockProviders.get(3));
-		Collection<Module> modules = new ModuleMerger(bootLogger).getModules(providers);
+		List<Module> modules = new ModuleMerger(bootLogger).getModules(providers);
 		assertEquals(1, modules.size());
 
-		assertTrue(modules.contains(testModules.get(0)));
+		assertOverrideModule(modules.get(0));
 	}
 
 	@Test
-	public void testGetModules_Four_Replaces_Chain() {
+	public void testGetModules_Overrides_Chain() {
 
-		// 0 replaces 3 ; 3 replaces 4
+		// 0 overrides 3 ; 3 overrides 4
 		mockProviders.set(0, createProvider(testModules.get(0), M3.class));
 		mockProviders.set(3, createProvider(testModules.get(3), M4.class));
 
@@ -115,12 +121,14 @@ public class ModuleMergerTest {
 		Collection<Module> modules = new ModuleMerger(bootLogger).getModules(providers);
 		assertEquals(2, modules.size());
 
-		assertTrue(modules.contains(testModules.get(0)));
+		assertFalse(modules.contains(testModules.get(4)));
 		assertTrue(modules.contains(testModules.get(1)));
+		assertFalse(modules.contains(testModules.get(0)));
+		assertFalse(modules.contains(testModules.get(3)));
 	}
 
 	@Test(expected = RuntimeException.class)
-	public void testGetModules_ReplacementCycle() {
+	public void testGetModules_OverrideCycle() {
 
 		// 0 replaces 3 ; 3 replaces 0
 		mockProviders.set(0, createProvider(testModules.get(0), M3.class));
@@ -131,7 +139,7 @@ public class ModuleMergerTest {
 	}
 
 	@Test(expected = RuntimeException.class)
-	public void testGetModules_ReplacementIndirectCycle() {
+	public void testGetModules_OverrideIndirectCycle() {
 
 		// 0 replaces 3 ; 3 replaces 4 ; 4 replaces 0
 		mockProviders.set(0, createProvider(testModules.get(0), M3.class));
@@ -143,19 +151,16 @@ public class ModuleMergerTest {
 		new ModuleMerger(bootLogger).getModules(providers);
 	}
 
-	@Test
-	public void testGetModules_ReplacementDupe() {
+	@Test(expected = RuntimeException.class)
+	public void testGetModules_OverrideDupe() {
 
-		// 0 replaces 3 ; 4 replaces 3
+		// 0 overrides 3 ; 4 overrides 3
 		mockProviders.set(0, createProvider(testModules.get(0), M3.class));
 		mockProviders.set(4, createProvider(testModules.get(4), M3.class));
 
 		Collection<BQModuleProvider> providers = Arrays.asList(mockProviders.get(0), mockProviders.get(4),
 				mockProviders.get(3));
-		Collection<Module> modules = new ModuleMerger(bootLogger).getModules(providers);
-		assertEquals(1, modules.size());
-
-		assertTrue(modules.contains(testModules.get(0)));
+		new ModuleMerger(bootLogger).getModules(providers);
 	}
 
 	class M0 implements Module {

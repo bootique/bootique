@@ -1,96 +1,106 @@
 package com.nhl.bootique;
 
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import com.google.inject.Module;
+import com.google.inject.util.Modules;
 import com.nhl.bootique.log.BootLogger;
 
 class ModuleMerger {
 
-	private Function<Collection<BQModuleProvider>, Collection<ModuleMergeNode>> nodeMapper;
-	private Predicate<ModuleMergeNode> skippedNodesFilter;
-	private Function<ModuleMergeNode, Module> moduleMapper;
+	private BootLogger bootLogger;
 
 	ModuleMerger(BootLogger bootLogger) {
-
-		this.nodeMapper = (providers) -> {
-			Collection<ModuleMergeNode> nodes = providers.stream().map(p -> new ModuleMergeNode(p.module(), p))
-					.collect(toList());
-
-			// de-dupe modules and index by module type
-
-			// need a map sorted in the order of node iteration
-			Map<Class<? extends Module>, ModuleMergeNode> dedupedNodesByModuleType = nodes.stream()
-					.collect(toMap(ModuleMergeNode::getModuleType, n -> n, (u, v) -> {
-				v.setDuplicateOf(u);
-				return u;
-			} , () -> new LinkedHashMap<>()));
-
-			// see who replaces who, and who replaces already replaced modules
-			dedupedNodesByModuleType.forEach((k, v) -> {
-				v.getReplaces().ifPresent(rt -> {
-					ModuleMergeNode replaced = dedupedNodesByModuleType.get(rt);
-					if (replaced != null) {
-
-						if (replaced.getReplacedBy() != null) {
-							v.setDuplicateReplacementOf(replaced.getReplacedBy());
-						} else {
-							replaced.setReplacedBy(v);
-						}
-					}
-				});
-			});
-
-			return nodes;
-		};
-
-		this.skippedNodesFilter = (n) -> {
-
-			if (n.getDuplicateOf() != null) {
-				bootLogger.trace(() -> String.format(
-						"Skipping module '%s' provided by '%s' (already provided by '%s')...", n.getModuleDescription(),
-						n.getProviderDescription(), n.getDuplicateOf().getProviderDescription()));
-				return false;
-			}
-
-			if (n.getReplacedBy() != null) {
-
-				n.checkReplacementCycles();
-
-				bootLogger.trace(() -> String.format(
-						"Skipping module '%s' provided by '%s' (replaced by '%s' provided by '%s')...",
-						n.getModuleDescription(), n.getProviderDescription(), n.getReplacedBy().getModuleDescription(),
-						n.getReplacedBy().getProviderDescription()));
-				return false;
-			}
-
-			if (n.getDuplicateReplacementOf() != null) {
-				bootLogger.trace(() -> String.format(
-						"Skipping module '%s' provided by '%s' (module it replaces is already replaced by '%s' provided by '%s')...",
-						n.getModuleDescription(), n.getProviderDescription(),
-						n.getDuplicateReplacementOf().getModuleDescription(),
-						n.getDuplicateReplacementOf().getProviderDescription()));
-				return false;
-			}
-
-			return true;
-		};
-
-		this.moduleMapper = (n) -> {
-			bootLogger.trace(() -> String.format("Adding module '%s' provided by '%s'...", n.getModuleDescription(),
-					n.getProviderDescription()));
-			return n.getModule();
-		};
+		this.bootLogger = bootLogger;
 	}
 
-	Collection<Module> getModules(Collection<BQModuleProvider> providers) {
-		return nodeMapper.apply(providers).stream().filter(skippedNodesFilter).map(moduleMapper).collect(toList());
+	List<Module> getModules(Collection<BQModuleProvider> providers) {
+		Map<Class<? extends Module>, ModuleMergeNode> nodes = toNodeMap(providers);
+
+		calcOverrides(nodes);
+		calcCycles(nodes);
+
+		return toModules(nodes);
+	}
+
+	private Map<Class<? extends Module>, ModuleMergeNode> toNodeMap(Collection<BQModuleProvider> providers) {
+
+		Map<Class<? extends Module>, ModuleMergeNode> nodes = new LinkedHashMap<>();
+
+		providers.forEach(p -> {
+
+			ModuleMergeNode n = new ModuleMergeNode(p.module(), p);
+			ModuleMergeNode existing = nodes.putIfAbsent(n.getModuleType(), n);
+			if (existing != null) {
+				bootLogger.trace(() -> String.format(
+						"Skipping module '%s' provided by '%s' (already provided by '%s')...", n.getModuleDescription(),
+						n.getProviderDescription(), existing.getProviderDescription()));
+			}
+		});
+
+		return nodes;
+	}
+
+	private void calcOverrides(Map<Class<? extends Module>, ModuleMergeNode> nodes) {
+		nodes.values().forEach((n) -> {
+			n.getModuleOverrides(nodes).forEach(o -> o.addOverriddenBy(n));
+		});
+	}
+
+	private void calcCycles(Map<Class<? extends Module>, ModuleMergeNode> nodes) {
+		nodes.values().forEach((n) -> {
+			n.checkCycles();
+		});
+	}
+
+	private List<Module> toModules(Map<Class<? extends Module>, ModuleMergeNode> nodes) {
+
+		Predicate<ModuleMergeNode> notOverridden = n -> {
+			if (n.getOverriddenBy().isEmpty()) {
+				return true;
+			}
+
+			if (n.getOverriddenBy().size() == 1) {
+				return false;
+			}
+
+			String overrideList = n.getOverriddenBy().stream().map(ModuleMergeNode::getModuleDescription)
+					.collect(joining(", "));
+			String message = String.format(
+					"Module %s provided by %s is overridden more then once. Overriding modules: %s",
+					n.getModuleDescription(), n.getProviderDescription(), overrideList);
+			throw new RuntimeException(message);
+		};
+
+		Function<ModuleMergeNode, Module> toModule = (n) -> {
+
+			bootLogger.trace(() -> String.format("Adding module '%s' provided by '%s'...", n.getModuleDescription(),
+					n.getProviderDescription()));
+
+			Collection<ModuleMergeNode> overrides = n.getModuleOverrides(nodes);
+
+			if (overrides.isEmpty()) {
+				return n.getModule();
+			}
+
+			Collection<Module> overrideModules = overrides.stream().map(o -> {
+				bootLogger.trace(() -> String.format("Will override %s provided by %s...", o.getModuleDescription(),
+						o.getProviderDescription()));
+				return o.getModule();
+			}).collect(toList());
+
+			return Modules.override(overrideModules).with(n.getModule());
+
+		};
+
+		return nodes.values().stream().filter(notOverridden).map(toModule).collect(toList());
 	}
 }

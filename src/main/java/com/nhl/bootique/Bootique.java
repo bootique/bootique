@@ -108,6 +108,31 @@ public class Bootique {
 		return this;
 	}
 
+	@SafeVarargs
+	public final BQModuleOverrideBuilder override(Class<? extends Module>... overriddenTypes) {
+		return new BQModuleOverrideBuilder() {
+
+			@Override
+			public Bootique with(Class<? extends Module> moduleType) {
+
+				providers.add(new BQModuleProvider() {
+
+					@Override
+					public Module module() {
+						return createModule(moduleType);
+					}
+
+					@Override
+					public Collection<Class<? extends Module>> overrides() {
+						return Arrays.asList(overriddenTypes);
+					}
+				});
+
+				return Bootique.this;
+			}
+		};
+	}
+
 	/**
 	 * Registers a custom {@link Command} object.
 	 */
