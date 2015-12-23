@@ -1,7 +1,10 @@
+Release 0.10
+
+#6 Service/Module override support
+
 Release 0.9
 
 #4 FactoryConfigurationService - support for loading parameterized types
-#6 Service/Module override support
 
 Release 0.8
 
