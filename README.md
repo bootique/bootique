@@ -23,12 +23,12 @@ Add Bootique dependency:
 <dependency>
 	<groupId>com.nhl.bootique.jersey</groupId>
 	<artifactId>bootique-jersey</artifactId>
-	<version>0.7</version>
+	<version>0.8</version>
 </dependency>
 <dependency>
 	<groupId>com.nhl.bootique.logback</groupId>
 	<artifactId>bootique-logback</artifactId>
-	<version>0.6</version>
+	<version>0.7</version>
 </dependency>
 ```
 Write a main class that rins Bootique. In this example we are creating a JAX-RS application and the main application class also serves as a JAX-RS resource:
