@@ -1,4 +1,4 @@
-package com.nhl.bootique.factory;
+package com.nhl.bootique.config;
 
 import java.util.Iterator;
 import java.util.Map;

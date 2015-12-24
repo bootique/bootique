@@ -1,11 +1,14 @@
 package com.nhl.bootique.factory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.nhl.bootique.config.ConfigurationFactory;
 
 /**
  * An object that has access to a tree of factories configuration data, and acts
  * as a factory of custom factories that are initialized from this
  * configuration.
+ * 
+ * @deprecated since 0.10 use {@link ConfigurationFactory}.
  */
 public interface FactoryConfigurationService {
 

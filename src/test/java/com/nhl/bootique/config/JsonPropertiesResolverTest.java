@@ -1,4 +1,4 @@
-package com.nhl.bootique.factory;
+package com.nhl.bootique.config;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -13,8 +13,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
-import com.nhl.bootique.factory.JsonPropertiesResolver;
-import com.nhl.bootique.factory.JsonPropertiesResolver.PathTuple;
+import com.nhl.bootique.config.JsonPropertiesResolver;
+import com.nhl.bootique.config.JsonPropertiesResolver.PathTuple;
 
 public class JsonPropertiesResolverTest {
 

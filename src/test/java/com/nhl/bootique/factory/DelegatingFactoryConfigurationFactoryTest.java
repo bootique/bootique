@@ -19,10 +19,12 @@ import org.junit.Test;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhl.bootique.config.ConfigurationSource;
+import com.nhl.bootique.config.YamlConfigurationFactory;
 import com.nhl.bootique.env.Environment;
 import com.nhl.bootique.jackson.JacksonService;
 
-public class YamlFactoryConfigurationServiceTest {
+@Deprecated
+public class DelegatingFactoryConfigurationFactoryTest {
 
 	private ConfigurationSource mockConfigSource;
 	private JacksonService mockJacksonService;
@@ -37,6 +39,11 @@ public class YamlFactoryConfigurationServiceTest {
 		mockEnvironment = mock(Environment.class);
 	}
 
+	private DelegatingFactoryConfigurationService createService() {
+		return new DelegatingFactoryConfigurationService(
+				new YamlConfigurationFactory(mockConfigSource, mockEnvironment, mockJacksonService));
+	}
+
 	@Test
 	public void testFactory() {
 
@@ -49,8 +56,7 @@ public class YamlFactoryConfigurationServiceTest {
 			return processor.apply(in);
 		});
 
-		Bean1 b1 = new YamlFactoryConfigurationService(mockConfigSource, mockEnvironment, mockJacksonService)
-				.factory(Bean1.class, "");
+		Bean1 b1 = createService().factory(Bean1.class, "");
 		assertNotNull(b1);
 		assertEquals("SS", b1.getS());
 		assertEquals(55, b1.getI());
@@ -68,8 +74,7 @@ public class YamlFactoryConfigurationServiceTest {
 			return processor.apply(in);
 		});
 
-		Bean2 b2 = new YamlFactoryConfigurationService(mockConfigSource, mockEnvironment, mockJacksonService)
-				.factory(Bean2.class, "");
+		Bean2 b2 = createService().factory(Bean2.class, "");
 		assertNotNull(b2);
 		assertNotNull(b2.getB1());
 		assertEquals("SS", b2.getB1().getS());
@@ -88,8 +93,7 @@ public class YamlFactoryConfigurationServiceTest {
 			return processor.apply(in);
 		});
 
-		Bean1 b1 = new YamlFactoryConfigurationService(mockConfigSource, mockEnvironment, mockJacksonService)
-				.factory(Bean1.class, "b1");
+		Bean1 b1 = createService().factory(Bean1.class, "b1");
 		assertNotNull(b1);
 		assertEquals("SS", b1.getS());
 		assertEquals(55, b1.getI());
@@ -107,8 +111,7 @@ public class YamlFactoryConfigurationServiceTest {
 			return processor.apply(in);
 		});
 
-		Bean1 b1 = new YamlFactoryConfigurationService(mockConfigSource, mockEnvironment, mockJacksonService)
-				.factory(Bean1.class, "b0.b1");
+		Bean1 b1 = createService().factory(Bean1.class, "b0.b1");
 		assertNotNull(b1);
 		assertEquals("SS", b1.getS());
 		assertEquals(55, b1.getI());
@@ -126,8 +129,7 @@ public class YamlFactoryConfigurationServiceTest {
 			return processor.apply(in);
 		});
 
-		Bean1 b1 = new YamlFactoryConfigurationService(mockConfigSource, mockEnvironment, mockJacksonService)
-				.factory(Bean1.class, "no.such.path");
+		Bean1 b1 = createService().factory(Bean1.class, "no.such.path");
 		assertNotNull(b1);
 		assertEquals(null, b1.getS());
 		assertEquals(0, b1.getI());
@@ -154,8 +156,7 @@ public class YamlFactoryConfigurationServiceTest {
 			return processor.apply(in);
 		});
 
-		Bean1 b1 = new YamlFactoryConfigurationService(mockConfigSource, mockEnvironment, mockJacksonService)
-				.factory(Bean1.class, "");
+		Bean1 b1 = createService().factory(Bean1.class, "");
 		assertNotNull(b1);
 		assertEquals("SS", b1.getS());
 		assertEquals(55, b1.getI());
@@ -182,8 +183,7 @@ public class YamlFactoryConfigurationServiceTest {
 			return processor.apply(in);
 		});
 
-		Bean1 b1 = new YamlFactoryConfigurationService(mockConfigSource, mockEnvironment, mockJacksonService)
-				.factory(Bean1.class, "b1");
+		Bean1 b1 = createService().factory(Bean1.class, "b1");
 		assertNotNull(b1);
 		assertEquals("SS", b1.getS());
 		assertEquals(55, b1.getI());
@@ -201,9 +201,8 @@ public class YamlFactoryConfigurationServiceTest {
 			return processor.apply(in);
 		});
 
-		List<Object> l = new YamlFactoryConfigurationService(mockConfigSource, mockEnvironment, mockJacksonService)
-				.factory(new TypeReference<List<Object>>() {
-				}, "");
+		List<Object> l = createService().factory(new TypeReference<List<Object>>() {
+		}, "");
 
 		assertNotNull(l);
 		assertEquals("SS", l.get(0));
@@ -222,9 +221,8 @@ public class YamlFactoryConfigurationServiceTest {
 			return processor.apply(in);
 		});
 
-		List<List<Object>> l = new YamlFactoryConfigurationService(mockConfigSource, mockEnvironment,
-				mockJacksonService).factory(new TypeReference<List<List<Object>>>() {
-				}, "");
+		List<List<Object>> l = createService().factory(new TypeReference<List<List<Object>>>() {
+		}, "");
 
 		assertNotNull(l);
 		assertEquals(2, l.size());
@@ -252,9 +250,8 @@ public class YamlFactoryConfigurationServiceTest {
 			return processor.apply(in);
 		});
 
-		Map<String, Object> m = new YamlFactoryConfigurationService(mockConfigSource, mockEnvironment,
-				mockJacksonService).factory(new TypeReference<Map<String, Object>>() {
-				}, "");
+		Map<String, Object> m = createService().factory(new TypeReference<Map<String, Object>>() {
+		}, "");
 
 		assertNotNull(m);
 		assertEquals("SS", m.get("b1"));
@@ -273,8 +270,8 @@ public class YamlFactoryConfigurationServiceTest {
 			return processor.apply(in);
 		});
 
-		Map<String, Map<String, Object>> m = new YamlFactoryConfigurationService(mockConfigSource, mockEnvironment,
-				mockJacksonService).factory(new TypeReference<Map<String, Map<String, Object>>>() {
+		Map<String, Map<String, Object>> m = createService()
+				.factory(new TypeReference<Map<String, Map<String, Object>>>() {
 				}, "");
 
 		assertNotNull(m);

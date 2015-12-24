@@ -1,28 +1,30 @@
-package com.nhl.bootique.factory;
+package com.nhl.bootique.config;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TreeTraversingParser;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
 import com.google.inject.Inject;
-import com.nhl.bootique.config.ConfigurationSource;
 import com.nhl.bootique.env.Environment;
 import com.nhl.bootique.jackson.JacksonService;
+import com.nhl.bootique.type.TypeRef;
 
 /**
- * {@link FactoryConfigurationService} based on YAML configs.
+ * {@link ConfigurationFactory} based on YAML configs.
  */
-public class YamlFactoryConfigurationService implements FactoryConfigurationService {
+public class YamlConfigurationFactory implements ConfigurationFactory {
 
 	private JsonNode rootNode;
 	private ObjectMapper mapper;
+	private TypeFactory typeFactory;
 
 	protected static JsonNode readYaml(InputStream in, ObjectMapper mapper) {
 		try {
@@ -34,8 +36,10 @@ public class YamlFactoryConfigurationService implements FactoryConfigurationServ
 	}
 
 	@Inject
-	public YamlFactoryConfigurationService(ConfigurationSource configurationSource, Environment environment,
+	public YamlConfigurationFactory(ConfigurationSource configurationSource, Environment environment,
 			JacksonService jacksonService) {
+		
+		this.typeFactory = TypeFactory.defaultInstance();
 		this.mapper = jacksonService.newObjectMapper();
 		this.rootNode = configurationSource.readConfig(in -> readYaml(in, mapper));
 
@@ -47,7 +51,7 @@ public class YamlFactoryConfigurationService implements FactoryConfigurationServ
 	}
 
 	@Override
-	public <T> T factory(Class<T> type, String prefix) {
+	public <T> T config(Class<T> type, String prefix) {
 
 		JsonNode child = JsonPropertiesResolver.findChild(rootNode, prefix);
 
@@ -62,12 +66,14 @@ public class YamlFactoryConfigurationService implements FactoryConfigurationServ
 	}
 
 	@Override
-	public <T> T factory(TypeReference<? extends T> type, String prefix) {
+	public <T> T config(TypeRef<? extends T> type, String prefix) {
 
 		JsonNode child = JsonPropertiesResolver.findChild(rootNode, prefix);
+		
+		JavaType jacksonType = typeFactory.constructType(type.getType());
 
 		try {
-			return mapper.readValue(new TreeTraversingParser(child), type);
+			return mapper.readValue(new TreeTraversingParser(child), jacksonType);
 		}
 		// TODO: implement better exception handling. See ConfigurationFactory
 		// in Dropwizard for inspiration
