@@ -31,9 +31,9 @@ public interface ConfigurationFactory {
 	/**
 	 * Creates and returns a specified generic type instance with its state
 	 * initialized from the configuration tree. "prefix" argument defines
-	 * sub-configuration location in the tree. To make a "type" parameter, you
-	 * would usually create an anonymous inner subclass of TypeRef, with the
-	 * right generics parameters:
+	 * sub-configuration location in the tree. To make a proper "type"
+	 * parameter, you would usually create an anonymous inner subclass of
+	 * TypeRef, with the right generics parameters:
 	 * 
 	 * <pre>
 	 * new TypeRef<List<Object>>() {
