@@ -14,8 +14,6 @@ import com.nhl.bootique.config.ConfigurationSource;
 import com.nhl.bootique.config.YamlConfigurationFactory;
 import com.nhl.bootique.env.DefaultEnvironment;
 import com.nhl.bootique.env.Environment;
-import com.nhl.bootique.factory.DelegatingFactoryConfigurationService;
-import com.nhl.bootique.factory.FactoryConfigurationService;
 import com.nhl.bootique.jackson.DefaultJacksonService;
 import com.nhl.bootique.jackson.JacksonService;
 import com.nhl.bootique.jopt.Args;
@@ -46,7 +44,6 @@ public class BQCoreModule implements Module {
 		binder.bind(ConfigurationSource.class).to(CliConfigurationSource.class).in(Singleton.class);
 
 		binder.bind(ConfigurationFactory.class).to(YamlConfigurationFactory.class).in(Singleton.class);
-		binder.bind(FactoryConfigurationService.class).to(DelegatingFactoryConfigurationService.class);
 
 		binder.bind(Environment.class).to(DefaultEnvironment.class);
 

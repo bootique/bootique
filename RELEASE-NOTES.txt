@@ -1,14 +1,18 @@
-Release 0.10
+0.11
+
+#8 Remove API's deprecated since 0.10
+
+0.10
 
 #5 FactoryConfigurationService refactoring
 #6 Service/Module override support
 #7 Start publishing Bootique to Maven central repo
 
-Release 0.9
+0.9
 
 #4 FactoryConfigurationService - support for loading parameterized types
 
-Release 0.8
+0.8
 
 #1 Merge bundles and modules into a single concept
 #2 Auto-load extensions
