@@ -32,6 +32,11 @@ Add Bootique dependency:
 	<version>0.8</version>
 </dependency>
 <dependency>
+	<groupId>com.nhl.bootique.jersey</groupId>
+	<artifactId>bootique-jetty</artifactId>
+	<version>0.8</version>
+</dependency>
+<dependency>
 	<groupId>com.nhl.bootique.logback</groupId>
 	<artifactId>bootique-logback</artifactId>
 	<version>0.7</version>
@@ -148,3 +153,11 @@ Below is a growing list of "standard" Bootique modules. With standard modules yo
 ## YAML Config
 
 ## YAML Config Property Overrides
+
+## Tracing Bootique Startup
+
+To see what modules are loaded and to trace other events that happen on startup, run your jar with ```-Dbq.trace``` startup option. E.g.:
+
+```
+java -Dbq.trace -jar target/myapp-1.0.jar --server 
+```
