@@ -12,6 +12,10 @@ import com.nhl.bootique.command.ConfigCommand;
 import com.nhl.bootique.jopt.Options;
 import com.nhl.bootique.log.BootLogger;
 
+/**
+ * A {@link ConfigurationSource} that locates configuration in a file specified
+ * via command-line '--config' option.
+ */
 public class CliConfigurationSource implements ConfigurationSource {
 
 	private String location;
@@ -49,5 +53,4 @@ public class CliConfigurationSource implements ConfigurationSource {
 			return processor.apply(in);
 		}
 	}
-
 }
