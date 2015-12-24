@@ -9,6 +9,7 @@ Bootique is built on top of [Google Guice](https://github.com/google/guice) DI c
 ## Prerequisites
 
 * Java 8 or newer
+* Maven 3.+. Though of course the examples below can be ported to Gradle or any other java build system.
 * _A few Bootique extensions (namely, [Cayenne](https://github.com/nhl/bootique-cayenne) and [LinkMove](https://github.com/nhl/bootique-linkmove)) require custom Maven repository declarations in the POM. Follow the links above for details. Hopefully this requirement will go away soon._
 
 ## Getting Started
