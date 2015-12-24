@@ -10,7 +10,12 @@ import java.util.function.Supplier;
 public interface BootLogger {
 
 	/**
-	 * Outputs the message to STDERR only if BootLogger is in a trace mode.
+	 * Outputs the message to STDERR only if BootLogger is in a trace mode. Uses
+	 * message supplier, so that the actual message production can be
+	 * conditionally skipped if tracing is not enabled.
+	 * 
+	 * @param messageSupplier
+	 *            a supplier of a String message.
 	 */
 	void trace(Supplier<String> messageSupplier);
 

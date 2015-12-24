@@ -35,6 +35,11 @@ public class BQBinder {
 
 	/**
 	 * Utility method to contribute custom environment properties to DI.
+	 * 
+	 * @param key
+	 *            environment parameter name.
+	 * @param value
+	 *            environment parameter value.
 	 */
 	public void property(String key, String value) {
 		propsBinder().addBinding(key).toInstance(value);
@@ -42,6 +47,10 @@ public class BQBinder {
 
 	/**
 	 * Utility method to contribute custom commands to DI.
+	 * 
+	 * @param commands
+	 *            {@link Command} types for singleton commands to add to
+	 *            Bootique.
 	 */
 	@SafeVarargs
 	public final void commandTypes(Class<? extends Command>... commands) {
@@ -50,6 +59,10 @@ public class BQBinder {
 
 	/**
 	 * Utility method to contribute custom commands to DI.
+	 * 
+	 * @param commands
+	 *            {@link Command} types for singleton commands to add to
+	 *            Bootique.
 	 */
 	public void commandTypes(Collection<Class<? extends Command>> commands) {
 		Multibinder<Command> commandBinder = Multibinder.newSetBinder(binder, Command.class);
@@ -58,6 +71,9 @@ public class BQBinder {
 
 	/**
 	 * Utility method to contribute custom commands to DI.
+	 * 
+	 * @param commands
+	 *            {@link Command} instances to add to Bootique.
 	 */
 	public void commands(Collection<? extends Command> commands) {
 		Multibinder<Command> commandBinder = Multibinder.newSetBinder(binder, Command.class);

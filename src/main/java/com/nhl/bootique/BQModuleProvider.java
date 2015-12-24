@@ -18,6 +18,9 @@ public interface BQModuleProvider {
 
 	/**
 	 * Returns a Guice module that is used to configure this provider's backend.
+	 * 
+	 * @return an instance of a Guice Module for which this proviuder acts as a
+	 *         factory.
 	 */
 	Module module();
 

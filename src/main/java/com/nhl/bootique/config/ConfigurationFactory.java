@@ -25,6 +25,9 @@ public interface ConfigurationFactory {
 	 *            string to access root config.
 	 * @return a fully initialized object of the specified type.
 	 * 
+	 * @param <T>
+	 *            a type of object given configuration should be deserialized
+	 *            to.
 	 */
 	<T> T config(Class<T> type, String prefix);
 
@@ -36,7 +39,7 @@ public interface ConfigurationFactory {
 	 * TypeRef, with the right generics parameters:
 	 * 
 	 * <pre>
-	 * new TypeRef<List<Object>>() {
+	 * new TypeRef&lt;List&lt;Object&gt;&gt;() {
 	 * }
 	 * </pre>
 	 * 
@@ -48,8 +51,10 @@ public interface ConfigurationFactory {
 	 *            string to access root config.
 	 * @return a fully initialized object of the specified type.
 	 * 
+	 * @param <T>
+	 *            a type of object given configuration should be deserialized
+	 *            to.
 	 * @since 0.9
-	 * 
 	 */
 	<T> T config(TypeRef<? extends T> type, String prefix);
 

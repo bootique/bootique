@@ -70,8 +70,9 @@ public class Bootique {
 	 * <i>Use with caution, you may load more modules than you expected. Make
 	 * sure only needed Bootique dependencies are included on class-path. If in
 	 * doubt, switch to explicit Module loading via
-	 * {@link #modules(Class...)}</i>
+	 * {@link #modules(Class...)}</i>.
 	 * 
+	 * @return this Bootique instance
 	 * @see BQModuleProvider
 	 */
 	public Bootique autoLoadModules() {
@@ -80,6 +81,9 @@ public class Bootique {
 	}
 
 	/**
+	 * @param moduleType
+	 *            custom Module class to add to Bootique DI runtime.
+	 * @return this Bootique instance
 	 * @since 0.8
 	 */
 	public Bootique module(Class<? extends Module> moduleType) {
@@ -89,6 +93,9 @@ public class Bootique {
 	}
 
 	/**
+	 * @param moduleTypes
+	 *            custom Module classes to add to Bootique DI runtime.
+	 * @return this Bootique instance
 	 * @since 0.8
 	 */
 	@SafeVarargs
@@ -135,6 +142,10 @@ public class Bootique {
 
 	/**
 	 * Registers a custom {@link Command} object.
+	 * 
+	 * @param command
+	 *            A custom {@link Command} instance to add to Bootique runtime.
+	 * @return this Bootique instance
 	 */
 	public Bootique command(Command command) {
 		this.commands.add(command);
@@ -143,6 +154,10 @@ public class Bootique {
 
 	/**
 	 * Registers a custom {@link Command} object.
+	 * 
+	 * @param commands
+	 *            Custom {@link Command} instances to add to Bootique runtime.
+	 * @return this Bootique instance
 	 */
 	public Bootique commands(Command... commands) {
 		Arrays.asList(commands).forEach(c -> command(c));

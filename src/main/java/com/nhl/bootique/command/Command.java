@@ -10,6 +10,8 @@ public interface Command {
 	/**
 	 * Executes a command.
 	 * 
+	 * @param options
+	 *            command-line options object.
 	 * @return CommandOutcome object that indicates to the caller whether
 	 *         command was successful and whether it needs to continue with
 	 *         command chain.
