@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.nhl.bootique.parent</groupId>
 		<artifactId>bootique-parent</artifactId>
-		<version>0.6</version>
+		<version>0.8</version>
 	</parent>
 
 	<groupId>com.nhl.bootique</groupId>
@@ -26,29 +26,9 @@
 
 	<scm>
 		<developerConnection>scm:git:ssh://git@github.com/nhl/bootique</developerConnection>
+		<url>https://github.com/nhl/bootique</url>
 		<tag>HEAD</tag>
 	</scm>
-
-	<repositories>
-		<repository>
-			<id>bootique-dependencies</id>
-			<name>Bootique Dependencies Repo</name>
-			<url>http://maven.objectstyle.org/nexus/content/groups/bootique-upstream</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>bootique-dependencies</id>
-			<name>Bootique Dependencies Repo</name>
-			<url>http://maven.objectstyle.org/nexus/content/groups/bootique-upstream</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
-	</pluginRepositories>
 
 	<dependencyManagement>
 		<dependencies>
