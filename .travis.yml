@@ -6,3 +6,5 @@ jdk:
 branches:
   only:
     - master
+
+script: mvn clean verify
