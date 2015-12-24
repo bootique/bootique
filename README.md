@@ -6,6 +6,11 @@ Bootique was inspired by two similar products - [Dropwizard](http://www.dropwiza
 
 Bootique is built on top of [Google Guice](https://github.com/google/guice) DI container, that is the core of its modularity mechanism.
 
+## Prerequisites
+
+* Java 8 or newer
+* A few Bootique extensions (namely, [Cayenne](https://github.com/nhl/bootique-cayenne) and [LinkMove](https://github.com/nhl/bootique-linkmove)) still require custom repos. Follow the links above for details. Hopefully this snag will be resolved soon.
+
 ## Getting Started
 
 Add Bootique dependency:
