@@ -8,26 +8,13 @@ Bootique is built on top of [Google Guice](https://github.com/google/guice) DI c
 
 ## Getting Started
 
-Declare Bootique Maven repository in your pom.xml (unless you have your own repo proxy, in which case add this repo to the proxy):
-
-```XML
-<repositories>
-    <repository>
-        <id>bq-repo</id>
-        <name>Bootique Repo</name>
-        <url>http://maven.objectstyle.org/nexus/content/repositories/bootique</url>
-    </repository>
-</repositories>
-```
-_TODO: eventually we'll start publishing Bootique to Central, so the step above will not be needed._
-
 Add Bootique dependency:
 
 ```XML
 <dependency>
 	<groupId>com.nhl.bootique</groupId>
 	<artifactId>bootique</artifactId>
-	<version>0.9</version>
+	<version>0.10</version>
 </dependency>
 <!-- 
   Below add any number of Bootique extensions. We'll be building a JAX-RS webservice here, 
