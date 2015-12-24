@@ -85,7 +85,7 @@ It was easy to run the app from the IDE, as we have access to the ```main``` met
 <parent>
 	<groupId>com.nhl.bootique.parent</groupId>
 	<artifactId>bootique-parent</artifactId>
-	<version>0.6</version>
+	<version>0.9</version>
 </parent>
 ```
 Other needed POM additions:
