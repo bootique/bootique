@@ -5,7 +5,7 @@ import com.nhl.bootique.type.TypeRef;
 /**
  * An object that provides access to a tree of configuration data. The whole
  * tree or subtrees of configuration can be read by the factory users as objects
- * of a specified type. More often then not returned configuration objects are
+ * of a specified type. More often than not returned configuration objects are
  * themselves "factories" of various services. So ConfigurationFactory can be
  * thought as a "factory of factories".
  * 
