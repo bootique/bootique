@@ -32,7 +32,7 @@ Add Bootique dependency:
 	<version>0.8</version>
 </dependency>
 <dependency>
-	<groupId>com.nhl.bootique.jersey</groupId>
+	<groupId>com.nhl.bootique.jetty</groupId>
 	<artifactId>bootique-jetty</artifactId>
 	<version>0.8</version>
 </dependency>
