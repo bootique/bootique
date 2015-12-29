@@ -166,7 +166,8 @@ public class Bootique {
 
 	public void run() {
 
-		BQRuntime runtime = new BQRuntime(createInjector());
+		BQRuntime runtime = createRuntime(createInjector());
+		runtime.addJVMShutdownHook();
 		CommandOutcome o = runtime.run();
 
 		// report error
@@ -185,6 +186,10 @@ public class Bootique {
 		}
 
 		o.exit();
+	}
+	
+	protected BQRuntime createRuntime(Injector injector) {
+		return new BQRuntime(injector);
 	}
 
 	protected BootLogger createBootLogger() {
