@@ -10,7 +10,7 @@
 
 	<groupId>com.nhl.bootique</groupId>
 	<artifactId>bootique</artifactId>
-	<version>0.11-SNAPSHOT</version>
+	<version>0.11</version>
 	<packaging>jar</packaging>
 
 	<name>Bootique Java Command-Line Launcher Framework</name>
@@ -27,7 +27,7 @@
 	<scm>
 		<developerConnection>scm:git:ssh://git@github.com/nhl/bootique</developerConnection>
 		<url>https://github.com/nhl/bootique</url>
-		<tag>HEAD</tag>
+		<tag>bootique-0.11</tag>
 	</scm>
 
 	<dependencyManagement>
