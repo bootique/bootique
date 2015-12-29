@@ -47,7 +47,6 @@ public class DefaultShutdownManagerIT {
 			}
 		}).when(mockCloseable2).close();
 
-		shutdownManager.addShutdownHook(mockCloseable1);
 		shutdownManager.addShutdownHook(mockCloseable2);
 
 		long t0 = System.currentTimeMillis();
@@ -55,7 +54,6 @@ public class DefaultShutdownManagerIT {
 
 		long t1 = System.currentTimeMillis();
 
-		verify(mockCloseable1).close();
 		verify(mockCloseable2).close();
 
 		assertTrue(t1 - t0 >= timeout.toMillis());
