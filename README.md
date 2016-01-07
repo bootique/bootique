@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/nhl/bootique.svg)](https://travis-ci.org/nhl/bootique)
 
-Bootique is a unopinionated technology for building container-less runnable Java applications. With Bootique you can create and run REST services, webapps, jobs, DB migration tasks, etc. as if they were simple commands. No JEE container required! Among other things Bootique is an ideal platform for Java [microservices](http://martinfowler.com/articles/microservices.html), as it allows you to create a fully functional app with minimal setup.
+Bootique is a minimally opinionated technology for building container-less runnable Java applications. With Bootique you can create REST services, webapps, jobs, DB migration tasks, etc. and run them as if they were simple commands. No JEE container required! Among other things Bootique is an ideal platform for Java [microservices](http://martinfowler.com/articles/microservices.html), as it allows you to create a fully functional app with minimal setup.
 
 Bootique was inspired by two similar products - [Dropwizard](http://www.dropwizard.io) and [SpringBoot](http://projects.spring.io/spring-boot/), however its focus is different. Bootique favors modularity and clean pluggable architecture.
 
