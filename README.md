@@ -42,7 +42,7 @@ Add Bootique dependency:
 	<version>0.7</version>
 </dependency>
 ```
-Write a main class that rins Bootique. In this example we are creating a JAX-RS application and the main application class also serves as a JAX-RS resource:
+Write a main class that runs Bootique. In this example we are creating a JAX-RS application and the main application class also serves as a JAX-RS resource:
 
 ```Java
 package com.example;
