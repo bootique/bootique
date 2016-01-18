@@ -1,9 +1,11 @@
 package com.nhl.bootique;
 
 import java.time.Duration;
+import java.util.Map;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
+import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.nhl.bootique.command.Command;
 import com.nhl.bootique.command.ConfigCommand;
@@ -16,6 +18,7 @@ import com.nhl.bootique.config.ConfigurationSource;
 import com.nhl.bootique.config.YamlConfigurationFactory;
 import com.nhl.bootique.env.DefaultEnvironment;
 import com.nhl.bootique.env.Environment;
+import com.nhl.bootique.env.EnvironmentProperties;
 import com.nhl.bootique.jackson.DefaultJacksonService;
 import com.nhl.bootique.jackson.JacksonService;
 import com.nhl.bootique.jopt.Args;
@@ -54,8 +57,6 @@ public class BQCoreModule implements Module {
 
 		binder.bind(ConfigurationFactory.class).to(YamlConfigurationFactory.class).in(Singleton.class);
 
-		binder.bind(Environment.class).to(DefaultEnvironment.class);
-
 		binder.bind(Command.class).annotatedWith(DefaultCommand.class).to(FailoverHelpCommand.class)
 				.in(Singleton.class);
 
@@ -64,5 +65,10 @@ public class BQCoreModule implements Module {
 		// don't bind anything to properties yet, but still declare the binding
 		contribBinder.propsBinder();
 		contribBinder.commandTypes(HelpCommand.class, ConfigCommand.class);
+	}
+
+	@Provides
+	public Environment createEnvironment(@EnvironmentProperties Map<String, String> diProperties) {
+		return new DefaultEnvironment(diProperties);
 	}
 }
