@@ -138,16 +138,18 @@ java -jar target/myapp-1.0.jar --server
 
 ## Bootique Modules
 
-Bootique is just a small DI-based launcher that doesn't do much by itself. Its power comes from being a *command-line plugin environment* that can run modules. There's a growing list of "standard" modules provided by Bootique development team. And you can easily write your own. An module is a piece of Java code (usually distributed as a single jar file) that contains some code and a [Guice Module class](https://google.github.io/guice/api-docs/latest/javadoc/index.html?com/google/inject/Module.html) that binds module-specific services. Module services can rely on services declared in the [Bootique core module](https://github.com/nhl/bootique/blob/master/src/main/java/com/nhl/bootique/BQCoreModule.java). 
+Bootique is just a small DI-based launcher that doesn't do much by itself. Its power comes from being a *command-line plugin environment* that can run modules. There's a growing list of "standard" modules provided by Bootique development team. And you can easily write your own. A module is a Java library that contains some code plus a [Guice Module class](https://google.github.io/guice/api-docs/latest/javadoc/index.html?com/google/inject/Module.html) that binds module-specific services. Module services can rely on services declared in the [Bootique core module](https://github.com/nhl/bootique/blob/master/src/main/java/com/nhl/bootique/BQCoreModule.java) as well as in other modules. 
 
 As you see we are using the word "module" either to refer to a Guice Module class, or to a whole a code module. The meaning should be clear from the context.
 
-Most modules can be autoloaded via ```Bootique.autoLoadModules()``` as long as they are included in your aplication dependencies. Autloading is built on the Java [ServiceLoader mechanism](https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html). To support auto loading of your own modules, first implement ```com.nhl.bootique.BQModuleProvider``` interface to create a Module instance for your own extension, and then include a file ```META-INF/services/com.nhl.bootique.BQModuleProvider``` with the only line containing the name of your BQModuleProvider implementor. E.g.:
+Application most often then not adds its own (Guice) Module to Bootique runtime that provides app-specific behavior. Though apps that are simply collections of other modules are perfectly valid as well. 
+
+Modules can be autoloaded via ```Bootique.autoLoadModules()``` as long as they are included in your aplication dependencies. Autloading is built on the Java [ServiceLoader mechanism](https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html). To support auto loading of your own modules, first implement ```com.nhl.bootique.BQModuleProvider``` interface to create a Module instance for your own extension, and then add a file ```META-INF/services/com.nhl.bootique.BQModuleProvider``` with the only line containing the name of your BQModuleProvider implementor. E.g.:
 
 ```
 com.foo.MyOwnModuleProvider
 ```
-During autoloading modules are configured using YAML config (as described below). Some modules additionally allow configuration in the code (e.g. see [JerseyModule](https://github.com/nhl/bootique-jersey/blob/master/src/main/java/com/nhl/bootique/jersey/JerseyModule.java) shown in the "Getting Started" example above).
+On autoloading modules are configured using YAML config (as described below). Some modules additionally allow configuration in the code (e.g. see [JerseyModule](https://github.com/nhl/bootique-jersey/blob/master/src/main/java/com/nhl/bootique/jersey/JerseyModule.java) shown in the "Getting Started" example above).
 
 ## Standard Modules
 
@@ -170,6 +172,10 @@ Below is a growing list of "standard" Bootique modules. With standard modules yo
 In example above Bootique printed ```--config <config_file>``` as one of the options. This is how you pass a configuration file to Bootique. By default config format is [YAML](http://www.yaml.org/), though just like everything else in Bootique it is easy to override to load a different format. Configuration data is a tree, which is loaded in memory when application starts. Parts of (or entire) configuration can be accessed as application- or module-specific configuration objects via injectable [ConfigurationFactory service](https://github.com/nhl/bootique/blob/master/src/main/java/com/nhl/bootique/config/ConfigurationFactory.java).
 
 TODO..
+
+## YAML Config for Modules
+
+TODO...
 
 ## YAML Config Property Overrides
 
