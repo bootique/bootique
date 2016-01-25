@@ -48,12 +48,14 @@ Write a main class that runs Bootique. In this example we are creating a JAX-RS 
 package com.example;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import javax.inject.Singleton;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
+import com.google.inject.Inject;
 import com.google.inject.Module;
 import com.nhl.bootique.Bootique;
 import com.nhl.bootique.jersey.JerseyModule;
