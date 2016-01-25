@@ -146,8 +146,11 @@ Below is a growing list of "standard" Bootique modules. With standard modules yo
 * [Bootique Jersey](https://github.com/nhl/bootique-jersey)
 * [Bootique Jetty](https://github.com/nhl/bootique-jetty)
 * [Bootique Job](https://github.com/nhl/bootique-job)
+* [Bootique LinkMove](https://github.com/nhl/bootique-linkmove)
+* [Bootique LinkRest](https://github.com/nhl/bootique-linkrest)
 * [Bootique Liquibase](https://github.com/nhl/bootique-liquibase)
 * [Bootique Logback](https://github.com/nhl/bootique-logback)
+* [Bootique Metrics](https://github.com/nhl/bootique-metrics)
 * [Bootique Zookeeper](https://github.com/nhl/bootique-zookeeper)
 
 ## YAML Config
