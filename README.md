@@ -165,9 +165,13 @@ Below is a growing list of "standard" Bootique modules. With standard modules yo
 
 ## YAML Config
 
+In example above Bootique printed ```--config <config_file>``` as one of the options. This is how you pass a configuration file to Bootique. By default config format is [YAML](http://www.yaml.org/), though just like everything else in Bootique it is easy to override to load a different format. Configuration data is a tree, which is loaded in memory when application starts. Parts of (or entire) configuration can be accessed as application- or module-specific configuration objects via injectable [ConfigurationFactory service](https://github.com/nhl/bootique/blob/master/src/main/java/com/nhl/bootique/config/ConfigurationFactory.java).
 
+TODO..
 
 ## YAML Config Property Overrides
+
+TODO...
 
 ## Tracing Bootique Startup
 
