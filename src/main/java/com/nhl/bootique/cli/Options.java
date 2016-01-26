@@ -11,6 +11,8 @@ import java.util.List;
  */
 public interface Options {
 
+	// TODO: this probably does not belong here.. instead we should be able to
+	// extract all options and print them using external renderer
 	void printHelp(Writer out);
 
 	boolean hasOption(String name);
@@ -22,5 +24,11 @@ public interface Options {
 	 *            option name
 	 * @return a potentially empty collection of CLI values for a given option.
 	 */
-	List<String> stringsFor(String name);
+	List<String> optionStrings(String name);
+
+	/**
+	 * Returns all arguments that are not options or option values in the order
+	 * they are encountered on the command line.
+	 */
+	List<String> nonOptionArgs();
 }

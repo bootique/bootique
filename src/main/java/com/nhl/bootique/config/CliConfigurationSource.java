@@ -23,7 +23,7 @@ public class CliConfigurationSource implements ConfigurationSource {
 	@Inject
 	public CliConfigurationSource(Options options, BootLogger bootLogger) {
 
-		Collection<String> configs = options.stringsFor(ConfigCommand.CONFIG_OPTION);
+		Collection<String> configs = options.optionStrings(ConfigCommand.CONFIG_OPTION);
 		if (configs.isEmpty()) {
 			// we are likely in boot sequence... so be quiet
 		} else if (configs.size() == 1) {

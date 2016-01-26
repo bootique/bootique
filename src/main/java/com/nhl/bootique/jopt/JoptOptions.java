@@ -44,7 +44,13 @@ public class JoptOptions implements Options {
 	}
 
 	@Override
-	public List<String> stringsFor(String optionName) {
+	public List<String> optionStrings(String optionName) {
 		return optionSet.valuesOf(optionName).stream().map(o -> String.valueOf(o)).collect(toList());
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> nonOptionArgs() {
+		return (List<String>) optionSet.nonOptionArguments();
 	}
 }

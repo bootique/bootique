@@ -35,7 +35,7 @@ public class JoptOptionsTest {
 		when(mockParsed.valueOf(anyString())).thenReturn(Collections.emptyList());
 
 		JoptOptions opts = new JoptOptions(mockBootLogger, mockParser, mockParsed);
-		assertNotNull(opts.stringsFor("no_such_opt"));
-		assertEquals(0, opts.stringsFor("no_such_opt").size());
+		assertNotNull(opts.optionStrings("no_such_opt"));
+		assertEquals(0, opts.optionStrings("no_such_opt").size());
 	}
 }
