@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Collection;
 
+import javax.swing.JOptionPane;
+
 import com.nhl.bootique.cli.Options;
 import com.nhl.bootique.log.BootLogger;
 
@@ -13,7 +15,7 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
 /**
- * A facade to the command-line option parsing framework.
+ * {@link Options} implementation on top of {@link JOptionPane} library.
  */
 public class JoptOptions implements Options {
 
