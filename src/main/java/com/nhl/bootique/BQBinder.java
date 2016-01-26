@@ -11,9 +11,9 @@ import com.nhl.bootique.command.Command;
 import com.nhl.bootique.env.EnvironmentProperties;
 
 /**
- * A helper class that allows to contribute commands and properties to Bootique
- * runtime. Create and invoke this binder insider your Module's "configure"
- * method to provide your own properties and/or Commands.
+ * A helper class used inside Modules that allows to contribute commands and
+ * properties to Bootique runtime. Create and invoke this binder inside your
+ * Module's "configure" method to provide your own properties and/or Commands.
  * 
  * @since 0.8
  */

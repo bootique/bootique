@@ -184,9 +184,35 @@ public class Bootique {
 		return this;
 	}
 
+	/**
+	 * Returns an instance of {@link BQRuntime} that contains all Bootique
+	 * services, commands, etc. This method is only needed if you need to run
+	 * your code manually, process {@link CommandOutcome} or don't want Bootique
+	 * to call {@link System#exit(int)}. Normally you should consider using
+	 * {@link #run()} instead.
+	 * 
+	 * @since 0.12
+	 * @return {@link BQRuntime} instance that contains all Bootique services,
+	 *         commands, etc.
+	 * @see Bootique#run()
+	 */
+	public BQRuntime runtime() {
+		Injector injector = createInjector();
+		return createRuntime(injector);
+	}
+
+	/**
+	 * Creates and runs {@link BQRuntime}, and processing its output. This
+	 * method is a rough alternative to "runtime().run().exit()". In most cases
+	 * calling it would result in the current JVM process to terminate.
+	 * <p>
+	 * If you don't want your app to shutdown after executing Bootique, you may
+	 * manually obtain {@link BQRuntime} by calling {@link #runtime()}, and run
+	 * it form your code without calling "exit()".
+	 */
 	public void run() {
 
-		BQRuntime runtime = createRuntime(createInjector());
+		BQRuntime runtime = runtime();
 		runtime.addJVMShutdownHook();
 		CommandOutcome o = runtime.run();
 
