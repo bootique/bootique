@@ -1,8 +1,7 @@
 package com.nhl.bootique.command;
 
-import com.nhl.bootique.jopt.Options;
-
-import joptsimple.OptionParser;
+import com.nhl.bootique.cli.OptionsBuilder;
+import com.nhl.bootique.cli.Options;
 
 @FunctionalInterface
 public interface Command {
@@ -15,17 +14,17 @@ public interface Command {
 	 * @return CommandOutcome object that indicates to the caller whether
 	 *         command was successful and whether the caller needs to continue
 	 *         with command chain.
+	 * @since 1.12
 	 */
 	CommandOutcome run(Options options);
 
 	/**
 	 * Allows subclasses to configure visible CLI options.
 	 * 
-	 * @param parser
-	 *            a mutable CLI parser that stores supported command line
-	 *            options.
+	 * @param optionsBuilder
+	 *            a mutable builder of options for a given command.
 	 */
-	default void configOptions(OptionParser parser) {
+	default void configOptions(OptionsBuilder optionsBuilder) {
 		// do nothing by default...
 	}
 }

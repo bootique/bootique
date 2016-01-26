@@ -1,15 +1,11 @@
 package com.nhl.bootique.command;
 
-import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Map;
 
 import com.google.inject.Inject;
-import com.nhl.bootique.jopt.Options;
+import com.nhl.bootique.cli.Options;
+import com.nhl.bootique.cli.OptionsBuilder;
 import com.nhl.bootique.log.BootLogger;
-
-import joptsimple.OptionParser;
-import joptsimple.OptionSpec;
 
 public class HelpCommand implements Command {
 
@@ -24,31 +20,20 @@ public class HelpCommand implements Command {
 
 	@Override
 	public CommandOutcome run(Options options) {
-		return options.getOptionSet().has(HELP_OPTION) ? printHelp(options) : CommandOutcome.skipped();
+		return options.hasOption(HELP_OPTION) ? printHelp(options) : CommandOutcome.skipped();
 	}
 
 	protected CommandOutcome printHelp(Options options) {
 		StringWriter out = new StringWriter();
-
-		try {
-			options.getParser().printHelpOn(out);
-		} catch (IOException e) {
-			bootLogger.stderr("Error printing help", e);
-		}
+		options.printHelp(out);
 
 		bootLogger.stdout(out.toString());
 		return CommandOutcome.succeeded();
 	}
 
 	@Override
-	public void configOptions(OptionParser parser) {
-
-		// install framework options unless they are already defined...
-		Map<String, OptionSpec<?>> existing = parser.recognizedOptions();
-
-		if (!existing.containsKey(HELP_OPTION)) {
-			parser.accepts(HELP_OPTION, "Prints this message.").forHelp();
-		}
+	public void configOptions(OptionsBuilder optionsBuilder) {
+		optionsBuilder.addHelp(HELP_OPTION, "Prints this message.");
 	}
 
 }

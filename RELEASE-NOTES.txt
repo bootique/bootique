@@ -1,19 +1,23 @@
-0.11
+0.12:
+
+#17 Wrap CLI Options API to avoid direct dependency on JOpt lib in commands
+
+0.11:
 
 #8 Remove API's deprecated since 0.10
 #10 Service shutdown functionality
 
-0.10
+0.10:
 
 #5 FactoryConfigurationService refactoring
 #6 Service/Module override support
 #7 Start publishing Bootique to Maven central repo
 
-0.9
+0.9:
 
 #4 FactoryConfigurationService - support for loading parameterized types
 
-0.8
+0.8:
 
 #1 Merge bundles and modules into a single concept
 #2 Auto-load extensions

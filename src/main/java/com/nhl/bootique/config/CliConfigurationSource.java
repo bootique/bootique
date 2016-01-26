@@ -8,8 +8,8 @@ import java.util.Collection;
 import java.util.function.Function;
 
 import com.google.inject.Inject;
+import com.nhl.bootique.cli.Options;
 import com.nhl.bootique.command.ConfigCommand;
-import com.nhl.bootique.jopt.Options;
 import com.nhl.bootique.log.BootLogger;
 
 /**

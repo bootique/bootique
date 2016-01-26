@@ -1,6 +1,6 @@
 package com.nhl.bootique.command;
 
-import com.nhl.bootique.jopt.Options;
+import com.nhl.bootique.cli.Options;
 
 public abstract class OptionTriggeredCommand implements Command {
 
@@ -10,7 +10,7 @@ public abstract class OptionTriggeredCommand implements Command {
 	}
 
 	protected boolean hasOption(Options options) {
-		return options.getOptionSet().has(getOption());
+		return options.hasOption(getOption());
 	}
 
 	protected abstract CommandOutcome doRun(Options options);
