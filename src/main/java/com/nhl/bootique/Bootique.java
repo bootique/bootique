@@ -85,6 +85,7 @@ public class Bootique {
 	 *            custom Module class to add to Bootique DI runtime.
 	 * @return this Bootique instance
 	 * @since 0.8
+	 * @see #autoLoadModules()
 	 */
 	public Bootique module(Class<? extends Module> moduleType) {
 		Objects.requireNonNull(moduleType);
@@ -93,10 +94,14 @@ public class Bootique {
 	}
 
 	/**
+	 * Adds an array of Module types to the Booqtique DI runtime. Each type will
+	 * be instantiated by Bootique and added to the Guice DI container.
+	 * 
 	 * @param moduleTypes
 	 *            custom Module classes to add to Bootique DI runtime.
 	 * @return this Bootique instance
 	 * @since 0.8
+	 * @see #autoLoadModules()
 	 */
 	@SafeVarargs
 	public final Bootique modules(Class<? extends Module>... moduleTypes) {
@@ -110,11 +115,26 @@ public class Bootique {
 		return this;
 	}
 
+	/**
+	 * Adds an array of Modules to the Booqtique DI runtime.
+	 * 
+	 * @param modules
+	 *            an array of modules to add to Booqtie DI runtime.
+	 * @return this instance of {@link Bootique}.
+	 */
 	public Bootique modules(Module... modules) {
 		Arrays.asList(modules).forEach(m -> module(m));
 		return this;
 	}
 
+	/**
+	 * Starts an API call chain to override an array of Modules.
+	 * 
+	 * @param overriddenTypes
+	 *            an array of modules whose bindings should be overridden.
+	 * @return {@link BQModuleOverrideBuilder} object to specify a Module
+	 *         overriding other modules.
+	 */
 	@SafeVarargs
 	public final BQModuleOverrideBuilder override(Class<? extends Module>... overriddenTypes) {
 		return new BQModuleOverrideBuilder() {
@@ -187,7 +207,7 @@ public class Bootique {
 
 		o.exit();
 	}
-	
+
 	protected BQRuntime createRuntime(Injector injector) {
 		return new BQRuntime(injector);
 	}
