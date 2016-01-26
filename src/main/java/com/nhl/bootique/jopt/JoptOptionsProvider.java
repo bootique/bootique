@@ -6,7 +6,6 @@ import java.util.Set;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.nhl.bootique.cli.Options;
-import com.nhl.bootique.cli.OptionsBuilder;
 import com.nhl.bootique.command.Command;
 import com.nhl.bootique.log.BootLogger;
 
@@ -28,11 +27,11 @@ public class JoptOptionsProvider implements Provider<Options> {
 	@Override
 	public Options get() {
 		OptionParser parser = new OptionParser();
-		OptionsBuilder builder = new JoptOptionsBuilder(parser);
+		JoptOptionsBuilder builder = new JoptOptionsBuilder(parser, bootLogger);
 
 		// allow each command to add its own options before parsing
 		commands.forEach(e -> e.configOptions(builder));
 
-		return new JoptOptions(bootLogger, parser, parser.parse(args));
+		return builder.build(args);
 	}
 }

@@ -16,15 +16,13 @@ class JoptOptionBuilder implements OptionBuilder {
 	}
 
 	@Override
-	public OptionBuilder mayTakeArgument(String description) {
+	public void mayTakeArgument(String description) {
 		optionSpecBuilder.withOptionalArg().describedAs(description);
-		return this;
 	}
 
 	@Override
-	public OptionBuilder requiresArgument(String description) {
+	public void requiresArgument(String description) {
 		optionSpecBuilder.withRequiredArg().describedAs(description);
-		return this;
 	}
 
 }

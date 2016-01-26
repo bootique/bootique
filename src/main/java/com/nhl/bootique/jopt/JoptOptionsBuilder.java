@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import com.nhl.bootique.cli.OptionBuilder;
 import com.nhl.bootique.cli.OptionsBuilder;
+import com.nhl.bootique.log.BootLogger;
 
 import joptsimple.OptionParser;
 import joptsimple.OptionSpecBuilder;
@@ -17,20 +18,26 @@ class JoptOptionsBuilder implements OptionsBuilder {
 	private static final OptionBuilder BLOCKED_OPTION_BUILDER = new OptionBuilder() {
 
 		@Override
-		public OptionBuilder requiresArgument(String description) {
-			return this;
+		public void requiresArgument(String description) {
+			// do nothing
 		}
 
 		@Override
-		public OptionBuilder mayTakeArgument(String description) {
-			return this;
+		public void mayTakeArgument(String description) {
+			// do nothing
 		}
 	};
 
 	private OptionParser optionParser;
+	private BootLogger bootLogger;
 
-	JoptOptionsBuilder(OptionParser optionParser) {
+	JoptOptionsBuilder(OptionParser optionParser, BootLogger bootLogger) {
 		this.optionParser = optionParser;
+		this.bootLogger = bootLogger;
+	}
+
+	JoptOptions build(String... args) {
+		return new JoptOptions(bootLogger, optionParser, optionParser.parse(args));
 	}
 
 	private Optional<OptionSpecBuilder> specBuilder(String option, String description) {

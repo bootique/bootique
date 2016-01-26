@@ -5,7 +5,8 @@ package com.nhl.bootique.cli;
  */
 public interface OptionBuilder {
 
-	OptionBuilder requiresArgument(String description);
+	void requiresArgument(String description);
 
-	OptionBuilder mayTakeArgument(String description);
+	void mayTakeArgument(String description);
+
 }

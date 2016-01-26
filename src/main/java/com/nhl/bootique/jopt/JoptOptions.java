@@ -4,7 +4,7 @@ import static java.util.stream.Collectors.toList;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.Collection;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -44,7 +44,7 @@ public class JoptOptions implements Options {
 	}
 
 	@Override
-	public Collection<String> stringsFor(String optionName) {
+	public List<String> stringsFor(String optionName) {
 		return optionSet.valuesOf(optionName).stream().map(o -> String.valueOf(o)).collect(toList());
 	}
 }

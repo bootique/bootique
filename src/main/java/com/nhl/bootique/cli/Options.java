@@ -1,7 +1,7 @@
 package com.nhl.bootique.cli;
 
 import java.io.Writer;
-import java.util.Collection;
+import java.util.List;
 
 /**
  * An object that represents a set of command line options passed to Booqtie
@@ -16,11 +16,11 @@ public interface Options {
 	boolean hasOption(String name);
 
 	/**
-	 * Returns a collection of String values for the specified option name.
+	 * Returns a List of String values for the specified option name.
 	 * 
 	 * @param name
 	 *            option name
 	 * @return a potentially empty collection of CLI values for a given option.
 	 */
-	Collection<String> stringsFor(String name);
+	List<String> stringsFor(String name);
 }
