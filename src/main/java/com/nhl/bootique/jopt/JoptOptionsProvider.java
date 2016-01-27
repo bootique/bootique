@@ -5,13 +5,13 @@ import java.util.Set;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.nhl.bootique.cli.Options;
+import com.nhl.bootique.cli.CommandLine;
 import com.nhl.bootique.command.Command;
 import com.nhl.bootique.log.BootLogger;
 
 import joptsimple.OptionParser;
 
-public class JoptOptionsProvider implements Provider<Options> {
+public class JoptOptionsProvider implements Provider<CommandLine> {
 
 	private String[] args;
 	private Collection<Command> commands;
@@ -25,7 +25,7 @@ public class JoptOptionsProvider implements Provider<Options> {
 	}
 
 	@Override
-	public Options get() {
+	public CommandLine get() {
 		OptionParser parser = new OptionParser();
 		JoptOptionsBuilder builder = new JoptOptionsBuilder(parser, bootLogger);
 

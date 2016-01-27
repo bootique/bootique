@@ -1,6 +1,6 @@
 package com.nhl.bootique.command;
 
-import com.nhl.bootique.cli.Options;
+import com.nhl.bootique.cli.CommandLine;
 import com.nhl.bootique.cli.OptionsBuilder;
 
 public class ConfigCommand implements Command {
@@ -8,7 +8,7 @@ public class ConfigCommand implements Command {
 	public static final String CONFIG_OPTION = "config";
 
 	@Override
-	public CommandOutcome run(Options options) {
+	public CommandOutcome run(CommandLine options) {
 		return CommandOutcome.skipped();
 	}
 

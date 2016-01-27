@@ -1,7 +1,7 @@
 package com.nhl.bootique.command;
 
 import com.google.inject.Inject;
-import com.nhl.bootique.cli.Options;
+import com.nhl.bootique.cli.CommandLine;
 import com.nhl.bootique.log.BootLogger;
 
 /**
@@ -17,7 +17,7 @@ public class FailoverHelpCommand extends HelpCommand {
 	}
 
 	@Override
-	public CommandOutcome run(Options options) {
+	public CommandOutcome run(CommandLine options) {
 		return printHelp(options);
 	}
 }

@@ -8,16 +8,16 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import com.nhl.bootique.cli.Options;
+import com.nhl.bootique.cli.CommandLine;
 import com.nhl.bootique.log.BootLogger;
 
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
 /**
- * {@link Options} implementation on top of {@link JOptionPane} library.
+ * {@link CommandLine} implementation on top of {@link JOptionPane} library.
  */
-public class JoptOptions implements Options {
+public class JoptOptions implements CommandLine {
 
 	private OptionParser parser;
 	private OptionSet optionSet;
@@ -50,7 +50,7 @@ public class JoptOptions implements Options {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<String> nonOptionArgs() {
+	public List<String> standaloneArguments() {
 		return (List<String>) optionSet.nonOptionArguments();
 	}
 }

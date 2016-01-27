@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.function.Function;
 
 import com.google.inject.Inject;
-import com.nhl.bootique.cli.Options;
+import com.nhl.bootique.cli.CommandLine;
 import com.nhl.bootique.command.ConfigCommand;
 import com.nhl.bootique.log.BootLogger;
 
@@ -21,7 +21,7 @@ public class CliConfigurationSource implements ConfigurationSource {
 	private String location;
 
 	@Inject
-	public CliConfigurationSource(Options options, BootLogger bootLogger) {
+	public CliConfigurationSource(CommandLine options, BootLogger bootLogger) {
 
 		Collection<String> configs = options.optionStrings(ConfigCommand.CONFIG_OPTION);
 		if (configs.isEmpty()) {

@@ -82,7 +82,7 @@ public class JoptOptionsIT {
 		optionsBuilder.add("other", null).mayTakeArgument(null);
 		optionsBuilder.add("yes", null);
 
-		assertEquals(createOptions("a --me=v1 --other v2 b --me v4 --yes c d").nonOptionArgs(), "a", "b", "c", "d");
+		assertEquals(createOptions("a --me=v1 --other v2 b --me v4 --yes c d").standaloneArguments(), "a", "b", "c", "d");
 	}
 
 	@Test
@@ -90,7 +90,7 @@ public class JoptOptionsIT {
 		optionsBuilder.add("me", null).mayTakeArgument(null);
 		optionsBuilder.add("other", null).mayTakeArgument(null);
 
-		assertEquals(createOptions("a --me=v1 -- --other v2").nonOptionArgs(), "a", "--other", "v2");
+		assertEquals(createOptions("a --me=v1 -- --other v2").standaloneArguments(), "a", "--other", "v2");
 	}
 
 	private void assertEquals(Collection<String> result, String... expected) {

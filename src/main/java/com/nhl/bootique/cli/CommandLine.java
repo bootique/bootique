@@ -4,12 +4,12 @@ import java.io.Writer;
 import java.util.List;
 
 /**
- * An object that represents a set of command line options passed to Booqtie
- * app.
+ * An object that represents a set of command-line options passed to the
+ * Bootique app.
  * 
  * @since 0.12
  */
-public interface Options {
+public interface CommandLine {
 
 	// TODO: this probably does not belong here.. instead we should be able to
 	// extract all options and print them using external renderer
@@ -30,5 +30,5 @@ public interface Options {
 	 * Returns all arguments that are not options or option values in the order
 	 * they are encountered on the command line.
 	 */
-	List<String> nonOptionArgs();
+	List<String> standaloneArguments();
 }

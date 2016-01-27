@@ -3,7 +3,7 @@ package com.nhl.bootique.command;
 import java.io.StringWriter;
 
 import com.google.inject.Inject;
-import com.nhl.bootique.cli.Options;
+import com.nhl.bootique.cli.CommandLine;
 import com.nhl.bootique.cli.OptionsBuilder;
 import com.nhl.bootique.log.BootLogger;
 
@@ -19,11 +19,11 @@ public class HelpCommand implements Command {
 	}
 
 	@Override
-	public CommandOutcome run(Options options) {
+	public CommandOutcome run(CommandLine options) {
 		return options.hasOption(HELP_OPTION) ? printHelp(options) : CommandOutcome.skipped();
 	}
 
-	protected CommandOutcome printHelp(Options options) {
+	protected CommandOutcome printHelp(CommandLine options) {
 		StringWriter out = new StringWriter();
 		options.printHelp(out);
 

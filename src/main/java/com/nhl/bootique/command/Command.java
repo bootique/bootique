@@ -1,7 +1,7 @@
 package com.nhl.bootique.command;
 
 import com.nhl.bootique.cli.OptionsBuilder;
-import com.nhl.bootique.cli.Options;
+import com.nhl.bootique.cli.CommandLine;
 
 @FunctionalInterface
 public interface Command {
@@ -16,7 +16,7 @@ public interface Command {
 	 *         with command chain.
 	 * @since 1.12
 	 */
-	CommandOutcome run(Options options);
+	CommandOutcome run(CommandLine options);
 
 	/**
 	 * Allows subclasses to configure visible CLI options.

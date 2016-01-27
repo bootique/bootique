@@ -7,7 +7,7 @@ import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.nhl.bootique.cli.Options;
+import com.nhl.bootique.cli.CommandLine;
 import com.nhl.bootique.command.Command;
 import com.nhl.bootique.command.ConfigCommand;
 import com.nhl.bootique.command.DefaultCommand;
@@ -52,7 +52,7 @@ public class BQCoreModule implements Module {
 		binder.bind(Runner.class).to(DefaultRunner.class).in(Singleton.class);
 		binder.bind(ShutdownManager.class).to(DefaultShutdownManager.class).in(Singleton.class);
 		binder.bind(Duration.class).annotatedWith(ShutdownTimeout.class).toInstance(shutdownTimeout);
-		binder.bind(Options.class).toProvider(JoptOptionsProvider.class).in(Singleton.class);
+		binder.bind(CommandLine.class).toProvider(JoptOptionsProvider.class).in(Singleton.class);
 		binder.bind(ConfigurationSource.class).to(CliConfigurationSource.class).in(Singleton.class);
 
 		binder.bind(ConfigurationFactory.class).to(YamlConfigurationFactory.class).in(Singleton.class);
