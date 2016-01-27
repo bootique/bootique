@@ -69,6 +69,12 @@ public class BQRuntime {
 		});
 	}
 
+	/**
+	 * @deprecated since 0.12 {@link Bootique} uses its own run method,
+	 *             essentially delegating to {@link #getRunner()}.
+	 * @return the outcome of executing the runner.
+	 */
+	@Deprecated
 	public CommandOutcome run() {
 		try {
 			return getRunner().run();

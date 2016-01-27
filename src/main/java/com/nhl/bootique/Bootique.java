@@ -9,11 +9,14 @@ import java.util.ServiceLoader;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import com.google.inject.ProvisionException;
 import com.nhl.bootique.command.Command;
 import com.nhl.bootique.command.CommandOutcome;
 import com.nhl.bootique.env.DefaultEnvironment;
 import com.nhl.bootique.log.BootLogger;
 import com.nhl.bootique.log.DefaultBootLogger;
+
+import joptsimple.OptionException;
 
 /**
  * A main launcher class of Bootique. To start a Bootique app, you may write
@@ -203,18 +206,20 @@ public class Bootique {
 
 	/**
 	 * Creates and runs {@link BQRuntime}, and processing its output. This
-	 * method is a rough alternative to "runtime().run().exit()". In most cases
-	 * calling it would result in the current JVM process to terminate.
+	 * method is a rough alternative to "runtime().getRunner().run().exit()". In
+	 * most cases calling it would result in the current JVM process to
+	 * terminate.
 	 * <p>
 	 * If you don't want your app to shutdown after executing Bootique, you may
 	 * manually obtain {@link BQRuntime} by calling {@link #runtime()}, and run
-	 * it form your code without calling "exit()".
+	 * it from your code without calling "exit()".
 	 */
 	public void run() {
 
 		BQRuntime runtime = runtime();
 		runtime.addJVMShutdownHook();
-		CommandOutcome o = runtime.run();
+
+		CommandOutcome o = run(runtime);
 
 		// report error
 		if (!o.isSuccess()) {
@@ -232,6 +237,17 @@ public class Bootique {
 		}
 
 		o.exit();
+	}
+
+	protected CommandOutcome run(BQRuntime runtime) {
+		try {
+			return runtime.getRunner().run();
+		}
+		// handle startup Guice exceptions
+		catch (ProvisionException e) {
+			return (e.getCause() instanceof OptionException) ? CommandOutcome.failed(1, e.getCause().getMessage())
+					: CommandOutcome.failed(1, e);
+		}
 	}
 
 	protected BQRuntime createRuntime(Injector injector) {
