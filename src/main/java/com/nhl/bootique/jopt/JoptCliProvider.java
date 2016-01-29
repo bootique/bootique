@@ -72,14 +72,14 @@ public class JoptCliProvider implements Provider<Cli> {
 			// using option-bound command strategy...
 			addOption(parser, CliOption.builder(c.getMetadata().getName()).build());
 		});
-		
+
 		// load global options; TODO: check for conflicts with other options
 		options.forEach(o -> addOption(parser, o));
 
 		return parser;
 	}
 
-	private void addOption(OptionParser parser, CliOption option) {
+	protected void addOption(OptionParser parser, CliOption option) {
 
 		OptionSpecBuilder optionBuilder = parser.accepts(option.getName(), option.getDescription());
 		switch (option.getValueCardinality()) {
