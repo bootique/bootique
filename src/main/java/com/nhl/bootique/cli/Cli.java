@@ -9,7 +9,13 @@ import java.util.List;
  * 
  * @since 0.12
  */
-public interface CommandLine {
+public interface Cli {
+
+	/**
+	 * Returns the name of the command to run, possibly derived from options or
+	 * standalone arguments.
+	 */
+	String commandName();
 
 	// TODO: this probably does not belong here.. instead we should be able to
 	// extract all options and print them using external renderer

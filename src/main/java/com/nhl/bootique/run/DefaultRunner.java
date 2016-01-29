@@ -4,19 +4,19 @@ import java.util.Collection;
 import java.util.Set;
 
 import com.google.inject.Inject;
-import com.nhl.bootique.cli.CommandLine;
+import com.nhl.bootique.cli.Cli;
 import com.nhl.bootique.command.Command;
 import com.nhl.bootique.command.CommandOutcome;
 import com.nhl.bootique.command.DefaultCommand;
 
 public class DefaultRunner implements Runner {
 
-	private CommandLine options;
+	private Cli options;
 	private Collection<Command> commands;
 	private Command defaultCommand;
 
 	@Inject
-	public DefaultRunner(CommandLine options, Set<Command> commands, @DefaultCommand Command defaultCommand) {
+	public DefaultRunner(Cli options, Set<Command> commands, @DefaultCommand Command defaultCommand) {
 		this.options = options;
 		this.commands = commands;
 		this.defaultCommand = defaultCommand;

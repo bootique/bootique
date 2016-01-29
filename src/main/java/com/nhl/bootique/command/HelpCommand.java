@@ -3,37 +3,30 @@ package com.nhl.bootique.command;
 import java.io.StringWriter;
 
 import com.google.inject.Inject;
-import com.nhl.bootique.cli.CommandLine;
-import com.nhl.bootique.cli.OptionsBuilder;
+import com.nhl.bootique.cli.Cli;
 import com.nhl.bootique.log.BootLogger;
 
-public class HelpCommand implements Command {
-
-	protected static final String HELP_OPTION = "help";
+public class HelpCommand extends CommandWithMetadata {
 
 	private BootLogger bootLogger;
 
 	@Inject
 	public HelpCommand(BootLogger bootLogger) {
+		super(CommandMetadata.builder(HelpCommand.class).description("Prints this message.").build());
 		this.bootLogger = bootLogger;
 	}
 
 	@Override
-	public CommandOutcome run(CommandLine options) {
-		return options.hasOption(HELP_OPTION) ? printHelp(options) : CommandOutcome.skipped();
+	public CommandOutcome run(Cli cli) {
+		return printHelp(cli);
 	}
 
-	protected CommandOutcome printHelp(CommandLine options) {
+	protected CommandOutcome printHelp(Cli cli) {
 		StringWriter out = new StringWriter();
-		options.printHelp(out);
+		cli.printHelp(out);
 
 		bootLogger.stdout(out.toString());
 		return CommandOutcome.succeeded();
-	}
-
-	@Override
-	public void configOptions(OptionsBuilder optionsBuilder) {
-		optionsBuilder.addHelp(HELP_OPTION, "Prints this message.");
 	}
 
 }

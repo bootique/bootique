@@ -1,7 +1,6 @@
 package com.nhl.bootique.command;
 
-import com.nhl.bootique.cli.OptionsBuilder;
-import com.nhl.bootique.cli.CommandLine;
+import com.nhl.bootique.cli.Cli;
 
 @FunctionalInterface
 public interface Command {
@@ -14,17 +13,18 @@ public interface Command {
 	 * @return CommandOutcome object that indicates to the caller whether
 	 *         command was successful and whether the caller needs to continue
 	 *         with command chain.
-	 * @since 1.12
+	 * @since 0.12
 	 */
-	CommandOutcome run(CommandLine options);
+	CommandOutcome run(Cli options);
 
 	/**
-	 * Allows subclasses to configure visible CLI options.
+	 * Returns a metadata object for this command. Default implementation
+	 * generates barebone metadata based on class name.
 	 * 
-	 * @param optionsBuilder
-	 *            a mutable builder of options for a given command.
+	 * @return metadata object describing current command.
+	 * @since 0.12
 	 */
-	default void configOptions(OptionsBuilder optionsBuilder) {
-		// do nothing by default...
+	default CommandMetadata getMetadata() {
+		return CommandMetadata.builder(getClass()).build();
 	}
 }

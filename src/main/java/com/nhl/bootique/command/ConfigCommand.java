@@ -1,19 +1,17 @@
 package com.nhl.bootique.command;
 
-import com.nhl.bootique.cli.CommandLine;
-import com.nhl.bootique.cli.OptionsBuilder;
+import com.nhl.bootique.cli.Cli;
 
-public class ConfigCommand implements Command {
+public class ConfigCommand extends CommandWithMetadata {
 
 	public static final String CONFIG_OPTION = "config";
 
-	@Override
-	public CommandOutcome run(CommandLine options) {
-		return CommandOutcome.skipped();
+	public ConfigCommand() {
+		super(CommandMetadata.builder(ConfigCommand.class).description("Specifies YAML config file path.").build());
 	}
 
 	@Override
-	public void configOptions(OptionsBuilder optionsBuilder) {
-		optionsBuilder.add(CONFIG_OPTION, "Specifies YAML config file path.").requiresArgument("config_file");
+	public CommandOutcome run(Cli cli) {
+		return CommandOutcome.skipped();
 	}
 }

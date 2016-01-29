@@ -7,7 +7,7 @@ import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.nhl.bootique.cli.CommandLine;
+import com.nhl.bootique.cli.Cli;
 import com.nhl.bootique.command.Command;
 import com.nhl.bootique.command.ConfigCommand;
 import com.nhl.bootique.command.DefaultCommand;
@@ -23,7 +23,7 @@ import com.nhl.bootique.env.EnvironmentProperties;
 import com.nhl.bootique.jackson.DefaultJacksonService;
 import com.nhl.bootique.jackson.JacksonService;
 import com.nhl.bootique.jopt.Args;
-import com.nhl.bootique.jopt.JoptOptionsProvider;
+import com.nhl.bootique.jopt.JoptCliProvider;
 import com.nhl.bootique.log.BootLogger;
 import com.nhl.bootique.run.DefaultRunner;
 import com.nhl.bootique.run.Runner;
@@ -52,7 +52,7 @@ public class BQCoreModule implements Module {
 		binder.bind(Runner.class).to(DefaultRunner.class).in(Singleton.class);
 		binder.bind(ShutdownManager.class).to(DefaultShutdownManager.class).in(Singleton.class);
 		binder.bind(Duration.class).annotatedWith(ShutdownTimeout.class).toInstance(shutdownTimeout);
-		binder.bind(CommandLine.class).toProvider(JoptOptionsProvider.class).in(Singleton.class);
+		binder.bind(Cli.class).toProvider(JoptCliProvider.class).in(Singleton.class);
 		binder.bind(ConfigurationSource.class).to(CliConfigurationSource.class).in(Singleton.class);
 
 		binder.bind(ConfigurationFactory.class).to(YamlConfigurationFactory.class).in(Singleton.class);
