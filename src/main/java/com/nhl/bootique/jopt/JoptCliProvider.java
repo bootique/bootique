@@ -10,8 +10,8 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.nhl.bootique.annotation.Args;
 import com.nhl.bootique.cli.Cli;
+import com.nhl.bootique.cli.CliOption;
 import com.nhl.bootique.command.Command;
-import com.nhl.bootique.command.CommandOption;
 import com.nhl.bootique.log.BootLogger;
 
 import joptsimple.OptionParser;
@@ -22,11 +22,13 @@ public class JoptCliProvider implements Provider<Cli> {
 
 	private String[] args;
 	private Map<String, Command> commands;
+	private Set<CliOption> options;
 	private BootLogger bootLogger;
 
 	@Inject
-	public JoptCliProvider(BootLogger bootLogger, Set<Command> commands, @Args String[] args) {
+	public JoptCliProvider(BootLogger bootLogger, Set<Command> commands, Set<CliOption> options, @Args String[] args) {
 		this.commands = mapCommands(commands);
+		this.options = options;
 		this.args = args;
 		this.bootLogger = bootLogger;
 	}
@@ -68,13 +70,16 @@ public class JoptCliProvider implements Provider<Cli> {
 			});
 
 			// using option-bound command strategy...
-			addOption(parser, CommandOption.builder(c.getMetadata().getName()).build());
+			addOption(parser, CliOption.builder(c.getMetadata().getName()).build());
 		});
+		
+		// load global options; TODO: check for conflicts with other options
+		options.forEach(o -> addOption(parser, o));
 
 		return parser;
 	}
 
-	private void addOption(OptionParser parser, CommandOption option) {
+	private void addOption(OptionParser parser, CliOption option) {
 
 		OptionSpecBuilder optionBuilder = parser.accepts(option.getName(), option.getDescription());
 		switch (option.getValueCardinality()) {

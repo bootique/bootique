@@ -9,7 +9,6 @@ import java.util.function.Function;
 
 import com.google.inject.Inject;
 import com.nhl.bootique.cli.Cli;
-import com.nhl.bootique.command.ConfigCommand;
 import com.nhl.bootique.log.BootLogger;
 
 /**
@@ -17,13 +16,15 @@ import com.nhl.bootique.log.BootLogger;
  * via command-line '--config' option.
  */
 public class CliConfigurationSource implements ConfigurationSource {
+	
+	public static final String CONFIG_OPTION = "config";
 
 	private String location;
 
 	@Inject
 	public CliConfigurationSource(Cli options, BootLogger bootLogger) {
 
-		Collection<String> configs = options.optionStrings(ConfigCommand.CONFIG_OPTION);
+		Collection<String> configs = options.optionStrings(CONFIG_OPTION);
 		if (configs.isEmpty()) {
 			// we are likely in boot sequence... so be quiet
 		} else if (configs.size() == 1) {

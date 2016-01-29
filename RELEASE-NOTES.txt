@@ -1,6 +1,7 @@
 0.12:
 
 #17 Wrap CLI Options API to avoid direct dependency on JOpt lib in commands
+#18 Separate a concept of DI-bound option from Command
 
 0.11:
 

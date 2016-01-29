@@ -8,6 +8,7 @@ import com.google.inject.Binder;
 import com.google.inject.multibindings.MapBinder;
 import com.google.inject.multibindings.Multibinder;
 import com.nhl.bootique.annotation.EnvironmentProperties;
+import com.nhl.bootique.cli.CliOption;
 import com.nhl.bootique.command.Command;
 
 /**
@@ -78,5 +79,30 @@ public class BQBinder {
 	public void commands(Collection<? extends Command> commands) {
 		Multibinder<Command> commandBinder = Multibinder.newSetBinder(binder, Command.class);
 		Preconditions.checkNotNull(commands).forEach(c -> commandBinder.addBinding().toInstance(c));
+	}
+
+	/**
+	 * Binds global options not explicitly associated with Commands
+	 * 
+	 * @since 0.12
+	 * @param options
+	 *            an array of options to recognize when parsing command line,
+	 *            which should be merged into existing set of options.
+	 */
+	public void options(CliOption... options) {
+		options(Arrays.asList(Preconditions.checkNotNull(options)));
+	}
+
+	/**
+	 * Binds global options not explicitly associated with Commands
+	 * 
+	 * @since 0.12
+	 * @param options
+	 *            a collection of options to recognize when parsing command
+	 *            line, which should be merged into existing set of options.
+	 */
+	public void options(Collection<CliOption> options) {
+		Multibinder<CliOption> optionsBinder = Multibinder.newSetBinder(binder, CliOption.class);
+		Preconditions.checkNotNull(options).forEach(o -> optionsBinder.addBinding().toInstance(o));
 	}
 }

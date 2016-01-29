@@ -14,26 +14,28 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.nhl.bootique.cli.Cli;
+import com.nhl.bootique.cli.CliOption;
 import com.nhl.bootique.command.Command;
 import com.nhl.bootique.command.CommandMetadata;
-import com.nhl.bootique.command.CommandOption;
 import com.nhl.bootique.log.BootLogger;
 
 public class JoptCliProviderIT {
 
 	private BootLogger mockBootLogger;
 	private Set<Command> commands;
+	private Set<CliOption> options;
 
 	@Before
 	public void before() {
 		this.mockBootLogger = mock(BootLogger.class);
 		this.commands = new HashSet<>();
+		this.options = new HashSet<>();
 	}
 
 	@Test
 	public void testGet_HasOption() {
 
-		addMockCommand(CommandMetadata.builder("c1").addOption(CommandOption.builder("me")));
+		addMockCommand(CommandMetadata.builder("c1").addOption(CliOption.builder("me")));
 
 		assertTrue(createOptions("-m").hasOption("me"));
 		assertTrue(createOptions("--me").hasOption("me"));
@@ -43,21 +45,21 @@ public class JoptCliProviderIT {
 
 	@Test
 	public void testOptionStrings_Short() {
-		addMockCommand(CommandMetadata.builder("c1").addOption(CommandOption.builder("me").valueOptional(null)));
+		addMockCommand(CommandMetadata.builder("c1").addOption(CliOption.builder("me").valueOptional(null)));
 
 		assertEquals(createOptions("-m v4").optionStrings("me"), "v4");
 	}
 
 	@Test
 	public void testOptionStrings_Long_Equals() {
-		addMockCommand(CommandMetadata.builder("c1").addOption(CommandOption.builder("me").valueOptional(null)));
+		addMockCommand(CommandMetadata.builder("c1").addOption(CliOption.builder("me").valueOptional(null)));
 
 		assertEquals(createOptions("--me=v4").optionStrings("me"), "v4");
 	}
 
 	@Test
 	public void testOptionStrings_Long_Space() {
-		addMockCommand(CommandMetadata.builder("c1").addOption(CommandOption.builder("me").valueOptional(null)));
+		addMockCommand(CommandMetadata.builder("c1").addOption(CliOption.builder("me").valueOptional(null)));
 
 		assertEquals(createOptions("--me v4").optionStrings("me"), "v4");
 	}
@@ -65,25 +67,25 @@ public class JoptCliProviderIT {
 	@Test
 	public void testOptionStrings_Single_Mixed() {
 
-		addMockCommand(CommandMetadata.builder("c1").addOption(CommandOption.builder("me").valueOptional(null))
-				.addOption(CommandOption.builder("other").valueOptional(null)));
+		addMockCommand(CommandMetadata.builder("c1").addOption(CliOption.builder("me").valueOptional(null))
+				.addOption(CliOption.builder("other").valueOptional(null)));
 
 		assertEquals(createOptions("--other v2 --me=v4").optionStrings("me"), "v4");
 	}
 
 	@Test
 	public void testOptionStrings_Multiple_Mixed() {
-		addMockCommand(CommandMetadata.builder("c1").addOption(CommandOption.builder("me").valueOptional(null))
-				.addOption(CommandOption.builder("other").valueOptional(null))
-				.addOption(CommandOption.builder("n").valueOptional(null)).addOption(CommandOption.builder("yes")));
+		addMockCommand(CommandMetadata.builder("c1").addOption(CliOption.builder("me").valueOptional(null))
+				.addOption(CliOption.builder("other").valueOptional(null))
+				.addOption(CliOption.builder("n").valueOptional(null)).addOption(CliOption.builder("yes")));
 
 		assertEquals(createOptions("--me=v1 --other v2 -n v3 --me v4 --yes").optionStrings("me"), "v1", "v4");
 	}
 
 	@Test
 	public void testNonOptionArgs_Mix() {
-		addMockCommand(CommandMetadata.builder("c1").addOption(CommandOption.builder("me").valueOptional(null))
-				.addOption(CommandOption.builder("other").valueOptional(null)).addOption(CommandOption.builder("yes")));
+		addMockCommand(CommandMetadata.builder("c1").addOption(CliOption.builder("me").valueOptional(null))
+				.addOption(CliOption.builder("other").valueOptional(null)).addOption(CliOption.builder("yes")));
 
 		assertEquals(createOptions("a --me=v1 --other v2 b --me v4 --yes c d").standaloneArguments(), "a", "b", "c",
 				"d");
@@ -91,8 +93,8 @@ public class JoptCliProviderIT {
 
 	@Test
 	public void testNonOptionArgs_DashDash() {
-		addMockCommand(CommandMetadata.builder("c1").addOption(CommandOption.builder("me").valueOptional(null))
-				.addOption(CommandOption.builder("other").valueOptional(null)));
+		addMockCommand(CommandMetadata.builder("c1").addOption(CliOption.builder("me").valueOptional(null))
+				.addOption(CliOption.builder("other").valueOptional(null)));
 
 		assertEquals(createOptions("a --me=v1 -- --other v2").standaloneArguments(), "a", "--other", "v2");
 	}
@@ -110,6 +112,6 @@ public class JoptCliProviderIT {
 
 	private Cli createOptions(String args) {
 		String[] argsArray = args.split(" ");
-		return new JoptCliProvider(mockBootLogger, commands, argsArray).get();
+		return new JoptCliProvider(mockBootLogger, commands, options, argsArray).get();
 	}
 }

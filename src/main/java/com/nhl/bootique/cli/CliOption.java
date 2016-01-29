@@ -1,9 +1,11 @@
-package com.nhl.bootique.command;
+package com.nhl.bootique.cli;
 
 /**
+ * A descriptor of a command-line option.
+ * 
  * @since 0.12
  */
-public class CommandOption {
+public class CliOption {
 
 	public static Builder builder(String name) {
 		return new Builder().name(name);
@@ -14,7 +16,7 @@ public class CommandOption {
 	}
 
 	private String name;
-	private CommandOptionValueCardinality valueCardinality;
+	private CliOptionValueCardinality valueCardinality;
 	private String description;
 	private String valueDescription;
 
@@ -26,7 +28,7 @@ public class CommandOption {
 		return description;
 	}
 
-	public CommandOptionValueCardinality getValueCardinality() {
+	public CliOptionValueCardinality getValueCardinality() {
 		return valueCardinality;
 	}
 
@@ -36,11 +38,11 @@ public class CommandOption {
 
 	public static class Builder {
 
-		private CommandOption option;
+		private CliOption option;
 
 		private Builder() {
-			this.option = new CommandOption();
-			this.option.valueCardinality = CommandOptionValueCardinality.NONE;
+			this.option = new CliOption();
+			this.option.valueCardinality = CliOptionValueCardinality.NONE;
 		}
 
 		public Builder name(String name) {
@@ -54,18 +56,18 @@ public class CommandOption {
 		}
 
 		public Builder valueRequired(String valueDescription) {
-			this.option.valueCardinality = CommandOptionValueCardinality.REQUIRED;
+			this.option.valueCardinality = CliOptionValueCardinality.REQUIRED;
 			this.option.valueDescription = valueDescription;
 			return this;
 		}
 
 		public Builder valueOptional(String valueDescription) {
-			this.option.valueCardinality = CommandOptionValueCardinality.OPTIONAL;
+			this.option.valueCardinality = CliOptionValueCardinality.OPTIONAL;
 			this.option.valueDescription = valueDescription;
 			return this;
 		}
 
-		public CommandOption build() {
+		public CliOption build() {
 			return option;
 		}
 	}

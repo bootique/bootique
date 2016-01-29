@@ -11,8 +11,8 @@ import com.nhl.bootique.annotation.Args;
 import com.nhl.bootique.annotation.DefaultCommand;
 import com.nhl.bootique.annotation.EnvironmentProperties;
 import com.nhl.bootique.cli.Cli;
+import com.nhl.bootique.cli.CliOption;
 import com.nhl.bootique.command.Command;
-import com.nhl.bootique.command.ConfigCommand;
 import com.nhl.bootique.command.FailoverHelpCommand;
 import com.nhl.bootique.command.HelpCommand;
 import com.nhl.bootique.config.CliConfigurationSource;
@@ -64,7 +64,15 @@ public class BQCoreModule implements Module {
 
 		// don't bind anything to properties yet, but still declare the binding
 		contribBinder.propsBinder();
-		contribBinder.commandTypes(HelpCommand.class, ConfigCommand.class);
+
+		// bind default commands and options
+		contribBinder.commandTypes(HelpCommand.class);
+		contribBinder.options(configOption());
+	}
+
+	private CliOption configOption() {
+		return CliOption.builder(CliConfigurationSource.CONFIG_OPTION).valueRequired("Specifies YAML config file path.")
+				.build();
 	}
 
 	@Provides

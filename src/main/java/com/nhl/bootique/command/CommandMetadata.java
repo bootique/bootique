@@ -3,6 +3,8 @@ package com.nhl.bootique.command;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.nhl.bootique.cli.CliOption;
+
 /**
  * Describes a {@link Command}, providing useful information to Bootique to map
  * command to command-line parameters and generate help.
@@ -20,7 +22,7 @@ public class CommandMetadata {
 	}
 
 	private String name;
-	private Collection<CommandOption> options;
+	private Collection<CliOption> options;
 	private String description;
 
 	public CommandMetadata() {
@@ -31,7 +33,7 @@ public class CommandMetadata {
 		return name;
 	}
 
-	public Collection<CommandOption> getOptions() {
+	public Collection<CliOption> getOptions() {
 		return options;
 	}
 
@@ -66,12 +68,12 @@ public class CommandMetadata {
 			return this;
 		}
 
-		public Builder addOption(CommandOption option) {
+		public Builder addOption(CliOption option) {
 			this.metadata.options.add(option);
 			return this;
 		}
 
-		public Builder addOption(CommandOption.Builder optionBuilder) {
+		public Builder addOption(CliOption.Builder optionBuilder) {
 			return addOption(optionBuilder.build());
 		}
 
