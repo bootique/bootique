@@ -11,13 +11,13 @@ import com.nhl.bootique.command.CommandOutcome;
 
 public class DefaultRunner implements Runner {
 
-	private Cli options;
+	private Cli cli;
 	private Collection<Command> commands;
 	private Command defaultCommand;
 
 	@Inject
-	public DefaultRunner(Cli options, Set<Command> commands, @DefaultCommand Command defaultCommand) {
-		this.options = options;
+	public DefaultRunner(Cli cli, Set<Command> commands, @DefaultCommand Command defaultCommand) {
+		this.cli = cli;
 		this.commands = commands;
 		this.defaultCommand = defaultCommand;
 	}
@@ -27,14 +27,14 @@ public class DefaultRunner implements Runner {
 
 		for (Command c : commands) {
 
-			CommandOutcome outcome = c.run(options);
+			CommandOutcome outcome = c.run(cli);
 
 			if (outcome.shouldExit()) {
 				return outcome;
 			}
 		}
 
-		return defaultCommand.run(options);
+		return defaultCommand.run(cli);
 	}
 
 }

@@ -8,14 +8,14 @@ public interface Command {
 	/**
 	 * Executes a command.
 	 * 
-	 * @param options
+	 * @param cli
 	 *            command-line options object.
 	 * @return CommandOutcome object that indicates to the caller whether
 	 *         command was successful and whether the caller needs to continue
 	 *         with command chain.
 	 * @since 0.12
 	 */
-	CommandOutcome run(Cli options);
+	CommandOutcome run(Cli cli);
 
 	/**
 	 * Returns a metadata object for this command. Default implementation
