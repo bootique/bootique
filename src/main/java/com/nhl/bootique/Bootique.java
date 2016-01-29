@@ -245,6 +245,8 @@ public class Bootique {
 		}
 		// handle startup Guice exceptions
 		catch (ProvisionException e) {
+			
+			// TODO: a dependency on JOPT OptionException shouldn't be here
 			return (e.getCause() instanceof OptionException) ? CommandOutcome.failed(1, e.getCause().getMessage())
 					: CommandOutcome.failed(1, e);
 		}

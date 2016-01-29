@@ -4,10 +4,10 @@ import java.util.Collection;
 import java.util.Set;
 
 import com.google.inject.Inject;
+import com.nhl.bootique.annotation.DefaultCommand;
 import com.nhl.bootique.cli.Cli;
 import com.nhl.bootique.command.Command;
 import com.nhl.bootique.command.CommandOutcome;
-import com.nhl.bootique.command.DefaultCommand;
 
 public class DefaultRunner implements Runner {
 

@@ -1,4 +1,4 @@
-package com.nhl.bootique.env;
+package com.nhl.bootique.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

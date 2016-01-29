@@ -7,8 +7,8 @@ import com.google.common.base.Preconditions;
 import com.google.inject.Binder;
 import com.google.inject.multibindings.MapBinder;
 import com.google.inject.multibindings.Multibinder;
+import com.nhl.bootique.annotation.EnvironmentProperties;
 import com.nhl.bootique.command.Command;
-import com.nhl.bootique.env.EnvironmentProperties;
 
 /**
  * A helper class used inside Modules that allows to contribute commands and

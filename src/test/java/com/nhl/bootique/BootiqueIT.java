@@ -13,8 +13,8 @@ import com.google.inject.Binder;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
+import com.nhl.bootique.annotation.Args;
 import com.nhl.bootique.it.ItestModuleProvider;
-import com.nhl.bootique.jopt.Args;
 
 public class BootiqueIT {
 

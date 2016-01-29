@@ -8,6 +8,7 @@ import java.util.Set;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.nhl.bootique.annotation.Args;
 import com.nhl.bootique.cli.Cli;
 import com.nhl.bootique.command.Command;
 import com.nhl.bootique.command.CommandOption;

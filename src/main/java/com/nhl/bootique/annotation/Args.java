@@ -1,4 +1,4 @@
-package com.nhl.bootique.command;
+package com.nhl.bootique.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -8,12 +8,12 @@ import java.lang.annotation.Target;
 import com.google.inject.BindingAnnotation;
 
 /**
- * A binding annotation for a failover {@link Command} that is executed when no
- * other Command is in effect.
+ * A DI annotation for a String[] of command line arguments passed to the Java
+ * app.
  */
 @Target({ ElementType.PARAMETER, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 @BindingAnnotation
-public @interface DefaultCommand {
+public @interface Args {
 
 }
