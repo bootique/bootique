@@ -114,7 +114,8 @@ public class JoptCliProviderTest {
 	@Test
 	public void testPrintHelp_CommandWithOptions() {
 
-		addMockCommand(CommandMetadata.builder("c1").addOption(CliOption.builder("o1").valueOptional("value_of_o1"))
+		addMockCommand(CommandMetadata.builder("c1").description("c1_description")
+				.addOption(CliOption.builder("o1").valueOptional("value_of_o1"))
 				.addOption(CliOption.builder("o2").valueOptional(null)));
 
 		StringWriter out = new StringWriter();
@@ -122,6 +123,7 @@ public class JoptCliProviderTest {
 
 		String help = out.toString();
 		assertTrue(help.indexOf("--c1") >= 0);
+		assertTrue(help.indexOf("c1_description") >= 0);
 		assertTrue(help.indexOf("--o1") >= 0);
 		assertTrue(help.indexOf("--o2") >= 0);
 		assertTrue(help.indexOf("value_of_o1") >= 0);

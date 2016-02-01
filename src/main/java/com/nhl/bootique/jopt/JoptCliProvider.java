@@ -13,6 +13,7 @@ import com.nhl.bootique.annotation.Args;
 import com.nhl.bootique.cli.Cli;
 import com.nhl.bootique.cli.CliOption;
 import com.nhl.bootique.command.Command;
+import com.nhl.bootique.command.CommandMetadata;
 import com.nhl.bootique.log.BootLogger;
 
 import joptsimple.OptionParser;
@@ -67,12 +68,15 @@ public class JoptCliProvider implements Provider<Cli> {
 
 		commands.values().forEach(c -> {
 
-			c.getMetadata().getOptions().forEach(o -> {
+			CommandMetadata md = c.getMetadata();
+
+			md.getOptions().forEach(o -> {
 				addOption(parser, o);
 			});
 
 			// using option-bound command strategy...
-			addOption(parser, CliOption.builder(c.getMetadata().getName()).build());
+
+			addOption(parser, CliOption.builder(md.getName()).description(md.getDescription()).build());
 		});
 
 		// load global options; TODO: check for conflicts with other options
