@@ -8,4 +8,4 @@
 
 * Now only one command can match command line options. THis was true before, but wasn't enforced.
   So you may see certain command line configs failing with errors, where they appeared to work before
-  by pure chance.
+  by pure chance. Sample commands can be found in our modules, e.g. [bootique-jobs](https://github.com/nhl/bootique-job/tree/master/src/main/java/com/nhl/bootique/job/command).
