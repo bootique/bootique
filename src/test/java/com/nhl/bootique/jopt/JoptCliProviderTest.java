@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.StringWriter;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -87,8 +88,7 @@ public class JoptCliProviderTest {
 		addMockCommand(CommandMetadata.builder("c1").addOption(CliOption.builder("me").valueOptional(null))
 				.addOption(CliOption.builder("other").valueOptional(null)).addOption(CliOption.builder("yes")));
 
-		assertEquals(createCli("a --me=v1 --other v2 b --me v4 --yes c d").standaloneArguments(), "a", "b", "c",
-				"d");
+		assertEquals(createCli("a --me=v1 --other v2 b --me v4 --yes c d").standaloneArguments(), "a", "b", "c", "d");
 	}
 
 	@Test
@@ -97,6 +97,34 @@ public class JoptCliProviderTest {
 				.addOption(CliOption.builder("other").valueOptional(null)));
 
 		assertEquals(createCli("a --me=v1 -- --other v2").standaloneArguments(), "a", "--other", "v2");
+	}
+
+	@Test
+	public void testPrintHelp_BareCommand() {
+
+		addMockCommand(CommandMetadata.builder("c1"));
+
+		StringWriter out = new StringWriter();
+		createCli("").printHelp(out);
+
+		String help = out.toString();
+		assertTrue(help.indexOf("--c1") >= 0);
+	}
+
+	@Test
+	public void testPrintHelp_CommandWithOptions() {
+
+		addMockCommand(CommandMetadata.builder("c1").addOption(CliOption.builder("o1").valueOptional("value_of_o1"))
+				.addOption(CliOption.builder("o2").valueOptional(null)));
+
+		StringWriter out = new StringWriter();
+		createCli("").printHelp(out);
+
+		String help = out.toString();
+		assertTrue(help.indexOf("--c1") >= 0);
+		assertTrue(help.indexOf("--o1") >= 0);
+		assertTrue(help.indexOf("--o2") >= 0);
+		assertTrue(help.indexOf("value_of_o1") >= 0);
 	}
 
 	private void assertEquals(Collection<String> result, String... expected) {

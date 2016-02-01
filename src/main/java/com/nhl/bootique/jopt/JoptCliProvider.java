@@ -4,6 +4,7 @@ import static java.util.stream.Collectors.joining;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import com.google.inject.Inject;
@@ -82,7 +83,10 @@ public class JoptCliProvider implements Provider<Cli> {
 
 	protected void addOption(OptionParser parser, CliOption option) {
 
-		OptionSpecBuilder optionBuilder = parser.accepts(option.getName(), option.getDescription());
+		// ensure non-null description
+		String description = Optional.ofNullable(option.getDescription()).orElse("");
+
+		OptionSpecBuilder optionBuilder = parser.accepts(option.getName(), description);
 		switch (option.getValueCardinality()) {
 		case OPTIONAL:
 			optionBuilder.withOptionalArg().describedAs(option.getValueDescription());
