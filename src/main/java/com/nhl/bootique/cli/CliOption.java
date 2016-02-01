@@ -55,10 +55,18 @@ public class CliOption {
 			return this;
 		}
 
+		public Builder valueRequired() {
+			return valueRequired("");
+		}
+
 		public Builder valueRequired(String valueDescription) {
 			this.option.valueCardinality = CliOptionValueCardinality.REQUIRED;
 			this.option.valueDescription = valueDescription;
 			return this;
+		}
+		
+		public Builder valueOptional() {
+			return valueOptional("");
 		}
 
 		public Builder valueOptional(String valueDescription) {
