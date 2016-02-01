@@ -3,17 +3,11 @@ package com.nhl.bootique.command;
 public class CommandOutcome {
 
 	private String message;
-	private boolean shouldExit;
 	private int exitCode;
 	private Throwable exception;
 
-	public static CommandOutcome skipped() {
-		return new CommandOutcome();
-	}
-
 	public static CommandOutcome succeeded() {
 		CommandOutcome o = new CommandOutcome();
-		o.shouldExit = true;
 		return o;
 	}
 
@@ -33,13 +27,9 @@ public class CommandOutcome {
 
 	private CommandOutcome() {
 	}
-	
+
 	public String getMessage() {
 		return message;
-	}
-
-	public boolean shouldExit() {
-		return shouldExit;
 	}
 
 	public int getExitCode() {
@@ -49,7 +39,7 @@ public class CommandOutcome {
 	public Throwable getException() {
 		return exception;
 	}
-	
+
 	public boolean isSuccess() {
 		return exitCode == 0;
 	}

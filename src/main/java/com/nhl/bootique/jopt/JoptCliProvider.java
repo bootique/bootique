@@ -25,6 +25,7 @@ public class JoptCliProvider implements Provider<Cli> {
 	private Set<CliOption> options;
 	private BootLogger bootLogger;
 
+	// TODO: inject commands as map by name
 	@Inject
 	public JoptCliProvider(BootLogger bootLogger, Set<Command> commands, Set<CliOption> options, @Args String[] args) {
 		this.commands = mapCommands(commands);

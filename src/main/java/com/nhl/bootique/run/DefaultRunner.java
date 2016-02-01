@@ -15,6 +15,7 @@ public class DefaultRunner implements Runner {
 	private Collection<Command> commands;
 	private Command defaultCommand;
 
+	// TODO: inject commands as map by name
 	@Inject
 	public DefaultRunner(Cli cli, Set<Command> commands, @DefaultCommand Command defaultCommand) {
 		this.cli = cli;
@@ -24,17 +25,24 @@ public class DefaultRunner implements Runner {
 
 	@Override
 	public CommandOutcome run() {
+		return getCommand().run(cli);
+	}
 
+	// TODO: inject commands as map by name
+	private Command getCommand() {
+		if (cli.commandName() == null) {
+			return defaultCommand;
+		}
+
+		// TODO: inject commands as map by name. This will ensure uniqueness and
+		// easy lookup
 		for (Command c : commands) {
-
-			CommandOutcome outcome = c.run(cli);
-
-			if (outcome.shouldExit()) {
-				return outcome;
+			if (cli.commandName().equals(c.getMetadata().getName())) {
+				return c;
 			}
 		}
 
-		return defaultCommand.run(cli);
+		return defaultCommand;
 	}
 
 }
