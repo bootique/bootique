@@ -13,7 +13,6 @@ import com.nhl.bootique.annotation.EnvironmentProperties;
 import com.nhl.bootique.cli.Cli;
 import com.nhl.bootique.cli.CliOption;
 import com.nhl.bootique.command.Command;
-import com.nhl.bootique.command.FailoverHelpCommand;
 import com.nhl.bootique.command.HelpCommand;
 import com.nhl.bootique.config.CliConfigurationSource;
 import com.nhl.bootique.config.ConfigurationFactory;
@@ -57,8 +56,7 @@ public class BQCoreModule implements Module {
 
 		binder.bind(ConfigurationFactory.class).to(YamlConfigurationFactory.class).in(Singleton.class);
 
-		binder.bind(Command.class).annotatedWith(DefaultCommand.class).to(FailoverHelpCommand.class)
-				.in(Singleton.class);
+		binder.bind(Command.class).annotatedWith(DefaultCommand.class).to(HelpCommand.class).in(Singleton.class);
 
 		BQBinder contribBinder = BQBinder.contributeTo(binder);
 
