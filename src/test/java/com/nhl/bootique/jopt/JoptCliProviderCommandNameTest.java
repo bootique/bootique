@@ -15,7 +15,9 @@ import org.junit.Test;
 import com.nhl.bootique.cli.Cli;
 import com.nhl.bootique.cli.CliOption;
 import com.nhl.bootique.command.Command;
+import com.nhl.bootique.command.CommandManager;
 import com.nhl.bootique.command.CommandMetadata;
+import com.nhl.bootique.command.DefaultCommandManager;
 import com.nhl.bootique.command.CommandMetadata.Builder;
 import com.nhl.bootique.log.BootLogger;
 
@@ -79,7 +81,10 @@ public class JoptCliProviderCommandNameTest {
 
 	private Cli createCli(String args) {
 		String[] argsArray = args.split(" ");
-		return new JoptCliProvider(mockBootLogger, commands, options, argsArray).get();
+
+		Command mockDefaultCommand = mock(Command.class);
+		CommandManager commandManager = new DefaultCommandManager(commands, mockDefaultCommand);
+		return new JoptCliProvider(mockBootLogger, commandManager, options, argsArray).get();
 	}
 
 }

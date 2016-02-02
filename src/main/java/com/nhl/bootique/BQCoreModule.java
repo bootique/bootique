@@ -16,6 +16,8 @@ import com.nhl.bootique.annotation.EnvironmentProperties;
 import com.nhl.bootique.cli.Cli;
 import com.nhl.bootique.cli.CliOption;
 import com.nhl.bootique.command.Command;
+import com.nhl.bootique.command.CommandManager;
+import com.nhl.bootique.command.DefaultCommandManager;
 import com.nhl.bootique.command.HelpCommand;
 import com.nhl.bootique.config.CliConfigurationSource;
 import com.nhl.bootique.config.ConfigurationFactory;
@@ -105,6 +107,7 @@ public class BQCoreModule implements Module {
 		binder.bind(ConfigurationSource.class).to(CliConfigurationSource.class).in(Singleton.class);
 		binder.bind(ConfigurationFactory.class).to(YamlConfigurationFactory.class).in(Singleton.class);
 		binder.bind(Command.class).annotatedWith(DefaultCommand.class).to(HelpCommand.class).in(Singleton.class);
+		binder.bind(CommandManager.class).to(DefaultCommandManager.class).in(Singleton.class);
 
 		// trigger extension points creation and provide default contributions
 		BQCoreModule.contributeProperties(binder);

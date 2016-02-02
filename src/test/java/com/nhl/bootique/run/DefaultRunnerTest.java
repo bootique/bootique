@@ -19,9 +19,11 @@ import org.junit.Test;
 import com.nhl.bootique.cli.Cli;
 import com.nhl.bootique.cli.CliOption;
 import com.nhl.bootique.command.Command;
+import com.nhl.bootique.command.CommandManager;
 import com.nhl.bootique.command.CommandMetadata;
 import com.nhl.bootique.command.CommandMetadata.Builder;
 import com.nhl.bootique.command.CommandOutcome;
+import com.nhl.bootique.command.DefaultCommandManager;
 
 public class DefaultRunnerTest {
 
@@ -116,7 +118,9 @@ public class DefaultRunnerTest {
 
 	private CommandOutcome run(Command... commands) {
 		Set<Command> commandSet = new HashSet<>(Arrays.asList(commands));
-		return new DefaultRunner(mockCli, commandSet, mockDefaultCommand).run();
+		CommandManager commandManager = new DefaultCommandManager(commandSet, mockDefaultCommand);
+
+		return new DefaultRunner(mockCli, commandManager).run();
 	}
 
 	private Command createMockCommand(String name, CommandOutcome outcome, String... options) {

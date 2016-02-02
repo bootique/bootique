@@ -13,6 +13,7 @@ import com.nhl.bootique.annotation.Args;
 import com.nhl.bootique.cli.Cli;
 import com.nhl.bootique.cli.CliOption;
 import com.nhl.bootique.command.Command;
+import com.nhl.bootique.command.CommandManager;
 import com.nhl.bootique.command.CommandMetadata;
 import com.nhl.bootique.log.BootLogger;
 
@@ -23,14 +24,14 @@ import joptsimple.OptionSpecBuilder;
 public class JoptCliProvider implements Provider<Cli> {
 
 	private String[] args;
-	private Map<String, Command> commands;
 	private Set<CliOption> options;
 	private BootLogger bootLogger;
+	private CommandManager commandManager;
 
-	// TODO: inject commands as map by name
 	@Inject
-	public JoptCliProvider(BootLogger bootLogger, Set<Command> commands, Set<CliOption> options, @Args String[] args) {
-		this.commands = mapCommands(commands);
+	public JoptCliProvider(BootLogger bootLogger, CommandManager commandManager, Set<CliOption> options,
+			@Args String[] args) {
+		this.commandManager = commandManager;
 		this.options = options;
 		this.args = args;
 		this.bootLogger = bootLogger;
@@ -45,28 +46,10 @@ public class JoptCliProvider implements Provider<Cli> {
 		return new JoptCli(bootLogger, parser, parsed, commandName);
 	}
 
-	protected Map<String, Command> mapCommands(Set<Command> commands) {
-		Map<String, Command> map = new HashMap<>();
-
-		commands.forEach(c -> {
-
-			String name = c.getMetadata().getName();
-			Command existing = map.put(name, c);
-			if (existing != null) {
-				// TODO: BootiqueException?
-				String message = String.format("Ambiguos command name: %s (shared by at least 2 commands: %s, %s)",
-						name, c.getClass().getName(), existing.getClass().getName());
-				throw new RuntimeException(message);
-			}
-		});
-
-		return map;
-	}
-
 	protected OptionParser createParser() {
 		OptionParser parser = new OptionParser();
 
-		commands.values().forEach(c -> {
+		commandManager.getCommands().forEach(c -> {
 
 			CommandMetadata md = c.getMetadata();
 
@@ -106,9 +89,10 @@ public class JoptCliProvider implements Provider<Cli> {
 	protected String commandName(OptionSet optionSet) {
 
 		Map<String, Command> matches = new HashMap<>(3);
-		commands.forEach((k, v) -> {
-			if (optionSet.has(k) && !optionSet.hasArgument(k)) {
-				matches.put(k, v);
+		commandManager.getCommands().forEach(c -> {
+			String name = c.getMetadata().getName();
+			if (optionSet.has(name) && !optionSet.hasArgument(name)) {
+				matches.put(name, c);
 			}
 		});
 
