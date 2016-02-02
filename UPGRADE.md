@@ -11,3 +11,6 @@
 * Now only one command can match command line options. THis was true before, but wasn't enforced.
   So you may see certain command line configs failing with errors, where they appeared to work before
   by pure chance.
+  
+* BQBinder is deprecated. From within your Module use static methods on BQCoreModule to contribute
+  Module-specific commands, properties, CLI options. 

@@ -10,6 +10,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.ProvisionException;
+import com.google.inject.multibindings.Multibinder;
 import com.nhl.bootique.command.Command;
 import com.nhl.bootique.command.CommandOutcome;
 import com.nhl.bootique.env.DefaultEnvironment;
@@ -283,7 +284,10 @@ public class Bootique {
 
 		return () -> {
 			bootLogger.trace(() -> "Adding module with custom commands...");
-			return (b) -> BQBinder.contributeTo(b).commands(commands);
+			return (b) -> {
+				Multibinder<Command> mb = BQCoreModule.contributeCommands(b);
+				commands.forEach(c -> mb.addBinding().toInstance(c));
+			};
 		};
 	}
 

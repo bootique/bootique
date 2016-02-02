@@ -8,6 +8,8 @@ import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.multibindings.MapBinder;
+import com.google.inject.multibindings.Multibinder;
 import com.nhl.bootique.annotation.Args;
 import com.nhl.bootique.annotation.DefaultCommand;
 import com.nhl.bootique.annotation.EnvironmentProperties;
@@ -31,14 +33,55 @@ import com.nhl.bootique.shutdown.DefaultShutdownManager;
 import com.nhl.bootique.shutdown.ShutdownManager;
 import com.nhl.bootique.shutdown.ShutdownTimeout;
 
+/**
+ * The main {@link Module} of Bootique DI runtime. Declares a minimal set of
+ * services needed for a Bootique app to start: services for parsing command
+ * line, reading configuration, selectign and running a Command.
+ */
 public class BQCoreModule implements Module {
 
 	private String[] args;
 	private BootLogger bootLogger;
 	private Duration shutdownTimeout;
 
+	/**
+	 * @since 0.12
+	 * @return a Builder instance to configure the module before using it to
+	 *         initialize DI container.
+	 */
 	public static Builder builder() {
 		return new Builder();
+	}
+
+	/**
+	 * @since 0.12
+	 * @param binder
+	 *            DI binder passed to the Module that invokes this method.
+	 * @return {@link Multibinder} for Bootique commands.
+	 */
+	public static Multibinder<Command> contributeCommands(Binder binder) {
+		return Multibinder.newSetBinder(binder, Command.class);
+	}
+
+	/**
+	 * @since 0.12
+	 * @param binder
+	 *            DI binder passed to the Module that invokes this method.
+	 * @return {@link Multibinder} for Bootique options.
+	 */
+	public static Multibinder<CliOption> contributeOptions(Binder binder) {
+		return Multibinder.newSetBinder(binder, CliOption.class);
+	}
+
+	/**
+	 * @since 0.12
+	 * @param binder
+	 *            DI binder passed to the Module that invokes this method.
+	 * @return {@link MapBinder} for Bootique properties.
+	 * @see EnvironmentProperties
+	 */
+	public static MapBinder<String, String> contributeProperties(Binder binder) {
+		return MapBinder.newMapBinder(binder, String.class, String.class, EnvironmentProperties.class);
 	}
 
 	private BQCoreModule() {
@@ -64,10 +107,9 @@ public class BQCoreModule implements Module {
 		binder.bind(Command.class).annotatedWith(DefaultCommand.class).to(HelpCommand.class).in(Singleton.class);
 
 		// trigger extension points creation and provide default contributions
-		BQBinder contribBinder = BQBinder.contributeTo(binder);
-		contribBinder.propsBinder();
-		contribBinder.commandsBinder().addBinding().to(HelpCommand.class);
-		contribBinder.optionsBinder().addBinding().toInstance(createConfigOption());
+		BQCoreModule.contributeProperties(binder);
+		BQCoreModule.contributeCommands(binder).addBinding().to(HelpCommand.class).in(Singleton.class);
+		BQCoreModule.contributeOptions(binder).addBinding().toInstance(createConfigOption());
 	}
 
 	protected CliOption createConfigOption() {

@@ -17,7 +17,13 @@ import com.nhl.bootique.command.Command;
  * Module's "configure" method to provide your own properties and/or Commands.
  * 
  * @since 0.8
+ * @deprecated since 0.12 per-module binding utilities are associated with the
+ *             Module itself, so use
+ *             {@link BQCoreModule#contributeCommands(Binder)},
+ *             {@link BQCoreModule#contributeOptions(Binder)},
+ *             {@link BQCoreModule#contributeProperties(Binder)}.
  */
+@Deprecated
 public class BQBinder {
 
 	public static BQBinder contributeTo(Binder binder) {
