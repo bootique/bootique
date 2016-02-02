@@ -2,6 +2,7 @@ package com.nhl.bootique;
 
 import java.time.Duration;
 import java.util.Map;
+import java.util.Objects;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
@@ -36,39 +37,40 @@ public class BQCoreModule implements Module {
 	private BootLogger bootLogger;
 	private Duration shutdownTimeout;
 
-	public BQCoreModule(String[] args, BootLogger bootLogger) {
-		this.args = args;
-		this.bootLogger = bootLogger;
+	public static Builder builder() {
+		return new Builder();
+	}
+
+	private BQCoreModule() {
 		this.shutdownTimeout = Duration.ofMillis(10000l);
 	}
 
 	@Override
 	public void configure(Binder binder) {
 
-		binder.bind(BootLogger.class).toInstance(bootLogger);
+		// bind instances
+		binder.bind(BootLogger.class).toInstance(Objects.requireNonNull(bootLogger));
+		binder.bind(String[].class).annotatedWith(Args.class).toInstance(Objects.requireNonNull(args));
+		binder.bind(Duration.class).annotatedWith(ShutdownTimeout.class)
+				.toInstance(Objects.requireNonNull(shutdownTimeout));
+
+		// bind singleton types
 		binder.bind(JacksonService.class).to(DefaultJacksonService.class);
-		binder.bind(String[].class).annotatedWith(Args.class).toInstance(args);
 		binder.bind(Runner.class).to(DefaultRunner.class).in(Singleton.class);
 		binder.bind(ShutdownManager.class).to(DefaultShutdownManager.class).in(Singleton.class);
-		binder.bind(Duration.class).annotatedWith(ShutdownTimeout.class).toInstance(shutdownTimeout);
 		binder.bind(Cli.class).toProvider(JoptCliProvider.class).in(Singleton.class);
 		binder.bind(ConfigurationSource.class).to(CliConfigurationSource.class).in(Singleton.class);
-
 		binder.bind(ConfigurationFactory.class).to(YamlConfigurationFactory.class).in(Singleton.class);
-
 		binder.bind(Command.class).annotatedWith(DefaultCommand.class).to(HelpCommand.class).in(Singleton.class);
 
+		// trigger extension points creation and provide default contributions
 		BQBinder contribBinder = BQBinder.contributeTo(binder);
-
-		// don't bind anything to properties yet, but still declare the binding
 		contribBinder.propsBinder();
-
-		// bind default commands and options
-		contribBinder.commandTypes(HelpCommand.class);
-		contribBinder.options(configOption());
+		contribBinder.commandsBinder().addBinding().to(HelpCommand.class);
+		contribBinder.optionsBinder().addBinding().toInstance(createConfigOption());
 	}
 
-	private CliOption configOption() {
+	protected CliOption createConfigOption() {
 		return CliOption.builder(CliConfigurationSource.CONFIG_OPTION, "Specifies YAML config file path.")
 				.valueRequired("yaml_file").build();
 	}
@@ -78,4 +80,32 @@ public class BQCoreModule implements Module {
 	public Environment createEnvironment(@EnvironmentProperties Map<String, String> diProperties) {
 		return new DefaultEnvironment(diProperties);
 	}
+
+	public static class Builder {
+		private BQCoreModule module;
+
+		private Builder() {
+			this.module = new BQCoreModule();
+		}
+
+		public BQCoreModule build() {
+			return module;
+		}
+
+		public Builder bootLogger(BootLogger bootLogger) {
+			module.bootLogger = bootLogger;
+			return this;
+		}
+
+		public Builder args(String[] args) {
+			module.args = args;
+			return this;
+		}
+
+		public Builder shutdownTimeout(Duration timeout) {
+			module.shutdownTimeout = timeout;
+			return this;
+		}
+	}
+
 }

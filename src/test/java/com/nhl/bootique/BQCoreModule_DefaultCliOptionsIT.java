@@ -49,7 +49,7 @@ public class BQCoreModule_DefaultCliOptionsIT {
 
 	private Injector injector(String args) {
 		String[] argsArray = args.split(" ");
-		BQCoreModule module = new BQCoreModule(argsArray, mockBootLogger);
+		BQCoreModule module = BQCoreModule.builder().args(argsArray).bootLogger(mockBootLogger).build();
 		return Guice.createInjector(module);
 	}
 }

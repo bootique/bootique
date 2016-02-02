@@ -34,6 +34,14 @@ public class BQBinder {
 		return MapBinder.newMapBinder(binder, String.class, String.class, EnvironmentProperties.class);
 	}
 
+	Multibinder<Command> commandsBinder() {
+		return Multibinder.newSetBinder(binder, Command.class);
+	}
+
+	Multibinder<CliOption> optionsBinder() {
+		return Multibinder.newSetBinder(binder, CliOption.class);
+	}
+
 	/**
 	 * Utility method to contribute custom environment properties to DI.
 	 * 
@@ -66,7 +74,7 @@ public class BQBinder {
 	 *            Bootique.
 	 */
 	public void commandTypes(Collection<Class<? extends Command>> commands) {
-		Multibinder<Command> commandBinder = Multibinder.newSetBinder(binder, Command.class);
+		Multibinder<Command> commandBinder = commandsBinder();
 		Preconditions.checkNotNull(commands).forEach(ct -> commandBinder.addBinding().to(ct));
 	}
 
@@ -77,7 +85,7 @@ public class BQBinder {
 	 *            {@link Command} instances to add to Bootique.
 	 */
 	public void commands(Collection<? extends Command> commands) {
-		Multibinder<Command> commandBinder = Multibinder.newSetBinder(binder, Command.class);
+		Multibinder<Command> commandBinder = commandsBinder();
 		Preconditions.checkNotNull(commands).forEach(c -> commandBinder.addBinding().toInstance(c));
 	}
 
@@ -102,7 +110,7 @@ public class BQBinder {
 	 *            line, which should be merged into existing set of options.
 	 */
 	public void options(Collection<CliOption> options) {
-		Multibinder<CliOption> optionsBinder = Multibinder.newSetBinder(binder, CliOption.class);
+		Multibinder<CliOption> optionsBinder = optionsBinder();
 		Preconditions.checkNotNull(options).forEach(o -> optionsBinder.addBinding().toInstance(o));
 	}
 }

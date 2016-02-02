@@ -263,7 +263,7 @@ public class Bootique {
 	protected Injector createInjector() {
 
 		Collection<BQModuleProvider> providers = new ArrayList<>();
-		providers.add(coreModuleProvider(args, bootLogger));
+		providers.add(coreModuleProvider());
 
 		if (!commands.isEmpty()) {
 			providers.add(commandsProvider());
@@ -291,8 +291,8 @@ public class Bootique {
 		return providers;
 	}
 
-	protected BQModuleProvider coreModuleProvider(String[] args, BootLogger bootLogger) {
-		return () -> new BQCoreModule(args, bootLogger);
+	protected BQModuleProvider coreModuleProvider() {
+		return () -> BQCoreModule.builder().args(args).bootLogger(bootLogger).build();
 	}
 
 	protected Collection<BQModuleProvider> autoLoadedProviders() {
