@@ -120,10 +120,10 @@ public class Bootique {
 	}
 
 	/**
-	 * Adds an array of Modules to the Booqtique DI runtime.
+	 * Adds an array of Modules to the Bootique DI runtime.
 	 * 
 	 * @param modules
-	 *            an array of modules to add to Booqtie DI runtime.
+	 *            an array of modules to add to Bootiqie DI runtime.
 	 * @return this instance of {@link Bootique}.
 	 */
 	public Bootique modules(Module... modules) {
