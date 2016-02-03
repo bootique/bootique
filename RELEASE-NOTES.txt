@@ -5,6 +5,7 @@
 #19 Command dispatch mechanism based on Cli state
 #20 Allow configuration of available commands in main()
 #21 Move contribution API into static methods on BQCoreModule
+#22 Better Module override API
 
 0.11:
 

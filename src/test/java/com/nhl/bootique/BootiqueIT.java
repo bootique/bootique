@@ -5,6 +5,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -56,6 +57,27 @@ public class BootiqueIT {
 
 		String[] args = i.getInstance(Key.get(String[].class, Args.class));
 		assertSame(M1.ARGS, args);
+	}
+
+	@Test
+	public void testCreateInjector_OverridesWithProvider() {
+		BQModuleProvider provider = new BQModuleProvider() {
+			
+			@Override
+			public Module module() {
+				return new M0();
+			}
+			
+			@Override
+			public Collection<Class<? extends Module>> overrides() {
+				return Collections.singleton(BQCoreModule.class);
+			}
+		};
+
+		Injector i = Bootique.app(args).module(provider).createInjector();
+
+		String[] args = i.getInstance(Key.get(String[].class, Args.class));
+		assertSame(M0.ARGS, args);
 	}
 
 	static class M0 implements Module {
