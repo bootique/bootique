@@ -98,7 +98,7 @@ public class Bootique {
 	}
 
 	/**
-	 * Adds an array of Module types to the Booqtique DI runtime. Each type will
+	 * Adds an array of Module types to the Bootique DI runtime. Each type will
 	 * be instantiated by Bootique and added to the Guice DI container.
 	 * 
 	 * @param moduleTypes
