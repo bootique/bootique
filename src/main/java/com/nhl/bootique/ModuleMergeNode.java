@@ -72,7 +72,7 @@ class ModuleMergeNode {
 	}
 
 	String getProviderDescription() {
-		return providedBy.getClass().getSimpleName();
+		return providedBy.name();
 	}
 
 	Collection<ModuleMergeNode> getOverriddenBy() {

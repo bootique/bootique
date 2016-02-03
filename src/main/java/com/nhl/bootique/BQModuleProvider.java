@@ -35,4 +35,13 @@ public interface BQModuleProvider {
 	default Collection<Class<? extends Module>> overrides() {
 		return Collections.emptyList();
 	}
+
+	/**
+	 * @since 0.12
+	 * @return a human readable name of the provider, by default calculated from
+	 *         the class name.
+	 */
+	default String name() {
+		return getClass().getSimpleName();
+	}
 }
