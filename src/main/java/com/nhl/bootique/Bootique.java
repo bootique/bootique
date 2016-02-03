@@ -115,7 +115,18 @@ public class Bootique {
 
 	public Bootique module(Module m) {
 		Objects.requireNonNull(m);
-		providers.add(() -> m);
+		providers.add(new BQModuleProvider() {
+			
+			@Override
+			public Module module() {
+				return m;
+			}
+			
+			@Override
+			public String name() {
+				return "Bootique";
+			}
+		});
 		return this;
 	}
 
@@ -311,7 +322,18 @@ public class Bootique {
 	}
 
 	protected BQModuleProvider coreModuleProvider() {
-		return () -> BQCoreModule.builder().args(args).bootLogger(bootLogger).build();
+		return new BQModuleProvider() {
+			
+			@Override
+			public Module module() {
+				return BQCoreModule.builder().args(args).bootLogger(bootLogger).build();
+			}
+			
+			@Override
+			public String name() {
+				return "Bootique";
+			}
+		};
 	}
 
 	protected Collection<BQModuleProvider> autoLoadedProviders() {
