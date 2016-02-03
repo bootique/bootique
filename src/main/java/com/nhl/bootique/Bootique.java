@@ -13,6 +13,7 @@ import com.google.inject.ProvisionException;
 import com.google.inject.multibindings.Multibinder;
 import com.nhl.bootique.command.Command;
 import com.nhl.bootique.command.CommandOutcome;
+import com.nhl.bootique.command.Commands;
 import com.nhl.bootique.env.DefaultEnvironment;
 import com.nhl.bootique.log.BootLogger;
 import com.nhl.bootique.log.DefaultBootLogger;
@@ -116,12 +117,12 @@ public class Bootique {
 	public Bootique module(Module m) {
 		Objects.requireNonNull(m);
 		providers.add(new BQModuleProvider() {
-			
+
 			@Override
 			public Module module() {
 				return m;
 			}
-			
+
 			@Override
 			public String name() {
 				return "Bootique";
@@ -196,6 +197,8 @@ public class Bootique {
 	 * @param command
 	 *            A custom {@link Command} instance to add to Bootique runtime.
 	 * @return this Bootique instance
+	 * @deprecated since 0.12 add to Bootique a {@link BQModuleProvider}
+	 *             produced via {@link Commands} builder.
 	 */
 	public Bootique command(Command command) {
 		this.commands.add(command);
@@ -208,6 +211,8 @@ public class Bootique {
 	 * @param commands
 	 *            Custom {@link Command} instances to add to Bootique runtime.
 	 * @return this Bootique instance
+	 * @deprecated since 0.12 add to Bootique a {@link BQModuleProvider}
+	 *             produced via {@link Commands} builder.
 	 */
 	public Bootique commands(Command... commands) {
 		Arrays.asList(commands).forEach(c -> command(c));
@@ -323,12 +328,12 @@ public class Bootique {
 
 	protected BQModuleProvider coreModuleProvider() {
 		return new BQModuleProvider() {
-			
+
 			@Override
 			public Module module() {
 				return BQCoreModule.builder().args(args).bootLogger(bootLogger).build();
 			}
-			
+
 			@Override
 			public String name() {
 				return "Bootique";

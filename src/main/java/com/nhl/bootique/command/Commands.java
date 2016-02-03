@@ -21,6 +21,7 @@ import com.nhl.bootique.annotation.DefaultCommand;
 public class Commands implements Module {
 
 	private Collection<Class<? extends Command>> commandTypes;
+	private Collection<Command> commands;
 	private boolean noModuleCommands;
 
 	static Multibinder<Command> contributeExtraCommands(Binder binder) {
@@ -34,12 +35,14 @@ public class Commands implements Module {
 
 	private Commands() {
 		this.commandTypes = new HashSet<>();
+		this.commands = new HashSet<>();
 	}
 
 	@Override
 	public void configure(Binder binder) {
 		Multibinder<Command> extraCommandsBinder = Commands.contributeExtraCommands(binder);
 		commandTypes.forEach(ct -> extraCommandsBinder.addBinding().to(ct));
+		commands.forEach(c -> extraCommandsBinder.addBinding().toInstance(c));
 	}
 
 	@Provides
@@ -49,6 +52,9 @@ public class Commands implements Module {
 		Set<Command> combinedCommands = new HashSet<>(extraCommands);
 
 		if (!noModuleCommands) {
+
+			// TODO: override similarly named module commands with extra
+			// commands...
 			combinedCommands.addAll(moduleCommands);
 		}
 
@@ -88,6 +94,15 @@ public class Commands implements Module {
 		public final Builder add(Class<? extends Command>... commandTypes) {
 			for (Class<? extends Command> ct : commandTypes) {
 				commands.commandTypes.add(ct);
+			}
+
+			return this;
+		}
+
+		@SafeVarargs
+		public final Builder add(Command... commands) {
+			for (Command c : commands) {
+				this.commands.commands.add(c);
 			}
 
 			return this;
