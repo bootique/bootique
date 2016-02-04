@@ -2,16 +2,20 @@ package com.nhl.bootique.command;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import com.google.inject.multibindings.Multibinder;
 import com.nhl.bootique.BQCoreModule;
 import com.nhl.bootique.BQModuleProvider;
 import com.nhl.bootique.annotation.DefaultCommand;
+import com.nhl.bootique.log.BootLogger;
 
 /**
  * A helper to build a non-standard command set in an app.
@@ -46,19 +50,53 @@ public class Commands implements Module {
 	}
 
 	@Provides
+	@Singleton
 	CommandManager createManager(Set<Command> moduleCommands, @ExtraCommands Set<Command> extraCommands,
-			@DefaultCommand Command defaultCommand) {
+			@DefaultCommand Command defaultCommand, BootLogger bootLogger) {
 
-		Set<Command> combinedCommands = new HashSet<>(extraCommands);
+		// merge two sets, checking for dupe names within the set, but allowing
+		// extras to override module commands...
 
-		if (!noModuleCommands) {
+		Map<String, Command> map;
 
-			// TODO: override similarly named module commands with extra
-			// commands...
-			combinedCommands.addAll(moduleCommands);
+		if (noModuleCommands) {
+			map = toDistinctCommands(extraCommands);
+		} else {
+			map = toDistinctCommands(moduleCommands);
+
+			// override with logging
+			toDistinctCommands(extraCommands).forEach((name, command) -> {
+				Command existingCommand = map.put(name, command);
+				if (existingCommand != null && existingCommand != command) {
+					String i1 = existingCommand.getClass().getName();
+					String i2 = command.getClass().getName();
+					bootLogger.trace(() -> String.format("Overriding command '%s' (old command: %s, new command: %s)",
+							name, i1, i2));
+				}
+			});
 		}
 
-		return new DefaultCommandManager(combinedCommands, defaultCommand);
+		return DefaultCommandManager.create(map, defaultCommand);
+	}
+
+	private Map<String, Command> toDistinctCommands(Set<Command> commands) {
+		Map<String, Command> commandMap = new HashMap<>();
+
+		commands.forEach(c -> {
+
+			String name = c.getMetadata().getName();
+			Command existing = commandMap.put(name, c);
+
+			// complain about dupes
+			if (existing != null && existing != c) {
+				String c1 = existing.getClass().getName();
+				String c2 = c.getClass().getName();
+				throw new RuntimeException(
+						String.format("Duplicate command for name %s (provided by: %s and %s) ", name, c1, c2));
+			}
+		});
+
+		return commandMap;
 	}
 
 	public static class Builder {

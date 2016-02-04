@@ -88,7 +88,7 @@ public class Bootqiue_CommandsIT {
 		@Override
 		public void configure(Binder binder) {
 			binder.bind(CommandManager.class)
-					.toInstance(new DefaultCommandManager(Collections.emptySet(), mockCommand));
+					.toInstance(DefaultCommandManager.create(Collections.emptySet(), mockCommand));
 		}
 	}
 }

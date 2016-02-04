@@ -83,7 +83,7 @@ public class JoptCliProviderCommandNameTest {
 		String[] argsArray = args.split(" ");
 
 		Command mockDefaultCommand = mock(Command.class);
-		CommandManager commandManager = new DefaultCommandManager(commands, mockDefaultCommand);
+		CommandManager commandManager = DefaultCommandManager.create(commands, mockDefaultCommand);
 		return new JoptCliProvider(mockBootLogger, commandManager, options, argsArray).get();
 	}
 

@@ -118,7 +118,7 @@ public class DefaultRunnerTest {
 
 	private CommandOutcome run(Command... commands) {
 		Set<Command> commandSet = new HashSet<>(Arrays.asList(commands));
-		CommandManager commandManager = new DefaultCommandManager(commandSet, mockDefaultCommand);
+		CommandManager commandManager = DefaultCommandManager.create(commandSet, mockDefaultCommand);
 
 		return new DefaultRunner(mockCli, commandManager).run();
 	}

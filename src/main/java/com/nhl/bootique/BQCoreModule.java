@@ -3,6 +3,7 @@ package com.nhl.bootique;
 import java.time.Duration;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
@@ -107,7 +108,6 @@ public class BQCoreModule implements Module {
 		binder.bind(ConfigurationSource.class).to(CliConfigurationSource.class).in(Singleton.class);
 		binder.bind(ConfigurationFactory.class).to(YamlConfigurationFactory.class).in(Singleton.class);
 		binder.bind(Command.class).annotatedWith(DefaultCommand.class).to(HelpCommand.class).in(Singleton.class);
-		binder.bind(CommandManager.class).to(DefaultCommandManager.class).in(Singleton.class);
 
 		// trigger extension points creation and provide default contributions
 		BQCoreModule.contributeProperties(binder);
@@ -118,6 +118,12 @@ public class BQCoreModule implements Module {
 	protected CliOption createConfigOption() {
 		return CliOption.builder(CliConfigurationSource.CONFIG_OPTION, "Specifies YAML config file path.")
 				.valueRequired("yaml_file").build();
+	}
+
+	@Provides
+	@Singleton
+	public CommandManager createCommandManager(Set<Command> commands, @DefaultCommand Command defaultCommand) {
+		return DefaultCommandManager.create(commands, defaultCommand);
 	}
 
 	@Provides

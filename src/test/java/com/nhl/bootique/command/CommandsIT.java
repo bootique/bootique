@@ -60,7 +60,7 @@ public class CommandsIT {
 		assertTrue(map.containsKey(C1.class.getName()));
 		assertTrue(map.containsKey(HelpCommand.class.getName()));
 	}
-	
+
 	@Test
 	public void testModule_ExtraCommandAsInstance() {
 		BQModuleProvider provider = Commands.builder().add(new C1()).build();
@@ -73,6 +73,19 @@ public class CommandsIT {
 		Map<String, List<Command>> map = mapCommands(commands);
 		assertTrue(map.containsKey(C1.class.getName()));
 		assertTrue(map.containsKey(HelpCommand.class.getName()));
+	}
+
+	@Test
+	public void testModule_ExtraCommandOverride() {
+		BQModuleProvider provider = Commands.builder().add(C2_Help.class).build();
+		BQRuntime runtime = Bootique.app(args).module(provider).runtime();
+		CommandManager commandManager = runtime.getInstance(CommandManager.class);
+
+		Collection<Command> commands = commandManager.getCommands();
+		assertEquals(1, commands.size());
+
+		Map<String, List<Command>> map = mapCommands(commands);
+		assertTrue(map.containsKey(C2_Help.class.getName()));
 	}
 
 	private Map<String, List<Command>> mapCommands(Collection<Command> commands) {
@@ -89,6 +102,18 @@ public class CommandsIT {
 		@Override
 		public CommandOutcome run(Cli cli) {
 			return CommandOutcome.succeeded();
+		}
+	}
+
+	static class C2_Help implements Command {
+		@Override
+		public CommandOutcome run(Cli cli) {
+			return CommandOutcome.succeeded();
+		}
+
+		@Override
+		public CommandMetadata getMetadata() {
+			return CommandMetadata.builder("help").build();
 		}
 	}
 }
