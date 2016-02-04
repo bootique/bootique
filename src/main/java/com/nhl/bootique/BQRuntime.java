@@ -26,12 +26,22 @@ public class BQRuntime {
 		this.injector = injector;
 	}
 
+	/**
+	 * @since 0.12
+	 * @param type
+	 *            a type of instance object to return
+	 * @return a DI-bound instance of a given class.
+	 */
+	public <T> T getInstance(Class<T> type) {
+		return injector.getInstance(type);
+	}
+
 	public BootLogger getBootLogger() {
-		return injector.getInstance(BootLogger.class);
+		return getInstance(BootLogger.class);
 	}
 
 	public Runner getRunner() {
-		return injector.getInstance(Runner.class);
+		return getInstance(Runner.class);
 	}
 
 	public String[] getArgs() {
