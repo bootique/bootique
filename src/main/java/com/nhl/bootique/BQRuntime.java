@@ -71,11 +71,28 @@ public class BQRuntime {
 
 			@Override
 			public void run() {
-				shutdownManager.shutdown().forEach((s, th) -> {
-					logger.stderr(String.format("Error performing shutdown of '%s': %s", s.getClass().getSimpleName(),
-							th.getMessage()));
-				});
+				shutdown(shutdownManager, logger);
 			}
+		});
+	}
+
+	/**
+	 * Executes Bootique runtime shutdown, allowing all interested DI services
+	 * to perform cleanup.
+	 * 
+	 * @since 0.12
+	 */
+	public void shutdown() {
+		ShutdownManager shutdownManager = injector.getInstance(ShutdownManager.class);
+		BootLogger logger = getBootLogger();
+
+		shutdown(shutdownManager, logger);
+	}
+
+	protected void shutdown(ShutdownManager shutdownManager, BootLogger logger) {
+		shutdownManager.shutdown().forEach((s, th) -> {
+			logger.stderr(String.format("Error performing shutdown of '%s': %s", s.getClass().getSimpleName(),
+					th.getMessage()));
 		});
 	}
 
