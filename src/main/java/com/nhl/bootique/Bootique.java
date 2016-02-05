@@ -67,6 +67,17 @@ public class Bootique {
 	}
 
 	/**
+	 * Optionally overrides Bootique BootLogger.
+	 * 
+	 * @since 0.12
+	 * @return this instance of Bootique.
+	 */
+	public Bootique bootLogger(BootLogger bootLogger) {
+		this.bootLogger = bootLogger;
+		return this;
+	}
+
+	/**
 	 * Instructs Bootique to load any modules available on class-path that
 	 * expose {@link BQModuleProvider} provider. Auto-loaded modules will be
 	 * used in default configuration. Factories within modules will of course be
