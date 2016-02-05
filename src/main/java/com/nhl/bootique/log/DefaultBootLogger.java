@@ -1,13 +1,25 @@
 package com.nhl.bootique.log;
 
+import java.io.PrintStream;
 import java.util.function.Supplier;
 
 public class DefaultBootLogger implements BootLogger {
 
 	private boolean trace;
+	private PrintStream stdout;
+	private PrintStream stderr;
 
 	public DefaultBootLogger(boolean trace) {
+		this(trace, System.out, System.err);
+	}
+
+	/**
+	 * @since 0.12
+	 */
+	public DefaultBootLogger(boolean trace, PrintStream stdout, PrintStream stderr) {
 		this.trace = trace;
+		this.stderr = stderr;
+		this.stdout = stdout;
 	}
 
 	@Override
@@ -19,12 +31,12 @@ public class DefaultBootLogger implements BootLogger {
 
 	@Override
 	public void stdout(String message) {
-		System.out.println(message);
+		stdout.println(message);
 	}
 
 	@Override
 	public void stderr(String message) {
-		System.err.println(message);
+		stderr.println(message);
 	}
 
 	@Override
