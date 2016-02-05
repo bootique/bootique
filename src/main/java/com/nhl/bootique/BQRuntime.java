@@ -80,8 +80,8 @@ public class BQRuntime {
 	}
 
 	/**
-	 * @deprecated since 0.12 {@link Bootique} uses its own run method,
-	 *             essentially delegating to {@link #getRunner()}.
+	 * @deprecated since 0.12 use either {@link Bootique#run()} or
+	 *             {@link BQRuntime#getRunner()}.
 	 * @return the outcome of executing the runner.
 	 */
 	@Deprecated
