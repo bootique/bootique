@@ -188,6 +188,24 @@ public class Bootique {
 
 				return Bootique.this;
 			}
+
+			@Override
+			public Bootique with(Module module) {
+				providers.add(new BQModuleProvider() {
+
+					@Override
+					public Module module() {
+						return module;
+					}
+
+					@Override
+					public Collection<Class<? extends Module>> overrides() {
+						return Arrays.asList(overriddenTypes);
+					}
+				});
+
+				return Bootique.this;
+			}
 		};
 	}
 

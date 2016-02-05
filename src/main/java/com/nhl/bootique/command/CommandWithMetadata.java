@@ -11,6 +11,10 @@ public abstract class CommandWithMetadata implements Command {
 
 	private CommandMetadata metadata;
 
+	public CommandWithMetadata(CommandMetadata.Builder metadataBuilder) {
+		this(metadataBuilder.build());
+	}
+	
 	public CommandWithMetadata(CommandMetadata metadata) {
 		this.metadata = metadata;
 	}
