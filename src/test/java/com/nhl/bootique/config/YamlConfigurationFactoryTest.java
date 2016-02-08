@@ -16,6 +16,9 @@ import java.util.function.Function;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhl.bootique.env.Environment;
 import com.nhl.bootique.jackson.JacksonService;
@@ -183,6 +186,29 @@ public class YamlConfigurationFactoryTest {
 		assertEquals(55, subM.get("i"));
 	}
 
+	@Test
+	public void testConfig_Polimorphic_Super() {
+
+		BeanSuper b1 = factory("type: sup1").config(BeanSuper.class, "");
+		assertEquals(BeanSuper.class, b1.getClass());
+	}
+
+	@Test
+	public void testConfig_Polimorphic_Sub1() {
+
+		BeanSuper b1 = factory("type: sub1\np1: p111").config(BeanSuper.class, "");
+		assertEquals(BeanSub1.class, b1.getClass());
+		assertEquals("p111", ((BeanSub1) b1).getP1());
+	}
+
+	@Test
+	public void testConfig_Polimorphic_Sub2() {
+
+		BeanSuper b1 = factory("type: sub2\np2: p222").config(BeanSuper.class, "");
+		assertEquals(BeanSub2.class, b1.getClass());
+		assertEquals("p222", ((BeanSub2) b1).getP2());
+	}
+
 	public static class Bean1 {
 
 		private String s;
@@ -217,4 +243,40 @@ public class YamlConfigurationFactoryTest {
 			this.b1 = b1;
 		}
 	}
+
+	@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
+	@JsonTypeName("sup1")
+	@JsonSubTypes(value = { @JsonSubTypes.Type(value = BeanSub1.class), @JsonSubTypes.Type(value = BeanSub2.class) })
+	public static class BeanSuper {
+
+	}
+
+	@JsonTypeName("sub1")
+	public static class BeanSub1 extends BeanSuper {
+
+		private String p1;
+
+		public void setP1(String p1) {
+			this.p1 = p1;
+		}
+
+		public String getP1() {
+			return p1;
+		}
+	}
+
+	@JsonTypeName("sub2")
+	public static class BeanSub2 extends BeanSuper {
+
+		private String p2;
+
+		public void setP1(String p2) {
+			this.p2 = p2;
+		}
+
+		public String getP2() {
+			return p2;
+		}
+	}
+
 }
