@@ -36,39 +36,31 @@ public class YamlConfigurationFactoryTest {
 		mockEnvironment = mock(Environment.class);
 	}
 
-	@Test
-	public void testFactory() {
-
+	private YamlConfigurationFactory factory(String yaml) {
 		when(mockConfigSource.readConfig(any())).thenAnswer(i -> {
 
 			@SuppressWarnings("unchecked")
 			Function<InputStream, Object> processor = i.getArgumentAt(0, Function.class);
-			InputStream in = new ByteArrayInputStream("s: SS\ni: 55".getBytes());
+			InputStream in = new ByteArrayInputStream(yaml.getBytes());
 
 			return processor.apply(in);
 		});
 
-		Bean1 b1 = new YamlConfigurationFactory(mockConfigSource, mockEnvironment, mockJacksonService)
-				.config(Bean1.class, "");
+		return new YamlConfigurationFactory(mockConfigSource, mockEnvironment, mockJacksonService);
+	}
+
+	@Test
+	public void testConfig() {
+
+		Bean1 b1 = factory("s: SS\ni: 55").config(Bean1.class, "");
 		assertNotNull(b1);
 		assertEquals("SS", b1.getS());
 		assertEquals(55, b1.getI());
 	}
 
 	@Test
-	public void testFactory_Nested() {
-
-		when(mockConfigSource.readConfig(any())).thenAnswer(i -> {
-
-			@SuppressWarnings("unchecked")
-			Function<InputStream, Object> processor = i.getArgumentAt(0, Function.class);
-			InputStream in = new ByteArrayInputStream("b1:\n  s: SS\n  i: 55".getBytes());
-
-			return processor.apply(in);
-		});
-
-		Bean2 b2 = new YamlConfigurationFactory(mockConfigSource, mockEnvironment, mockJacksonService)
-				.config(Bean2.class, "");
+	public void testConfig_Nested() {
+		Bean2 b2 = factory("b1:\n  s: SS\n  i: 55").config(Bean2.class, "");
 		assertNotNull(b2);
 		assertNotNull(b2.getB1());
 		assertEquals("SS", b2.getB1().getS());
@@ -76,64 +68,32 @@ public class YamlConfigurationFactoryTest {
 	}
 
 	@Test
-	public void testFactory_Subconfig() {
-
-		when(mockConfigSource.readConfig(any())).thenAnswer(i -> {
-
-			@SuppressWarnings("unchecked")
-			Function<InputStream, Object> processor = i.getArgumentAt(0, Function.class);
-			InputStream in = new ByteArrayInputStream("b1:\n  s: SS\n  i: 55".getBytes());
-
-			return processor.apply(in);
-		});
-
-		Bean1 b1 = new YamlConfigurationFactory(mockConfigSource, mockEnvironment, mockJacksonService)
-				.config(Bean1.class, "b1");
+	public void testConfig_Subconfig() {
+		Bean1 b1 = factory("b1:\n  s: SS\n  i: 55").config(Bean1.class, "b1");
 		assertNotNull(b1);
 		assertEquals("SS", b1.getS());
 		assertEquals(55, b1.getI());
 	}
 
 	@Test
-	public void testFactory_Subconfig_MultiLevel() {
+	public void testConfig_Subconfig_MultiLevel() {
 
-		when(mockConfigSource.readConfig(any())).thenAnswer(i -> {
-
-			@SuppressWarnings("unchecked")
-			Function<InputStream, Object> processor = i.getArgumentAt(0, Function.class);
-			InputStream in = new ByteArrayInputStream("b0:\n  b1:\n    s: SS\n    i: 55".getBytes());
-
-			return processor.apply(in);
-		});
-
-		Bean1 b1 = new YamlConfigurationFactory(mockConfigSource, mockEnvironment, mockJacksonService)
-				.config(Bean1.class, "b0.b1");
+		Bean1 b1 = factory("b0:\n  b1:\n    s: SS\n    i: 55").config(Bean1.class, "b0.b1");
 		assertNotNull(b1);
 		assertEquals("SS", b1.getS());
 		assertEquals(55, b1.getI());
 	}
 
 	@Test
-	public void testFactory_Subconfig_Missing() {
-
-		when(mockConfigSource.readConfig(any())).thenAnswer(i -> {
-
-			@SuppressWarnings("unchecked")
-			Function<InputStream, Object> processor = i.getArgumentAt(0, Function.class);
-			InputStream in = new ByteArrayInputStream("b1:\n  s: SS\n  i: 55".getBytes());
-
-			return processor.apply(in);
-		});
-
-		Bean1 b1 = new YamlConfigurationFactory(mockConfigSource, mockEnvironment, mockJacksonService)
-				.config(Bean1.class, "no.such.path");
+	public void testConfig_Subconfig_Missing() {
+		Bean1 b1 = factory("b1:\n  s: SS\n  i: 55").config(Bean1.class, "no.such.path");
 		assertNotNull(b1);
 		assertEquals(null, b1.getS());
 		assertEquals(0, b1.getI());
 	}
 
 	@Test
-	public void testFactory_PropSubstitution() {
+	public void testConfig_PropSubstitution() {
 
 		when(mockEnvironment.frameworkProperties()).thenReturn(new HashMap<String, String>() {
 			private static final long serialVersionUID = 1L;
@@ -144,24 +104,14 @@ public class YamlConfigurationFactoryTest {
 			}
 		});
 
-		when(mockConfigSource.readConfig(any())).thenAnswer(i -> {
-
-			@SuppressWarnings("unchecked")
-			Function<InputStream, Object> processor = i.getArgumentAt(0, Function.class);
-			InputStream in = new ByteArrayInputStream("s: replace_me\ni: replace_me".getBytes());
-
-			return processor.apply(in);
-		});
-
-		Bean1 b1 = new YamlConfigurationFactory(mockConfigSource, mockEnvironment, mockJacksonService)
-				.config(Bean1.class, "");
+		Bean1 b1 = factory("s: replace_me\ni: replace_me").config(Bean1.class, "");
 		assertNotNull(b1);
 		assertEquals("SS", b1.getS());
 		assertEquals(55, b1.getI());
 	}
 
 	@Test
-	public void testFactory_PropSubstitution_Nested() {
+	public void testConfig_PropSubstitution_Nested() {
 
 		when(mockEnvironment.frameworkProperties()).thenReturn(new HashMap<String, String>() {
 			private static final long serialVersionUID = 1L;
@@ -172,17 +122,7 @@ public class YamlConfigurationFactoryTest {
 			}
 		});
 
-		when(mockConfigSource.readConfig(any())).thenAnswer(i -> {
-
-			@SuppressWarnings("unchecked")
-			Function<InputStream, Object> processor = i.getArgumentAt(0, Function.class);
-			InputStream in = new ByteArrayInputStream("b1:\n  s: replace_me\n  i: replace_me".getBytes());
-
-			return processor.apply(in);
-		});
-
-		Bean1 b1 = new YamlConfigurationFactory(mockConfigSource, mockEnvironment, mockJacksonService)
-				.config(Bean1.class, "b1");
+		Bean1 b1 = factory("b1:\n  s: replace_me\n  i: replace_me").config(Bean1.class, "b1");
 		assertNotNull(b1);
 		assertEquals("SS", b1.getS());
 		assertEquals(55, b1.getI());
@@ -191,18 +131,8 @@ public class YamlConfigurationFactoryTest {
 	@Test
 	public void testList_SingleLevel() {
 
-		when(mockConfigSource.readConfig(any())).thenAnswer(i -> {
-
-			@SuppressWarnings("unchecked")
-			Function<InputStream, Object> processor = i.getArgumentAt(0, Function.class);
-			InputStream in = new ByteArrayInputStream("- SS\n- 55".getBytes());
-
-			return processor.apply(in);
-		});
-
-		List<Object> l = new YamlConfigurationFactory(mockConfigSource, mockEnvironment, mockJacksonService)
-				.config(new TypeRef<List<Object>>() {
-				}, "");
+		List<Object> l = factory("- SS\n- 55").config(new TypeRef<List<Object>>() {
+		}, "");
 
 		assertNotNull(l);
 		assertEquals("SS", l.get(0));
@@ -212,18 +142,8 @@ public class YamlConfigurationFactoryTest {
 	@Test
 	public void testList_MultiLevel() {
 
-		when(mockConfigSource.readConfig(any())).thenAnswer(i -> {
-
-			@SuppressWarnings("unchecked")
-			Function<InputStream, Object> processor = i.getArgumentAt(0, Function.class);
-			InputStream in = new ByteArrayInputStream("-\n  - SS\n  - 55\n-\n  - X".getBytes());
-
-			return processor.apply(in);
-		});
-
-		List<List<Object>> l = new YamlConfigurationFactory(mockConfigSource, mockEnvironment, mockJacksonService)
-				.config(new TypeRef<List<List<Object>>>() {
-				}, "");
+		List<List<Object>> l = factory("-\n  - SS\n  - 55\n-\n  - X").config(new TypeRef<List<List<Object>>>() {
+		}, "");
 
 		assertNotNull(l);
 		assertEquals(2, l.size());
@@ -236,24 +156,12 @@ public class YamlConfigurationFactoryTest {
 		List<Object> sl2 = l.get(1);
 		assertEquals(1, sl2.size());
 		assertEquals("X", sl2.get(0));
-
 	}
 
 	@Test
 	public void testMap_SingleLevel() {
-
-		when(mockConfigSource.readConfig(any())).thenAnswer(i -> {
-
-			@SuppressWarnings("unchecked")
-			Function<InputStream, Object> processor = i.getArgumentAt(0, Function.class);
-			InputStream in = new ByteArrayInputStream("b1: SS\ni: 55".getBytes());
-
-			return processor.apply(in);
-		});
-
-		Map<String, Object> m = new YamlConfigurationFactory(mockConfigSource, mockEnvironment, mockJacksonService)
-				.config(new TypeRef<Map<String, Object>>() {
-				}, "");
+		Map<String, Object> m = factory("b1: SS\ni: 55").config(new TypeRef<Map<String, Object>>() {
+		}, "");
 
 		assertNotNull(m);
 		assertEquals("SS", m.get("b1"));
@@ -263,17 +171,8 @@ public class YamlConfigurationFactoryTest {
 	@Test
 	public void testMap_MultiLevel() {
 
-		when(mockConfigSource.readConfig(any())).thenAnswer(i -> {
-
-			@SuppressWarnings("unchecked")
-			Function<InputStream, Object> processor = i.getArgumentAt(0, Function.class);
-			InputStream in = new ByteArrayInputStream("b1:\n  k1: SS\n  i: 55".getBytes());
-
-			return processor.apply(in);
-		});
-
-		Map<String, Map<String, Object>> m = new YamlConfigurationFactory(mockConfigSource, mockEnvironment,
-				mockJacksonService).config(new TypeRef<Map<String, Map<String, Object>>>() {
+		Map<String, Map<String, Object>> m = factory("b1:\n  k1: SS\n  i: 55")
+				.config(new TypeRef<Map<String, Map<String, Object>>>() {
 				}, "");
 
 		assertNotNull(m);
@@ -318,5 +217,4 @@ public class YamlConfigurationFactoryTest {
 			this.b1 = b1;
 		}
 	}
-
 }
