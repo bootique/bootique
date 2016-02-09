@@ -33,6 +33,17 @@ public interface Cli {
 	List<String> optionStrings(String name);
 
 	/**
+	 * Returns a single value for option or null if not present.
+	 * 
+	 * @param name
+	 *            option name.
+	 * @return a single value for option or null if not present.
+	 * @throws RuntimeException
+	 *             if there's more then one value for the option.
+	 */
+	String optionString(String name);
+
+	/**
 	 * Returns all arguments that are not options or option values in the order
 	 * they are encountered on the command line.
 	 */

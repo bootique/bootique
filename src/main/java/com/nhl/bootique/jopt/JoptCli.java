@@ -30,7 +30,7 @@ public class JoptCli implements Cli {
 		this.bootLogger = bootLogger;
 		this.commandName = commandName;
 	}
-	
+
 	@Override
 	public String commandName() {
 		return commandName;
@@ -51,8 +51,19 @@ public class JoptCli implements Cli {
 	}
 
 	@Override
-	public List<String> optionStrings(String optionName) {
-		return optionSet.valuesOf(optionName).stream().map(o -> String.valueOf(o)).collect(toList());
+	public List<String> optionStrings(String name) {
+		return optionSet.valuesOf(name).stream().map(o -> String.valueOf(o)).collect(toList());
+	}
+
+	@Override
+	public String optionString(String name) {
+		List<String> allStrings = optionStrings(name);
+
+		if (allStrings.size() > 1) {
+			throw new RuntimeException("More than one value specified for option: " + name);
+		}
+
+		return allStrings.isEmpty() ? null : allStrings.get(0);
 	}
 
 	@SuppressWarnings("unchecked")
