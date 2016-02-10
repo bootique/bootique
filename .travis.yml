@@ -7,7 +7,7 @@ branches:
   only:
     - master
 
-script: mvn deploy --settings travis_settings.xml
+script: mvn deploy -X --settings travis_settings.xml
 
 env:
   global:
