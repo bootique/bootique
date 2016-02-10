@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>com.nhl.bootique.parent</groupId>
 		<artifactId>bootique-parent</artifactId>
-		<version>0.9</version>
+		<version>0.10</version>
 	</parent>
 
 	<groupId>com.nhl.bootique</groupId>
@@ -30,16 +30,7 @@
 		<url>https://github.com/nhl/bootique</url>
 		<tag>HEAD</tag>
 	</scm>
-
-
-	<distributionManagement>
-		<!-- TODO: move this to parent? -->
-		<snapshotRepository>
-			<id>bootique-snapshots</id>
-			<url>http://maven.objectstyle.org/nexus/content/repositories/bootique-snapshots</url>
-		</snapshotRepository>
-	</distributionManagement>
-
+	
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
