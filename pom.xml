@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -29,6 +30,15 @@
 		<url>https://github.com/nhl/bootique</url>
 		<tag>HEAD</tag>
 	</scm>
+
+
+	<distributionManagement>
+		<!-- TODO: move this to parent? -->
+		<snapshotRepository>
+			<id>bootique-snapshots</id>
+			<url>http://maven.objectstyle.org/nexus/content/repositories/bootique-snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
 
 	<dependencyManagement>
 		<dependencies>
@@ -118,7 +128,7 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+
 	<!-- Optional profile used to sign artifacts -->
 	<profiles>
 		<profile>
