@@ -23,7 +23,7 @@
         <bootique.version.major>0</bootique.version.major>	
 	</properties>
 
-		<build>
+	<build>
 		<resources>
             <resource>
                 <directory>src</directory>
