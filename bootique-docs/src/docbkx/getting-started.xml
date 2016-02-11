@@ -4,8 +4,162 @@
     <title>Getting Started with Bootique</title>
  
     <chapter xml:id="getting-started-minimal-app">
-        <title>First App</title>
-        
-       
+        <title>Hello World in Bootique</title>
+        <para>The goal of this chapter is to write a simple REST app using Bootique. Let's start
+            with a new Java Maven project created in your favorite IDE. You <code>pom.xml</code> in
+            addition to the required project information tags will need to declare one artifact in
+            the <code>&lt;dependencyManagement/></code>
+            section:<programlisting language="xml">&lt;dependencyManagement>
+	&lt;dependencies>
+		&lt;dependency>
+			&lt;groupId>com.nhl.bootique.bom&lt;/groupId>
+			&lt;artifactId>bootique-bom&lt;/artifactId>
+			&lt;version>0.12&lt;/version>
+			&lt;type>pom&lt;/type>
+			&lt;scope>import&lt;/scope>
+		&lt;/dependency>
+	&lt;/dependencies>
+&lt;/dependencyManagement></programlisting></para>
+        <para>This will allow  <code>&lt;dependencies/></code> section that will follow shortly to
+            include various Bootique modules and not worry about their individual versions. So let's
+            create this section and import a few
+            modules:<programlisting language="xml">&lt;dependencies>
+	&lt;dependency>
+		&lt;groupId>com.nhl.bootique.jersey&lt;/groupId>
+		&lt;artifactId>bootique-jersey&lt;/artifactId>
+		&lt;scope>compile&lt;/scope>
+	&lt;/dependency>
+	&lt;dependency>
+		&lt;groupId>com.nhl.bootique.logback&lt;/groupId>
+		&lt;artifactId>bootique-logback&lt;/artifactId>
+		&lt;scope>compile&lt;/scope>
+	&lt;/dependency>
+&lt;/dependencies></programlisting></para>
+        <para>As you see we want a <code>bootique-jersey</code> and <code>bootique-logback</code>
+            modules in our app. Those may depend on other modules, but we don't have to think about
+            it. Those dependencies will be included by Maven automatically. Now let's create the
+            main Java class that will run the
+            app:<programlisting language="java">package com.foo;
+
+import com.nhl.bootique.Bootique;
+
+public class Main {
+
+	public static void main(String[] args) {
+		Bootique.app(args).autoLoadModules().run();
+	}
+}</programlisting></para>
+        <para>There's only one line of meaningful code inside the  <code>main()</code> method, but
+            this is already a working Bootique app. Meaning it is runnable  and can do a few things.
+            So let's try running this class from your IDE. You will see the output like this on the
+            IDE
+            console:<programlisting language="bourne">Option                    Description                          
+------                    -----------                          
+--config &lt;yaml_location>  Specifies YAML config location, which
+                            can be a file path or a URL.       
+--help                    Prints this message.                 
+--server                  Starts Jetty server</programlisting></para>
+        <para>So the app printed its help message telling us which commands and options it
+            understands.  <code>--server</code> option looks promising, but before we use it, let's
+            actually write a REST endpoint that will answer to our requests. We'll use standard Java
+                <link xlink:href="https://en.wikipedia.org/wiki/Java_API_for_RESTful_Web_Services"
+                >JAX-RS API</link> for
+            that:<programlisting language="java">package com.foo;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+
+@Path("/")
+public class HelloResource {
+
+	@GET
+	public String hello() {
+		return "Hello, world!";
+	}
+}</programlisting></para>
+        <para>Note that we could have placed this code straight in the Main class. Which makes for
+            an effective demo (an app that can fit in one class), but not for a particularly clean
+            design. So keeping the resource in its own class. Now let's amend the <code>Main</code>
+            class to tell Bootique where to find the
+            resource:<programlisting language="java">package com.nhl.bootique.bom;
+
+import com.nhl.bootique.Bootique;
+import com.nhl.bootique.jersey.JerseyModule;
+
+public class Main {
+
+	public static void main(String[] args) {
+		JerseyModule jersey = JerseyModule.builder().packageRoot(HelloResource.class).build();
+		Bootique.app(args).module(jersey).autoLoadModules().run();
+	}
+}</programlisting></para>
+        <para>What happened here is that instead of implicitly loading JerseyModule, we created it
+            ourselves and configured it to look for resources in the Java package of the
+            HelloResource class (so any other resources we'd add here would be recognized
+            automatically with no extra configuration). Now let's try to run the app with the
+            changes. Add <code>--server</code> to the command run parameters before doing it. Now
+            when the app is started, you will see different output, and the app will not terminate
+            immediately:<programlisting language="bourne">INFO  [2016-02-11 15:15:41,100] main c.n.b.j.c.ServerCommand: Starting jetty...
+INFO  [2016-02-11 15:15:41,197] main o.e.jetty.util.log: Logging initialized @933ms
+INFO  [2016-02-11 15:15:41,221] main c.n.b.j.s.ServerFactory: Adding servlet mapped to /*
+INFO  [2016-02-11 15:15:41,248] main o.e.j.server.Server: jetty-9.3.6.v20151106
+INFO  [2016-02-11 15:15:41,796] main o.e.j.s.h.ContextHandler: Started o.e.j.s.ServletContextHandler@cf65451{/,null,AVAILABLE}
+INFO  [2016-02-11 15:15:41,816] main o.e.j.s.ServerConnector: Started ServerConnector@60cf80e7{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+INFO  [2016-02-11 15:15:41,816] main o.e.j.server.Server: Started @1554ms</programlisting>Now
+            let's try opening the URL <link xlink:href="http://localhost:8080/"
+                >http://localhost:8080/</link> in the browser. We should see 'Hello, world!' as
+            request output. So here we have a working REST app that does not require deployment to a
+            web container, and generally wasn't that hard to write. Next we'll talk about
+            injection...</para>
+    </chapter>
+    <chapter>
+        <title>Injection</title>
+        <para>We've mentioned that Bootique is built on Google Guice dependency injection (DI)
+            container. We'll talk more about injection elsewhere. Here we'll provide a simple
+            example. Our simple app has a number of objects and services working behind the scenes
+            that can be injected. One of them is command-line arguments that were provded to the app
+            on startup. Let's extend our resource to include those arguments in the
+            output:<programlisting>package com.nhl.bootique.bom;
+
+import static java.util.stream.Collectors.joining;
+
+import java.util.Arrays;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+
+import com.google.inject.Inject;
+import com.nhl.bootique.annotation.Args;
+
+@Path("/")
+public class HelloResource {
+	
+	@Inject
+	@Args
+	private String[] args;
+
+	@GET
+	public String hello() {
+		
+		String allArgs = Arrays.asList(args).stream().collect(joining(" "));
+		return "Hello, world! The app was started with the following arguments: " + allArgs;
+	}
+}</programlisting></para>
+        <para>As you see, we declared a variable of type <code>String[]</code> and annotated it with
+                <code>@Inject</code> and <code>@Args</code>. <code>@Inject</code>  (must be a
+                <code>com.google.inject.Inject</code>, not <code>javax.inject.Inject</code>) ensures
+            that the value is initialized via injection, and <code>@Args</code> tells Bootique which
+            one of possibly many String[] instances from the DI container we are expecting
+            here.</para>
+        <para>Now you can restart the app and refresh <link xlink:href="http://localhost:8080/"
+                >http://localhost:8080/</link> in the browser. The new output will be "Hello, world!
+            The app was started with the following arguments: --server". Next let's check our
+            configuration options...</para>
+    </chapter>
+    <chapter>
+        <title>Configuration</title>
+    </chapter>
+    <chapter>
+        <title>Packaging</title>
     </chapter>
 </part>
