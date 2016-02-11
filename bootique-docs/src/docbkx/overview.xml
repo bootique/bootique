@@ -6,12 +6,16 @@
     <chapter xml:id="overview-what-is-bootique">
         <title>What is Bootique</title>
         <para>Bootique is a minimally opinionated technology for building container-less runnable
-            Java applications. No JEE container required! It is an ideal platform for
-                    <emphasis><link xlink:href="http://martinfowler.com/articles/microservices.html"
+            Java applications. No JEE container required to run your app! It is an ideal platform
+            for <emphasis><link xlink:href="http://martinfowler.com/articles/microservices.html"
                     >microservices</link></emphasis>, as it allows you to create a fully functional
-            app with minimal-to-no setup. It is not limited to a specific kind of app (or the
-            "micro" size) though and can be used for REST services, webapps, runnable jobs, DB
-            migrations, JavaFX GUI apps to mention a few examples.</para>
+            app with minimal-to-no setup. Though it is not limited to a specific kind of app (or the
+            "micro" size) and can be used for REST services, webapps, runnable jobs, DB migrations,
+            JavaFX GUI apps to mention a few examples.</para>
+        <para>Unlike traditional container-based apps, Bootique allows you to control your
+                <code>main()</code> method and create Java apps that behave like simple executable
+            commands that can be run with
+            Java:<programlisting language="bourne">java -jar my.jar [arguments]</programlisting></para>
         <para>Bootique was inspired by two similar products - <link
                 xlink:href="http://www.dropwizard.io/">Dropwizard</link> and <link
                 xlink:href="http://projects.spring.io/spring-boot/">SpringBoot</link>, however its
@@ -21,5 +25,13 @@
             mechanism.</para>
         
        
+    </chapter>
+    <chapter>
+        <title>Requirements</title>
+        <para>Java 8 or newer is required. This is it.</para>
+        <para>Bootique apps can be built using any Java build system (Ant, Maven, Gradle, etc).
+            Examples in the documentation are based on Maven and <code>maven-shade-plugin</code>.
+            While this is not strictly a requirement, Bootique apps are usually packaged into "fat"
+            runnable jars and don't have any runtime dependencies beyond the JRE.</para>
     </chapter>
 </part>
