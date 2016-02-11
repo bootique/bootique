@@ -5,6 +5,20 @@
  
     <chapter xml:id="overview-what-is-bootique">
         <title>What is Bootique</title>
+        <para>Bootique is a minimally opinionated technology for building container-less runnable
+            Java applications. No JEE container required! It is an ideal platform for
+                    <emphasis><link xlink:href="http://martinfowler.com/articles/microservices.html"
+                    >microservices</link></emphasis>, as it allows you to create a fully functional
+            app with minimal-to-no setup. It is not limited to a specific kind of app (or the
+            "micro" size) though and can be used for REST services, webapps, runnable jobs, DB
+            migrations, JavaFX GUI apps to mention a few examples.</para>
+        <para>Bootique was inspired by two similar products - <link
+                xlink:href="http://www.dropwizard.io/">Dropwizard</link> and <link
+                xlink:href="http://projects.spring.io/spring-boot/">SpringBoot</link>, however its
+            focus is different. Bootique favors modularity and clean pluggable architecture.
+            Bootique is built on top of <link xlink:href="https://github.com/google/guice">Google
+                Guice</link> DI container, which provides the core of its modularity
+            mechanism.</para>
         
        
     </chapter>
