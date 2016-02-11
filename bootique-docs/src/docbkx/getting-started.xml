@@ -108,21 +108,24 @@ INFO  [2016-02-11 15:15:41,816] main o.e.j.s.ServerConnector: Started ServerConn
 INFO  [2016-02-11 15:15:41,816] main o.e.j.server.Server: Started @1554ms</programlisting>Now
             let's try opening the URL <link xlink:href="http://localhost:8080/"
                 >http://localhost:8080/</link> in the browser. We should see 'Hello, world!' as
-            request output. So here we have a working REST app that does not require deployment to a
-            web container, and generally wasn't that hard to write. The takeways here is
-            this:</para>
+            request output. We just built a working REST app that does not require deployment to a
+            web container, and generally wasn't that hard to write. The takeway here is this:</para>
         <para>
             <itemizedlist>
                 <listitem>
-                    <para>A Bootique app is a collection of modules. </para>
+                    <para>You start Bootique via <code>Bootique</code> class, that gives you a
+                        runnable "shell" of your future app in one line of code.</para>
                 </listitem>
                 <listitem>
-                    <para>Declaring those modules in the app dependencies will give you a runnable
-                        "shell" of your future app.</para>
+                    <para>Declaring modules in the app dependencies and using
+                            <code>Bootique.autoLoadModules()</code> gives the app the ability to
+                        respond to commands from those modules (in our example <code>--server</code>
+                        command coming from implicit bootique-jetty module started an embedded web
+                        server ).</para>
                 </listitem>
                 <listitem>
-                    <para>You can contribute your own code to the modules to build an app with
-                        desired behavior.</para>
+                    <para>You can contribute your own code to modules to build an app with desired
+                        behavior.</para>
                 </listitem>
             </itemizedlist>
         </para>
@@ -135,9 +138,9 @@ INFO  [2016-02-11 15:15:41,816] main o.e.j.server.Server: Started @1554ms</progr
         <title>Injection</title>
         <para>We've mentioned that Bootique is built on Google Guice dependency injection (DI)
             container. We'll talk more about injection elsewhere. Here we'll provide a simple
-            example. Our simple app has a number of objects and services working behind the scenes
-            that can be injected. One of them is command-line arguments that were provded to the app
-            on startup. Let's extend our resource to include those arguments in the
+            example. Our simple app already has a number of objects and services working behind the
+            scenes that can be injected. One of them is command-line arguments that were provded to
+            the app on startup. Let's extend our resource to include those arguments in the
             output:<programlisting>package com.nhl.bootique.bom;
 
 import static java.util.stream.Collectors.joining;

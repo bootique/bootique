@@ -35,9 +35,40 @@
             runnable jars and don't have any runtime dependencies beyond the JRE.</para>
     </chapter>
     <chapter>
-        <title>Available Integrations</title>
-        <para>Bootique itself is pretty minimal. It contains a command-line processor, configuration
-            parser and a DI environment to load extensions. The power of Bootique is in its ability
-            to load and run plugins. </para>
+        <title>What You Can Do with Bootique</title>
+        <para>Bootique itself is pretty small. It contains a command-line processor, configuration
+            parser and a DI environment to load modules and execute commands. Most of the actual
+            functionality is coming from modules, either developed by Bootique community or written
+            by you as a developer. There is a growing list of the former kind. Here are just some
+            examples to give a taste of what you can do with Bootique out of the box:<itemizedlist>
+                <listitem>
+                    <para><link xlink:href="https://github.com/nhl/bootique-jetty">Bootique
+                            Jetty</link> provides embedded Jetty web server to run servlets and
+                        servlet filters</para>
+                </listitem>
+                <listitem>
+                    <para><link xlink:href="https://github.com/nhl/bootique-jersey">Bootique
+                            Jersey</link> provides functionality to run JAX-RS resources on top of
+                        bootique-jetty. This is a starting point of your typical microservices
+                        stack.</para>
+                </listitem>
+                <listitem>
+                    <para><link xlink:href="https://github.com/nhl/bootique-jdbc">Bootique
+                            JDBC</link> provides a collection of JDBC DataSources to the app.</para>
+                </listitem>
+                <listitem>
+                    <para><link xlink:href="https://github.com/nhl/bootique-cayenne">Bootique
+                            Cayenne</link> provides a powerful ORM.</para>
+                </listitem>
+                <listitem>
+                    <para><link xlink:href="https://github.com/nhl/bootique-liquibase">Bootique
+                            Liquibase</link> provides a way to run DB migrations as Bootique
+                        apps.</para>
+                </listitem>
+                <listitem>
+                    <para>and more...</para>
+                    <para> </para>
+                </listitem>
+            </itemizedlist></para>
     </chapter>
 </part>
