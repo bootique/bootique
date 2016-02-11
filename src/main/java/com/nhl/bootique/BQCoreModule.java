@@ -116,7 +116,9 @@ public class BQCoreModule implements Module {
 	}
 
 	protected CliOption createConfigOption() {
-		return CliOption.builder(CliConfigurationSource.CONFIG_OPTION, "Specifies YAML config file path.")
+		return CliOption
+				.builder(CliConfigurationSource.CONFIG_OPTION,
+						"Specifies YAML config location, which can be a file path or a URL.")
 				.valueRequired("yaml_file").build();
 	}
 
