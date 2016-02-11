@@ -101,12 +101,12 @@
 						<id>build-html</id>
 						<configuration>
 							<htmlCustomization>${project.build.outputDirectory}/xsl/html.xsl</htmlCustomization>
-							<chunkedOutput>true</chunkedOutput>
+							<chunkedOutput>false</chunkedOutput>
 							<postProcess>
-								<copy todir="${basedir}/target/site/index/css">
+								<copy todir="${basedir}/target/site/css">
 									<fileset dir="${basedir}/src/docbkx/css" />
 								</copy>
-								<copy todir="${basedir}/target/site/index/img">
+								<copy todir="${basedir}/target/site/img">
 									<fileset dir="${basedir}/src/docbkx/img" />
 								</copy>
 							</postProcess>

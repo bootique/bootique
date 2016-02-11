@@ -184,9 +184,6 @@ body { background-image: url('</xsl:text>
                                                     <xsl:with-param name="object" select="$prev"/>
                                                 </xsl:call-template>
                                             </xsl:attribute>
-                                            <xsl:call-template name="navig.content">
-                                                <xsl:with-param name="direction" select="'prev'"/>
-                                            </xsl:call-template>
                                         </a>
                                     </xsl:if>
                                     <xsl:text>&#160;</xsl:text>
@@ -221,9 +218,6 @@ body { background-image: url('</xsl:text>
                                                     <xsl:with-param name="object" select="$next"/>
                                                 </xsl:call-template>
                                             </xsl:attribute>
-                                            <xsl:call-template name="navig.content">
-                                                <xsl:with-param name="direction" select="'next'"/>
-                                            </xsl:call-template>
                                         </a>
                                     </xsl:if>
                                 </td>
