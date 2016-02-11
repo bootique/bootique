@@ -1,4 +1,4 @@
-This module contains source of the Docbook Bootique documentation published on the website.
+This module contains source of the Bootique documentation published on the website. The docs are in Docbook XML format.
 
 ## Building the Docs:
 
