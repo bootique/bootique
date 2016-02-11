@@ -1,9 +1,11 @@
 package com.nhl.bootique.config;
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
 import java.util.Collection;
 import java.util.function.Function;
 
@@ -16,17 +18,18 @@ import com.nhl.bootique.log.BootLogger;
  * via command-line '--config' option.
  */
 public class CliConfigurationSource implements ConfigurationSource {
-	
+
 	public static final String CONFIG_OPTION = "config";
 
 	private String location;
 
 	@Inject
-	public CliConfigurationSource(Cli options, BootLogger bootLogger) {
+	public CliConfigurationSource(Cli cli, BootLogger bootLogger) {
 
-		Collection<String> configs = options.optionStrings(CONFIG_OPTION);
+		Collection<String> configs = cli.optionStrings(CONFIG_OPTION);
 		if (configs.isEmpty()) {
-			// we are likely in boot sequence... so be quiet
+			// we are likely in boot sequence, so be quiet about no config. This
+			// is likely ok.
 		} else if (configs.size() == 1) {
 			this.location = configs.iterator().next();
 			bootLogger.stdout("Using configuration at " + location);
@@ -50,7 +53,14 @@ public class CliConfigurationSource implements ConfigurationSource {
 	}
 
 	private <T> T doReadConfig(Function<InputStream, T> processor) throws FileNotFoundException, IOException {
-		try (InputStream in = new FileInputStream(location)) {
+
+		// location can be either a file path or a URL
+
+		URI uri = URI.create(location);
+
+		URL url = uri.isAbsolute() ? uri.toURL() : new File(location).toURI().toURL();
+
+		try (InputStream in = url.openStream()) {
 			return processor.apply(in);
 		}
 	}

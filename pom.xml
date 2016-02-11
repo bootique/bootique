@@ -30,7 +30,7 @@
 		<url>https://github.com/nhl/bootique</url>
 		<tag>HEAD</tag>
 	</scm>
-	
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -63,6 +63,16 @@
 				<artifactId>jopt-simple</artifactId>
 				<version>4.9</version>
 			</dependency>
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-server</artifactId>
+				<version>9.3.6.v20151106</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-servlet</artifactId>
+				<version>9.3.6.v20151106</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -76,6 +86,16 @@
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-servlet</artifactId>
 			<scope>test</scope>
 		</dependency>
 
