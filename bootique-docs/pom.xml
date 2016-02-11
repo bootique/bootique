@@ -5,7 +5,7 @@
 
 	<parent>
 		<groupId>com.nhl.bootique</groupId>
-		<artifactId>bootique-parent</artifactId>
+		<artifactId>bootique-framework-parent</artifactId>
 		<version>0.12-SNAPSHOT</version>
 	</parent>
 
