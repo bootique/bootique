@@ -2,14 +2,13 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0"
     xml:id="linkrest-guide" xmlns:xi="http://www.w3.org/2001/XInclude">
     <info>
-        <title>Bootique Guide</title>
+        <title>Bootique: A Minimally Opinionated Framework for Runnable Java Apps - Documentation</title>
         <copyright>
             <year>2016</year>
             <holder>National Hockey League, ObjectStyle LLC and individual authors</holder>
         </copyright>
     </info>
    
-    <title>Bootique: A Minimally Opinionated Framework for Runnable Java Apps</title>
     <xi:include href="overview.xml"/>
     <xi:include href="getting-started.xml"/>
     <xi:include href="programming.xml"/>

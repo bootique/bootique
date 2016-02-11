@@ -21,8 +21,8 @@
                 xlink:href="http://projects.spring.io/spring-boot/">SpringBoot</link>, however its
             focus is different. Bootique favors modularity and clean pluggable architecture.
             Bootique is built on top of <link xlink:href="https://github.com/google/guice">Google
-                Guice</link> DI container, which provides the core of its modularity
-            mechanism.</para>
+                Guice</link> dependency injection (DI) container, which provides the core of its
+            modularity mechanism.</para>
         
        
     </chapter>
@@ -33,5 +33,11 @@
             Examples in the documentation are based on Maven and <code>maven-shade-plugin</code>.
             While this is not strictly a requirement, Bootique apps are usually packaged into "fat"
             runnable jars and don't have any runtime dependencies beyond the JRE.</para>
+    </chapter>
+    <chapter>
+        <title>Available Integrations</title>
+        <para>Bootique itself is pretty minimal. It contains a command-line processor, configuration
+            parser and a DI environment to load extensions. The power of Bootique is in its ability
+            to load and run plugins. </para>
     </chapter>
 </part>

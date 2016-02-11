@@ -109,8 +109,27 @@ INFO  [2016-02-11 15:15:41,816] main o.e.j.server.Server: Started @1554ms</progr
             let's try opening the URL <link xlink:href="http://localhost:8080/"
                 >http://localhost:8080/</link> in the browser. We should see 'Hello, world!' as
             request output. So here we have a working REST app that does not require deployment to a
-            web container, and generally wasn't that hard to write. Next we'll talk about
-            injection...</para>
+            web container, and generally wasn't that hard to write. The takeways here is
+            this:</para>
+        <para>
+            <itemizedlist>
+                <listitem>
+                    <para>A Bootique app is a collection of modules. </para>
+                </listitem>
+                <listitem>
+                    <para>Declaring those modules in the app dependencies will give you a runnable
+                        "shell" of your future app.</para>
+                </listitem>
+                <listitem>
+                    <para>You can contribute your own code to the modules to build an app with
+                        desired behavior.</para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para>Next we'll talk about configuration...</para>
+    </chapter>
+    <chapter>
+        <title>Configuration</title>
     </chapter>
     <chapter>
         <title>Injection</title>
@@ -155,9 +174,6 @@ public class HelloResource {
                 >http://localhost:8080/</link> in the browser. The new output will be "Hello, world!
             The app was started with the following arguments: --server". Next let's check our
             configuration options...</para>
-    </chapter>
-    <chapter>
-        <title>Configuration</title>
     </chapter>
     <chapter>
         <title>Packaging</title>

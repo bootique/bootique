@@ -73,8 +73,8 @@
             <link rev="made" href="{$link.mailto.url}"/>
         </xsl:if>
 
-        <meta name="keywords" content="Bootique ${bootique.version.major} documentation"/>
-        <meta name="description" content="User documentation for Bootique Framework version ${linkrest.version.major}"/>
+        <meta name="keywords" content="Bootique Framework Documentation version ${bootique.version.major} "/>
+        <meta name="description" content="Bootique: A Minimally Opinionated Framework for Runnable Java Apps - Documentation version ${bootique.version.major}"/>
 
         <xsl:if test="$generate.meta.abstract != 0">
             <xsl:variable name="info" select="(d:articleinfo
