@@ -8,8 +8,8 @@ html {
 body, td {
     margin-left:   10%;
     margin-right:  10%;
-    font-family:   "Lucida Grande","Trebuchet MS",Verdana,sans-serif;
-    font-size: small;
+    font-family:   "Helvetica Neue",Helvetica,"Segoe UI",Arial,freesans,sans-serif;
+    font-size: medium;
 }
 
 div {
@@ -26,14 +26,13 @@ hr {
 }
 
 h1, h2, h3, h4 {
-    font-family: "Trebuchet MS","Lucida Grande",Verdana,sans-serif;
+    font-family: "Helvetica Neue",Helvetica,"Segoe UI",Arial,freesans,sans-serif;
     font-weight: normal;
     line-height: normal;
     margin: 1em 0 0.5em;
 }
 
 h2 {
-    color: #660000;
     font-size: 170%;
     padding: 0;
 }
