@@ -169,7 +169,7 @@ Below is a growing list of "standard" Bootique modules. With standard modules yo
 
 ## YAML Config
 
-In example above Bootique printed ```--config <config_file>``` as one of the options. This is a hint on how you'd pass a configuration file to a typical Bootique app. Centralized configuration is one of the advantages of the "container-less" approach, e.g. allowing you to specify your app listen port and some app-specific property in a single place.
+In the example above Bootique printed ```--config <config_file>``` as one of the options. This is a hint on how you'd pass a configuration file to a typical Bootique app. Centralized configuration is one of the advantages of the "container-less" approach. E.g. you can specify in a single place your app listen port and some app-specific property, like administrator email address and such.
 
 By default config format is [YAML](http://www.yaml.org/), though just like everything else in Bootique it is easy to override to load a different format. Configuration data is a tree, which is loaded in memory when application starts. Parts of (or entire) configuration can be accessed as application- or module-specific configuration objects via injectable [ConfigurationFactory service](https://github.com/nhl/bootique/blob/master/src/main/java/com/nhl/bootique/config/ConfigurationFactory.java).
 
