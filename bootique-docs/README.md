@@ -4,7 +4,7 @@ This module contains source of the Docbook Bootique documentation published on t
 
 Checkout the web site:
 
-```
+```shell
 # assuming we were in bootique.git folder, step out
 cd ../   
 
@@ -17,14 +17,15 @@ git checkout -b gh-pages origin/gh-pages
 
 ## Building and Publishing the Docs:
 
-```
+```shell
 cd <main_bootique_checkout>/bootique-docs
 mvn clean package
 cp -r target/site/index/ ../../bootique-pages/docs/ 
 
 cd ../../bootique-pages/docs/ 
 git add -A
-git commit -a -m "docs update"
+git commit -m "docs update"
+git push
 ```
 
 In a few seconds you will be able to check the result at http://bootique.io/docs/ .
