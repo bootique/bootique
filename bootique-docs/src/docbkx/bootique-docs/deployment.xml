@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<part xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
+    version="5.0" xml:id="deployment">
+    <title>Deployment</title>
+ 
+    <chapter xml:id="deployment-tracing">
+        <title>Tracing Bootique Startup</title>
+        <para>To see what modules are loaded and to trace other events that happen on startup, run
+            your jar with <code>-Dbq.trace</code> option. E.g.:</para>
+        <programlisting>java -Dbq.trace -jar target/myapp-1.0.jar --server</programlisting>
+        <para>You may see an output like this:</para>
+        <programlisting>Skipping module 'JerseyModule' provided by 'JerseyModuleProvider' (already provided by 'Bootique')...
+Adding module 'BQCoreModule' provided by 'Bootique'...
+Adding module 'JerseyModule' provided by 'Bootique'...
+Adding module 'JettyModule' provided by 'JettyModuleProvider'...
+Adding module 'LogbackModule' provided by 'LogbackModuleProvider'...</programlisting>
+        
+    </chapter>
+
+</part>

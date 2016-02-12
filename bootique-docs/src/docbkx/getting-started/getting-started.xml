@@ -43,7 +43,7 @@
 
 import com.nhl.bootique.Bootique;
 
-public class Main {
+public class Application {
 
 	public static void main(String[] args) {
 		Bootique.app(args).autoLoadModules().run();
@@ -86,7 +86,7 @@ public class HelloResource {
 import com.nhl.bootique.Bootique;
 import com.nhl.bootique.jersey.JerseyModule;
 
-public class Main {
+public class Application {
 
 	public static void main(String[] args) {
 		JerseyModule jersey = JerseyModule.builder().packageRoot(HelloResource.class).build();
@@ -213,7 +213,7 @@ public class HelloResource {
 &lt;/parent></programlisting></para>
         <para>Other required <code>pom.xml</code>
             additions:<programlisting language="xml">&lt;properties>
-    &lt;main.class>com.foo.Main&lt;/main.class>
+    &lt;main.class>com.foo.Application&lt;/main.class>
 &lt;/properties>
 ...
 &lt;build>
@@ -231,8 +231,8 @@ public class HelloResource {
         <para>Once this is setup you can build and run the
             app:<programlisting language="bourne">mvn clean package
 
-# Using myapp-1.0-SNAPSHOT.jar as an example; the actual jar name depends on your POM settings
-java -jar target/myapp-1.0-SNAPSHOT.jar --server --config=myconfig.yml</programlisting></para>
+# Using myapp-1.0.jar as an example; the actual jar name depends on your POM settings
+java -jar target/myapp-1.0.jar --server --config=myconfig.yml</programlisting></para>
         <para>The result should be the same as running from the IDE and the app should be still
             accessible at <link xlink:href="http://localhost:10001/hello"
                 >http://localhost:10001/hello</link>. Now your jar can be deployed in any

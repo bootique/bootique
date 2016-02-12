@@ -11,7 +11,34 @@
 
     <chapter xml:id="programming-modules">
         <title>Modules</title>
-        <para>TODO</para>
+        <para>Bootique framework is just a small DI-based launcher that doesn't do much by itself.
+            Its power comes from being a <emphasis role="italic">command-line plugin
+                environment</emphasis> that can run modules. There's a growing list of "standard"
+            modules provided by Bootique development team. And you can easily write your own. A
+            module is a Java library that contains some code plus a <link
+                xlink:href="https://google.github.io/guice/api-docs/latest/javadoc/index.html?com/google/inject/Module.html"
+                >Guice Module class</link> that binds module-specific services. Module services can
+            rely on services declared in the <link
+                xlink:href="https://github.com/nhl/bootique/blob/master/src/main/java/com/nhl/bootique/BQCoreModule.java"
+                >Bootique core module</link> as well as in other modules. </para>
+        <para>As you see we are using the word "module" either to refer to a Guice Module class, or
+            to a whole a code module. The meaning should be clear from the context.</para>
+        <para>Application most often then not adds its own (Guice) Module to Bootique runtime that
+            provides app-specific behavior. Though apps that are simply collections of other modules
+            are perfectly valid as well. </para>
+        <para>Modules can be autoloaded via <code>Bootique.autoLoadModules()</code> as long as they
+            are included in your aplication dependencies. Autloading is built on the Java <link
+                xlink:href="https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html"
+                >ServiceLoader mechanism</link>. To support auto loading of your own modules, first
+            implement <code>com.nhl.bootique.BQModuleProvider</code> interface to create a Module
+            instance for your own extension, and then add a file
+                <code>META-INF/services/com.nhl.bootique.BQModuleProvider</code> with the only line
+            containing the name of your BQModuleProvider implementor. E.g.:</para>
+        <programlisting>com.foo.MyOwnModuleProvider</programlisting>
+        <para>On autoloading modules are configured using YAML config (as described below). Some
+            modules additionally allow configuration in the code (e.g. see <link
+                xlink:href="https://github.com/nhl/bootique-jersey/blob/master/src/main/java/com/nhl/bootique/jersey/JerseyModule.java"
+                >JerseyModule</link> shown in the "Getting Started" example above).</para>
         
     </chapter>
     <chapter>
