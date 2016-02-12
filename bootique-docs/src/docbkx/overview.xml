@@ -16,8 +16,9 @@
                 <code>main()</code> method and create Java apps that behave like simple executable
             commands that can be run with
             Java:<programlisting language="bourne">java -jar my.jar [arguments]</programlisting></para>
-        <para>Each Bootique app can be started with a YAML config file (or URL), that makes it ideal
-            for cloud deployments.</para>
+        <para>Each Bootique app can be started with a YAML configuration loaded from a file or from
+            a remote URL. Among other benefits, such configuration approach ideally suits cloud
+            deployment environments.</para>
         <para>Bootique was inspired by two similar products - <link
                 xlink:href="http://www.dropwizard.io/">Dropwizard</link> and <link
                 xlink:href="http://projects.spring.io/spring-boot/">SpringBoot</link>, however its
