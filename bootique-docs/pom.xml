@@ -94,8 +94,8 @@
 					<xincludeSupported>true</xincludeSupported>
 					<highlightSource>true</highlightSource>
 					<targetDirectory>${basedir}/target/site</targetDirectory>
-					<includes>index.xml</includes>				
-				</configuration>
+					<includes>getting-started/index.xml,bootique-docs/index.xml</includes>
+\				</configuration>
 				<executions>
 					<execution>
 						<id>build-html</id>

@@ -10,7 +10,6 @@
     </info>
    
     <xi:include href="overview.xml"/>
-    <xi:include href="getting-started.xml"/>
     <xi:include href="programming.xml"/>
     <xi:include href="testing.xml"/>
 </book>
