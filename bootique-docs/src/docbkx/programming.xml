@@ -5,14 +5,26 @@
  
     <chapter xml:id="programming-runnable-jar">
         <title>Runnable Jar</title>
+        <para>TODO</para>
         
     </chapter>
 
     <chapter xml:id="programming-modules">
         <title>Modules</title>
+        <para>TODO</para>
         
     </chapter>
     <chapter>
         <title>Commands and Options</title>
+        <para>TODO</para>
+        
+    </chapter>
+    <chapter>
+        <title>Working with Configuration</title>
+        <para>TODO</para>
+    </chapter>
+    <chapter>
+        <title>Logging</title>
+        <para>TODO</para>
     </chapter>
 </part>

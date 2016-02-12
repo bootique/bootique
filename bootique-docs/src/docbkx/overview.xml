@@ -16,13 +16,16 @@
                 <code>main()</code> method and create Java apps that behave like simple executable
             commands that can be run with
             Java:<programlisting language="bourne">java -jar my.jar [arguments]</programlisting></para>
+        <para>Each Bootique app can be started with a YAML config file (or URL), that makes it ideal
+            for cloud deployments.</para>
         <para>Bootique was inspired by two similar products - <link
                 xlink:href="http://www.dropwizard.io/">Dropwizard</link> and <link
                 xlink:href="http://projects.spring.io/spring-boot/">SpringBoot</link>, however its
             focus is different. Bootique favors modularity and clean pluggable architecture.
             Bootique is built on top of <link xlink:href="https://github.com/google/guice">Google
                 Guice</link> dependency injection (DI) container, which provides the core of its
-            modularity mechanism.</para>
+            modularity mechanism. This means that pretty much anything in Bootique can be
+            customized/overridden to your liking.</para>
         
        
     </chapter>

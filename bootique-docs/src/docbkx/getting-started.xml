@@ -98,15 +98,16 @@ public class Main {
             HelloResource class (so any other resources we'd add here would be recognized
             automatically with no extra configuration). Now let's try to run the app with the
             changes. Add <code>--server</code> to the command run parameters before doing it. Now
-            when the app is started, you will see different output, and the app will not terminate
-            immediately:<programlisting language="bourne">INFO  [2016-02-11 15:15:41,100] main c.n.b.j.c.ServerCommand: Starting jetty...
-INFO  [2016-02-11 15:15:41,197] main o.e.jetty.util.log: Logging initialized @933ms
-INFO  [2016-02-11 15:15:41,221] main c.n.b.j.s.ServerFactory: Adding servlet mapped to /*
-INFO  [2016-02-11 15:15:41,248] main o.e.j.server.Server: jetty-9.3.6.v20151106
-INFO  [2016-02-11 15:15:41,796] main o.e.j.s.h.ContextHandler: Started o.e.j.s.ServletContextHandler@cf65451{/,null,AVAILABLE}
-INFO  [2016-02-11 15:15:41,816] main o.e.j.s.ServerConnector: Started ServerConnector@60cf80e7{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
-INFO  [2016-02-11 15:15:41,816] main o.e.j.server.Server: Started @1554ms</programlisting>Now
-            let's try opening the URL <link xlink:href="http://localhost:8080/"
+            when the app is started, you will see different
+            output:<programlisting language="bourne">INFO  main c.n.b.j.c.ServerCommand: Starting jetty...
+INFO  main o.e.jetty.util.log: Logging initialized @933ms
+INFO  main c.n.b.j.s.ServerFactory: Adding servlet mapped to /*
+INFO  main o.e.j.server.Server: jetty-9.3.6.v20151106
+INFO  main o.e.j.s.h.ContextHandler: Started o.e.j.s.ServletContextHandler@cf65451{/,null,AVAILABLE}
+INFO  main o.e.j.s.ServerConnector: Started ServerConnector@60cf80e7{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+INFO  main o.e.j.server.Server: Started @1554ms</programlisting>Notice
+            that the app did not terminate immediately, and is waiting for user requests. Now let's
+            try opening the URL <link xlink:href="http://localhost:8080/"
                 >http://localhost:8080/</link> in the browser. We should see 'Hello, world!' as
             request output. We just built a working REST app that does not require deployment to a
             web container, and generally wasn't that hard to write. The takeway here is this:</para>
@@ -133,6 +134,25 @@ INFO  [2016-02-11 15:15:41,816] main o.e.j.server.Server: Started @1554ms</progr
     </chapter>
     <chapter>
         <title>Configuration</title>
+        <para>You can optionally pass a configuration to almost any Bootique app. This is done with
+            a <code>--config</code> parameter. An argument to <code>--config</code> is either a path
+            to a configuration file or a URL of a service that serves such configuration remotely
+            (imagine an app starting on a cloud that downloads its configuration from a central
+            server). The format of the file is YAML (though, just like everything in Bootique, this
+            can be customized). Let's create a config file that changes Jetty listen port and the
+            app context path. To do this create a file in the app run directory, with an arbitrary
+            name, e.g. <code>myconfig.yml</code> with the following
+            contents:<programlisting>jetty:
+  context: /hello
+  connector:
+    port: 10001</programlisting></para>
+        <para>Now restart the app with the new set of parameters: <code>--server
+                --config=myconfig.yml</code>. After the restart the app would no longer respond at
+                <link xlink:href="http://localhost:8080/">http://localhost:8080/</link>, instead you
+            will need to use a new URL: <link xlink:href="http://localhost:10001/hello"
+                >http://localhost:10001/hello</link>. This is just a taste of what can be done with
+            configuration. Your app can just as easily obtain its own specific configuration in a
+            form of an app-specific object, as described elsewhere in the docs.</para>
     </chapter>
     <chapter>
         <title>Injection</title>
@@ -162,7 +182,6 @@ public class HelloResource {
 
 	@GET
 	public String hello() {
-		
 		String allArgs = Arrays.asList(args).stream().collect(joining(" "));
 		return "Hello, world! The app was started with the following arguments: " + allArgs;
 	}
@@ -173,12 +192,51 @@ public class HelloResource {
             that the value is initialized via injection, and <code>@Args</code> tells Bootique which
             one of possibly many String[] instances from the DI container we are expecting
             here.</para>
-        <para>Now you can restart the app and refresh <link xlink:href="http://localhost:8080/"
-                >http://localhost:8080/</link> in the browser. The new output will be "Hello, world!
-            The app was started with the following arguments: --server". Next let's check our
-            configuration options...</para>
+        <para>Now you can restart the app and refresh <link
+                xlink:href="http://localhost:10001/hello">http://localhost:10001/hello</link> in the
+            browser. The new output will be "Hello, world! The app was started with the following
+            arguments: --server --config=myconfig.yml". </para>
+        <para>Next let's discuss how to build and run the app outside the IDE...</para>
     </chapter>
     <chapter>
         <title>Packaging</title>
+        <para>Till now we've been running our app from IDE (which also happened to be much easier
+            then running typical container-aware apps). Now let's package our app as a runnable
+            "fat" jar to be able to run it from command line (e.g. in deployment environment).
+            Assembling "fat" jar requires a bit of configuration of the Maven
+                <code>maven-shade-plugin</code>. To simplify it, you can set a parent of your
+                <code>pom.xml</code> to be a standard Bootique
+            parent:<programlisting language="xml">&lt;parent>
+    &lt;groupId>com.nhl.bootique.parent&lt;/groupId>
+    &lt;artifactId>bootique-parent&lt;/artifactId>
+    &lt;version>0.10&lt;/version>
+&lt;/parent></programlisting></para>
+        <para>Other required <code>pom.xml</code>
+            additions:<programlisting language="xml">&lt;properties>
+    &lt;main.class>com.foo.Main&lt;/main.class>
+&lt;/properties>
+...
+&lt;build>
+    &lt;plugins>
+        &lt;plugin>
+            &lt;groupId>org.apache.maven.plugins&lt;/groupId>
+            &lt;artifactId>maven-shade-plugin&lt;/artifactId>
+        &lt;/plugin>
+        &lt;plugin>
+            &lt;groupId>org.apache.maven.plugins&lt;/groupId>
+            &lt;artifactId>maven-jar-plugin&lt;/artifactId>
+        &lt;/plugin>
+    &lt;/plugins>
+&lt;/build></programlisting></para>
+        <para>Once this is setup you can build and run the
+            app:<programlisting language="bourne">mvn clean package
+
+# Using myapp-1.0-SNAPSHOT.jar as an example; the actual jar name depends on your POM settings
+java -jar target/myapp-1.0-SNAPSHOT.jar --server --config=myconfig.yml</programlisting></para>
+        <para>The result should be the same as running from the IDE and the app should be still
+            accessible at <link xlink:href="http://localhost:10001/hello"
+                >http://localhost:10001/hello</link>. Now your jar can be deployed in any
+            environment that has Java 8. </para>
+        <para>This concludes our simple tutorial.</para>
     </chapter>
 </part>
