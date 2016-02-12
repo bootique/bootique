@@ -28,19 +28,46 @@
     </chapter>
     <chapter>
         <title>Requirements</title>
-        <para>Java 8 or newer is required. This is it.</para>
-        <para>Bootique apps can be built using any Java build system (Ant, Maven, Gradle, etc).
-            Examples in the documentation are based on Maven and <code>maven-shade-plugin</code>.
-            While this is not strictly a requirement, Bootique apps are usually packaged into "fat"
-            runnable jars and don't have any runtime dependencies beyond the JRE.</para>
+        <section>
+            <title>Java Version</title>
+            <para>Java 8 or newer is required. </para>
+        </section>
+        <section>
+            <title>Build System</title>
+            <para>Bootique apps can be built using any Java build system (Ant, Maven, Gradle, etc).
+                Examples in the documentation are based on Maven and
+                <code>maven-shade-plugin</code>. While this is not strictly a requirement, Bootique
+                apps are usually packaged into "fat" runnable jars and don't have any runtime
+                dependencies beyond the JRE.</para>
+       
+        </section>
+        <section>
+            <title>Programming Skills</title>
+            <para>Everyting you know about Java programming will be applicable when working with
+                Bootique. You may need to  "unlearn" some of the practices related to JEE
+                configuration and deployment though. </para>
+            <para>Integration of various parts of Bootique app is done via <link
+                    xlink:href="https://github.com/google/guice">Google Guice</link>. In most cases
+                Bootique API would steer you towards idiomatic approach to integration, so deep
+                knowledge of  Guice is not required. Though it wouldn't hurt to understand a few
+                main concepts: modules, bindings, <link
+                    xlink:href="https://github.com/google/guice/wiki/Multibindings"
+                    >multibindings</link>, <link
+                    xlink:href="http://google.github.io/guice/api-docs/latest/javadoc/index.html?com/google/inject/util/Modules.html"
+                    >overrides</link>.</para>
+            <para>Java <link
+                    xlink:href="https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html"
+                    >ServiceLoader</link> facility is another important part of Bootique, and
+                probably one other thing that you shouldn't worry too much about initially.</para>
+        </section>
     </chapter>
     <chapter>
         <title>What You Can Do with Bootique</title>
-        <para>Bootique itself is pretty small. It contains a command-line processor, configuration
-            parser and a DI environment to load modules and execute commands. Most of the actual
-            functionality is coming from modules, either developed by Bootique community or written
-            by you as a developer. There is a growing list of the former kind. Here are just some
-            examples to give a taste of what you can do with Bootique out of the box:<itemizedlist>
+        <para>Core framework of Bootique is pretty small. It contains a command-line processor,
+            configuration parser and a DI environment to load modules and execute commands. Most of
+            the actual functionality is delegated to modules that are either developed by Bootique
+            community or written by you as a developer. There is a growing list of the former kind.
+            Here are just some examples to give a taste of what you can do with Bootique out of the box:<itemizedlist>
                 <listitem>
                     <para><link xlink:href="https://github.com/nhl/bootique-jetty">Bootique
                             Jetty</link> provides embedded Jetty web server to run servlets and
