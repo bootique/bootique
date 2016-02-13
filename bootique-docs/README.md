@@ -31,7 +31,7 @@ Build the docs locally as described above, and then do this:
 ```shell
 
 cd <main_bootique_checkout>/bootique-docs
-cp -r target/site/index/ ../../bootique-pages/docs/ 
+cp -r target/site/index/ ../../bootique-pages/docs/0/
 cd ../../bootique-pages/docs/ 
 git add -A
 git commit -m "docs update"

@@ -26,7 +26,7 @@
     <xsl:include href="common-customizations.xsl"/>
 
     <!--<xsl:param name="highlight.source" select="1"/>-->
-    <xsl:param name="html.stylesheet" select="'../css/doc.css'"/>
+    <xsl:param name="html.stylesheet" select="'css/doc.css'"/>
     <xsl:param name="chunker.output.encoding">UTF-8</xsl:param>
 
     <!-- Only chapters start a new page -->

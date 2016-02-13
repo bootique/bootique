@@ -103,10 +103,16 @@
 							<htmlCustomization>${project.build.outputDirectory}/xsl/html.xsl</htmlCustomization>
 							<chunkedOutput>false</chunkedOutput>
 							<postProcess>
-								<copy todir="${basedir}/target/site/css">
+								<copy todir="${basedir}/target/site/getting-started/css">
 									<fileset dir="${basedir}/src/docbkx/css" />
 								</copy>
-								<copy todir="${basedir}/target/site/img">
+								<copy todir="${basedir}/target/site/getting-started/img">
+									<fileset dir="${basedir}/src/docbkx/img" />
+								</copy>
+								<copy todir="${basedir}/target/site/bootique-docs/css">
+									<fileset dir="${basedir}/src/docbkx/css" />
+								</copy>
+								<copy todir="${basedir}/target/site/bootique-docs/img">
 									<fileset dir="${basedir}/src/docbkx/img" />
 								</copy>
 							</postProcess>
