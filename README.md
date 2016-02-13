@@ -12,14 +12,14 @@ Bootique is a minimally opinionated technology for building container-less runna
 
 Below is a growing list of "standard" Bootique modules. With standard modules you can write apps of different kinds: REST services, job containers, DB migrations, etc.:
 
-    Bootique Cayenne
-    Bootique JDBC
-    Bootique Jersey
-    Bootique Jetty
-    Bootique Job
-    Bootique LinkMove
-    Bootique LinkRest
-    Bootique Liquibase
-    Bootique Logback
-    Bootique Metrics
-    Bootique Zookeeper
+* Bootique Cayenne
+* Bootique JDBC
+* Bootique Jersey
+* Bootique Jetty
+* Bootique Job
+* Bootique LinkMove
+* Bootique LinkRest
+* Bootique Liquibase
+* Bootique Logback
+* Bootique Metrics
+* Bootique Zookeeper
