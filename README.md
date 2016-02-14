@@ -25,3 +25,6 @@ Below is a growing list of "standard" Bootique modules. With standard modules yo
 * [Bootique Metrics](https://github.com/nhl/bootique-metrics)
 * [Bootique Zookeeper](https://github.com/nhl/bootique-zookeeper)
 
+## Support
+
+If you have a question, [open an issue](https://github.com/nhl/bootique/issues) with a label of "help wanted" or "question". 
