@@ -10,46 +10,130 @@
     </chapter>
 
     <chapter xml:id="programming-modules">
-        <title>Modules</title>
-        <para>Bootique framework is just a small DI-based launcher that doesn't do much by itself.
-            Its power comes from being a <emphasis role="italic">command-line plugin
-                environment</emphasis> that can run modules. There's a growing list of "standard"
-            modules provided by Bootique development team. And you can easily write your own. A
-            module is a Java library that contains some code plus a <link
-                xlink:href="https://google.github.io/guice/api-docs/latest/javadoc/index.html?com/google/inject/Module.html"
-                >Guice Module class</link> that binds module-specific services. Module services can
-            rely on services declared in the <link
-                xlink:href="https://github.com/nhl/bootique/blob/master/src/main/java/com/nhl/bootique/BQCoreModule.java"
-                >Bootique core module</link> as well as in other modules. </para>
-        <para>As you see we are using the word "module" either to refer to a Guice Module class, or
-            to a whole a code module. The meaning should be clear from the context.</para>
-        <para>Application most often then not adds its own (Guice) Module to Bootique runtime that
-            provides app-specific behavior. Though apps that are simply collections of other modules
-            are perfectly valid as well. </para>
-        <para>Modules can be autoloaded via <code>Bootique.autoLoadModules()</code> as long as they
-            are included in your aplication dependencies. Autloading is built on the Java <link
-                xlink:href="https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html"
-                >ServiceLoader mechanism</link>. To support auto loading of your own modules, first
-            implement <code>com.nhl.bootique.BQModuleProvider</code> interface to create a Module
-            instance for your own extension, and then add a file
-                <code>META-INF/services/com.nhl.bootique.BQModuleProvider</code> with the only line
-            containing the name of your BQModuleProvider implementor. E.g.:</para>
-        <programlisting>com.foo.MyOwnModuleProvider</programlisting>
-        <para>On autoloading modules are configured using YAML config (as described below). Some
-            modules additionally allow configuration in the code (e.g. see <link
-                xlink:href="https://github.com/nhl/bootique-jersey/blob/master/src/main/java/com/nhl/bootique/jersey/JerseyModule.java"
-                >JerseyModule</link> shown in the "Getting Started" example above).</para>
+            <title>Modules</title>
+            <para>Bootique apps are made of "modules". The framework simply locates all available
+                modules, loads them in the DI environment, parses the command line, and then
+                transfers control to a Command (that can originate from any of the modules) that
+                matched the user choice. There's a growing list of "standard" modules created by
+                Bootique development team. And you can easily write your own. In fact, programming
+                in Bootique is primarily about writing Modules. </para>
+            <para>A module is a Java library that contains some code. What makes this library a
+                module is a special Java class that implements <link
+                    xlink:href="https://google.github.io/guice/api-docs/latest/javadoc/index.html?com/google/inject/Module.html"
+                    >Guice Module interface</link>. This class defines what "services" or other
+                types of objects the module provides. This is done in a form of "bindings", i.e.
+                associations between publicly visible service interface and specific
+                implementations:<programlisting language="java">public class MyModule implements Module {
+	@Override
+	public void configure(Binder binder) {
+		binder.bind(MyService.class).to(MyServiceImpl.class);
+	}
+}</programlisting></para>
+            <para>There are other flavors of bindings in Guice. Please refer to <link
+                    xlink:href="https://github.com/google/guice/wiki/Motivation">Guice
+                    documentation</link> for details. One important form of binding extensively used
+                in Bootique is <link xlink:href="https://github.com/google/guice/wiki/Multibindings"
+                    >Multibinding</link> that will be discussed later.</para>
         
     </chapter>
+    <chapter xml:id="programming-module-providers">
+            <title>Module Providers and Auto-Loading</title>
+            <para>Modules can be automatically loaded via <code>Bootique.autoLoadModules()</code> as
+                long as they are included in your aplication dependencies. Auto-loading depends on
+                the Java <link
+                    xlink:href="https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html"
+                    >ServiceLoader mechanism</link>. To support auto-loading of your own modules,
+                first implement <code>com.nhl.bootique.BQModuleProvider</code> interface to create a
+                Module instance for your own library module:
+                <programlisting language="java">public class MyModuleProvider implements BQModuleProvider {
+	@Override
+	public Module module() {
+		return new MyModule();
+	}
+}</programlisting>After
+                that add a file <code>META-INF/services/com.nhl.bootique.BQModuleProvider</code>
+                with the only line containing the name of your BQModuleProvider implementor.
+                E.g.:</para>
+            <programlisting>com.foo.MyModuleProvider</programlisting>
+            <para><code>BQModuleProvider</code> has a 2 more methods with default implementations
+                that help Bootique to make sense of the module being
+                loaded:<programlisting language="java">public class MyModuleProvider implements BQModuleProvider {
+	...
+	// provides human-readable name of the module
+	@Override
+	public String name() {
+		return "CustomName";
+	}
+	
+	// a collection of modules whose services are overridden by this module
+	@Override
+	public Collection&lt;Class&lt;? extends Module>> overrides() {
+		return Collections.singleton(BQCoreModule.class);
+	}
+}</programlisting></para>
+            <para>You should add the modules, whose services are you planning to redefine in your
+                module to the <code>overrides()</code> collection. By default it is empty. </para>
+    </chapter>
+    <chapter xml:id="programming-configuration">
+            <title>Configuration and Configurable Factories</title>
+            <para/>
+    </chapter>
+    <chapter xml:id="programming-using-modules">
+            <title>Designing and Using Modules</title>
+            <para>Modules interact with each other in a few well-defined ways:<itemizedlist>
+                    <listitem>
+                        <para>"Import": a module uses another module as a library, ignoring its
+                            injectable services.</para>
+                    </listitem>
+                    <listitem>
+                        <para>"Use" : module's classes inject classes from an upstream
+                            module.</para>
+                    </listitem>
+                    <listitem>
+                        <para>"Contribute":  module classes add objects to collections and maps of
+                            their upstream modules.</para>
+                    </listitem>
+                </itemizedlist></para>
+            <para>Usually a module exposes a single concern in your application, such as providing a
+            DataSource to connect to the database, provide an embeddable web container, etc. Ideally
+            this single concern should be represented as a single "service" class that can be </para>
+        </chapter>
+    <chapter xml:id="programming-application-module">
+            <title>Application as a Module</title>
+            <para>The class that contains the <code>"main()"</code> method is informally called
+                "application". Bootique does not impose any particular requirements on this class.
+                You decide what to put in it. It can be limited to just <code>"main()"</code>,
+                turned into a REST resource, etc. </para>
+            <para>We recommend wrapping all your custom code in Guice modules. Then you can view
+                your apps as collections of modules. In this scenario, it makes the most sense to
+                write your application class as either just a launcher with the static
+                    <code>"main()"</code> method or in addition to that turn it into a Module as
+                well. After all Bootique app is just a collection of Modules, and it is but logical
+                that your Application represents that one final Module to rule them
+                all:<programlisting>public class Application implements Module {
+
+   public static void main(String[] args) {
+      Bootique.app(args).module(new Application()).autoLoadModules().run();
+   }
+
+   public void configure(Binder binder) {
+      // load app-specific services; redefine standard ones
+   }
+}</programlisting></para>
+            <para>You may also implement a separate BQModuleProvider for the Application module.
+                Then <code>autoLoadModules()</code> will discover it just like any other Module, and
+                there won't be a need to create an instance.</para>
+    </chapter>
+        
     <chapter>
         <title>Commands and Options</title>
-        <para>TODO</para>
+        <para>Bootique runtime contains a set of commands. Bootique derives a command name to
+            execute from the command line arguments. The initial set of available commands is a
+            combination of commands coming from Bootique core framework and any modules currently in
+            effect in the app </para>
         
     </chapter>
-    <chapter>
-        <title>Working with Configuration</title>
-        <para>TODO</para>
-    </chapter>
+ 
     <chapter>
         <title>Logging</title>
         <para>TODO</para>
