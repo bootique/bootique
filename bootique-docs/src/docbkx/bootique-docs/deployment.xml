@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <part xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink"
-    version="5.0" xml:id="deployment">
-    <title>Deployment</title>
+    version="5.0" xml:id="assembly-deployment">
+    <title>Assembly and Deployment</title>
+    <chapter xml:id="programming-runnable-jar">
+        <title>Runnable Jar</title>
+        <para>TODO</para>
+    </chapter>
  
     <chapter xml:id="deployment-tracing">
         <title>Tracing Bootique Startup</title>
