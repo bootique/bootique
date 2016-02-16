@@ -1,4 +1,6 @@
 [![Build Status](https://travis-ci.org/nhl/bootique.svg)](https://travis-ci.org/nhl/bootique)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.nhl.bootique/bootique/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.nhl.bootique/bootique/)
+
 
 Bootique is a minimally opinionated technology for building container-less runnable Java applications. With Bootique you can create REST services, webapps, jobs, DB migration tasks, etc. and run them as if they were simple commands. No JavaEE container required! Among other things Bootique is an ideal platform for Java [microservices](http://martinfowler.com/articles/microservices.html), as it allows you to create a fully functional app with minimal setup.
 
