@@ -100,7 +100,7 @@
                 >BQCoreModule</link> as an example of an upstream module, as it is available in all
             apps.</para>
         <section>
-            <title>Inject Other Module's Services</title>
+            <title>Injecting Other Module's Services</title>
             <para>BQCoreModule provides a number of objects and services that can be accessed via
                 injection and used by your code.
                 E.g.:<programlisting language="java">class MyService {
@@ -119,11 +119,11 @@
                 the array that we want here.</para>
         </section>
         <section>
-            <title>Contribute to Other Modules</title>
+            <title>Contributing to Other Modules</title>
             <para>Guice supports <link
                     xlink:href="https://github.com/google/guice/wiki/Multibindings"
                     >multibindings</link>, intended to <emphasis>contribute</emphasis> objects
-                defined in a downstream module to collections/maps used by serices in upstream
+                defined in a downstream module to collections/maps used by services in upstream
                 modules. E.g. the following code makes <code>MyCommand</code> available in the app
                 set of
                 commands:<programlisting>public class MyModule implements Module {
@@ -136,10 +136,10 @@
 	}
 }</programlisting></para>
             <para>Here we obtained a Multibinder instance via a static method on BQCoreModule. Most
-                standard modules define such methods for every collection/map that can be extended
-                by module users. This is a pattern you might want to follow in your own modules.<note>
+                standard modules define such helper methods for every collection/map that should be
+                populated by module users. This is a pattern you might want to follow in your own modules.<note>
                     <para>Commands can be alternatively contributed using a special
-                            <code>Commands</code> module builder described below. It is simply a
+                            <code>Commands</code> module builder described below, which is a
                         shortcut for the code above.</para>
                 </note></para>
         </section>
@@ -151,15 +151,15 @@
                 You decide what to put in it. It can be limited to just <code>"main()"</code>,
                 turned into a REST resource, etc. </para>
             <para>We recommend wrapping all your custom code in Guice modules. Then you can view
-                your apps as collections of modules. In this scenario, it makes the most sense to
-                write your application class as either just a launcher with the static
-                    <code>"main()"</code> method or in addition to that turn it into a Module as
-                well. After all Bootique app is just a collection of Modules, and it is but logical
-                that your Application represents that one final Module to rule them
-                all:<programlisting>public class Application implements Module {
+            your apps as collections of modules. In this scenario, it makes the most sense to write
+            your application class as either just a launcher with the static <code>"main()"</code>
+            method or in addition to that turn it into a Module as well. After all Bootique app is
+            just a collection of Modules, and it is but logical that your Application represents
+            that one final Module to rule them
+            all:<programlisting>public class Application implements Module {
 
    public static void main(String[] args) {
-      Bootique.app(args).module(new Application()).autoLoadModules().run();
+      Bootique.app(args).module(Application.class).autoLoadModules().run();
    }
 
    public void configure(Binder binder) {
@@ -167,8 +167,8 @@
    }
 }</programlisting></para>
             <para>You may also implement a separate BQModuleProvider for the Application module.
-                Then <code>autoLoadModules()</code> will discover it just like any other Module, and
-                there won't be a need to create an instance.</para>
+            Then <code>autoLoadModules()</code> will discover it just like any other Module, and
+            there won't be a need to add Application module explicitly.</para>
     </chapter>
         
     <chapter>
