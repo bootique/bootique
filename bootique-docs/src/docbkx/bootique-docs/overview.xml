@@ -6,7 +6,7 @@
     <chapter xml:id="overview-what-is-bootique">
         <title>What is Bootique</title>
         <para>Bootique is a minimally opinionated technology for building container-less runnable
-            Java applications. No JEE container required to run your app! It is an ideal platform
+            Java applications. No JavaEE container required to run your app! It is an ideal platform
             for <emphasis><link xlink:href="http://martinfowler.com/articles/microservices.html"
                     >microservices</link></emphasis>, as it allows you to create a fully functional
             app with minimal-to-no setup. Though it is not limited to a specific kind of app (or the
@@ -65,41 +65,4 @@
                     >ServiceLoader</link> facility is another important part of Bootique, and
                 probably one other thing that you shouldn't worry too much about initially.</para>
         </chapter>
-    <chapter>
-        <title>What You Can Do with Bootique</title>
-        <para>Core framework of Bootique is pretty small. It contains a command-line processor,
-            configuration parser and a DI environment to load modules and execute commands. Most of
-            the actual functionality is delegated to modules that are either developed by Bootique
-            community or written by you as a developer. There is a growing list of the former kind.
-            Here are just some examples to give a taste of what you can do with Bootique out of the box:<itemizedlist>
-                <listitem>
-                    <para><link xlink:href="https://github.com/nhl/bootique-jetty">Bootique
-                            Jetty</link> provides embedded Jetty web server to run servlets and
-                        servlet filters</para>
-                </listitem>
-                <listitem>
-                    <para><link xlink:href="https://github.com/nhl/bootique-jersey">Bootique
-                            Jersey</link> provides functionality to run JAX-RS resources on top of
-                        bootique-jetty. This is a starting point of your typical microservices
-                        stack.</para>
-                </listitem>
-                <listitem>
-                    <para><link xlink:href="https://github.com/nhl/bootique-jdbc">Bootique
-                            JDBC</link> provides a collection of JDBC DataSources to the app.</para>
-                </listitem>
-                <listitem>
-                    <para><link xlink:href="https://github.com/nhl/bootique-cayenne">Bootique
-                            Cayenne</link> provides a powerful ORM.</para>
-                </listitem>
-                <listitem>
-                    <para><link xlink:href="https://github.com/nhl/bootique-liquibase">Bootique
-                            Liquibase</link> provides a way to run DB migrations as Bootique
-                        apps.</para>
-                </listitem>
-                <listitem>
-                    <para>and more...</para>
-                    <para> </para>
-                </listitem>
-            </itemizedlist></para>
-    </chapter>
 </part>
