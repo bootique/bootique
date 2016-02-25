@@ -77,6 +77,10 @@
             this factory to create the service in question. Our configuration examples are based on
             this style. </para>
         <para>TODO</para>
+        <section>
+            <title>Polymorphic Configuration Objects</title>
+            <para>TODO</para>
+        </section>
     </chapter>
     <chapter xml:id="programming-using-modules">
             <title>Using Modules</title>
