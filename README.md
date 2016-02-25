@@ -17,6 +17,7 @@ Below is a growing list of "standard" Bootique modules. With standard modules yo
 * [Bootique Cayenne](https://github.com/nhl/bootique-cayenne)
 * [Bootique JDBC](https://github.com/nhl/bootique-jdbc)
 * [Bootique Jersey](https://github.com/nhl/bootique-jersey)
+* [Bootique Jersey Client](https://github.com/nhl/bootique-jersey-client)
 * [Bootique Jetty](https://github.com/nhl/bootique-jetty)
 * [Bootique Job](https://github.com/nhl/bootique-job)
 * [Bootique LinkMove](https://github.com/nhl/bootique-linkmove)
@@ -25,6 +26,10 @@ Below is a growing list of "standard" Bootique modules. With standard modules yo
 * [Bootique Logback](https://github.com/nhl/bootique-logback)
 * [Bootique Metrics](https://github.com/nhl/bootique-metrics)
 * [Bootique Zookeeper](https://github.com/nhl/bootique-zookeeper)
+
+And a BOM that declares them all with compatibel versions:
+
+* [Bootique BOM](https://github.com/nhl/bootique-bom)
 
 ## Support
 
