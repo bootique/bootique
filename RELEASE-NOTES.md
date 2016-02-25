@@ -1,6 +1,7 @@
 ## 0.13:
 
 * #14 Support for configs polymorphism
+* #31 Rename Bootique.runtime() to Bootique.createRuntime()
 
 ## 0.12:
 

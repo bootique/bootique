@@ -29,7 +29,7 @@ public class CommandsIT {
 	@Test
 	public void testModuleCommands() {
 		BQModuleProvider provider = Commands.builder().build();
-		BQRuntime runtime = Bootique.app(args).module(provider).runtime();
+		BQRuntime runtime = Bootique.app(args).module(provider).createRuntime();
 		CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
 		Collection<Command> commands = commandManager.getCommands();
@@ -42,7 +42,7 @@ public class CommandsIT {
 	@Test
 	public void testNoModuleCommands() {
 		BQModuleProvider provider = Commands.builder().noModuleCommands().build();
-		BQRuntime runtime = Bootique.app(args).module(provider).runtime();
+		BQRuntime runtime = Bootique.app(args).module(provider).createRuntime();
 		CommandManager commandManager = runtime.getInstance(CommandManager.class);
 		assertTrue(commandManager.getCommands().isEmpty());
 	}
@@ -50,7 +50,7 @@ public class CommandsIT {
 	@Test
 	public void testModule_ExtraCommandAsType() {
 		BQModuleProvider provider = Commands.builder(C1.class).build();
-		BQRuntime runtime = Bootique.app(args).module(provider).runtime();
+		BQRuntime runtime = Bootique.app(args).module(provider).createRuntime();
 		CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
 		Collection<Command> commands = commandManager.getCommands();
@@ -64,7 +64,7 @@ public class CommandsIT {
 	@Test
 	public void testModule_ExtraCommandAsInstance() {
 		BQModuleProvider provider = Commands.builder().add(new C1()).build();
-		BQRuntime runtime = Bootique.app(args).module(provider).runtime();
+		BQRuntime runtime = Bootique.app(args).module(provider).createRuntime();
 		CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
 		Collection<Command> commands = commandManager.getCommands();
@@ -78,7 +78,7 @@ public class CommandsIT {
 	@Test
 	public void testModule_ExtraCommandOverride() {
 		BQModuleProvider provider = Commands.builder().add(C2_Help.class).build();
-		BQRuntime runtime = Bootique.app(args).module(provider).runtime();
+		BQRuntime runtime = Bootique.app(args).module(provider).createRuntime();
 		CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
 		Collection<Command> commands = commandManager.getCommands();

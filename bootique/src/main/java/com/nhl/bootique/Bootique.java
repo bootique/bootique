@@ -249,20 +249,29 @@ public class Bootique {
 	}
 
 	/**
-	 * Returns an instance of {@link BQRuntime} that contains all Bootique
-	 * services, commands, etc. This method is only needed if you need to run
-	 * your code manually, process {@link CommandOutcome} or don't want Bootique
-	 * to call {@link System#exit(int)}. Normally you should consider using
-	 * {@link #run()} instead.
+	 * Creates and returns an instance of {@link BQRuntime} that contains all
+	 * Bootique services, commands, etc. This method is only needed if you need
+	 * to run your code manually, process {@link CommandOutcome} or don't want
+	 * Bootique to call {@link System#exit(int)}. Normally you should consider
+	 * using {@link #run()} instead.
 	 * 
-	 * @since 0.12
-	 * @return {@link BQRuntime} instance that contains all Bootique services,
-	 *         commands, etc.
+	 * @since 0.13
+	 * @return a new {@link BQRuntime} instance that contains all Bootique
+	 *         services, commands, etc.
 	 * @see Bootique#run()
 	 */
-	public BQRuntime runtime() {
+	public BQRuntime createRuntime() {
 		Injector injector = createInjector();
 		return createRuntime(injector);
+	}
+
+	/**
+	 * @deprecated since 0.13 in favor of {@link #createRuntime()}.
+	 * @return a newly created runtime.
+	 */
+	@Deprecated
+	public BQRuntime runtime() {
+		return createRuntime();
 	}
 
 	/**
@@ -272,12 +281,12 @@ public class Bootique {
 	 * terminate.
 	 * <p>
 	 * If you don't want your app to shutdown after executing Bootique, you may
-	 * manually obtain {@link BQRuntime} by calling {@link #runtime()}, and run
-	 * it from your code without calling "exit()".
+	 * manually obtain {@link BQRuntime} by calling {@link #createRuntime()},
+	 * and run it from your code without calling "exit()".
 	 */
 	public void run() {
 
-		BQRuntime runtime = runtime();
+		BQRuntime runtime = createRuntime();
 		runtime.addJVMShutdownHook();
 
 		CommandOutcome o = run(runtime);
