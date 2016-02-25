@@ -43,6 +43,11 @@ public class DefaultJacksonServiceIT {
 		Sup1 su2 = readValue(Sup1.class, mapper, "{\"type\":\"sub2\",\"p2\":15}");
 		assertTrue(su2 instanceof Sub2);
 		assertEquals(15, ((Sub2) su2).getP2());
+		
+		Sup1 su22 = readValue(Sup1.class, mapper, "{\"p2\":18}");
+		assertTrue(su22 instanceof Sub2);
+		assertEquals(18, ((Sub2) su22).getP2());
+		
 
 		Sup2 su3 = readValue(Sup2.class, mapper, "{\"type\":\"sub3\",\"p3\":\"pxxxx\"}");
 		assertTrue(su3 instanceof Sub3);
