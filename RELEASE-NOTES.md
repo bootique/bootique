@@ -1,3 +1,7 @@
+## 0.14:
+
+* #32 A test module to write Bootique apps for unit tests
+
 ## 0.13:
 
 * #14 Support for configs polymorphism
