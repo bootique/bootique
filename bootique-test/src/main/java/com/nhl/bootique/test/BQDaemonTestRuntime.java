@@ -1,7 +1,5 @@
 package com.nhl.bootique.test;
 
-import static org.junit.Assert.assertTrue;
-
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -34,16 +32,14 @@ public class BQDaemonTestRuntime extends BQTestRuntime {
 		this.executor = Executors.newCachedThreadPool();
 	}
 
-	public void start(long timeout, TimeUnit unit, String... args)
-			throws InterruptedException, ExecutionException, TimeoutException {
+	public void start(long timeout, TimeUnit unit, String... args) {
 
 		start(args);
-		
+
 		BootLogger logger = runtime.getBootLogger();
 
 		Future<Boolean> startupFuture = executor.submit(() -> {
 
-		
 			try {
 				while (!startupCheck.apply(runtime)) {
 					logger.stderr("Daemon runtime hasn't started yet...");
@@ -60,9 +56,19 @@ public class BQDaemonTestRuntime extends BQTestRuntime {
 			}
 
 		});
+		
+		boolean success;
+		try {
+			success = startupFuture.get(timeout, unit);
+		} catch (InterruptedException | ExecutionException | TimeoutException e) {
+			throw new RuntimeException(String.format("Daemon failed to start in %s ms", unit.toMillis(timeout)));
+		}
 
-		assertTrue(startupFuture.get(timeout, unit));
-		logger.stdout("Daemon runtime started successfully...");
+		if (success) {
+			logger.stdout("Daemon runtime started successfully...");
+		} else {
+			throw new RuntimeException("Daemon failed to start");
+		}
 	}
 
 	protected void start(String... args) {
