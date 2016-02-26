@@ -12,19 +12,15 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.nhl.bootique.BQRuntime;
 import com.nhl.bootique.Bootique;
 import com.nhl.bootique.command.CommandOutcome;
+import com.nhl.bootique.log.BootLogger;
 
 /**
  * @since 0.13
  */
 public class BQDaemonTestRuntime extends BQTestRuntime {
-
-	private static final Logger LOGGER = LoggerFactory.getLogger(BQDaemonTestRuntime.class);
 
 	private ExecutorService executor;
 	private Function<BQRuntime, Boolean> startupCheck;
@@ -42,28 +38,31 @@ public class BQDaemonTestRuntime extends BQTestRuntime {
 			throws InterruptedException, ExecutionException, TimeoutException {
 
 		start(args);
+		
+		BootLogger logger = runtime.getBootLogger();
 
 		Future<Boolean> startupFuture = executor.submit(() -> {
 
+		
 			try {
 				while (!startupCheck.apply(runtime)) {
-					LOGGER.info("daemon runtime hasn't started yet...");
+					logger.stderr("daemon runtime hasn't started yet...");
 					Thread.sleep(500);
 				}
 
 				return true;
 			} catch (InterruptedException e) {
-				LOGGER.warn("Timed out waiting for server to start");
+				logger.stderr("Timed out waiting for server to start");
 				return false;
 			} catch (Throwable th) {
-				LOGGER.warn("Server error", th);
+				logger.stderr("Server error", th);
 				return false;
 			}
 
 		});
 
 		assertTrue(startupFuture.get(timeout, unit));
-		LOGGER.info("Started successfully...");
+		logger.stdout("Started successfully...");
 	}
 
 	protected void start(String... args) {
