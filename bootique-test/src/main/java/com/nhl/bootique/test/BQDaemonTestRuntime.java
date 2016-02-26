@@ -46,7 +46,7 @@ public class BQDaemonTestRuntime extends BQTestRuntime {
 		
 			try {
 				while (!startupCheck.apply(runtime)) {
-					logger.stderr("daemon runtime hasn't started yet...");
+					logger.stderr("Daemon runtime hasn't started yet...");
 					Thread.sleep(500);
 				}
 
@@ -62,7 +62,7 @@ public class BQDaemonTestRuntime extends BQTestRuntime {
 		});
 
 		assertTrue(startupFuture.get(timeout, unit));
-		logger.stdout("Started successfully...");
+		logger.stdout("Daemon runtime started successfully...");
 	}
 
 	protected void start(String... args) {
