@@ -85,8 +85,6 @@ public class BQDaemonTestRuntime extends BQTestRuntime {
 		} catch (InterruptedException e) {
 			logger.stderr("Interrupted while waiting for shutdown", e);
 		}
-
-		runtime.shutdown();
 	}
 
 	protected CommandOutcome run() {
