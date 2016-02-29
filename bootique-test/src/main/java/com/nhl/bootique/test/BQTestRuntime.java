@@ -13,7 +13,7 @@ import com.nhl.bootique.log.DefaultBootLogger;
  * 
  * @since 0.14
  */
-public abstract class BQTestRuntime {
+public class BQTestRuntime {
 
 	private InMemoryPrintStream stdout;
 	private InMemoryPrintStream stderr;
@@ -37,7 +37,7 @@ public abstract class BQTestRuntime {
 		return stderr.toString();
 	}
 
-	protected BQRuntime createRuntime(String... args) {
+	public BQRuntime createRuntime(String... args) {
 		Bootique bootique = Bootique.app(args).bootLogger(createBootLogger());
 		configurator.accept(bootique);
 		return bootique.createRuntime();
