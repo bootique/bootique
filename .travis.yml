@@ -7,7 +7,7 @@ branches:
   only:
     - master
 
-script: mvn clean deploy --settings travis_settings.xml
+script: mvn clean source:jar deploy --settings travis_settings.xml
 
 # travis encrypt -r nhl/bootique "CI_DEPLOY_USERNAME='name'"
 # travis encrypt -r nhl/bootique "CI_DEPLOY_PASSWORD='password'"
