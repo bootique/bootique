@@ -56,7 +56,7 @@ public class BQDaemonTestRuntime extends BQTestRuntime {
 			}
 
 		});
-		
+
 		boolean success;
 		try {
 			success = startupFuture.get(timeout, unit);
@@ -76,12 +76,17 @@ public class BQDaemonTestRuntime extends BQTestRuntime {
 		this.executor.submit(() -> run());
 	}
 
-	public void stop() throws InterruptedException {
-		executor.shutdownNow();
-		executor.awaitTermination(3, TimeUnit.SECONDS);
+	public void stop() {
+		BootLogger logger = runtime.getBootLogger();
 
-		// TODO: ?
-		// runtime.shutdown();
+		executor.shutdownNow();
+		try {
+			executor.awaitTermination(3, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			logger.stderr("Interrupted while waiting for shutdown", e);
+		}
+
+		runtime.shutdown();
 	}
 
 	protected CommandOutcome run() {
