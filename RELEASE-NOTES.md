@@ -1,6 +1,7 @@
 ## 0.14:
 
 * #32 A test module to write Bootique apps for unit tests
+* #34 BQRuntime.getInstance(..) must throw on missing bindings
 
 ## 0.13:
 

@@ -3,7 +3,9 @@ package com.nhl.bootique;
 import static java.util.stream.Collectors.joining;
 
 import java.util.Arrays;
+import java.util.Objects;
 
+import com.google.inject.Binding;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.ProvisionException;
@@ -27,13 +29,21 @@ public class BQRuntime {
 	}
 
 	/**
+	 * Returns a DI-bound instance of a given class, throwing if this class is
+	 * not explicitly bound in DI.
+	 * 
 	 * @since 0.12
 	 * @param type
 	 *            a type of instance object to return
 	 * @return a DI-bound instance of a given class.
 	 */
 	public <T> T getInstance(Class<T> type) {
-		return injector.getInstance(type);
+		Binding<T> binding = injector.getExistingBinding(Key.get(type));
+
+		// note that Guice default behavior is to attempt creating a binding on
+		// the fly, if there's no explicit one available. We are overriding this
+		// behavior.
+		return Objects.requireNonNull(binding).getProvider().get();
 	}
 
 	public BootLogger getBootLogger() {
