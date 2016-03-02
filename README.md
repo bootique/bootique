@@ -5,7 +5,7 @@ Bootique is a [minimally opinionated](https://medium.com/@andrus_a/bootique-a-mi
 
 ## Quick Links:
 
-* WebSite - coming soon at bootique.io 
+* [WebSite](http://bootique.io)
 * [Getting Started](http://bootique.io/docs/0/getting-started/index.html)
 * [Docs](http://bootique.io/docs/0/bootique-docs/index.html)
 
