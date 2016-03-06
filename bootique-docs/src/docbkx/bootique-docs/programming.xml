@@ -70,16 +70,169 @@
     </chapter>
     <chapter xml:id="programming-configuration">
             <title>Reading Configuration and Configurable Factories</title>
-            <para>Usually a module exposes a single concern in your application, such as providing a
-            DataSource to connect to the database, provide an embeddable web container, etc. This
-            single concern is often represented as a single "service" class. Then the goal of module
-            configuration becomes to create a factory based on configuration data, and then invoke
-            this factory to create the service in question. Our configuration examples are based on
-            this style. </para>
-        <para>TODO</para>
+        <para>As mentioned above, a Bootique app can be started with a YAML configuration file. Here
+            is a simple example of such
+            file:<programlisting language="python">log:
+  level: warn
+  appenders:
+    - type: file
+      logFormat: '%c{20}: %m%n'
+      file: target/logback/debug.log
+
+jetty:
+  context: /myapp
+  connector:
+    port: 12009
+</programlisting></para>
+        <para>While this is not strictly required, as a rule the top-level keys in the file belong
+            to configuration objects of individual modules. In the example above "log" subtree
+            configures <code>bootique-logback</code> module, while "jetty" subtree configures
+                <code>bootique-jetty-module</code>. For standard modules, refer to module-specific
+            documentation on the structure of the supported configuration. Here we'll discuss how to
+            build your own configuration-aware module.</para>
+        <para>Bootique allows the Module to read its specific configuration subree as an object of
+            the type defined in the Module. Very often such an object as written as a factory that
+            contains a bunch of setters for the configuration properties, and a factory method to
+            produce some service that a Module is interested in based on this configuration. Here is
+            an example
+            factory:<programlisting language="java">public class MyFactory {
+
+	private int intProperty;
+	private String stringProperty;
+
+	public void setIntProperty(int i) {
+		this.intProperty = i;
+	}
+
+	public void setStringProperty(String s) {
+		this.stringProperty = s;
+	}
+
+	// factory method
+	public MyService createMyService(SomeOtherService soService) {
+		return new MyServiceImpl(soService, intProperty, stringProperty);
+	}
+}</programlisting></para>
+        <para>The factory contains configuration property declarations, as well as public setters
+            for these properties (you can create the getters if you want as well. While this is not
+            strictly required, it may be useful. E.g. for unit tests). Now let's take a look at the
+            Module
+            class:<programlisting language="java">public class MyModule extends ConfigModule {
+	@Provides
+	public MyService createMyService(
+             ConfigurationFactory configFactory, 
+             SomeOtherService soService) {
+
+		return configFactory
+                 .config(MyFactory.class, configPrefix)
+                 .createMySerice(soService);
+	}
+}</programlisting></para>
+        <para>And now a sample configuration that will work with our
+            module:<programlisting>my:
+  intProperty: 55
+  stringProperty: 'Hello, world!'</programlisting></para>
+        <para>A few points to note here: </para>
+        <para>
+            <itemizedlist>
+                <listitem>
+                    <para>Calling our module "MyModule" and extending from <code>ConfigModule</code>
+                        gives it access to the protected "configPrefix" instance variable that is
+                        initialized to the value of "my" (the naming convention here is to use the
+                        Module simple class name without the "Module" suffix and converted to
+                        lowercase).</para>
+                </listitem>
+                <listitem>
+                    <para><code>@Provides</code> annotation is a Guice way of marking a Module
+                        method as a "provider" for a certain type of injectable service. All its
+                        parameters are themselves injectable objects. </para>
+                </listitem>
+                <listitem>
+                    <para><code>ConfigurationFactory</code> is the class used to bind a subtree in
+                        the app YAML configuration to a given Java object (in our case - MyFactory).
+                        The structure of MyFactory is very simple here, but can be as complex as
+                        needed, containing nested objects, arrays, maps, etc. Internally Bootique
+                        uses <link xlink:href="http://wiki.fasterxml.com/JacksonHome">Jackson
+                            framework</link> to bind YAML to a Java class, so all the features of
+                        Jackson can be used to craft configuration.</para>
+                </listitem>
+            </itemizedlist>
+        </para>
         <section>
             <title>Polymorphic Configuration Objects</title>
-            <para>TODO</para>
+            <para>A powerful feature of Jackson is the ability to dynamically create subclasses of
+                the configuration objects. Bootique takes full advantage of this. E.g. imagine a
+                logging module that needs "appenders" to output its log messages (file appender,
+                console appender, syslog appender, etc.). The framework might not be aware of all
+                possible appenders its users might come up with in the future. Yet it still wants to
+                have the ability to instantiate any of them, based solely on the data coming from
+                YAML. Moreover each appender will have its own set of incompatble configuration
+                properties. In fact this is exactly the situation with <code>bootique-logback</code>
+                module. </para>
+            <para>Here is how you ensure that such a polimorphic configuration is possible. Let's
+                start with a simple class hierarchy and a factory that contains a variable of the
+                supertype that we'd like to init to a concrete subclass in
+                runtime:<programlisting language="java">public abstract class SuperType {
+...
+}
+
+public class ConcreteType1 extends SuperType {
+...
+}
+
+public class ConcreteType2 extends SuperType {
+...	
+}
+
+public class MyFactory {
+
+	// can be a class or an interface
+	private SuperType subconfig;
+	
+
+	public void setSubconfig(SuperType s) {
+		this.subconfig = s;
+	}	
+...
+}</programlisting></para>
+            <para>To make polimorphism work, we need to provide some instructions to Jackson. First
+                we need to annotate the supertype and
+                subtypes:<programlisting language="java">@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, 
+     property = "type", 
+     defaultImpl = ConcreteType1.class)
+public abstract class SuperType {
+
+}
+
+@JsonTypeName("type1")
+public class ConcreteType1 extends SuperType {
+
+}
+
+@JsonTypeName("type2")
+public class ConcreteType2 extends SuperType {
+	
+}</programlisting></para>
+            <para>After that we need to create a service provider file called
+                    <code>META-INF/service/com.nhl.bootique.config.PolymorphicConfiguration</code>
+                where all the types participating in the hierarchy are listed (including the
+                supertype):<programlisting>com.foo.SuperType
+com.foo.ConcreteType1
+com.foo.ConcreteType2</programlisting></para>
+            <para>This should be enough to work with configuration like
+                this:<programlisting>my:
+  subconfig:
+    type: type2
+    someVar: someVal</programlisting></para>
+            <para>Or this (here type is implicitly assumed to be "type1", see the "defaultImpl" in
+                the <code>@JsonTypeInfo</code> annotation
+                above:<programlisting>my:
+  subconfig:
+    someOtherVar: someOtherVal</programlisting></para>
+            <para>If another module decides to create yet another subclass of SuperType, it will
+                need to create its own
+                    <code>META-INF/service/com.nhl.bootique.config.PolymorphicConfiguration</code>
+                file that metions the subclass.</para>
         </section>
     </chapter>
     <chapter xml:id="programming-using-modules">
