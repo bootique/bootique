@@ -232,7 +232,7 @@ com.foo.ConcreteType2</programlisting></para>
             <para>If another module decides to create yet another subclass of SuperType, it will
                 need to create its own
                     <code>META-INF/service/com.nhl.bootique.config.PolymorphicConfiguration</code>
-                file that metions the subclass.</para>
+                file that metions the new subclass.</para>
         </section>
     </chapter>
     <chapter xml:id="programming-using-modules">
