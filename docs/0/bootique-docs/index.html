@@ -8,7 +8,7 @@
 
   ga('create', 'UA-73654436-1', 'auto');
   ga('send', 'pageview');
-        </script></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="book" title="Bootique Documentation"><div class="titlepage"><div><div><h1 class="title"><a name="linkrest-guide"></a>Bootique Documentation</h1></div><div><p class="copyright">Copyright &copy; 2016 National Hockey League, ObjectStyle LLC and individual authors</p></div></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="part"><a href="#overview">I. Overview</a></span></dt><dd><dl><dt><span class="chapter"><a href="#overview-what-is-bootique">1. What is Bootique</a></span></dt><dt><span class="chapter"><a href="#d50e42">2. Java Version</a></span></dt><dt><span class="chapter"><a href="#d50e47">3. Build System</a></span></dt><dt><span class="chapter"><a href="#d50e55">4. Programming Skills</a></span></dt></dl></dd><dt><span class="part"><a href="#programming">II. Programming</a></span></dt><dd><dl><dt><span class="chapter"><a href="#programming-modules">5. Modules</a></span></dt><dt><span class="chapter"><a href="#programming-module-providers">6. Modules Auto-Loading</a></span></dt><dt><span class="chapter"><a href="#programming-configuration">7. Reading Configuration and Configurable Factories</a></span></dt><dd><dl><dt><span class="section"><a href="#d50e139">Polymorphic Configuration Objects</a></span></dt></dl></dd><dt><span class="chapter"><a href="#programming-using-modules">8. Using Modules</a></span></dt><dd><dl><dt><span class="section"><a href="#d50e164">Injecting Other Module's Services</a></span></dt><dt><span class="section"><a href="#d50e179">Contributing to Other Modules</a></span></dt></dl></dd><dt><span class="chapter"><a href="#programming-application-module">9. Application as a Module</a></span></dt><dt><span class="chapter"><a href="#d50e226">10. Commands and Options</a></span></dt><dt><span class="chapter"><a href="#d50e233">11. Logging</a></span></dt></dl></dd><dt><span class="part"><a href="#testing">III. Testing</a></span></dt><dd><dl><dt><span class="chapter"><a href="#d50e241">12. Writing Unit Tests</a></span></dt></dl></dd><dt><span class="part"><a href="#assembly-deployment">IV. Assembly and Deployment</a></span></dt><dd><dl><dt><span class="chapter"><a href="#programming-runnable-jar">13. Runnable Jar</a></span></dt><dt><span class="chapter"><a href="#deployment-tracing">14. Tracing Bootique Startup</a></span></dt></dl></dd></dl></div><div class="part" title="Part&nbsp;I.&nbsp;Overview"><div class="titlepage"><div><div><h1 class="title"><a name="overview"></a>Part&nbsp;I.&nbsp;Overview</h1></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#overview-what-is-bootique">1. What is Bootique</a></span></dt><dt><span class="chapter"><a href="#d50e42">2. Java Version</a></span></dt><dt><span class="chapter"><a href="#d50e47">3. Build System</a></span></dt><dt><span class="chapter"><a href="#d50e55">4. Programming Skills</a></span></dt></dl></div><div class="chapter" title="Chapter&nbsp;1.&nbsp;What is Bootique"><div class="titlepage"><div><div><h2 class="title"><a name="overview-what-is-bootique"></a>Chapter&nbsp;1.&nbsp;What is Bootique</h2></div></div></div><p>Bootique is a minimally opinionated technology for building container-less runnable
+        </script></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="book" title="Bootique Documentation"><div class="titlepage"><div><div><h1 class="title"><a name="linkrest-guide"></a>Bootique Documentation</h1></div><div><p class="copyright">Copyright &copy; 2016 National Hockey League, ObjectStyle LLC and individual authors</p></div></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="part"><a href="#overview">I. Overview</a></span></dt><dd><dl><dt><span class="chapter"><a href="#overview-what-is-bootique">1. What is Bootique</a></span></dt><dt><span class="chapter"><a href="#d50e42">2. Java Version</a></span></dt><dt><span class="chapter"><a href="#d50e47">3. Build System</a></span></dt><dt><span class="chapter"><a href="#d50e55">4. Programming Skills</a></span></dt></dl></dd><dt><span class="part"><a href="#programming">II. Programming</a></span></dt><dd><dl><dt><span class="chapter"><a href="#programming-modules">5. Modules</a></span></dt><dt><span class="chapter"><a href="#programming-module-providers">6. Modules Auto-Loading</a></span></dt><dt><span class="chapter"><a href="#programming-configuration">7. Reading Configuration and Configurable Factories</a></span></dt><dd><dl><dt><span class="section"><a href="#d50e184">Polymorphic Configuration Objects</a></span></dt></dl></dd><dt><span class="chapter"><a href="#programming-using-modules">8. Using Modules</a></span></dt><dd><dl><dt><span class="section"><a href="#d50e243">Injecting Other Module's Services</a></span></dt><dt><span class="section"><a href="#d50e258">Contributing to Other Modules</a></span></dt></dl></dd><dt><span class="chapter"><a href="#programming-application-module">9. Application as a Module</a></span></dt><dt><span class="chapter"><a href="#d50e305">10. Commands and Options</a></span></dt><dt><span class="chapter"><a href="#d50e312">11. Logging</a></span></dt></dl></dd><dt><span class="part"><a href="#testing">III. Testing</a></span></dt><dd><dl><dt><span class="chapter"><a href="#d50e320">12. Writing Unit Tests</a></span></dt></dl></dd><dt><span class="part"><a href="#assembly-deployment">IV. Assembly and Deployment</a></span></dt><dd><dl><dt><span class="chapter"><a href="#programming-runnable-jar">13. Runnable Jar</a></span></dt><dt><span class="chapter"><a href="#deployment-tracing">14. Tracing Bootique Startup</a></span></dt></dl></dd></dl></div><div class="part" title="Part&nbsp;I.&nbsp;Overview"><div class="titlepage"><div><div><h1 class="title"><a name="overview"></a>Part&nbsp;I.&nbsp;Overview</h1></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#overview-what-is-bootique">1. What is Bootique</a></span></dt><dt><span class="chapter"><a href="#d50e42">2. Java Version</a></span></dt><dt><span class="chapter"><a href="#d50e47">3. Build System</a></span></dt><dt><span class="chapter"><a href="#d50e55">4. Programming Skills</a></span></dt></dl></div><div class="chapter" title="Chapter&nbsp;1.&nbsp;What is Bootique"><div class="titlepage"><div><div><h2 class="title"><a name="overview-what-is-bootique"></a>Chapter&nbsp;1.&nbsp;What is Bootique</h2></div></div></div><p>Bootique is a minimally opinionated technology for building container-less runnable
             Java applications. No JavaEE container required to run your app! It is an ideal platform
             for <span class="emphasis"><em><a class="link" href="http://martinfowler.com/articles/microservices.html" target="_top">microservices</a></em></span>, as it allows you to create a fully functional
             app with minimal-to-no setup. Though it is not limited to a specific kind of app (or the
@@ -33,7 +33,7 @@
             Bootique API would steer you towards idiomatic approach to integration, so deep
             knowledge of Guice is not required. Though it wouldn't hurt to understand a few main
             concepts: modules, bindings, <a class="link" href="https://github.com/google/guice/wiki/Multibindings" target="_top">multibindings</a>, <a class="link" href="http://google.github.io/guice/api-docs/latest/javadoc/index.html?com/google/inject/util/Modules.html" target="_top">overrides</a>.</p><p>Java <a class="link" href="https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html" target="_top">ServiceLoader</a> facility is another important part of Bootique, and
-                probably one other thing that you shouldn't worry too much about initially.</p></div></div><div class="part" title="Part&nbsp;II.&nbsp;Programming"><div class="titlepage"><div><div><h1 class="title"><a name="programming"></a>Part&nbsp;II.&nbsp;Programming</h1></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#programming-modules">5. Modules</a></span></dt><dt><span class="chapter"><a href="#programming-module-providers">6. Modules Auto-Loading</a></span></dt><dt><span class="chapter"><a href="#programming-configuration">7. Reading Configuration and Configurable Factories</a></span></dt><dd><dl><dt><span class="section"><a href="#d50e139">Polymorphic Configuration Objects</a></span></dt></dl></dd><dt><span class="chapter"><a href="#programming-using-modules">8. Using Modules</a></span></dt><dd><dl><dt><span class="section"><a href="#d50e164">Injecting Other Module's Services</a></span></dt><dt><span class="section"><a href="#d50e179">Contributing to Other Modules</a></span></dt></dl></dd><dt><span class="chapter"><a href="#programming-application-module">9. Application as a Module</a></span></dt><dt><span class="chapter"><a href="#d50e226">10. Commands and Options</a></span></dt><dt><span class="chapter"><a href="#d50e233">11. Logging</a></span></dt></dl></div><div class="chapter" title="Chapter&nbsp;5.&nbsp;Modules"><div class="titlepage"><div><div><h2 class="title"><a name="programming-modules"></a>Chapter&nbsp;5.&nbsp;Modules</h2></div></div></div><p>Bootique apps are made of "modules". The framework simply locates all available
+                probably one other thing that you shouldn't worry too much about initially.</p></div></div><div class="part" title="Part&nbsp;II.&nbsp;Programming"><div class="titlepage"><div><div><h1 class="title"><a name="programming"></a>Part&nbsp;II.&nbsp;Programming</h1></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#programming-modules">5. Modules</a></span></dt><dt><span class="chapter"><a href="#programming-module-providers">6. Modules Auto-Loading</a></span></dt><dt><span class="chapter"><a href="#programming-configuration">7. Reading Configuration and Configurable Factories</a></span></dt><dd><dl><dt><span class="section"><a href="#d50e184">Polymorphic Configuration Objects</a></span></dt></dl></dd><dt><span class="chapter"><a href="#programming-using-modules">8. Using Modules</a></span></dt><dd><dl><dt><span class="section"><a href="#d50e243">Injecting Other Module's Services</a></span></dt><dt><span class="section"><a href="#d50e258">Contributing to Other Modules</a></span></dt></dl></dd><dt><span class="chapter"><a href="#programming-application-module">9. Application as a Module</a></span></dt><dt><span class="chapter"><a href="#d50e305">10. Commands and Options</a></span></dt><dt><span class="chapter"><a href="#d50e312">11. Logging</a></span></dt></dl></div><div class="chapter" title="Chapter&nbsp;5.&nbsp;Modules"><div class="titlepage"><div><div><h2 class="title"><a name="programming-modules"></a>Chapter&nbsp;5.&nbsp;Modules</h2></div></div></div><p>Bootique apps are made of "modules". The framework simply locates all available
             modules, loads them in the DI environment, parses the command line, and then transfers
             control to a Command (that can originate from any of the modules) that matched the user
             choice. There's a growing list of modules created by Bootique development team. And you
@@ -78,17 +78,149 @@
 		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">return</span> Collections.singleton(BQCoreModule.<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span>);
 	}
 }</pre><p>If  in your Module you are planning to redefine any services from the upstream
-            modules, specify those upstream modules in the <code class="code">overrides()</code> collection. </p></div><div class="chapter" title="Chapter&nbsp;7.&nbsp;Reading Configuration and Configurable Factories"><div class="titlepage"><div><div><h2 class="title"><a name="programming-configuration"></a>Chapter&nbsp;7.&nbsp;Reading Configuration and Configurable Factories</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#d50e139">Polymorphic Configuration Objects</a></span></dt></dl></div><p>Usually a module exposes a single concern in your application, such as providing a
-            DataSource to connect to the database, provide an embeddable web container, etc. This
-            single concern is often represented as a single "service" class. Then the goal of module
-            configuration becomes to create a factory based on configuration data, and then invoke
-            this factory to create the service in question. Our configuration examples are based on
-            this style. </p><p>TODO</p><div class="section" title="Polymorphic Configuration Objects"><div class="titlepage"><div><div><h2 class="title"><a name="d50e139"></a>Polymorphic Configuration Objects</h2></div></div></div><p>TODO</p></div></div><div class="chapter" title="Chapter&nbsp;8.&nbsp;Using Modules"><div class="titlepage"><div><div><h2 class="title"><a name="programming-using-modules"></a>Chapter&nbsp;8.&nbsp;Using Modules</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#d50e164">Injecting Other Module's Services</a></span></dt><dt><span class="section"><a href="#d50e179">Contributing to Other Modules</a></span></dt></dl></div><p>Modules can use other "upstream" modules in a few ways:</p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem"><p>"Import": a downstream module uses another module as a library, ignoring
+            modules, specify those upstream modules in the <code class="code">overrides()</code> collection. </p></div><div class="chapter" title="Chapter&nbsp;7.&nbsp;Reading Configuration and Configurable Factories"><div class="titlepage"><div><div><h2 class="title"><a name="programming-configuration"></a>Chapter&nbsp;7.&nbsp;Reading Configuration and Configurable Factories</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#d50e184">Polymorphic Configuration Objects</a></span></dt></dl></div><p>As mentioned above, a Bootique app can be started with a YAML configuration file. Here
+            is a simple example of such
+            file:</p><pre class="programlisting">log:
+  level: warn
+  appenders:
+    - type: file
+      logFormat: <span xmlns="http://www.w3.org/1999/xhtml" class="hl-string">'%c{20}: %m%n'</span>
+      file: target/logback/debug.log
+
+jetty:
+  context: /myapp
+  connector:
+    port: <span xmlns="http://www.w3.org/1999/xhtml" class="hl-number">12009</span>
+</pre><p>While this is not strictly required, as a rule the top-level keys in the file belong
+            to configuration objects of individual modules. In the example above "log" subtree
+            configures <code class="code">bootique-logback</code> module, while "jetty" subtree configures
+                <code class="code">bootique-jetty-module</code>. For standard modules, refer to module-specific
+            documentation on the structure of the supported configuration. Here we'll discuss how to
+            build your own configuration-aware module.</p><p>Bootique allows the Module to read its specific configuration subree as an object of
+            the type defined in the Module. Very often such an object as written as a factory that
+            contains a bunch of setters for the configuration properties, and a factory method to
+            produce some service that a Module is interested in based on this configuration. Here is
+            an example
+            factory:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span> MyFactory {
+
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">private</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">int</span> intProperty;
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">private</span> String stringProperty;
+
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">void</span> setIntProperty(<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">int</span> i) {
+		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">this</span>.intProperty = i;
+	}
+
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">void</span> setStringProperty(String s) {
+		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">this</span>.stringProperty = s;
+	}
+
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-comment">// factory method</span>
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> MyService createMyService(SomeOtherService soService) {
+		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">return</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">new</span> MyServiceImpl(soService, intProperty, stringProperty);
+	}
+}</pre><p>The factory contains configuration property declarations, as well as public setters
+            for these properties (you can create the getters if you want as well. While this is not
+            strictly required, it may be useful. E.g. for unit tests). Now let's take a look at the
+            Module
+            class:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span> MyModule <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">extends</span> ConfigModule {
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-annotation">@Provides</span>
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> MyService createMyService(
+             ConfigurationFactory configFactory, 
+             SomeOtherService soService) {
+
+		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">return</span> configFactory
+                 .config(MyFactory.<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span>, configPrefix)
+                 .createMySerice(soService);
+	}
+}</pre><p>And now a sample configuration that will work with our
+            module:</p><pre class="programlisting">my:
+  intProperty: 55
+  stringProperty: 'Hello, world!'</pre><p>A few points to note here: </p><p>
+            </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem"><p>Calling our module "MyModule" and extending from <code class="code">ConfigModule</code>
+                        gives it access to the protected "configPrefix" instance variable that is
+                        initialized to the value of "my" (the naming convention here is to use the
+                        Module simple class name without the "Module" suffix and converted to
+                        lowercase).</p></li><li class="listitem"><p><code class="code">@Provides</code> annotation is a Guice way of marking a Module
+                        method as a "provider" for a certain type of injectable service. All its
+                        parameters are themselves injectable objects. </p></li><li class="listitem"><p><code class="code">ConfigurationFactory</code> is the class used to bind a subtree in
+                        the app YAML configuration to a given Java object (in our case - MyFactory).
+                        The structure of MyFactory is very simple here, but can be as complex as
+                        needed, containing nested objects, arrays, maps, etc. Internally Bootique
+                        uses <a class="link" href="http://wiki.fasterxml.com/JacksonHome" target="_top">Jackson
+                            framework</a> to bind YAML to a Java class, so all the features of
+                        Jackson can be used to craft configuration.</p></li></ul></div><p>
+        </p><div class="section" title="Polymorphic Configuration Objects"><div class="titlepage"><div><div><h2 class="title"><a name="d50e184"></a>Polymorphic Configuration Objects</h2></div></div></div><p>A powerful feature of Jackson is the ability to dynamically create subclasses of
+                the configuration objects. Bootique takes full advantage of this. E.g. imagine a
+                logging module that needs "appenders" to output its log messages (file appender,
+                console appender, syslog appender, etc.). The framework might not be aware of all
+                possible appenders its users might come up with in the future. Yet it still wants to
+                have the ability to instantiate any of them, based solely on the data coming from
+                YAML. Moreover each appender will have its own set of incompatble configuration
+                properties. In fact this is exactly the situation with <code class="code">bootique-logback</code>
+                module. </p><p>Here is how you ensure that such a polimorphic configuration is possible. Let's
+                start with a simple class hierarchy and a factory that contains a variable of the
+                supertype that we'd like to init to a concrete subclass in
+                runtime:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">abstract</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span> SuperType {
+...
+}
+
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span> ConcreteType1 <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">extends</span> SuperType {
+...
+}
+
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span> ConcreteType2 <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">extends</span> SuperType {
+...	
+}
+
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span> MyFactory {
+
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-comment">// can be a class or an interface</span>
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">private</span> SuperType subconfig;
+	
+
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">void</span> setSubconfig(SuperType s) {
+		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">this</span>.subconfig = s;
+	}	
+...
+}</pre><p>To make polimorphism work, we need to provide some instructions to Jackson. First
+                we need to annotate the supertype and
+                subtypes:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-annotation">@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, 
+     property = "type", 
+     defaultImpl = ConcreteType1.class)</span>
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">abstract</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span> SuperType {
+
+}
+
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-annotation">@JsonTypeName("type1")</span>
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span> ConcreteType1 <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">extends</span> SuperType {
+
+}
+
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-annotation">@JsonTypeName("type2")</span>
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span> ConcreteType2 <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">extends</span> SuperType {
+	
+}</pre><p>After that we need to create a service provider file called
+                    <code class="code">META-INF/service/com.nhl.bootique.config.PolymorphicConfiguration</code>
+                where all the types participating in the hierarchy are listed (including the
+                supertype):</p><pre class="programlisting">com.foo.SuperType
+com.foo.ConcreteType1
+com.foo.ConcreteType2</pre><p>This should be enough to work with configuration like
+                this:</p><pre class="programlisting">my:
+  subconfig:
+    type: type2
+    someVar: someVal</pre><p>Or this (here type is implicitly assumed to be "type1", see the "defaultImpl" in
+                the <code class="code">@JsonTypeInfo</code> annotation
+                above:</p><pre class="programlisting">my:
+  subconfig:
+    someOtherVar: someOtherVal</pre><p>If another module decides to create yet another subclass of SuperType, it will
+                need to create its own
+                    <code class="code">META-INF/service/com.nhl.bootique.config.PolymorphicConfiguration</code>
+                file that metions the new subclass.</p></div></div><div class="chapter" title="Chapter&nbsp;8.&nbsp;Using Modules"><div class="titlepage"><div><div><h2 class="title"><a name="programming-using-modules"></a>Chapter&nbsp;8.&nbsp;Using Modules</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#d50e243">Injecting Other Module's Services</a></span></dt><dt><span class="section"><a href="#d50e258">Contributing to Other Modules</a></span></dt></dl></div><p>Modules can use other "upstream" modules in a few ways:</p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem"><p>"Import": a downstream module uses another module as a library, ignoring
                         its injectable services.</p></li><li class="listitem"><p>"Use" : downstream module's classes inject classes from an upstream
                         module.</p></li><li class="listitem"><p>"Contribute": downstream module injects objects to collections and maps
                         defined in upstream modules.</p></li></ul></div><p>Import case is trivial, so we'll concentrate on the two remaining scenarios. We
             will use <a class="link" href="https://github.com/nhl/bootique/blob/master/bootique/src/main/java/com/nhl/bootique/BQCoreModule.java" target="_top">BQCoreModule</a> as an example of an upstream module, as it is available in all
-            apps.</p><div class="section" title="Injecting Other Module's Services"><div class="titlepage"><div><div><h2 class="title"><a name="d50e164"></a>Injecting Other Module's Services</h2></div></div></div><p>BQCoreModule provides a number of objects and services that can be accessed via
+            apps.</p><div class="section" title="Injecting Other Module's Services"><div class="titlepage"><div><div><h2 class="title"><a name="d50e243"></a>Injecting Other Module's Services</h2></div></div></div><p>BQCoreModule provides a number of objects and services that can be accessed via
                 injection and used by your code.
                 E.g.:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span> MyService {
 
@@ -102,7 +234,7 @@
 }</pre><p>In this example we injected command line arguments that were used to start the
                 app. Note that since there can potentially be more than one <code class="code">String[]</code> in
                 a DI container, Bootique <code class="code">@Args</code> annotation is used to uniquely identify
-                the array that we want here.</p></div><div class="section" title="Contributing to Other Modules"><div class="titlepage"><div><div><h2 class="title"><a name="d50e179"></a>Contributing to Other Modules</h2></div></div></div><p>Guice supports <a class="link" href="https://github.com/google/guice/wiki/Multibindings" target="_top">multibindings</a>, intended to <span class="emphasis"><em>contribute</em></span> objects
+                the array that we want here.</p></div><div class="section" title="Contributing to Other Modules"><div class="titlepage"><div><div><h2 class="title"><a name="d50e258"></a>Contributing to Other Modules</h2></div></div></div><p>Guice supports <a class="link" href="https://github.com/google/guice/wiki/Multibindings" target="_top">multibindings</a>, intended to <span class="emphasis"><em>contribute</em></span> objects
                 defined in a downstream module to collections/maps used by services in upstream
                 modules. E.g. the following code makes <code class="code">MyCommand</code> available in the app
                 set of
@@ -138,10 +270,10 @@
    }
 }</pre><p>You may also implement a separate BQModuleProvider for the Application module.
             Then <code class="code">autoLoadModules()</code> will discover it just like any other Module, and
-            there won't be a need to add Application module explicitly.</p></div><div class="chapter" title="Chapter&nbsp;10.&nbsp;Commands and Options"><div class="titlepage"><div><div><h2 class="title"><a name="d50e226"></a>Chapter&nbsp;10.&nbsp;Commands and Options</h2></div></div></div><p>Bootique runtime contains a set of commands. Bootique derives a command name to
+            there won't be a need to add Application module explicitly.</p></div><div class="chapter" title="Chapter&nbsp;10.&nbsp;Commands and Options"><div class="titlepage"><div><div><h2 class="title"><a name="d50e305"></a>Chapter&nbsp;10.&nbsp;Commands and Options</h2></div></div></div><p>Bootique runtime contains a set of commands. Bootique derives a command name to
             execute from the command line arguments. The initial set of available commands is a
             combination of commands coming from Bootique core framework and any modules currently in
-            effect in the app.</p><p>TODO</p></div><div class="chapter" title="Chapter&nbsp;11.&nbsp;Logging"><div class="titlepage"><div><div><h2 class="title"><a name="d50e233"></a>Chapter&nbsp;11.&nbsp;Logging</h2></div></div></div><p>TODO</p></div></div><div class="part" title="Part&nbsp;III.&nbsp;Testing"><div class="titlepage"><div><div><h1 class="title"><a name="testing"></a>Part&nbsp;III.&nbsp;Testing</h1></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#d50e241">12. Writing Unit Tests</a></span></dt></dl></div><div class="chapter" title="Chapter&nbsp;12.&nbsp;Writing Unit Tests"><div class="titlepage"><div><div><h2 class="title"><a name="d50e241"></a>Chapter&nbsp;12.&nbsp;Writing Unit Tests</h2></div></div></div><p>TODO</p></div></div><div class="part" title="Part&nbsp;IV.&nbsp;Assembly and Deployment"><div class="titlepage"><div><div><h1 class="title"><a name="assembly-deployment"></a>Part&nbsp;IV.&nbsp;Assembly and Deployment</h1></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#programming-runnable-jar">13. Runnable Jar</a></span></dt><dt><span class="chapter"><a href="#deployment-tracing">14. Tracing Bootique Startup</a></span></dt></dl></div><div class="chapter" title="Chapter&nbsp;13.&nbsp;Runnable Jar"><div class="titlepage"><div><div><h2 class="title"><a name="programming-runnable-jar"></a>Chapter&nbsp;13.&nbsp;Runnable Jar</h2></div></div></div><p>TODO</p></div><div class="chapter" title="Chapter&nbsp;14.&nbsp;Tracing Bootique Startup"><div class="titlepage"><div><div><h2 class="title"><a name="deployment-tracing"></a>Chapter&nbsp;14.&nbsp;Tracing Bootique Startup</h2></div></div></div><p>To see what modules are loaded and to trace other events that happen on startup, run
+            effect in the app.</p><p>TODO</p></div><div class="chapter" title="Chapter&nbsp;11.&nbsp;Logging"><div class="titlepage"><div><div><h2 class="title"><a name="d50e312"></a>Chapter&nbsp;11.&nbsp;Logging</h2></div></div></div><p>TODO</p></div></div><div class="part" title="Part&nbsp;III.&nbsp;Testing"><div class="titlepage"><div><div><h1 class="title"><a name="testing"></a>Part&nbsp;III.&nbsp;Testing</h1></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#d50e320">12. Writing Unit Tests</a></span></dt></dl></div><div class="chapter" title="Chapter&nbsp;12.&nbsp;Writing Unit Tests"><div class="titlepage"><div><div><h2 class="title"><a name="d50e320"></a>Chapter&nbsp;12.&nbsp;Writing Unit Tests</h2></div></div></div><p>TODO</p></div></div><div class="part" title="Part&nbsp;IV.&nbsp;Assembly and Deployment"><div class="titlepage"><div><div><h1 class="title"><a name="assembly-deployment"></a>Part&nbsp;IV.&nbsp;Assembly and Deployment</h1></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#programming-runnable-jar">13. Runnable Jar</a></span></dt><dt><span class="chapter"><a href="#deployment-tracing">14. Tracing Bootique Startup</a></span></dt></dl></div><div class="chapter" title="Chapter&nbsp;13.&nbsp;Runnable Jar"><div class="titlepage"><div><div><h2 class="title"><a name="programming-runnable-jar"></a>Chapter&nbsp;13.&nbsp;Runnable Jar</h2></div></div></div><p>TODO</p></div><div class="chapter" title="Chapter&nbsp;14.&nbsp;Tracing Bootique Startup"><div class="titlepage"><div><div><h2 class="title"><a name="deployment-tracing"></a>Chapter&nbsp;14.&nbsp;Tracing Bootique Startup</h2></div></div></div><p>To see what modules are loaded and to trace other events that happen on startup, run
             your jar with <code class="code">-Dbq.trace</code> option. E.g.:</p><pre class="programlisting">java -Dbq.trace -jar target/myapp-1.0.jar --server</pre><p>You may see an output like this:</p><pre class="programlisting">Skipping module 'JerseyModule' provided by 'JerseyModuleProvider' (already provided by 'Bootique')...
 Adding module 'BQCoreModule' provided by 'Bootique'...
 Adding module 'JerseyModule' provided by 'Bootique'...
