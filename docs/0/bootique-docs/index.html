@@ -8,7 +8,7 @@
 
   ga('create', 'UA-73654436-1', 'auto');
   ga('send', 'pageview');
-        </script></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="book" title="Bootique Documentation"><div class="titlepage"><div><div><h1 class="title"><a name="linkrest-guide"></a>Bootique Documentation</h1></div><div><p class="copyright">Copyright &copy; 2016 National Hockey League, ObjectStyle LLC and individual authors</p></div></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="part"><a href="#overview">I. Overview</a></span></dt><dd><dl><dt><span class="chapter"><a href="#overview-what-is-bootique">1. What is Bootique</a></span></dt><dt><span class="chapter"><a href="#d50e42">2. Java Version</a></span></dt><dt><span class="chapter"><a href="#d50e47">3. Build System</a></span></dt><dt><span class="chapter"><a href="#d50e55">4. Programming Skills</a></span></dt></dl></dd><dt><span class="part"><a href="#programming">II. Programming</a></span></dt><dd><dl><dt><span class="chapter"><a href="#programming-modules">5. Modules</a></span></dt><dt><span class="chapter"><a href="#programming-module-providers">6. Modules Auto-Loading</a></span></dt><dt><span class="chapter"><a href="#programming-configuration">7. Reading Configuration and Configurable Factories</a></span></dt><dd><dl><dt><span class="section"><a href="#d50e184">Polymorphic Configuration Objects</a></span></dt></dl></dd><dt><span class="chapter"><a href="#programming-using-modules">8. Using Modules</a></span></dt><dd><dl><dt><span class="section"><a href="#d50e243">Injecting Other Module's Services</a></span></dt><dt><span class="section"><a href="#d50e258">Contributing to Other Modules</a></span></dt></dl></dd><dt><span class="chapter"><a href="#programming-application-module">9. Application as a Module</a></span></dt><dt><span class="chapter"><a href="#d50e305">10. Commands and Options</a></span></dt><dt><span class="chapter"><a href="#d50e312">11. Logging</a></span></dt></dl></dd><dt><span class="part"><a href="#testing">III. Testing</a></span></dt><dd><dl><dt><span class="chapter"><a href="#d50e320">12. Writing Unit Tests</a></span></dt></dl></dd><dt><span class="part"><a href="#assembly-deployment">IV. Assembly and Deployment</a></span></dt><dd><dl><dt><span class="chapter"><a href="#programming-runnable-jar">13. Runnable Jar</a></span></dt><dt><span class="chapter"><a href="#deployment-tracing">14. Tracing Bootique Startup</a></span></dt></dl></dd></dl></div><div class="part" title="Part&nbsp;I.&nbsp;Overview"><div class="titlepage"><div><div><h1 class="title"><a name="overview"></a>Part&nbsp;I.&nbsp;Overview</h1></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#overview-what-is-bootique">1. What is Bootique</a></span></dt><dt><span class="chapter"><a href="#d50e42">2. Java Version</a></span></dt><dt><span class="chapter"><a href="#d50e47">3. Build System</a></span></dt><dt><span class="chapter"><a href="#d50e55">4. Programming Skills</a></span></dt></dl></div><div class="chapter" title="Chapter&nbsp;1.&nbsp;What is Bootique"><div class="titlepage"><div><div><h2 class="title"><a name="overview-what-is-bootique"></a>Chapter&nbsp;1.&nbsp;What is Bootique</h2></div></div></div><p>Bootique is a minimally opinionated technology for building container-less runnable
+        </script></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="book" title="Bootique Documentation"><div class="titlepage"><div><div><h1 class="title"><a name="linkrest-guide"></a>Bootique Documentation</h1></div><div><p class="copyright">Copyright &copy; 2016 National Hockey League, ObjectStyle LLC and individual authors</p></div></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="part"><a href="#overview">I. Overview</a></span></dt><dd><dl><dt><span class="chapter"><a href="#overview-what-is-bootique">1. What is Bootique</a></span></dt><dt><span class="chapter"><a href="#d50e42">2. Java Version</a></span></dt><dt><span class="chapter"><a href="#d50e47">3. Build System</a></span></dt><dt><span class="chapter"><a href="#d50e55">4. Programming Skills</a></span></dt></dl></dd><dt><span class="part"><a href="#programming">II. Programming</a></span></dt><dd><dl><dt><span class="chapter"><a href="#programming-modules">5. Modules</a></span></dt><dt><span class="chapter"><a href="#programming-module-providers">6. Modules Auto-Loading</a></span></dt><dt><span class="chapter"><a href="#programming-configuration">7. Reading Configuration and Configurable Factories</a></span></dt><dd><dl><dt><span class="section"><a href="#d50e184">Polymorphic Configuration Objects</a></span></dt></dl></dd><dt><span class="chapter"><a href="#programming-using-modules">8. Using Modules</a></span></dt><dd><dl><dt><span class="section"><a href="#d50e243">Injecting Other Module's Services</a></span></dt><dt><span class="section"><a href="#d50e258">Contributing to Other Modules</a></span></dt></dl></dd><dt><span class="chapter"><a href="#programming-application-module">9. Application as a Module</a></span></dt><dt><span class="chapter"><a href="#d50e305">10. Commands</a></span></dt><dd><dl><dt><span class="section"><a href="#d50e318">Writing Commands</a></span></dt><dt><span class="section"><a href="#d50e342">Injection in Commands</a></span></dt></dl></dd><dt><span class="chapter"><a href="#d50e355">11. Options</a></span></dt><dt><span class="chapter"><a href="#d50e374">12. Logging</a></span></dt><dd><dl><dt><span class="section"><a href="#d50e377">Loggers in the Code </a></span></dt><dt><span class="section"><a href="#d50e385">Configurable Logging with Logback</a></span></dt><dt><span class="section"><a href="#d50e410">BootLogger</a></span></dt></dl></dd></dl></dd><dt><span class="part"><a href="#testing">III. Testing</a></span></dt><dd><dl><dt><span class="chapter"><a href="#d50e431">13. Writing Unit Tests</a></span></dt></dl></dd><dt><span class="part"><a href="#assembly-deployment">IV. Assembly and Deployment</a></span></dt><dd><dl><dt><span class="chapter"><a href="#programming-runnable-jar">14. Runnable Jar</a></span></dt><dt><span class="chapter"><a href="#deployment-tracing">15. Tracing Bootique Startup</a></span></dt></dl></dd></dl></div><div class="part" title="Part&nbsp;I.&nbsp;Overview"><div class="titlepage"><div><div><h1 class="title"><a name="overview"></a>Part&nbsp;I.&nbsp;Overview</h1></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#overview-what-is-bootique">1. What is Bootique</a></span></dt><dt><span class="chapter"><a href="#d50e42">2. Java Version</a></span></dt><dt><span class="chapter"><a href="#d50e47">3. Build System</a></span></dt><dt><span class="chapter"><a href="#d50e55">4. Programming Skills</a></span></dt></dl></div><div class="chapter" title="Chapter&nbsp;1.&nbsp;What is Bootique"><div class="titlepage"><div><div><h2 class="title"><a name="overview-what-is-bootique"></a>Chapter&nbsp;1.&nbsp;What is Bootique</h2></div></div></div><p>Bootique is a minimally opinionated technology for building container-less runnable
             Java applications. No JavaEE container required to run your app! It is an ideal platform
             for <span class="emphasis"><em><a class="link" href="http://martinfowler.com/articles/microservices.html" target="_top">microservices</a></em></span>, as it allows you to create a fully functional
             app with minimal-to-no setup. Though it is not limited to a specific kind of app (or the
@@ -33,7 +33,7 @@
             Bootique API would steer you towards idiomatic approach to integration, so deep
             knowledge of Guice is not required. Though it wouldn't hurt to understand a few main
             concepts: modules, bindings, <a class="link" href="https://github.com/google/guice/wiki/Multibindings" target="_top">multibindings</a>, <a class="link" href="http://google.github.io/guice/api-docs/latest/javadoc/index.html?com/google/inject/util/Modules.html" target="_top">overrides</a>.</p><p>Java <a class="link" href="https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html" target="_top">ServiceLoader</a> facility is another important part of Bootique, and
-                probably one other thing that you shouldn't worry too much about initially.</p></div></div><div class="part" title="Part&nbsp;II.&nbsp;Programming"><div class="titlepage"><div><div><h1 class="title"><a name="programming"></a>Part&nbsp;II.&nbsp;Programming</h1></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#programming-modules">5. Modules</a></span></dt><dt><span class="chapter"><a href="#programming-module-providers">6. Modules Auto-Loading</a></span></dt><dt><span class="chapter"><a href="#programming-configuration">7. Reading Configuration and Configurable Factories</a></span></dt><dd><dl><dt><span class="section"><a href="#d50e184">Polymorphic Configuration Objects</a></span></dt></dl></dd><dt><span class="chapter"><a href="#programming-using-modules">8. Using Modules</a></span></dt><dd><dl><dt><span class="section"><a href="#d50e243">Injecting Other Module's Services</a></span></dt><dt><span class="section"><a href="#d50e258">Contributing to Other Modules</a></span></dt></dl></dd><dt><span class="chapter"><a href="#programming-application-module">9. Application as a Module</a></span></dt><dt><span class="chapter"><a href="#d50e305">10. Commands and Options</a></span></dt><dt><span class="chapter"><a href="#d50e312">11. Logging</a></span></dt></dl></div><div class="chapter" title="Chapter&nbsp;5.&nbsp;Modules"><div class="titlepage"><div><div><h2 class="title"><a name="programming-modules"></a>Chapter&nbsp;5.&nbsp;Modules</h2></div></div></div><p>Bootique apps are made of "modules". The framework simply locates all available
+                probably one other thing that you shouldn't worry too much about initially.</p></div></div><div class="part" title="Part&nbsp;II.&nbsp;Programming"><div class="titlepage"><div><div><h1 class="title"><a name="programming"></a>Part&nbsp;II.&nbsp;Programming</h1></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#programming-modules">5. Modules</a></span></dt><dt><span class="chapter"><a href="#programming-module-providers">6. Modules Auto-Loading</a></span></dt><dt><span class="chapter"><a href="#programming-configuration">7. Reading Configuration and Configurable Factories</a></span></dt><dd><dl><dt><span class="section"><a href="#d50e184">Polymorphic Configuration Objects</a></span></dt></dl></dd><dt><span class="chapter"><a href="#programming-using-modules">8. Using Modules</a></span></dt><dd><dl><dt><span class="section"><a href="#d50e243">Injecting Other Module's Services</a></span></dt><dt><span class="section"><a href="#d50e258">Contributing to Other Modules</a></span></dt></dl></dd><dt><span class="chapter"><a href="#programming-application-module">9. Application as a Module</a></span></dt><dt><span class="chapter"><a href="#d50e305">10. Commands</a></span></dt><dd><dl><dt><span class="section"><a href="#d50e318">Writing Commands</a></span></dt><dt><span class="section"><a href="#d50e342">Injection in Commands</a></span></dt></dl></dd><dt><span class="chapter"><a href="#d50e355">11. Options</a></span></dt><dt><span class="chapter"><a href="#d50e374">12. Logging</a></span></dt><dd><dl><dt><span class="section"><a href="#d50e377">Loggers in the Code </a></span></dt><dt><span class="section"><a href="#d50e385">Configurable Logging with Logback</a></span></dt><dt><span class="section"><a href="#d50e410">BootLogger</a></span></dt></dl></dd></dl></div><div class="chapter" title="Chapter&nbsp;5.&nbsp;Modules"><div class="titlepage"><div><div><h2 class="title"><a name="programming-modules"></a>Chapter&nbsp;5.&nbsp;Modules</h2></div></div></div><p>Bootique apps are made of "modules". The framework simply locates all available
             modules, loads them in the DI environment, parses the command line, and then transfers
             control to a Command (that can originate from any of the modules) that matched the user
             choice. There's a growing list of modules created by Bootique development team. And you
@@ -270,10 +270,142 @@ com.foo.ConcreteType2</pre><p>This should be enough to work with configuration l
    }
 }</pre><p>You may also implement a separate BQModuleProvider for the Application module.
             Then <code class="code">autoLoadModules()</code> will discover it just like any other Module, and
-            there won't be a need to add Application module explicitly.</p></div><div class="chapter" title="Chapter&nbsp;10.&nbsp;Commands and Options"><div class="titlepage"><div><div><h2 class="title"><a name="d50e305"></a>Chapter&nbsp;10.&nbsp;Commands and Options</h2></div></div></div><p>Bootique runtime contains a set of commands. Bootique derives a command name to
-            execute from the command line arguments. The initial set of available commands is a
-            combination of commands coming from Bootique core framework and any modules currently in
-            effect in the app.</p><p>TODO</p></div><div class="chapter" title="Chapter&nbsp;11.&nbsp;Logging"><div class="titlepage"><div><div><h2 class="title"><a name="d50e312"></a>Chapter&nbsp;11.&nbsp;Logging</h2></div></div></div><p>TODO</p></div></div><div class="part" title="Part&nbsp;III.&nbsp;Testing"><div class="titlepage"><div><div><h1 class="title"><a name="testing"></a>Part&nbsp;III.&nbsp;Testing</h1></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#d50e320">12. Writing Unit Tests</a></span></dt></dl></div><div class="chapter" title="Chapter&nbsp;12.&nbsp;Writing Unit Tests"><div class="titlepage"><div><div><h2 class="title"><a name="d50e320"></a>Chapter&nbsp;12.&nbsp;Writing Unit Tests</h2></div></div></div><p>TODO</p></div></div><div class="part" title="Part&nbsp;IV.&nbsp;Assembly and Deployment"><div class="titlepage"><div><div><h1 class="title"><a name="assembly-deployment"></a>Part&nbsp;IV.&nbsp;Assembly and Deployment</h1></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#programming-runnable-jar">13. Runnable Jar</a></span></dt><dt><span class="chapter"><a href="#deployment-tracing">14. Tracing Bootique Startup</a></span></dt></dl></div><div class="chapter" title="Chapter&nbsp;13.&nbsp;Runnable Jar"><div class="titlepage"><div><div><h2 class="title"><a name="programming-runnable-jar"></a>Chapter&nbsp;13.&nbsp;Runnable Jar</h2></div></div></div><p>TODO</p></div><div class="chapter" title="Chapter&nbsp;14.&nbsp;Tracing Bootique Startup"><div class="titlepage"><div><div><h2 class="title"><a name="deployment-tracing"></a>Chapter&nbsp;14.&nbsp;Tracing Bootique Startup</h2></div></div></div><p>To see what modules are loaded and to trace other events that happen on startup, run
+            there won't be a need to add Application module explicitly.</p></div><div class="chapter" title="Chapter&nbsp;10.&nbsp;Commands"><div class="titlepage"><div><div><h2 class="title"><a name="d50e305"></a>Chapter&nbsp;10.&nbsp;Commands</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#d50e318">Writing Commands</a></span></dt><dt><span class="section"><a href="#d50e342">Injection in Commands</a></span></dt></dl></div><p>Bootique runtime contains a set of commands coming from Bootique core and from all the
+            modules currently in effect in the app. On startup Bootique attempts to map command-line
+            arguments to a single command type. If no match is found, a <span class="emphasis"><em>default</em></span>
+            command is executed (which is normally a "help" command). To list all available
+            commands, the app can be run with <code class="code">--help</code> option (in most cases running
+            without any options will have the same effect).
+            E.g.:</p><pre class="programlisting">$ java -jar myapp-1.0.jar --help
+
+Option                    Description                          
+------                    -----------                          
+--config &lt;yaml_location&gt;  Specifies YAML config location, which
+                            can be a file path or a URL.       
+--help                    Prints this message.                 
+--server                  Starts Jetty server.</pre><div class="section" title="Writing Commands"><div class="titlepage"><div><div><h2 class="title"><a name="d50e318"></a>Writing Commands</h2></div></div></div><p>Most common commands are already available in various standard modules, still
+                often you'd need to write your own. To do that, first create a command class. It
+                should implement <code class="code">com.nhl.bootique.command.Command</code> interface, though
+                usually it more practical to extend
+                    <code class="code">com.nhl.bootique.command.CommandWithMetadata</code> and provide some
+                metadata used in help and
+                elsewhere:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span> MyCommand <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">extends</span> CommandWithMetadata {
+
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">private</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">static</span> CommandMetadata createMetadata() {
+		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">return</span> CommandMetadata.builder(MyCommand.<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span>)
+				.description(<span xmlns="http://www.w3.org/1999/xhtml" class="hl-string">"My command does something important."</span>)
+				.build();
+	}
+
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> MyCommand() {
+		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">super</span>(createMetadata());
+	}
+
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-annotation">@Override</span>
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> CommandOutcome run(Cli cli) {
+
+		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-comment">// ... run the command here....</span>
+
+		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">return</span> CommandOutcome.succeeded();
+	}
+}</pre><p>The command initializes metadata in constructor and implements the "run" method to
+                run its code. The return CommandOutcome object instructs Bootique what to do when
+                command finishes. The object contains system exit code, and exceptions that occurred
+                during execution. To make the new command available to Bootique, "contribute" it to
+                    <code class="code">BQCoreModule</code>, as was already shown
+                above:</p><pre class="programlisting">public class MyModule implements Module {
+
+	@Override
+	public void configure(Binder binder) {
+		BQCoreModule.contributeCommands(binder)
+			.addBinding()
+			.to(MyCommand.class);
+	}
+}</pre><p>To implement a "daemon" command running forever until it receives an OS signal
+                (e.g. a web server waiting for user requests) , do something like
+                this:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-annotation">@Override</span>
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> CommandOutcome run(Cli cli) {
+
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-comment">// ... start some process in a different thread ....</span>
+
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-comment">// now wait till the app is stopped from another thread </span>
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-comment">// or the JVM is terminated</span>
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">try</span> {
+		Thread.currentThread().join();
+	} <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">catch</span> (InterruptedException e) {
+		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-comment">// ignore exception or log if needed</span>
+	}
+
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">return</span> CommandOutcome.succeeded();
+}</pre></div><div class="section" title="Injection in Commands"><div class="titlepage"><div><div><h2 class="title"><a name="d50e342"></a>Injection in Commands</h2></div></div></div><p>Commands can inject services, just like most other other classes in Bootique.
+                There are some specifics though. Since commands are sometimes instantiated, but not
+                executed (e.g. when <code class="code">--help</code> is run that lists all commands), it is often
+                desirable to avoid immediate instantiation of all dependencies of a given command.
+                So a common pattern with commands is to inject Guice <code class="code">Provider</code> instead
+                of direct
+                dependency:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-annotation">@Inject</span>
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">private</span> Provider&lt;SomeService&gt; provider;
+
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-annotation">@Override</span>
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> CommandOutcome run(Cli cli) {
+	provider.get().someMethod();
+}</pre></div></div><div class="chapter" title="Chapter&nbsp;11.&nbsp;Options"><div class="titlepage"><div><div><h2 class="title"><a name="d50e355"></a>Chapter&nbsp;11.&nbsp;Options</h2></div></div></div><p>In addition to commands, the app can define "options". Options are not associated with
+            any runnable java code, and simply pass command-line values to commands and services.
+            E.g. the standard "<code class="code">--config</code>" option is used by
+                <code class="code">CliConfigurationSource</code> service to locate configuration file.
+            Unrecognized options cause application startup errors. To be recognized, an option needs
+            to be "contributed" to Bootique similar to
+            commands:</p><pre class="programlisting">CliOption option = CliOption
+	.builder(<span xmlns="http://www.w3.org/1999/xhtml" class="hl-string">"email"</span>, <span xmlns="http://www.w3.org/1999/xhtml" class="hl-string">"An admin email address"</span>)
+	.valueRequired(<span xmlns="http://www.w3.org/1999/xhtml" class="hl-string">"email_address"</span>).build();
+
+BQCoreModule.contributeOptions(binder).addBinding().toInstance(option);</pre><p>To
+            read a value of the option, a service should inject
+                <code class="code">com.nhl.bootique.cli.Cli</code> object (commands also get this object as a
+            parameter to "run")
+            :</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-annotation">@Inject</span>
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">private</span> Cli cli;
+
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">void</span> doSomething() {
+	Collection&lt;String&gt; emails = cli.optionStrings(<span xmlns="http://www.w3.org/1999/xhtml" class="hl-string">"email"</span>);
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-comment">// do something with option values....</span>
+}</pre></div><div class="chapter" title="Chapter&nbsp;12.&nbsp;Logging"><div class="titlepage"><div><div><h2 class="title"><a name="d50e374"></a>Chapter&nbsp;12.&nbsp;Logging</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#d50e377">Loggers in the Code </a></span></dt><dt><span class="section"><a href="#d50e385">Configurable Logging with Logback</a></span></dt><dt><span class="section"><a href="#d50e410">BootLogger</a></span></dt></dl></div><div class="section" title="Loggers in the Code"><div class="titlepage"><div><div><h2 class="title"><a name="d50e377"></a>Loggers in the Code </h2></div></div></div><p>Standard Bootique modules use <a class="link" href="http://www.slf4j.org/" target="_top">SLF4J</a> internally, as it is the most convenient least common denominator
+                framework, and can be easily bridged to other logging implementations. Your apps or
+                modules are not required to use SLF4J, though if they do, it will likely reduce the
+                amount of bridging needed to route all logs to a single destination.</p></div><div class="section" title="Configurable Logging with Logback"><div class="titlepage"><div><div><h2 class="title"><a name="d50e385"></a>Configurable Logging with Logback</h2></div></div></div><p>For better control over  logging a standard module called
+                    <code class="code">bootique-logback</code> is available, that integrates <a class="link" href="http://logback.qos.ch/" target="_top">Logback framework</a> in the app. It
+                seamlessly bridges SLF4J (so you keep using SLF4J in the code), and allows to
+                configure logging via YAML config file, including appenders (file, console, etc.)
+                and per class/package log levels. Just like any other module,
+                    <code class="code">bootique-logback</code> can be enabled by simply adding it to the pom.xml
+                dependencies, assuming <code class="code">autoLoadModules()</code> is in
+                effect:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;dependency&gt;</span>
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;groupId&gt;</span>com.nhl.bootique.logback<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/groupId&gt;</span>
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;artifactId&gt;</span>bootique-logback<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/artifactId&gt;</span>
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/dependency&gt;</span></pre><p>To
+                further configure Logback, use <code class="code">log</code> section of the YAML file.
+                E.g.:</p><pre class="programlisting">log:
+  level: warn
+  loggers:
+    com.foo:
+      level: debug
+    com.example:
+      level: debug
+  appenders:
+    - type: file
+      logFormat: '%c{20}: %m%n'
+      file: target/logback/testRun_Debug.log</pre></div><div class="section" title="BootLogger"><div class="titlepage"><div><div><h2 class="title"><a name="d50e410"></a>BootLogger</h2></div></div></div><p>To perform logging during startup, before DI environment is available and YAML
+                configuration is processed, Bootique uses a special service called
+                    <code class="code">BootLogger</code>, that is not dependent on SLF4J and is not automatically
+                bridged to Logback. It provides an abstraction for writing to stdout / stderr, as
+                well as conditional "trace" logs sent to stderr. To enable Bootique trace logs,
+                start the app with <code class="code">-Dbq.trace</code> as described in the deployment section. </p><p>BootLogger is injectable, in case your own code needs to use it. If the default
+                BootLogger behavior is not satisfactory, it can be overridden right in the
+                    <code class="code">main(..)</code> method, as unlike other services, you may need to change
+                it before DI is
+                available:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">static</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">void</span> main(String[] args) {
+   Bootique.app(args).bootLogger(<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">new</span> MyBootLogger()).run();
+}</pre></div></div></div><div class="part" title="Part&nbsp;III.&nbsp;Testing"><div class="titlepage"><div><div><h1 class="title"><a name="testing"></a>Part&nbsp;III.&nbsp;Testing</h1></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#d50e431">13. Writing Unit Tests</a></span></dt></dl></div><div class="chapter" title="Chapter&nbsp;13.&nbsp;Writing Unit Tests"><div class="titlepage"><div><div><h2 class="title"><a name="d50e431"></a>Chapter&nbsp;13.&nbsp;Writing Unit Tests</h2></div></div></div><p>TODO</p></div></div><div class="part" title="Part&nbsp;IV.&nbsp;Assembly and Deployment"><div class="titlepage"><div><div><h1 class="title"><a name="assembly-deployment"></a>Part&nbsp;IV.&nbsp;Assembly and Deployment</h1></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#programming-runnable-jar">14. Runnable Jar</a></span></dt><dt><span class="chapter"><a href="#deployment-tracing">15. Tracing Bootique Startup</a></span></dt></dl></div><div class="chapter" title="Chapter&nbsp;14.&nbsp;Runnable Jar"><div class="titlepage"><div><div><h2 class="title"><a name="programming-runnable-jar"></a>Chapter&nbsp;14.&nbsp;Runnable Jar</h2></div></div></div><p>TODO</p></div><div class="chapter" title="Chapter&nbsp;15.&nbsp;Tracing Bootique Startup"><div class="titlepage"><div><div><h2 class="title"><a name="deployment-tracing"></a>Chapter&nbsp;15.&nbsp;Tracing Bootique Startup</h2></div></div></div><p>To see what modules are loaded and to trace other events that happen on startup, run
             your jar with <code class="code">-Dbq.trace</code> option. E.g.:</p><pre class="programlisting">java -Dbq.trace -jar target/myapp-1.0.jar --server</pre><p>You may see an output like this:</p><pre class="programlisting">Skipping module 'JerseyModule' provided by 'JerseyModuleProvider' (already provided by 'Bootique')...
 Adding module 'BQCoreModule' provided by 'Bootique'...
 Adding module 'JerseyModule' provided by 'Bootique'...
