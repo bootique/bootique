@@ -329,17 +329,174 @@ com.foo.ConcreteType2</programlisting></para>
     </chapter>
         
     <chapter>
-        <title>Commands and Options</title>
-        <para>Bootique runtime contains a set of commands. Bootique derives a command name to
-            execute from the command line arguments. The initial set of available commands is a
-            combination of commands coming from Bootique core framework and any modules currently in
-            effect in the app.</para>
-        <para>TODO</para>
-        
+        <title>Commands</title>
+        <para>Bootique runtime contains a set of commands coming from Bootique core and from all the
+            modules currently in effect in the app. On startup Bootique attempts to map command-line
+            arguments to a single command type. If no match is found, a <emphasis>default</emphasis>
+            command is executed (which is normally a "help" command). To list all available
+            commands, the app can be run with <code>--help</code> option (in most cases running
+            without any options will have the same effect).
+            E.g.:<programlisting>$ java -jar myapp-1.0.jar --help
+
+Option                    Description                          
+------                    -----------                          
+--config &lt;yaml_location>  Specifies YAML config location, which
+                            can be a file path or a URL.       
+--help                    Prints this message.                 
+--server                  Starts Jetty server.</programlisting></para>
+        <section>
+            <title>Writing Commands</title>
+            <para>Most common commands are already available in various standard modules, still
+                often you'd need to write your own. To do that, first create a command class. It
+                should implement <code>com.nhl.bootique.command.Command</code> interface, though
+                usually it more practical to extend
+                    <code>com.nhl.bootique.command.CommandWithMetadata</code> and provide some
+                metadata used in help and
+                elsewhere:<programlisting language="java">public class MyCommand extends CommandWithMetadata {
+
+	private static CommandMetadata createMetadata() {
+		return CommandMetadata.builder(MyCommand.class)
+				.description("My command does something important.")
+				.build();
+	}
+
+	public MyCommand() {
+		super(createMetadata());
+	}
+
+	@Override
+	public CommandOutcome run(Cli cli) {
+
+		// ... run the command here....
+
+		return CommandOutcome.succeeded();
+	}
+}</programlisting></para>
+            <para>The command initializes metadata in constructor and implements the "run" method to
+                run its code. The return CommandOutcome object instructs Bootique what to do when
+                command finishes. The object contains system exit code, and exceptions that occurred
+                during execution. To make the new command available to Bootique, "contribute" it to
+                    <code>BQCoreModule</code>, as was already shown
+                above:<programlisting>public class MyModule implements Module {
+
+	@Override
+	public void configure(Binder binder) {
+		BQCoreModule.contributeCommands(binder)
+			.addBinding()
+			.to(MyCommand.class);
+	}
+}</programlisting></para>
+            <para>To implement a "daemon" command running forever until it receives an OS signal
+                (e.g. a web server waiting for user requests) , do something like
+                this:<programlisting language="java">@Override
+public CommandOutcome run(Cli cli) {
+
+	// ... start some process in a different thread ....
+
+	// now wait till the app is stopped from another thread 
+	// or the JVM is terminated
+	try {
+		Thread.currentThread().join();
+	} catch (InterruptedException e) {
+		// ignore exception or log if needed
+	}
+
+	return CommandOutcome.succeeded();
+}</programlisting></para>
+        </section>
+        <section>
+            <title>Injection in Commands</title>
+            <para>Commands can inject services, just like most other other classes in Bootique.
+                There are some specifics though. Since commands are sometimes instantiated, but not
+                executed (e.g. when <code>--help</code> is run that lists all commands), it is often
+                desirable to avoid immediate instantiation of all dependencies of a given command.
+                So a common pattern with commands is to inject Guice <code>Provider</code> instead
+                of direct
+                dependency:<programlisting language="java">@Inject
+private Provider&lt;SomeService> provider;
+
+@Override
+public CommandOutcome run(Cli cli) {
+	provider.get().someMethod();
+}</programlisting></para>
+        </section>
     </chapter>
- 
+    <chapter>
+        <title>Options</title>
+        <para>In addition to commands, the app can define "options". Options are not associated with
+            any runnable java code, and simply pass command-line values to commands and services.
+            E.g. the standard "<code>--config</code>" option is used by
+                <code>CliConfigurationSource</code> service to locate configuration file.
+            Unrecognized options cause application startup errors. To be recognized, an option needs
+            to be "contributed" to Bootique similar to
+            commands:<programlisting language="java">CliOption option = CliOption
+	.builder("email", "An admin email address")
+	.valueRequired("email_address").build();
+
+BQCoreModule.contributeOptions(binder).addBinding().toInstance(option);</programlisting>To
+            read a value of the option, a service should inject
+                <code>com.nhl.bootique.cli.Cli</code> object (commands also get this object as a
+            parameter to "run")
+            :<programlisting language="java">@Inject
+private Cli cli;
+
+public void doSomething() {
+	Collection&lt;String> emails = cli.optionStrings("email");
+	// do something with option values....
+}</programlisting></para>
+    </chapter>
     <chapter>
         <title>Logging</title>
-        <para>TODO</para>
+        <section>
+            <title>Loggers in the Code </title>
+            <para>Standard Bootique modules use <link xlink:href="http://www.slf4j.org/"
+                    >SLF4J</link> internally, as it is the most convenient least common denominator
+                framework, and can be easily bridged to other logging implementations. Your apps or
+                modules are not required to use SLF4J, though if they do, it will likely reduce the
+                amount of bridging needed to route all logs to a single destination.</para>
+        </section>
+        <section>
+            <title>Configurable Logging with Logback</title>
+            <para>For better control over  logging a standard module called
+                    <code>bootique-logback</code> is available, that integrates <link
+                    xlink:href="http://logback.qos.ch/">Logback framework</link> in the app. It
+                seamlessly bridges SLF4J (so you keep using SLF4J in the code), and allows to
+                configure logging via YAML config file, including appenders (file, console, etc.)
+                and per class/package log levels. Just like any other module,
+                    <code>bootique-logback</code> can be enabled by simply adding it to the pom.xml
+                dependencies, assuming <code>autoLoadModules()</code> is in
+                effect:<programlisting language="xml">&lt;dependency>
+	&lt;groupId>com.nhl.bootique.logback&lt;/groupId>
+	&lt;artifactId>bootique-logback&lt;/artifactId>
+&lt;/dependency></programlisting>To
+                further configure Logback, use <code>log</code> section of the YAML file.
+                E.g.:<programlisting>log:
+  level: warn
+  loggers:
+    com.foo:
+      level: debug
+    com.example:
+      level: debug
+  appenders:
+    - type: file
+      logFormat: '%c{20}: %m%n'
+      file: target/logback/testRun_Debug.log</programlisting></para>
+        </section>
+        <section>
+            <title>BootLogger</title>
+            <para>To perform logging during startup, before DI environment is available and YAML
+                configuration is processed, Bootique uses a special service called
+                    <code>BootLogger</code>, that is not dependent on SLF4J and is not automatically
+                bridged to Logback. It provides an abstraction for writing to stdout / stderr, as
+                well as conditional "trace" logs sent to stderr. To enable Bootique trace logs,
+                start the app with <code>-Dbq.trace</code> as described in the deployment section. </para>
+            <para>BootLogger is injectable, in case your own code needs to use it. If the default
+                BootLogger behavior is not satisfactory, it can be overridden right in the
+                    <code>main(..)</code> method, as unlike other services, you may need to change
+                it before DI is
+                available:<programlisting language="java">public static void main(String[] args) {
+   Bootique.app(args).bootLogger(new MyBootLogger()).run();
+}</programlisting></para>
+        </section>
     </chapter>
 </part>
