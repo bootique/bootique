@@ -1,3 +1,7 @@
+## 0.15:
+
+* #38 BQDaemonTestRuntime NPE in stop if there was an error in start
+
 ## 0.14:
 
 * #32 A test module to write Bootique apps for unit tests

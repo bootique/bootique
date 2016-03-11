@@ -77,6 +77,12 @@ public class BQDaemonTestRuntime extends BQTestRuntime {
 	}
 
 	public void stop() {
+		
+		if (runtime == null) {
+			// this means we weren't started successfully. No need to shutdown
+			return;
+		}
+
 		BootLogger logger = runtime.getBootLogger();
 
 		executor.shutdownNow();
