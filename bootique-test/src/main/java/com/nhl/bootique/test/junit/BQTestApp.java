@@ -16,10 +16,9 @@ import com.nhl.bootique.config.ConfigurationFactory;
 import com.nhl.bootique.test.BQTestRuntime;
 
 /**
- * Provides an object that manages a simple Bootique stack within a lifecycle of
- * the a JUnit test. It doesn't run any commands by default and is usually used
- * for accessing initialized standard services, such as
- * {@link ConfigurationFactory}, etc.
+ * Manages a simple Bootique stack within a lifecycle of the a JUnit test. It
+ * doesn't run any commands by default and is usually used for accessing
+ * initialized standard services, such as {@link ConfigurationFactory}, etc.
  * <p>
  * Instances should be annotated within the unit tests with {@link Rule} or
  * {@link ClassRule}. E.g.:

@@ -1,6 +1,7 @@
 ## 0.15:
 
 * #38 BQDaemonTestRuntime NPE in stop if there was an error in start
+* #39 A wrapper for BQDaemonTestRuntime injectable to JUnit
 * #41 A wrapper for BQTestRuntime injectable to JUnit
 
 ## 0.14:
