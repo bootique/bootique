@@ -5,7 +5,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -15,13 +17,12 @@ import com.google.inject.multibindings.MapBinder;
 import com.nhl.bootique.BQCoreModule;
 import com.nhl.bootique.BQRuntime;
 import com.nhl.bootique.Bootique;
-import com.nhl.bootique.config.ConfigurationFactory;
-import com.nhl.bootique.test.BQTestRuntime;
+import com.nhl.bootique.test.BQDaemonTestRuntime;
 
 /**
- * Manages a simple Bootique stack within a lifecycle of the a JUnit test. It
- * doesn't run any commands by default and is usually used for accessing
- * initialized standard services, such as {@link ConfigurationFactory}, etc.
+ * Manages a "daemon" Bootique stack within a lifecycle of the a JUnit test.
+ * This allows to start background servers so that tests can execute requests
+ * against them, etc.
  * <p>
  * Instances should be annotated within the unit tests with {@link Rule} or
  * {@link ClassRule}. E.g.:
@@ -30,24 +31,24 @@ import com.nhl.bootique.test.BQTestRuntime;
  * public class MyTest {
  * 
  * 	&#64;Rule
- * 	public BQTestApp testApp = new BQTestApp();
+ * 	public BQDaemonTestFactory testFactory = new BQDaemonTestFactory();
  * }
  * </pre>
  * 
  * @since 0.15
  */
-public class BQTestApp extends ExternalResource {
+public class BQDaemonTestFactory extends ExternalResource {
 
-	private Collection<BQRuntime> runtimes;
+	private Collection<BQDaemonTestRuntime> runtimes;
 
 	@Override
 	protected void after() {
-		Collection<BQRuntime> localRuntimes = this.runtimes;
+		Collection<BQDaemonTestRuntime> localRuntimes = this.runtimes;
 
 		if (localRuntimes != null) {
 			localRuntimes.forEach(runtime -> {
 				try {
-					runtime.shutdown();
+					runtime.stop();
 				} catch (Exception e) {
 					// ignore...
 				}
@@ -69,14 +70,19 @@ public class BQTestApp extends ExternalResource {
 		private static final Consumer<Bootique> DO_NOTHING_CONFIGURATOR = bootique -> {
 		};
 
-		private Collection<BQRuntime> runtimes;
+		private static final Function<BQRuntime, Boolean> AFFIRMATIVE_STARTUP_CHECK = runtime -> true;
+
+		private Collection<BQDaemonTestRuntime> runtimes;
+		private Function<BQRuntime, Boolean> startupCheck;
 		private Consumer<Bootique> configurator;
 		private Map<String, String> properties;
 
-		private Builder(Collection<BQRuntime> runtimes) {
+		private Builder(Collection<BQDaemonTestRuntime> runtimes) {
+
 			this.runtimes = runtimes;
 			this.properties = new HashMap<>();
 			this.configurator = DO_NOTHING_CONFIGURATOR;
+			this.startupCheck = AFFIRMATIVE_STARTUP_CHECK;
 		}
 
 		public Builder property(String key, String value) {
@@ -89,7 +95,19 @@ public class BQTestApp extends ExternalResource {
 			return this;
 		}
 
-		public BQRuntime build(String... args) {
+		public Builder startupCheck(Function<BQRuntime, Boolean> startupCheck) {
+			this.startupCheck = Objects.requireNonNull(startupCheck);
+			return this;
+		}
+
+		/**
+		 * Starts the test app in a background thread.
+		 * 
+		 * @param args
+		 *            String[] emulating command-line arguments passed to a Java
+		 *            app.
+		 */
+		public void start(String... args) {
 
 			Consumer<Bootique> localConfigurator = configurator;
 
@@ -103,9 +121,9 @@ public class BQTestApp extends ExternalResource {
 				localConfigurator = localConfigurator.andThen(propsConfigurator);
 			}
 
-			BQRuntime runtime = new BQTestRuntime(localConfigurator).createRuntime(args);
+			BQDaemonTestRuntime runtime = new BQDaemonTestRuntime(localConfigurator, startupCheck);
 			runtimes.add(runtime);
-			return runtime;
+			runtime.start(5, TimeUnit.SECONDS, args);
 		}
 	}
 }
