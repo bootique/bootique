@@ -41,14 +41,9 @@ public class BQDaemonTestApp extends ExternalResource {
 
 	private Collection<BQDaemonTestRuntime> runtimes;
 
-	public BQDaemonTestApp() {
-		runtimes = new ArrayList<>();
-	}
-
 	@Override
 	protected void after() {
 		Collection<BQDaemonTestRuntime> localRuntimes = this.runtimes;
-		this.runtimes = null;
 
 		if (localRuntimes != null) {
 			localRuntimes.forEach(runtime -> {
@@ -59,6 +54,11 @@ public class BQDaemonTestApp extends ExternalResource {
 				}
 			});
 		}
+	}
+
+	@Override
+	protected void before() {
+		this.runtimes = new ArrayList<>();
 	}
 
 	public Builder newRuntime() {
