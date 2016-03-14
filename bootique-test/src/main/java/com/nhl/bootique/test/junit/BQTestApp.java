@@ -1,7 +1,10 @@
 package com.nhl.bootique.test.junit;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import org.junit.ClassRule;
@@ -35,54 +38,74 @@ import com.nhl.bootique.test.BQTestRuntime;
  */
 public class BQTestApp extends ExternalResource {
 
-	private Consumer<Bootique> configurator;
-	private Map<String, String> properties;
-	private BQRuntime runtime;
-
-	public BQTestApp() {
-		this.properties = new HashMap<>();
-	}
+	private Collection<BQRuntime> runtimes;
 
 	@Override
 	protected void after() {
-		this.configurator = null;
-		this.properties.clear();
-		shutdownRuntime();
-	}
+		Collection<BQRuntime> localRuntimes = this.runtimes;
 
-	protected void shutdownRuntime() {
-		BQRuntime localRuntime = this.runtime;
-		if (localRuntime != null) {
-			this.runtime = null;
-			localRuntime.shutdown();
+		if (localRuntimes != null) {
+			localRuntimes.forEach(runtime -> {
+				try {
+					runtime.shutdown();
+				} catch (Exception e) {
+					// ignore...
+				}
+			});
 		}
 	}
 
-	public BQTestApp property(String key, String value) {
-		properties.put(key, value);
-		return this;
+	@Override
+	protected void before() {
+		this.runtimes = new ArrayList<>();
 	}
 
-	public BQTestApp configurator(Consumer<Bootique> configurator) {
-		this.configurator = configurator;
-		return this;
+	public Builder newRuntime() {
+		return new Builder(runtimes);
 	}
 
-	public BQRuntime createRuntime(String... args) {
+	public static class Builder {
 
-		// reset any previously managed runtime
-		shutdownRuntime();
+		private static final Consumer<Bootique> DO_NOTHING_CONFIGURATOR = bootique -> {
+		};
 
-		Consumer<Bootique> localConfigurator = bootique -> bootique.module(binder -> {
-			MapBinder<String, String> mapBinder = BQCoreModule.contributeProperties(binder);
-			properties.forEach((k, v) -> mapBinder.addBinding(k).toInstance(v));
-		});
+		private Collection<BQRuntime> runtimes;
+		private Consumer<Bootique> configurator;
+		private Map<String, String> properties;
 
-		if (configurator != null) {
-			localConfigurator = localConfigurator.andThen(configurator);
+		private Builder(Collection<BQRuntime> runtimes) {
+			this.runtimes = runtimes;
+			this.properties = new HashMap<>();
+			this.configurator = DO_NOTHING_CONFIGURATOR;
 		}
 
-		this.runtime = new BQTestRuntime(localConfigurator).createRuntime(args);
-		return runtime;
+		public Builder property(String key, String value) {
+			properties.put(key, value);
+			return this;
+		}
+
+		public Builder configurator(Consumer<Bootique> configurator) {
+			this.configurator = Objects.requireNonNull(configurator);
+			return this;
+		}
+
+		public BQRuntime build(String... args) {
+
+			Consumer<Bootique> localConfigurator = configurator;
+
+			if (!properties.isEmpty()) {
+
+				Consumer<Bootique> propsConfigurator = bootique -> bootique.module(binder -> {
+					MapBinder<String, String> mapBinder = BQCoreModule.contributeProperties(binder);
+					properties.forEach((k, v) -> mapBinder.addBinding(k).toInstance(v));
+				});
+
+				localConfigurator = localConfigurator.andThen(propsConfigurator);
+			}
+
+			BQRuntime runtime = new BQTestRuntime(localConfigurator).createRuntime(args);
+			runtimes.add(runtime);
+			return runtime;
+		}
 	}
 }
