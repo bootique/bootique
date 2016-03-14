@@ -3,6 +3,7 @@ package com.nhl.bootique.test.junit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -108,5 +109,6 @@ public class BQDaemonTestApp extends ExternalResource {
 		}
 
 		this.runtime = new BQDaemonTestRuntime(localConfigurator, startupCheck);
+		runtime.start(5, TimeUnit.SECONDS, args);
 	}
 }
