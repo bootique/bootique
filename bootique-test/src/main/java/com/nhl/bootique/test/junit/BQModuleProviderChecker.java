@@ -1,7 +1,7 @@
 package com.nhl.bootique.test.junit;
 
 import static java.util.stream.Collectors.counting;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.Objects;
 import java.util.ServiceLoader;
@@ -31,8 +31,19 @@ public class BQModuleProviderChecker {
 	}
 
 	protected void testPresentInJar() {
-		long c = StreamSupport.stream(ServiceLoader.load(BQModuleProvider.class).spliterator(), false)
-				.filter(p -> p != null && expectedProvider.isAssignableFrom(p.getClass())).collect(counting());
-		assertEquals("Expected provider " + expectedProvider.getName() + " is not found", 1, c);
+		Long c = StreamSupport.stream(ServiceLoader.load(BQModuleProvider.class).spliterator(), false)
+				.filter(p -> p != null && expectedProvider.equals(p.getClass())).collect(counting());
+
+		switch (c.intValue()) {
+		case 0:
+			fail("Expected provider '" + expectedProvider.getName() + "' is not found");
+			break;
+
+		case 1:
+			break;
+		default:
+			fail("Expected provider '" + expectedProvider.getName() + "' is found more then once: " + c);
+			break;
+		}
 	}
 }
