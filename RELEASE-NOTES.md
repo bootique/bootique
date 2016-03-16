@@ -3,6 +3,8 @@
 * #38 BQDaemonTestRuntime NPE in stop if there was an error in start
 * #39 A wrapper for BQDaemonTestRuntime injectable to JUnit
 * #41 A wrapper for BQTestRuntime injectable to JUnit
+* #44 BQModuleProviderChecker: a test helper that ensures module provider 
+      is available for auto-loading
 
 ## 0.14:
 
