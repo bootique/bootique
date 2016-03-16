@@ -76,9 +76,13 @@ public class BQDaemonTestFactory extends ExternalResource {
 		private Function<BQRuntime, Boolean> startupCheck;
 		private Consumer<Bootique> configurator;
 		private Map<String, String> properties;
+		private long startupTimeout;
+		private TimeUnit startupTimeoutTimeUnit;
 
 		private Builder(Collection<BQDaemonTestRuntime> runtimes) {
 
+			this.startupTimeout = 5;
+			this.startupTimeoutTimeUnit = TimeUnit.SECONDS;
 			this.runtimes = runtimes;
 			this.properties = new HashMap<>();
 			this.configurator = DO_NOTHING_CONFIGURATOR;
@@ -97,6 +101,12 @@ public class BQDaemonTestFactory extends ExternalResource {
 
 		public Builder startupCheck(Function<BQRuntime, Boolean> startupCheck) {
 			this.startupCheck = Objects.requireNonNull(startupCheck);
+			return this;
+		}
+		
+		public Builder startupTimeout(long timeout, TimeUnit unit) {
+			this.startupTimeout = timeout;
+			this.startupTimeoutTimeUnit = unit;
 			return this;
 		}
 
@@ -123,7 +133,7 @@ public class BQDaemonTestFactory extends ExternalResource {
 
 			BQDaemonTestRuntime runtime = new BQDaemonTestRuntime(localConfigurator, startupCheck);
 			runtimes.add(runtime);
-			runtime.start(5, TimeUnit.SECONDS, args);
+			runtime.start(startupTimeout, startupTimeoutTimeUnit, args);
 		}
 	}
 }
