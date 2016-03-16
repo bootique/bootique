@@ -7,10 +7,7 @@ import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.stream.StreamSupport;
 
-import org.junit.Test;
-
 import com.nhl.bootique.BQModuleProvider;
-import com.nhl.bootique.job.runtime.JobModuleProvider;
 
 /**
  * A helper class to simplify writing the tests that need to check that a
