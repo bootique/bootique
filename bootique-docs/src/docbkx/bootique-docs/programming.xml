@@ -150,34 +150,37 @@ jetty:
                             parameters are themselves injectable objects. </para>
                     </listitem>
                     <listitem>
-                        <para><code>ConfigurationFactory</code> is the class used to bind a subtree in
-                            the app YAML configuration to a given Java object (in our case - MyFactory).
-                            The structure of MyFactory is very simple here, but can be as complex as
-                            needed, containing nested objects, arrays, maps, etc. Internally Bootique
-                            uses <link xlink:href="http://wiki.fasterxml.com/JacksonHome">Jackson
-                                framework</link> to bind YAML to a Java class, so all the features of
-                            Jackson can be used to craft configuration.</para>
+                        <para><code>ConfigurationFactory</code> is the class used to bind a subtree
+                            of the app YAML configuration to a given Java object (in our case -
+                            MyFactory). The structure of MyFactory is very simple here, but it can
+                            be as complex as needed, containing nested objects, arrays, maps, etc.
+                            Internally Bootique uses <link
+                                xlink:href="http://wiki.fasterxml.com/JacksonHome">Jackson
+                                framework</link> to bind YAML to a Java class, so all the features
+                            of Jackson can be used to craft configuration.</para>
                     </listitem>
                 </itemizedlist>
             </para>
         </section>
         <section>
             <title>Configuration via Properties</title>
-            <para>If you think of it, YAML file can be thought of a set of nested properties. E.g.
-                the following config
-                <programlisting>my:
+            <para>YAML file can be thought of as a set of nested properties. E.g. the following
+                config <programlisting>my:
   prop1: val1
-  prop2: val2</programlisting>can be represented
-                as two properties ("my.prop1", "my.prop2") being assigned some values. Bootique
-                takes advantage of this structural equivalence and allows to define configuration
-                via properties. If the same "key" is defined in both YAML file and a property,
-                    <code>ConfigurationFactory</code> would use the property value (in other words
-                properties override YAML values).</para>
-            <para>To turn a given property into configuration property, you need to prefix it with
-                    <code>bq.</code>. This helps to avoid random naming conflicts with properties
-                otherwise present in the system.</para>
-            <para>Properties can be provided in one of two ways: either with JVM <code>-D</code>
-                flag or via DI contribution. Two examples below define the same
+  prop2: val2</programlisting>can be
+                represented as two properties ("my.prop1", "my.prop2") being assigned some values.
+                Bootique takes advantage of this structural equivalence and allows to define
+                configuration via properties as an alternative (or more frequently - an addition) to
+                YAML. If the same "key" is defined in both YAML file and a property,
+                    <code>ConfigurationFactory</code> would use the value of the property (in other
+                words properties override YAML values).</para>
+            <para>To turn a given property into a configuration property, you need to prefix it with
+                    "<code>bq.</code>". This "namespace" makes configuration explicit and helps to
+                avoid random naming conflicts with properties otherwise present in the
+                system.</para>
+            <para>Properties can be provided to Bootique in one of two ways: either via JVM
+                    <code>-D</code> flag or via DI contribution. Examples below demonstrate the two
+                approaches, defining the same
                 properties:<programlisting language="bourne">java -Dbq.my.prop1=valX -Dbq.my.prop2=valY -jar myapp.jar</programlisting><programlisting>class MyModule implements Module {
 	public void configure(Binder binder) {
 
