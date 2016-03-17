@@ -61,8 +61,8 @@
                 xlink:href="http://google.github.io/guice/api-docs/latest/javadoc/index.html?com/google/inject/util/Modules.html"
                 >overrides</link>.</para>
             <para>Java <link
-                    xlink:href="https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html"
-                    >ServiceLoader</link> facility is another important part of Bootique, and
-                probably one other thing that you shouldn't worry too much about initially.</para>
+                xlink:href="https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html"
+                >ServiceLoader</link> facility is another important part of Bootique, and probably
+            yet another thing that you shouldn't worry too much about initially.</para>
         </chapter>
 </part>
