@@ -49,8 +49,8 @@
     <chapter>
             <title>Programming Skills</title>
             <para>Everyting you know about Java programming will be applicable when working with
-            Bootique. You may need to "unlearn" some of the practices related to JEE configuration
-            and container deployment though. </para>
+            Bootique. You may need to "unlearn" some of the practices related to JavaEE
+            configuration and container deployment though. </para>
             <para>Integration between various parts of a Bootique app is done via <link
                 xlink:href="https://github.com/google/guice">Google Guice</link>. In most cases
             Bootique API would steer you towards idiomatic approach to integration, so deep
