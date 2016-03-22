@@ -39,7 +39,7 @@ import com.nhl.bootique.test.BQDaemonTestRuntime;
  */
 public class BQDaemonTestFactory extends ExternalResource {
 
-	private Collection<BQDaemonTestRuntime> runtimes;
+	protected Collection<BQDaemonTestRuntime> runtimes;
 
 	@Override
 	protected void after() {
@@ -79,7 +79,7 @@ public class BQDaemonTestFactory extends ExternalResource {
 		private long startupTimeout;
 		private TimeUnit startupTimeoutTimeUnit;
 
-		private Builder(Collection<BQDaemonTestRuntime> runtimes) {
+		protected Builder(Collection<BQDaemonTestRuntime> runtimes) {
 
 			this.startupTimeout = 5;
 			this.startupTimeoutTimeUnit = TimeUnit.SECONDS;
