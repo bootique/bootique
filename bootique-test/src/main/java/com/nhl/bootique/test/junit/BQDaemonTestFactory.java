@@ -94,8 +94,16 @@ public class BQDaemonTestFactory extends ExternalResource {
 			return this;
 		}
 
+		/**
+		 * Appends configurator to any existing configurators.
+		 * 
+		 * @param configurator
+		 *            configurator function.
+		 * @return this builder.
+		 */
 		public Builder configurator(Consumer<Bootique> configurator) {
-			this.configurator = Objects.requireNonNull(configurator);
+			Objects.requireNonNull(configurator);
+			this.configurator = this.configurator != null ? this.configurator.andThen(configurator) : configurator;
 			return this;
 		}
 
@@ -103,7 +111,7 @@ public class BQDaemonTestFactory extends ExternalResource {
 			this.startupCheck = Objects.requireNonNull(startupCheck);
 			return this;
 		}
-		
+
 		public Builder startupTimeout(long timeout, TimeUnit unit) {
 			this.startupTimeout = timeout;
 			this.startupTimeoutTimeUnit = unit;
