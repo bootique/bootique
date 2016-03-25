@@ -77,7 +77,7 @@ public class BQDaemonTestRuntime extends BQTestRuntime {
 	}
 
 	public void stop() {
-		
+
 		if (runtime == null) {
 			// this means we weren't started successfully. No need to shutdown
 			return;
@@ -85,7 +85,9 @@ public class BQDaemonTestRuntime extends BQTestRuntime {
 
 		BootLogger logger = runtime.getBootLogger();
 
-		executor.shutdown();
+		// must interrupt execution (using "shutdown()" is not enough to stop
+		// Jetty for instance
+		executor.shutdownNow();
 		try {
 			executor.awaitTermination(3, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
