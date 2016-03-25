@@ -85,7 +85,7 @@ public class BQDaemonTestRuntime extends BQTestRuntime {
 
 		BootLogger logger = runtime.getBootLogger();
 
-		executor.shutdownNow();
+		executor.shutdown();
 		try {
 			executor.awaitTermination(3, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
