@@ -106,5 +106,13 @@ public class CliConfigurationSourceTest {
 		String config = new CliConfigurationSource(cli, mockBootLogger).readConfig(configReader);
 		assertEquals("e: f", config);
 	}
+	
+	@Test
+	public void testReadConfig_ClasspathUrl() {
+		String url = "classpath:com/nhl/bootique/config/test2.yml";
+		Cli cli = createCli(url);
+		String config = new CliConfigurationSource(cli, mockBootLogger).readConfig(configReader);
+		assertEquals("c: d", config);
+	}
 
 }
