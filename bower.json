@@ -1,0 +1,14 @@
+{
+  "name": "Bootique",
+  "private": true,
+  "dependencies": {
+    "jquery": "~2.1.4",
+    "modernizr": "~2.8.3",
+    "purecss-sass": "^0.6.0",
+    "font-awesome": "fontawesome#^4.5.0"
+  },
+  "devDependencies": {
+    "chai": "~3.5.0",
+    "mocha": "~2.4.5"
+  }
+}
