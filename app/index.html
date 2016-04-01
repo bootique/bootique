@@ -29,9 +29,16 @@
     <meta name="msapplication-config" content="/images/favicon/browserconfig.xml">
     <meta name="theme-color" content="#ffffff">
 
-
+    <!-- build:css(.) styles/vendor.css -->
+    <!-- bower:css -->
+    <!-- endbower -->
+    <!-- endbuild -->
+    <!-- build:css(.tmp) styles/main.css -->
     <link rel="stylesheet" href="styles/main.css">
-    <script src="scripts/vendor/modernizr.js"></script>
+    <!-- endbuild -->
+    <!-- build:js scripts/vendor/modernizr.js -->
+    <script src="/bower_components/modernizr/modernizr.js"></script>
+    <!-- endbuild -->
     
   </head>
   <body>
@@ -93,10 +100,18 @@
 
     <p class="footer-p">&copy; <span class="current-year">2016</span> NHL, ObjectStyle and individual authors</p>
     
-    <script src="scripts/vendor.js"></script>
+    <!-- build:js(.) scripts/vendor.js -->
+    <!-- bower:js -->
+    <script src="/bower_components/jquery/dist/jquery.js"></script>
+    <!-- endbower -->
+    <!-- Twitter widgets  --> <!-- add /app/ for build:js -->
+    <!-- <script src="/app/scripts/tw-widgets.js"></script> -->
+    <!-- endbuild --> 
 
 
+    <!-- build:js scripts/main.js -->
     <script src="scripts/main.js"></script>
+    <!-- endbuild -->
     
     <script>
       (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
