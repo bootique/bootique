@@ -25,6 +25,7 @@ Below is a growing list of "standard" Bootique modules. With standard modules yo
 * [Bootique Liquibase](https://github.com/nhl/bootique-liquibase)
 * [Bootique Logback](https://github.com/nhl/bootique-logback)
 * [Bootique Metrics](https://github.com/nhl/bootique-metrics)
+* [Bootique MVC](https://github.com/nhl/bootique-mvc)
 * [Bootique Zookeeper](https://github.com/nhl/bootique-zookeeper)
 
 And a BOM that declares them all with compatible versions:
