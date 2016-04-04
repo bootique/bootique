@@ -1,26 +1,22 @@
 package com.nhl.bootique.config;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
 import java.util.Collection;
 import java.util.function.Function;
 
 import com.google.inject.Inject;
 import com.nhl.bootique.cli.Cli;
 import com.nhl.bootique.log.BootLogger;
+import com.nhl.bootique.resource.ResourceFactory;
 
 /**
- * A {@link ConfigurationSource} that locates configuration in a file specified
- * via command-line '--config' option.
+ * A {@link ConfigurationSource} that locates configuration in a resource
+ * specified via command-line '--config' option.
  */
 public class CliConfigurationSource implements ConfigurationSource {
 
-	private static final String CLASSPATH_URL_PREFIX = "classpath:";
 	public static final String CONFIG_OPTION = "config";
 
 	private String location;
@@ -56,29 +52,9 @@ public class CliConfigurationSource implements ConfigurationSource {
 
 	private <T> T doReadConfig(Function<InputStream, T> processor) throws FileNotFoundException, IOException {
 
-		URL url = locationAsUrl();
-
-		try (InputStream in = url.openStream()) {
+		try (InputStream in = new ResourceFactory(location).openStream()) {
 			return processor.apply(in);
 		}
 	}
 
-	private URL locationAsUrl() throws MalformedURLException {
-
-		// location can be either a file path or a URL or a classpath: URL
-
-		if (location.startsWith(CLASSPATH_URL_PREFIX)) {
-			URL cpUrl = CliConfigurationSource.class.getClassLoader()
-					.getResource(location.substring(CLASSPATH_URL_PREFIX.length()));
-
-			if (cpUrl == null) {
-				throw new NullPointerException("Classpath URL not found: " + location);
-			}
-
-			return cpUrl;
-		}
-
-		URI uri = URI.create(location);
-		return uri.isAbsolute() ? uri.toURL() : new File(location).toURI().toURL();
-	}
 }
