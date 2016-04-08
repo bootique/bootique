@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.Objects;
 
 /**
  * A value object representing a resource URL. Supports 3 common resource
@@ -44,7 +45,7 @@ public class ResourceFactory {
 	 *            a String identifier of the resource.
 	 */
 	public ResourceFactory(String resourceId) {
-		this.resourceId = resourceId;
+		this.resourceId = Objects.requireNonNull(resourceId);
 	}
 
 	/**
