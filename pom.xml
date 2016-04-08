@@ -10,7 +10,7 @@
 
 	<groupId>com.nhl.bootique</groupId>
 	<artifactId>bootique-framework-parent</artifactId>
-	<version>0.15</version>
+	<version>0.16-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>Parent of Bootique - a minimally opinionated framework for runnable Java apps</name>
@@ -27,7 +27,7 @@
 	<scm>
 		<developerConnection>scm:git:ssh://git@github.com/nhl/bootique</developerConnection>
 		<url>https://github.com/nhl/bootique</url>
-		<tag>bootique-framework-parent-0.15</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 	<!-- Optional profile used to sign artifacts -->
