@@ -11,7 +11,7 @@ import com.google.inject.BindingAnnotation;
  * A DI annotation for a String[] of command line arguments passed to the Java
  * app.
  */
-@Target({ ElementType.PARAMETER, ElementType.FIELD })
+@Target({ ElementType.PARAMETER, ElementType.FIELD, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @BindingAnnotation
 public @interface Args {

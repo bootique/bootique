@@ -107,7 +107,6 @@ public class BQCoreModule implements Module {
 		binder.bind(Cli.class).toProvider(JoptCliProvider.class).in(Singleton.class);
 		binder.bind(ConfigurationSource.class).to(CliConfigurationSource.class).in(Singleton.class);
 		binder.bind(ConfigurationFactory.class).to(YamlConfigurationFactory.class).in(Singleton.class);
-		binder.bind(Command.class).annotatedWith(DefaultCommand.class).to(HelpCommand.class).in(Singleton.class);
 
 		// trigger extension points creation and provide default contributions
 		BQCoreModule.contributeProperties(binder);
@@ -120,6 +119,19 @@ public class BQCoreModule implements Module {
 				.builder(CliConfigurationSource.CONFIG_OPTION,
 						"Specifies YAML config location, which can be a file path or a URL.")
 				.valueRequired("yaml_location").build();
+	}
+
+	@Provides
+	@Singleton
+	@DefaultCommand
+	public Command provideDefaultCommand(HelpCommand helpCommand) {
+		return helpCommand;
+	}
+
+	@Provides
+	@Singleton
+	public HelpCommand provideHelpCommand(BootLogger bootLogger) {
+		return new HelpCommand(bootLogger);
 	}
 
 	@Provides

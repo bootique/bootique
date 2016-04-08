@@ -12,7 +12,7 @@ import com.nhl.bootique.command.Command;
  * A binding annotation for a failover {@link Command} that is executed when no
  * other Command is in effect.
  */
-@Target({ ElementType.PARAMETER, ElementType.FIELD })
+@Target({ ElementType.PARAMETER, ElementType.FIELD, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @BindingAnnotation
 public @interface DefaultCommand {
