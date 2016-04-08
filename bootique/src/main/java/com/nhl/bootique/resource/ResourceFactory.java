@@ -24,7 +24,7 @@ import java.util.Objects;
  */
 public class ResourceFactory {
 
-	private static final String CLASSPATH_URL_PREFIX = "classpath:";
+	protected static final String CLASSPATH_URL_PREFIX = "classpath:";
 
 	private String resourceId;
 
