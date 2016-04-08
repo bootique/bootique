@@ -7,10 +7,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.function.Function;
 
 import org.junit.Before;
@@ -22,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhl.bootique.env.Environment;
 import com.nhl.bootique.jackson.JacksonService;
+import com.nhl.bootique.resource.ResourceFactory;
 import com.nhl.bootique.type.TypeRef;
 
 public class YamlConfigurationFactoryTest {
@@ -209,6 +212,19 @@ public class YamlConfigurationFactoryTest {
 		assertEquals("p222", ((BeanSub2) b1).getP2());
 	}
 
+	@Test
+	public void testConfig_ResourceFactory() throws IOException {
+
+		ResourceFactoryHolder rfh = factory("resourceFactory: classpath:com/nhl/bootique/config/resourcefactory.txt")
+				.config(ResourceFactoryHolder.class, "");
+		assertNotNull(rfh);
+		assertNotNull(rfh.resourceFactory);
+
+		try (Scanner scanner = new Scanner(rfh.resourceFactory.openStream(), "UTF-8")) {
+			assertEquals("resource factory worked!", scanner.useDelimiter("\\Z").nextLine());
+		}
+	}
+
 	public static class Bean1 {
 
 		private String s;
@@ -279,4 +295,11 @@ public class YamlConfigurationFactoryTest {
 		}
 	}
 
+	public static class ResourceFactoryHolder {
+		private ResourceFactory resourceFactory;
+
+		public void setResourceFactory(ResourceFactory resourceFactory) {
+			this.resourceFactory = resourceFactory;
+		}
+	}
 }
