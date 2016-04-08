@@ -48,9 +48,9 @@ public class ResourceFactory {
 	}
 
 	/**
-	 * Returns resource representation as URL.
+	 * Returns a URL to access resource contents.
 	 * 
-	 * @return resource representation as URL.
+	 * @return a URL to access resource contents.
 	 */
 	public URL getUrl() {
 
