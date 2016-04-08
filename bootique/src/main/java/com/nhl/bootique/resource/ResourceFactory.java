@@ -1,8 +1,6 @@
 package com.nhl.bootique.resource;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -50,20 +48,11 @@ public class ResourceFactory {
 	}
 
 	/**
-	 * Creates a new input stream to read the resource contents. It is caller's
-	 * responsibility to close the obtained stream.
+	 * Returns resource representation as URL.
 	 * 
-	 * @return a new input stream to read the resource contents.
+	 * @return resource representation as URL.
 	 */
-	public InputStream openStream() {
-		try {
-			return resourceAsUrl().openStream();
-		} catch (IOException e) {
-			throw new RuntimeException("Error opening stream for resource: " + resourceId, e);
-		}
-	}
-
-	protected URL resourceAsUrl() throws MalformedURLException {
+	public URL getUrl() {
 
 		// resourceId can be either a file path or a URL or a classpath: URL
 
@@ -74,8 +63,7 @@ public class ResourceFactory {
 			// classpath URLs must not start with a slash. This does not work
 			// with ClassLoader.
 			if (path.length() > 0 && path.charAt(0) == '/') {
-				throw new MalformedURLException(
-						CLASSPATH_URL_PREFIX + " URLs must not start with a slash: " + resourceId);
+				throw new RuntimeException(CLASSPATH_URL_PREFIX + " URLs must not start with a slash: " + resourceId);
 			}
 
 			URL cpUrl = ResourceFactory.class.getClassLoader().getResource(path);
@@ -88,7 +76,11 @@ public class ResourceFactory {
 		}
 
 		URI uri = URI.create(resourceId);
-		return uri.isAbsolute() ? uri.toURL() : new File(resourceId).toURI().toURL();
+		try {
+			return uri.isAbsolute() ? uri.toURL() : new File(resourceId).toURI().toURL();
+		} catch (MalformedURLException e) {
+			throw new RuntimeException("Bad url", e);
+		}
 	}
 
 }

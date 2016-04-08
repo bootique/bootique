@@ -52,7 +52,7 @@ public class CliConfigurationSource implements ConfigurationSource {
 
 	private <T> T doReadConfig(Function<InputStream, T> processor) throws FileNotFoundException, IOException {
 
-		try (InputStream in = new ResourceFactory(location).openStream()) {
+		try (InputStream in = new ResourceFactory(location).getUrl().openStream()) {
 			return processor.apply(in);
 		}
 	}

@@ -220,7 +220,7 @@ public class YamlConfigurationFactoryTest {
 		assertNotNull(rfh);
 		assertNotNull(rfh.resourceFactory);
 
-		try (Scanner scanner = new Scanner(rfh.resourceFactory.openStream(), "UTF-8")) {
+		try (Scanner scanner = new Scanner(rfh.resourceFactory.getUrl().openStream(), "UTF-8")) {
 			assertEquals("resource factory worked!", scanner.useDelimiter("\\Z").nextLine());
 		}
 	}

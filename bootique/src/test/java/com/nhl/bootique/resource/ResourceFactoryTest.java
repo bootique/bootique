@@ -26,7 +26,7 @@ public class ResourceFactoryTest {
 	}
 
 	static String resourceContents(String resourceId) throws IOException {
-		URL url = new ResourceFactory(resourceId).resourceAsUrl();
+		URL url = new ResourceFactory(resourceId).getUrl();
 
 		assertNotNull(url);
 
@@ -58,7 +58,7 @@ public class ResourceFactoryTest {
 		assertEquals("c: d", resourceContents(cpUrl));
 	}
 
-	@Test(expected = MalformedURLException.class)
+	@Test(expected = RuntimeException.class)
 	public void testResourceAsUrl_ClasspathUrlWithSlash() throws IOException {
 		String cpUrl = "classpath:/com/nhl/bootique/config/test2.yml";
 		resourceContents(cpUrl);
