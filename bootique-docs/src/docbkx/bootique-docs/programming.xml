@@ -482,7 +482,7 @@ public void doSomething() {
 }</programlisting></para>
     </chapter>
     <chapter>
-        <title>Logging</title>
+        <title xml:id="logging">Logging</title>
         <section>
             <title>Loggers in the Code </title>
             <para>Standard Bootique modules use <link xlink:href="http://www.slf4j.org/"
@@ -493,7 +493,7 @@ public void doSomething() {
         </section>
         <section>
             <title>Configurable Logging with Logback</title>
-            <para>For better control over  logging a standard module called
+            <para>For better control over logging a standard module called
                     <code>bootique-logback</code> is available, that integrates <link
                     xlink:href="http://logback.qos.ch/">Logback framework</link> in the app. It
                 seamlessly bridges SLF4J (so you keep using SLF4J in the code), and allows to
@@ -504,19 +504,10 @@ public void doSomething() {
                 effect:<programlisting language="xml">&lt;dependency>
 	&lt;groupId>com.nhl.bootique.logback&lt;/groupId>
 	&lt;artifactId>bootique-logback&lt;/artifactId>
-&lt;/dependency></programlisting>To
-                further configure Logback, use <code>log</code> section of the YAML file.
-                E.g.:<programlisting>log:
-  level: warn
-  loggers:
-    com.foo:
-      level: debug
-    com.example:
-      level: debug
-  appenders:
-    - type: file
-      logFormat: '%c{20}: %m%n'
-      file: target/logback/testRun_Debug.log</programlisting></para>
+&lt;/dependency></programlisting>See
+                    <code>bootique-logback</code> module <link
+                    xlink:href="http://bootique.io/docs/0/bootique-logback-docs/"
+                    >documentation</link> for further details.</para>
         </section>
         <section>
             <title>BootLogger</title>
