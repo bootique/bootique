@@ -6,7 +6,7 @@
 * #44 BQModuleProviderChecker: a test helper that ensures module provider 
       is available for auto-loading
 * #46 Support classpath: URLs in configuration loader.
-* #47 Configuration type for abstract resource
+* #47 ResourceFactory: Configuration type for abstract resource
 * #54 @BindingAnnotation's in Bootique should be allowed on methods
 
 ## 0.14:
