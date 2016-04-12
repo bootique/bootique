@@ -93,7 +93,7 @@ jetty:
                 documentation on the structure of the supported configuration. Here we'll discuss how to
                 build your own configuration-aware module.</para>
             <para>Bootique allows the Module to read its specific configuration subree as an object of
-                the type defined in the Module. Very often such an object as written as a factory that
+                the type defined in the Module. Very often such an object is written as a factory that
                 contains a bunch of setters for the configuration properties, and a factory method to
                 produce some service that a Module is interested in based on this configuration. Here is
                 an example
@@ -202,7 +202,7 @@ jetty:
                 console appender, syslog appender, etc.). The framework might not be aware of all
                 possible appenders its users might come up with in the future. Yet it still wants to
                 have the ability to instantiate any of them, based solely on the data coming from
-                YAML. Moreover each appender will have its own set of incompatble configuration
+                YAML. Moreover each appender will have its own set of incompatible configuration
                 properties. In fact this is exactly the situation with <code>bootique-logback</code>
                 module. </para>
             <para>Here is how you ensure that such a polimorphic configuration is possible. Let's
@@ -268,7 +268,7 @@ com.foo.ConcreteType2</programlisting></para>
             <para>If another module decides to create yet another subclass of SuperType, it will
                 need to create its own
                     <code>META-INF/service/com.nhl.bootique.config.PolymorphicConfiguration</code>
-                file that metions the new subclass.</para>
+                file that mentions the new subclass.</para>
         </section>
     </chapter>
     <chapter xml:id="programming-using-modules">
