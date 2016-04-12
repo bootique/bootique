@@ -6,7 +6,7 @@
     <chapter xml:id="getting-started-minimal-app">
         <title>Hello World in Bootique</title>
         <para>The goal of this chapter is to write a simple REST app using Bootique. Let's start
-            with a new Java Maven project created in your favorite IDE. You <code>pom.xml</code> in
+            with a new Java Maven project created in your favorite IDE. Your <code>pom.xml</code> in
             addition to the required project information tags will need to declare one artifact in
             the <code>&lt;dependencyManagement/></code>
             section:<programlisting language="xml">&lt;dependencyManagement>
