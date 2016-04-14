@@ -91,7 +91,7 @@ public void testAbc() {
             your REST API's), and so on. Some examples are given below, outlining common
             techniques.</para>
         <section>
-            <title>Testing Services in Bootique Runtime</title>
+            <title>Testing Services that are Part of Bootique Runtime</title>
             <para>TODO</para>
         </section>
         <section>
