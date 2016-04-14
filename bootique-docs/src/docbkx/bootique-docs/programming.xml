@@ -319,7 +319,7 @@ com.foo.ConcreteType2</programlisting></para>
                 defined in a downstream module to collections/maps used by services in upstream
                 modules. E.g. the following code makes <code>MyCommand</code> available in the app
                 set of
-                commands:<programlisting>public class MyModule implements Module {
+                commands:<programlisting language="java">public class MyModule implements Module {
 
 	@Override
 	public void configure(Binder binder) {
@@ -330,11 +330,8 @@ com.foo.ConcreteType2</programlisting></para>
 }</programlisting></para>
             <para>Here we obtained a Multibinder instance via a static method on BQCoreModule. Most
                 standard modules define such helper methods for every collection/map that should be
-                populated by module users. This is a pattern you might want to follow in your own modules.<note>
-                    <para>Commands can be alternatively contributed using a special
-                            <code>Commands</code> module builder described below, which is a
-                        shortcut for the code above.</para>
-                </note></para>
+                populated by module users. This is a pattern you might want to follow in your own
+                modules.</para>
         </section>
         </chapter>
     <chapter xml:id="programming-application-module">
