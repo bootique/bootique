@@ -5,32 +5,103 @@
     <chapter>
         <title>Bootique and Testing</title>
         
-        <para>Bootique is uniquely suitable as a test framework. Within a single test it allows you
-            to start and stop multiple embedded stacks with distinct set of modules, and distinct
-            YAML configurations, making it a powerful tool for integration testing. A "stack" is
-            represented by a <code>BQRuntime</code>object. Bootique core module and a number of
-            other modules provide companion test extensions that contain reusable base
-            stacks.</para>
-        <para>One typical use pattern is to include an appropriate stack
-                <emphasis>factory</emphasis> in your test annoatted with JUnit <code>@Rule</code> or
-                <code>@ClassRule</code>, and then use customize the base stacks produced by the
-            factories to match the test conditions. Standard factories can also be subclassed to
-            include app-specific modules and methods, building a test framework tailored for your
-            domain.</para>
+        <para>Bootique is uniquely suitable to be used as a test framework. Within a single test it
+            allows you to start and stop multiple embedded stacks with distinct set of modules and
+            distinct YAML configurations, making it a powerful tool for <emphasis>integration
+                testing.</emphasis> Bootique core module and some other modules provide companion
+            test extensions that contain reusable test stacks.</para>
+    </chapter>
+    <chapter>
+        <title>Creating Test Stacks</title>
         <para>To use basic Bootique test framework, import the following module in the "test"
-            scope:<programlisting>&lt;dependency>
+            scope:<programlisting language="xml">&lt;dependency>
 	&lt;groupId>com.nhl.bootique&lt;/groupId>
 	&lt;artifactId>bootique-test&lt;/artifactId>
 	&lt;scope>test&lt;/scope>
-&lt;/dependency></programlisting>
-            For module-specific companion test frameworks (e.g. <code>bootique-jetty-test</code>),
-            check documentation of those modules, or GitHub.</para>
+&lt;/dependency></programlisting>For
+            module-specific "companion" test frameworks (e.g. <code>bootique-jetty-test</code>),
+            check documentation of those modules or GitHub.</para>
+        <para>While there are a number of built-in and custom stacks that you can create, they
+            usually fall into two broad categories - "foreground" - those that are running in the
+            main test thread, and "background" - those that are running in an isolated thread pool
+            (usually network services, like Jetty). To create a foreground stack, use
+                <code>BQTestFactory</code>, annotated with <code>@Rule</code> or
+                <code>@ClassRule</code>:<programlisting language="java">public class ForegroundTest {
+	
+	@Rule
+	public BQTestFactory testFactory = new BQTestFactory();
+
+	@Test
+	public void testXyz() {
+		BQTestRuntime runtime = testFactory.newRuntime().build("--help");
+		...
+	}
+}</programlisting>As
+            you see, the test class declares a factory, and test methods can create
+                <code>BQTestRuntime</code> instances with different command-line arguments,
+            including commands (<code>--help</code> in this example), but also
+                <code>"--config=some.yml"</code> argument that can change the entire stack
+            configuration, etc. So your test runtime will behave just like a real Java app. </para>
+        <para>If a stack requires a thread pool to run (e.g. we are starting a webserver), it needs
+            to be started with <code>BQDaemonTestFactory</code> instead of
+                <code>BQTestFactory</code>:<programlisting language="java">public class BackgroundTest {
+	
+	@Rule
+	public BQDaemonTestFactory testFactory = new BQDaemonTestFactory();
+	
+	@Test
+	public void testBackground() {
+		BQDaemonTestRuntime runtime = testFactory.newRuntime().start("--server");
+		... 
+	}
+}</programlisting></para>
+        <para>You won't need to stop it explicitly. <code>BQDaemonTestFactory</code> will take care
+            of it via JUnit lifecycle.</para>
+        <para>The next thing you may want to do is to add various modules to the basic stack (either
+            foreground or background). <code>testFactory.newRuntime()</code> returns a builder
+            object that allows to pass a special "configurator" instance to tweak the runtime.
+            Adding modules can be done by writing such
+            configurator:<programlisting language="java">@Test
+public void testAbc() {
+
+	Consumer&lt;Bootique> configurator = (bootique) -> {
+		bootique
+			// ensure all classpath modules are included
+			.autoLoadModules()
+			// add an adhoc module specific to the test
+			.module((binder) -> {
+			binder.bind(MyService.class).to(MyServiceImpl.class);
+		});
+	};
+	
+	testFactory.newRuntime().configurator(configurator).build("--help");
+	... 
+}</programlisting></para>
+        <para>In real test suites creating configurators for every test becomes unwieldy rather
+            quickly. So consider subclassing <code>BQDaemonTestFactory</code> or
+                <code>BQTestFactory</code> to reuse configurators common for your entire app.</para>
     </chapter>
     
     <chapter>
-        <title>Single-Threaded Tests</title>
-        <para>If your test stack does not start a background process, listens on a port, etc (e.g.
-            it is not a web server), you can create Boot</para>
+        <title>Common Test Scenarios</title>
+        <para>Now that we can start stacks on foreground or background, we can finally write some
+            tests. Some things that can be tested include runtime services with real dependencies,
+            standard output of full Bootique applications (i.e. the stuff that would be printed to
+            console if this were a real app), network services using real network connections (e.g.
+            your REST API's), and so on. Some examples are given below, outlining common
+            techniques.</para>
+        <section>
+            <title>Testing Services in Bootique Runtime</title>
+            <para>TODO</para>
+        </section>
+        <section>
+            <title>Capturing "stdout" and "stderr" of Commands</title>
+            <para>TODO</para>
+        </section>
+        <section>
+            <title>Testing Network Services</title>
+            <para>TODO</para>
+        </section>
     </chapter>
  
    
