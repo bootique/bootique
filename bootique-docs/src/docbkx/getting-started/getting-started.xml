@@ -14,7 +14,7 @@
 		&lt;dependency>
 			&lt;groupId>com.nhl.bootique.bom&lt;/groupId>
 			&lt;artifactId>bootique-bom&lt;/artifactId>
-			&lt;version>0.12.1&lt;/version>
+			&lt;version>0.16&lt;/version>
 			&lt;type>pom&lt;/type>
 			&lt;scope>import&lt;/scope>
 		&lt;/dependency>
@@ -89,16 +89,17 @@ import com.nhl.bootique.jersey.JerseyModule;
 public class Application {
 
 	public static void main(String[] args) {
-		JerseyModule jersey = JerseyModule.builder().packageRoot(HelloResource.class).build();
-		Bootique.app(args).module(jersey).autoLoadModules().run();
+
+		Module module = binder -> 
+                  JerseyModule.contributeResources(binder).addBinding().to(HelloResource.class);
+
+		Bootique.app(args).module(module).autoLoadModules().run();
 	}
 }</programlisting></para>
-        <para>What happened here is that instead of implicitly loading JerseyModule, we created it
-            ourselves and configured it to look for resources in the Java package of the
-            HelloResource class (so any other resources we'd add here would be recognized
-            automatically with no extra configuration). Now let's try to run the app with the
-            changes. Add <code>--server</code> to the command run parameters before doing it. Now
-            when the app is started, you will see different
+        <para>Here we created our own module that "contributes" resource configuration to the
+            JerseyModule. Now let's try to run the app with the changes. Add <code>--server</code>
+            to the command run parameters before doing it. Now when the app is started, you will see
+            different
             output:<programlisting language="bourne">INFO  main c.n.b.j.c.ServerCommand: Starting jetty...
 INFO  main o.e.jetty.util.log: Logging initialized @933ms
 INFO  main c.n.b.j.s.ServerFactory: Adding servlet mapped to /*
