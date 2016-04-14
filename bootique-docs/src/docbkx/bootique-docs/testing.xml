@@ -3,9 +3,34 @@
     version="5.0" xml:id="testing">
     <title>Testing</title>
     <chapter>
-        <title>Writing Unit Tests</title>
+        <title>Bootique and Testing</title>
         
-        <para>TODO</para>
+        <para>Bootique is uniquely suitable as a test framework. Within a single test it allows you
+            to start and stop multiple embedded stacks with distinct set of modules, and distinct
+            YAML configurations, making it a powerful tool for integration testing. A "stack" is
+            represented by a <code>BQRuntime</code>object. Bootique core module and a number of
+            other modules provide companion test extensions that contain reusable base
+            stacks.</para>
+        <para>One typical use pattern is to include an appropriate stack
+                <emphasis>factory</emphasis> in your test annoatted with JUnit <code>@Rule</code> or
+                <code>@ClassRule</code>, and then use customize the base stacks produced by the
+            factories to match the test conditions. Standard factories can also be subclassed to
+            include app-specific modules and methods, building a test framework tailored for your
+            domain.</para>
+        <para>To use basic Bootique test framework, import the following module in the "test"
+            scope:<programlisting>&lt;dependency>
+	&lt;groupId>com.nhl.bootique&lt;/groupId>
+	&lt;artifactId>bootique-test&lt;/artifactId>
+	&lt;scope>test&lt;/scope>
+&lt;/dependency></programlisting>
+            For module-specific companion test frameworks (e.g. <code>bootique-jetty-test</code>),
+            check documentation of those modules, or GitHub.</para>
+    </chapter>
+    
+    <chapter>
+        <title>Single-Threaded Tests</title>
+        <para>If your test stack does not start a background process, listens on a port, etc (e.g.
+            it is not a web server), you can create Boot</para>
     </chapter>
  
    
