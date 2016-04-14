@@ -15,7 +15,6 @@ import org.junit.rules.ExternalResource;
 
 import com.google.inject.multibindings.MapBinder;
 import com.nhl.bootique.BQCoreModule;
-import com.nhl.bootique.BQRuntime;
 import com.nhl.bootique.Bootique;
 import com.nhl.bootique.test.BQDaemonTestRuntime;
 
@@ -70,10 +69,10 @@ public class BQDaemonTestFactory extends ExternalResource {
 		private static final Consumer<Bootique> DO_NOTHING_CONFIGURATOR = bootique -> {
 		};
 
-		private static final Function<BQRuntime, Boolean> AFFIRMATIVE_STARTUP_CHECK = runtime -> true;
+		private static final Function<BQDaemonTestRuntime, Boolean> AFFIRMATIVE_STARTUP_CHECK = runtime -> true;
 
 		private Collection<BQDaemonTestRuntime> runtimes;
-		private Function<BQRuntime, Boolean> startupCheck;
+		private Function<BQDaemonTestRuntime, Boolean> startupCheck;
 		private Consumer<Bootique> configurator;
 		private Map<String, String> properties;
 		private long startupTimeout;
@@ -107,8 +106,20 @@ public class BQDaemonTestFactory extends ExternalResource {
 			return this;
 		}
 
-		public Builder startupCheck(Function<BQRuntime, Boolean> startupCheck) {
+		public Builder startupCheck(Function<BQDaemonTestRuntime, Boolean> startupCheck) {
 			this.startupCheck = Objects.requireNonNull(startupCheck);
+			return this;
+		}
+
+		/**
+		 * Adds a startup check that waits till the runtime finishes, within the
+		 * startup timeout bounds.
+		 * 
+		 * @since 0.16
+		 * @return this builder
+		 */
+		public Builder startupAndWaitCheck() {
+			this.startupCheck = (runtime) -> runtime.getOutcome().isPresent();
 			return this;
 		}
 

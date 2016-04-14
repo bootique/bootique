@@ -1,6 +1,7 @@
 package com.nhl.bootique.test;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -21,15 +22,33 @@ import com.nhl.bootique.log.BootLogger;
 public class BQDaemonTestRuntime extends BQTestRuntime {
 
 	private ExecutorService executor;
-	private Function<BQRuntime, Boolean> startupCheck;
+	private Function<BQDaemonTestRuntime, Boolean> startupCheck;
+	private Optional<CommandOutcome> outcome;
 
 	private BQRuntime runtime;
 
-	public BQDaemonTestRuntime(Consumer<Bootique> configurator, Function<BQRuntime, Boolean> startupCheck) {
+	public BQDaemonTestRuntime(Consumer<Bootique> configurator, Function<BQDaemonTestRuntime, Boolean> startupCheck) {
 		super(configurator);
 
 		this.startupCheck = startupCheck;
 		this.executor = Executors.newCachedThreadPool();
+		this.outcome = Optional.empty();
+	}
+
+	/**
+	 * @since 0.16
+	 * @return an optional outcome, available if the test runtime has finished.
+	 */
+	public Optional<CommandOutcome> getOutcome() {
+		return outcome;
+	}
+
+	/**
+	 * @since 0.16
+	 * @return internal BQRuntime.
+	 */
+	public BQRuntime getRuntime() {
+		return runtime;
 	}
 
 	public void start(long timeout, TimeUnit unit, String... args) {
@@ -41,7 +60,7 @@ public class BQDaemonTestRuntime extends BQTestRuntime {
 		Future<Boolean> startupFuture = executor.submit(() -> {
 
 			try {
-				while (!startupCheck.apply(runtime)) {
+				while (!startupCheck.apply(this)) {
 					logger.stderr("Daemon runtime hasn't started yet...");
 					Thread.sleep(500);
 				}
@@ -95,10 +114,10 @@ public class BQDaemonTestRuntime extends BQTestRuntime {
 		}
 	}
 
-	protected CommandOutcome run() {
+	protected void run() {
 		Objects.requireNonNull(runtime);
 		try {
-			return runtime.getRunner().run();
+			this.outcome = Optional.of(runtime.getRunner().run());
 		} finally {
 			runtime.shutdown();
 		}
