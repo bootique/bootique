@@ -1,3 +1,7 @@
+## 0.16:
+
+* #57 BQDaemonTestFactory - return BQDaemonTestRuntime from Builder.start
+
 ## 0.15:
 
 * #38 BQDaemonTestRuntime NPE in stop if there was an error in start
