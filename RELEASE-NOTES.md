@@ -2,6 +2,7 @@
 
 * #57 BQDaemonTestFactory - return BQDaemonTestRuntime from Builder.start
 * #58 BQDaemonTestRuntime to track outcome
+* #59 BQTestRuntime.run(..) method
 
 ## 0.15:
 
