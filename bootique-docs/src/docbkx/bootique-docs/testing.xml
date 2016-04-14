@@ -95,11 +95,11 @@ public void testAbc() {
             <para>TODO</para>
         </section>
         <section>
-            <title>Capturing "stdout" and "stderr" of Commands</title>
+            <title>Testing Network Services</title>
             <para>TODO</para>
         </section>
         <section>
-            <title>Testing Network Services</title>
+            <title>Capturing "stdout" and "stderr"</title>
             <para>TODO</para>
         </section>
     </chapter>
