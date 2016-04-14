@@ -124,8 +124,11 @@ public class BQDaemonTestFactory extends ExternalResource {
 		 * @param args
 		 *            String[] emulating command-line arguments passed to a Java
 		 *            app.
+		 * @return {@link BQDaemonTestRuntime} instance created by the builder.
+		 *         The caller doesn't need to shut it down. Usually JUnit
+		 *         lifecycle takes care of it.
 		 */
-		public void start(String... args) {
+		public BQDaemonTestRuntime start(String... args) {
 
 			Consumer<Bootique> localConfigurator = configurator;
 
@@ -142,6 +145,7 @@ public class BQDaemonTestFactory extends ExternalResource {
 			BQDaemonTestRuntime runtime = new BQDaemonTestRuntime(localConfigurator, startupCheck);
 			runtimes.add(runtime);
 			runtime.start(startupTimeout, startupTimeoutTimeUnit, args);
+			return runtime;
 		}
 	}
 }
