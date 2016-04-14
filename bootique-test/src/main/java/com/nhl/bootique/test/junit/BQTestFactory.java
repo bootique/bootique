@@ -13,7 +13,6 @@ import org.junit.rules.ExternalResource;
 
 import com.google.inject.multibindings.MapBinder;
 import com.nhl.bootique.BQCoreModule;
-import com.nhl.bootique.BQRuntime;
 import com.nhl.bootique.Bootique;
 import com.nhl.bootique.config.ConfigurationFactory;
 import com.nhl.bootique.test.BQTestRuntime;
@@ -38,16 +37,16 @@ import com.nhl.bootique.test.BQTestRuntime;
  */
 public class BQTestFactory extends ExternalResource {
 
-	private Collection<BQRuntime> runtimes;
+	private Collection<BQTestRuntime> runtimes;
 
 	@Override
 	protected void after() {
-		Collection<BQRuntime> localRuntimes = this.runtimes;
+		Collection<BQTestRuntime> localRuntimes = this.runtimes;
 
 		if (localRuntimes != null) {
 			localRuntimes.forEach(runtime -> {
 				try {
-					runtime.shutdown();
+					runtime.getRuntime().shutdown();
 				} catch (Exception e) {
 					// ignore...
 				}
@@ -69,11 +68,11 @@ public class BQTestFactory extends ExternalResource {
 		private static final Consumer<Bootique> DO_NOTHING_CONFIGURATOR = bootique -> {
 		};
 
-		private Collection<BQRuntime> runtimes;
+		private Collection<BQTestRuntime> runtimes;
 		private Consumer<Bootique> configurator;
 		private Map<String, String> properties;
 
-		private Builder(Collection<BQRuntime> runtimes) {
+		private Builder(Collection<BQTestRuntime> runtimes) {
 			this.runtimes = runtimes;
 			this.properties = new HashMap<>();
 			this.configurator = DO_NOTHING_CONFIGURATOR;
@@ -89,7 +88,7 @@ public class BQTestFactory extends ExternalResource {
 			return this;
 		}
 
-		public BQRuntime build(String... args) {
+		public BQTestRuntime build(String... args) {
 
 			Consumer<Bootique> localConfigurator = configurator;
 
@@ -103,7 +102,7 @@ public class BQTestFactory extends ExternalResource {
 				localConfigurator = localConfigurator.andThen(propsConfigurator);
 			}
 
-			BQRuntime runtime = new BQTestRuntime(localConfigurator).createRuntime(args);
+			BQTestRuntime runtime = new BQTestRuntime(localConfigurator, args);
 			runtimes.add(runtime);
 			return runtime;
 		}

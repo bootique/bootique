@@ -1,6 +1,5 @@
 package com.nhl.bootique.test;
 
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -11,7 +10,6 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import com.nhl.bootique.BQRuntime;
 import com.nhl.bootique.Bootique;
 import com.nhl.bootique.command.CommandOutcome;
 import com.nhl.bootique.log.BootLogger;
@@ -25,11 +23,9 @@ public class BQDaemonTestRuntime extends BQTestRuntime {
 	private Function<BQDaemonTestRuntime, Boolean> startupCheck;
 	private Optional<CommandOutcome> outcome;
 
-	private BQRuntime runtime;
-
-	public BQDaemonTestRuntime(Consumer<Bootique> configurator, Function<BQDaemonTestRuntime, Boolean> startupCheck) {
-		super(configurator);
-
+	public BQDaemonTestRuntime(Consumer<Bootique> configurator, Function<BQDaemonTestRuntime, Boolean> startupCheck,
+			String... args) {
+		super(configurator, args);
 		this.startupCheck = startupCheck;
 		this.executor = Executors.newCachedThreadPool();
 		this.outcome = Optional.empty();
@@ -43,19 +39,11 @@ public class BQDaemonTestRuntime extends BQTestRuntime {
 		return outcome;
 	}
 
-	/**
-	 * @since 0.16
-	 * @return internal BQRuntime.
-	 */
-	public BQRuntime getRuntime() {
-		return runtime;
-	}
+	public void start(long timeout, TimeUnit unit) {
 
-	public void start(long timeout, TimeUnit unit, String... args) {
+		start();
 
-		start(args);
-
-		BootLogger logger = runtime.getBootLogger();
+		BootLogger logger = getRuntime().getBootLogger();
 
 		Future<Boolean> startupFuture = executor.submit(() -> {
 
@@ -90,19 +78,18 @@ public class BQDaemonTestRuntime extends BQTestRuntime {
 		}
 	}
 
-	protected void start(String... args) {
-		this.runtime = createRuntime(args);
-		this.executor.submit(() -> run());
+	protected void start() {
+		this.executor.submit(() -> outcome = Optional.of(run()));
 	}
 
 	public void stop() {
 
-		if (runtime == null) {
+		if (getRuntime() == null) {
 			// this means we weren't started successfully. No need to shutdown
 			return;
 		}
 
-		BootLogger logger = runtime.getBootLogger();
+		BootLogger logger = getRuntime().getBootLogger();
 
 		// must interrupt execution (using "shutdown()" is not enough to stop
 		// Jetty for instance
@@ -111,15 +98,6 @@ public class BQDaemonTestRuntime extends BQTestRuntime {
 			executor.awaitTermination(3, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
 			logger.stderr("Interrupted while waiting for shutdown", e);
-		}
-	}
-
-	protected void run() {
-		Objects.requireNonNull(runtime);
-		try {
-			this.outcome = Optional.of(runtime.getRunner().run());
-		} finally {
-			runtime.shutdown();
 		}
 	}
 }

@@ -153,9 +153,9 @@ public class BQDaemonTestFactory extends ExternalResource {
 				localConfigurator = localConfigurator.andThen(propsConfigurator);
 			}
 
-			BQDaemonTestRuntime runtime = new BQDaemonTestRuntime(localConfigurator, startupCheck);
+			BQDaemonTestRuntime runtime = new BQDaemonTestRuntime(localConfigurator, startupCheck, args);
 			runtimes.add(runtime);
-			runtime.start(startupTimeout, startupTimeoutTimeUnit, args);
+			runtime.start(startupTimeout, startupTimeoutTimeUnit);
 			return runtime;
 		}
 	}
