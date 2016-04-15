@@ -60,11 +60,6 @@ public class BQTestRuntime {
 	 * Executes runtime runner, returning the outcome.
 	 */
 	public CommandOutcome run() {
-		Objects.requireNonNull(runtime);
-		try {
-			return runtime.getRunner().run();
-		} finally {
-			runtime.shutdown();
-		}
+		return Objects.requireNonNull(runtime).getRunner().run();
 	}
 }

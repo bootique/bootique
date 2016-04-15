@@ -90,6 +90,7 @@ public class BQDaemonTestRuntime extends BQTestRuntime {
 		}
 
 		BootLogger logger = getRuntime().getBootLogger();
+		getRuntime().shutdown();
 
 		// must interrupt execution (using "shutdown()" is not enough to stop
 		// Jetty for instance
