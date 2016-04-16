@@ -72,7 +72,7 @@ public class BQDaemonTestRuntime extends BQTestRuntime {
 		}
 
 		if (success) {
-			logger.stdout("Daemon runtime started successfully...");
+			logger.stdout("Daemon runtime started...");
 		} else {
 			throw new RuntimeException("Daemon failed to start");
 		}
@@ -82,21 +82,19 @@ public class BQDaemonTestRuntime extends BQTestRuntime {
 		this.executor.submit(() -> outcome = Optional.of(run()));
 	}
 
+	@Override
 	public void stop() {
 
-		if (getRuntime() == null) {
-			// this means we weren't started successfully. No need to shutdown
-			return;
-		}
-
 		BootLogger logger = getRuntime().getBootLogger();
-		getRuntime().shutdown();
+
+		super.stop();
 
 		// must interrupt execution (using "shutdown()" is not enough to stop
 		// Jetty for instance
 		executor.shutdownNow();
 		try {
 			executor.awaitTermination(3, TimeUnit.SECONDS);
+			logger.stdout("Daemon runtime stopped...");
 		} catch (InterruptedException e) {
 			logger.stderr("Interrupted while waiting for shutdown", e);
 		}

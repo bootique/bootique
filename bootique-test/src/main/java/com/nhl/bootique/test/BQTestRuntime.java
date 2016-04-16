@@ -1,6 +1,5 @@
 package com.nhl.bootique.test;
 
-import java.util.Objects;
 import java.util.function.Consumer;
 
 import com.nhl.bootique.BQRuntime;
@@ -60,6 +59,10 @@ public class BQTestRuntime {
 	 * Executes runtime runner, returning the outcome.
 	 */
 	public CommandOutcome run() {
-		return Objects.requireNonNull(runtime).getRunner().run();
+		return runtime.getRunner().run();
+	}
+
+	public void stop() {
+		runtime.shutdown();
 	}
 }

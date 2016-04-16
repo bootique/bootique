@@ -46,7 +46,7 @@ public class BQTestFactory extends ExternalResource {
 		if (localRuntimes != null) {
 			localRuntimes.forEach(runtime -> {
 				try {
-					runtime.getRuntime().shutdown();
+					runtime.stop();
 				} catch (Exception e) {
 					// ignore...
 				}
