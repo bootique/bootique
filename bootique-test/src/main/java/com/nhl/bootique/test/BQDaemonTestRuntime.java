@@ -40,9 +40,15 @@ public class BQDaemonTestRuntime extends BQTestRuntime {
 	}
 
 	public void start(long timeout, TimeUnit unit) {
-
 		start();
+		checkStartupSucceeded(timeout, unit);
+	}
 
+	protected void start() {
+		this.executor.submit(() -> outcome = Optional.of(run()));
+	}
+
+	protected void checkStartupSucceeded(long timeout, TimeUnit unit) {
 		BootLogger logger = getRuntime().getBootLogger();
 
 		Future<Boolean> startupFuture = executor.submit(() -> {
@@ -76,10 +82,6 @@ public class BQDaemonTestRuntime extends BQTestRuntime {
 		} else {
 			throw new RuntimeException("Daemon failed to start");
 		}
-	}
-
-	protected void start() {
-		this.executor.submit(() -> outcome = Optional.of(run()));
 	}
 
 	@Override
