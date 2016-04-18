@@ -516,7 +516,7 @@ BQCoreModule.contributeOptions(binder).addBinding().toInstance(option);</pre><p>
                 checking the values of the exist code and <code class="code">stdin</code> and <code class="code">stderr</code>
                 contents:</p><pre class="programlisting">@Test
 public void testCommand() {
-	BQTestRuntime runtime = app.newRuntime().build("--help");
+	BQTestRuntime runtime = testFactory.newRuntime().build("--help");
 	CommandOutcome outcome = runtime.run();
 
 	assertEquals(0, outcome.getExitCode());
@@ -532,7 +532,64 @@ public void testCommand() {
                 it:</p><pre class="programlisting">@Test
 public void testPresentInJar() {
 	BQModuleProviderChecker.testPresentInJar(MyModuleProvider.class);
-}</pre></div></div></div><div class="part" title="Part&nbsp;IV.&nbsp;Assembly and Deployment"><div class="titlepage"><div><div><h1 class="title"><a name="assembly-deployment"></a>Part&nbsp;IV.&nbsp;Assembly and Deployment</h1></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#programming-runnable-jar">16. Runnable Jar</a></span></dt><dt><span class="chapter"><a href="#deployment-tracing">17. Tracing Bootique Startup</a></span></dt></dl></div><div class="chapter" title="Chapter&nbsp;16.&nbsp;Runnable Jar"><div class="titlepage"><div><div><h2 class="title"><a name="programming-runnable-jar"></a>Chapter&nbsp;16.&nbsp;Runnable Jar</h2></div></div></div><p>TODO</p></div><div class="chapter" title="Chapter&nbsp;17.&nbsp;Tracing Bootique Startup"><div class="titlepage"><div><div><h2 class="title"><a name="deployment-tracing"></a>Chapter&nbsp;17.&nbsp;Tracing Bootique Startup</h2></div></div></div><p>To see what modules are loaded and to trace other events that happen on startup, run
+}</pre></div></div></div><div class="part" title="Part&nbsp;IV.&nbsp;Assembly and Deployment"><div class="titlepage"><div><div><h1 class="title"><a name="assembly-deployment"></a>Part&nbsp;IV.&nbsp;Assembly and Deployment</h1></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#programming-runnable-jar">16. Runnable Jar</a></span></dt><dt><span class="chapter"><a href="#deployment-tracing">17. Tracing Bootique Startup</a></span></dt></dl></div><div class="chapter" title="Chapter&nbsp;16.&nbsp;Runnable Jar"><div class="titlepage"><div><div><h2 class="title"><a name="programming-runnable-jar"></a>Chapter&nbsp;16.&nbsp;Runnable Jar</h2></div></div></div><p>To build a runnable jar, Bootique relies on <code class="code">maven-shade-plugin</code>. To
+            simplfy its configuration, your app <code class="code">pom.xml</code> may inherit from
+                <code class="code">bootoqie-parent</code> pom. In this case configuration would look like
+            this:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;parent&gt;</span>
+    <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;groupId&gt;</span>com.nhl.bootique.parent<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/groupId&gt;</span>
+    <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;artifactId&gt;</span>bootique-parent<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/artifactId&gt;</span>
+    <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;version&gt;</span>0.10<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/version&gt;</span>
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/parent&gt;</span>
+...
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;properties&gt;</span>
+    <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;main.class&gt;</span>com.foo.Application<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/main.class&gt;</span>
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/properties&gt;</span>
+...
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;build&gt;</span>
+    <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;plugins&gt;</span>
+        <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;plugin&gt;</span>
+            <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;groupId&gt;</span>org.apache.maven.plugins<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/groupId&gt;</span>
+            <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;artifactId&gt;</span>maven-shade-plugin<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/artifactId&gt;</span>
+        <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/plugin&gt;</span>
+    <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/plugins&gt;</span>
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/build&gt;</span></pre><p>If you want to avoid a common parent, you will need to explicitly provide the
+            following unwieldy configuration similar to the one found in <a class="link" href="https://repo1.maven.org/maven2/com/nhl/bootique/parent/bootique-parent/0.10/bootique-parent-0.10.pom" target="_top"><code class="code">bootique-parent</code></a>:</p><pre class="programlisting">&lt;plugin&gt;
+	&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+	&lt;artifactId&gt;maven-shade-plugin&lt;/artifactId&gt;
+	&lt;version&gt;<span xmlns="http://www.w3.org/1999/xhtml" class="hl-number">2.4</span>.<span xmlns="http://www.w3.org/1999/xhtml" class="hl-number">2</span>&lt;/version&gt;
+
+	&lt;configuration&gt;
+		&lt;createDependencyReducedPom&gt;true&lt;/createDependencyReducedPom&gt;
+		&lt;filters&gt;
+			&lt;filter&gt;
+				&lt;artifact&gt;*:*&lt;/artifact&gt;
+				&lt;excludes&gt;
+					&lt;exclude&gt;META-INF<span xmlns="http://www.w3.org/1999/xhtml" class="hl-comment">/*.SF&lt;/exclude&gt;
+					&lt;exclude&gt;META-INF/*.DSA&lt;/exclude&gt;
+					&lt;exclude&gt;META-INF/*.RSA&lt;/exclude&gt;
+				&lt;/excludes&gt;
+			&lt;/filter&gt;
+		&lt;/filters&gt;
+	&lt;/configuration&gt;
+	&lt;executions&gt;
+		&lt;execution&gt;
+			&lt;phase&gt;package&lt;/phase&gt;
+			&lt;goals&gt;
+				&lt;goal&gt;shade&lt;/goal&gt;
+			&lt;/goals&gt;
+			&lt;configuration&gt;
+				&lt;transformers&gt;
+					&lt;transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" /&gt;
+					&lt;transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"&gt;
+						&lt;mainClass&gt;${main.class}&lt;/mainClass&gt;
+					&lt;/transformer&gt;
+				&lt;/transformers&gt;
+			&lt;/configuration&gt;
+		&lt;/execution&gt;
+	&lt;/executions&gt;
+&lt;/plugin&gt;</span></pre><p>Either way, once your pom is configured, you can assemble and run your jar.
+            E.g.:</p><pre class="programlisting">mvn clean package
+java -jar target/my-0.0.1.jar</pre></div><div class="chapter" title="Chapter&nbsp;17.&nbsp;Tracing Bootique Startup"><div class="titlepage"><div><div><h2 class="title"><a name="deployment-tracing"></a>Chapter&nbsp;17.&nbsp;Tracing Bootique Startup</h2></div></div></div><p>To see what modules are loaded and to trace other events that happen on startup, run
             your jar with <code class="code">-Dbq.trace</code> option. E.g.:</p><pre class="programlisting">java -Dbq.trace -jar target/myapp-1.0.jar --server</pre><p>You may see an output like this:</p><pre class="programlisting">Skipping module 'JerseyModule' provided by 'JerseyModuleProvider' (already provided by 'Bootique')...
 Adding module 'BQCoreModule' provided by 'Bootique'...
 Adding module 'JerseyModule' provided by 'Bootique'...
