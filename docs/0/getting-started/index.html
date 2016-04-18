@@ -9,7 +9,7 @@
   ga('create', 'UA-73654436-1', 'auto');
   ga('send', 'pageview');
         </script></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="book" title="Getting Started with Bootique"><div class="titlepage"><div><div><h1 class="title"><a name="linkrest-guide"></a>Getting Started with Bootique</h1></div><div><p class="copyright">Copyright &copy; 2016 National Hockey League, ObjectStyle LLC and individual authors</p></div></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="part"><a href="#getting-started">I. Getting Started with Bootique</a></span></dt><dd><dl><dt><span class="chapter"><a href="#getting-started-minimal-app">1. Hello World in Bootique</a></span></dt><dt><span class="chapter"><a href="#d0e102">2. Configuration</a></span></dt><dt><span class="chapter"><a href="#d0e129">3. Injection</a></span></dt><dt><span class="chapter"><a href="#d0e166">4. Packaging</a></span></dt></dl></dd></dl></div><div class="part" title="Part&nbsp;I.&nbsp;Getting Started with Bootique"><div class="titlepage"><div><div><h1 class="title"><a name="getting-started"></a>Part&nbsp;I.&nbsp;Getting Started with Bootique</h1></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#getting-started-minimal-app">1. Hello World in Bootique</a></span></dt><dt><span class="chapter"><a href="#d0e102">2. Configuration</a></span></dt><dt><span class="chapter"><a href="#d0e129">3. Injection</a></span></dt><dt><span class="chapter"><a href="#d0e166">4. Packaging</a></span></dt></dl></div><div class="chapter" title="Chapter&nbsp;1.&nbsp;Hello World in Bootique"><div class="titlepage"><div><div><h2 class="title"><a name="getting-started-minimal-app"></a>Chapter&nbsp;1.&nbsp;Hello World in Bootique</h2></div></div></div><p>The goal of this chapter is to write a simple REST app using Bootique. Let's start
-            with a new Java Maven project created in your favorite IDE. You <code class="code">pom.xml</code> in
+            with a new Java Maven project created in your favorite IDE. Your <code class="code">pom.xml</code> in
             addition to the required project information tags will need to declare one artifact in
             the <code class="code">&lt;dependencyManagement/&gt;</code>
             section:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;dependencyManagement&gt;</span>
@@ -17,7 +17,7 @@
 		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;dependency&gt;</span>
 			<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;groupId&gt;</span>com.nhl.bootique.bom<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/groupId&gt;</span>
 			<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;artifactId&gt;</span>bootique-bom<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/artifactId&gt;</span>
-			<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;version&gt;</span>0.12.1<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/version&gt;</span>
+			<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;version&gt;</span>0.16<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/version&gt;</span>
 			<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;type&gt;</span>pom<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/type&gt;</span>
 			<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;scope&gt;</span>import<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/scope&gt;</span>
 		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/dependency&gt;</span>
@@ -86,15 +86,16 @@
 <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span> Application {
 
 	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">static</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">void</span> main(String[] args) {
-		JerseyModule jersey = JerseyModule.builder().packageRoot(HelloResource.<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span>).build();
-		Bootique.app(args).module(jersey).autoLoadModules().run();
+
+		Module module = binder -&gt; 
+                  JerseyModule.contributeResources(binder).addBinding().to(HelloResource.<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span>);
+
+		Bootique.app(args).module(module).autoLoadModules().run();
 	}
-}</pre><p>What happened here is that instead of implicitly loading JerseyModule, we created it
-            ourselves and configured it to look for resources in the Java package of the
-            HelloResource class (so any other resources we'd add here would be recognized
-            automatically with no extra configuration). Now let's try to run the app with the
-            changes. Add <code class="code">--server</code> to the command run parameters before doing it. Now
-            when the app is started, you will see different
+}</pre><p>Here we created our own module that "contributes" resource configuration to the
+            JerseyModule. Now let's try to run the app with the changes. Add <code class="code">--server</code>
+            to the command run parameters before doing it. Now when the app is started, you will see
+            different
             output:</p><pre class="programlisting">INFO  main c.n.b.j.c.ServerCommand: Starting jetty...
 INFO  main o.e.jetty.util.log: Logging initialized @933ms
 INFO  main c.n.b.j.s.ServerFactory: Adding servlet mapped to /*
