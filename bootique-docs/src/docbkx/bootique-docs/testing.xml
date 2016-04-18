@@ -24,7 +24,7 @@
         <para>While there are a number of built-in and custom stacks that you can create, they
             usually fall into two broad categories - "foreground" - those that are running in the
             main test thread, and "background" - those that are running in an isolated thread pool
-            (usually network services, like Jetty). To create a foreground stack, use
+            (usually network services like Jetty). To create a foreground stack, use
                 <code>BQTestFactory</code>, annotated with <code>@Rule</code> or
                 <code>@ClassRule</code>:<programlisting language="java">public class ForegroundTest {
 	
@@ -39,9 +39,9 @@
 }</programlisting>As
             you see, the test class declares a factory, and test methods can create
                 <code>BQTestRuntime</code> instances with different command-line arguments,
-            including commands (<code>--help</code> in this example), but also
-                <code>"--config=some.yml"</code> argument that can change the entire stack
-            configuration, etc. So your test runtime will behave just like a real Java app. </para>
+            including commands (<code>--help</code> in this example), configuration file
+                (<code>"--config=some.yml"</code>), etc. So your test runtime will behave just like
+            a real Java app and will allow to verify various scenarios. </para>
         <para>If a stack requires a thread pool to run (e.g. we are starting a webserver), it needs
             to be started with <code>BQDaemonTestFactory</code> instead of
                 <code>BQTestFactory</code>:<programlisting language="java">public class BackgroundTest {
@@ -55,13 +55,13 @@
 		... 
 	}
 }</programlisting></para>
-        <para>You won't need to stop it explicitly. <code>BQDaemonTestFactory</code> will take care
+        <para>You don't need to stop it explicitly. <code>BQDaemonTestFactory</code> will take care
             of it via JUnit lifecycle.</para>
         <para>The next thing you may want to do is to add various modules to the basic stack (either
             foreground or background). <code>testFactory.newRuntime()</code> returns a builder
-            object that allows to pass a special "configurator" instance to tweak the runtime.
-            Adding modules can be done by writing such
-            configurator:<programlisting language="java">@Test
+            object that optionally takes a special "configurator" instance that can add new
+            modules,each of those adding or overriding runtime
+            services:<programlisting language="java">@Test
 public void testAbc() {
 
 	Consumer&lt;Bootique> configurator = (bootique) -> {
@@ -70,8 +70,8 @@ public void testAbc() {
 			.autoLoadModules()
 			// add an adhoc module specific to the test
 			.module((binder) -> {
-			binder.bind(MyService.class).to(MyServiceImpl.class);
-		});
+			   binder.bind(MyService.class).to(MyServiceImpl.class);
+		       });
 	};
 	
 	testFactory.newRuntime().configurator(configurator).build("--help");
@@ -92,15 +92,63 @@ public void testAbc() {
             techniques.</para>
         <section>
             <title>Testing Services that are Part of Bootique Runtime</title>
-            <para>TODO</para>
+            <para>Services can be obtained from test runtime, their methods called, and assertions
+                made about the results of the call: </para>
+            <para>
+                <programlisting language="java">@Test
+public void testService() {
+
+	BQTestRuntime runtime = testFactory.newRuntime().build("--config=src/test/resources/my.yml");
+
+	MyService service = runtime.getRuntime().getInstance(MyService.class);
+	assertEquals("xyz", service.someMethod());
+}</programlisting>
+            </para>
         </section>
         <section>
             <title>Testing Network Services</title>
-            <para>TODO</para>
+            <para>If a test stack is started on the background, and if runs a web server (like
+                    <code>bootique-jetty-test</code>) or some other network service, it can be
+                accessed via a URL.
+                E.g.:<programlisting language="java">@Test
+public void testServer() {
+
+	BQDaemonTestRuntime runtime = testFactory.newRuntime().start("--server");
+
+	// using JAX-RS client API
+	WebTarget base = ClientBuilder.newClient().target("http://localhost:8080/");
+	Response r1 = base.path("/somepath").request().get();
+	assertEquals(Status.OK.getStatusCode(), r1.getStatus());
+	assertEquals("{}", r1.readEntity(String.class));
+}</programlisting></para>
         </section>
         <section>
-            <title>Capturing "stdout" and "stderr"</title>
-            <para>TODO</para>
+            <title>Testing Commands</title>
+            <para>You can emulate a real app execution in a unit test, by running a command and then
+                checking the values of the exist code and <code>stdin</code> and <code>stderr</code>
+                contents:<programlisting>@Test
+public void testCommand() {
+	BQTestRuntime runtime = app.newRuntime().build("--help");
+	CommandOutcome outcome = runtime.run();
+
+	assertEquals(0, outcome.getExitCode());
+
+	String help = runtime.getStdout();
+	assertTrue(help.contains("--help"));
+	assertTrue(help.contains("--config"));
+}</programlisting></para>
+        </section>
+        <section>
+            <title>Testing Module Validity</title>
+            <para>When you are writing your own modules, you may want to check that they are
+                configured properly for autoloading (i.e.
+                    <code>META-INF/services/com.nhl.bootique.BQModuleProvider</code> is present in
+                the expected place and contains the right provider. There's a helper class to check
+                for
+                it:<programlisting>@Test
+public void testPresentInJar() {
+	BQModuleProviderChecker.testPresentInJar(MyModuleProvider.class);
+}</programlisting></para>
         </section>
     </chapter>
  
