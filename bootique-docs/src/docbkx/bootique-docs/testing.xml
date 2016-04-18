@@ -128,7 +128,7 @@ public void testServer() {
                 checking the values of the exist code and <code>stdin</code> and <code>stderr</code>
                 contents:<programlisting>@Test
 public void testCommand() {
-	BQTestRuntime runtime = app.newRuntime().build("--help");
+	BQTestRuntime runtime = testFactory.newRuntime().build("--help");
 	CommandOutcome outcome = runtime.run();
 
 	assertEquals(0, outcome.getExitCode());

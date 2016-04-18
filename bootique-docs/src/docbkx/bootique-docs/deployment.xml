@@ -4,7 +4,68 @@
     <title>Assembly and Deployment</title>
     <chapter xml:id="programming-runnable-jar">
         <title>Runnable Jar</title>
-        <para>TODO</para>
+        <para>To build a runnable jar, Bootique relies on <code>maven-shade-plugin</code>. To
+            simplfy its configuration, your app <code>pom.xml</code> may inherit from
+                <code>bootoqie-parent</code> pom. In this case configuration would look like
+            this:<programlisting language="xml">&lt;parent>
+    &lt;groupId>com.nhl.bootique.parent&lt;/groupId>
+    &lt;artifactId>bootique-parent&lt;/artifactId>
+    &lt;version>0.10&lt;/version>
+&lt;/parent>
+...
+&lt;properties>
+    &lt;main.class>com.foo.Application&lt;/main.class>
+&lt;/properties>
+...
+&lt;build>
+    &lt;plugins>
+        &lt;plugin>
+            &lt;groupId>org.apache.maven.plugins&lt;/groupId>
+            &lt;artifactId>maven-shade-plugin&lt;/artifactId>
+        &lt;/plugin>
+    &lt;/plugins>
+&lt;/build></programlisting></para>
+        <para>If you want to avoid a common parent, you will need to explicitly provide the
+            following unwieldy configuration similar to the one found in <link
+                xlink:href="https://repo1.maven.org/maven2/com/nhl/bootique/parent/bootique-parent/0.10/bootique-parent-0.10.pom"
+                    ><code>bootique-parent</code></link>:<programlisting language="java">&lt;plugin>
+	&lt;groupId>org.apache.maven.plugins&lt;/groupId>
+	&lt;artifactId>maven-shade-plugin&lt;/artifactId>
+	&lt;version>2.4.2&lt;/version>
+
+	&lt;configuration>
+		&lt;createDependencyReducedPom>true&lt;/createDependencyReducedPom>
+		&lt;filters>
+			&lt;filter>
+				&lt;artifact>*:*&lt;/artifact>
+				&lt;excludes>
+					&lt;exclude>META-INF/*.SF&lt;/exclude>
+					&lt;exclude>META-INF/*.DSA&lt;/exclude>
+					&lt;exclude>META-INF/*.RSA&lt;/exclude>
+				&lt;/excludes>
+			&lt;/filter>
+		&lt;/filters>
+	&lt;/configuration>
+	&lt;executions>
+		&lt;execution>
+			&lt;phase>package&lt;/phase>
+			&lt;goals>
+				&lt;goal>shade&lt;/goal>
+			&lt;/goals>
+			&lt;configuration>
+				&lt;transformers>
+					&lt;transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+					&lt;transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+						&lt;mainClass>${main.class}&lt;/mainClass>
+					&lt;/transformer>
+				&lt;/transformers>
+			&lt;/configuration>
+		&lt;/execution>
+	&lt;/executions>
+&lt;/plugin></programlisting></para>
+        <para>Either way, once your pom is configured, you can assemble and run your jar.
+            E.g.:<programlisting>mvn clean package
+java -jar target/my-0.0.1.jar</programlisting></para>
     </chapter>
  
     <chapter xml:id="deployment-tracing">
