@@ -65,7 +65,7 @@
 &lt;/plugin></programlisting></para>
         <para>Either way, once your pom is configured, you can assemble and run your jar.
             E.g.:<programlisting>mvn clean package
-java -jar target/my-0.0.1.jar</programlisting></para>
+java -jar target/myapp-1.0.jar</programlisting></para>
     </chapter>
  
     <chapter xml:id="deployment-tracing">
