@@ -37,6 +37,8 @@ import joptsimple.OptionException;
  * 	Bootique.app(args).commands(_optional_commands_).autoLoadModules().run();
  * }
  * </pre>
+ * 
+ * or just use this class as a main app class.
  */
 public class Bootique {
 
