@@ -1,3 +1,7 @@
+## 0.17
+
+* #62 Bootique.main() - a generic main method
+
 ## 0.16:
 
 * #57 BQDaemonTestFactory - return BQDaemonTestRuntime from Builder.start

@@ -54,6 +54,27 @@ public class Bootique {
 	private boolean autoLoadModules;
 	private BootLogger bootLogger;
 
+	/**
+	 * A reusable main method that auto-loads available modules and runs
+	 * Bootique stack. Useful for apps that don't care to customize their
+	 * "main()".
+	 * 
+	 * @param args
+	 *            app arguments passed by the shell.
+	 * @since 0.17
+	 */
+	public static void main(String[] args) {
+		Bootique.app(args).autoLoadModules().run();
+	}
+
+	/**
+	 * Starts a builder of Bootique runtime.
+	 * 
+	 * @param args
+	 *            app arguments passed by the shell.
+	 * @return Bootique object that can be customized and then executed as an
+	 *         app via the {@link #run()} method.
+	 */
 	public static Bootique app(String[] args) {
 		return new Bootique(args);
 	}
