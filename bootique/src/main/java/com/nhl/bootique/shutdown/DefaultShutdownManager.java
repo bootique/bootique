@@ -14,8 +14,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import com.google.inject.Inject;
-
 /**
  * A shutdown handler that performs a best-effort attempt to shutdown a set of
  * {@link AutoCloseable} objects, blocking no longer then the specified timeout.
@@ -27,8 +25,7 @@ public class DefaultShutdownManager implements ShutdownManager {
 	private Duration timeout;
 	private ConcurrentMap<AutoCloseable, Integer> shutdownHooks;
 
-	@Inject
-	public DefaultShutdownManager(@ShutdownTimeout Duration timeout) {
+	public DefaultShutdownManager(Duration timeout) {
 		this.shutdownHooks = new ConcurrentHashMap<>();
 		this.timeout = timeout;
 	}

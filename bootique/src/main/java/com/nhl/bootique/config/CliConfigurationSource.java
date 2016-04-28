@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.function.Function;
 
-import com.google.inject.Inject;
 import com.nhl.bootique.cli.Cli;
 import com.nhl.bootique.log.BootLogger;
 import com.nhl.bootique.resource.ResourceFactory;
@@ -21,7 +20,6 @@ public class CliConfigurationSource implements ConfigurationSource {
 
 	private String location;
 
-	@Inject
 	public CliConfigurationSource(Cli cli, BootLogger bootLogger) {
 
 		Collection<String> configs = cli.optionStrings(CONFIG_OPTION);

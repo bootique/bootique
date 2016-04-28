@@ -103,10 +103,7 @@ public class BQCoreModule implements Module {
 		// bind singleton types
 		binder.bind(JacksonService.class).to(DefaultJacksonService.class);
 		binder.bind(Runner.class).to(DefaultRunner.class).in(Singleton.class);
-		binder.bind(ShutdownManager.class).to(DefaultShutdownManager.class).in(Singleton.class);
 		binder.bind(Cli.class).toProvider(JoptCliProvider.class).in(Singleton.class);
-		binder.bind(ConfigurationSource.class).to(CliConfigurationSource.class).in(Singleton.class);
-		binder.bind(ConfigurationFactory.class).to(YamlConfigurationFactory.class).in(Singleton.class);
 
 		// trigger extension points creation and provide default contributions
 		BQCoreModule.contributeProperties(binder);
@@ -119,6 +116,25 @@ public class BQCoreModule implements Module {
 				.builder(CliConfigurationSource.CONFIG_OPTION,
 						"Specifies YAML config location, which can be a file path or a URL.")
 				.valueRequired("yaml_location").build();
+	}
+
+	@Provides
+	@Singleton
+	public ShutdownManager provideShutdownManager(@ShutdownTimeout Duration timeout) {
+		return new DefaultShutdownManager(timeout);
+	}
+
+	@Provides
+	@Singleton
+	public ConfigurationSource provideConfigurationSource(Cli cli, BootLogger bootLogger) {
+		return new CliConfigurationSource(cli, bootLogger);
+	}
+
+	@Provides
+	@Singleton
+	public ConfigurationFactory provideConfigurationFactory(ConfigurationSource configurationSource,
+			Environment environment, JacksonService jacksonService) {
+		return new YamlConfigurationFactory(configurationSource, environment, jacksonService);
 	}
 
 	@Provides

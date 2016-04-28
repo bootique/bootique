@@ -12,7 +12,6 @@ import com.fasterxml.jackson.databind.node.TreeTraversingParser;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
-import com.google.inject.Inject;
 import com.nhl.bootique.env.Environment;
 import com.nhl.bootique.jackson.JacksonService;
 import com.nhl.bootique.type.TypeRef;
@@ -35,10 +34,9 @@ public class YamlConfigurationFactory implements ConfigurationFactory {
 		}
 	}
 
-	@Inject
 	public YamlConfigurationFactory(ConfigurationSource configurationSource, Environment environment,
 			JacksonService jacksonService) {
-		
+
 		this.typeFactory = TypeFactory.defaultInstance();
 		this.mapper = jacksonService.newObjectMapper();
 		this.rootNode = configurationSource.readConfig(in -> readYaml(in, mapper));
@@ -69,7 +67,7 @@ public class YamlConfigurationFactory implements ConfigurationFactory {
 	public <T> T config(TypeRef<? extends T> type, String prefix) {
 
 		JsonNode child = JsonPropertiesResolver.findChild(rootNode, prefix);
-		
+
 		JavaType jacksonType = typeFactory.constructType(type.getType());
 
 		try {
