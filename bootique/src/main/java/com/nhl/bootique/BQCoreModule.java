@@ -109,7 +109,7 @@ public class BQCoreModule implements Module {
 		BQCoreModule.contributeOptions(binder).addBinding().toInstance(createConfigOption());
 	}
 
-	protected CliOption createConfigOption() {
+	CliOption createConfigOption() {
 		return CliOption
 				.builder(CliConfigurationSource.CONFIG_OPTION,
 						"Specifies YAML config location, which can be a file path or a URL.")
@@ -118,57 +118,57 @@ public class BQCoreModule implements Module {
 
 	@Provides
 	@Singleton
-	public JacksonService provideJacksonService(BootLogger bootLogger) {
+	JacksonService provideJacksonService(BootLogger bootLogger) {
 		return new DefaultJacksonService(bootLogger);
 	}
 
 	@Provides
 	@Singleton
-	public Runner provideRunner(Cli cli, CommandManager commandManager) {
+	Runner provideRunner(Cli cli, CommandManager commandManager) {
 		return new DefaultRunner(cli, commandManager);
 	}
 
 	@Provides
 	@Singleton
-	public ShutdownManager provideShutdownManager(@ShutdownTimeout Duration timeout) {
+	ShutdownManager provideShutdownManager(@ShutdownTimeout Duration timeout) {
 		return new DefaultShutdownManager(timeout);
 	}
 
 	@Provides
 	@Singleton
-	public ConfigurationSource provideConfigurationSource(Cli cli, BootLogger bootLogger) {
+	ConfigurationSource provideConfigurationSource(Cli cli, BootLogger bootLogger) {
 		return new CliConfigurationSource(cli, bootLogger);
 	}
 
 	@Provides
 	@Singleton
-	public ConfigurationFactory provideConfigurationFactory(ConfigurationSource configurationSource,
-			Environment environment, JacksonService jacksonService) {
+	ConfigurationFactory provideConfigurationFactory(ConfigurationSource configurationSource, Environment environment,
+			JacksonService jacksonService) {
 		return new YamlConfigurationFactory(configurationSource, environment, jacksonService);
 	}
 
 	@Provides
 	@Singleton
 	@DefaultCommand
-	public Command provideDefaultCommand(HelpCommand helpCommand) {
+	Command provideDefaultCommand(HelpCommand helpCommand) {
 		return helpCommand;
 	}
 
 	@Provides
 	@Singleton
-	public HelpCommand provideHelpCommand(BootLogger bootLogger) {
+	HelpCommand provideHelpCommand(BootLogger bootLogger) {
 		return new HelpCommand(bootLogger);
 	}
 
 	@Provides
 	@Singleton
-	public CommandManager provideCommandManager(Set<Command> commands, @DefaultCommand Command defaultCommand) {
+	CommandManager provideCommandManager(Set<Command> commands, @DefaultCommand Command defaultCommand) {
 		return DefaultCommandManager.create(commands, defaultCommand);
 	}
 
 	@Provides
 	@Singleton
-	public Environment createEnvironment(@EnvironmentProperties Map<String, String> diProperties) {
+	Environment createEnvironment(@EnvironmentProperties Map<String, String> diProperties) {
 		return new DefaultEnvironment(diProperties);
 	}
 
