@@ -1,6 +1,5 @@
 package com.nhl.bootique.run;
 
-import com.google.inject.Inject;
 import com.nhl.bootique.cli.Cli;
 import com.nhl.bootique.command.Command;
 import com.nhl.bootique.command.CommandManager;
@@ -11,7 +10,6 @@ public class DefaultRunner implements Runner {
 	private Cli cli;
 	private CommandManager commandManager;
 
-	@Inject
 	public DefaultRunner(Cli cli, CommandManager commandManager) {
 		this.cli = cli;
 		this.commandManager = commandManager;

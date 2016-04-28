@@ -100,9 +100,7 @@ public class BQCoreModule implements Module {
 		binder.bind(Duration.class).annotatedWith(ShutdownTimeout.class)
 				.toInstance(Objects.requireNonNull(shutdownTimeout));
 
-		// bind singleton types
-		binder.bind(JacksonService.class).to(DefaultJacksonService.class);
-		binder.bind(Runner.class).to(DefaultRunner.class).in(Singleton.class);
+		// we can't bind Provider with @Provides, so declaring it here...
 		binder.bind(Cli.class).toProvider(JoptCliProvider.class).in(Singleton.class);
 
 		// trigger extension points creation and provide default contributions
@@ -116,6 +114,18 @@ public class BQCoreModule implements Module {
 				.builder(CliConfigurationSource.CONFIG_OPTION,
 						"Specifies YAML config location, which can be a file path or a URL.")
 				.valueRequired("yaml_location").build();
+	}
+
+	@Provides
+	@Singleton
+	public JacksonService provideJacksonService(BootLogger bootLogger) {
+		return new DefaultJacksonService(bootLogger);
+	}
+
+	@Provides
+	@Singleton
+	public Runner provideRunner(Cli cli, CommandManager commandManager) {
+		return new DefaultRunner(cli, commandManager);
 	}
 
 	@Provides
@@ -152,7 +162,7 @@ public class BQCoreModule implements Module {
 
 	@Provides
 	@Singleton
-	public CommandManager createCommandManager(Set<Command> commands, @DefaultCommand Command defaultCommand) {
+	public CommandManager provideCommandManager(Set<Command> commands, @DefaultCommand Command defaultCommand) {
 		return DefaultCommandManager.create(commands, defaultCommand);
 	}
 
