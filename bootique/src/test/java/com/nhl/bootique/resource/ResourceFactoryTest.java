@@ -36,8 +36,20 @@ public class ResourceFactoryTest {
 	}
 
 	@Test
+	public void testGetCanonicalFile() throws IOException {
+		File file = new ResourceFactory("./src/test/resources/com/nhl/bootique/config/test1.yml").getCanonicalFile();
+		assertEquals(System.getProperty("user.dir") + "/src/test/resources/com/nhl/bootique/config/test1.yml",
+				file.getPath());
+	}
+
+	@Test
 	public void testResourceAsUrl_File() throws IOException {
 		assertEquals("a: b", resourceContents("src/test/resources/com/nhl/bootique/config/test1.yml"));
+	}
+
+	@Test
+	public void testResourceAsUrl_File_DotSlash() throws IOException {
+		assertEquals("a: b", resourceContents("./src/test/resources/com/nhl/bootique/config/test1.yml"));
 	}
 
 	@Test

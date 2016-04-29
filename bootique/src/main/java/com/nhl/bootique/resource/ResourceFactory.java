@@ -1,7 +1,7 @@
 package com.nhl.bootique.resource;
 
 import java.io.File;
-import java.net.MalformedURLException;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.Objects;
@@ -78,12 +78,24 @@ public class ResourceFactory {
 
 		URI uri = URI.create(resourceId);
 		try {
-			return uri.isAbsolute() ? uri.toURL() : new File(resourceId).toURI().toURL();
-		} catch (MalformedURLException e) {
+			return uri.isAbsolute() ? uri.toURL() : getCanonicalFile().toURI().toURL();
+		} catch (IOException e) {
 			throw new RuntimeException("Bad url", e);
 		}
 	}
-	
+
+	/**
+	 * Converts resource ID to a canonical file.
+	 * 
+	 * @return canonical file produced from resource id.
+	 * @throws IOException
+	 */
+	// using canonical file avoids downstream bugs like this:
+	// https://github.com/nhl/bootique-jetty/issues/29
+	protected File getCanonicalFile() throws IOException {
+		return new File(resourceId).getCanonicalFile();
+	}
+
 	@Override
 	public String toString() {
 		return "ResourceFactory:" + resourceId;

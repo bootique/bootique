@@ -1,6 +1,7 @@
 ## 0.17
 
 * #62 Bootique.main() - a generic main method
+* #63 Must canonicalize file:/ URLs.
 
 ## 0.16:
 
