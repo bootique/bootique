@@ -34,4 +34,6 @@ And a BOM that declares them all with compatible versions:
 
 ## Support
 
-If you have a question, [open an issue](https://github.com/nhl/bootique/issues) with a label of "help wanted" or "question". 
+You have two options:
+* [Open an issue](https://github.com/nhl/bootique/issues) on GitHub with a label of "help wanted" or "question" (or "bug" if you think you found a bug).
+* Post your question on the [Bootique forum](https://groups.google.com/forum/#!forum/bootique-user).
