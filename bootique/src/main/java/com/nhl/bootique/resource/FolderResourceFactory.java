@@ -23,4 +23,8 @@ public class FolderResourceFactory extends ResourceFactory {
 		super(normalizeResourceId(Objects.requireNonNull(resourceId)));
 	}
 
+	@Override
+	public String toString() {
+		return "FolderResourceFactory:" + resourceId;
+	}
 }

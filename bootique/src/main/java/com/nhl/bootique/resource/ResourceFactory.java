@@ -26,7 +26,7 @@ public class ResourceFactory {
 
 	protected static final String CLASSPATH_URL_PREFIX = "classpath:";
 
-	private String resourceId;
+	protected String resourceId;
 
 	/**
 	 * Creates a ResourceFactory passing it a String resource identifier. It can
@@ -82,6 +82,11 @@ public class ResourceFactory {
 		} catch (MalformedURLException e) {
 			throw new RuntimeException("Bad url", e);
 		}
+	}
+	
+	@Override
+	public String toString() {
+		return "ResourceFactory:" + resourceId;
 	}
 
 }
