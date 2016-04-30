@@ -73,12 +73,31 @@ public class Bootique {
 	 * Starts a builder of Bootique runtime.
 	 * 
 	 * @param args
-	 *            app arguments passed by the shell.
+	 *            command-line arguments.
 	 * @return Bootique object that can be customized and then executed as an
 	 *         app via the {@link #run()} method.
 	 */
-	public static Bootique app(String[] args) {
+	public static Bootique app(String... args) {
+		if (args == null) {
+			args = new String[0];
+		}
+
 		return new Bootique(args);
+	}
+
+	/**
+	 * Starts a builder of Bootique runtime, initializing it with provided
+	 * command-line arguments.
+	 * 
+	 * @since 0.17
+	 * @param args
+	 *            command-line arguments.
+	 * @return Bootique object that can be customized and then executed as an
+	 *         app via the {@link #run()} method.
+	 */
+	public static Bootique app(Collection<String> args) {
+		Objects.requireNonNull(args);
+		return app(args.toArray(new String[args.size()]));
 	}
 
 	private Bootique(String[] args) {

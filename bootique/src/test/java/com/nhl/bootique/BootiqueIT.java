@@ -1,5 +1,7 @@
 package com.nhl.bootique;
 
+import static java.util.Arrays.asList;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -34,6 +36,14 @@ public class BootiqueIT {
 
 		String[] args = i.getInstance(Key.get(String[].class, Args.class));
 		assertSame(this.args, args);
+	}
+	
+	@Test
+	public void testApp_Collection() {
+		Injector i = Bootique.app(asList(args)).createInjector();
+
+		String[] args = i.getInstance(Key.get(String[].class, Args.class));
+		assertArrayEquals(this.args, args);
 	}
 
 	@Test

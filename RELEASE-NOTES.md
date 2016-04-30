@@ -3,6 +3,7 @@
 * #62 Bootique.main() - a generic main method
 * #63 Must canonicalize file:/ URLs.
 * #66 Support for multiple ordered configs
+* #67 Expand Bootique.app(..) method 
 
 ## 0.16:
 
