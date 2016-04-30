@@ -1,7 +1,6 @@
-package com.nhl.bootique.config;
+package com.nhl.bootique.config.jackson;
 
 import java.util.Iterator;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -11,26 +10,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-class JsonPropertiesResolver {
-
-	static JsonNode findChild(JsonNode node, String path) {
-		return lastPathComponent(node, path).map(t -> t.node).orElse(new ObjectNode(null));
-	}
-
-	static void resolve(JsonNode node, Map<String, String> properties) {
-		properties.entrySet().forEach(e -> {
-
-			PathTuple target = lastPathComponent(node, e.getKey()).get();
-			target.fillMissingParents();
-
-			if (!(target.parent.node instanceof ObjectNode)) {
-				throw new IllegalArgumentException("Invalid property '" + e.getKey() + "'");
-			}
-
-			ObjectNode parentObjectNode = (ObjectNode) target.parent.node;
-			parentObjectNode.put(target.incomingPath, e.getValue());
-		});
-	}
+/**
+ * A helper class to navigate {@link JsonNode} objects.
+ */
+class JsonNodeUtils {
 
 	static Optional<PathTuple> lastPathComponent(JsonNode node, String path) {
 		return asStream(node, path).reduce((a, b) -> b);

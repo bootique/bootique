@@ -30,13 +30,20 @@ public class BQCoreModule_DefaultCliOptionsIT {
 		Injector i = injector("--config=abc.yml");
 		assertEquals(i.getInstance(Cli.class).optionStrings(CliConfigurationSource.CONFIG_OPTION), "abc.yml");
 	}
-	
+
+	@Test
+	public void testConfigOptions() {
+		Injector i = injector("--config=abc.yml --config=xyz.yml");
+		assertEquals(i.getInstance(Cli.class).optionStrings(CliConfigurationSource.CONFIG_OPTION), "abc.yml",
+				"xyz.yml");
+	}
+
 	@Test
 	public void testHelpOption() {
 		Injector i = injector("--help");
 		assertTrue(i.getInstance(Cli.class).hasOption("help"));
 	}
-	
+
 	@Test
 	public void testNoHelpOption() {
 		Injector i = injector("a b");

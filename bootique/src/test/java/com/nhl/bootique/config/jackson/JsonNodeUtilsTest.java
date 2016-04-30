@@ -1,4 +1,4 @@
-package com.nhl.bootique.config;
+package com.nhl.bootique.config.jackson;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -13,10 +13,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
-import com.nhl.bootique.config.JsonPropertiesResolver;
-import com.nhl.bootique.config.JsonPropertiesResolver.PathTuple;
+import com.nhl.bootique.config.jackson.JsonNodeUtils;
+import com.nhl.bootique.config.jackson.JsonNodeUtils.PathTuple;
 
-public class JsonPropertiesResolverTest {
+public class JsonNodeUtilsTest {
 
 	private static JsonNode readYaml(String yaml) {
 
@@ -29,13 +29,12 @@ public class JsonPropertiesResolverTest {
 			throw new RuntimeException("Error reading config file", e);
 		}
 	}
-	
 
 	@Test
 	public void testLastPathComponent_Root() {
 		JsonNode node = readYaml("a: b\nc: d");
-		Optional<PathTuple> last = JsonPropertiesResolver.lastPathComponent(node, "");
-		
+		Optional<PathTuple> last = JsonNodeUtils.lastPathComponent(node, "");
+
 		assertNotNull(last);
 		assertNotNull(last.get());
 		assertEquals("b", last.get().node.get("a").asText());
@@ -45,18 +44,18 @@ public class JsonPropertiesResolverTest {
 	@Test
 	public void testLastPathComponent() {
 		JsonNode node = readYaml("a: b\nc: d");
-		Optional<PathTuple> last = JsonPropertiesResolver.lastPathComponent(node, "a");
-		
+		Optional<PathTuple> last = JsonNodeUtils.lastPathComponent(node, "a");
+
 		assertNotNull(last);
 		assertNotNull(last.get());
 		assertEquals("b", last.get().node.asText());
 	}
-	
+
 	@Test
 	public void testLastPathComponent_Nested() {
 		JsonNode node = readYaml("a: b\nc:\n  d: e");
-		Optional<PathTuple> last = JsonPropertiesResolver.lastPathComponent(node, "c.d");
-		
+		Optional<PathTuple> last = JsonNodeUtils.lastPathComponent(node, "c.d");
+
 		assertNotNull(last);
 		assertNotNull(last.get());
 		assertEquals("e", last.get().node.asText());

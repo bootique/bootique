@@ -1,58 +1,38 @@
-package com.nhl.bootique.config;
+package com.nhl.bootique.config.jackson;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.function.Function;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nhl.bootique.env.Environment;
-import com.nhl.bootique.jackson.JacksonService;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.nhl.bootique.config.jackson.JsonNodeConfigurationFactory;
 import com.nhl.bootique.resource.ResourceFactory;
 import com.nhl.bootique.type.TypeRef;
 
-public class YamlConfigurationFactoryTest {
+public class JsonNodeConfigurationFactoryTest {
 
-	private ConfigurationSource mockConfigSource;
-	private JacksonService mockJacksonService;
-	private Environment mockEnvironment;
+	private JsonNodeConfigurationFactory factory(String yaml) {
 
-	@Before
-	public void before() {
-		mockConfigSource = mock(ConfigurationSource.class);
-		mockJacksonService = mock(JacksonService.class);
-		when(mockJacksonService.newObjectMapper()).thenReturn(new ObjectMapper());
+		ObjectMapper objectMapper = new ObjectMapper();
+		JsonNode rootConfig;
+		try {
+			rootConfig = objectMapper.readTree(new YAMLFactory().createParser(yaml));
+		} catch (IOException e) {
+			throw new RuntimeException("Error parsing YAML", e);
+		}
 
-		mockEnvironment = mock(Environment.class);
-	}
-
-	private YamlConfigurationFactory factory(String yaml) {
-		when(mockConfigSource.readConfig(any())).thenAnswer(i -> {
-
-			@SuppressWarnings("unchecked")
-			Function<InputStream, Object> processor = i.getArgumentAt(0, Function.class);
-			InputStream in = new ByteArrayInputStream(yaml.getBytes());
-
-			return processor.apply(in);
-		});
-
-		return new YamlConfigurationFactory(mockConfigSource, mockEnvironment, mockJacksonService);
+		return new JsonNodeConfigurationFactory(rootConfig, objectMapper);
 	}
 
 	@Test
@@ -96,42 +76,6 @@ public class YamlConfigurationFactoryTest {
 		assertNotNull(b1);
 		assertEquals(null, b1.getS());
 		assertEquals(0, b1.getI());
-	}
-
-	@Test
-	public void testConfig_PropSubstitution() {
-
-		when(mockEnvironment.frameworkProperties()).thenReturn(new HashMap<String, String>() {
-			private static final long serialVersionUID = 1L;
-
-			{
-				put("s", "SS");
-				put("i", "55");
-			}
-		});
-
-		Bean1 b1 = factory("s: replace_me\ni: replace_me").config(Bean1.class, "");
-		assertNotNull(b1);
-		assertEquals("SS", b1.getS());
-		assertEquals(55, b1.getI());
-	}
-
-	@Test
-	public void testConfig_PropSubstitution_Nested() {
-
-		when(mockEnvironment.frameworkProperties()).thenReturn(new HashMap<String, String>() {
-			private static final long serialVersionUID = 1L;
-
-			{
-				put("b1.s", "SS");
-				put("b1.i", "55");
-			}
-		});
-
-		Bean1 b1 = factory("b1:\n  s: replace_me\n  i: replace_me").config(Bean1.class, "b1");
-		assertNotNull(b1);
-		assertEquals("SS", b1.getS());
-		assertEquals(55, b1.getI());
 	}
 
 	@Test

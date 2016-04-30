@@ -1,5 +1,6 @@
 package com.nhl.bootique.config;
 
+import static java.util.stream.Collectors.joining;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
@@ -59,11 +60,11 @@ public class CliConfigurationSource_WebConfigSourceIT {
 	}
 
 	@Test
-	public void testReadConfig_HttpUrl() {
+	public void testGet_HttpUrl() {
 
 		String url = "http://localhost:12025/";
 		Cli cli = CliConfigurationSourceTest.createCli(url);
-		String config = new CliConfigurationSource(cli, mockBootLogger).readConfig(configReader);
+		String config = new CliConfigurationSource(cli, mockBootLogger).get().map(configReader).collect(joining(";"));
 		assertEquals("g: h", config);
 	}
 

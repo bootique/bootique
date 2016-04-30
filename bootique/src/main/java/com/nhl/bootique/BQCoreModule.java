@@ -1,10 +1,15 @@
 package com.nhl.bootique;
 
+import java.io.InputStream;
 import java.time.Duration;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Provides;
@@ -23,7 +28,11 @@ import com.nhl.bootique.command.HelpCommand;
 import com.nhl.bootique.config.CliConfigurationSource;
 import com.nhl.bootique.config.ConfigurationFactory;
 import com.nhl.bootique.config.ConfigurationSource;
-import com.nhl.bootique.config.YamlConfigurationFactory;
+import com.nhl.bootique.config.jackson.InPlaceLeftHandMerger;
+import com.nhl.bootique.config.jackson.InPlaceMapOverrider;
+import com.nhl.bootique.config.jackson.JsonNodeConfigurationBuilder;
+import com.nhl.bootique.config.jackson.JsonNodeConfigurationFactory;
+import com.nhl.bootique.config.jackson.JsonNodeYamlParser;
 import com.nhl.bootique.env.DefaultEnvironment;
 import com.nhl.bootique.env.Environment;
 import com.nhl.bootique.jackson.DefaultJacksonService;
@@ -143,8 +152,17 @@ public class BQCoreModule implements Module {
 	@Provides
 	@Singleton
 	ConfigurationFactory provideConfigurationFactory(ConfigurationSource configurationSource, Environment environment,
-			JacksonService jacksonService) {
-		return new YamlConfigurationFactory(configurationSource, environment, jacksonService);
+			JacksonService jacksonService, BootLogger bootLogger) {
+
+		ObjectMapper mapper = jacksonService.newObjectMapper();
+		Function<InputStream, JsonNode> parser = new JsonNodeYamlParser(mapper);
+		BinaryOperator<JsonNode> singleConfigMerger = new InPlaceLeftHandMerger(bootLogger);
+		Function<JsonNode, JsonNode> overrider = new InPlaceMapOverrider(environment.frameworkProperties());
+
+		JsonNode rootNode = JsonNodeConfigurationBuilder.builder().parser(parser).merger(singleConfigMerger)
+				.resources(configurationSource).overrider(overrider).build();
+
+		return new JsonNodeConfigurationFactory(rootNode, mapper);
 	}
 
 	@Provides
