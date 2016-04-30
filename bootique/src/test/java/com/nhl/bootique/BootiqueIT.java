@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import com.google.inject.Binder;
@@ -19,12 +18,7 @@ import com.nhl.bootique.it.ItestModuleProvider;
 
 public class BootiqueIT {
 
-	private String[] args;
-
-	@Before
-	public void before() {
-		args = new String[] { "a", "b", "c" };
-	}
+	private String[] args = new String[] { "a", "b", "c" };
 
 	@Test
 	public void testAutoLoadedProviders() {
@@ -62,12 +56,12 @@ public class BootiqueIT {
 	@Test
 	public void testCreateInjector_OverridesWithProvider() {
 		BQModuleProvider provider = new BQModuleProvider() {
-			
+
 			@Override
 			public Module module() {
 				return new M0();
 			}
-			
+
 			@Override
 			public Collection<Class<? extends Module>> overrides() {
 				return Collections.singleton(BQCoreModule.class);
