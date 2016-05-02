@@ -9,7 +9,10 @@ import com.nhl.bootique.log.BootLogger;
 
 /**
  * A configuration merger that merges right-hand config argument into left-hand
- * argument and returns altered left-hand object.
+ * argument. It will try to avoid copying objects as much as possible, so chunks
+ * of left and right documents may end up merged in the resulting object. This
+ * assumes an environment where the app cares about the merge result and throw
+ * away both source and target after the merge.
  * 
  * @since 0.17
  */
