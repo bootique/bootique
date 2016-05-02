@@ -9,7 +9,7 @@ import com.nhl.bootique.config.jackson.JsonNodeUtils.PathTuple;
 
 /**
  * 
- * An in-place overrider of JsonNode values from a map of properties.
+ * Overrides JsonNode object values from a map of properties.
  * 
  * @since 0.17
  */
