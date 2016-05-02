@@ -83,7 +83,7 @@ public class BQInternalTestFactory extends ExternalResource {
 			}
 
 			Bootique bootique = Bootique.app(args).bootLogger(new DefaultBootLogger(true));
-			configurator.accept(bootique);
+			localConfigurator.accept(bootique);
 			BQRuntime runtime = bootique.createRuntime();
 
 			runtimes.add(runtime);
