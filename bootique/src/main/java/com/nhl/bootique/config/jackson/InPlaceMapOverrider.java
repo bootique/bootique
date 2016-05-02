@@ -5,7 +5,6 @@ import java.util.function.Function;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.nhl.bootique.config.jackson.JsonNodeUtils.PathTuple;
 
 /**
  * 
@@ -25,15 +24,15 @@ public class InPlaceMapOverrider implements Function<JsonNode, JsonNode> {
 	public JsonNode apply(JsonNode t) {
 		properties.entrySet().forEach(e -> {
 
-			PathTuple target = JsonNodeUtils.lastPathComponent(t, e.getKey()).get();
+			PathSegment target = new PathSegment(t, e.getKey()).lastPathComponent().get();
 			target.fillMissingParents();
 
-			if (!(target.parent.node instanceof ObjectNode)) {
+			if (!(target.getParentNode() instanceof ObjectNode)) {
 				throw new IllegalArgumentException("Invalid property '" + e.getKey() + "'");
 			}
 
-			ObjectNode parentObjectNode = (ObjectNode) target.parent.node;
-			parentObjectNode.put(target.incomingPath, e.getValue());
+			ObjectNode parentObjectNode = (ObjectNode) target.getParentNode();
+			parentObjectNode.put(target.getIncomingPath(), e.getValue());
 		});
 
 		return t;

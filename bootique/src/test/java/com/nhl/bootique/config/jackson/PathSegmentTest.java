@@ -13,10 +13,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
-import com.nhl.bootique.config.jackson.JsonNodeUtils;
-import com.nhl.bootique.config.jackson.JsonNodeUtils.PathTuple;
 
-public class JsonNodeUtilsTest {
+public class PathSegmentTest {
 
 	private static JsonNode readYaml(String yaml) {
 
@@ -33,31 +31,31 @@ public class JsonNodeUtilsTest {
 	@Test
 	public void testLastPathComponent_Root() {
 		JsonNode node = readYaml("a: b\nc: d");
-		Optional<PathTuple> last = JsonNodeUtils.lastPathComponent(node, "");
+		Optional<PathSegment> last = new PathSegment(node, "").lastPathComponent();
 
 		assertNotNull(last);
 		assertNotNull(last.get());
-		assertEquals("b", last.get().node.get("a").asText());
-		assertEquals("d", last.get().node.get("c").asText());
+		assertEquals("b", last.get().getNode().get("a").asText());
+		assertEquals("d", last.get().getNode().get("c").asText());
 	}
 
 	@Test
 	public void testLastPathComponent() {
 		JsonNode node = readYaml("a: b\nc: d");
-		Optional<PathTuple> last = JsonNodeUtils.lastPathComponent(node, "a");
+		Optional<PathSegment> last = new PathSegment(node, "a").lastPathComponent();
 
 		assertNotNull(last);
 		assertNotNull(last.get());
-		assertEquals("b", last.get().node.asText());
+		assertEquals("b", last.get().getNode().asText());
 	}
 
 	@Test
 	public void testLastPathComponent_Nested() {
 		JsonNode node = readYaml("a: b\nc:\n  d: e");
-		Optional<PathTuple> last = JsonNodeUtils.lastPathComponent(node, "c.d");
+		Optional<PathSegment> last = new PathSegment(node, "c.d").lastPathComponent();
 
 		assertNotNull(last);
 		assertNotNull(last.get());
-		assertEquals("e", last.get().node.asText());
+		assertEquals("e", last.get().getNode().asText());
 	}
 }
