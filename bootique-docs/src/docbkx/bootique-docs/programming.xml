@@ -70,10 +70,21 @@
     </chapter>
     <chapter xml:id="programming-configuration">
             <title>Configuration and Configurable Factories</title>
+        <para>Bootique Modules obtain their configuration in a form of "factory objects". We'll show
+            some examples shortly. For now let's focus on the big picture, namely the fact that
+            Bootique app configuration is multi-layered and roughly follows the sequence of "code -
+            config files - overrides". "Code" is the default values that are provided in
+            constructors of factory objects. Config files overlay those defaults with external
+            configuration values. Config files is where the bulk of configuration usually stored.
+            Finally config values may be further overridden via Java properties and/or environment
+            variables. </para>
+        <para>Now let's discuss how each step works.</para>
         <section>
             <title>Configuration via YAML Files</title>
-            <para>As mentioned above, a Bootique app can be started with a YAML configuration file. Here
-                is a simple example of such
+            <para>As mentioned above, a Bootique app can be started with one or more YAML
+                configuration files. To specify more than one file, use <code>--config</code> option
+                multiple times. Configurations will be loaded and merged together in the order of
+                their appearance on the command line. Here is a simple example of a config
                 file:<programlisting language="python">log:
   level: warn
   appenders:
@@ -193,6 +204,30 @@ jetty:
 		  .toInstance("valY");
 	}
 }</programlisting></para>
+            <para>Often the main configuration is specified in YAML, and properties are used to
+                override just a few values. Next we'll discuss another way to override values - via
+                environment variables.</para>
+        </section>
+        <section>
+            <title>Configuration via Environment Variables</title>
+            <para>In addition to JVM properties, Bootique allows to use environment variables to
+                specify/override configuration values. Variable names start with <code>BQ_</code>
+                prefix, the rest of the variable name being case insensitive, with property
+                components separated with underscore.
+                E.g.:<programlisting>export BQ_MY_PROP1=valX
+export BQ_MY_PROP1=valY</programlisting>While
+                variables work similar to JVM properties, using them has advantages in certain situations:<itemizedlist>
+                    <listitem>
+                        <para>They may be used to configure credentials, as unlike YAML they won't
+                            end up in version control, and unlike Java properties, they won't be
+                            visible in the process list.</para>
+                    </listitem>
+                    <listitem>
+                        <para>They provide customized application environment without changing the
+                            launch script.</para>
+                    </listitem>
+                </itemizedlist>Just watch out for possible naming conflicts due to case-insensitive
+                nature of the properties.</para>
         </section>
         <section>
             <title>Polymorphic Configuration Objects</title>
