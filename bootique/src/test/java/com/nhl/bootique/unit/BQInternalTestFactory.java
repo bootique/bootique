@@ -51,15 +51,22 @@ public class BQInternalTestFactory extends ExternalResource {
 		private Collection<BQRuntime> runtimes;
 		private Consumer<Bootique> configurator;
 		private Map<String, String> properties;
+		private Map<String, String> variables;
 
 		private Builder(Collection<BQRuntime> runtimes) {
 			this.runtimes = runtimes;
 			this.properties = new HashMap<>();
+			this.variables = new HashMap<>();
 			this.configurator = DO_NOTHING_CONFIGURATOR;
 		}
 
 		public Builder property(String key, String value) {
 			properties.put(key, value);
+			return this;
+		}
+
+		public Builder var(String key, String value) {
+			variables.put(key, value);
 			return this;
 		}
 
@@ -80,6 +87,15 @@ public class BQInternalTestFactory extends ExternalResource {
 				});
 
 				localConfigurator = localConfigurator.andThen(propsConfigurator);
+			}
+
+			if (!variables.isEmpty()) {
+				Consumer<Bootique> varsConfigurator = bootique -> bootique.module(binder -> {
+					MapBinder<String, String> mapBinder = BQCoreModule.contributeVariables(binder);
+					variables.forEach((k, v) -> mapBinder.addBinding(k).toInstance(v));
+				});
+
+				localConfigurator = localConfigurator.andThen(varsConfigurator);
 			}
 
 			Bootique bootique = Bootique.app(args).bootLogger(new DefaultBootLogger(true));

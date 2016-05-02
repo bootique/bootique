@@ -53,7 +53,6 @@ public class JsonNodeConfigurationBuilder {
 	public JsonNode build() {
 
 		Objects.requireNonNull(resourceStreamSupplier);
-		Objects.requireNonNull(overrider);
 		Objects.requireNonNull(parser);
 		Objects.requireNonNull(merger);
 

@@ -62,7 +62,8 @@ public class JsonNodeConfigurationFactory implements ConfigurationFactory {
 	}
 
 	protected JsonNode findChild(String path) {
-		return new PathSegment(rootNode, path).lastPathComponent().map(t -> t.getNode()).orElse(new ObjectNode(null));
+		return new PathSegment(rootNode, path, '.').lastPathComponent().map(t -> t.getNode())
+				.orElse(new ObjectNode(null));
 	}
 
 }

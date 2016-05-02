@@ -9,6 +9,7 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Binder;
 import com.google.inject.Module;
@@ -19,6 +20,7 @@ import com.google.inject.multibindings.Multibinder;
 import com.nhl.bootique.annotation.Args;
 import com.nhl.bootique.annotation.DefaultCommand;
 import com.nhl.bootique.annotation.EnvironmentProperties;
+import com.nhl.bootique.annotation.EnvironmentVariables;
 import com.nhl.bootique.cli.Cli;
 import com.nhl.bootique.cli.CliOption;
 import com.nhl.bootique.command.Command;
@@ -96,6 +98,17 @@ public class BQCoreModule implements Module {
 		return MapBinder.newMapBinder(binder, String.class, String.class, EnvironmentProperties.class);
 	}
 
+	/**
+	 * @since 0.17
+	 * @param binder
+	 *            DI binder passed to the Module that invokes this method.
+	 * @return {@link MapBinder} for values emulating environment variables.
+	 * @see EnvironmentVariables
+	 */
+	public static MapBinder<String, String> contributeVariables(Binder binder) {
+		return MapBinder.newMapBinder(binder, String.class, String.class, EnvironmentVariables.class);
+	}
+
 	private BQCoreModule() {
 		this.shutdownTimeout = Duration.ofMillis(10000l);
 	}
@@ -114,6 +127,7 @@ public class BQCoreModule implements Module {
 
 		// trigger extension points creation and provide default contributions
 		BQCoreModule.contributeProperties(binder);
+		BQCoreModule.contributeVariables(binder);
 		BQCoreModule.contributeCommands(binder).addBinding().to(HelpCommand.class).in(Singleton.class);
 		BQCoreModule.contributeOptions(binder).addBinding().toInstance(createConfigOption());
 	}
@@ -154,15 +168,27 @@ public class BQCoreModule implements Module {
 	ConfigurationFactory provideConfigurationFactory(ConfigurationSource configurationSource, Environment environment,
 			JacksonService jacksonService, BootLogger bootLogger) {
 
-		ObjectMapper mapper = jacksonService.newObjectMapper();
-		Function<InputStream, JsonNode> parser = new JsonNodeYamlParser(mapper);
+		Function<InputStream, JsonNode> parser = new JsonNodeYamlParser(jacksonService.newObjectMapper());
 		BinaryOperator<JsonNode> singleConfigMerger = new InPlaceLeftHandMerger(bootLogger);
-		Function<JsonNode, JsonNode> overrider = new InPlaceMapOverrider(environment.frameworkProperties());
+		Function<JsonNode, JsonNode> propsOverrider = new InPlaceMapOverrider(environment.frameworkProperties(), true,
+				'.');
+
+		Map<String, String> vars = environment.frameworkVariables();
+
+		ObjectMapper jsonToObjectMapper = jacksonService.newObjectMapper();
+
+		if (!vars.isEmpty()) {
+
+			// switching to slower CI strategy for mapping properties...
+			jsonToObjectMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
+
+			propsOverrider = propsOverrider.andThen(new InPlaceMapOverrider(vars, false, '_'));
+		}
 
 		JsonNode rootNode = JsonNodeConfigurationBuilder.builder().parser(parser).merger(singleConfigMerger)
-				.resources(configurationSource).overrider(overrider).build();
+				.resources(configurationSource).overrider(propsOverrider).build();
 
-		return new JsonNodeConfigurationFactory(rootNode, mapper);
+		return new JsonNodeConfigurationFactory(rootNode, jsonToObjectMapper);
 	}
 
 	@Provides
@@ -186,8 +212,9 @@ public class BQCoreModule implements Module {
 
 	@Provides
 	@Singleton
-	Environment createEnvironment(@EnvironmentProperties Map<String, String> diProperties) {
-		return new DefaultEnvironment(diProperties);
+	Environment createEnvironment(@EnvironmentProperties Map<String, String> diProperties,
+			@EnvironmentVariables Map<String, String> diVars) {
+		return new DefaultEnvironment(diProperties, diVars);
 	}
 
 	public static class Builder {

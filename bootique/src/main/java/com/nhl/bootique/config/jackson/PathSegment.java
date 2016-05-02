@@ -18,17 +18,21 @@ class PathSegment implements Iterable<PathSegment> {
 	private String incomingPath;
 	private JsonNode node;
 	private PathSegment parent;
+	protected char pathSeparator;
 
-	PathSegment(JsonNode node, String remainingPath) {
-		this(node, null, null, remainingPath);
+	PathSegment(JsonNode node, String remainingPath, char pathSeparator) {
+		this(node, null, null, remainingPath, pathSeparator);
 	}
 
-	PathSegment(JsonNode node, PathSegment parent, String incomingPath, String remainingPath) {
+	protected PathSegment(JsonNode node, PathSegment parent, String incomingPath, String remainingPath,
+			char pathSeparator) {
 		this.node = node;
 		this.parent = parent;
 		this.incomingPath = incomingPath;
+		this.pathSeparator = pathSeparator;
 
-		if (remainingPath != null && remainingPath.endsWith(".")) {
+		if (remainingPath != null && remainingPath.length() > 0
+				&& remainingPath.charAt(remainingPath.length() - 1) == pathSeparator) {
 			remainingPath = remainingPath.substring(0, remainingPath.length() - 1);
 		}
 		this.remainingPath = remainingPath;
@@ -41,11 +45,11 @@ class PathSegment implements Iterable<PathSegment> {
 	public JsonNode getNode() {
 		return node;
 	}
-	
+
 	public JsonNode getParentNode() {
 		return parent.getNode();
 	}
-	
+
 	public String getIncomingPath() {
 		return incomingPath;
 	}
@@ -55,12 +59,16 @@ class PathSegment implements Iterable<PathSegment> {
 			return null;
 		}
 
-		int dot = remainingPath.indexOf('.');
+		int dot = remainingPath.indexOf(pathSeparator);
 		String pre = dot > 0 ? remainingPath.substring(0, dot) : remainingPath;
 		String post = dot > 0 ? remainingPath.substring(dot + 1) : "";
 
-		JsonNode child = node != null ? node.get(pre) : null;
-		return new PathSegment(child, this, pre, post);
+		return createChild(pre, post);
+	}
+
+	protected PathSegment createChild(String incomingPath, String remainingPath) {
+		JsonNode child = node != null ? node.get(incomingPath) : null;
+		return new PathSegment(child, this, incomingPath, remainingPath, pathSeparator);
 	}
 
 	void fillMissingParents() {

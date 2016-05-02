@@ -14,18 +14,25 @@ public class DefaultEnvironment implements Environment {
 	public static final String FRAMEWORK_PROPERTIES_PREFIX = "bq";
 
 	/**
+	 * @since 0.17
+	 */
+	public static final String FRAMEWORK_VARIABLES_PREFIX = "BQ_";
+
+	/**
 	 * If present, enables boot sequence tracing to STDERR.
 	 */
 	public static final String TRACE_PROPERTY = "bq.trace";
 
 	private Map<String, String> properties;
+	private Map<String, String> variables;
 
-	public DefaultEnvironment(Map<String, String> diProperties) {
+	public DefaultEnvironment(Map<String, String> diProperties, Map<String, String> diVariables) {
 		this.properties = new HashMap<>(diProperties);
+		this.variables = new HashMap<>(diVariables);
 
 		// override DI props from system...
-		System.getProperties().entrySet().stream()
-				.forEach(e -> properties.put((String) e.getKey(), (String) e.getValue()));
+		System.getProperties().forEach((k, v) -> properties.put((String) k, (String) v));
+		System.getenv().forEach((k, v) -> variables.put(k, v));
 	}
 
 	@Override
@@ -35,16 +42,34 @@ public class DefaultEnvironment implements Environment {
 
 	@Override
 	public Map<String, String> subproperties(String prefix) {
-
-		String lPrefix = prefix.endsWith(".") ? prefix : prefix + ".";
-		int len = lPrefix.length();
-
-		return properties.entrySet().stream().filter(e -> e.getKey().startsWith(lPrefix))
-				.collect(toMap(e -> e.getKey().substring(len), e -> e.getValue()));
+		return filterByPrefix(properties, prefix, ".");
 	}
 
 	@Override
 	public Map<String, String> frameworkProperties() {
 		return subproperties(FRAMEWORK_PROPERTIES_PREFIX);
+	}
+
+	@Override
+	public String getVariable(String name) {
+		return variables.get(name);
+	}
+
+	@Override
+	public Map<String, String> variables(String prefix) {
+		return filterByPrefix(variables, prefix, "_");
+	}
+
+	@Override
+	public Map<String, String> frameworkVariables() {
+		return variables(FRAMEWORK_VARIABLES_PREFIX);
+	}
+
+	protected Map<String, String> filterByPrefix(Map<String, String> unfiltered, String prefix, String separator) {
+		String lPrefix = prefix.endsWith(separator) ? prefix : prefix + separator;
+		int len = lPrefix.length();
+
+		return unfiltered.entrySet().stream().filter(e -> e.getKey().startsWith(lPrefix))
+				.collect(toMap(e -> e.getKey().substring(len), e -> e.getValue()));
 	}
 }
