@@ -4,7 +4,8 @@
 * #63 Must canonicalize file:/ URLs.
 * #65 Allow property override from environment variables
 * #66 Support for multiple ordered configs
-* #67 Expand Bootique.app(..) method 
+* #67 Expand Bootique.app(..) method
+* #69 Appendable args list
 
 ## 0.16:
 

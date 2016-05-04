@@ -3,6 +3,7 @@ package com.nhl.bootique;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.ServiceLoader;
 
@@ -48,6 +49,26 @@ public class Bootique {
 		} catch (InstantiationException | IllegalAccessException e) {
 			throw new RuntimeException("Error instantiating Module of type: " + moduleType.getName(), e);
 		}
+	}
+
+	static String[] mergeArrays(String[] a1, String[] a2) {
+		if (a1.length == 0) {
+			return a2;
+		}
+
+		if (a2.length == 0) {
+			return a1;
+		}
+
+		String[] merged = new String[a1.length + a2.length];
+		System.arraycopy(a1, 0, merged, 0, a1.length);
+		System.arraycopy(a2, 0, merged, a1.length, a2.length);
+
+		return merged;
+	}
+
+	static String[] toArray(Collection<String> collection) {
+		return collection.toArray(new String[collection.size()]);
 	}
 
 	protected Collection<BQModuleProvider> providers;
@@ -96,8 +117,11 @@ public class Bootique {
 	 *         app via the {@link #run()} method.
 	 */
 	public static Bootique app(Collection<String> args) {
-		Objects.requireNonNull(args);
-		return app(args.toArray(new String[args.size()]));
+		if (args == null) {
+			args = Collections.emptyList();
+		}
+
+		return app(toArray(Objects.requireNonNull(args)));
 	}
 
 	private Bootique(String[] args) {
@@ -116,6 +140,36 @@ public class Bootique {
 	 */
 	public Bootique bootLogger(BootLogger bootLogger) {
 		this.bootLogger = bootLogger;
+		return this;
+	}
+
+	/**
+	 * Appends extra values to Bootique CLI arguments.
+	 * 
+	 * @since 0.17
+	 * @param args
+	 *            extra args to pass to Bootique.
+	 * @return this instance of Bootique
+	 */
+	public Bootique args(String... args) {
+		if (args != null) {
+			this.args = Bootique.mergeArrays(this.args, args);
+		}
+		return this;
+	}
+
+	/**
+	 * Appends extra values to Bootique CLI arguments.
+	 * 
+	 * @since 0.17
+	 * @param args
+	 *            extra args to pass to Bootique.
+	 * @return this instance of Bootique
+	 */
+	public Bootique args(Collection<String> args) {
+		if (args != null) {
+			this.args = Bootique.mergeArrays(this.args, Bootique.toArray(args));
+		}
 		return this;
 	}
 
