@@ -1,6 +1,6 @@
 package com.nhl.bootique.config;
 
-import java.io.InputStream;
+import java.net.URL;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -9,6 +9,6 @@ import java.util.stream.Stream;
  * Configuration can be stored in a file, etc. Configuration source is agnostic
  * to the media type of configuration (JSON, YAML, etc.)
  */
-public interface ConfigurationSource extends Supplier<Stream<InputStream>> {
+public interface ConfigurationSource extends Supplier<Stream<URL>> {
 
 }

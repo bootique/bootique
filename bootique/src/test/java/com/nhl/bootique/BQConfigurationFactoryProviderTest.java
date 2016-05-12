@@ -7,7 +7,10 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +38,22 @@ public class BQConfigurationFactoryProviderTest {
 	private static ConfigurationFactory factory(Map<String, String> propertyOverrides, Map<String, String> varOverrides,
 			String... yaml) {
 		ConfigurationSource mockSource = mock(ConfigurationSource.class);
-		when(mockSource.get()).thenReturn(asList(yaml).stream().map(s -> new ByteArrayInputStream(s.getBytes())));
+
+		when(mockSource.get()).thenReturn(asList(yaml).stream().map(s -> {
+
+			// need to store YAML on disk to have a URL for it
+
+			try {
+				Path dir = Paths.get("target", "junit", "tmp");
+				Files.createDirectories(dir);
+				Path tmp = Files.createTempFile(dir, "BQConfigurationFactoryProviderTest", ".yml");
+				Files.write(tmp, s.getBytes());
+				return tmp.toUri().toURL();
+
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}));
 
 		Environment mockEnvironment = mock(Environment.class);
 		when(mockEnvironment.frameworkProperties()).thenReturn(propertyOverrides);

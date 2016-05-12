@@ -1,9 +1,6 @@
 package com.nhl.bootique.config;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.net.URL;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -28,30 +25,12 @@ public class CliConfigurationSource implements ConfigurationSource {
 	}
 
 	@Override
-	public Stream<InputStream> get() {
-
-		Collection<InputStream> streamsToClose = new ArrayList<>();
-		Runnable closeHandler = () -> streamsToClose.forEach(in -> {
-			try {
-				in.close();
-			} catch (IOException e) {
-				// ignoring...
-			}
-		});
-
-		return locations.stream().map(location -> openStream(location, streamsToClose)).onClose(closeHandler);
+	public Stream<URL> get() {
+		return locations.stream().map(this::toURL);
 	}
 
-	protected InputStream openStream(String location, Collection<InputStream> streamsToClose) {
-
+	protected URL toURL(String location) {
 		bootLogger.stdout("Reading configuration at " + location);
-
-		try {
-			InputStream in = new ResourceFactory(location).getUrl().openStream();
-			streamsToClose.add(in);
-			return in;
-		} catch (IOException e) {
-			throw new RuntimeException("Error reading config: " + location, e);
-		}
+		return new ResourceFactory(location).getUrl();
 	}
 }

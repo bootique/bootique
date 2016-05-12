@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,15 +45,15 @@ public class CliConfigurationSourceTest {
 		return cli;
 	}
 
-	static Function<InputStream, String> createConfigReader() {
-		return (in) -> {
+	static Function<URL, String> createConfigReader() {
+		return (url) -> {
 
 			StringBuilder string = new StringBuilder();
 			byte[] buffer = new byte[1024];
 			int read;
 			Charset utf8 = Charset.forName("UTF8");
 
-			try {
+			try (InputStream in = url.openStream()) {
 				while ((read = in.read(buffer, 0, buffer.length)) > 0) {
 					string.append(new String(buffer, 0, read, utf8));
 				}
@@ -65,7 +66,7 @@ public class CliConfigurationSourceTest {
 	}
 
 	private BootLogger mockBootLogger;
-	private Function<InputStream, String> configReader;
+	private Function<URL, String> configReader;
 
 	@Before
 	public void before() {

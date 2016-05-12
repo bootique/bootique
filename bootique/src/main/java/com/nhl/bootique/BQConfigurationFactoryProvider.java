@@ -1,6 +1,8 @@
 package com.nhl.bootique;
 
 import java.io.InputStream;
+import java.net.URL;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
@@ -16,7 +18,10 @@ import com.nhl.bootique.config.jackson.InPlaceLeftHandMerger;
 import com.nhl.bootique.config.jackson.InPlaceMapOverrider;
 import com.nhl.bootique.config.jackson.JsonNodeConfigurationBuilder;
 import com.nhl.bootique.config.jackson.JsonNodeConfigurationFactory;
+import com.nhl.bootique.config.jackson.JsonNodeJsonParser;
 import com.nhl.bootique.config.jackson.JsonNodeYamlParser;
+import com.nhl.bootique.config.jackson.MultiFormatJsonNodeParser;
+import com.nhl.bootique.config.jackson.MultiFormatJsonNodeParser.ParserType;
 import com.nhl.bootique.env.Environment;
 import com.nhl.bootique.jackson.JacksonService;
 import com.nhl.bootique.log.BootLogger;
@@ -44,10 +49,17 @@ public class BQConfigurationFactoryProvider implements Provider<ConfigurationFac
 	@Override
 	public ConfigurationFactory get() {
 
-		Function<InputStream, JsonNode> parser = new JsonNodeYamlParser(jacksonService.newObjectMapper());
+		// hopefully sharing the mapper between parsers is safe... Does it
+		// change the state during parse?
+		ObjectMapper textToJsonMapper = jacksonService.newObjectMapper();
+		Map<ParserType, Function<InputStream, JsonNode>> parsers = new EnumMap<>(ParserType.class);
+		parsers.put(ParserType.YAML, new JsonNodeYamlParser(textToJsonMapper));
+		parsers.put(ParserType.JSON, new JsonNodeJsonParser(textToJsonMapper));
+
+		Function<URL, JsonNode> parser = new MultiFormatJsonNodeParser(parsers, bootLogger);
+
 		BinaryOperator<JsonNode> singleConfigMerger = new InPlaceLeftHandMerger(bootLogger);
-		Function<JsonNode, JsonNode> overrider = new InPlaceMapOverrider(environment.frameworkProperties(), true,
-				'.');
+		Function<JsonNode, JsonNode> overrider = new InPlaceMapOverrider(environment.frameworkProperties(), true, '.');
 
 		Map<String, String> vars = environment.frameworkVariables();
 

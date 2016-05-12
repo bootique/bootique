@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.URL;
 import java.util.function.Function;
 
 import javax.servlet.ServletException;
@@ -28,7 +28,7 @@ public class CliConfigurationSource_WebConfigSourceIT {
 
 	private Server jetty;
 	private BootLogger mockBootLogger;
-	private Function<InputStream, String> configReader;
+	private Function<URL, String> configReader;
 
 	@Before
 	public void before() throws Exception {

@@ -1,6 +1,6 @@
 package com.nhl.bootique.config.jackson;
 
-import java.io.InputStream;
+import java.net.URL;
 import java.util.Objects;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
@@ -18,8 +18,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  */
 public class JsonNodeConfigurationBuilder {
 
-	private Supplier<Stream<InputStream>> resourceStreamSupplier;
-	private Function<InputStream, JsonNode> parser;
+	private Supplier<Stream<URL>> resourceStreamSupplier;
+	private Function<URL, JsonNode> parser;
 	private BinaryOperator<JsonNode> merger;
 	private Function<JsonNode, JsonNode> overrider;
 
@@ -30,7 +30,7 @@ public class JsonNodeConfigurationBuilder {
 	protected JsonNodeConfigurationBuilder() {
 	}
 
-	public JsonNodeConfigurationBuilder resources(Supplier<Stream<InputStream>> streamSupplier) {
+	public JsonNodeConfigurationBuilder resources(Supplier<Stream<URL>> streamSupplier) {
 		this.resourceStreamSupplier = streamSupplier;
 		return this;
 	}
@@ -40,7 +40,7 @@ public class JsonNodeConfigurationBuilder {
 		return this;
 	}
 
-	public JsonNodeConfigurationBuilder parser(Function<InputStream, JsonNode> parser) {
+	public JsonNodeConfigurationBuilder parser(Function<URL, JsonNode> parser) {
 		this.parser = parser;
 		return this;
 	}
@@ -58,7 +58,7 @@ public class JsonNodeConfigurationBuilder {
 
 		JsonNode rootNode;
 
-		try (Stream<InputStream> sources = resourceStreamSupplier.get()) {
+		try (Stream<URL> sources = resourceStreamSupplier.get()) {
 
 			rootNode = sources.map(parser::apply).reduce(merger)
 					.orElseGet(() -> new ObjectNode(new JsonNodeFactory(true)));
