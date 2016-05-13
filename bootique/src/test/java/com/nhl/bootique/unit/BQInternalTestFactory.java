@@ -17,7 +17,7 @@ import com.nhl.bootique.log.DefaultBootLogger;
 
 public class BQInternalTestFactory extends ExternalResource {
 
-	private Collection<BQRuntime> runtimes;
+	protected Collection<BQRuntime> runtimes;
 
 	@Override
 	protected void after() {
@@ -53,7 +53,7 @@ public class BQInternalTestFactory extends ExternalResource {
 		private Map<String, String> properties;
 		private Map<String, String> variables;
 
-		private Builder(Collection<BQRuntime> runtimes) {
+		protected Builder(Collection<BQRuntime> runtimes) {
 			this.runtimes = runtimes;
 			this.properties = new HashMap<>();
 			this.variables = new HashMap<>();
@@ -71,7 +71,7 @@ public class BQInternalTestFactory extends ExternalResource {
 		}
 
 		public Builder configurator(Consumer<Bootique> configurator) {
-			this.configurator = Objects.requireNonNull(configurator);
+			this.configurator = configurator.andThen(Objects.requireNonNull(configurator));
 			return this;
 		}
 
