@@ -6,6 +6,7 @@
 * #66 Support for multiple ordered configs
 * #67 Expand Bootique.app(..) method
 * #69 Appendable args list
+* #71 Support for alternative formats of configs
 
 ## 0.16:
 
