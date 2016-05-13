@@ -25,7 +25,7 @@ import com.nhl.bootique.env.Environment;
 import com.nhl.bootique.jackson.JacksonService;
 import com.nhl.bootique.log.DefaultBootLogger;
 
-public class BQConfigurationFactoryProviderTest {
+public class JsonNodeConfigurationFactoryProviderTest {
 
 	private static ConfigurationFactory factory(String... yaml) {
 		return factory(Collections.emptyMap(), yaml);
@@ -67,7 +67,7 @@ public class BQConfigurationFactoryProviderTest {
 		JacksonService mockJackson = mock(JacksonService.class);
 		when(mockJackson.newObjectMapper()).thenReturn(new ObjectMapper());
 
-		ConfigurationFactory factory = new BQConfigurationFactoryProvider(mockSource, mockEnvironment, mockJackson,
+		ConfigurationFactory factory = new JsonNodeConfigurationFactoryProvider(mockSource, mockEnvironment, mockJackson,
 				new DefaultBootLogger(true)).get();
 
 		assertNotNull(factory);

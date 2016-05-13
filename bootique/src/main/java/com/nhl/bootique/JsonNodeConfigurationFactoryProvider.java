@@ -29,7 +29,7 @@ import com.nhl.bootique.log.BootLogger;
 /**
  * @since 0.17
  */
-public class BQConfigurationFactoryProvider implements Provider<ConfigurationFactory> {
+public class JsonNodeConfigurationFactoryProvider implements Provider<ConfigurationFactory> {
 
 	private ConfigurationSource configurationSource;
 	private Environment environment;
@@ -37,7 +37,7 @@ public class BQConfigurationFactoryProvider implements Provider<ConfigurationFac
 	private BootLogger bootLogger;
 
 	@Inject
-	public BQConfigurationFactoryProvider(ConfigurationSource configurationSource, Environment environment,
+	public JsonNodeConfigurationFactoryProvider(ConfigurationSource configurationSource, Environment environment,
 			JacksonService jacksonService, BootLogger bootLogger) {
 
 		this.configurationSource = configurationSource;

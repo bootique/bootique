@@ -113,7 +113,7 @@ public class BQCoreModule implements Module {
 
 		// too much code to create config factory.. extracting it in a provider
 		// class...
-		binder.bind(ConfigurationFactory.class).toProvider(BQConfigurationFactoryProvider.class).in(Singleton.class);
+		binder.bind(ConfigurationFactory.class).toProvider(JsonNodeConfigurationFactoryProvider.class).in(Singleton.class);
 
 		// we can't bind Provider with @Provides, so declaring it here...
 		binder.bind(Cli.class).toProvider(JoptCliProvider.class).in(Singleton.class);
