@@ -12,11 +12,16 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.nhl.bootique.BQRuntime;
 import com.nhl.bootique.Bootique;
 import com.nhl.bootique.log.BootLogger;
 
 public class BQInternalDaemonTestFactory extends BQInternalTestFactory {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(BQInternalDaemonTestFactory.class);
 
 	protected ExecutorService executor;
 
@@ -93,6 +98,7 @@ public class BQInternalDaemonTestFactory extends BQInternalTestFactory {
 
 			BQRuntime runtime = super.build(args);
 
+			LOGGER.info("Starting runtime...");
 			executor.submit(() -> Optional.of(runtime.getRunner().run()));
 			checkStartupSucceeded(runtime, startupTimeout, startupTimeoutTimeUnit);
 			return runtime;
@@ -128,7 +134,7 @@ public class BQInternalDaemonTestFactory extends BQInternalTestFactory {
 			}
 
 			if (success) {
-				logger.stdout("Daemon runtime started...");
+				LOGGER.info("Runtime started...");
 			} else {
 				throw new RuntimeException("Daemon failed to start");
 			}

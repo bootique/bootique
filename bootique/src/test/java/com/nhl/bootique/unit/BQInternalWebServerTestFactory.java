@@ -26,6 +26,7 @@ import com.nhl.bootique.command.Command;
 import com.nhl.bootique.command.CommandOutcome;
 import com.nhl.bootique.env.Environment;
 import com.nhl.bootique.resource.ResourceFactory;
+import com.nhl.bootique.shutdown.ShutdownManager;
 
 /**
  * A test factory that serves static resources out of "target"
@@ -94,12 +95,12 @@ public class BQInternalWebServerTestFactory extends BQInternalDaemonTestFactory 
 
 		@Provides
 		@Singleton
-		Server provideServer(Environment env) {
-			Server jetty = new Server();
+		Server provideServer(Environment env, ShutdownManager shutdownManager) {
+			Server server = new Server();
 
-			ServerConnector connector = new ServerConnector(jetty);
+			ServerConnector connector = new ServerConnector(server);
 			connector.setPort(12025);
-			jetty.addConnector(connector);
+			server.addConnector(connector);
 
 			ServletContextHandler handler = new ServletContextHandler();
 			handler.setContextPath("/");
@@ -110,9 +111,13 @@ public class BQInternalWebServerTestFactory extends BQInternalDaemonTestFactory 
 			handler.addServlet(holder, "/*");
 			handler.setResourceBase(env.getProperty("bq.internaljetty.base"));
 
-			jetty.setHandler(handler);
+			server.setHandler(handler);
+			
+			shutdownManager.addShutdownHook(() -> {
+				server.stop();
+			});
 
-			return jetty;
+			return server;
 		}
 	}
 

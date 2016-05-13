@@ -8,6 +8,8 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 import org.junit.rules.ExternalResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.inject.multibindings.MapBinder;
 import com.nhl.bootique.BQCoreModule;
@@ -16,11 +18,15 @@ import com.nhl.bootique.Bootique;
 import com.nhl.bootique.log.DefaultBootLogger;
 
 public class BQInternalTestFactory extends ExternalResource {
+	private static final Logger LOGGER = LoggerFactory.getLogger(BQInternalTestFactory.class);
 
 	protected Collection<BQRuntime> runtimes;
 
 	@Override
 	protected void after() {
+
+		LOGGER.info("Stopping runtime...");
+
 		Collection<BQRuntime> localRuntimes = this.runtimes;
 
 		if (localRuntimes != null) {
