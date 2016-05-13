@@ -46,8 +46,7 @@ public class BQConfigurationFactoryProvider implements Provider<ConfigurationFac
 		this.bootLogger = bootLogger;
 	}
 
-	@Override
-	public ConfigurationFactory get() {
+	protected JsonNode loadConfiguration(Map<String, String> properties, Map<String, String> vars) {
 
 		// hopefully sharing the mapper between parsers is safe... Does it
 		// change the state during parse?
@@ -59,22 +58,30 @@ public class BQConfigurationFactoryProvider implements Provider<ConfigurationFac
 		Function<URL, JsonNode> parser = new MultiFormatJsonNodeParser(parsers, bootLogger);
 
 		BinaryOperator<JsonNode> singleConfigMerger = new InPlaceLeftHandMerger(bootLogger);
-		Function<JsonNode, JsonNode> overrider = new InPlaceMapOverrider(environment.frameworkProperties(), true, '.');
+		Function<JsonNode, JsonNode> overrider = new InPlaceMapOverrider(properties, true, '.');
+
+		if (!vars.isEmpty()) {
+			overrider = overrider.andThen(new InPlaceMapOverrider(vars, false, '_'));
+		}
+
+		return JsonNodeConfigurationBuilder.builder().parser(parser).merger(singleConfigMerger)
+				.resources(configurationSource).overrider(overrider).build();
+	}
+
+	@Override
+	public ConfigurationFactory get() {
 
 		Map<String, String> vars = environment.frameworkVariables();
+		Map<String, String> properties = environment.frameworkProperties();
+
+		JsonNode rootNode = loadConfiguration(properties, vars);
 
 		ObjectMapper jsonToObjectMapper = jacksonService.newObjectMapper();
-
 		if (!vars.isEmpty()) {
 
 			// switching to slower CI strategy for mapping properties...
 			jsonToObjectMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
-
-			overrider = overrider.andThen(new InPlaceMapOverrider(vars, false, '_'));
 		}
-
-		JsonNode rootNode = JsonNodeConfigurationBuilder.builder().parser(parser).merger(singleConfigMerger)
-				.resources(configurationSource).overrider(overrider).build();
 
 		return new JsonNodeConfigurationFactory(rootNode, jsonToObjectMapper);
 	}
