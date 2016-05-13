@@ -13,7 +13,7 @@ import com.nhl.bootique.log.BootLogger;
 public class MultiFormatJsonNodeParser implements Function<URL, JsonNode> {
 
 	public static enum ParserType {
-		YAML, JSON, XML
+		YAML, JSON
 	}
 
 	private Map<ParserType, Function<InputStream, JsonNode>> parsers;
@@ -75,9 +75,6 @@ public class MultiFormatJsonNodeParser implements Function<URL, JsonNode> {
 		case "application/json":
 			bootLogger.trace(() -> "Configuration is in JSON format (based on HTTP content-type)");
 			return ParserType.JSON;
-		case "application/xml":
-			bootLogger.trace(() -> "Configuration is in XML format (based on HTTP content-type)");
-			return ParserType.XML;
 		default:
 			return null;
 		}
@@ -103,9 +100,6 @@ public class MultiFormatJsonNodeParser implements Function<URL, JsonNode> {
 		case "json":
 			bootLogger.trace(() -> "Configuration is in JSON format (based on URL extension)");
 			return ParserType.JSON;
-		case "xml":
-			bootLogger.trace(() -> "Configuration is in XML format (based on URL extension)");
-			return ParserType.XML;
 		default:
 			return null;
 		}

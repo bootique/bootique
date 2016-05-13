@@ -33,25 +33,17 @@ public class MultiFormatJsonNodeParserTest {
 
 	@Test
 	public void testParser() {
-		Map<ParserType, Function<InputStream, JsonNode>> parsers = createParsersMap(ParserType.JSON, ParserType.YAML,
-				ParserType.XML);
+		Map<ParserType, Function<InputStream, JsonNode>> parsers = createParsersMap(ParserType.JSON, ParserType.YAML);
 
 		MultiFormatJsonNodeParser parser = new MultiFormatJsonNodeParser(parsers, mock(BootLogger.class));
 		assertSame(parsers.get(ParserType.YAML), parser.parser(ParserType.YAML));
 		assertSame(parsers.get(ParserType.JSON), parser.parser(ParserType.JSON));
-		assertSame(parsers.get(ParserType.XML), parser.parser(ParserType.XML));
 	}
 
 	@Test(expected = IllegalStateException.class)
 	public void testParser_MissingYaml() {
-		Map<ParserType, Function<InputStream, JsonNode>> parsers = createParsersMap(ParserType.JSON, ParserType.XML);
+		Map<ParserType, Function<InputStream, JsonNode>> parsers = createParsersMap(ParserType.JSON);
 		new MultiFormatJsonNodeParser(parsers, mock(BootLogger.class)).parser(ParserType.YAML);
-	}
-
-	@Test(expected = IllegalStateException.class)
-	public void testParser_MissingXml() {
-		Map<ParserType, Function<InputStream, JsonNode>> parsers = createParsersMap(ParserType.JSON, ParserType.YAML);
-		new MultiFormatJsonNodeParser(parsers, mock(BootLogger.class)).parser(ParserType.XML);
 	}
 
 	@Test
@@ -74,7 +66,6 @@ public class MultiFormatJsonNodeParserTest {
 		assertEquals(ParserType.YAML, parser.parserTypeFromExtension(new URL("http://example.org/test.yml")));
 		assertEquals(ParserType.YAML, parser.parserTypeFromExtension(new URL("http://example.org/test.yaml")));
 		assertEquals(ParserType.JSON, parser.parserTypeFromExtension(new URL("http://example.org/test.json")));
-		assertEquals(ParserType.XML, parser.parserTypeFromExtension(new URL("http://example.org/test.xml")));
 	}
 
 	@Test
