@@ -43,7 +43,7 @@ public class BQRuntime {
 		// note that Guice default behavior is to attempt creating a binding on
 		// the fly, if there's no explicit one available. We are overriding this
 		// behavior.
-		return Objects.requireNonNull(binding).getProvider().get();
+		return Objects.requireNonNull(binding, "No binding for type: " + type).getProvider().get();
 	}
 
 	public BootLogger getBootLogger() {
