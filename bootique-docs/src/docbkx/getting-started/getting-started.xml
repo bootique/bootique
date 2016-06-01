@@ -223,10 +223,6 @@ public class HelloResource {
             &lt;groupId>org.apache.maven.plugins&lt;/groupId>
             &lt;artifactId>maven-shade-plugin&lt;/artifactId>
         &lt;/plugin>
-        &lt;plugin>
-            &lt;groupId>org.apache.maven.plugins&lt;/groupId>
-            &lt;artifactId>maven-jar-plugin&lt;/artifactId>
-        &lt;/plugin>
     &lt;/plugins>
 &lt;/build></programlisting></para>
         <para>Once this is setup you can build and run the
