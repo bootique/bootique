@@ -317,34 +317,6 @@ public class Bootique {
 	}
 
 	/**
-	 * Registers a custom {@link Command} object.
-	 * 
-	 * @param command
-	 *            A custom {@link Command} instance to add to Bootique runtime.
-	 * @return this Bootique instance
-	 * @deprecated since 0.12 add to Bootique a {@link BQModuleProvider}
-	 *             produced via {@link Commands} builder.
-	 */
-	public Bootique command(Command command) {
-		this.commands.add(command);
-		return this;
-	}
-
-	/**
-	 * Registers a custom {@link Command} object.
-	 * 
-	 * @param commands
-	 *            Custom {@link Command} instances to add to Bootique runtime.
-	 * @return this Bootique instance
-	 * @deprecated since 0.12 add to Bootique a {@link BQModuleProvider}
-	 *             produced via {@link Commands} builder.
-	 */
-	public Bootique commands(Command... commands) {
-		Arrays.asList(commands).forEach(c -> command(c));
-		return this;
-	}
-
-	/**
 	 * Creates and returns an instance of {@link BQRuntime} that contains all
 	 * Bootique services, commands, etc. This method is only needed if you need
 	 * to run your code manually, process {@link CommandOutcome} or don't want

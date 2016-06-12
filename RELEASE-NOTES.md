@@ -8,6 +8,7 @@
 * #69 Appendable args list
 * #71 Support for alternative formats of configs
 * #72 FolderResourceFactory classpath: URL issues 
+* #74 Remove API deprecated since 0.12
 
 ## 0.16:
 

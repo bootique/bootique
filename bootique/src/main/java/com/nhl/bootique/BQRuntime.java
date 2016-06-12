@@ -105,22 +105,4 @@ public class BQRuntime {
 					th.getMessage()));
 		});
 	}
-
-	/**
-	 * @deprecated since 0.12 use either {@link Bootique#run()} or
-	 *             {@link BQRuntime#getRunner()}.
-	 * @return the outcome of executing the runner.
-	 */
-	@Deprecated
-	public CommandOutcome run() {
-		try {
-			return getRunner().run();
-		}
-		// handle startup Guice exceptions
-		catch (ProvisionException e) {
-			return (e.getCause() instanceof OptionException) ? CommandOutcome.failed(1, e.getCause().getMessage())
-					: CommandOutcome.failed(1, e);
-		}
-	}
-
 }

@@ -15,7 +15,7 @@ public class FolderResourceFactory extends ResourceFactory {
 
         // folder resources must end with a slash. Otherwise relative URLs won't
         // resolve properly
-        
+
         if (resourceId.length() == 0) {
             return normalizeResourceId(System.getProperty("user.dir"));
         }
