@@ -7,6 +7,7 @@
 * #67 Expand Bootique.app(..) method
 * #69 Appendable args list
 * #71 Support for alternative formats of configs
+* #72 FolderResourceFactory classpath: URL issues 
 
 ## 0.16:
 

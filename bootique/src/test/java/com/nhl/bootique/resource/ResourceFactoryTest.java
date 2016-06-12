@@ -43,35 +43,35 @@ public class ResourceFactoryTest {
 	}
 
 	@Test
-	public void testResourceAsUrl_File() throws IOException {
+	public void testGetUrl_File() throws IOException {
 		assertEquals("a: b", resourceContents("src/test/resources/com/nhl/bootique/config/test1.yml"));
 	}
 
 	@Test
-	public void testResourceAsUrl_File_DotSlash() throws IOException {
+	public void testGetUrl_File_DotSlash() throws IOException {
 		assertEquals("a: b", resourceContents("./src/test/resources/com/nhl/bootique/config/test1.yml"));
 	}
 
 	@Test
-	public void testResourceAsUrl_FileUrl() throws IOException {
+	public void testGetUrl_FileUrl() throws IOException {
 		String fileUrl = fileUrl("src/test/resources/com/nhl/bootique/config/test2.yml");
 		assertEquals("c: d", resourceContents(fileUrl));
 	}
 
 	@Test
-	public void testResourceAsUrl_JarUrl() throws IOException {
+	public void testGetUrl_JarUrl() throws IOException {
 		String jarUrl = jarEntryUrl("src/test/resources/com/nhl/bootique/config/test3.jar", "com/foo/test3.yml");
 		assertEquals("e: f", resourceContents(jarUrl));
 	}
 
 	@Test
-	public void testResourceAsUrl_ClasspathUrl() throws IOException {
+	public void testGetUrl_ClasspathUrl() throws IOException {
 		String cpUrl = "classpath:com/nhl/bootique/config/test2.yml";
 		assertEquals("c: d", resourceContents(cpUrl));
 	}
 
 	@Test(expected = RuntimeException.class)
-	public void testResourceAsUrl_ClasspathUrlWithSlash() throws IOException {
+	public void testGetUrl_ClasspathUrlWithSlash() throws IOException {
 		String cpUrl = "classpath:/com/nhl/bootique/config/test2.yml";
 		resourceContents(cpUrl);
 	}
