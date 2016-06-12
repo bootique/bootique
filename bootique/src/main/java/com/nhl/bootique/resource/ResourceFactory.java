@@ -81,7 +81,7 @@ public class ResourceFactory {
 
         URI uri = URI.create(resourceId);
         try {
-            return uri.isAbsolute() ? uri.toURL() : getCanonicalFile().toURI().toURL();
+            return uri.isAbsolute() ? uri.toURL() : getCanonicalFile(resourceId).toURI().toURL();
         } catch (IOException e) {
             throw new RuntimeException("Bad url", e);
         }
@@ -95,7 +95,7 @@ public class ResourceFactory {
      */
     // using canonical file avoids downstream bugs like this:
     // https://github.com/nhl/bootique-jetty/issues/29
-    protected File getCanonicalFile() throws IOException {
+    protected File getCanonicalFile(String resourceId) throws IOException {
         return new File(resourceId).getCanonicalFile();
     }
 
