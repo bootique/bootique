@@ -27,7 +27,7 @@ import joptsimple.OptionException;
  * 
  * <pre>
  * public static void main(String[] args) {
- * 	Bootique.app(args)commands(_optional_commands_).modules(_optional_extensions_).run();
+ * 	Bootique.app(args).commands(_optional_commands_).modules(_optional_extensions_).run();
  * }
  * </pre>
  * 
@@ -72,7 +72,6 @@ public class Bootique {
 	}
 
 	protected Collection<BQModuleProvider> providers;
-	private Collection<Command> commands;
 	private String[] args;
 	private boolean autoLoadModules;
 	private BootLogger bootLogger;
@@ -127,7 +126,6 @@ public class Bootique {
 	private Bootique(String[] args) {
 		this.args = args;
 		this.providers = new ArrayList<>();
-		this.commands = new ArrayList<>();
 		this.autoLoadModules = false;
 		this.bootLogger = createBootLogger();
 	}
@@ -403,10 +401,6 @@ public class Bootique {
 		Collection<BQModuleProvider> providers = new ArrayList<>();
 		providers.add(coreModuleProvider());
 
-		if (!commands.isEmpty()) {
-			providers.add(commandsProvider());
-		}
-
 		providers.addAll(builderProviders());
 
 		if (autoLoadModules) {
@@ -415,17 +409,6 @@ public class Bootique {
 
 		Collection<Module> modules = new ModuleMerger(bootLogger).getModules(providers);
 		return Guice.createInjector(modules);
-	}
-
-	protected BQModuleProvider commandsProvider() {
-
-		return () -> {
-			bootLogger.trace(() -> "Adding module with custom commands...");
-			return (b) -> {
-				Multibinder<Command> mb = BQCoreModule.contributeCommands(b);
-				commands.forEach(c -> mb.addBinding().toInstance(c));
-			};
-		};
 	}
 
 	protected Collection<BQModuleProvider> builderProviders() {
