@@ -8,7 +8,7 @@
 
   ga('create', 'UA-73654436-1', 'auto');
   ga('send', 'pageview');
-        </script></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="book" title="Bootique Logback Documentation"><div class="titlepage"><div><div><h1 class="title"><a name="bootique-jetty-guide"></a>Bootique Logback Documentation</h1></div><div><p class="copyright">Copyright &copy; 2016 National Hockey League, ObjectStyle LLC and individual authors</p></div></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#overview">1. Bootique Integration with Logback</a></span></dt><dt><span class="chapter"><a href="#configuration">2. Configuration Reference</a></span></dt><dd><dl><dt><span class="section"><a href="#d0e42">log</a></span></dt><dt><span class="section"><a href="#d0e128">log.appenders</a></span></dt><dt><span class="section"><a href="#d0e291">log.loggers</a></span></dt></dl></dd></dl></div><div class="list-of-tables"><p><b>List of Tables</b></p><dl><dt>2.1. <a href="#d0e56">"log" Element Property Reference</a></dt><dt>2.2. <a href="#d0e135">"console" Appender Property Reference</a></dt><dt>2.3. <a href="#d0e170">"file" Appender Property Reference</a></dt><dt>2.4. <a href="#d0e301">Logger Property Reference</a></dt></dl></div><div class="chapter" title="Chapter&nbsp;1.&nbsp;Bootique Integration with Logback"><div class="titlepage"><div><div><h2 class="title"><a name="overview"></a>Chapter&nbsp;1.&nbsp;Bootique Integration with Logback</h2></div></div></div><p>As mentioned in Bootique <a class="link" href="http://bootique.io/docs/0/bootique-docs/index.html#logging" target="_top">general
+        </script></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="book" title="Bootique Logback Documentation"><div class="titlepage"><div><div><h1 class="title"><a name="bootique-jetty-guide"></a>Bootique Logback Documentation</h1></div><div><p class="copyright">Copyright &copy; 2016 National Hockey League, ObjectStyle LLC and individual authors</p></div></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#overview">1. Bootique Integration with Logback</a></span></dt><dt><span class="chapter"><a href="#configuration">2. Configuration Reference</a></span></dt><dd><dl><dt><span class="section"><a href="#d0e42">log</a></span></dt><dt><span class="section"><a href="#d0e128">log.appenders</a></span></dt><dt><span class="section"><a href="#d0e459">log.loggers</a></span></dt></dl></dd></dl></div><div class="list-of-tables"><p><b>List of Tables</b></p><dl><dt>2.1. <a href="#d0e56">"log" Element Property Reference</a></dt><dt>2.2. <a href="#d0e135">"console" Appender Property Reference</a></dt><dt>2.3. <a href="#d0e170">"file" Appender Property Reference</a></dt><dt>2.4. <a href="#d0e253">"fixedWindow" rolling policy Property Reference</a></dt><dt>2.5. <a href="#d0e318">"time" rolling policy Property Reference</a></dt><dt>2.6. <a href="#d0e386">"sizeAndTime" rolling policy Property Reference</a></dt><dt>2.7. <a href="#d0e469">Logger Property Reference</a></dt></dl></div><div class="chapter" title="Chapter&nbsp;1.&nbsp;Bootique Integration with Logback"><div class="titlepage"><div><div><h2 class="title"><a name="overview"></a>Chapter&nbsp;1.&nbsp;Bootique Integration with Logback</h2></div></div></div><p>As mentioned in Bootique <a class="link" href="http://bootique.io/docs/0/bootique-docs/index.html#logging" target="_top">general
             documentation on logging</a>, standard modules rely on SLF4J loggers that can be
         easily bridged to various  advanced logging frameworks. Same maximally neutral logging
         approach is reasonable to apply in the user modules as well.</p><p><a class="link" href="https://github.com/nhl/bootique-logback" target="_top"><code class="code">bootique-logback</code></a> is a "drag-and-drop" module integrating Bootique
@@ -21,7 +21,7 @@
 <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/dependency&gt;</span></pre><p>Without further configuration it would log everything to console using INFO level.
         Configuration can be provided via YAML, as shown in the following section. Configuration
         options include per class and package log levels configuration, a choice of appenders,
-        etc.</p></div><div class="chapter" title="Chapter&nbsp;2.&nbsp;Configuration Reference"><div class="titlepage"><div><div><h2 class="title"><a name="configuration"></a>Chapter&nbsp;2.&nbsp;Configuration Reference</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#d0e42">log</a></span></dt><dt><span class="section"><a href="#d0e128">log.appenders</a></span></dt><dt><span class="section"><a href="#d0e291">log.loggers</a></span></dt></dl></div><div class="section" title="log"><div class="titlepage"><div><div><h2 class="title"><a name="d0e42"></a>log</h2></div></div></div><p>
+        etc.</p></div><div class="chapter" title="Chapter&nbsp;2.&nbsp;Configuration Reference"><div class="titlepage"><div><div><h2 class="title"><a name="configuration"></a>Chapter&nbsp;2.&nbsp;Configuration Reference</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#d0e42">log</a></span></dt><dt><span class="section"><a href="#d0e128">log.appenders</a></span></dt><dt><span class="section"><a href="#d0e459">log.loggers</a></span></dt></dl></div><div class="section" title="log"><div class="titlepage"><div><div><h2 class="title"><a name="d0e42"></a>log</h2></div></div></div><p>
             </p><pre class="programlisting">log:
   level: warn
   loggers:
@@ -62,7 +62,7 @@
   appenders:
     - type: file
       logFormat: <span xmlns="http://www.w3.org/1999/xhtml" class="hl-string">'%c{20}: %m%n'</span>
-      file: target/logback/testRun_Debug.log
+      file: /var/log/myapp.log
     - type: console
       logFormat: <span xmlns="http://www.w3.org/1999/xhtml" class="hl-string">'%c{20}: %m%n'</span></pre><p>Lists
             appenders to sends the logs to. If the list is empty, console appender is used with
@@ -85,40 +85,120 @@
                 </tr><tr>
                     <td><code class="code">file</code></td>
                     <td>none</td>
-                    <td>A filename or a filename pattern for the log file. If <code class="code">"rotate"</code>
-                        is true, the filename can be a pattern per <a class="link" href="http://logback.qos.ch/manual/appenders.html#RollingFileAppender" target="_top">Logback documentation</a> that determines time-based rotation
-                        interval. Additional settings allow to also cap individual and total files
-                        sizes and how many total log files can be kept.</td>
+                    <td>A name of a file to send the log to.</td>
                 </tr><tr>
-                    <td><code class="code">maxFiles</code></td>
-                    <td><code class="code">0</code></td>
-                    <td>A maximum number of log archive files to keep. Older files in excess of this
-                        number will be deleted. Ignored if <code class="code">"rotate"</code> is false.</td>
-                </tr><tr>
-                    <td><code class="code">maxFileSize</code></td>
-                    <td>unlimited</td>
-                    <td>A maximum size of a single log file. Exceeding this size causes file
-                        rotation. This option is ignored if <code class="code">"rotate"</code> is false. The size
-                        can be expressed in bytes, kilobytes, megabytes or gigabytes by suffixing a
-                        numeric value with KB, MB and respectively GB. For example: 5000000, 5000KB,
-                        5MB and 2GB.</td>
-                </tr><tr>
-                    <td><code class="code">maxTotalFileSize</code></td>
-                    <td>unlimited</td>
-                    <td>A maximum size of all log files combined. Equivalent to Logback
-                        'totalSizeCap' property. Ignored if <code class="code">"rotate"</code> is false or
-                            <code class="code">"maxFiles"</code> is zero. The size can be expressed in bytes,
-                        kilobytes, megabytes or gigabytes by suffixing a numeric value with KB, MB
-                        and respectively GB. For example: 5000000, 5000KB, 5MB and 2GB.</td>
-                </tr><tr>
-                    <td><code class="code">rotate</code></td>
-                    <td><code class="code">false</code></td>
-                    <td>Enables or disables file rotation. By default rotation is disabled. If
-                        "true", time-based rotation is enabled. Rotation interval is derived from
-                        the file name pattern (you will need to turn <code class="code">file</code> into a
-                        pattern). Additionally you can add size-based rotation using
-                            <code class="code">maxFileSize</code> property.</td>
-                </tr></tbody></table></div><div class="section" title="log.loggers"><div class="titlepage"><div><div><h2 class="title"><a name="d0e291"></a>log.loggers</h2></div></div></div><pre class="programlisting">log:
+                    <td><code class="code">rollingPolicy</code></td>
+                    <td>none</td>
+                    <td>An object that defines a log rotation policy. Examples are given below. </td>
+                </tr></tbody></table><p>There are a few ways log file rotation can be configured for the "file" appender, as
+            defined by the <code class="code">rollingPolicy</code>. Out of the box the following Logback policies
+            are supported: <a class="link" href="http://logback.qos.ch/manual/appenders.html#FixedWindowRollingPolicy" target="_top"><code class="code">fixedWindow</code></a>, <a class="link" href="http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy" target="_top"><code class="code">time</code></a>, <code class="code">sizeAndTime</code>.</p><div class="section" title="&#34;fixedWindow&#34; Rolling Policy"><div class="titlepage"><div><div><h3 class="title"><a name="d0e246"></a>"fixedWindow" Rolling Policy</h3></div></div></div><pre class="programlisting">log:
+  appenders:
+    - type: file
+      logFormat: '%c{20}: %m%n'
+      file: /var/log/myapp.log
+      rollingPolicy:
+        type: fixedWindow
+        fileNamePattern: '/var/log/myapp-%i.log'
+        historySize: 5
+        fileSize: 20</pre><p>"fixedWindow"
+                policy rotates the main log file when it reaches a certain size, keeping one or more
+                rotated files.</p><table frame="void" id="d0e253"><caption>Table&nbsp;2.4.&nbsp;"fixedWindow" rolling policy Property Reference</caption><col width="20%"><col width="53%"><col width="27%"><thead><tr>
+                            <th>Property</th>
+                            <th>Default</th>
+                            <th>Description</th>
+                        </tr></thead><tbody><tr>
+                            <td><code class="code">fileNamePattern</code></td>
+                            <td>none</td>
+                            <td>A pattern of rotated file name. Must contain <code class="code">%i</code>
+                                somewhere in the pattern (replaced by a number during
+                                rotation).</td>
+                        </tr><tr>
+                            <td><code class="code">historySize</code></td>
+                            <td>none (unlimited)</td>
+                            <td>A max number of rotated files to keep.</td>
+                        </tr><tr>
+                            <td><code class="code">fileSize</code></td>
+                            <td>none</td>
+                            <td>Max file size that causes rotation. Expressed in bytes, kilobytes,
+                                megabytes or gigabytes by suffixing a numeric value with KB, MB and
+                                respectively GB. For example: 5000000, 5000KB, 5MB and 2GB.</td>
+                        </tr></tbody></table></div><div class="section" title="&#34;time&#34; Rolling Policy"><div class="titlepage"><div><div><h3 class="title"><a name="d0e311"></a>"time" Rolling Policy</h3></div></div></div><pre class="programlisting">log:
+  appenders:
+    - type: file
+      logFormat: '%c{20}: %m%n'
+      file: /var/log/myapp.log
+      rollingPolicy:
+        type: time
+        fileNamePattern: '/var/log/myapp-%d{yyyyMMDDHHmmss}.log'</pre><p>"time"
+                policy rotates the main log file at a fixed time interval determined by the file
+                name pattern.</p><table frame="void" id="d0e318"><caption>Table&nbsp;2.5.&nbsp;"time" rolling policy Property Reference</caption><col width="20%"><col width="53%"><col width="27%"><thead><tr>
+                            <th>Property</th>
+                            <th>Default</th>
+                            <th>Description</th>
+                        </tr></thead><tbody><tr>
+                            <td><code class="code">fileNamePattern</code></td>
+                            <td>none</td>
+                            <td>A pattern of rotated file name. Its value should consist of the name
+                                of the file, plus a suitably placed %d conversion specifier. The %d
+                                conversion specifier may contain a date-and-time pattern as
+                                specified by the <code class="code">java.text.SimpleDateFormat</code> class. If
+                                the date-and-time pattern is omitted, then the default pattern
+                                    <code class="code">yyyy-MM-dd</code>is assumed. The rollover interval is
+                                inferred from the value of the pattern.</td>
+                        </tr><tr>
+                            <td><code class="code">historySize</code></td>
+                            <td>none (unlimited)</td>
+                            <td>A max number of rotated files to keep.</td>
+                        </tr><tr>
+                            <td><code class="code">totalSize</code></td>
+                            <td>none</td>
+                            <td>Max size of all log files combined. Expressed in bytes, kilobytes,
+                                megabytes or gigabytes by suffixing a numeric value with KB, MB and
+                                respectively GB. For example: 5000000, 5000KB, 5MB and 2GB.</td>
+                        </tr></tbody></table></div><div class="section" title="&#34;sizeAndTime&#34; Rolling Policy"><div class="titlepage"><div><div><h3 class="title"><a name="d0e379"></a>"sizeAndTime" Rolling Policy</h3></div></div></div><pre class="programlisting">log:
+  appenders:
+    - type: file
+      logFormat: '%c{20}: %m%n'
+      file: /var/log/myapp.log
+      rollingPolicy:
+        type: sizeAndTime
+        fileNamePattern: '/var/log/myapp-%d{yyyyMMDDHHmmss}.%i.log'
+        historySize: 5
+        fileSize: 50
+        totalSize: 150</pre><p>"sizeAndTime"
+                policy rotates the main log file either at a fixed time interval determined by the
+                file name pattern or when the log file reaches a certain size.</p><table frame="void" id="d0e386"><caption>Table&nbsp;2.6.&nbsp;"sizeAndTime" rolling policy Property Reference</caption><col width="20%"><col width="53%"><col width="27%"><thead><tr>
+                            <th>Property</th>
+                            <th>Default</th>
+                            <th>Description</th>
+                        </tr></thead><tbody><tr>
+                            <td><code class="code">fileNamePattern</code></td>
+                            <td>none</td>
+                            <td>A pattern of rotated file name. Its value should consist of the name
+                                of the file, plus a suitably placed %d conversion specifier. The %d
+                                conversion specifier may contain a date-and-time pattern as
+                                specified by the <code class="code">java.text.SimpleDateFormat</code> class. If
+                                the date-and-time pattern is omitted, then the default pattern
+                                    <code class="code">yyyy-MM-dd</code>is assumed. The rollover interval is
+                                inferred from the value of the pattern.</td>
+                        </tr><tr>
+                            <td><code class="code">historySize</code></td>
+                            <td>none (unlimited)</td>
+                            <td>A max number of rotated files to keep.</td>
+                        </tr><tr>
+                            <td><code class="code">totalSize</code></td>
+                            <td>none</td>
+                            <td>Max size of all log files combined. Expressed in bytes, kilobytes,
+                                megabytes or gigabytes by suffixing a numeric value with KB, MB and
+                                respectively GB. For example: 5000000, 5000KB, 5MB and 2GB.</td>
+                        </tr><tr>
+                            <td><code class="code">fileSize</code></td>
+                            <td>none</td>
+                            <td>Max file size that causes rotation. Expressed in bytes, kilobytes,
+                                megabytes or gigabytes by suffixing a numeric value with KB, MB and
+                                respectively GB. For example: 5000000, 5000KB, 5MB and 2GB.</td>
+                        </tr></tbody></table></div></div><div class="section" title="log.loggers"><div class="titlepage"><div><div><h2 class="title"><a name="d0e459"></a>log.loggers</h2></div></div></div><pre class="programlisting">log:
   loggers:
     com.foo:
       level: debug
@@ -126,7 +206,7 @@
       level: debug</pre><p>This
             is a map of <a class="link" href="https://github.com/nhl/bootique-logback/blob/master/bootique-logback/src/main/java/com/nhl/bootique/logback/LoggerFactory.java" target="_top">logger factories</a> by logger name. Logger name is either a package name
             (applied recursively to subpackages and their classes) or a class name. Each
-            LoggerFactory has the following properties:</p><table frame="void" id="d0e301"><caption>Table&nbsp;2.4.&nbsp;Logger Property Reference</caption><col width="20%"><col width="53%"><col width="27%"><thead><tr>
+            LoggerFactory has the following properties:</p><table frame="void" id="d0e469"><caption>Table&nbsp;2.7.&nbsp;Logger Property Reference</caption><col width="20%"><col width="53%"><col width="27%"><thead><tr>
                     <th>Property</th>
                     <th>Default</th>
                     <th>Description</th>
