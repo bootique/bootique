@@ -8,7 +8,7 @@
 
   ga('create', 'UA-73654436-1', 'auto');
   ga('send', 'pageview');
-        </script></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="book" title="Bootique Jetty Documentation"><div class="titlepage"><div><div><h1 class="title"><a name="bootique-jetty-guide"></a>Bootique Jetty Documentation</h1></div><div><p class="copyright">Copyright &copy; 2016 National Hockey League, ObjectStyle LLC and individual authors</p></div></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#overview">1. Bootique Integration with Jetty</a></span></dt><dt><span class="chapter"><a href="#programming">2. Programming Jetty Applications</a></span></dt><dd><dl><dt><span class="section"><a href="#d0e55">Servlets</a></span></dt><dt><span class="section"><a href="#d0e81">Servlet Filters</a></span></dt><dt><span class="section"><a href="#d0e98">Listeners</a></span></dt><dt><span class="section"><a href="#d0e113">Serving Static Files</a></span></dt></dl></dd><dt><span class="chapter"><a href="#configuration">3. Configuration Reference</a></span></dt><dd><dl><dt><span class="section"><a href="#d0e119">jetty</a></span></dt><dt><span class="section"><a href="#d0e337">jetty.connector</a></span></dt><dt><span class="section"><a href="#d0e383">jetty.filters</a></span></dt><dt><span class="section"><a href="#d0e390">jetty.servlets</a></span></dt></dl></dd></dl></div><div class="list-of-tables"><p><b>List of Tables</b></p><dl><dt>3.1. <a href="#d0e133">"jetty" Element Property Reference</a></dt><dt>3.2. <a href="#d0e351">"jetty.connector" Element Property Reference</a></dt></dl></div><div class="chapter" title="Chapter&nbsp;1.&nbsp;Bootique Integration with Jetty"><div class="titlepage"><div><div><h2 class="title"><a name="overview"></a>Chapter&nbsp;1.&nbsp;Bootique Integration with Jetty</h2></div></div></div><p><a class="link" href="https://github.com/nhl/bootique-jetty" target="_top"><code class="code">bootique-jetty</code></a> module embeds a <a class="link" href="http://www.eclipse.org/jetty/" target="_top">Jetty web server</a> in your application.
+        </script></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="book" title="Bootique Jetty Documentation"><div class="titlepage"><div><div><h1 class="title"><a name="bootique-jetty-guide"></a>Bootique Jetty Documentation</h1></div><div><p class="copyright">Copyright &copy; 2016 National Hockey League, ObjectStyle LLC and individual authors</p></div></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#overview">1. Bootique Integration with Jetty</a></span></dt><dt><span class="chapter"><a href="#programming">2. Programming Jetty Applications</a></span></dt><dd><dl><dt><span class="section"><a href="#d0e55">Servlets</a></span></dt><dt><span class="section"><a href="#d0e81">Servlet Filters</a></span></dt><dt><span class="section"><a href="#d0e98">Listeners</a></span></dt><dt><span class="section"><a href="#d0e113">Serving Static Files</a></span></dt></dl></dd><dt><span class="chapter"><a href="#configuration">3. Configuration Reference</a></span></dt><dd><dl><dt><span class="section"><a href="#d0e119">jetty</a></span></dt><dt><span class="section"><a href="#d0e337">jetty.connector</a></span></dt><dt><span class="section"><a href="#d0e409">jetty.filters</a></span></dt><dt><span class="section"><a href="#d0e416">jetty.servlets</a></span></dt></dl></dd></dl></div><div class="list-of-tables"><p><b>List of Tables</b></p><dl><dt>3.1. <a href="#d0e133">"jetty" Element Property Reference</a></dt><dt>3.2. <a href="#d0e351">"jetty.connector" Element Property Reference</a></dt></dl></div><div class="chapter" title="Chapter&nbsp;1.&nbsp;Bootique Integration with Jetty"><div class="titlepage"><div><div><h2 class="title"><a name="overview"></a>Chapter&nbsp;1.&nbsp;Bootique Integration with Jetty</h2></div></div></div><p><a class="link" href="https://github.com/nhl/bootique-jetty" target="_top"><code class="code">bootique-jetty</code></a> module embeds a <a class="link" href="http://www.eclipse.org/jetty/" target="_top">Jetty web server</a> in your application.
         This means you can write web applications based on servlet specification, and beyond. You
         will be able to run servlets, servlet filters, use servlet listeners. Also you will be able
         to serve static files that are either a part of the application jar or located outside of
@@ -89,7 +89,7 @@ public void configure(Binder binder) {
 public void configure(Binder binder) {
 	JettyModule.contributeListeners(binder).addBinding().to(MyListener.class);
 }</pre><p>Listeners can rely on injection to obtain dependencies, just like servlets and
-            filters.</p></div><div class="section" title="Serving Static Files"><div class="titlepage"><div><div><h2 class="title"><a name="d0e113"></a>Serving Static Files</h2></div></div></div></div></div><div class="chapter" title="Chapter&nbsp;3.&nbsp;Configuration Reference"><div class="titlepage"><div><div><h2 class="title"><a name="configuration"></a>Chapter&nbsp;3.&nbsp;Configuration Reference</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#d0e119">jetty</a></span></dt><dt><span class="section"><a href="#d0e337">jetty.connector</a></span></dt><dt><span class="section"><a href="#d0e383">jetty.filters</a></span></dt><dt><span class="section"><a href="#d0e390">jetty.servlets</a></span></dt></dl></div><div class="section" title="jetty"><div class="titlepage"><div><div><h2 class="title"><a name="d0e119"></a>jetty</h2></div></div></div><p>
+            filters.</p></div><div class="section" title="Serving Static Files"><div class="titlepage"><div><div><h2 class="title"><a name="d0e113"></a>Serving Static Files</h2></div></div></div></div></div><div class="chapter" title="Chapter&nbsp;3.&nbsp;Configuration Reference"><div class="titlepage"><div><div><h2 class="title"><a name="configuration"></a>Chapter&nbsp;3.&nbsp;Configuration Reference</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#d0e119">jetty</a></span></dt><dt><span class="section"><a href="#d0e337">jetty.connector</a></span></dt><dt><span class="section"><a href="#d0e409">jetty.filters</a></span></dt><dt><span class="section"><a href="#d0e416">jetty.servlets</a></span></dt></dl></div><div class="section" title="jetty"><div class="titlepage"><div><div><h2 class="title"><a name="d0e119"></a>jetty</h2></div></div></div><p>
             </p><pre class="programlisting">jetty:
   context: <span xmlns="http://www.w3.org/1999/xhtml" class="hl-string">"/myapp"</span>
   maxThreads: <span xmlns="http://www.w3.org/1999/xhtml" class="hl-number">100</span>
@@ -185,7 +185,15 @@ public void configure(Binder binder) {
                         <td><code class="code">port</code></td>
                         <td><code class="code">8080</code></td>
                         <td>A port the connector listens on.</td>
-                    </tr></tbody></table></div><div class="section" title="jetty.filters"><div class="titlepage"><div><div><h2 class="title"><a name="d0e383"></a>jetty.filters</h2></div></div></div><pre class="programlisting">jetty:
+                    </tr><tr>
+                        <td><code class="code">requestHeaderSize</code></td>
+                        <td><code class="code">8192</code></td>
+                        <td>A max size in bytes of Jetty request headers and GET URLs. </td>
+                    </tr><tr>
+                        <td><code class="code">responseHeaderSize</code></td>
+                        <td><code class="code">8192</code></td>
+                        <td>A max size in bytes of Jetty response headers.</td>
+                    </tr></tbody></table></div><div class="section" title="jetty.filters"><div class="titlepage"><div><div><h2 class="title"><a name="d0e409"></a>jetty.filters</h2></div></div></div><pre class="programlisting">jetty:
   filters:
     f1:
       urlPatterns:
@@ -197,7 +205,7 @@ public void configure(Binder binder) {
     f2:
       params:
         p3: v3
-        p4: v4</pre><p>TODO</p></div><div class="section" title="jetty.servlets"><div class="titlepage"><div><div><h2 class="title"><a name="d0e390"></a>jetty.servlets</h2></div></div></div><pre class="programlisting">jetty:
+        p4: v4</pre><p>TODO</p></div><div class="section" title="jetty.servlets"><div class="titlepage"><div><div><h2 class="title"><a name="d0e416"></a>jetty.servlets</h2></div></div></div><pre class="programlisting">jetty:
   servlets:
     s1:
       urlPatterns:
