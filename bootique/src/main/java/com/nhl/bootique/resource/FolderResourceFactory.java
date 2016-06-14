@@ -1,5 +1,6 @@
 package com.nhl.bootique.resource;
 
+import java.io.File;
 import java.net.URL;
 import java.util.Objects;
 
@@ -17,8 +18,9 @@ public class FolderResourceFactory extends ResourceFactory {
         // resolve properly
 
         if (resourceId.length() == 0) {
-            return normalizeResourceId(System.getProperty("user.dir"));
+            return normalizeResourceId(getUserDir());
         }
+        resourceId = slashify(resourceId);
 
         if (resourceId.startsWith(ResourceFactory.CLASSPATH_URL_PREFIX)) {
 
@@ -37,6 +39,26 @@ public class FolderResourceFactory extends ResourceFactory {
                 ? resourceId : resourceId + "/";
     }
 
+    /**
+     * @return Absolute URI for current working directory (without trailing forward slash)
+     */
+    public static String getUserDir() {
+        String userDir = System.getProperty("user.dir");
+        if (!userDir.startsWith("/")) {
+            userDir = "/" + userDir;
+        }
+        if (userDir.endsWith("/")) {
+            userDir = userDir.substring(0, userDir.length() - 1);
+        }
+        return "file://" + slashify(userDir);
+    }
+
+    /**
+     * Converts abstract pathname into URI path (replacing system-dependent name separators with forward slashes)
+     */
+    private static String slashify(String path) {
+        return Objects.requireNonNull(path).replace(File.separatorChar, '/');
+    }
 
     public FolderResourceFactory(String resourceId) {
         super(normalizeResourceId(Objects.requireNonNull(resourceId)));
