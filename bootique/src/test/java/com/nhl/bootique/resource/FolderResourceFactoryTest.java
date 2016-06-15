@@ -45,4 +45,24 @@ public class FolderResourceFactoryTest {
     public void testGetUrl_Subresource_ClasspathUrl() throws IOException {
         assertEquals("c: d", resourceContents("classpath:com/nhl/bootique/config", "test2.yml"));
     }
+
+    @Test(expected = Exception.class)
+    public void testGetUrl_Exception_InvalidScheme() throws IOException {
+        try {
+            resourceContents("Z:/a/b/c", "test2.yml");
+        } catch (Throwable e) {
+            assertTrue(e.getMessage().contains("Bad url"));
+            throw e;
+        }
+    }
+
+    @Test(expected = Exception.class)
+    public void testGetUrl_Subresource_ReverseSlashes() throws IOException {
+        try {
+            resourceContents("\\a\\b\\c", "test2.yml");
+        } catch (Throwable e) {
+            assertTrue(e.getMessage().contains("Illegal character in path at index 0: \\a\\b\\c/test2.yml"));
+            throw e;
+        }
+    }
 }

@@ -20,7 +20,6 @@ public class FolderResourceFactory extends ResourceFactory {
         if (resourceId.length() == 0) {
             return normalizeResourceId(getUserDir());
         }
-        resourceId = slashify(resourceId);
 
         if (resourceId.startsWith(ResourceFactory.CLASSPATH_URL_PREFIX)) {
 
