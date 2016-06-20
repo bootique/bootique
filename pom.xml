@@ -13,7 +13,7 @@
 	<version>0.18-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<name>Bootique Parent</name>
+	<name>bootique-framework-parent</name>
 	<description>Parent of Bootique core framework and Bootique docs.</description>
 
 	<modules>
