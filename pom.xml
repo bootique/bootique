@@ -13,10 +13,8 @@
 	<version>0.18-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<name>Parent of Bootique - a minimally opinionated framework for runnable Java apps</name>
-	<description>
-		Parent of Bootique core framework, and Bootique docs.
-	</description>
+	<name>Bootique Parent</name>
+	<description>Parent of Bootique core framework and Bootique docs.</description>
 
 	<modules>
 		<module>bootique</module>
