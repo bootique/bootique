@@ -11,7 +11,7 @@
 	<artifactId>bootique-test</artifactId>
 	<packaging>jar</packaging>
 
-	<name>Test framework on top of Bootique</name>
+	<name>Bootique Test: a Test framework on top of Bootique</name>
 	<description>
 		Provides a test framework on top of Bootique.
 	</description>
