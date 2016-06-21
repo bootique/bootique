@@ -42,6 +42,9 @@ public class DefaultBootLogger implements BootLogger {
 	@Override
 	public void stderr(String message, Throwable th) {
 		stderr(message);
-		th.printStackTrace(stderr);
+
+		if(th != null) {
+			th.printStackTrace(stderr);
+		}
 	}
 }

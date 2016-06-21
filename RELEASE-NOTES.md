@@ -1,3 +1,7 @@
+## 0.18
+
+* #76 BQDaemonTestRuntime fails quietly.
+
 ## 0.17
 
 * #62 Bootique.main() - a generic main method
