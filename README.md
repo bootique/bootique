@@ -15,6 +15,7 @@ Bootique is a [minimally opinionated](https://medium.com/@andrus_a/bootique-a-mi
 Below is a growing list of "standard" Bootique modules. With standard modules you can write apps of different kinds: REST services, job containers, DB migrations, etc.:
 
 * [Bootique Cayenne](https://github.com/nhl/bootique-cayenne)
+* [Bootique Curator](https://github.com/nhl/bootique-curator) - Zookeeper client.
 * [Bootique JDBC](https://github.com/nhl/bootique-jdbc)
 * [Bootique Jersey](https://github.com/nhl/bootique-jersey)
 * [Bootique Jersey Client](https://github.com/nhl/bootique-jersey-client)
@@ -27,7 +28,6 @@ Below is a growing list of "standard" Bootique modules. With standard modules yo
 * [Bootique Metrics](https://github.com/nhl/bootique-metrics)
 * [Bootique MVC](https://github.com/nhl/bootique-mvc)
 * [Bootique Tapestry](https://github.com/nhl/bootique-tapestry)
-* [Bootique Zookeeper](https://github.com/nhl/bootique-zookeeper)
 
 And a BOM that declares them all with compatible versions:
 
