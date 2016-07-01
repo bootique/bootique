@@ -12,7 +12,7 @@ Bootique is a [minimally opinionated](https://medium.com/@andrus_a/bootique-a-mi
 
 ## Standard Modules
 
-Below is a growing list of "standard" Bootique modules. With standard modules you can write apps of different kinds: REST services, job containers, DB migrations, etc. If you don't see a module that you need, keep in mind that [writing your own modules](http://bootique.io/docs/0/bootique-docs/index.html#programming-modules) is easy. So you can either integrate some favorite technology of yours or wrap your own code in a custom module.
+Below is a growing list of "standard" Bootique modules. With standard modules you can write apps of different kinds: REST services, job containers, DB migrations, etc. If you don't see a module that you need, keep in mind that [writing your own modules](http://bootique.io/docs/0/bootique-docs/index.html#programming-modules) is easy. By writing custom modules you can extend Bootique dependency injection and configuration facilities to either some favorite technology of yours or own code.
 
 * [Bootique Cayenne](https://github.com/nhl/bootique-cayenne)
 * [Bootique Curator](https://github.com/nhl/bootique-curator) - Zookeeper client.
