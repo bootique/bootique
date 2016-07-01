@@ -371,16 +371,13 @@ com.foo.ConcreteType2</programlisting></para>
         </chapter>
     <chapter xml:id="programming-application-module">
             <title>Application as a Module</title>
-            <para>The class that contains the <code>"main()"</code> method is informally called
-                "application". Bootique does not impose any particular requirements on this class.
+            <para>A class that contains the <code>"main()"</code> method is informally called
+                "application". Bootique does not impose any additional requirements on this class.
                 You decide what to put in it. It can be limited to just <code>"main()"</code>,
-                turned into a REST resource, etc. </para>
-            <para>We recommend wrapping all your custom code in Guice modules. Then you can view
-            your apps as collections of modules. In this scenario, it makes the most sense to write
-            your application class as either just a launcher with the static <code>"main()"</code>
-            method or in addition to that turn it into a Module as well. After all Bootique app is
-            just a collection of Modules, and it is but logical that your Application represents
-            that one final Module to rule them
+                or turned into a REST API resource, etc. </para>
+            <para>Most often then not it makes sense to turn the application class into a Module 
+            though. After all a Bootique app is just a collection of Modules, and this way 
+            the application class would represent that one final Module to rule them
             all:<programlisting>public class Application implements Module {
 
    public static void main(String[] args) {
