@@ -14,7 +14,7 @@
 		&lt;dependency>
 			&lt;groupId>com.nhl.bootique.bom&lt;/groupId>
 			&lt;artifactId>bootique-bom&lt;/artifactId>
-			&lt;version>0.16&lt;/version>
+			&lt;version>0.17&lt;/version>
 			&lt;type>pom&lt;/type>
 			&lt;scope>import&lt;/scope>
 		&lt;/dependency>
@@ -210,7 +210,7 @@ public class HelloResource {
             parent:<programlisting language="xml">&lt;parent>
     &lt;groupId>com.nhl.bootique.parent&lt;/groupId>
     &lt;artifactId>bootique-parent&lt;/artifactId>
-    &lt;version>0.10&lt;/version>
+    &lt;version>0.11&lt;/version>
 &lt;/parent></programlisting></para>
         <para>Other required <code>pom.xml</code>
             additions:<programlisting language="xml">&lt;properties>
