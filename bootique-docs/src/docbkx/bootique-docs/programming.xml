@@ -370,15 +370,17 @@ com.foo.ConcreteType2</programlisting></para>
         </section>
         </chapter>
     <chapter xml:id="programming-application-module">
-            <title>Application as a Module</title>
+            <title>Application Class</title>
             <para>A class that contains the <code>"main()"</code> method is informally called
                 "application". Bootique does not impose any additional requirements on this class.
                 You decide what to put in it. It can be limited to just <code>"main()"</code>,
                 or turned into a REST API resource, etc. </para>
-            <para>Most often then not it makes sense to turn the application class into a Module 
-            though. After all a Bootique app is just a collection of Modules, and this way 
-            the application class would represent that one final Module to rule them
-            all:<programlisting>public class Application implements Module {
+        <section>
+            <title>Application as a Module</title>
+            <para>Most often then not it makes sense to turn the application class into a Module
+                though. After all a Bootique app is just a collection of Modules, and this way the
+                application class would represent that one final Module to rule them
+                all:<programlisting language="java">public class Application implements Module {
 
    public static void main(String[] args) {
       Bootique.app(args).module(Application.class).autoLoadModules().run();
@@ -389,8 +391,19 @@ com.foo.ConcreteType2</programlisting></para>
    }
 }</programlisting></para>
             <para>You may also implement a separate BQModuleProvider for the Application module.
-            Then <code>autoLoadModules()</code> will discover it just like any other Module, and
-            there won't be a need to add Application module explicitly.</para>
+                Then <code>autoLoadModules()</code> will discover it just like any other Module, and
+                there won't be a need to add Application module explicitly.</para>
+        </section>
+        <section>
+            <title>Common Main Class</title>
+            <para>If all your code is packaged in auto-loadable modules (which you probably should
+                do), you may not even need a custom main class.
+                    <code>com.nhl.bootique.Bootique</code> class itself declares a
+                    <code>main()</code> method and can be used as an app launcher. This creates some
+                interesting possibilities. E.g. you can create Java projects that have no code of
+                their own and are simply collections of modules declared as compile
+                dependencies.</para>
+        </section>
     </chapter>
         
     <chapter>
