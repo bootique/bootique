@@ -455,7 +455,7 @@ Option                    Description
                 command finishes. The object contains system exit code, and exceptions that occurred
                 during execution. To make the new command available to Bootique, "contribute" it to
                     <code>BQCoreModule</code>, as was already shown
-                above:<programlisting>public class MyModule implements Module {
+                above:<programlisting language="java">public class MyModule implements Module {
 
 	@Override
 	public void configure(Binder binder) {
