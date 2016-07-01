@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<book xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0"
+      xml:id="linkrest-guide" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <info>
+        <title>Available Bootique Documentation</title>
+    </info>
+    <chapter>
+        <title>Main Documentation</title>
+
+
+        <para>
+            <itemizedlist>
+                <listitem>
+                    <para>
+                        <link xlink:href="0/getting-started/index.html">Getting Started</link> : A
+                        short tutorial that will get you started quickly. </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <link xlink:href="0/bootique-docs/index.html">Core</link> : Main
+                        documentation collection explaining fundumental framework concepts, such as
+                        modules, configuration, commands, services and dependency injection, unit
+                        testing.</para>
+                </listitem>
+            </itemizedlist>
+        </para>
+    </chapter>
+    <chapter>
+        <title>Modules Documentation (in alphabetic order)</title>
+        <para>
+            <itemizedlist>
+                <listitem>
+                    <para>bootique-cayenne : Integrates Apache Cayenne ORM framework, providing easy
+                        RDBMS access.</para>
+                </listitem>
+                <listitem>
+                    <para>bootique-curator : Integrates Apache Curator in your app, providing access
+                        to Zookeeper.</para>
+                </listitem>
+                <listitem>
+                    <para>bootique-jdbc : Integrates high-performance JDBC connection pool,
+                        providing optimized configurable database connectivity.</para>
+                </listitem>
+                <listitem>
+                    <para>bootique-jersey : Integrates JAX-RS engine, allowing you to create and run
+                        REST web services.</para>
+                </listitem>
+                <listitem>
+                    <para>bootique-jersey-client : Integerates JAX-RS-based HTTP client with support
+                        for various types of server authentication (BASIC, OAuth2, etc.)</para>
+                </listitem>
+                <listitem>
+                    <para><link xlink:href="0/bootique-jetty-docs/index.html">bootique-jetty</link>
+                        : Integrates Jetty webserver and servlet engine. </para>
+                </listitem>
+                <listitem>
+                    <para>bootique-job : Integrates a job scheduling and execution engine. Jobs can
+                        be run individually or scheduled for periodic execution. Supports instance
+                        clustering with Zookeeper.</para>
+                </listitem>
+                <listitem>
+                    <para>bootique-jooq : Integrates JOOQ SQL generator for building type-safe SQL
+                        queries.</para>
+                </listitem>
+                <listitem>
+                    <para>bootique-linkmove : Integrates LinkMove, an embeddable model-driven ETL
+                        tool that allows to synchronize data from various sources into your
+                        database.</para>
+                </listitem>
+                <listitem>
+                    <para>bootique-linkrest : Integrates LinkRest, a powerful model-driven REST
+                        framework.</para>
+                </listitem>
+                <listitem>
+                    <para>bootique-liquibase : Integrates Liquibase engine that helps you to evolve
+                        your database schema via migration scripts.</para>
+                </listitem>
+                <listitem>
+                    <para><link xlink:href="0/bootique-logback-docs/index.html"
+                            >bootique-logback</link> : Integrates Logback framework to provide
+                        advanced logging facility for your app. </para>
+                </listitem>
+                <listitem>
+                    <para>bootique-metrics : Integrates Dropwizard Metrics framework to expose
+                        runtime information about your application to monitoring systems.</para>
+                </listitem>
+                <listitem>
+                    <para>bootique-mvc : Integrates a REST-based MVC engine, and a simple temlate
+                        provider based on Mustache framework.</para>
+                </listitem>
+                <listitem>
+                    <para>bootique-swagger : Integrates Swagger, a popular REST API documentation
+                        engine.</para>
+                </listitem>
+                <listitem>
+                    <para>bootique-tapestry : Integrates Apache Tapestry, a powerful component-based
+                        HTML generation framework.</para>
+                </listitem>
+            </itemizedlist>
+        </para>
+    </chapter>
+
+</book>

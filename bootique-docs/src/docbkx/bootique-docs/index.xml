@@ -2,7 +2,7 @@
 <book xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0"
     xml:id="linkrest-guide" xmlns:xi="http://www.w3.org/2001/XInclude">
     <info>
-        <title>Bootique Documentation</title>
+        <title>Bootique Core Documentation</title>
         <copyright>
             <year>2016</year>
             <holder>National Hockey League, ObjectStyle LLC and individual authors</holder>
