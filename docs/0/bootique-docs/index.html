@@ -362,13 +362,13 @@ Option                    Description
                 command finishes. The object contains system exit code, and exceptions that occurred
                 during execution. To make the new command available to Bootique, "contribute" it to
                     <code class="code">BQCoreModule</code>, as was already shown
-                above:</p><pre class="programlisting">public class MyModule implements Module {
+                above:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span> MyModule <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">implements</span> Module {
 
-	@Override
-	public void configure(Binder binder) {
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-annotation">@Override</span>
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">void</span> configure(Binder binder) {
 		BQCoreModule.contributeCommands(binder)
 			.addBinding()
-			.to(MyCommand.class);
+			.to(MyCommand.<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span>);
 	}
 }</pre><p>To implement a "daemon" command running forever until it receives an OS signal
                 (e.g. a web server waiting for user requests) , do something like
