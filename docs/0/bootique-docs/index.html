@@ -173,16 +173,16 @@ jetty:
                 system.</p><p>Properties can be provided to Bootique in one of two ways: either via JVM
                     <code class="code">-D</code> flag or via DI contribution. Examples below demonstrate the two
                 approaches, defining the same
-                properties:</p><pre class="programlisting">java -Dbq.my.prop1=valX -Dbq.my.prop2=valY -jar myapp.jar</pre><pre class="programlisting">class MyModule implements Module {
-	public void configure(Binder binder) {
+                properties:</p><pre class="programlisting">java -Dbq.my.prop1=valX -Dbq.my.prop2=valY -jar myapp.jar</pre><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span> MyModule <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">implements</span> Module {
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">void</span> configure(Binder binder) {
 
 		BQCoreModule.contributeProperties(binder)
-		  .addBinding("bq.my.prop1")
-		  .toInstance("valX");
+		  .addBinding(<span xmlns="http://www.w3.org/1999/xhtml" class="hl-string">"bq.my.prop1"</span>)
+		  .toInstance(<span xmlns="http://www.w3.org/1999/xhtml" class="hl-string">"valX"</span>);
 
 		BQCoreModule.contributeProperties(binder)
-		  .addBinding("bq.my.prop2")
-		  .toInstance("valY");
+		  .addBinding(<span xmlns="http://www.w3.org/1999/xhtml" class="hl-string">"bq.my.prop2"</span>)
+		  .toInstance(<span xmlns="http://www.w3.org/1999/xhtml" class="hl-string">"valY"</span>);
 	}
 }</pre><p>Often the main configuration is specified in YAML, and properties are used to
                 override just a few values. Next we'll discuss another way to override values - via
@@ -318,8 +318,8 @@ com.foo.ConcreteType2</pre><p>This should be enough to work with configuration l
                     <code class="code">com.nhl.bootique.Bootique</code> class itself declares a
                     <code class="code">main()</code> method and can be used as an app launcher. This creates some
                 interesting possibilities. E.g. you can create Java projects that have no code of
-                their own and are simply collections of modules declared as compile
-                dependencies.</p></div></div><div class="chapter" title="Chapter&nbsp;10.&nbsp;Commands"><div class="titlepage"><div><div><h2 class="title"><a name="d50e366"></a>Chapter&nbsp;10.&nbsp;Commands</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#d50e379">Writing Commands</a></span></dt><dt><span class="section"><a href="#d50e403">Injection in Commands</a></span></dt></dl></div><p>Bootique runtime contains a set of commands coming from Bootique core and from all the
+                their own and are simply collections of modules declared as compile dependencies.
+                More details on packaging are given in the "Runnable Jar" chapter.</p></div></div><div class="chapter" title="Chapter&nbsp;10.&nbsp;Commands"><div class="titlepage"><div><div><h2 class="title"><a name="d50e366"></a>Chapter&nbsp;10.&nbsp;Commands</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#d50e379">Writing Commands</a></span></dt><dt><span class="section"><a href="#d50e403">Injection in Commands</a></span></dt></dl></div><p>Bootique runtime contains a set of commands coming from Bootique core and from all the
             modules currently in effect in the app. On startup Bootique attempts to map command-line
             arguments to a single command type. If no match is found, a <span class="emphasis"><em>default</em></span>
             command is executed (which is normally a "help" command). To list all available
@@ -558,16 +558,13 @@ public void testPresentInJar() {
 	BQModuleProviderChecker.testPresentInJar(MyModuleProvider.class);
 }</pre></div></div></div><div class="part" title="Part&nbsp;IV.&nbsp;Assembly and Deployment"><div class="titlepage"><div><div><h1 class="title"><a name="assembly-deployment"></a>Part&nbsp;IV.&nbsp;Assembly and Deployment</h1></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#programming-runnable-jar">16. Runnable Jar</a></span></dt><dt><span class="chapter"><a href="#deployment-tracing">17. Tracing Bootique Startup</a></span></dt></dl></div><div class="chapter" title="Chapter&nbsp;16.&nbsp;Runnable Jar"><div class="titlepage"><div><div><h2 class="title"><a name="programming-runnable-jar"></a>Chapter&nbsp;16.&nbsp;Runnable Jar</h2></div></div></div><p>To build a runnable jar, Bootique relies on <code class="code">maven-shade-plugin</code>. To
             simplfy its configuration, your app <code class="code">pom.xml</code> may inherit from
-                <code class="code">bootoqie-parent</code> pom. In this case configuration would look like
+                <code class="code">bootique-parent</code> pom. In this case configuration would look like
             this:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;parent&gt;</span>
     <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;groupId&gt;</span>com.nhl.bootique.parent<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/groupId&gt;</span>
     <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;artifactId&gt;</span>bootique-parent<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/artifactId&gt;</span>
-    <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;version&gt;</span>0.10<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/version&gt;</span>
+    <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;version&gt;</span>0.11<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/version&gt;</span>
 <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/parent&gt;</span>
-...
-<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;properties&gt;</span>
-    <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;main.class&gt;</span>com.foo.Application<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/main.class&gt;</span>
-<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/properties&gt;</span>
+
 ...
 <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;build&gt;</span>
     <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;plugins&gt;</span>
@@ -576,8 +573,14 @@ public void testPresentInJar() {
             <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;artifactId&gt;</span>maven-shade-plugin<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/artifactId&gt;</span>
         <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/plugin&gt;</span>
     <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/plugins&gt;</span>
-<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/build&gt;</span></pre><p>If you want to avoid a common parent, you will need to explicitly provide the
-            following unwieldy configuration similar to the one found in <a class="link" href="https://repo1.maven.org/maven2/com/nhl/bootique/parent/bootique-parent/0.10/bootique-parent-0.10.pom" target="_top"><code class="code">bootique-parent</code></a>:</p><pre class="programlisting">&lt;plugin&gt;
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/build&gt;</span></pre><p>This configuration will build an app with the framework-provided main class, namely
+                <code class="code">com.nhl.bootique.Bootique</code>. If you want to use a custom main class (and
+            in most cases you do), you will need to redefine Maven <code class="code">main.class</code>
+            property:</p><pre class="programlisting">&lt;properties&gt;
+    &lt;main.<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span>&gt;com.foo.Application&lt;/main.<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span>&gt;
+&lt;/properties&gt;</pre><p>If you want to avoid inheriting from the framework parent pom, you will need to
+            explicitly provide the following unwieldy configuration similar to the one found in
+                <a class="link" href="https://repo1.maven.org/maven2/com/nhl/bootique/parent/bootique-parent/0.10/bootique-parent-0.10.pom" target="_top"><code class="code">bootique-parent</code></a>:</p><pre class="programlisting">&lt;plugin&gt;
 	&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
 	&lt;artifactId&gt;maven-shade-plugin&lt;/artifactId&gt;
 	&lt;version&gt;<span xmlns="http://www.w3.org/1999/xhtml" class="hl-number">2.4</span>.<span xmlns="http://www.w3.org/1999/xhtml" class="hl-number">2</span>&lt;/version&gt;
