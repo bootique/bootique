@@ -329,9 +329,9 @@ com.foo.ConcreteType2</programlisting></para>
             apps.</para>
         <section>
             <title>Injecting Other Module's Services</title>
-            <para>BQCoreModule provides a number of objects and services that can be accessed via
-                injection and used by your code.
-                E.g.:<programlisting language="java">class MyService {
+            <para>You can inject any services declared in other modules. E.g. BQCoreModule provides
+                a number of objects and services that can be accessed via
+                injection:<programlisting language="java">class MyService {
 
 	@Args
 	@Inject
