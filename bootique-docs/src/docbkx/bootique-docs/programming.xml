@@ -192,7 +192,7 @@ jetty:
             <para>Properties can be provided to Bootique in one of two ways: either via JVM
                     <code>-D</code> flag or via DI contribution. Examples below demonstrate the two
                 approaches, defining the same
-                properties:<programlisting language="bourne">java -Dbq.my.prop1=valX -Dbq.my.prop2=valY -jar myapp.jar</programlisting><programlisting>class MyModule implements Module {
+                properties:<programlisting language="bourne">java -Dbq.my.prop1=valX -Dbq.my.prop2=valY -jar myapp.jar</programlisting><programlisting language="java">class MyModule implements Module {
 	public void configure(Binder binder) {
 
 		BQCoreModule.contributeProperties(binder)
@@ -401,8 +401,8 @@ com.foo.ConcreteType2</programlisting></para>
                     <code>com.nhl.bootique.Bootique</code> class itself declares a
                     <code>main()</code> method and can be used as an app launcher. This creates some
                 interesting possibilities. E.g. you can create Java projects that have no code of
-                their own and are simply collections of modules declared as compile
-                dependencies.</para>
+                their own and are simply collections of modules declared as compile dependencies.
+                More details on packaging are given in the "Runnable Jar" chapter.</para>
         </section>
     </chapter>
         
