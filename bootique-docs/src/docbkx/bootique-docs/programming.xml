@@ -396,8 +396,8 @@ com.foo.ConcreteType2</programlisting></para>
         </section>
         <section>
             <title>Common Main Class</title>
-            <para>If all your code is packaged in auto-loadable modules (which you probably should
-                do), you may not even need a custom main class.
+            <para>If all your code is packaged in auto-loadable modules (which is always a good
+                idea), you may not even need a custom main class.
                     <code>com.nhl.bootique.Bootique</code> class itself declares a
                     <code>main()</code> method and can be used as an app launcher. This creates some
                 interesting possibilities. E.g. you can create Java projects that have no code of
