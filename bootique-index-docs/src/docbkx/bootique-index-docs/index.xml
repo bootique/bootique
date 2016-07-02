@@ -5,7 +5,7 @@
         <title>Bootique Documentation</title>
     </info>
     <chapter>
-        <title>Main Documentation</title>
+        <title>Common Documentation and Examples</title>
 
 
         <para>
@@ -20,6 +20,12 @@
                         <link xlink:href="0/bootique-docs/index.html">Core</link> : Main
                         documentation collection explaining fundamental framework concepts, such as
                         modules, configuration, commands, dependency injection, unit testing.</para>
+                </listitem>
+                <listitem>
+                    <para><link xlink:href="https://github.com/bootique-examples"
+                                ><code>bootique-examples</code></link> : A collection of simple
+                        projects demonstrating the use of Bootique and various modules for typical
+                        programming scenarios.</para>
                 </listitem>
             </itemizedlist>
         </para>
