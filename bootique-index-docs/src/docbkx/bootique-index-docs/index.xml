@@ -61,7 +61,7 @@
                 <listitem>
                     <para><code>bootique-jetty</code> : Integrates Jetty webserver and servlet
                         engine. (<link xlink:href="https://github.com/nhl/bootique-jetty"
-                            >GitHub</link> | <link xlink:href="bootique-jetty-docs"
+                            >GitHub</link> | <link xlink:href="0/bootique-jetty-docs/index.html"
                         >Docs</link>)</para>
                 </listitem>
                 <listitem>
