@@ -32,8 +32,11 @@
     <!-- Only chapters start a new page -->
     <xsl:param name="chunk.section.depth">0</xsl:param>
 
-    <!-- Only chapters start a new page -->
+    <!-- Suppress table of contents -->
     <xsl:param name="generate.toc">nop</xsl:param>
+
+    <!-- No chapter names -->
+    <xsl:param name="chapter.autolabel">0</xsl:param>
 
     <!-- Don't add any embedded styles -->
     <xsl:param name="css.decoration">0</xsl:param>
