@@ -1,15 +1,6 @@
 This module contains source of the Bootique cross-module documentation index published on the website. 
 The docs are in Docbook XML format.
 
-## Building the Docs
-
-```shell
-cd <main_bootique_checkout>/bootique-index-docs
-mvn clean package
-```
-
-You can now inspect the local docs under ```target/site/index/```. If you are not a Bootique maintainer, you may stop here. 
-
 ## Publishing Prerequisites
 
 Checkout the web site:
@@ -24,6 +15,15 @@ git clone git@github.com:nhl/bootique.git bootique-pages
 # get on the website branch
 git checkout -b gh-pages origin/gh-pages
 ```
+
+## Building the Docs
+
+```shell
+cd <main_bootique_checkout>/bootique-index-docs
+mvn clean package
+```
+
+You can now inspect the local docs under ```target/site/index/```.
 
 ## Publishing the Docs
 
