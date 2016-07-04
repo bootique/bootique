@@ -46,6 +46,13 @@ public class FolderResourceFactoryTest {
         assertEquals("c: d", resourceContents("classpath:com/nhl/bootique/config", "test2.yml"));
     }
 
+    @Test
+    public void testGetUrl_Subresource_FileProtocolUrl() throws IOException {
+        String folder = FolderResourceFactoryTest.class.getResource("/com/nhl/bootique/config").getPath();
+        assertEquals("c: d", resourceContents("file:" + folder, "test2.yml"));
+        assertEquals("c: d", resourceContents("file://" + folder, "test2.yml"));
+    }
+
     @Test(expected = Exception.class)
     public void testGetUrl_Exception_InvalidScheme() throws IOException {
         try {

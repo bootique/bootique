@@ -41,7 +41,7 @@ public class FolderResourceFactory extends ResourceFactory {
     /**
      * @return Absolute URI for current working directory (without trailing forward slash)
      */
-    public static String getUserDir() {
+    private static String getUserDir() {
         String userDir = System.getProperty("user.dir");
         if (!userDir.startsWith("/")) {
             userDir = "/" + userDir;
