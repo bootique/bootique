@@ -1,5 +1,6 @@
 ## 0.18
 
+* #73 Test ResourceFactory and FolderResourceFactory on Windows
 * #76 BQDaemonTestRuntime fails quietly.
 
 ## 0.17
