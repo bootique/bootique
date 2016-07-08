@@ -56,7 +56,7 @@ public class FolderResourceFactory extends ResourceFactory {
      * Converts abstract pathname into URI path (replacing system-dependent name separators with forward slashes)
      */
     private static String slashify(String path) {
-        return Objects.requireNonNull(path).replace(File.separatorChar, '/');
+        return File.separatorChar != '/' ? Objects.requireNonNull(path).replace(File.separatorChar, '/') : path;
     }
 
     public FolderResourceFactory(String resourceId) {
