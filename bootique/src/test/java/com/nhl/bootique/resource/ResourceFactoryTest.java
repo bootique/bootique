@@ -38,8 +38,8 @@ public class ResourceFactoryTest {
 	@Test
 	public void testGetCanonicalFile() throws IOException {
 		File file = new ResourceFactory("").getCanonicalFile("./src/test/resources/com/nhl/bootique/config/test1.yml");
-		assertEquals(System.getProperty("user.dir") + "/src/test/resources/com/nhl/bootique/config/test1.yml",
-				file.getPath());
+		File expected = new File(System.getProperty("user.dir") + "/src/test/resources/com/nhl/bootique/config/test1.yml");
+		assertEquals(expected, file);
 	}
 
 	@Test
