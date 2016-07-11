@@ -37,9 +37,13 @@
         <meta name="theme-color" content="#ffffff">
         
         <!-- styles -->
+        <!-- build:css(.tmp) ../styles/main.css -->
         <link rel="stylesheet" href="../styles/main.css">
+        <!-- endbuild -->
         <!-- modernizr (svg) -->
-        <script src="../scripts/vendor/modernizr.js"></script>
+        <!-- build:js ../scripts/vendor/modernizr.js -->
+        <script src="../bower_components/modernizr/modernizr.js"></script>
+        <!-- endbuild -->
 
 </head>
 
@@ -341,10 +345,19 @@
     <p class="footer-p">&copy; <span class="current-year">2016</span> NHL, ObjectStyle and individual authors</p>
     
     <!-- added -->
-        <script src="../scripts/vendor.js"></script>
+        <!-- build:js(.) ../scripts/vendor.js -->
+        <!-- bower:js -->
+        <script src="/bower_components/modernizr/modernizr.js"></script>
+        <script src="/bower_components/jquery/dist/jquery.js"></script>
+        <!-- endbower -->
+        <!-- Twitter widgets  -->
+        <script src="/app/scripts/tw-widgets.js"></script>
+        <!-- endbuild --> 
 
 
+        <!-- build:js ../scripts/main.js -->
         <script src="../scripts/main.js"></script>
+        <!-- endbuild -->
     
     <!-- moved from <head> -->
         <script xmlns:d="http://docbook.org/ns/docbook" type="text/javascript">

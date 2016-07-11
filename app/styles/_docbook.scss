@@ -1,0 +1,19 @@
+// DOCBOOK
+	
+	.docbook {
+
+		// links
+			a {
+				text-decoration: underline;
+
+				&:hover {
+					text-decoration: none;
+				}
+			}
+
+		// headings
+			.titlepage h1,
+			.titlepage .title {
+				text-align: center;
+			}
+	}
