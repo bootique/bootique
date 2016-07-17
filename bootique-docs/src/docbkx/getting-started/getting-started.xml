@@ -81,8 +81,9 @@ public class HelloResource {
             an effective demo (an app that can fit in one class), but not for a particularly clean
             design. So keeping the resource in its own class. Now let's amend the <code>Main</code>
             class to tell Bootique where to find the
-            resource:<programlisting language="java">package com.nhl.bootique.bom;
+            resource:<programlisting language="java">package com.foo;
 
+import com.google.inject.Module;
 import com.nhl.bootique.Bootique;
 import com.nhl.bootique.jersey.JerseyModule;
 
@@ -162,7 +163,7 @@ INFO  main o.e.j.server.Server: Started @1554ms</programlisting>Notice
             example. Our simple app already has a number of objects and services working behind the
             scenes that can be injected. One of them is command-line arguments that were provded to
             the app on startup. Let's extend our resource to include those arguments in the
-            output:<programlisting>package com.nhl.bootique.bom;
+            output:<programlisting>package com.foo;
 
 import static java.util.stream.Collectors.joining;
 
