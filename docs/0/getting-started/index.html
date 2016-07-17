@@ -78,8 +78,9 @@
             an effective demo (an app that can fit in one class), but not for a particularly clean
             design. So keeping the resource in its own class. Now let's amend the <code class="code">Main</code>
             class to tell Bootique where to find the
-            resource:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">package</span> com.nhl.bootique.bom;
+            resource:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">package</span> com.foo;
 
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">import</span> com.google.inject.Module;
 <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">import</span> com.nhl.bootique.Bootique;
 <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">import</span> com.nhl.bootique.jersey.JerseyModule;
 
@@ -135,7 +136,7 @@ INFO  main o.e.j.server.Server: Started @1554ms</pre><p>Notice
             example. Our simple app already has a number of objects and services working behind the
             scenes that can be injected. One of them is command-line arguments that were provded to
             the app on startup. Let's extend our resource to include those arguments in the
-            output:</p><pre class="programlisting">package com.nhl.bootique.bom;
+            output:</p><pre class="programlisting">package com.foo;
 
 import static java.util.stream.Collectors.joining;
 
