@@ -41,7 +41,15 @@ public interface Cli {
 	 * @throws RuntimeException
 	 *             if there's more then one value for the option.
 	 */
-	String optionString(String name);
+	default String optionString(String name) {
+		List<String> allStrings = optionStrings(name);
+	
+		if (allStrings.size() > 1) {
+			throw new RuntimeException("More than one value specified for option: " + name);
+		}
+	
+		return allStrings.isEmpty() ? null : allStrings.get(0);
+	}
 
 	/**
 	 * Returns all arguments that are not options or option values in the order

@@ -1,5 +1,8 @@
 package com.nhl.bootique.env;
 
+import static com.nhl.bootique.env.DefaultEnvironment.FRAMEWORK_PROPERTIES_PREFIX;
+import static com.nhl.bootique.env.DefaultEnvironment.FRAMEWORK_VARIABLES_PREFIX;
+
 import java.util.Map;
 
 /**
@@ -28,7 +31,9 @@ public interface Environment {
 	 * 
 	 * @return a map of all properties that start with "bq." prefix.
 	 */
-	Map<String, String> frameworkProperties();
+	default Map<String, String> frameworkProperties() {
+		return subproperties(FRAMEWORK_PROPERTIES_PREFIX);
+	}
 
 	/**
 	 * Returns a value of the environment variable with a given name.
@@ -58,5 +63,7 @@ public interface Environment {
 	 * @since 0.17
 	 * @return a map of all variables that start with "BQ_" prefix.
 	 */
-	Map<String, String> frameworkVariables();
+	default Map<String, String> frameworkVariables() {
+		return variables(FRAMEWORK_VARIABLES_PREFIX);
+	}
 }
