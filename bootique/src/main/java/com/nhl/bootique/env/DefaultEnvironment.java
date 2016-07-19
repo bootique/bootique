@@ -11,13 +11,6 @@ import java.util.Map;
  */
 public class DefaultEnvironment implements Environment {
 
-	public static final String FRAMEWORK_PROPERTIES_PREFIX = "bq";
-
-	/**
-	 * @since 0.17
-	 */
-	public static final String FRAMEWORK_VARIABLES_PREFIX = "BQ_";
-
 	/**
 	 * If present, enables boot sequence tracing to STDERR.
 	 */

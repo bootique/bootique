@@ -1,8 +1,5 @@
 package com.nhl.bootique.env;
 
-import static com.nhl.bootique.env.DefaultEnvironment.FRAMEWORK_PROPERTIES_PREFIX;
-import static com.nhl.bootique.env.DefaultEnvironment.FRAMEWORK_VARIABLES_PREFIX;
-
 import java.util.Map;
 
 /**
@@ -10,6 +7,13 @@ import java.util.Map;
  * Allows to filter properties by prefix to separate Bootique-specific values.
  */
 public interface Environment {
+
+	String FRAMEWORK_PROPERTIES_PREFIX = "bq";
+	
+	/**
+	 * @since 0.17
+	 */
+	String FRAMEWORK_VARIABLES_PREFIX = "BQ_";
 
 	String getProperty(String name);
 
