@@ -1,7 +1,8 @@
 
 // PURECSS
   @import 'bower_components/purecss-sass/vendor/assets/stylesheets/purecss/base';
-  // @import 'bower_components/purecss-sass/vendor/assets/stylesheets/purecss/grids-responsive';
+  @import 'bower_components/purecss-sass/vendor/assets/stylesheets/purecss/grids';
+  @import 'bower_components/purecss-sass/vendor/assets/stylesheets/purecss/grids-responsive';
   // @import 'bower_components/purecss-sass/vendor/assets/stylesheets/purecss/buttons';
   @import 'bower_components/purecss-sass/vendor/assets/stylesheets/purecss/menus';
 
@@ -11,6 +12,7 @@
 
 // custom:scss
   @import 'mixins', 'helper-classes';
+  @import 'typography', 'docbook';
 
 // wiredep|bower:scss 
 // wiredep|endbower
@@ -85,9 +87,9 @@
     
     body {
       background: #fff;
+      color: #616161;
       font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      line-height: 1.7em;
-      color: #333;
+      line-height: 1.6;
       font-size: 14px;
 
       &.inactive {
@@ -119,6 +121,12 @@
       }
     }
 
+    hr {
+      border: 1px solid #ececec;
+      border-width: 1px 0 0;
+      margin: 20px 0;
+    }
+
     
   // IMG
     $i: "../images/";   // PATH VAR
@@ -145,21 +153,73 @@
     }
 
 
+  // GRID
+    .container {
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: 15px;
+      padding-right: 15px;
+
+      &.nav {
+        max-width: 1050px;
+      }
+
+      &.content {
+        max-width: 1050px;
+      }
+
+      &.docbook {
+        padding-bottom: 60px;
+
+        & ~ .footer-p {
+          position: static;
+        }
+      }
+    }
+
+
   // NAV
+    
+    #top-nav {
+      min-height: 5.7em;
+      position: relative;
+    }
+
+    .nav-brand {
+      display: inline-block;
+      position: absolute;
+      z-index: 5;
+      transition: none;
+
+      .main & {
+        opacity: 0;
+      }
+
+      img {
+        max-width: 100px;
+      }
+      
+      &.center {
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-50%);
+
+        @media screen and (max-width: 991px) {
+          top: 42px;
+          left: 112px;
+        }
+      }
+    }
+
     .nav-menu {
         padding: 1em 2em;
         text-align: center;
         box-shadow: 0 1px 1px rgba(0,0,0, 0.10);
-
-        > .container {
-          max-width: 1440px;
-          margin: 0 auto;
-        }
     }
     .nav-menu {
         background: #fcfcfc;
     
-      @media (min-width: 48em) {
+      @media (min-width: 992px) {
           text-align: left;
       }
     }
@@ -179,13 +239,25 @@
       text-transform: uppercase;
       color: #4f4f4f;
         // color: lighten(#6f6f6f, 8%);
+      
+      .pure-menu-selected & {
+        color: #000;
+        text-decoration: underline;
+      
+        &:hover,
+        &:focus {
+          color: #7e7e7e;
+          text-decoration: none;
+        }
+      }
 
       &:hover,
-      &:focus,
-      .pure-menu-selected & {
+      &:focus {
         color: #7e7e7e;
         text-decoration: none;
       }
+
+
 
       &:hover,
       &:focus,
@@ -291,7 +363,7 @@
     }
 
     // sm
-    @media screen and (max-width: 767px) {
+    @media screen and (max-width: 991px) {
       
       // Main Nav
       .pure-menu.pure-menu-fixed {
@@ -329,6 +401,7 @@
 
           .pure-menu-item {
             display: block;
+            height: auto;
           }
         }
 
@@ -415,16 +488,16 @@
 
           display: none;
 
-          @media screen and (max-width: 767px) {
+          @media screen and (max-width: 991px) {
             display: block; /* show this only on small screens */
           }
 
-          &.menu-link:before {
-            content: attr(aria-label);
-            position: absolute;
-            left: 100%;
-            font-size: 14px;
-          }
+          // &.menu-link:before {
+          //   content: attr(aria-label);
+          //   position: absolute;
+          //   left: 100%;
+          //   font-size: 14px;
+          // }
       }
 
         /* Hamburger + `x` when active */
@@ -478,7 +551,6 @@
                          -o-transform: rotate(-45deg) translate(.4em, -.3em);
                             transform: rotate(-45deg) translate(.4em, -.3em);
                 }
-
 
 
   // MAIN
@@ -561,6 +633,7 @@
 
       // margin: 49px auto 115px; // 58px auto 68px;
       margin: 3% auto 8%;
+      display: block;
 
       font-size: 45px;
       font-weight: 100;
@@ -671,8 +744,6 @@
 
       }
     }
-
-
 
 
   // Footer

@@ -1,0 +1,197 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title xmlns:d="http://docbook.org/ns/docbook">Getting Started with Bootique</title><link rel="stylesheet" type="text/css" href="css/doc.css"><meta xmlns:d="http://docbook.org/ns/docbook" name="keywords" content="Bootique Framework Documentation version 0 "><meta xmlns:d="http://docbook.org/ns/docbook" name="description" content="Bootique: A Minimally Opinionated Framework for Runnable Java Apps - Documentation version 0"><script xmlns:d="http://docbook.org/ns/docbook" type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-73654436-1', 'auto');
+  ga('send', 'pageview');
+        </script></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="book" title="Getting Started with Bootique"><div class="titlepage"><div><div><h1 class="title"><a name="linkrest-guide"></a>Getting Started with Bootique</h1></div><div><p class="copyright">Copyright &copy; 2016 National Hockey League, ObjectStyle LLC and individual authors</p></div></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="part"><a href="#getting-started">I. Getting Started with Bootique</a></span></dt><dd><dl><dt><span class="chapter"><a href="#getting-started-minimal-app">1. Hello World in Bootique</a></span></dt><dt><span class="chapter"><a href="#d0e102">2. Configuration</a></span></dt><dt><span class="chapter"><a href="#d0e129">3. Injection</a></span></dt><dt><span class="chapter"><a href="#d0e166">4. Packaging</a></span></dt></dl></dd></dl></div><div class="part" title="Part&nbsp;I.&nbsp;Getting Started with Bootique"><div class="titlepage"><div><div><h1 class="title"><a name="getting-started"></a>Part&nbsp;I.&nbsp;Getting Started with Bootique</h1></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#getting-started-minimal-app">1. Hello World in Bootique</a></span></dt><dt><span class="chapter"><a href="#d0e102">2. Configuration</a></span></dt><dt><span class="chapter"><a href="#d0e129">3. Injection</a></span></dt><dt><span class="chapter"><a href="#d0e166">4. Packaging</a></span></dt></dl></div><div class="chapter" title="Chapter&nbsp;1.&nbsp;Hello World in Bootique"><div class="titlepage"><div><div><h2 class="title"><a name="getting-started-minimal-app"></a>Chapter&nbsp;1.&nbsp;Hello World in Bootique</h2></div></div></div><p>The goal of this chapter is to write a simple REST app using Bootique. Let's start
+            with a new Java Maven project created in your favorite IDE. Your <code class="code">pom.xml</code> in
+            addition to the required project information tags will need to declare one artifact in
+            the <code class="code">&lt;dependencyManagement/&gt;</code>
+            section:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;dependencyManagement&gt;</span>
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;dependencies&gt;</span>
+		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;dependency&gt;</span>
+			<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;groupId&gt;</span>com.nhl.bootique.bom<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/groupId&gt;</span>
+			<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;artifactId&gt;</span>bootique-bom<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/artifactId&gt;</span>
+			<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;version&gt;</span>0.17<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/version&gt;</span>
+			<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;type&gt;</span>pom<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/type&gt;</span>
+			<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;scope&gt;</span>import<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/scope&gt;</span>
+		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/dependency&gt;</span>
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/dependencies&gt;</span>
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/dependencyManagement&gt;</span></pre><p>This will allow &nbsp;<code class="code">&lt;dependencies/&gt;</code> section that will follow shortly to
+            include various Bootique modules and not worry about their individual versions. So let's
+            create this section and import a few
+            modules:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;dependencies&gt;</span>
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;dependency&gt;</span>
+		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;groupId&gt;</span>com.nhl.bootique.jersey<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/groupId&gt;</span>
+		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;artifactId&gt;</span>bootique-jersey<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/artifactId&gt;</span>
+		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;scope&gt;</span>compile<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/scope&gt;</span>
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/dependency&gt;</span>
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;dependency&gt;</span>
+		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;groupId&gt;</span>com.nhl.bootique.logback<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/groupId&gt;</span>
+		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;artifactId&gt;</span>bootique-logback<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/artifactId&gt;</span>
+		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;scope&gt;</span>compile<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/scope&gt;</span>
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/dependency&gt;</span>
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/dependencies&gt;</span></pre><p>As you see we want a <code class="code">bootique-jersey</code> and <code class="code">bootique-logback</code>
+            modules in our app. Those may depend on other modules, but we don't have to think about
+            it. Those dependencies will be included by Maven automatically. Now let's create the
+            main Java class that will run the
+            app:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">package</span> com.foo;
+
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">import</span> com.nhl.bootique.Bootique;
+
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span> Application {
+
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">static</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">void</span> main(String[] args) {
+		Bootique.app(args).autoLoadModules().run();
+	}
+}</pre><p>There's only one line of meaningful code inside the  <code class="code">main()</code> method, but
+            this is already a working Bootique app. Meaning it is runnable  and can do a few things.
+            So let's try running this class from your IDE. You will see the output like this on the
+            IDE
+            console:</p><pre class="programlisting">Option                    Description                          
+------                    -----------                          
+--config &lt;yaml_location&gt;  Specifies YAML config location, which
+                            can be a file path or a URL.       
+--help                    Prints this message.                 
+--server                  Starts Jetty server</pre><p>So the app printed its help message telling us which commands and options it
+            understands. &nbsp;<code class="code">--server</code> option looks promising, but before we use it, let's
+            actually write a REST endpoint that will answer to our requests. We'll use standard Java
+                <a class="link" href="https://en.wikipedia.org/wiki/Java_API_for_RESTful_Web_Services" target="_top">JAX-RS API</a> for
+            that:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">package</span> com.foo;
+
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">import</span> javax.ws.rs.GET;
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">import</span> javax.ws.rs.Path;
+
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-annotation">@Path("/")</span>
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span> HelloResource {
+
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-annotation">@GET</span>
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> String hello() {
+		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">return</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-string">"Hello, world!"</span>;
+	}
+}</pre><p>Note that we could have placed this code straight in the Main class. Which makes for
+            an effective demo (an app that can fit in one class), but not for a particularly clean
+            design. So keeping the resource in its own class. Now let's amend the <code class="code">Main</code>
+            class to tell Bootique where to find the
+            resource:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">package</span> com.nhl.bootique.bom;
+
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">import</span> com.nhl.bootique.Bootique;
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">import</span> com.nhl.bootique.jersey.JerseyModule;
+
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span> Application {
+
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">static</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">void</span> main(String[] args) {
+
+		Module module = binder -&gt; 
+                  JerseyModule.contributeResources(binder).addBinding().to(HelloResource.<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span>);
+
+		Bootique.app(args).module(module).autoLoadModules().run();
+	}
+}</pre><p>Here we created our own module that "contributes" resource configuration to the
+            JerseyModule. Now let's try to run the app with the changes. Add <code class="code">--server</code>
+            to the command run parameters before doing it. Now when the app is started, you will see
+            different
+            output:</p><pre class="programlisting">INFO  main c.n.b.j.c.ServerCommand: Starting jetty...
+INFO  main o.e.jetty.util.log: Logging initialized @933ms
+INFO  main c.n.b.j.s.ServerFactory: Adding servlet mapped to /*
+INFO  main o.e.j.server.Server: jetty-9.3.6.v20151106
+INFO  main o.e.j.s.h.ContextHandler: Started o.e.j.s.ServletContextHandler@cf65451{/,null,AVAILABLE}
+INFO  main o.e.j.s.ServerConnector: Started ServerConnector@60cf80e7{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+INFO  main o.e.j.server.Server: Started @1554ms</pre><p>Notice
+            that the app did not terminate immediately, and is waiting for user requests. Now let's
+            try opening the URL <a class="link" href="http://localhost:8080/" target="_top">http://localhost:8080/</a> in the browser. We should see 'Hello, world!' as
+            request output. We just built a working REST app that does not require deployment to a
+            web container, and generally wasn't that hard to write. The takeway here is this:</p><p>
+            </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem"><p>You start Bootique via <code class="code">Bootique</code> class, that gives you a
+                        runnable "shell" of your future app in one line of code.</p></li><li class="listitem"><p>Declaring modules in the app dependencies and using
+                            <code class="code">Bootique.autoLoadModules()</code> gives the app the ability to
+                        respond to commands from those modules (in our example <code class="code">--server</code>
+                        command coming from implicit bootique-jetty module started an embedded web
+                        server ).</p></li><li class="listitem"><p>You can contribute your own code to modules to build an app with desired
+                        behavior.</p></li></ul></div><p>
+        </p><p>Next we'll talk about configuration...</p></div><div class="chapter" title="Chapter&nbsp;2.&nbsp;Configuration"><div class="titlepage"><div><div><h2 class="title"><a name="d0e102"></a>Chapter&nbsp;2.&nbsp;Configuration</h2></div></div></div><p>You can optionally pass a configuration to almost any Bootique app. This is done with
+            a <code class="code">--config</code> parameter. An argument to <code class="code">--config</code> is either a path
+            to a configuration file or a URL of a service that serves such configuration remotely
+            (imagine an app starting on a cloud that downloads its configuration from a central
+            server). The format of the file is YAML (though, just like everything in Bootique, this
+            can be customized). Let's create a config file that changes Jetty listen port and the
+            app context path. To do this create a file in the app run directory, with an arbitrary
+            name, e.g. <code class="code">myconfig.yml</code> with the following
+            contents:</p><pre class="programlisting">jetty:
+  context: /hello
+  connector:
+    port: 10001</pre><p>Now restart the app with the new set of parameters: <code class="code">--server
+                --config=myconfig.yml</code>. After the restart the app would no longer respond at
+                <a class="link" href="http://localhost:8080/" target="_top">http://localhost:8080/</a>, instead you
+            will need to use a new URL: <a class="link" href="http://localhost:10001/hello" target="_top">http://localhost:10001/hello</a>. This is just a taste of what can be done with
+            configuration. Your app can just as easily obtain its own specific configuration in a
+            form of an app-specific object, as described elsewhere in the docs.</p></div><div class="chapter" title="Chapter&nbsp;3.&nbsp;Injection"><div class="titlepage"><div><div><h2 class="title"><a name="d0e129"></a>Chapter&nbsp;3.&nbsp;Injection</h2></div></div></div><p>We've mentioned that Bootique is built on Google Guice dependency injection (DI)
+            container. We'll talk more about injection elsewhere. Here we'll provide a simple
+            example. Our simple app already has a number of objects and services working behind the
+            scenes that can be injected. One of them is command-line arguments that were provded to
+            the app on startup. Let's extend our resource to include those arguments in the
+            output:</p><pre class="programlisting">package com.nhl.bootique.bom;
+
+import static java.util.stream.Collectors.joining;
+
+import java.util.Arrays;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+
+import com.google.inject.Inject;
+import com.nhl.bootique.annotation.Args;
+
+@Path("/")
+public class HelloResource {
+	
+	@Inject
+	@Args
+	private String[] args;
+
+	@GET
+	public String hello() {
+		String allArgs = Arrays.asList(args).stream().collect(joining(" "));
+		return "Hello, world! The app was started with the following arguments: " + allArgs;
+	}
+}</pre><p>As you see, we declared a variable of type <code class="code">String[]</code> and annotated it with
+                <code class="code">@Inject</code> and <code class="code">@Args</code>. <code class="code">@Inject</code>  (must be a
+                <code class="code">com.google.inject.Inject</code>, not <code class="code">javax.inject.Inject</code>) ensures
+            that the value is initialized via injection, and <code class="code">@Args</code> tells Bootique which
+            one of possibly many String[] instances from the DI container we are expecting
+            here.</p><p>Now you can restart the app and refresh <a class="link" href="http://localhost:10001/hello" target="_top">http://localhost:10001/hello</a> in the
+            browser. The new output will be "Hello, world! The app was started with the following
+            arguments: --server --config=myconfig.yml". </p><p>Next let's discuss how to build and run the app outside the IDE...</p></div><div class="chapter" title="Chapter&nbsp;4.&nbsp;Packaging"><div class="titlepage"><div><div><h2 class="title"><a name="d0e166"></a>Chapter&nbsp;4.&nbsp;Packaging</h2></div></div></div><p>Till now we've been running our app from IDE (which also happened to be much easier
+            then running typical container-aware apps). Now let's package our app as a runnable
+            "fat" jar to be able to run it from command line (e.g. in deployment environment).
+            Assembling "fat" jar requires a bit of configuration of the Maven
+                <code class="code">maven-shade-plugin</code>. To simplify it, you can set a parent of your
+                <code class="code">pom.xml</code> to be a standard Bootique
+            parent:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;parent&gt;</span>
+    <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;groupId&gt;</span>com.nhl.bootique.parent<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/groupId&gt;</span>
+    <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;artifactId&gt;</span>bootique-parent<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/artifactId&gt;</span>
+    <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;version&gt;</span>0.11<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/version&gt;</span>
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/parent&gt;</span></pre><p>Other required <code class="code">pom.xml</code>
+            additions:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;properties&gt;</span>
+    <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;main.class&gt;</span>com.foo.Application<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/main.class&gt;</span>
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/properties&gt;</span>
+...
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;build&gt;</span>
+    <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;plugins&gt;</span>
+        <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;plugin&gt;</span>
+            <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;groupId&gt;</span>org.apache.maven.plugins<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/groupId&gt;</span>
+            <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;artifactId&gt;</span>maven-shade-plugin<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/artifactId&gt;</span>
+        <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/plugin&gt;</span>
+    <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/plugins&gt;</span>
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/build&gt;</span></pre><p>Once this is setup you can build and run the
+            app:</p><pre class="programlisting">mvn clean package
+
+# Using myapp-1.0.jar as an example; the actual jar name depends on your POM settings
+java -jar target/myapp-1.0.jar --server --config=myconfig.yml</pre><p>The result should be the same as running from the IDE and the app should be still
+            accessible at <a class="link" href="http://localhost:10001/hello" target="_top">http://localhost:10001/hello</a>. Now your jar can be deployed in any
+            environment that has Java 8. </p><p>This concludes our simple tutorial.</p></div></div></div></body></html>
