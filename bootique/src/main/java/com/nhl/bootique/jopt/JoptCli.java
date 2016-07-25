@@ -55,17 +55,6 @@ public class JoptCli implements Cli {
 		return optionSet.valuesOf(name).stream().map(o -> String.valueOf(o)).collect(toList());
 	}
 
-	@Override
-	public String optionString(String name) {
-		List<String> allStrings = optionStrings(name);
-
-		if (allStrings.size() > 1) {
-			throw new RuntimeException("More than one value specified for option: " + name);
-		}
-
-		return allStrings.isEmpty() ? null : allStrings.get(0);
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> standaloneArguments() {

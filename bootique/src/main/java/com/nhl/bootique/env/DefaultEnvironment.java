@@ -11,13 +11,6 @@ import java.util.Map;
  */
 public class DefaultEnvironment implements Environment {
 
-	public static final String FRAMEWORK_PROPERTIES_PREFIX = "bq";
-
-	/**
-	 * @since 0.17
-	 */
-	public static final String FRAMEWORK_VARIABLES_PREFIX = "BQ_";
-
 	/**
 	 * If present, enables boot sequence tracing to STDERR.
 	 */
@@ -46,11 +39,6 @@ public class DefaultEnvironment implements Environment {
 	}
 
 	@Override
-	public Map<String, String> frameworkProperties() {
-		return subproperties(FRAMEWORK_PROPERTIES_PREFIX);
-	}
-
-	@Override
 	public String getVariable(String name) {
 		return variables.get(name);
 	}
@@ -58,11 +46,6 @@ public class DefaultEnvironment implements Environment {
 	@Override
 	public Map<String, String> variables(String prefix) {
 		return filterByPrefix(variables, prefix, "_");
-	}
-
-	@Override
-	public Map<String, String> frameworkVariables() {
-		return variables(FRAMEWORK_VARIABLES_PREFIX);
 	}
 
 	protected Map<String, String> filterByPrefix(Map<String, String> unfiltered, String prefix, String separator) {
