@@ -1,0 +1,575 @@
+/*
+Offsets from https://raw.githubusercontent.com/tilomitra/pure/d7f85e37abec3fdab14a541305ad05783159655c/src/grids/css/grids-offsets.css
+Media queries from Pure v0.5.0
+Copyright 2014 Yahoo! Inc. All rights reserved.
+Licensed under the BSD License.
+https://github.com/yui/pure/blob/master/LICENSE.md
+*/
+@media screen and (min-width: 35.5em) {
+    .offset-sm-0 {
+      margin-left:0;
+    }
+
+    .offset-sm-1-2 {
+      margin-left: 50%;
+      *margin-left: 49.995%;
+    }
+
+    .offset-sm-1-3 {
+      margin-left: 33.33%;
+      *margin-left: 33.325%;
+    }
+
+    .offset-sm-2-3 {
+      margin-left: 66.67%;
+      *margin-left: 66.665%;
+    }
+
+    .offset-sm-1-4 {
+      margin-left: 25%;
+      *margin-left: 24.995%;
+    }
+
+    .offset-sm-3-4 {
+      margin-left: 75%;
+      *margin-left: 74.995%;
+    }
+
+    .offset-sm-1-5 {
+      margin-left: 20%;
+      *margin-left: 19.995%;
+    }
+
+    .offset-sm-2-5 {
+      margin-left: 40%;
+      *margin-left: 39.995%;
+    }
+
+    .offset-sm-3-5 {
+      margin-left: 60%;
+      *margin-left: 59.995%;
+    }
+
+    .offset-sm-4-5 {
+      margin-left: 80%;
+      *margin-left: 79.995%;
+    }
+
+    .offset-sm-1-6 {
+      margin-left: 16.66%;
+      *margin-left: 16.655%;
+    }
+
+    .offset-sm-5-6 {
+      margin-left: 83.33%;
+      *margin-left: 83.325%;
+    }
+
+    .offset-sm-1-8 {
+      margin-left: 12.5%;
+      *margin-left: 12.495%;
+    }
+
+    .offset-sm-3-8 {
+      margin-left: 37.5%;
+      *margin-left: 37.495%;
+    }
+
+    .offset-sm-5-8 {
+      margin-left: 62.5%;
+      *margin-left: 62.495%;
+    }
+
+    .offset-sm-7-8 {
+      margin-left: 87.5%;
+      *margin-left: 87.495%;
+    }
+
+    .offset-sm-1-12 {
+      margin-left: 8.33%;
+      *margin-left: 8.325%;
+    }
+
+    .offset-sm-5-12 {
+      margin-left: 41.67%;
+      *margin-left: 41.665%;
+    }
+
+    .offset-sm-7-12 {
+      margin-left: 58.33%;
+      *margin-left: 58.325%;
+    }
+
+    .offset-sm-11-12 {
+      margin-left: 91.67%;
+      *margin-left: 91.665%;
+    }
+
+    .offset-sm-1-24 {
+      margin-left: 4.17%;
+      *margin-left: 4.165%;
+    }
+
+    .offset-sm-5-24 {
+      margin-left: 20.83%;
+      *margin-left: 20.825%;
+    }
+
+    .offset-sm-7-24 {
+      margin-left: 29.17%;
+      *margin-left: 29.165%;
+    }
+
+    .offset-sm-11-24 {
+      margin-left: 45.83%;
+      *margin-left: 45.825%;
+    }
+
+    .offset-sm-13-24 {
+      margin-left: 54.17%;
+      *margin-left: 54.165%;
+    }
+
+    .offset-sm-17-24 {
+      margin-left: 70.83%;
+      *margin-left: 70.825%;
+    }
+
+    .offset-sm-19-24 {
+      margin-left: 79.17%;
+      *margin-left: 79.165%;
+    }
+
+    .offset-sm-23-24 {
+      margin-left: 95.83%;
+      *margin-left: 95.825%;
+    }
+
+}
+
+@media screen and (min-width: 48em) {
+    .offset-md-0 {
+      margin-left:0;
+    }
+
+    .offset-md-1-2 {
+      margin-left: 50%;
+      *margin-left: 49.995%;
+    }
+
+    .offset-md-1-3 {
+      margin-left: 33.33%;
+      *margin-left: 33.325%;
+    }
+
+    .offset-md-2-3 {
+      margin-left: 66.67%;
+      *margin-left: 66.665%;
+    }
+
+    .offset-md-1-4 {
+      margin-left: 25%;
+      *margin-left: 24.995%;
+    }
+
+    .offset-md-3-4 {
+      margin-left: 75%;
+      *margin-left: 74.995%;
+    }
+
+    .offset-md-1-5 {
+      margin-left: 20%;
+      *margin-left: 19.995%;
+    }
+
+    .offset-md-2-5 {
+      margin-left: 40%;
+      *margin-left: 39.995%;
+    }
+
+    .offset-md-3-5 {
+      margin-left: 60%;
+      *margin-left: 59.995%;
+    }
+
+    .offset-md-4-5 {
+      margin-left: 80%;
+      *margin-left: 79.995%;
+    }
+
+    .offset-md-1-6 {
+      margin-left: 16.66%;
+      *margin-left: 16.655%;
+    }
+
+    .offset-md-5-6 {
+      margin-left: 83.33%;
+      *margin-left: 83.325%;
+    }
+
+    .offset-md-1-8 {
+      margin-left: 12.5%;
+      *margin-left: 12.495%;
+    }
+
+    .offset-md-3-8 {
+      margin-left: 37.5%;
+      *margin-left: 37.495%;
+    }
+
+    .offset-md-5-8 {
+      margin-left: 62.5%;
+      *margin-left: 62.495%;
+    }
+
+    .offset-md-7-8 {
+      margin-left: 87.5%;
+      *margin-left: 87.495%;
+    }
+
+    .offset-md-1-12 {
+      margin-left: 8.33%;
+      *margin-left: 8.325%;
+    }
+
+    .offset-md-5-12 {
+      margin-left: 41.67%;
+      *margin-left: 41.665%;
+    }
+
+    .offset-md-7-12 {
+      margin-left: 58.33%;
+      *margin-left: 58.325%;
+    }
+
+    .offset-md-11-12 {
+      margin-left: 91.67%;
+      *margin-left: 91.665%;
+    }
+
+    .offset-md-1-24 {
+      margin-left: 4.17%;
+      *margin-left: 4.165%;
+    }
+
+    .offset-md-5-24 {
+      margin-left: 20.83%;
+      *margin-left: 20.825%;
+    }
+
+    .offset-md-7-24 {
+      margin-left: 29.17%;
+      *margin-left: 29.165%;
+    }
+
+    .offset-md-11-24 {
+      margin-left: 45.83%;
+      *margin-left: 45.825%;
+    }
+
+    .offset-md-13-24 {
+      margin-left: 54.17%;
+      *margin-left: 54.165%;
+    }
+
+    .offset-md-17-24 {
+      margin-left: 70.83%;
+      *margin-left: 70.825%;
+    }
+
+    .offset-md-19-24 {
+      margin-left: 79.17%;
+      *margin-left: 79.165%;
+    }
+
+    .offset-md-23-24 {
+      margin-left: 95.83%;
+      *margin-left: 95.825%;
+    }
+
+}
+
+@media screen and (min-width: 64em) {
+    .offset-lg-0 {
+      margin-left:0;
+    }
+
+    .offset-lg-1-2 {
+      margin-left: 50%;
+      *margin-left: 49.995%;
+    }
+
+    .offset-lg-1-3 {
+      margin-left: 33.33%;
+      *margin-left: 33.325%;
+    }
+
+    .offset-lg-2-3 {
+      margin-left: 66.67%;
+      *margin-left: 66.665%;
+    }
+
+    .offset-lg-1-4 {
+      margin-left: 25%;
+      *margin-left: 24.995%;
+    }
+
+    .offset-lg-3-4 {
+      margin-left: 75%;
+      *margin-left: 74.995%;
+    }
+
+    .offset-lg-1-5 {
+      margin-left: 20%;
+      *margin-left: 19.995%;
+    }
+
+    .offset-lg-2-5 {
+      margin-left: 40%;
+      *margin-left: 39.995%;
+    }
+
+    .offset-lg-3-5 {
+      margin-left: 60%;
+      *margin-left: 59.995%;
+    }
+
+    .offset-lg-4-5 {
+      margin-left: 80%;
+      *margin-left: 79.995%;
+    }
+
+    .offset-lg-1-6 {
+      margin-left: 16.66%;
+      *margin-left: 16.655%;
+    }
+
+    .offset-lg-5-6 {
+      margin-left: 83.33%;
+      *margin-left: 83.325%;
+    }
+
+    .offset-lg-1-8 {
+      margin-left: 12.5%;
+      *margin-left: 12.495%;
+    }
+
+    .offset-lg-3-8 {
+      margin-left: 37.5%;
+      *margin-left: 37.495%;
+    }
+
+    .offset-lg-5-8 {
+      margin-left: 62.5%;
+      *margin-left: 62.495%;
+    }
+
+    .offset-lg-7-8 {
+      margin-left: 87.5%;
+      *margin-left: 87.495%;
+    }
+
+    .offset-lg-1-12 {
+      margin-left: 8.33%;
+      *margin-left: 8.325%;
+    }
+
+    .offset-lg-5-12 {
+      margin-left: 41.67%;
+      *margin-left: 41.665%;
+    }
+
+    .offset-lg-7-12 {
+      margin-left: 58.33%;
+      *margin-left: 58.325%;
+    }
+
+    .offset-lg-11-12 {
+      margin-left: 91.67%;
+      *margin-left: 91.665%;
+    }
+
+    .offset-lg-1-24 {
+      margin-left: 4.17%;
+      *margin-left: 4.165%;
+    }
+
+    .offset-lg-5-24 {
+      margin-left: 20.83%;
+      *margin-left: 20.825%;
+    }
+
+    .offset-lg-7-24 {
+      margin-left: 29.17%;
+      *margin-left: 29.165%;
+    }
+
+    .offset-lg-11-24 {
+      margin-left: 45.83%;
+      *margin-left: 45.825%;
+    }
+
+    .offset-lg-13-24 {
+      margin-left: 54.17%;
+      *margin-left: 54.165%;
+    }
+
+    .offset-lg-17-24 {
+      margin-left: 70.83%;
+      *margin-left: 70.825%;
+    }
+
+    .offset-lg-19-24 {
+      margin-left: 79.17%;
+      *margin-left: 79.165%;
+    }
+
+    .offset-lg-23-24 {
+      margin-left: 95.83%;
+      *margin-left: 95.825%;
+    }
+
+}
+
+@media screen and (min-width: 80em) {
+    .offset-xl-0 {
+      margin-left:0;
+    }
+
+    .offset-xl-1-2 {
+      margin-left: 50%;
+      *margin-left: 49.995%;
+    }
+
+    .offset-xl-1-3 {
+      margin-left: 33.33%;
+      *margin-left: 33.325%;
+    }
+
+    .offset-xl-2-3 {
+      margin-left: 66.67%;
+      *margin-left: 66.665%;
+    }
+
+    .offset-xl-1-4 {
+      margin-left: 25%;
+      *margin-left: 24.995%;
+    }
+
+    .offset-xl-3-4 {
+      margin-left: 75%;
+      *margin-left: 74.995%;
+    }
+
+    .offset-xl-1-5 {
+      margin-left: 20%;
+      *margin-left: 19.995%;
+    }
+
+    .offset-xl-2-5 {
+      margin-left: 40%;
+      *margin-left: 39.995%;
+    }
+
+    .offset-xl-3-5 {
+      margin-left: 60%;
+      *margin-left: 59.995%;
+    }
+
+    .offset-xl-4-5 {
+      margin-left: 80%;
+      *margin-left: 79.995%;
+    }
+
+    .offset-xl-1-6 {
+      margin-left: 16.66%;
+      *margin-left: 16.655%;
+    }
+
+    .offset-xl-5-6 {
+      margin-left: 83.33%;
+      *margin-left: 83.325%;
+    }
+
+    .offset-xl-1-8 {
+      margin-left: 12.5%;
+      *margin-left: 12.495%;
+    }
+
+    .offset-xl-3-8 {
+      margin-left: 37.5%;
+      *margin-left: 37.495%;
+    }
+
+    .offset-xl-5-8 {
+      margin-left: 62.5%;
+      *margin-left: 62.495%;
+    }
+
+    .offset-xl-7-8 {
+      margin-left: 87.5%;
+      *margin-left: 87.495%;
+    }
+
+    .offset-xl-1-12 {
+      margin-left: 8.33%;
+      *margin-left: 8.325%;
+    }
+
+    .offset-xl-5-12 {
+      margin-left: 41.67%;
+      *margin-left: 41.665%;
+    }
+
+    .offset-xl-7-12 {
+      margin-left: 58.33%;
+      *margin-left: 58.325%;
+    }
+
+    .offset-xl-11-12 {
+      margin-left: 91.67%;
+      *margin-left: 91.665%;
+    }
+
+    .offset-xl-1-24 {
+      margin-left: 4.17%;
+      *margin-left: 4.165%;
+    }
+
+    .offset-xl-5-24 {
+      margin-left: 20.83%;
+      *margin-left: 20.825%;
+    }
+
+    .offset-xl-7-24 {
+      margin-left: 29.17%;
+      *margin-left: 29.165%;
+    }
+
+    .offset-xl-11-24 {
+      margin-left: 45.83%;
+      *margin-left: 45.825%;
+    }
+
+    .offset-xl-13-24 {
+      margin-left: 54.17%;
+      *margin-left: 54.165%;
+    }
+
+    .offset-xl-17-24 {
+      margin-left: 70.83%;
+      *margin-left: 70.825%;
+    }
+
+    .offset-xl-19-24 {
+      margin-left: 79.17%;
+      *margin-left: 79.165%;
+    }
+
+    .offset-xl-23-24 {
+      margin-left: 95.83%;
+      *margin-left: 95.825%;
+    }
+
+
+}

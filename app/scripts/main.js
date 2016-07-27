@@ -66,4 +66,38 @@ $( document ).ready(function() {
 	// 1.3 Current year in footer
 		var currentYear = new Date().getFullYear();
 		if ($('.current-year').length) {$('.current-year').text(currentYear);}
+
+
+	// 1.4 DOCS NAV (CONTENTS)
+	if ($('.bs-docs-sidebar').length) {
+		var docsContents = $('.bs-docs-sidebar');
+
+		docsContents.affix({
+			offset: {
+				top: function() {
+					var c = docsContents.offset().top,
+						d = parseInt(docsContents.children(0).css("margin-top"), 10),
+						e = $("#top-nav").height();
+
+					return this.top = c - e - d;
+				}
+			}
+		});
+	}
+
+	// 1.5 Hash links
+	$(this).on('click', 'a[href^=#]:not([href=#menu])', function(e) {
+		if ($(this).prop('hash').split()[0] != '') {
+			e.preventDefault();
+			$('html, body').animate({
+				scrollTop: $($.attr(this, 'href')).offset().top - $('#top-nav').height() - 19   // + height of fixed header + padding from it
+			}, 300);
+		}
+	});
+
+	// 1.6 Pretty print
+	$('pre').addClass('prettyprint');
+
+	// 1.7 Tables 
+	$('table').addClass('pure-table');
 });

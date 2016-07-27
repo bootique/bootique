@@ -1,0 +1,156 @@
+// DOCS NAV (CONTENTS)
+
+.nav {
+    padding-left: 0;
+    margin-bottom: 0;
+    list-style: none;
+	
+	> li {
+	    position: relative;
+	    display: block;
+		
+		> a {
+		    position: relative;
+		    display: block;
+		    padding: 10px 15px;
+		}
+	}
+}
+
+
+
+.bs-docs-sidebar.affix {
+    position: static
+}
+
+@media screen and (min-width: $screen-md) {
+    .bs-docs-sidebar {
+        padding-left: 20px
+    }
+}
+
+.bs-docs-sidenav {
+    // margin-top: 20px;
+    margin-bottom: 20px
+}
+
+.bs-docs-sidebar .nav>li>a {
+    display: block;
+    padding: 4px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: $gray-mid-text;
+    transition: none;
+    text-decoration: none;
+}
+
+.bs-docs-sidebar .nav>li>a:focus,
+.bs-docs-sidebar .nav>li>a:hover {
+    padding-left: 19px;
+    color: $black;
+    text-decoration: none;
+    background-color: transparent;
+	border-left: 1px solid transparent;
+
+    @media screen and (min-width: $screen-md) {
+	    border-left: 1px solid $gray-dark-line-nav;
+	}
+
+}
+
+.bs-docs-sidebar .nav>.active .nav>.active>a:focus,
+.bs-docs-sidebar .nav>.active .nav>.active>a:hover,
+.bs-docs-sidebar .nav>.active .nav>.active>a {
+	border-left: 1px solid $gray-dark-line-nav;	
+	// padding-left: 19px;
+}
+
+.bs-docs-sidebar .nav>.active:focus>a,
+.bs-docs-sidebar .nav>.active:hover>a,
+.bs-docs-sidebar .nav>.active>a {
+    padding-left: 18px;
+    // font-weight: 600;
+    color: $black;
+    background-color: transparent;
+    border-left: 2px solid $gray-dark-line-nav;
+}
+
+.bs-docs-sidebar .nav .nav {
+    display: none;
+    padding-bottom: 10px
+}
+
+.bs-docs-sidebar .nav .nav>li>a {
+    padding-top: 1px;
+    padding-bottom: 1px;
+    padding-left: 30px;
+    font-size: 14px;
+    font-weight: 400
+}
+
+.bs-docs-sidebar .nav .nav>li>a:focus,
+.bs-docs-sidebar .nav .nav>li>a:hover {
+    padding-left: 29px
+}
+
+.bs-docs-sidebar .nav .nav>.active:focus>a,
+.bs-docs-sidebar .nav .nav>.active:hover>a,
+.bs-docs-sidebar .nav .nav>.active>a {
+    padding-left: 29px;
+    font-weight: 500
+}
+
+// @media screen and (min-width: $screen-md) {
+    .bs-docs-sidebar .nav>.active>ul {
+        display: block
+    }
+    .bs-docs-sidebar.affix,
+    .bs-docs-sidebar.affix-bottom {
+        width: 255px
+    }
+    .bs-docs-sidebar.affix {
+        position: fixed;
+        top: 100px
+    }
+    .bs-docs-sidebar.affix-bottom {
+        position: absolute
+    }
+    .bs-docs-sidebar.affix .bs-docs-sidenav,
+    .bs-docs-sidebar.affix-bottom .bs-docs-sidenav {
+        margin-top: 0;
+        // margin-bottom: 0
+    }
+// }
+
+// ^^
+// from top
+	@media screen and (max-width: $screen-sm-max) {
+		.bs-docs-sidebar.affix {
+	        position: static;
+	        top: 100px
+	    }
+
+	    .bs-docs-sidebar .nav .nav {
+	    	display: block;
+	    }
+	}
+
+@media screen and (min-width: $screen-lg) {
+    .bs-docs-sidebar.affix,
+    .bs-docs-sidebar.affix-bottom {
+        width: 263px
+    }
+}
+
+
+
+.back-to-top {
+    // display: none;
+    padding: 4px 10px;
+    // margin-top: 10px;
+    margin-left: 10px;
+    font-size: 12px;
+    color: $gray-light-text;
+    text-transform: uppercase;
+    text-decoration: none;
+}

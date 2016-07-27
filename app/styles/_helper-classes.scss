@@ -94,6 +94,27 @@ HELPER CLASSES
 		}
 
 	// LISTS
+
+		// List options
+			// [converter] extracted from `.list-unstyled` for libsass compatibility
+				@mixin list-unstyled {
+					padding-left: 0;
+					list-style: none;
+				}
+			// [converter] extracted as `@mixin list-unstyled` for libsass compatibility
+				.list-unstyled {
+					@include list-unstyled;
+				}
+		
+			// Inline turns list items into inline-block
+				.list-inline {
+					@include list-unstyled;
+
+					> li {
+						display: inline-block;
+					}
+				}
+
 		// LIST `,` (comma) divider
 			.list-commmas {
 				margin-left: 0;
@@ -117,7 +138,8 @@ HELPER CLASSES
 
 				li {
 					position: relative;
-					padding: 0 8px; 
+					padding: 0 8px;
+					list-style: none;
 
 					&:before {
 						content: '\007C'; // = '|'
@@ -181,6 +203,12 @@ HELPER CLASSES
 		.text-40 {
 			font-size: 40px;
 		}
+
+	// FONT WRAPPING
+		.nowrap,
+		.nowrap * {
+			white-space: nowrap;
+		}
 	
 	// FONT COLORS
 		// SOCIAL
@@ -201,4 +229,18 @@ HELPER CLASSES
 		.text-underline,
 		.link-imitation {
 			text-decoration: underline;
+		}
+
+
+// LINKS
+	// FIXED HEADER ANCHOR LINKS OFFSET
+		@mixin fixed-header-anchor-offset($header-height: 80px, $offset-from-header: 20px) {
+
+			&:before {
+				content:"";
+				display:block;
+				height: $header-height + $offset-from-header; /* fixed header height*/
+				margin:-($header-height + $offset-from-header) 0 0; /* negative fixed header height */
+			}
+
 		}

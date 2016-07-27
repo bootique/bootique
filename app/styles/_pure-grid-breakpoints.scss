@@ -1,0 +1,19 @@
+// RWD BREAKPOINTS
+
+	// xl
+	$screen-xl: 1201px;
+
+	// lg
+	$screen-lg: 1200px;
+
+	// md
+	$screen-md-max: $screen-lg - 1;		// 1199px
+	$screen-md: 1024px;
+
+	// sm
+	$screen-sm-max: $screen-md - 1;		// 1023px
+	$screen-sm: 768px;
+	
+	// xs
+	$screen-xs-max: $screen-sm - 1;		// 767px
+	$screen-xs: 320px;

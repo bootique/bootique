@@ -5,14 +5,17 @@
   @import 'bower_components/purecss-sass/vendor/assets/stylesheets/purecss/grids-responsive';
   // @import 'bower_components/purecss-sass/vendor/assets/stylesheets/purecss/buttons';
   @import 'bower_components/purecss-sass/vendor/assets/stylesheets/purecss/menus';
+  @import 'bower_components/purecss-sass/vendor/assets/stylesheets/purecss/tables';
+
 
 // VARS RE-DEFENITION
   // FONT AWESOME (FULL SET)
   // $fa-font-path: "../bower_components/font-aweso1me/fonts";
 
 // custom:scss
-  @import 'mixins', 'helper-classes';
-  @import 'typography', 'docbook';
+  @import 'pure-grid-breakpoints', 'pure-grid-offsets';
+  @import 'mixins', 'helper-classes', 'helpers/bs/media'; 
+  @import 'color-pallette','typography', 'docbook';
 
 // wiredep|bower:scss 
 // wiredep|endbower
@@ -97,6 +100,10 @@
       }
     }
 
+    [data-spy="scroll"] {
+      position: relative;
+    }
+
     h1, h2, h3, h4, h5, h6 {
 
       > a {
@@ -154,6 +161,14 @@
 
 
   // GRID
+    .pure-g {
+      /* IE10 uses display: flexbox */
+      display: -ms-flexbox;
+      -ms-flex-flow: row wrap;
+
+      display: -webkit-flex;
+      -webkit-flex-flow: row wrap;
+    }
     .container {
       margin-left: auto;
       margin-right: auto;
