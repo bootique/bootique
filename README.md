@@ -10,13 +10,13 @@ app with minimal setup.
 
 Each Bootique app is a collection of modules interacting with each other via dependency injection. This GitHub project 
 provides Bootique core. Bootique team also develops a number of important modules. A full list is available 
-[here](http://bootique.io/docs/0/bootique-docs/).
+[here](http://bootique.io/docs/).
 
 ## Quick Links
 
 * [WebSite](http://bootique.io)
 * [Getting Started](http://bootique.io/docs/0/getting-started/)
-* [Docs](http://bootique.io/docs/0/bootique-docs/) - documentation collection for Bootique core and all standard 
+* [Docs](http://bootique.io/docs/) - documentation collection for Bootique core and all standard 
   modules.
 
 ## Support
