@@ -8,7 +8,7 @@ simple commands. No JavaEE container required! Among other things Bootique is an
 Java [microservices](http://martinfowler.com/articles/microservices.html), as it allows you to create a fully-functional
 app with minimal setup.
 
-Each Bootoque app is a collection of modules interacting with each other via dependency injection. This GitHub project 
+Each Bootique app is a collection of modules interacting with each other via dependency injection. This GitHub project 
 provides Bootique core. Bootique team also develops a number of important modules. A full list is available 
 [here](http://bootique.io/docs/0/bootique-docs/).
 
