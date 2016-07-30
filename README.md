@@ -81,3 +81,9 @@ public class Application {
 It has ```main()``` method, so you can run it! 
 
 *For a more detailed tutorial proceed to [this link](http://bootique.io/docs/0/getting-started/).*
+
+## Upgrading
+
+See the "maven-central" badge above for the current production version of the 2 ```bootique-bom``` collection modules. 
+When upgrading, don't forget to check [upgrade notes](https://github.com/nhl/bootique-bom/blob/master/UPGRADE.md) 
+specific to your version.
