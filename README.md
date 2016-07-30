@@ -2,10 +2,15 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.nhl.bootique/bootique/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.nhl.bootique/bootique/)
 
 Bootique is a [minimally opinionated](https://medium.com/@andrus_a/bootique-a-minimally-opinionated-platform-for-modern-java-apps-644194c23872#.odwmsbnbh) 
-technology for building container-less runnable Java applications. With Bootique you can create REST services, webapps, 
-jobs, DB migration tasks, etc. and run them as if they were simple commands. No JavaEE container required! Among other 
-things Bootique is an ideal platform for Java [microservices](http://martinfowler.com/articles/microservices.html), 
-as it allows you to create a fully functional app with minimal setup.
+java launcher and integration technology. It is intended for building container-less runnable Java applications. 
+With Bootique you can create REST services, webapps, jobs, DB migration tasks, etc. and run them as if they were 
+simple commands. No JavaEE container required! Among other things Bootique is an ideal platform for 
+Java [microservices](http://martinfowler.com/articles/microservices.html), as it allows you to create a fully-functional
+app with minimal setup.
+
+Each Bootoque app is a collection of modules interacting with each other via dependency injection. This GitHub project 
+provides Bootique core. Bootique team also develops a number of important modules. A full list is available 
+[here](http://bootique.io/docs/0/bootique-docs/).
 
 ## Quick Links
 
@@ -25,7 +30,7 @@ You have two options:
 
 For the impatient, here is how to get started with Bootique:
 
-1. Import two official module collections:
+* Import two official module collections:
 ```xml
 <dependencyManagement>
 	<dependencies>
@@ -46,7 +51,7 @@ For the impatient, here is how to get started with Bootique:
 	</dependencies>
 </dependencyManagement>
 ```
-2. Include the modules that you need:
+* Include the modules that you need:
 ```xml
 <dependencies>
 	<dependency>
@@ -61,19 +66,18 @@ For the impatient, here is how to get started with Bootique:
 	</dependency>
 </dependencies>
 ```
-3. Write your app:
+* Write your app:
 ```java
 package com.foo;
 
 import com.nhl.bootique.Bootique;
 
 public class Application {
-
 	public static void main(String[] args) {
 		Bootique.app(args).autoLoadModules().run();
 	}
 }
 ```
-It has the main menthod, so you can run it! 
+It has ```main()``` method, so you can run it! 
 
-*For more detailed tutorial proceed to [this link](http://bootique.io/docs/0/getting-started/).*
+*For a more detailed tutorial proceed to [this link](http://bootique.io/docs/0/getting-started/).*
