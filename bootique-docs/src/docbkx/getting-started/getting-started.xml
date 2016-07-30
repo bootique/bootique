@@ -7,14 +7,21 @@
         <title>Hello World in Bootique</title>
         <para>The goal of this chapter is to write a simple REST app using Bootique. Let's start
             with a new Java Maven project created in your favorite IDE. Your <code>pom.xml</code> in
-            addition to the required project information tags will need to declare one artifact in
-            the <code>&lt;dependencyManagement/></code>
+            addition to the required project information tags will need to declare a few BOM ("Bill
+            of Material") imports in the <code>&lt;dependencyManagement/></code>
             section:<programlisting language="xml">&lt;dependencyManagement>
 	&lt;dependencies>
 		&lt;dependency>
+			&lt;groupId>io.bootique.bom&lt;/groupId>
+			&lt;artifactId>bootique-bom&lt;/artifactId>
+			&lt;version>0.18&lt;/version>
+			&lt;type>pom&lt;/type>
+			&lt;scope>import&lt;/scope>
+		&lt;/dependency>
+		&lt;dependency>
 			&lt;groupId>com.nhl.bootique.bom&lt;/groupId>
 			&lt;artifactId>bootique-bom&lt;/artifactId>
-			&lt;version>0.17&lt;/version>
+			&lt;version>0.18&lt;/version>
 			&lt;type>pom&lt;/type>
 			&lt;scope>import&lt;/scope>
 		&lt;/dependency>
