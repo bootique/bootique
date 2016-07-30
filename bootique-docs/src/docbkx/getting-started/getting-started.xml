@@ -242,7 +242,7 @@ java -jar target/myapp-1.0.jar --server --config=myconfig.yml</programlisting></
             accessible at <link xlink:href="http://localhost:10001/hello"
                 >http://localhost:10001/hello</link>. Now your jar can be deployed in any
             environment that has Java 8. </para>
-        <para>This concludes our simple tutorial. From here you can inspect our <link
+        <para>This concludes our simple tutorial. Now you can explore our <link
                 xlink:href="http://bootique.io/docs/">documentation</link> to read more about
             Bootique core and individual modules.</para>
     </chapter>
