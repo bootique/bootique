@@ -19,7 +19,6 @@
 	<modules>
 		<module>bootique</module>
 		<module>bootique-test</module>
-		<module>bootique-index-docs</module>
 		<module>bootique-docs</module>
 	</modules>
 
