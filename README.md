@@ -30,7 +30,7 @@ You have two options:
 
 For the impatient, here is how to get started with Bootique:
 
-* Import two official module collections:
+* Declare 2 official module collections:
 ```xml
 <dependencyManagement>
 	<dependencies>
