@@ -1,3 +1,7 @@
+## 0.19
+
+* #84 Cache SubtypeResolver in DefaultJacksonService
+
 ## 0.18
 
 * #73 Test ResourceFactory and FolderResourceFactory on Windows

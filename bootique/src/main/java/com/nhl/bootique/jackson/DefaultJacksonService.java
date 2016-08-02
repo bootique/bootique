@@ -8,15 +8,19 @@ import com.nhl.bootique.log.BootLogger;
 public class DefaultJacksonService implements JacksonService {
 
 	private BootLogger bootLogger;
+	private SubtypeResolver subtypeResolver;
 
 	public DefaultJacksonService(BootLogger bootLogger) {
 		this.bootLogger = bootLogger;
+		this.subtypeResolver = createResolver();
 	}
 
 	@Override
 	public ObjectMapper newObjectMapper() {
 		ObjectMapper mapper = new ObjectMapper();
-		mapper.setSubtypeResolver(createResolver());
+
+		// reusing cached resolver; factory ensures it is immutable...
+		mapper.setSubtypeResolver(subtypeResolver);
 		return mapper;
 	}
 
