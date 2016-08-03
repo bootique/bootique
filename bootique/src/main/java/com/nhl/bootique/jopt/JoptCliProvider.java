@@ -1,12 +1,5 @@
 package com.nhl.bootique.jopt;
 
-import static java.util.stream.Collectors.joining;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.nhl.bootique.annotation.Args;
@@ -16,10 +9,16 @@ import com.nhl.bootique.command.Command;
 import com.nhl.bootique.command.CommandManager;
 import com.nhl.bootique.command.CommandMetadata;
 import com.nhl.bootique.log.BootLogger;
-
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpecBuilder;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
+import static java.util.stream.Collectors.joining;
 
 public class JoptCliProvider implements Provider<Cli> {
 
@@ -104,7 +103,7 @@ public class JoptCliProvider implements Provider<Cli> {
 			return matches.keySet().iterator().next();
 		default:
 			String opts = matches.keySet().stream().collect(joining(", "));
-			String message = String.format("Ambiguos options, matched multiple commands: %s", opts);
+			String message = String.format("Ambiguous options, matched multiple commands: %s", opts);
 
 			// TODO: BootiqueException?
 			throw new RuntimeException(message);
