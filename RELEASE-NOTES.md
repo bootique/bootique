@@ -1,6 +1,7 @@
 ## 0.19
 
 * #84 Cache SubtypeResolver in DefaultJacksonService
+* #85 API to override log levels
 
 ## 0.18
 

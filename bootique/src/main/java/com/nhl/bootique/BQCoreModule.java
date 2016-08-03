@@ -1,10 +1,5 @@
 package com.nhl.bootique;
 
-import java.time.Duration;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.Provides;
@@ -15,6 +10,7 @@ import com.nhl.bootique.annotation.Args;
 import com.nhl.bootique.annotation.DefaultCommand;
 import com.nhl.bootique.annotation.EnvironmentProperties;
 import com.nhl.bootique.annotation.EnvironmentVariables;
+import com.nhl.bootique.annotation.LogLevels;
 import com.nhl.bootique.cli.Cli;
 import com.nhl.bootique.cli.CliOption;
 import com.nhl.bootique.command.Command;
@@ -35,6 +31,12 @@ import com.nhl.bootique.run.Runner;
 import com.nhl.bootique.shutdown.DefaultShutdownManager;
 import com.nhl.bootique.shutdown.ShutdownManager;
 import com.nhl.bootique.shutdown.ShutdownTimeout;
+
+import java.time.Duration;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.logging.Level;
 
 /**
  * The main {@link Module} of Bootique DI runtime. Declares a minimal set of
@@ -98,6 +100,19 @@ public class BQCoreModule implements Module {
 		return MapBinder.newMapBinder(binder, String.class, String.class, EnvironmentVariables.class);
 	}
 
+	/**
+	 * Provides a way to set default log levels for specific loggers. These settings can be overridden via Bootique
+	 * configuration of whatever logging module you might use, like bootique-logback. This feature may be handy to
+	 * suppress chatty third-party loggers, but still allow users to turn them on via configuration.
+	 *
+	 * @param binder DI binder passed to the Module that invokes this method.
+	 * @return {@link MapBinder} for Bootique properties.
+	 * @since 0.19
+	 */
+	public static MapBinder<String, Level> contributeLogLevels(Binder binder) {
+		return MapBinder.newMapBinder(binder, String.class, Level.class, LogLevels.class);
+	}
+
 	private BQCoreModule() {
 		this.shutdownTimeout = Duration.ofMillis(10000l);
 	}
@@ -123,6 +138,7 @@ public class BQCoreModule implements Module {
 		BQCoreModule.contributeVariables(binder);
 		BQCoreModule.contributeCommands(binder).addBinding().to(HelpCommand.class).in(Singleton.class);
 		BQCoreModule.contributeOptions(binder).addBinding().toInstance(createConfigOption());
+		BQCoreModule.contributeLogLevels(binder);
 	}
 
 	CliOption createConfigOption() {
