@@ -484,7 +484,7 @@ public CommandOutcome run(Cli cli) {
         </section>
         <section>
             <title>Injection in Commands</title>
-            <para>Commands can inject services, just like most other other classes in Bootique.
+            <para>Commands can inject services, just like most other classes in Bootique.
                 There are some specifics though. Since commands are sometimes instantiated, but not
                 executed (e.g. when <code>--help</code> is run that lists all commands), it is often
                 desirable to avoid immediate instantiation of all dependencies of a given command.
