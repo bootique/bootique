@@ -38,42 +38,42 @@ public class ResourceFactoryTest {
 
 	@Test
 	public void testGetCanonicalFile() throws IOException {
-		File file = new ResourceFactory("").getCanonicalFile("./src/test/resources/com/nhl/bootique/config/test1.yml");
-		File expected = new File(System.getProperty("user.dir") + "/src/test/resources/com/nhl/bootique/config/test1.yml");
+		File file = new ResourceFactory("").getCanonicalFile("./src/test/resources/io/bootique/config/test1.yml");
+		File expected = new File(System.getProperty("user.dir") + "/src/test/resources/io/bootique/config/test1.yml");
 		assertEquals(expected, file);
 	}
 
 	@Test
 	public void testGetUrl_File() throws IOException {
-		assertEquals("a: b", resourceContents("src/test/resources/com/nhl/bootique/config/test1.yml"));
+		assertEquals("a: b", resourceContents("src/test/resources/io/bootique/config/test1.yml"));
 	}
 
 	@Test
 	public void testGetUrl_File_DotSlash() throws IOException {
-		assertEquals("a: b", resourceContents("./src/test/resources/com/nhl/bootique/config/test1.yml"));
+		assertEquals("a: b", resourceContents("./src/test/resources/io/bootique/config/test1.yml"));
 	}
 
 	@Test
 	public void testGetUrl_FileUrl() throws IOException {
-		String fileUrl = fileUrl("src/test/resources/com/nhl/bootique/config/test2.yml");
+		String fileUrl = fileUrl("src/test/resources/io/bootique/config/test2.yml");
 		assertEquals("c: d", resourceContents(fileUrl));
 	}
 
 	@Test
 	public void testGetUrl_JarUrl() throws IOException {
-		String jarUrl = jarEntryUrl("src/test/resources/com/nhl/bootique/config/test3.jar", "com/foo/test3.yml");
+		String jarUrl = jarEntryUrl("src/test/resources/io/bootique/config/test3.jar", "com/foo/test3.yml");
 		assertEquals("e: f", resourceContents(jarUrl));
 	}
 
 	@Test
 	public void testGetUrl_ClasspathUrl() throws IOException {
-		String cpUrl = "classpath:com/nhl/bootique/config/test2.yml";
+		String cpUrl = "classpath:io/bootique/config/test2.yml";
 		assertEquals("c: d", resourceContents(cpUrl));
 	}
 
 	@Test(expected = RuntimeException.class)
 	public void testGetUrl_ClasspathUrlWithSlash() throws IOException {
-		String cpUrl = "classpath:/com/nhl/bootique/config/test2.yml";
+		String cpUrl = "classpath:/io/bootique/config/test2.yml";
 		resourceContents(cpUrl);
 	}
 }

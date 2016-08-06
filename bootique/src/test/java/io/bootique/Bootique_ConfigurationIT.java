@@ -18,8 +18,8 @@ public class Bootique_ConfigurationIT {
 
 	@Test
 	public void testConfigConfig() {
-		BQRuntime runtime = runtimeFactory.newRuntime().build("--config=src/test/resources/com/nhl/bootique/test1.yml",
-				"--config=src/test/resources/com/nhl/bootique/test2.yml");
+		BQRuntime runtime = runtimeFactory.newRuntime().build("--config=src/test/resources/io/bootique/test1.yml",
+				"--config=src/test/resources/io/bootique/test2.yml");
 
 		Map<String, String> config = runtime.getInstance(ConfigurationFactory.class)
 				.config(new TypeRef<Map<String, String>>() {
@@ -29,8 +29,8 @@ public class Bootique_ConfigurationIT {
 
 	@Test
 	public void testConfigConfig_Reverse() {
-		BQRuntime runtime = runtimeFactory.newRuntime().build("--config=src/test/resources/com/nhl/bootique/test2.yml",
-				"--config=src/test/resources/com/nhl/bootique/test1.yml");
+		BQRuntime runtime = runtimeFactory.newRuntime().build("--config=src/test/resources/io/bootique/test2.yml",
+				"--config=src/test/resources/io/bootique/test1.yml");
 
 		Map<String, String> config = runtime.getInstance(ConfigurationFactory.class)
 				.config(new TypeRef<Map<String, String>>() {
@@ -41,7 +41,7 @@ public class Bootique_ConfigurationIT {
 	@Test
 	public void testConfigEnvOverrides() {
 		BQRuntime runtime = runtimeFactory.newRuntime().var("BQ_A", "F")
-				.build("--config=src/test/resources/com/nhl/bootique/test2.yml");
+				.build("--config=src/test/resources/io/bootique/test2.yml");
 
 		Map<String, String> config = runtime.getInstance(ConfigurationFactory.class)
 				.config(new TypeRef<Map<String, String>>() {
@@ -53,7 +53,7 @@ public class Bootique_ConfigurationIT {
 	@Test
 	public void testConfigEnvOverrides_Nested() {
 		BQRuntime runtime = runtimeFactory.newRuntime().var("BQ_A", "F").var("BQ_C_M_F", "F1").var("BQ_C_M_K", "3")
-				.build("--config=src/test/resources/com/nhl/bootique/test3.yml");
+				.build("--config=src/test/resources/io/bootique/test3.yml");
 
 		Bean1 b1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
 

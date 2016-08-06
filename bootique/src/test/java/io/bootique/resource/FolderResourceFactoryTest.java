@@ -38,17 +38,17 @@ public class FolderResourceFactoryTest {
 
     @Test
     public void testGetUrl_Subresource_RootClasspathUrl() throws IOException {
-        assertEquals("c: d", resourceContents("classpath:", "com/nhl/bootique/config/test2.yml"));
+        assertEquals("c: d", resourceContents("classpath:", "io/bootique/config/test2.yml"));
     }
 
     @Test
     public void testGetUrl_Subresource_ClasspathUrl() throws IOException {
-        assertEquals("c: d", resourceContents("classpath:com/nhl/bootique/config", "test2.yml"));
+        assertEquals("c: d", resourceContents("classpath:io/bootique/config", "test2.yml"));
     }
 
     @Test
     public void testGetUrl_Subresource_FileProtocolUrl() throws IOException {
-        String folder = FolderResourceFactoryTest.class.getResource("/com/nhl/bootique/config").getPath();
+        String folder = FolderResourceFactoryTest.class.getResource("/io/bootique/config").getPath();
         assertEquals("c: d", resourceContents("file:" + folder, "test2.yml"));
         assertEquals("c: d", resourceContents("file://" + folder, "test2.yml"));
     }

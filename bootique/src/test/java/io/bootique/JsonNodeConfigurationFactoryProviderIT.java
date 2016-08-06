@@ -24,7 +24,7 @@ public class JsonNodeConfigurationFactoryProviderIT {
 
 	@BeforeClass
 	public static void beforeClass() {
-		WEB_CONFIG_FACTORY.newRuntime().resourceUrl(new ResourceFactory("classpath:com/nhl/bootique"))
+		WEB_CONFIG_FACTORY.newRuntime().resourceUrl(new ResourceFactory("classpath:io/bootique"))
 				.build("--server");
 	}
 

@@ -33,7 +33,7 @@ public class CliConfigurationSource_WebConfigSourceIT {
 	@Test
 	public void testGet_HttpUrl() {
 
-		testFactory.newRuntime().resourceUrl(new ResourceFactory("classpath:com/nhl/bootique/config"))
+		testFactory.newRuntime().resourceUrl(new ResourceFactory("classpath:io/bootique/config"))
 				.build("--server");
 
 		String url = "http://localhost:12025/CliConfigurationSource_WebConfigSourceIT1.yml";

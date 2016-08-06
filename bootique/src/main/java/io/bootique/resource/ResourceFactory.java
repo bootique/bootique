@@ -94,7 +94,7 @@ public class ResourceFactory {
      * @throws IOException
      */
     // using canonical file avoids downstream bugs like this:
-    // https://github.com/nhl/bootique-jetty/issues/29
+    // https://github.com/bootique/bootique-jetty/issues/29
     protected File getCanonicalFile(String resourceId) throws IOException {
         return new File(resourceId).getCanonicalFile();
     }

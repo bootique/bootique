@@ -159,7 +159,7 @@ public class JsonNodeConfigurationFactoryTest {
 	@Test
 	public void testConfig_ResourceFactory() throws IOException {
 
-		ResourceFactoryHolder rfh = factory("resourceFactory: classpath:com/nhl/bootique/config/resourcefactory.txt")
+		ResourceFactoryHolder rfh = factory("resourceFactory: classpath:io/bootique/config/resourcefactory.txt")
 				.config(ResourceFactoryHolder.class, "");
 		assertNotNull(rfh);
 		assertNotNull(rfh.resourceFactory);
