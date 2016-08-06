@@ -12,8 +12,8 @@ script:
   - 'if [ "$TRAVIS_SECURE_ENV_VARS" = "false" ]; then mvn clean verify; fi'
 
 
-# travis encrypt -r nhl/bootique "CI_DEPLOY_USERNAME='name'"
-# travis encrypt -r nhl/bootique "CI_DEPLOY_PASSWORD='password'"
+# travis encrypt -r bootique/bootique "CI_DEPLOY_USERNAME='name'"
+# travis encrypt -r bootique/bootique "CI_DEPLOY_PASSWORD='password'"
 env:
   global:
     - secure: "CDO2VNKgMS+oJiRD2I93SSKaA9sLvLTjrWMa6YlD6y90OHI9q3ajiKepJc9ejxkOVN0PEX9K88DANO3AF2LgkvfliW8qswOrOXav3QzNfAJxhjpkrGufv95hGNhk5h05SARxGL+/MqwrNUQcZnko3Gmt4LvIlEFAW1ZKE3NNdJmq5Q2UOAnyuyNUkFMDcEHdnVKsNn0T8BUi3wCp4aqsO794tVMi+oYAeFlQPSCktHmDtlDsAr9i+Qpi7Lr0DZaWN6+X0N+icivRrUvVwsWJqvbYGtElgeAFbrh6yVLPKawOrWUZzi5XYNPwR1XKQT0PQW9YGtWbvK0cqDc30HFGbs8OXQAy6pH9abU60J+qY+oBEls1eqzynSxxDi0bu5TM2Md9SR64yBlNPD7wu2jdxRjdbcF2tpBLzhEnQrC+yhfR+w3laIzKVX/BXkqPcD6z6hLYDeXZdwrwff06vimAodGd7SJ0NvpEUgHrKqreGuASjCI8aePE9Y1IbxP5daNCprXVTe0kwLM9CcARvPQEAZvnYpcYsNbesgX/CbSdIybvFbdO/9mZ/waIXN5ZYQJOXeqRIIVPk02Pl2Kj+SkDv4N9PaxhrHQAUop/p15Ysplz8ggRMYhD/4Te3DAB+r3B4y7YPZXssllilxbIG5Wr3ZMgUXxBLzwjJck43PXHjQw="
