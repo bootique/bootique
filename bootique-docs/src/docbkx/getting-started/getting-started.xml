@@ -14,14 +14,7 @@
 		&lt;dependency>
 			&lt;groupId>io.bootique.bom&lt;/groupId>
 			&lt;artifactId>bootique-bom&lt;/artifactId>
-			&lt;version>0.18&lt;/version>
-			&lt;type>pom&lt;/type>
-			&lt;scope>import&lt;/scope>
-		&lt;/dependency>
-		&lt;dependency>
-			&lt;groupId>com.nhl.bootique.bom&lt;/groupId>
-			&lt;artifactId>bootique-bom&lt;/artifactId>
-			&lt;version>0.18&lt;/version>
+			&lt;version>0.19&lt;/version>
 			&lt;type>pom&lt;/type>
 			&lt;scope>import&lt;/scope>
 		&lt;/dependency>
@@ -32,12 +25,12 @@
             create this section and import a few
             modules:<programlisting language="xml">&lt;dependencies>
 	&lt;dependency>
-		&lt;groupId>com.nhl.bootique.jersey&lt;/groupId>
+		&lt;groupId>io.bootique.jersey&lt;/groupId>
 		&lt;artifactId>bootique-jersey&lt;/artifactId>
 		&lt;scope>compile&lt;/scope>
 	&lt;/dependency>
 	&lt;dependency>
-		&lt;groupId>com.nhl.bootique.logback&lt;/groupId>
+		&lt;groupId>io.bootique.logback&lt;/groupId>
 		&lt;artifactId>bootique-logback&lt;/artifactId>
 		&lt;scope>compile&lt;/scope>
 	&lt;/dependency>
@@ -48,7 +41,7 @@
             main Java class that will run the
             app:<programlisting language="java">package com.foo;
 
-import com.nhl.bootique.Bootique;
+import io.bootique.Bootique;
 
 public class Application {
 
@@ -91,8 +84,8 @@ public class HelloResource {
             resource:<programlisting language="java">package com.foo;
 
 import com.google.inject.Module;
-import com.nhl.bootique.Bootique;
-import com.nhl.bootique.jersey.JerseyModule;
+import io.bootique.Bootique;
+import io.bootique.jersey.JerseyModule;
 
 public class Application {
 
@@ -180,7 +173,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 import com.google.inject.Inject;
-import com.nhl.bootique.annotation.Args;
+import io.bootique.annotation.Args;
 
 @Path("/")
 public class HelloResource {
@@ -216,9 +209,9 @@ public class HelloResource {
                 <code>maven-shade-plugin</code>. To simplify it, you can set a parent of your
                 <code>pom.xml</code> to be a standard Bootique
             parent:<programlisting language="xml">&lt;parent>
-    &lt;groupId>com.nhl.bootique.parent&lt;/groupId>
+    &lt;groupId>io.bootique.parent&lt;/groupId>
     &lt;artifactId>bootique-parent&lt;/artifactId>
-    &lt;version>0.11&lt;/version>
+    &lt;version>0.12&lt;/version>
 &lt;/parent></programlisting></para>
         <para>Other required <code>pom.xml</code>
             additions:<programlisting language="xml">&lt;properties>

@@ -15,7 +15,7 @@
         <title>Creating Test Stacks</title>
         <para>To use basic Bootique test framework, import the following module in the "test"
             scope:<programlisting language="xml">&lt;dependency>
-	&lt;groupId>com.nhl.bootique&lt;/groupId>
+	&lt;groupId>io.bootique&lt;/groupId>
 	&lt;artifactId>bootique-test&lt;/artifactId>
 	&lt;scope>test&lt;/scope>
 &lt;/dependency></programlisting>For
@@ -142,7 +142,7 @@ public void testCommand() {
             <title>Testing Module Validity</title>
             <para>When you are writing your own modules, you may want to check that they are
                 configured properly for autoloading (i.e.
-                    <code>META-INF/services/com.nhl.bootique.BQModuleProvider</code> is present in
+                    <code>META-INF/services/io.bootique.BQModuleProvider</code> is present in
                 the expected place and contains the right provider. There's a helper class to check
                 for
                 it:<programlisting>@Test

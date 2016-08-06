@@ -38,7 +38,7 @@
             Java <link
                 xlink:href="https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html"
                 >ServiceLoader mechanism</link>. To ensure your modules can be auto-loaded do two
-            things. First implement <code>com.nhl.bootique.BQModuleProvider</code> interface
+            things. First implement <code>io.bootique.BQModuleProvider</code> interface
             specific to your
             module:<programlisting language="java">public class MyModuleProvider implements BQModuleProvider {
 	@Override
@@ -46,7 +46,7 @@
 		return new MyModule();
 	}
 }</programlisting>After
-            then create a file <code>META-INF/services/com.nhl.bootique.BQModuleProvider</code> with
+            then create a file <code>META-INF/services/io.bootique.BQModuleProvider</code> with
             the only line being the name of your BQModuleProvider implementor. E.g.:</para>
             <programlisting>com.foo.MyModuleProvider</programlisting>
             <para><code>BQModuleProvider</code> has two more methods that you can optionally
@@ -285,7 +285,7 @@ public class ConcreteType2 extends SuperType {
 	
 }</programlisting></para>
             <para>After that we need to create a service provider file called
-                    <code>META-INF/service/com.nhl.bootique.config.PolymorphicConfiguration</code>
+                    <code>META-INF/service/io.bootique.config.PolymorphicConfiguration</code>
                 where all the types participating in the hierarchy are listed (including the
                 supertype):<programlisting>com.foo.SuperType
 com.foo.ConcreteType1
@@ -302,7 +302,7 @@ com.foo.ConcreteType2</programlisting></para>
     someOtherVar: someOtherVal</programlisting></para>
             <para>If another module decides to create yet another subclass of SuperType, it will
                 need to create its own
-                    <code>META-INF/service/com.nhl.bootique.config.PolymorphicConfiguration</code>
+                    <code>META-INF/service/io.bootique.config.PolymorphicConfiguration</code>
                 file that mentions the new subclass.</para>
         </section>
     </chapter>
@@ -324,7 +324,7 @@ com.foo.ConcreteType2</programlisting></para>
             </itemizedlist></para>
             <para>Import case is trivial, so we'll concentrate on the two remaining scenarios. We
             will use <link
-                xlink:href="https://github.com/nhl/bootique/blob/master/bootique/src/main/java/com/nhl/bootique/BQCoreModule.java"
+                xlink:href="https://github.com/bootique/bootique/blob/master/bootique/src/main/java/io/bootique/BQCoreModule.java"
                 >BQCoreModule</link> as an example of an upstream module, as it is available in all
             apps.</para>
         <section>
@@ -398,7 +398,7 @@ com.foo.ConcreteType2</programlisting></para>
             <title>Common Main Class</title>
             <para>If all your code is packaged in auto-loadable modules (which is always a good
                 idea), you may not even need a custom main class.
-                    <code>com.nhl.bootique.Bootique</code> class itself declares a
+                    <code>io.bootique.Bootique</code> class itself declares a
                     <code>main()</code> method and can be used as an app launcher. This creates some
                 interesting possibilities. E.g. you can create Java projects that have no code of
                 their own and are simply collections of modules declared as compile dependencies.
@@ -426,9 +426,9 @@ Option                    Description
             <title>Writing Commands</title>
             <para>Most common commands are already available in various standard modules, still
                 often you'd need to write your own. To do that, first create a command class. It
-                should implement <code>com.nhl.bootique.command.Command</code> interface, though
+                should implement <code>io.bootique.command.Command</code> interface, though
                 usually it more practical to extend
-                    <code>com.nhl.bootique.command.CommandWithMetadata</code> and provide some
+                    <code>io.bootique.command.CommandWithMetadata</code> and provide some
                 metadata used in help and
                 elsewhere:<programlisting language="java">public class MyCommand extends CommandWithMetadata {
 
@@ -513,7 +513,7 @@ public CommandOutcome run(Cli cli) {
 
 BQCoreModule.contributeOptions(binder).addBinding().toInstance(option);</programlisting>To
             read a value of the option, a service should inject
-                <code>com.nhl.bootique.cli.Cli</code> object (commands also get this object as a
+                <code>io.bootique.cli.Cli</code> object (commands also get this object as a
             parameter to "run")
             :<programlisting language="java">@Inject
 private Cli cli;
@@ -544,7 +544,7 @@ public void doSomething() {
                     <code>bootique-logback</code> can be enabled by simply adding it to the pom.xml
                 dependencies, assuming <code>autoLoadModules()</code> is in
                 effect:<programlisting language="xml">&lt;dependency>
-	&lt;groupId>com.nhl.bootique.logback&lt;/groupId>
+	&lt;groupId>io.bootique.logback&lt;/groupId>
 	&lt;artifactId>bootique-logback&lt;/artifactId>
 &lt;/dependency></programlisting>See
                     <code>bootique-logback</code> module <link

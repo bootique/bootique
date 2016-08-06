@@ -1,5 +1,5 @@
-[![Build Status](https://travis-ci.org/nhl/bootique.svg)](https://travis-ci.org/nhl/bootique)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.nhl.bootique/bootique/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.nhl.bootique/bootique/)
+[![Build Status](https://travis-ci.org/bootique/bootique.svg)](https://travis-ci.org/bootique/bootique)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.bootique/bootique/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.bootique/bootique/)
 
 Bootique is a [minimally opinionated](https://medium.com/@andrus_a/bootique-a-minimally-opinionated-platform-for-modern-java-apps-644194c23872#.odwmsbnbh) 
 java launcher and integration technology. It is intended for building container-less runnable Java applications. 
@@ -22,7 +22,7 @@ provides Bootique core. Bootique team also develops a number of important module
 ## Support
 
 You have two options:
-* [Open an issue](https://github.com/nhl/bootique/issues) on GitHub with a label of "help wanted" or "question" 
+* [Open an issue](https://github.com/bootique/bootique/issues) on GitHub with a label of "help wanted" or "question" 
   (or "bug" if you think you found a bug).
 * Post a question on the [Bootique forum](https://groups.google.com/forum/#!forum/bootique-user).
 
@@ -30,24 +30,17 @@ You have two options:
 
 For the impatient, here is how to get started with Bootique:
 
-* Declare 2 official module collections:
+* Declare the official module collection:
 ```xml
 <dependencyManagement>
 	<dependencies>
 		<dependency>
             <groupId>io.bootique.bom</groupId>
             <artifactId>bootique-bom</artifactId>
-            <version>0.18</version>
+            <version>0.19</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency> 
-		<dependency>
-			<groupId>com.nhl.bootique.bom</groupId>
-			<artifactId>bootique-bom</artifactId>
-			<version>0.18</version>
-			<type>pom</type>
-			<scope>import</scope>
-		</dependency>
 	</dependencies>
 </dependencyManagement>
 ```
@@ -55,12 +48,12 @@ For the impatient, here is how to get started with Bootique:
 ```xml
 <dependencies>
 	<dependency>
-		<groupId>com.nhl.bootique.jersey</groupId>
+		<groupId>io.bootique.jersey</groupId>
 		<artifactId>bootique-jersey</artifactId>
 		<scope>compile</scope>
 	</dependency>
 	<dependency>
-		<groupId>com.nhl.bootique.logback</groupId>
+		<groupId>io.bootique.logback</groupId>
 		<artifactId>bootique-logback</artifactId>
 		<scope>compile</scope>
 	</dependency>
@@ -70,7 +63,7 @@ For the impatient, here is how to get started with Bootique:
 ```java
 package com.foo;
 
-import com.nhl.bootique.Bootique;
+import io.bootique.Bootique;
 
 public class Application {
 	public static void main(String[] args) {
@@ -85,5 +78,5 @@ It has ```main()``` method, so you can run it!
 ## Upgrading
 
 See the "maven-central" badge above for the current production version of the 2 ```bootique-bom``` collection modules. 
-When upgrading, don't forget to check [upgrade notes](https://github.com/nhl/bootique-bom/blob/master/UPGRADE.md) 
+When upgrading, don't forget to check [upgrade notes](https://github.com/bootique/bootique/blob/master/UPGRADE.md) 
 specific to your version.

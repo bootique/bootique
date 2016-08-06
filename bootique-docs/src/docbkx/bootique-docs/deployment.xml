@@ -8,9 +8,9 @@
             simplfy its configuration, your app <code>pom.xml</code> may inherit from
                 <code>bootique-parent</code> pom. In this case configuration would look like
             this:<programlisting language="xml">&lt;parent>
-    &lt;groupId>com.nhl.bootique.parent&lt;/groupId>
+    &lt;groupId>io.bootique.parent&lt;/groupId>
     &lt;artifactId>bootique-parent&lt;/artifactId>
-    &lt;version>0.11&lt;/version>
+    &lt;version>0.12&lt;/version>
 &lt;/parent>
 
 ...
@@ -23,7 +23,7 @@
     &lt;/plugins>
 &lt;/build></programlisting></para>
         <para>This configuration will build an app with the framework-provided main class, namely
-                <code>com.nhl.bootique.Bootique</code>. If you want to use a custom main class (and
+                <code>io.bootique.Bootique</code>. If you want to use a custom main class (and
             in most cases you do), you will need to redefine Maven <code>main.class</code>
             property:<programlisting language="java">&lt;properties>
     &lt;main.class>com.foo.Application&lt;/main.class>
@@ -31,7 +31,7 @@
         <para>If you want to avoid inheriting from the framework parent pom, you will need to
             explicitly provide the following unwieldy configuration similar to the one found in
                 <link
-                xlink:href="https://repo1.maven.org/maven2/com/nhl/bootique/parent/bootique-parent/0.10/bootique-parent-0.10.pom"
+                xlink:href="https://repo1.maven.org/maven2/io/bootique/parent/bootique-parent/0.12/bootique-parent-0.12.pom"
                     ><code>bootique-parent</code></link>:<programlisting language="java">&lt;plugin>
 	&lt;groupId>org.apache.maven.plugins&lt;/groupId>
 	&lt;artifactId>maven-shade-plugin&lt;/artifactId>
