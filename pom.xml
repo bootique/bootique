@@ -3,12 +3,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>com.nhl.bootique.parent</groupId>
+		<groupId>io.bootique.parent</groupId>
 		<artifactId>bootique-parent</artifactId>
-		<version>0.10</version>
+		<version>0.12</version>
 	</parent>
 
-	<groupId>com.nhl.bootique</groupId>
+	<groupId>io.bootique</groupId>
 	<artifactId>bootique-framework-parent</artifactId>
 	<version>0.19-SNAPSHOT</version>
 	<packaging>pom</packaging>
@@ -23,8 +23,8 @@
 	</modules>
 
 	<scm>
-		<developerConnection>scm:git:ssh://git@github.com/nhl/bootique</developerConnection>
-		<url>https://github.com/nhl/bootique</url>
+		<developerConnection>scm:git:ssh://git@github.com/bootique/bootique</developerConnection>
+		<url>https://github.com/bootique/bootique</url>
 		<tag>HEAD</tag>
 	</scm>
 

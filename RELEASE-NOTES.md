@@ -2,6 +2,7 @@
 
 * #84 Cache SubtypeResolver in DefaultJacksonService
 * #85 API to override log levels
+* #87 Move to io.bootique namespace
 
 ## 0.18
 

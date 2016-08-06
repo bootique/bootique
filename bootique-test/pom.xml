@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>com.nhl.bootique</groupId>
+		<groupId>io.bootique</groupId>
 		<artifactId>bootique-framework-parent</artifactId>
 		<version>0.19-SNAPSHOT</version>
 	</parent>
@@ -48,7 +48,7 @@
 
 		<!-- Compile dependencies -->
 		<dependency>
-			<groupId>com.nhl.bootique</groupId>
+			<groupId>io.bootique</groupId>
 			<artifactId>bootique</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
