@@ -1,4 +1,4 @@
-package com.nhl.bootique.test;
+package io.bootique.test;
 
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;

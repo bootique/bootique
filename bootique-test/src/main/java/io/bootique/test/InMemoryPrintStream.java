@@ -1,4 +1,4 @@
-package com.nhl.bootique.test;
+package io.bootique.test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;

@@ -1,12 +1,13 @@
-package com.nhl.bootique.test.junit;
+package io.bootique.test.junit;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertNotSame;
 
+import io.bootique.test.junit.BQDaemonTestFactory;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.nhl.bootique.test.BQDaemonTestRuntime;
+import io.bootique.test.BQDaemonTestRuntime;
 
 public class BQDaemonTestFactoryIT {
 

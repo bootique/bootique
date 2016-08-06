@@ -1,4 +1,4 @@
-package com.nhl.bootique.test.junit;
+package io.bootique.test.junit;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,7 +16,7 @@ import org.junit.rules.ExternalResource;
 import com.google.inject.multibindings.MapBinder;
 import io.bootique.BQCoreModule;
 import io.bootique.Bootique;
-import com.nhl.bootique.test.BQDaemonTestRuntime;
+import io.bootique.test.BQDaemonTestRuntime;
 
 /**
  * Manages a "daemon" Bootique stack within a lifecycle of the a JUnit test.

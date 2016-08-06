@@ -1,4 +1,4 @@
-package com.nhl.bootique.test.junit;
+package io.bootique.test.junit;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import io.bootique.test.BQTestRuntime;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.rules.ExternalResource;
@@ -15,7 +16,6 @@ import com.google.inject.multibindings.MapBinder;
 import io.bootique.BQCoreModule;
 import io.bootique.Bootique;
 import io.bootique.config.ConfigurationFactory;
-import com.nhl.bootique.test.BQTestRuntime;
 
 /**
  * Manages a simple Bootique stack within a lifecycle of the a JUnit test. It

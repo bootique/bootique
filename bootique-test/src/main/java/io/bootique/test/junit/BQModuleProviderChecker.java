@@ -1,4 +1,4 @@
-package com.nhl.bootique.test.junit;
+package io.bootique.test.junit;
 
 import static java.util.stream.Collectors.counting;
 import static org.junit.Assert.fail;
