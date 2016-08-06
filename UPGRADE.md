@@ -33,8 +33,7 @@ names in imports, and the name of BQModuleProvider service file in your modules.
 Note that there was a brief period of time (0.18) when required both BOMs to be imported. Not anymore. ```io.bootique```
 one is sufficient now.
 
-* Look for Java compilation errors in yoru IDE, and change ```com.nhl.bootique.*``` import statements to 
-  ```io.bootique.*```.
+* Look for Java compilation errors in yoru IDE, and change ```com.nhl.bootique.*``` import statements to ```io.bootique.*``` .
 
 * If you've written any auto-loadable modules, should have ```META-INF/services/com.nhl.bootique.BQModuleProvider``` sitting
   somewhere in your source. Make sure you rename these files to ```META-INF/services/io.bootique.BQModuleProvider```.
