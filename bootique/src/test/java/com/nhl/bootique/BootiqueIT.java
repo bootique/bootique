@@ -9,13 +9,16 @@ import static org.junit.Assert.assertTrue;
 import java.util.Collection;
 import java.util.Collections;
 
+import io.bootique.BQCoreModule;
+import io.bootique.BQModuleProvider;
+import io.bootique.Bootique;
 import org.junit.Test;
 
 import com.google.inject.Binder;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
-import com.nhl.bootique.annotation.Args;
+import io.bootique.annotation.Args;
 import com.nhl.bootique.it.ItestModuleProvider;
 
 public class BootiqueIT {

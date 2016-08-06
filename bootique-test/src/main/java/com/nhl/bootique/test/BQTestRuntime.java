@@ -1,10 +1,10 @@
 package com.nhl.bootique.test;
 
-import com.nhl.bootique.BQRuntime;
-import com.nhl.bootique.Bootique;
-import com.nhl.bootique.command.CommandOutcome;
-import com.nhl.bootique.log.BootLogger;
-import com.nhl.bootique.log.DefaultBootLogger;
+import io.bootique.BQRuntime;
+import io.bootique.Bootique;
+import io.bootique.command.CommandOutcome;
+import io.bootique.log.BootLogger;
+import io.bootique.log.DefaultBootLogger;
 
 import java.util.function.Consumer;
 

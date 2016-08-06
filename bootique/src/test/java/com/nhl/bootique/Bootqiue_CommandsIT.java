@@ -7,15 +7,17 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 
+import io.bootique.BQCoreModule;
+import io.bootique.Bootique;
 import org.junit.Test;
 
 import com.google.inject.Binder;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.nhl.bootique.command.Command;
-import com.nhl.bootique.command.CommandManager;
-import com.nhl.bootique.command.CommandMetadata;
-import com.nhl.bootique.command.DefaultCommandManager;
+import io.bootique.command.Command;
+import io.bootique.command.CommandManager;
+import io.bootique.command.CommandMetadata;
+import io.bootique.command.DefaultCommandManager;
 
 public class Bootqiue_CommandsIT {
 

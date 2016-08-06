@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
+import io.bootique.jackson.DefaultJacksonService;
 import org.junit.Test;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -18,8 +19,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.TreeTraversingParser;
-import com.nhl.bootique.config.PolymorphicConfiguration;
-import com.nhl.bootique.log.DefaultBootLogger;
+import io.bootique.config.PolymorphicConfiguration;
+import io.bootique.log.DefaultBootLogger;
 
 public class DefaultJacksonServiceIT {
 

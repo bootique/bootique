@@ -7,14 +7,15 @@ import static org.mockito.Mockito.mock;
 
 import java.util.Collection;
 
+import io.bootique.BQCoreModule;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.nhl.bootique.cli.Cli;
-import com.nhl.bootique.config.CliConfigurationSource;
-import com.nhl.bootique.log.BootLogger;
+import io.bootique.cli.Cli;
+import io.bootique.config.CliConfigurationSource;
+import io.bootique.log.BootLogger;
 
 public class BQCoreModule_DefaultCliOptionsIT {
 

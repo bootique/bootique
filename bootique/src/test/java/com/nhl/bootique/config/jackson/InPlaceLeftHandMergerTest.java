@@ -5,13 +5,14 @@ import static org.junit.Assert.assertSame;
 
 import java.io.IOException;
 
+import io.bootique.config.jackson.InPlaceLeftHandMerger;
 import org.junit.Test;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nhl.bootique.log.DefaultBootLogger;
+import io.bootique.log.DefaultBootLogger;
 
 public class InPlaceLeftHandMergerTest {
 

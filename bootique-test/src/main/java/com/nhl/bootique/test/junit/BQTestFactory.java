@@ -12,9 +12,9 @@ import org.junit.Rule;
 import org.junit.rules.ExternalResource;
 
 import com.google.inject.multibindings.MapBinder;
-import com.nhl.bootique.BQCoreModule;
-import com.nhl.bootique.Bootique;
-import com.nhl.bootique.config.ConfigurationFactory;
+import io.bootique.BQCoreModule;
+import io.bootique.Bootique;
+import io.bootique.config.ConfigurationFactory;
 import com.nhl.bootique.test.BQTestRuntime;
 
 /**

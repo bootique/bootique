@@ -5,6 +5,7 @@ import static org.mockito.Mockito.verify;
 
 import java.time.Duration;
 
+import io.bootique.shutdown.DefaultShutdownManager;
 import org.junit.Before;
 import org.junit.Test;
 

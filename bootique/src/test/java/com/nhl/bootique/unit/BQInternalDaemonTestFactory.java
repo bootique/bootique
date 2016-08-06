@@ -15,9 +15,9 @@ import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.nhl.bootique.BQRuntime;
-import com.nhl.bootique.Bootique;
-import com.nhl.bootique.log.BootLogger;
+import io.bootique.BQRuntime;
+import io.bootique.Bootique;
+import io.bootique.log.BootLogger;
 
 public class BQInternalDaemonTestFactory extends BQInternalTestFactory {
 

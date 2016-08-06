@@ -15,11 +15,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.function.Function;
 
+import io.bootique.config.CliConfigurationSource;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.nhl.bootique.cli.Cli;
-import com.nhl.bootique.log.BootLogger;
+import io.bootique.cli.Cli;
+import io.bootique.log.BootLogger;
 
 public class CliConfigurationSourceTest {
 

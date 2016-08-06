@@ -12,10 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.inject.multibindings.MapBinder;
-import com.nhl.bootique.BQCoreModule;
-import com.nhl.bootique.BQRuntime;
-import com.nhl.bootique.Bootique;
-import com.nhl.bootique.log.DefaultBootLogger;
+import io.bootique.BQCoreModule;
+import io.bootique.BQRuntime;
+import io.bootique.Bootique;
+import io.bootique.log.DefaultBootLogger;
 
 public class BQInternalTestFactory extends ExternalResource {
 	private static final Logger LOGGER = LoggerFactory.getLogger(BQInternalTestFactory.class);

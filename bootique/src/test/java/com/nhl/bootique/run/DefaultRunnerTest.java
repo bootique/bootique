@@ -13,17 +13,18 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import io.bootique.run.DefaultRunner;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.nhl.bootique.cli.Cli;
-import com.nhl.bootique.cli.CliOption;
-import com.nhl.bootique.command.Command;
-import com.nhl.bootique.command.CommandManager;
-import com.nhl.bootique.command.CommandMetadata;
-import com.nhl.bootique.command.CommandMetadata.Builder;
-import com.nhl.bootique.command.CommandOutcome;
-import com.nhl.bootique.command.DefaultCommandManager;
+import io.bootique.cli.Cli;
+import io.bootique.cli.CliOption;
+import io.bootique.command.Command;
+import io.bootique.command.CommandManager;
+import io.bootique.command.CommandMetadata;
+import io.bootique.command.CommandMetadata.Builder;
+import io.bootique.command.CommandOutcome;
+import io.bootique.command.DefaultCommandManager;
 
 public class DefaultRunnerTest {
 

@@ -16,9 +16,9 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.nhl.bootique.config.jackson.JsonNodeConfigurationFactory;
-import com.nhl.bootique.resource.ResourceFactory;
-import com.nhl.bootique.type.TypeRef;
+import io.bootique.config.jackson.JsonNodeConfigurationFactory;
+import io.bootique.resource.ResourceFactory;
+import io.bootique.type.TypeRef;
 
 public class JsonNodeConfigurationFactoryTest {
 

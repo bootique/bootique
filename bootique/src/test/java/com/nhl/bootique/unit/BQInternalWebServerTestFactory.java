@@ -18,15 +18,15 @@ import com.google.inject.Module;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.nhl.bootique.BQCoreModule;
-import com.nhl.bootique.BQRuntime;
-import com.nhl.bootique.Bootique;
-import com.nhl.bootique.cli.Cli;
-import com.nhl.bootique.command.Command;
-import com.nhl.bootique.command.CommandOutcome;
-import com.nhl.bootique.env.Environment;
-import com.nhl.bootique.resource.ResourceFactory;
-import com.nhl.bootique.shutdown.ShutdownManager;
+import io.bootique.BQCoreModule;
+import io.bootique.BQRuntime;
+import io.bootique.Bootique;
+import io.bootique.cli.Cli;
+import io.bootique.command.Command;
+import io.bootique.command.CommandOutcome;
+import io.bootique.env.Environment;
+import io.bootique.resource.ResourceFactory;
+import io.bootique.shutdown.ShutdownManager;
 
 /**
  * A test factory that serves static resources out of "target"

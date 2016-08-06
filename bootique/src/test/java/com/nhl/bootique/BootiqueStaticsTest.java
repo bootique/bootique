@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
+import io.bootique.Bootique;
 import org.junit.Test;
 
 import com.google.inject.Binder;

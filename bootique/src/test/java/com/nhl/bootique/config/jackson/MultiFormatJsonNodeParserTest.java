@@ -14,11 +14,12 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import io.bootique.config.jackson.MultiFormatJsonNodeParser;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.nhl.bootique.config.jackson.MultiFormatJsonNodeParser.ParserType;
-import com.nhl.bootique.log.BootLogger;
+import io.bootique.config.jackson.MultiFormatJsonNodeParser.ParserType;
+import io.bootique.log.BootLogger;
 
 public class MultiFormatJsonNodeParserTest {
 

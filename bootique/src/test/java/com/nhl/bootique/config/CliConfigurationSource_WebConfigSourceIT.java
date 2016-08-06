@@ -7,13 +7,14 @@ import static org.mockito.Mockito.mock;
 import java.net.URL;
 import java.util.function.Function;
 
+import io.bootique.config.CliConfigurationSource;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.nhl.bootique.cli.Cli;
-import com.nhl.bootique.log.BootLogger;
-import com.nhl.bootique.resource.ResourceFactory;
+import io.bootique.cli.Cli;
+import io.bootique.log.BootLogger;
+import io.bootique.resource.ResourceFactory;
 import com.nhl.bootique.unit.BQInternalWebServerTestFactory;
 
 public class CliConfigurationSource_WebConfigSourceIT {

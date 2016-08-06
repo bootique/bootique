@@ -4,16 +4,18 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Collections;
 
+import io.bootique.BQRuntime;
+import io.bootique.JsonNodeConfigurationFactoryProvider;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.nhl.bootique.config.ConfigurationSource;
-import com.nhl.bootique.env.Environment;
-import com.nhl.bootique.jackson.JacksonService;
-import com.nhl.bootique.resource.ResourceFactory;
+import io.bootique.config.ConfigurationSource;
+import io.bootique.env.Environment;
+import io.bootique.jackson.JacksonService;
+import io.bootique.resource.ResourceFactory;
 import com.nhl.bootique.unit.BQInternalTestFactory;
 import com.nhl.bootique.unit.BQInternalWebServerTestFactory;
 

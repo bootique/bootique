@@ -1,7 +1,7 @@
 package com.nhl.bootique.it;
 
 import com.google.inject.Module;
-import com.nhl.bootique.BQModuleProvider;
+import io.bootique.BQModuleProvider;
 
 public class ItestModuleProvider implements BQModuleProvider {
 

@@ -15,15 +15,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.bootique.JsonNodeConfigurationFactoryProvider;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nhl.bootique.config.ConfigurationFactory;
-import com.nhl.bootique.config.ConfigurationSource;
-import com.nhl.bootique.config.jackson.JsonNodeConfigurationFactory;
-import com.nhl.bootique.env.Environment;
-import com.nhl.bootique.jackson.JacksonService;
-import com.nhl.bootique.log.DefaultBootLogger;
+import io.bootique.config.ConfigurationFactory;
+import io.bootique.config.ConfigurationSource;
+import io.bootique.config.jackson.JsonNodeConfigurationFactory;
+import io.bootique.env.Environment;
+import io.bootique.jackson.JacksonService;
+import io.bootique.log.DefaultBootLogger;
 
 public class JsonNodeConfigurationFactoryProviderTest {
 

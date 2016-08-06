@@ -1,5 +1,6 @@
 package com.nhl.bootique.resource;
 
+import io.bootique.resource.FolderResourceFactory;
 import org.junit.Test;
 
 import java.io.IOException;

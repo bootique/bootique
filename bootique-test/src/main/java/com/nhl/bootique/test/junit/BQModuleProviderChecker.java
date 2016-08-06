@@ -7,13 +7,13 @@ import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.stream.StreamSupport;
 
-import com.nhl.bootique.BQModuleProvider;
+import io.bootique.BQModuleProvider;
 
 /**
  * A helper class to simplify writing the tests that need to check that a
  * specified {@link BQModuleProvider} is available via ServiceLoader mechanism.
  * This is a useful test as
- * <code>META-INF/services/com.nhl.bootique.BQModuleProvider</code> files can
+ * <code>META-INF/services/BQModuleProvider</code> files can
  * contain typos or omissions. Sample usage:
  * 
  * <pre>

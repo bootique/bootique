@@ -4,11 +4,12 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Map;
 
+import io.bootique.BQRuntime;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-import com.nhl.bootique.config.ConfigurationFactory;
-import com.nhl.bootique.type.TypeRef;
+import io.bootique.config.ConfigurationFactory;
+import io.bootique.type.TypeRef;
 import com.nhl.bootique.unit.BQInternalTestFactory;
 
 public class Bootique_ConfigurationIT {

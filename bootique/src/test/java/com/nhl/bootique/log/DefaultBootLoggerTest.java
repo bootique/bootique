@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 
 import java.io.PrintStream;
 
+import io.bootique.log.DefaultBootLogger;
 import org.junit.Before;
 import org.junit.Test;
 

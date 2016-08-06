@@ -14,8 +14,8 @@ import org.junit.Rule;
 import org.junit.rules.ExternalResource;
 
 import com.google.inject.multibindings.MapBinder;
-import com.nhl.bootique.BQCoreModule;
-import com.nhl.bootique.Bootique;
+import io.bootique.BQCoreModule;
+import io.bootique.Bootique;
 import com.nhl.bootique.test.BQDaemonTestRuntime;
 
 /**

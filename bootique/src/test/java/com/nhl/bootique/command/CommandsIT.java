@@ -9,13 +9,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.bootique.command.Command;
+import io.bootique.command.CommandManager;
+import io.bootique.command.CommandMetadata;
+import io.bootique.command.CommandOutcome;
+import io.bootique.command.Commands;
+import io.bootique.command.HelpCommand;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.nhl.bootique.BQModuleProvider;
-import com.nhl.bootique.BQRuntime;
-import com.nhl.bootique.Bootique;
-import com.nhl.bootique.cli.Cli;
+import io.bootique.BQModuleProvider;
+import io.bootique.BQRuntime;
+import io.bootique.Bootique;
+import io.bootique.cli.Cli;
 
 public class CommandsIT {
 

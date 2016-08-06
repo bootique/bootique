@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
 
+import io.bootique.resource.ResourceFactory;
 import org.junit.Test;
 
 public class ResourceFactoryTest {

@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
+import io.bootique.config.jackson.JsonNodeJsonParser;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;

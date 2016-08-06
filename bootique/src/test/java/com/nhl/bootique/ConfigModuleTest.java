@@ -2,6 +2,7 @@ package com.nhl.bootique;
 
 import static org.junit.Assert.assertEquals;
 
+import io.bootique.ConfigModule;
 import org.junit.Test;
 
 public class ConfigModuleTest {

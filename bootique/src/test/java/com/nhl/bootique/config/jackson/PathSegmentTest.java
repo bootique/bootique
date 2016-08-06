@@ -7,6 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Optional;
 
+import io.bootique.config.jackson.PathSegment;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;

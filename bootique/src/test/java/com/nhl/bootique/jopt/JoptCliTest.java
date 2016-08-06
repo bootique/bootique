@@ -9,10 +9,11 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 
+import io.bootique.jopt.JoptCli;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.nhl.bootique.log.BootLogger;
+import io.bootique.log.BootLogger;
 
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
