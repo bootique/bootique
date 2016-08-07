@@ -9,7 +9,7 @@ Checkout the web site:
 cd <main_bootique_checkout>/../
 
 # checkout a second copy of Bootique to be able to copy stuff between the branches
-git clone git@github.com:nhl/bootique.git bootique-pages 
+git clone git@github.com:bootique/bootique.git bootique-pages 
 
 # get on the website branch
 git checkout -b gh-pages origin/gh-pages
