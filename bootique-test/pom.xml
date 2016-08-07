@@ -55,14 +55,6 @@
 		</dependency>
 	</dependencies>
 
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-failsafe-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
-
 	<!-- Optional profile used to sign artifacts -->
 	<profiles>
 		<profile>
