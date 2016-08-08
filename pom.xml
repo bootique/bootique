@@ -22,6 +22,14 @@
 		<module>bootique-docs</module>
 	</modules>
 
+    <distributionManagement>
+        <repository>
+            <id>bintray-bootique-releases</id>
+            <name>bintray-bootique-releases</name>
+            <url>https://api.bintray.com/maven/bootique/releases/bootique/;publish=1</url>
+        </repository>
+    </distributionManagement>
+
 	<!-- Optional profile used to sign artifacts -->
 	<profiles>
 		<profile>
