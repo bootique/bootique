@@ -36,10 +36,10 @@ one is sufficient now.
 * Look for Java compilation errors in your IDE, and change ```com.nhl.bootique.*``` import statements to ```io.bootique.*```.
 
 * If you've written any auto-loadable modules, you will have ```META-INF/services/com.nhl.bootique.BQModuleProvider``` 
-  files sitting somewhere in your source. Make sure you rename these files to ```META-INF/services/io.bootique.BQModuleProvider```.
+  files sitting somewhere in your source.Rename these files to ```META-INF/services/io.bootique.BQModuleProvider```.
 
-* If you've written any polymorphic config extensions, you will have ```META-INF/services/com.nhl.bootique.config.PolymorphicConfiguration``` 
-  files sitting somewhere in your source. Make sure you rename these files to ```META-INF/services/io.bootique.config.PolymorphicConfiguration```.
+* Similarly if you've written any polymorphic config extensions, your sources will have ```META-INF/services/com.nhl.bootique.config.PolymorphicConfiguration``` 
+  files somewhere. Rename these files to ```META-INF/services/io.bootique.config.PolymorphicConfiguration```.
 
 
 ## 0.18
