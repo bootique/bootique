@@ -17,14 +17,7 @@
 		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;dependency&gt;</span>
 			<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;groupId&gt;</span>io.bootique.bom<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/groupId&gt;</span>
 			<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;artifactId&gt;</span>bootique-bom<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/artifactId&gt;</span>
-			<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;version&gt;</span>0.18<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/version&gt;</span>
-			<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;type&gt;</span>pom<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/type&gt;</span>
-			<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;scope&gt;</span>import<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/scope&gt;</span>
-		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/dependency&gt;</span>
-		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;dependency&gt;</span>
-			<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;groupId&gt;</span>com.nhl.bootique.bom<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/groupId&gt;</span>
-			<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;artifactId&gt;</span>bootique-bom<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/artifactId&gt;</span>
-			<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;version&gt;</span>0.18<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/version&gt;</span>
+			<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;version&gt;</span>0.19<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/version&gt;</span>
 			<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;type&gt;</span>pom<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/type&gt;</span>
 			<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;scope&gt;</span>import<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/scope&gt;</span>
 		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/dependency&gt;</span>
@@ -34,12 +27,12 @@
             create this section and import a few
             modules:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;dependencies&gt;</span>
 	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;dependency&gt;</span>
-		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;groupId&gt;</span>com.nhl.bootique.jersey<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/groupId&gt;</span>
+		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;groupId&gt;</span>io.bootique.jersey<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/groupId&gt;</span>
 		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;artifactId&gt;</span>bootique-jersey<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/artifactId&gt;</span>
 		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;scope&gt;</span>compile<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/scope&gt;</span>
 	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/dependency&gt;</span>
 	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;dependency&gt;</span>
-		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;groupId&gt;</span>com.nhl.bootique.logback<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/groupId&gt;</span>
+		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;groupId&gt;</span>io.bootique.logback<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/groupId&gt;</span>
 		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;artifactId&gt;</span>bootique-logback<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/artifactId&gt;</span>
 		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;scope&gt;</span>compile<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/scope&gt;</span>
 	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/dependency&gt;</span>
@@ -49,7 +42,7 @@
             main Java class that will run the
             app:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">package</span> com.foo;
 
-<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">import</span> com.nhl.bootique.Bootique;
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">import</span> io.bootique.Bootique;
 
 <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span> Application {
 
@@ -88,8 +81,8 @@
             resource:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">package</span> com.foo;
 
 <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">import</span> com.google.inject.Module;
-<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">import</span> com.nhl.bootique.Bootique;
-<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">import</span> com.nhl.bootique.jersey.JerseyModule;
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">import</span> io.bootique.Bootique;
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">import</span> io.bootique.jersey.JerseyModule;
 
 <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span> Application {
 
@@ -153,7 +146,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 import com.google.inject.Inject;
-import com.nhl.bootique.annotation.Args;
+import io.bootique.annotation.Args;
 
 @Path("/")
 public class HelloResource {
@@ -181,9 +174,9 @@ public class HelloResource {
                 <code class="code">maven-shade-plugin</code>. To simplify it, you can set a parent of your
                 <code class="code">pom.xml</code> to be a standard Bootique
             parent:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;parent&gt;</span>
-    <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;groupId&gt;</span>com.nhl.bootique.parent<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/groupId&gt;</span>
+    <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;groupId&gt;</span>io.bootique.parent<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/groupId&gt;</span>
     <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;artifactId&gt;</span>bootique-parent<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/artifactId&gt;</span>
-    <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;version&gt;</span>0.11<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/version&gt;</span>
+    <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;version&gt;</span>0.12<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/version&gt;</span>
 <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/parent&gt;</span></pre><p>Other required <code class="code">pom.xml</code>
             additions:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;properties&gt;</span>
     <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;main.class&gt;</span>com.foo.Application<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/main.class&gt;</span>

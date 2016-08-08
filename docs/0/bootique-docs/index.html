@@ -53,7 +53,7 @@
                 <a class="link" href="https://github.com/google/guice/wiki/Multibindings" target="_top">Multibinding</a>.</p></div><div class="chapter" title="Chapter&nbsp;6.&nbsp;Modules Auto-Loading"><div class="titlepage"><div><div><h2 class="title"><a name="programming-module-providers"></a>Chapter&nbsp;6.&nbsp;Modules Auto-Loading</h2></div></div></div><p>Modules can be automatically loaded via <code class="code">Bootique.autoLoadModules()</code> as
             long as they are included in your aplication dependencies. Auto-loading depends on the
             Java <a class="link" href="https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html" target="_top">ServiceLoader mechanism</a>. To ensure your modules can be auto-loaded do two
-            things. First implement <code class="code">com.nhl.bootique.BQModuleProvider</code> interface
+            things. First implement <code class="code">io.bootique.BQModuleProvider</code> interface
             specific to your
             module:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span> MyModuleProvider <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">implements</span> BQModuleProvider {
 	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-annotation">@Override</span>
@@ -61,7 +61,7 @@
 		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">return</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">new</span> MyModule();
 	}
 }</pre><p>After
-            then create a file <code class="code">META-INF/services/com.nhl.bootique.BQModuleProvider</code> with
+            then create a file <code class="code">META-INF/services/io.bootique.BQModuleProvider</code> with
             the only line being the name of your BQModuleProvider implementor. E.g.:</p><pre class="programlisting">com.foo.MyModuleProvider</pre><p><code class="code">BQModuleProvider</code> has two more methods that you can optionally
             implement to help Bootique to make sense of the module being
             loaded:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span> MyModuleProvider <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">implements</span> BQModuleProvider {
@@ -247,7 +247,7 @@ export BQ_MY_PROP1=valY</pre><p>While
 <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span> ConcreteType2 <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">extends</span> SuperType {
 	
 }</pre><p>After that we need to create a service provider file called
-                    <code class="code">META-INF/service/com.nhl.bootique.config.PolymorphicConfiguration</code>
+                    <code class="code">META-INF/service/io.bootique.config.PolymorphicConfiguration</code>
                 where all the types participating in the hierarchy are listed (including the
                 supertype):</p><pre class="programlisting">com.foo.SuperType
 com.foo.ConcreteType1
@@ -261,12 +261,12 @@ com.foo.ConcreteType2</pre><p>This should be enough to work with configuration l
   subconfig:
     someOtherVar: someOtherVal</pre><p>If another module decides to create yet another subclass of SuperType, it will
                 need to create its own
-                    <code class="code">META-INF/service/com.nhl.bootique.config.PolymorphicConfiguration</code>
+                    <code class="code">META-INF/service/io.bootique.config.PolymorphicConfiguration</code>
                 file that mentions the new subclass.</p></div></div><div class="chapter" title="Chapter&nbsp;8.&nbsp;Using Modules"><div class="titlepage"><div><div><h2 class="title"><a name="programming-using-modules"></a>Chapter&nbsp;8.&nbsp;Using Modules</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#d50e299">Injecting Other Module's Services</a></span></dt><dt><span class="section"><a href="#d50e314">Contributing to Other Modules</a></span></dt></dl></div><p>Modules can use other "upstream" modules in a few ways:</p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem"><p>"Import": a downstream module uses another module as a library, ignoring
                         its injectable services.</p></li><li class="listitem"><p>"Use" : downstream module's classes inject classes from an upstream
                         module.</p></li><li class="listitem"><p>"Contribute": downstream module injects objects to collections and maps
                         defined in upstream modules.</p></li></ul></div><p>Import case is trivial, so we'll concentrate on the two remaining scenarios. We
-            will use <a class="link" href="https://github.com/nhl/bootique/blob/master/bootique/src/main/java/com/nhl/bootique/BQCoreModule.java" target="_top">BQCoreModule</a> as an example of an upstream module, as it is available in all
+            will use <a class="link" href="https://github.com/bootique/bootique/blob/master/bootique/src/main/java/io/bootique/BQCoreModule.java" target="_top">BQCoreModule</a> as an example of an upstream module, as it is available in all
             apps.</p><div class="section" title="Injecting Other Module's Services"><div class="titlepage"><div><div><h2 class="title"><a name="d50e299"></a>Injecting Other Module's Services</h2></div></div></div><p>You can inject any services declared in other modules. E.g. BQCoreModule provides
                 a number of objects and services that can be accessed via
                 injection:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span> MyService {
@@ -315,7 +315,7 @@ com.foo.ConcreteType2</pre><p>This should be enough to work with configuration l
                 Then <code class="code">autoLoadModules()</code> will discover it just like any other Module, and
                 there won't be a need to add Application module explicitly.</p></div><div class="section" title="Common Main Class"><div class="titlepage"><div><div><h2 class="title"><a name="d50e355"></a>Common Main Class</h2></div></div></div><p>If all your code is packaged in auto-loadable modules (which is always a good
                 idea), you may not even need a custom main class.
-                    <code class="code">com.nhl.bootique.Bootique</code> class itself declares a
+                    <code class="code">io.bootique.Bootique</code> class itself declares a
                     <code class="code">main()</code> method and can be used as an app launcher. This creates some
                 interesting possibilities. E.g. you can create Java projects that have no code of
                 their own and are simply collections of modules declared as compile dependencies.
@@ -334,9 +334,9 @@ Option                    Description
 --help                    Prints this message.                 
 --server                  Starts Jetty server.</pre><div class="section" title="Writing Commands"><div class="titlepage"><div><div><h2 class="title"><a name="d50e379"></a>Writing Commands</h2></div></div></div><p>Most common commands are already available in various standard modules, still
                 often you'd need to write your own. To do that, first create a command class. It
-                should implement <code class="code">com.nhl.bootique.command.Command</code> interface, though
+                should implement <code class="code">io.bootique.command.Command</code> interface, though
                 usually it more practical to extend
-                    <code class="code">com.nhl.bootique.command.CommandWithMetadata</code> and provide some
+                    <code class="code">io.bootique.command.CommandWithMetadata</code> and provide some
                 metadata used in help and
                 elsewhere:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span> MyCommand <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">extends</span> CommandWithMetadata {
 
@@ -386,7 +386,7 @@ Option                    Description
 	}
 
 	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">return</span> CommandOutcome.succeeded();
-}</pre></div><div class="section" title="Injection in Commands"><div class="titlepage"><div><div><h2 class="title"><a name="d50e403"></a>Injection in Commands</h2></div></div></div><p>Commands can inject services, just like most other other classes in Bootique.
+}</pre></div><div class="section" title="Injection in Commands"><div class="titlepage"><div><div><h2 class="title"><a name="d50e403"></a>Injection in Commands</h2></div></div></div><p>Commands can inject services, just like most other classes in Bootique.
                 There are some specifics though. Since commands are sometimes instantiated, but not
                 executed (e.g. when <code class="code">--help</code> is run that lists all commands), it is often
                 desirable to avoid immediate instantiation of all dependencies of a given command.
@@ -410,7 +410,7 @@ Option                    Description
 
 BQCoreModule.contributeOptions(binder).addBinding().toInstance(option);</pre><p>To
             read a value of the option, a service should inject
-                <code class="code">com.nhl.bootique.cli.Cli</code> object (commands also get this object as a
+                <code class="code">io.bootique.cli.Cli</code> object (commands also get this object as a
             parameter to "run")
             :</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-annotation">@Inject</span>
 <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">private</span> Cli cli;
@@ -429,7 +429,7 @@ BQCoreModule.contributeOptions(binder).addBinding().toInstance(option);</pre><p>
                     <code class="code">bootique-logback</code> can be enabled by simply adding it to the pom.xml
                 dependencies, assuming <code class="code">autoLoadModules()</code> is in
                 effect:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;dependency&gt;</span>
-	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;groupId&gt;</span>com.nhl.bootique.logback<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/groupId&gt;</span>
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;groupId&gt;</span>io.bootique.logback<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/groupId&gt;</span>
 	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;artifactId&gt;</span>bootique-logback<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/artifactId&gt;</span>
 <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/dependency&gt;</span></pre><p>See
                     <code class="code">bootique-logback</code> module <a class="link" href="http://bootique.io/docs/0/bootique-logback-docs/" target="_top">documentation</a> for further details.</p></div><div class="section" title="BootLogger"><div class="titlepage"><div><div><h2 class="title"><a name="d50e472"></a>BootLogger</h2></div></div></div><p>To perform logging during startup, before DI environment is available and YAML
@@ -449,7 +449,7 @@ BQCoreModule.contributeOptions(binder).addBinding().toInstance(option);</pre><p>
                 testing.</em></span> Bootique core module and some other modules provide companion
             test extensions that contain reusable test stacks.</p></div><div class="chapter" title="Chapter&nbsp;14.&nbsp;Creating Test Stacks"><div class="titlepage"><div><div><h2 class="title"><a name="d50e501"></a>Chapter&nbsp;14.&nbsp;Creating Test Stacks</h2></div></div></div><p>To use basic Bootique test framework, import the following module in the "test"
             scope:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;dependency&gt;</span>
-	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;groupId&gt;</span>com.nhl.bootique<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/groupId&gt;</span>
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;groupId&gt;</span>io.bootique<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/groupId&gt;</span>
 	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;artifactId&gt;</span>bootique-test<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/artifactId&gt;</span>
 	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;scope&gt;</span>test<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/scope&gt;</span>
 <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/dependency&gt;</span></pre><p>For
@@ -550,7 +550,7 @@ public void testCommand() {
 	assertTrue(help.contains("--config"));
 }</pre></div><div class="section" title="Testing Module Validity"><div class="titlepage"><div><div><h2 class="title"><a name="d50e603"></a>Testing Module Validity</h2></div></div></div><p>When you are writing your own modules, you may want to check that they are
                 configured properly for autoloading (i.e.
-                    <code class="code">META-INF/services/com.nhl.bootique.BQModuleProvider</code> is present in
+                    <code class="code">META-INF/services/io.bootique.BQModuleProvider</code> is present in
                 the expected place and contains the right provider. There's a helper class to check
                 for
                 it:</p><pre class="programlisting">@Test
@@ -560,9 +560,9 @@ public void testPresentInJar() {
             simplfy its configuration, your app <code class="code">pom.xml</code> may inherit from
                 <code class="code">bootique-parent</code> pom. In this case configuration would look like
             this:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;parent&gt;</span>
-    <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;groupId&gt;</span>com.nhl.bootique.parent<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/groupId&gt;</span>
+    <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;groupId&gt;</span>io.bootique.parent<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/groupId&gt;</span>
     <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;artifactId&gt;</span>bootique-parent<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/artifactId&gt;</span>
-    <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;version&gt;</span>0.11<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/version&gt;</span>
+    <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;version&gt;</span>0.12<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/version&gt;</span>
 <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/parent&gt;</span>
 
 ...
@@ -574,13 +574,13 @@ public void testPresentInJar() {
         <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/plugin&gt;</span>
     <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/plugins&gt;</span>
 <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/build&gt;</span></pre><p>This configuration will build an app with the framework-provided main class, namely
-                <code class="code">com.nhl.bootique.Bootique</code>. If you want to use a custom main class (and
+                <code class="code">io.bootique.Bootique</code>. If you want to use a custom main class (and
             in most cases you do), you will need to redefine Maven <code class="code">main.class</code>
             property:</p><pre class="programlisting">&lt;properties&gt;
     &lt;main.<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span>&gt;com.foo.Application&lt;/main.<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span>&gt;
 &lt;/properties&gt;</pre><p>If you want to avoid inheriting from the framework parent pom, you will need to
             explicitly provide the following unwieldy configuration similar to the one found in
-                <a class="link" href="https://repo1.maven.org/maven2/com/nhl/bootique/parent/bootique-parent/0.10/bootique-parent-0.10.pom" target="_top"><code class="code">bootique-parent</code></a>:</p><pre class="programlisting">&lt;plugin&gt;
+                <a class="link" href="https://repo1.maven.org/maven2/io/bootique/parent/bootique-parent/0.12/bootique-parent-0.12.pom" target="_top"><code class="code">bootique-parent</code></a>:</p><pre class="programlisting">&lt;plugin&gt;
 	&lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
 	&lt;artifactId&gt;maven-shade-plugin&lt;/artifactId&gt;
 	&lt;version&gt;<span xmlns="http://www.w3.org/1999/xhtml" class="hl-number">2.4</span>.<span xmlns="http://www.w3.org/1999/xhtml" class="hl-number">2</span>&lt;/version&gt;
