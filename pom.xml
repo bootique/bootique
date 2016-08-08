@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>io.bootique.modules.parent</groupId>
 		<artifactId>bootique-modules-parent</artifactId>
-		<version>0.3</version>
+		<version>0.2</version>
 	</parent>
 
 	<groupId>io.bootique</groupId>
@@ -22,9 +22,19 @@
 		<module>bootique-docs</module>
 	</modules>
 
-	<properties>
-		<public.name>bootique</public.name>
-	</properties>
+	<scm>
+        <developerConnection>scm:git:ssh://git@github.com/bootique/bootique</developerConnection>
+        <url>https://github.com/bootique/bootique</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>bintray-bootique-releases</id>
+            <name>bintray-bootique-releases</name>
+            <url>https://api.bintray.com/maven/bootique/releases/bootique/;publish=1</url>
+        </repository>
+    </distributionManagement>
 
 	<!-- Optional profile used to sign artifacts -->
 	<profiles>
