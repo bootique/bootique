@@ -21,10 +21,10 @@
 	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;artifactId&gt;</span>bootique-jetty<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/artifactId&gt;</span>
 <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/dependency&gt;</span></pre><p>Alternatively you may include an "instrumented" version of <code class="code">bootique-jetty</code>
         that will provide a number of metrics for your running
-        app:</p><pre class="programlisting">&lt;dependency&gt;
-	&lt;groupId&gt;io.bootique.jetty&lt;/groupId&gt;
-	&lt;artifactId&gt;bootique-jetty-instrumented&lt;/artifactId&gt;
-&lt;/dependency&gt;</pre><p>The module provides <code class="code">--server</code> command, which starts your web server on
+        app:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;dependency&gt;</span>
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;groupId&gt;</span>io.bootique.jetty<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/groupId&gt;</span>
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;artifactId&gt;</span>bootique-jetty-instrumented<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/artifactId&gt;</span>
+<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/dependency&gt;</span></pre><p>The module provides <code class="code">--server</code> command, which starts your web server on
         foreground:</p><pre class="programlisting">java -jar my.jar --server
 ...
 i.b.j.s.ServerFactory - Adding listener i.b.j.s.DefaultServletEnvironment
