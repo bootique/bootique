@@ -8,15 +8,15 @@
 
   ga('create', 'UA-73654436-1', 'auto');
   ga('send', 'pageview');
-        </script></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="book" title="Bootique Logback Documentation"><div class="titlepage"><div><div><h1 class="title"><a name="bootique-jetty-guide"></a>Bootique Logback Documentation</h1></div><div><p class="copyright">Copyright &copy; 2016 National Hockey League, ObjectStyle LLC and individual authors</p></div></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><ul><li><span class="chapter"><a href="#overview">1. Bootique Integration with Logback</a></span></li><li><span class="chapter"><a href="#configuration">2. Configuration Reference</a></span><ul><li><span class="section"><a href="#d0e42">log</a></span></li><li><span class="section"><a href="#d0e128">log.appenders</a></span></li><li><span class="section"><a href="#d0e459">log.loggers</a></span></li></ul></li></ul></div><div class="chapter" title="Chapter&nbsp;1.&nbsp;Bootique Integration with Logback"><div class="titlepage"><div><div><h2 class="title"><a name="overview"></a>Chapter&nbsp;1.&nbsp;Bootique Integration with Logback</h2></div></div></div><p>As mentioned in Bootique <a class="link" href="http://bootique.io/docs/0/bootique-docs/index.html#logging" target="_top">general
+        </script></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="book" title="Bootique Logback Documentation"><div class="titlepage"><div><div><h1 class="title"><a name="bootique-jetty-guide"></a>Bootique Logback Documentation</h1></div><div><p class="copyright">Copyright &copy; 2016 ObjectStyle LLC and individual authors</p></div></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><ul><li><span class="chapter"><a href="#overview">1. Bootique Integration with Logback</a></span></li><li><span class="chapter"><a href="#configuration">2. Configuration Reference</a></span><ul><li><span class="section"><a href="#d0e42">log</a></span></li><li><span class="section"><a href="#d0e128">log.appenders</a></span></li><li><span class="section"><a href="#d0e459">log.loggers</a></span></li></ul></li></ul></div><div class="chapter" title="Chapter&nbsp;1.&nbsp;Bootique Integration with Logback"><div class="titlepage"><div><div><h2 class="title"><a name="overview"></a>Chapter&nbsp;1.&nbsp;Bootique Integration with Logback</h2></div></div></div><p>As mentioned in Bootique <a class="link" href="http://bootique.io/docs/0/bootique-docs/index.html#logging" target="_top">general
             documentation on logging</a>, standard modules rely on SLF4J loggers that can be
         easily bridged to various  advanced logging frameworks. Same maximally neutral logging
-        approach is reasonable to apply in the user modules as well.</p><p><a class="link" href="https://github.com/nhl/bootique-logback" target="_top"><code class="code">bootique-logback</code></a> is a "drag-and-drop" module integrating Bootique
+        approach is reasonable to apply in the user modules as well.</p><p><a class="link" href="https://github.com/bootique/bootique-logback" target="_top"><code class="code">bootique-logback</code></a> is a "drag-and-drop" module integrating Bootique
         logging with <a class="link" href="http://logback.qos.ch/" target="_top">Logback logging framework</a>.
         Just like any other module, <code class="code">bootique-logback</code> can be enabled by simply adding it
         to the <code class="code">pom.xml</code> dependencies, assuming <code class="code">autoLoadModules()</code> is in
         effect:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;dependency&gt;</span>
-	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;groupId&gt;</span>com.nhl.bootique.logback<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/groupId&gt;</span>
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;groupId&gt;</span>io.bootique.logback<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/groupId&gt;</span>
 	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;artifactId&gt;</span>bootique-logback<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/artifactId&gt;</span>
 <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/dependency&gt;</span></pre><p>Without further configuration it would log everything to console using INFO level.
         Configuration can be provided via YAML, as shown in the following section. Configuration
@@ -33,7 +33,7 @@
     - type: file
       logFormat: <span xmlns="http://www.w3.org/1999/xhtml" class="hl-string">'%c{20}: %m%n'</span>
       file: target/logback/testRun_Debug.log</pre><p>
-        </p><p>"log" is a root element of the Logback configuration and is bound to a <a class="link" href="https://github.com/nhl/bootique-logback/blob/master/bootique-logback/src/main/java/com/nhl/bootique/logback/LogbackContextFactory.java" target="_top"><code class="code">LogbackContextFactory</code></a> object. It supports the following
+        </p><p>"log" is a root element of the Logback configuration and is bound to a <a class="link" href="https://github.com/bootique/bootique-logback/blob/master/bootique-logback/src/main/java/io/bootique/logback/LogbackContextFactory.java" target="_top"><code class="code">LogbackContextFactory</code></a> object. It supports the following
             properties:</p><table frame="void" id="d0e56"><caption>Table&nbsp;2.1.&nbsp;"log" Element Property Reference</caption><col width="20%"><col width="15%"><col width="65%"><thead><tr>
                 <th>Property</th>
                 <th>Default</th>
@@ -204,7 +204,7 @@
       level: debug
     com.example:
       level: debug</pre><p>This
-            is a map of <a class="link" href="https://github.com/nhl/bootique-logback/blob/master/bootique-logback/src/main/java/com/nhl/bootique/logback/LoggerFactory.java" target="_top">logger factories</a> by logger name. Logger name is either a package name
+            is a map of <a class="link" href="https://github.com/bootique/bootique-logback/blob/master/bootique-logback/src/main/java/io/bootique/logback/LoggerFactory.java" target="_top">logger factories</a> by logger name. Logger name is either a package name
             (applied recursively to subpackages and their classes) or a class name. Each
             LoggerFactory has the following properties:</p><table frame="void" id="d0e469"><caption>Table&nbsp;2.7.&nbsp;Logger Property Reference</caption><col width="20%"><col width="53%"><col width="27%"><thead><tr>
                     <th>Property</th>
