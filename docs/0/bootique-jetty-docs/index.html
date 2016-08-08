@@ -8,7 +8,7 @@
 
   ga('create', 'UA-73654436-1', 'auto');
   ga('send', 'pageview');
-        </script></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="book" title="Bootique Jetty Documentation"><div class="titlepage"><div><div><h1 class="title"><a name="bootique-jetty-guide"></a>Bootique Jetty Documentation</h1></div><div><p class="copyright">Copyright &copy; 2016 National Hockey League, ObjectStyle LLC and individual authors</p></div></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#overview">1. Bootique Integration with Jetty</a></span></dt><dt><span class="chapter"><a href="#programming">2. Programming Jetty Applications</a></span></dt><dd><dl><dt><span class="section"><a href="#d0e59">Servlets</a></span></dt><dt><span class="section"><a href="#d0e85">Servlet Filters</a></span></dt><dt><span class="section"><a href="#d0e102">Listeners</a></span></dt><dt><span class="section"><a href="#d0e117">Serving Static Files</a></span></dt></dl></dd><dt><span class="chapter"><a href="#configuration">3. Configuration Reference</a></span></dt><dd><dl><dt><span class="section"><a href="#d0e123">jetty</a></span></dt><dt><span class="section"><a href="#d0e341">jetty.connector</a></span></dt><dt><span class="section"><a href="#d0e413">jetty.filters</a></span></dt><dt><span class="section"><a href="#d0e420">jetty.servlets</a></span></dt></dl></dd></dl></div><div class="list-of-tables"><p><b>List of Tables</b></p><dl><dt>3.1. <a href="#d0e137">"jetty" Element Property Reference</a></dt><dt>3.2. <a href="#d0e355">"jetty.connector" Element Property Reference</a></dt></dl></div><div class="chapter" title="Chapter&nbsp;1.&nbsp;Bootique Integration with Jetty"><div class="titlepage"><div><div><h2 class="title"><a name="overview"></a>Chapter&nbsp;1.&nbsp;Bootique Integration with Jetty</h2></div></div></div><p><a class="link" href="https://github.com/nhl/bootique-jetty" target="_top"><code class="code">bootique-jetty</code></a> module embeds <a class="link" href="http://www.eclipse.org/jetty/" target="_top">Jetty web server</a> in your application.
+        </script></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="book" title="Bootique Jetty Documentation"><div class="titlepage"><div><div><h1 class="title"><a name="bootique-jetty-guide"></a>Bootique Jetty Documentation</h1></div><div><p class="copyright">Copyright &copy; 2016 ObjectStyle LLC and individual authors</p></div></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="chapter"><a href="#overview">1. Bootique Integration with Jetty</a></span></dt><dt><span class="chapter"><a href="#programming">2. Programming Jetty Applications</a></span></dt><dd><dl><dt><span class="section"><a href="#d0e59">Servlets</a></span></dt><dt><span class="section"><a href="#d0e85">Servlet Filters</a></span></dt><dt><span class="section"><a href="#d0e102">Listeners</a></span></dt><dt><span class="section"><a href="#d0e117">Serving Static Files</a></span></dt></dl></dd><dt><span class="chapter"><a href="#configuration">3. Configuration Reference</a></span></dt><dd><dl><dt><span class="section"><a href="#d0e123">jetty</a></span></dt><dt><span class="section"><a href="#d0e341">jetty.connector</a></span></dt><dt><span class="section"><a href="#d0e413">jetty.filters</a></span></dt><dt><span class="section"><a href="#d0e420">jetty.servlets</a></span></dt></dl></dd></dl></div><div class="list-of-tables"><p><b>List of Tables</b></p><dl><dt>3.1. <a href="#d0e137">"jetty" Element Property Reference</a></dt><dt>3.2. <a href="#d0e355">"jetty.connector" Element Property Reference</a></dt></dl></div><div class="chapter" title="Chapter&nbsp;1.&nbsp;Bootique Integration with Jetty"><div class="titlepage"><div><div><h2 class="title"><a name="overview"></a>Chapter&nbsp;1.&nbsp;Bootique Integration with Jetty</h2></div></div></div><p><a class="link" href="https://github.com/bootique/bootique-jetty" target="_top"><code class="code">bootique-jetty</code></a> module embeds <a class="link" href="http://www.eclipse.org/jetty/" target="_top">Jetty web server</a> in your application.
         It provides environment for running servlet specification objects (servlets, servlet
         filters, servlet listeners). Also you will be able to serve static files that are either
         packaged in the application jar or located somewhere on the filesystem. As things go with
@@ -17,20 +17,20 @@
         enabled by simply adding it to the <code class="code">pom.xml</code> dependencies (assuming
             <code class="code">autoLoadModules()</code> is in effect):
         </p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;dependency&gt;</span>
-	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;groupId&gt;</span>com.nhl.bootique.jetty<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/groupId&gt;</span>
+	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;groupId&gt;</span>io.bootique.jetty<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/groupId&gt;</span>
 	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;artifactId&gt;</span>bootique-jetty<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/artifactId&gt;</span>
 <span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/dependency&gt;</span></pre><p>Alternatively you may include an "instrumented" version of <code class="code">bootique-jetty</code>
         that will provide a number of metrics for your running
         app:</p><pre class="programlisting">&lt;dependency&gt;
-	&lt;groupId&gt;com.nhl.bootique.jetty&lt;/groupId&gt;
+	&lt;groupId&gt;io.bootique.jetty&lt;/groupId&gt;
 	&lt;artifactId&gt;bootique-jetty-instrumented&lt;/artifactId&gt;
 &lt;/dependency&gt;</pre><p>The module provides <code class="code">--server</code> command, which starts your web server on
         foreground:</p><pre class="programlisting">java -jar my.jar --server
 ...
-c.n.b.j.s.ServerFactory - Adding listener c.n.b.j.s.DefaultServletEnvironment
-c.n.b.j.s.h.ContextHandler - Started o.e.j.s.ServletContextHandler@1e78c66e{/myapp,null,AVAILABLE}
-c.n.b.j.s.ServerConnector - Started ServerConnector@41ccbaa{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
-c.n.b.j.s.Server - Started @490ms</pre><p>Various
+i.b.j.s.ServerFactory - Adding listener i.b.j.s.DefaultServletEnvironment
+i.b.j.s.h.ContextHandler - Started o.e.j.s.ServletContextHandler@1e78c66e{/myapp,null,AVAILABLE}
+i.b.j.s.ServerConnector - Started ServerConnector@41ccbaa{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+i.b.j.s.Server - Started @490ms</pre><p>Various
         aspects of the Jetty container, such as listen port, thread pool size, etc. can be
         configured in a normal Bootique way via YAML, as detailed below in the "Configuration
         Reference" chapter.</p></div><div class="chapter" title="Chapter&nbsp;2.&nbsp;Programming Jetty Applications"><div class="titlepage"><div><div><h2 class="title"><a name="programming"></a>Chapter&nbsp;2.&nbsp;Programming Jetty Applications</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#d0e59">Servlets</a></span></dt><dt><span class="section"><a href="#d0e85">Servlet Filters</a></span></dt><dt><span class="section"><a href="#d0e102">Listeners</a></span></dt><dt><span class="section"><a href="#d0e117">Serving Static Files</a></span></dt></dl></div><p>You can write servlet specification objects (servlets, filters, listeners) as you'd do it
@@ -47,7 +47,7 @@ c.n.b.j.s.Server - Started @490ms</pre><p>Various
 	}
 )</span>
 <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span> AnnotatedServlet <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">extends</span> HttpServlet { .. }</pre><p>The
-            "name" property is kind of important as it would allow to override annotation values in
+            "name" annotation is kind of important as it would allow to override annotation values in
             the YAML, as described in the "Configuration Reference" chapter. A servlet created this
             way can inject any services it might need using normal Guice injection. </p><p>Next step is adding it to Bootique via <code class="code">JettyModule</code> contribution API
             called from your application
@@ -99,7 +99,7 @@ public void configure(Binder binder) {
   params:
     a: a1
     b: b2</pre><p>
-        </p><p>"jetty" is a root element of the Jetty configuration and is bound to a <a class="link" href="https://github.com/nhl/bootique-jetty/blob/master/bootique-jetty/src/main/java/com/nhl/bootique/jetty/server/ServerFactory.java" target="_top"><code class="code">ServerFactory</code></a> object. It supports the following
+        </p><p>"jetty" is a root element of the Jetty configuration and is bound to a <a class="link" href="https://github.com/bootique/bootique-jetty/blob/master/bootique-jetty/src/main/java/io/bootique/jetty/server/ServerFactory.java" target="_top"><code class="code">ServerFactory</code></a> object. It supports the following
             properties:</p><table frame="void" id="d0e137"><caption>Table&nbsp;3.1.&nbsp;"jetty" Element Property Reference</caption><col width="20%"><col width="15%"><col width="65%"><thead><tr>
                 <th>Property</th>
                 <th>Default</th>
@@ -165,7 +165,7 @@ public void configure(Binder binder) {
                             a filesystem path, a URL or a special "<code class="code">classpath:</code>" URL
                             (which gives the ability to bundle resources in the app, not unlike a
                             JavaEE .war file). </p>
-                        <p>For security reasons this property has to be set explicitly. There's
+                        <p>For security reasons this annotation has to be set explicitly. There's
                             no default. </p>
                         <p>This setting only makes sense when some form of "default" servlet is
                             in use, that will be responsible for serving static resources. See
@@ -179,7 +179,7 @@ public void configure(Binder binder) {
   connector:
     port: 9999</pre><p>
         </p><p>"jetty.connector" element configures a web connector (i.e. an object that listens for
-            network requests for our Jetty-enabled app) and is bound to <a class="link" href="https://github.com/nhl/bootique-jetty/blob/master/bootique-jetty/src/main/java/com/nhl/bootique/jetty/server/HttpConnectorFactory.java" target="_top"><code class="code">HttpConnectorFactory</code></a>. It supports the following
+            network requests for our Jetty-enabled app) and is bound to <a class="link" href="https://github.com/bootique/bootique-jetty/blob/master/bootique-jetty/src/main/java/io/bootique/jetty/server/HttpConnectorFactory.java" target="_top"><code class="code">HttpConnectorFactory</code></a>. It supports the following
                 properties:</p><table frame="void" id="d0e355"><caption>Table&nbsp;3.2.&nbsp;"jetty.connector" Element Property Reference</caption><col width="20%"><col width="15%"><col width="65%"><thead><tr>
                         <th>Property</th>
                         <th>Default</th>
