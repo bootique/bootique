@@ -10,7 +10,7 @@
 
 	<groupId>io.bootique</groupId>
 	<artifactId>bootique-framework-parent</artifactId>
-	<version>0.19-SNAPSHOT</version>
+	<version>0.19</version>
 	<packaging>pom</packaging>
 
 	<name>bootique-framework-parent</name>
