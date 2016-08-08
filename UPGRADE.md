@@ -33,11 +33,10 @@ names in imports, and the name of service provider files in your modules. Detail
 Note that there was a brief period of time (0.18) when required both BOMs to be imported. Not anymore. ```io.bootique```
 one is sufficient now.
 
-* Look for Java compilation errors in your IDE, and change ```com.nhl.bootique.*``` import statements to ```io.bootique.*``` .
+* Look for Java compilation errors in your IDE, and change ```com.nhl.bootique.*``` import statements to ```io.bootique.*```.
 
 * If you've written any auto-loadable modules, you will have ```META-INF/services/com.nhl.bootique.BQModuleProvider``` 
-  files sitting somewhere in your source. Make sure you rename these files to 
-  ```META-INF/services/io.bootique.BQModuleProvider```.
+  files sitting somewhere in your source. Make sure you rename these files to ```META-INF/services/io.bootique.BQModuleProvider```.
 
 * If you've written any polymorphic config extensions, you will have ```META-INF/services/com.nhl.bootique.config.PolymorphicConfiguration``` 
   files sitting somewhere in your source. Make sure you rename these files to ```META-INF/services/io.bootique.config.PolymorphicConfiguration```.
