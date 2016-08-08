@@ -101,9 +101,9 @@ public class Application {
             JerseyModule. Now let's try to run the app with the changes. Add <code>--server</code>
             to the command run parameters before doing it. Now when the app is started, you will see
             different
-            output:<programlisting language="bourne">INFO  main c.n.b.j.c.ServerCommand: Starting jetty...
+            output:<programlisting language="bourne">INFO  main i.b.j.c.ServerCommand: Starting jetty...
 INFO  main o.e.jetty.util.log: Logging initialized @933ms
-INFO  main c.n.b.j.s.ServerFactory: Adding servlet mapped to /*
+INFO  main i.b.j.s.ServerFactory: Adding servlet mapped to /*
 INFO  main o.e.j.server.Server: jetty-9.3.6.v20151106
 INFO  main o.e.j.s.h.ContextHandler: Started o.e.j.s.ServletContextHandler@cf65451{/,null,AVAILABLE}
 INFO  main o.e.j.s.ServerConnector: Started ServerConnector@60cf80e7{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
