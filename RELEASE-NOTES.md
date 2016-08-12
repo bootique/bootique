@@ -1,3 +1,7 @@
+## 0.20
+
+* #89 Don't print debug info to stdout
+
 ## 0.19
 
 * #84 Cache SubtypeResolver in DefaultJacksonService

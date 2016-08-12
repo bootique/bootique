@@ -1,12 +1,12 @@
 package io.bootique.config;
 
-import java.net.URL;
-import java.util.List;
-import java.util.stream.Stream;
-
 import io.bootique.cli.Cli;
 import io.bootique.log.BootLogger;
 import io.bootique.resource.ResourceFactory;
+
+import java.net.URL;
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * A {@link ConfigurationSource} that locates configuration in a resource
@@ -30,7 +30,7 @@ public class CliConfigurationSource implements ConfigurationSource {
 	}
 
 	protected URL toURL(String location) {
-		bootLogger.stdout("Reading configuration at " + location);
+		bootLogger.stderr("Reading configuration at " + location);
 		return new ResourceFactory(location).getUrl();
 	}
 }
