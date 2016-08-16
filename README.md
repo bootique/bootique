@@ -77,6 +77,6 @@ It has ```main()``` method, so you can run it!
 
 ## Upgrading
 
-See the "maven-central" badge above for the current production version of the 2 ```bootique-bom``` collection modules. 
+See the "maven-central" badge above for the current production version of ```bootique-bom```. 
 When upgrading, don't forget to check [upgrade notes](https://github.com/bootique/bootique/blob/master/UPGRADE.md) 
 specific to your version.
