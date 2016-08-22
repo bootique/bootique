@@ -6,3 +6,5 @@ io.bootique.test.junit.PolymorphicConfigurationCheckerIT$C7
 io.bootique.test.junit.PolymorphicConfigurationCheckerIT$C8
 io.bootique.test.junit.PolymorphicConfigurationCheckerIT$C9
 io.bootique.test.junit.PolymorphicConfigurationCheckerIT$C11
+io.bootique.test.junit.PolymorphicConfigurationCheckerIT$C12
+io.bootique.test.junit.PolymorphicConfigurationCheckerIT$C13

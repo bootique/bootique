@@ -14,21 +14,21 @@ import java.util.Enumeration;
 /**
  * @since 0.13
  */
-class SubtypeResolverFactory {
+public class SubtypeResolverFactory<T> {
 
     private BootLogger logger;
     private ClassLoader classLoader;
-    private Class<?> serviceType;
+    private Class<T> serviceType;
 
-    SubtypeResolverFactory(ClassLoader classLoader, Class<?> serviceType, BootLogger logger) {
+    public SubtypeResolverFactory(ClassLoader classLoader, Class<T> serviceType, BootLogger logger) {
         this.logger = logger;
         this.classLoader = classLoader;
         this.serviceType = serviceType;
     }
 
-    SubtypeResolver createResolver() {
+    public SubtypeResolver createResolver() {
 
-        Collection<Class<?>> subtypes;
+        Collection<Class<? extends T>> subtypes;
         try {
             subtypes = resolveSubclasses();
         } catch (IOException | ClassNotFoundException e) {
@@ -38,9 +38,12 @@ class SubtypeResolverFactory {
         return new ImmutableSubtypeResolver(subtypes);
     }
 
-    Collection<Class<?>> resolveSubclasses() throws IOException, ClassNotFoundException {
+    public Collection<Class<? extends T>> resolveSubclasses() throws IOException, ClassNotFoundException {
 
-        Collection<Class<?>> subclasses = new ArrayList<>();
+        // note that unlike java.util.ServiceLoader, SubtypeResolverFactory can work with abstarct supertypes
+        // as they are not instantiated....
+
+        Collection<Class<? extends T>> subclasses = new ArrayList<>();
 
         String location = serviceLocation();
 
@@ -53,7 +56,7 @@ class SubtypeResolverFactory {
         return subclasses;
     }
 
-    void appendSubclasses(URL url, Collection<Class<?>> subclasses) throws IOException, ClassNotFoundException {
+    void appendSubclasses(URL url, Collection<Class<? extends T>> subclasses) throws IOException, ClassNotFoundException {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream(), "UTF-8"))) {
 
             String line;
@@ -63,9 +66,9 @@ class SubtypeResolverFactory {
         }
     }
 
-    Class<?> loadClass(String className) throws ClassNotFoundException {
+    Class<? extends T> loadClass(String className) throws ClassNotFoundException {
         logger.trace(() -> "Loading config subtype: " + className);
-        return classLoader.loadClass(className);
+        return (Class<? extends T>) classLoader.loadClass(className);
     }
 
     String serviceLocation() {

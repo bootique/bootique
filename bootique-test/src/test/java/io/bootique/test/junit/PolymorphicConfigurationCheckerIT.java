@@ -31,6 +31,11 @@ public class PolymorphicConfigurationCheckerIT {
     }
 
     @Test
+    public void test_Success_AbstractSuper() {
+        PolymorphicConfigurationChecker.test(C12.class, C13.class);
+    }
+
+    @Test
     public void testNoDefault_Success() {
         PolymorphicConfigurationChecker.testNoDefault(C6.class, C7.class, C8.class);
     }
@@ -80,6 +85,14 @@ public class PolymorphicConfigurationCheckerIT {
 
     @JsonTypeName("c11")
     public static class C11 extends C9 {
+    }
+
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, defaultImpl = C13.class)
+    public static abstract class C12 implements PolymorphicConfiguration {
+    }
+
+    @JsonTypeName("c13")
+    public static class C13 extends C12 {
     }
 
 }

@@ -3,14 +3,15 @@ package io.bootique.test.junit;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.bootique.config.PolymorphicConfiguration;
+import io.bootique.jackson.SubtypeResolverFactory;
+import io.bootique.log.DefaultBootLogger;
 
+import java.io.IOException;
 import java.lang.reflect.Modifier;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
-import java.util.ServiceConfigurationError;
-import java.util.ServiceLoader;
 import java.util.Set;
-import java.util.stream.StreamSupport;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toSet;
@@ -64,7 +65,7 @@ public class PolymorphicConfigurationChecker<T extends PolymorphicConfiguration>
 
     protected void test() {
 
-        Set<Class<? extends PolymorphicConfiguration>> loaded = loadedViaServiceLoader();
+        Set<Class<? extends PolymorphicConfiguration>> loaded = loadedFromSpi();
         assertEquals("Loaded and expected types do not match", allExpectedTypes, loaded);
 
         testRoot();
@@ -106,7 +107,7 @@ public class PolymorphicConfigurationChecker<T extends PolymorphicConfiguration>
         assertTrue("Invalid type " + t.getName() + ". Must be a subclass of root type " + expectedRoot.getName(),
                 expectedRoot.isAssignableFrom(t));
 
-        assertTrue("Non-root configuration type must not be abstract", isConcrete(t));
+        assertTrue("Non-root configuration type must not be abstract: " + t.getName(), isConcrete(t));
 
         // this check would prevent matching subclasses by class, but we discourage that anyways.. (otherwise FQN
         // would have to be used in YAML)
@@ -116,23 +117,27 @@ public class PolymorphicConfigurationChecker<T extends PolymorphicConfiguration>
     }
 
 
-    protected Set<Class<? extends PolymorphicConfiguration>> loadedViaServiceLoader() {
-        try {
-            return StreamSupport
-                    .stream(ServiceLoader.load(PolymorphicConfiguration.class).spliterator(), false)
-                    .map(p -> p != null ? p.getClass() : null)
-                    .filter(p -> p != null && expectedRoot.isAssignableFrom(p))
-                    .collect(toSet());
-        } catch (ServiceConfigurationError e) {
-            fail(e.getMessage());
+    protected Set<Class<? extends PolymorphicConfiguration>> loadedFromSpi() {
 
+        Collection<Class<? extends PolymorphicConfiguration>> types;
+        try {
+            types = new SubtypeResolverFactory(getClass().getClassLoader(),
+                    PolymorphicConfiguration.class,
+                    new DefaultBootLogger(false))
+                    .resolveSubclasses();
+        } catch (IOException | ClassNotFoundException e) {
+            fail(e.getMessage());
             // dead code; still required to compile...
-            throw e;
+            throw new RuntimeException(e);
         }
+
+        return types.stream()
+                .filter(p -> expectedRoot.isAssignableFrom(p))
+                .collect(toSet());
     }
 
     protected boolean isConcrete(Class<?> type) {
-        int modifiers = expectedRoot.getModifiers();
+        int modifiers = type.getModifiers();
         return !Modifier.isAbstract(modifiers) && !Modifier.isInterface(modifiers);
     }
 
