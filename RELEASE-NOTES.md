@@ -1,5 +1,6 @@
 ## 0.20
 
+
 * #89 Don't print debug info to stdout
 * #91 bootique-test: test helper for PolymorphicConfiguration
 
