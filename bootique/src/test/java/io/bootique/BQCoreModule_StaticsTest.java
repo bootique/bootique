@@ -6,14 +6,13 @@ import static org.junit.Assert.assertTrue;
 import java.util.Map;
 import java.util.Set;
 
-import io.bootique.BQCoreModule;
 import org.junit.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import io.bootique.annotation.EnvironmentProperties;
-import io.bootique.cli.CliOption;
+import io.bootique.cli.meta.CliOption;
 
 public class BQCoreModule_StaticsTest {
 

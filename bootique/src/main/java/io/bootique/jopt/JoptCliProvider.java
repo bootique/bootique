@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import io.bootique.annotation.Args;
 import io.bootique.cli.Cli;
-import io.bootique.cli.CliOption;
+import io.bootique.cli.meta.CliOption;
 import io.bootique.command.Command;
 import io.bootique.command.CommandManager;
 import io.bootique.command.CommandMetadata;
