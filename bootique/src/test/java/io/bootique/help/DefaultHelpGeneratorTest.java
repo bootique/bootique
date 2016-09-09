@@ -1,28 +1,13 @@
 package io.bootique.help;
 
-import io.bootique.cli.Cli;
-import io.bootique.cli.CliOption;
-import io.bootique.command.Command;
-import io.bootique.command.CommandManager;
-import io.bootique.command.CommandMetadata;
-import io.bootique.command.CommandOutcome;
-import io.bootique.command.CommandWithMetadata;
-import org.junit.Before;
+import io.bootique.cli.meta.CliApplication;
+import io.bootique.cli.meta.CliOption;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class DefaultHelpGeneratorTest {
-
-    private CommandManager mockCommandManager;
-    private Collection<Command> commands;
-    private Collection<CliOption> standloneOptions;
 
 
     private static void assertLines(DefaultHelpGenerator generator, String... expectedLines) {
@@ -37,37 +22,49 @@ public class DefaultHelpGeneratorTest {
         assertEquals(expected.toString(), help);
     }
 
-    @Before
-    public void before() {
-
-        this.commands = new ArrayList<>();
-        this.standloneOptions = new ArrayList<>();
-
-        this.mockCommandManager = mock(CommandManager.class);
-        when(mockCommandManager.getCommands()).thenReturn(commands);
-    }
 
     @Test
-    public void testGenerate_Command_DefaultMetadata() {
+    public void testGenerate_AppName() {
 
-        commands.add(new DefaultMetadataCommand());
+        CliApplication app = CliApplication.builder("myapp").build();
 
-        assertLines(new DefaultHelpGenerator(mockCommandManager, standloneOptions),
-                "OPTIONS",
-                "   -d, --defaultmetadata"
+        assertLines(new DefaultHelpGenerator(app),
+                "NAME",
+                "   myapp"
         );
     }
 
-    static final class DefaultMetadataCommand extends CommandWithMetadata {
+    @Test
+    public void testGenerate_AppName_Description() {
 
-        public DefaultMetadataCommand() {
-            super(CommandMetadata.builder(DefaultMetadataCommand.class));
-        }
+        CliApplication app = CliApplication.builder("myapp", "this is my app").build();
 
-        @Override
-        public CommandOutcome run(Cli cli) {
-            return CommandOutcome.succeeded();
-        }
+        assertLines(new DefaultHelpGenerator(app),
+                "NAME",
+                "   myapp: this is my app"
+        );
     }
+
+    @Test
+    public void testGenerate_AppName_Options() {
+
+        CliOption listOpt = CliOption.builder("list", "Lists everything").build();
+        CliOption runOpt = CliOption.builder("run", "Runs everything").build();
+        CliApplication app = CliApplication
+                .builder("myapp")
+                .addOption(listOpt)
+                .addOption(runOpt)
+                .build();
+
+        assertLines(new DefaultHelpGenerator(app),
+                "NAME",
+                "   myapp",
+                "",
+                "OPTIONS",
+                "   -l, --list",
+                "   -r, --run"
+        );
+    }
+
 
 }

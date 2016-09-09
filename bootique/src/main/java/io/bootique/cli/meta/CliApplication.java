@@ -29,6 +29,10 @@ public class CliApplication extends CliNode {
         return new Builder().name(name);
     }
 
+    public static Builder builder(String name, String description) {
+        return new Builder().name(name).description(description);
+    }
+
     /**
      * Returns application name that is the name of the main class derived from runtime stack.
      *
