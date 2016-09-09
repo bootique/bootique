@@ -14,7 +14,7 @@ public class DefaultHelpGeneratorTest {
 
         StringBuilder expected = new StringBuilder();
         for (String s : expectedLines) {
-            expected.append(s).append(DefaultHelpGenerator.NEWLINE);
+            expected.append(s).append(FormattedAppender.NEWLINE);
         }
 
         String help = generator.generate();
@@ -24,7 +24,7 @@ public class DefaultHelpGeneratorTest {
 
 
     @Test
-    public void testGenerate_AppName() {
+    public void testGenerate_Name() {
 
         CliApplication app = CliApplication.builder("myapp").build();
 
@@ -35,7 +35,7 @@ public class DefaultHelpGeneratorTest {
     }
 
     @Test
-    public void testGenerate_AppName_Description() {
+    public void testGenerate_Name_Description() {
 
         CliApplication app = CliApplication.builder("myapp", "this is my app").build();
 
@@ -46,7 +46,7 @@ public class DefaultHelpGeneratorTest {
     }
 
     @Test
-    public void testGenerate_AppName_Options() {
+    public void testGenerate_Name_Options() {
 
         CliOption listOpt = CliOption.builder("list", "Lists everything").build();
         CliOption runOpt = CliOption.builder("run", "Runs everything").build();
@@ -62,7 +62,9 @@ public class DefaultHelpGeneratorTest {
                 "",
                 "OPTIONS",
                 "   -l, --list",
-                "   -r, --run"
+                "        Lists everything",
+                "   -r, --run",
+                "        Runs everything"
         );
     }
 
