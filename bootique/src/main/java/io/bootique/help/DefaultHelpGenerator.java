@@ -1,10 +1,12 @@
 package io.bootique.help;
 
 import io.bootique.cli.meta.CliApplication;
+import io.bootique.cli.meta.CliOption;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 /**
  * Default {@link HelpGenerator} implementation.
@@ -27,22 +29,25 @@ public class DefaultHelpGenerator implements HelpGenerator {
         FormattedAppender appender = createAppender(out);
 
         printName(appender, application.getName(), application.getDescription());
+        printOptions(appender, collectOptions());
+    }
 
-        SortedMap<String, String> options = new TreeMap<>();
+    protected Collection<HelpOption> collectOptions() {
+
+        HelpOptions helpOptions = new HelpOptions();
 
         application.getCommands().forEach(c -> {
 
-            // for now combine commands and options together (commands are options in a default CLI parser)
-            options.put(c.getName(), c.getDescription());
+            // for now expose commands as simply options (commands are options in a default CLI parser)
+            helpOptions.add(CliOption.builder(c.getName(), c.getDescription()).build());
 
-            // TODO: value cardinality, value description
-            c.getOptions().forEach(o -> options.put(o.getName(), o.getDescription()));
+            c.getOptions().forEach(o -> helpOptions.add(o));
         });
 
-        application.getOptions().forEach(o -> options.put(o.getName(), o.getDescription()));
-
-        printOptions(appender, options);
+        application.getOptions().forEach(o -> helpOptions.add(o));
+        return helpOptions.getOptions();
     }
+
 
     protected void printName(FormattedAppender out, String name, String description) {
         out.printSectionName("NAME");
@@ -56,17 +61,57 @@ public class DefaultHelpGenerator implements HelpGenerator {
         }
     }
 
-    protected void printOptions(FormattedAppender out, SortedMap<String, String> options) {
+    protected void printOptions(FormattedAppender out, Collection<HelpOption> options) {
 
         if (options.isEmpty()) {
             return;
         }
 
         out.printSectionName("OPTIONS");
+        options.forEach(o -> {
 
-        options.forEach((name, description) -> {
-            out.printText("--", name);
+            String valueName = o.getOption().getValueName();
+            if (valueName == null || valueName.length() == 0) {
+                valueName = "val";
+            }
 
+            List<String> parts = new ArrayList<>();
+            if (o.isShortNameAllowed()) {
+                parts.add("-");
+                parts.add(o.getShortName());
+
+                switch (o.getOption().getValueCardinality()) {
+                    case REQUIRED:
+                        parts.add(" ");
+                        parts.add(valueName);
+                        break;
+                    case OPTIONAL:
+                        parts.add(" [");
+                        parts.add(valueName);
+                        parts.add("]");
+                        break;
+                }
+
+                parts.add(", ");
+            }
+
+            parts.add("--");
+            parts.add(o.getOption().getName());
+            switch (o.getOption().getValueCardinality()) {
+                case REQUIRED:
+                    parts.add("=");
+                    parts.add(valueName);
+                    break;
+                case OPTIONAL:
+                    parts.add("[=");
+                    parts.add(valueName);
+                    parts.add("]");
+                    break;
+            }
+
+            out.printText(parts);
+
+            String description = o.getOption().getDescription();
             if (description != null) {
                 out.printDescription(description);
             }

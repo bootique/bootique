@@ -75,10 +75,10 @@ public class JoptCliProvider implements Provider<Cli> {
 		OptionSpecBuilder optionBuilder = parser.accepts(option.getName(), description);
 		switch (option.getValueCardinality()) {
 		case OPTIONAL:
-			optionBuilder.withOptionalArg().describedAs(option.getValueDescription());
+			optionBuilder.withOptionalArg().describedAs(option.getValueName());
 			break;
 		case REQUIRED:
-			optionBuilder.withRequiredArg().describedAs(option.getValueDescription());
+			optionBuilder.withRequiredArg().describedAs(option.getValueName());
 		default:
 			break;
 		}

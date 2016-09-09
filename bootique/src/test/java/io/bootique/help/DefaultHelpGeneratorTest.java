@@ -9,7 +9,6 @@ import static org.junit.Assert.assertNotNull;
 
 public class DefaultHelpGeneratorTest {
 
-
     private static void assertLines(DefaultHelpGenerator generator, String... expectedLines) {
 
         StringBuilder expected = new StringBuilder();
@@ -21,7 +20,6 @@ public class DefaultHelpGeneratorTest {
         assertNotNull(help);
         assertEquals(expected.toString(), help);
     }
-
 
     @Test
     public void testGenerate_Name() {
@@ -49,9 +47,39 @@ public class DefaultHelpGeneratorTest {
     public void testGenerate_Name_Options() {
 
         CliOption listOpt = CliOption.builder("list", "Lists everything").build();
+        CliOption runOpt = CliOption.builder("run", "Runs specified command").valueRequired().build();
+        CliOption debugOpt = CliOption.builder("debug", "Switches to debug mode").valueOptional("level").build();
+
+        CliApplication app = CliApplication
+                .builder("myapp")
+                .addOption(listOpt)
+                .addOption(runOpt)
+                .addOption(debugOpt)
+                .build();
+
+        assertLines(new DefaultHelpGenerator(app),
+                "NAME",
+                "   myapp",
+                "",
+                "OPTIONS",
+                "   -d [level], --debug[=level]",
+                "        Switches to debug mode",
+                "   -l, --list",
+                "        Lists everything",
+                "   -r val, --run=val",
+                "        Runs specified command"
+        );
+    }
+
+    @Test
+    public void testGenerate_Name_Options_ShortNameConflict() {
+
+        CliOption resetOpt = CliOption.builder("reset", "Resets everything").build();
+        CliOption listOpt = CliOption.builder("list", "Lists everything").build();
         CliOption runOpt = CliOption.builder("run", "Runs everything").build();
         CliApplication app = CliApplication
                 .builder("myapp")
+                .addOption(resetOpt)
                 .addOption(listOpt)
                 .addOption(runOpt)
                 .build();
@@ -63,10 +91,10 @@ public class DefaultHelpGeneratorTest {
                 "OPTIONS",
                 "   -l, --list",
                 "        Lists everything",
-                "   -r, --run",
+                "   --reset",
+                "        Resets everything",
+                "   --run",
                 "        Runs everything"
         );
     }
-
-
 }

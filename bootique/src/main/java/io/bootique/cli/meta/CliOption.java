@@ -8,7 +8,7 @@ package io.bootique.cli.meta;
 public class CliOption extends CliNode {
 
     private CliOptionValueCardinality valueCardinality;
-    private String valueDescription;
+    private String valueName;
 
     public static Builder builder(String name) {
         return new Builder().name(name);
@@ -22,8 +22,8 @@ public class CliOption extends CliNode {
         return valueCardinality;
     }
 
-    public String getValueDescription() {
-        return valueDescription;
+    public String getValueName() {
+        return valueName;
     }
 
     public static class Builder {
@@ -49,9 +49,9 @@ public class CliOption extends CliNode {
             return valueRequired("");
         }
 
-        public Builder valueRequired(String valueDescription) {
+        public Builder valueRequired(String valueName) {
             this.option.valueCardinality = CliOptionValueCardinality.REQUIRED;
-            this.option.valueDescription = valueDescription;
+            this.option.valueName = valueName;
             return this;
         }
 
@@ -59,9 +59,9 @@ public class CliOption extends CliNode {
             return valueOptional("");
         }
 
-        public Builder valueOptional(String valueDescription) {
+        public Builder valueOptional(String valueName) {
             this.option.valueCardinality = CliOptionValueCardinality.OPTIONAL;
-            this.option.valueDescription = valueDescription;
+            this.option.valueName = valueName;
             return this;
         }
 
