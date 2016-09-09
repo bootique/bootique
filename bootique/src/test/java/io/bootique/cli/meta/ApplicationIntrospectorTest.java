@@ -4,32 +4,29 @@ import io.bootique.Bootique;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-
-public class CliApplicationTest {
+public class ApplicationIntrospectorTest {
 
     @Test
     public void testMainClass() {
 
-        String mainClassName = CliApplication.mainClass();
+        Class<?> mainClass = ApplicationIntrospector.mainClass();
 
         // TODO: until https://github.com/bootique/bootique/issues/52 is available,
         // we can't make an exact assertion here, as tests can be started from different IDEs, etc.
 
-        Assert.assertNotNull(mainClassName);
-        Assert.assertNotEquals(Bootique.class.getName(), mainClassName);
+        Assert.assertNotNull(mainClass);
+        Assert.assertNotEquals(Bootique.class, mainClass);
     }
 
     @Test
     public void testAppNameFromRuntime() {
 
-        String name = CliApplication.appNameFromRuntime();
+        String name = ApplicationIntrospector.appNameFromRuntime();
 
         // TODO: until https://github.com/bootique/bootique/issues/52 is available,
         // we can't make an exact assertion here, as tests can be started from different IDEs, etc.
 
         Assert.assertNotNull(name);
-        assertEquals(-1, name.indexOf('.'));
-        Assert.assertNotEquals(Bootique.class.getSimpleName(), name);
+        Assert.assertNotEquals("Bootique", name);
     }
 }

@@ -1,10 +1,7 @@
 package io.bootique.cli.meta;
 
-import io.bootique.Bootique;
-
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * Metadata for the app application command invocation structure.
@@ -33,46 +30,6 @@ public class CliApplication extends CliNode {
         return new Builder().name(name).description(description);
     }
 
-    /**
-     * Returns application name that is the name of the main class derived from runtime stack.
-     *
-     * @return application name that is the name of the main class derived from runtime stack.
-     */
-    static String appNameFromRuntime() {
-
-        String main = mainClass();
-        int dot = main.lastIndexOf('.');
-        return dot >= 0 && dot < main.length() - 1 ? main.substring(dot + 1) : main;
-    }
-
-    /**
-     * Returns the name of the app main class. If it can't be found, return 'io.bootique.Bootique'.
-     *
-     * @return the name of the app main class.
-     */
-    static String mainClass() {
-
-        for (Map.Entry<Thread, StackTraceElement[]> stackEntry : Thread.getAllStackTraces().entrySet()) {
-
-            // thread must be called "main"
-            if ("main".equals(stackEntry.getKey().getName())) {
-
-                StackTraceElement[] stack = stackEntry.getValue();
-                StackTraceElement bottom = stack[stack.length - 1];
-
-                // method must be called main
-                if ("main".equals(bottom.getMethodName())) {
-                    return bottom.getClassName();
-                } else {
-                    // no other ideas where else to look for main...
-                    return Bootique.class.getName();
-                }
-            }
-        }
-
-        // failover...
-        return Bootique.class.getName();
-    }
 
     public Collection<CliCommand> getCommands() {
         return commands;
@@ -100,7 +57,7 @@ public class CliApplication extends CliNode {
         }
 
         public Builder defaultName() {
-            return name(CliApplication.appNameFromRuntime());
+            return name(ApplicationIntrospector.appNameFromRuntime());
         }
 
         public Builder description(String description) {
