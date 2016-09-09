@@ -13,12 +13,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import io.bootique.run.DefaultRunner;
 import org.junit.Before;
 import org.junit.Test;
 
 import io.bootique.cli.Cli;
-import io.bootique.cli.CliOption;
+import io.bootique.cli.meta.CliOption;
 import io.bootique.command.Command;
 import io.bootique.command.CommandManager;
 import io.bootique.command.CommandMetadata;

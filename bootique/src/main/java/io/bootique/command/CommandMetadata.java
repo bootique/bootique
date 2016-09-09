@@ -1,9 +1,9 @@
 package io.bootique.command;
 
+import io.bootique.cli.meta.CliOption;
+
 import java.util.ArrayList;
 import java.util.Collection;
-
-import io.bootique.cli.CliOption;
 
 /**
  * Describes a {@link Command}, providing useful information to Bootique to map

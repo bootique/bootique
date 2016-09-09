@@ -1,15 +1,15 @@
-package io.bootique.cli;
+package io.bootique.cli.meta;
+
+import io.bootique.cli.CliOptionValueCardinality;
 
 /**
  * A descriptor of a command-line option.
  *
  * @since 0.12
  */
-public class CliOption {
+public class CliOption extends CliNode {
 
-    private String name;
     private CliOptionValueCardinality valueCardinality;
-    private String description;
     private String valueDescription;
 
     public static Builder builder(String name) {
@@ -18,18 +18,6 @@ public class CliOption {
 
     public static Builder builder(String name, String description) {
         return new Builder().name(name).description(description);
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getShortName() {
-        return name.substring(0, 1);
-    }
-
-    public String getDescription() {
-        return description;
     }
 
     public CliOptionValueCardinality getValueCardinality() {
@@ -50,7 +38,7 @@ public class CliOption {
         }
 
         public Builder name(String name) {
-            this.option.name = validateName(name);
+            this.option.name = name;
             return this;
         }
 
@@ -77,18 +65,6 @@ public class CliOption {
             this.option.valueCardinality = CliOptionValueCardinality.OPTIONAL;
             this.option.valueDescription = valueDescription;
             return this;
-        }
-
-        private String validateName(String name) {
-            if (name == null) {
-                throw new NullPointerException("Null option name");
-            }
-
-            if (name.length() < 1) {
-                throw new IllegalStateException("Empty option name");
-            }
-
-            return name;
         }
 
         public CliOption build() {
