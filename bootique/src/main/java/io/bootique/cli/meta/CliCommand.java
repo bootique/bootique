@@ -10,6 +10,12 @@ import java.util.Collection;
  */
 public class CliCommand extends CliNode {
 
+    private Collection<CliOption> options;
+
+    public CliCommand() {
+        this.options = new ArrayList<>();
+    }
+
     public static Builder builder(Class<? extends Command> commandType) {
         return new Builder().commandType(commandType);
     }
@@ -18,24 +24,8 @@ public class CliCommand extends CliNode {
         return new Builder().name(commandName);
     }
 
-    private String name;
-    private Collection<CliOption> options;
-    private String description;
-
-    public CliCommand() {
-        this.options = new ArrayList<>();
-    }
-
-    public String getName() {
-        return name;
-    }
-
     public Collection<CliOption> getOptions() {
         return options;
-    }
-
-    public String getDescription() {
-        return description;
     }
 
     public static class Builder {
