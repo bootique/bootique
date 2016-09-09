@@ -1,7 +1,5 @@
 package io.bootique.cli.meta;
 
-import io.bootique.cli.CliOptionValueCardinality;
-
 /**
  * A descriptor of a command-line option.
  *

@@ -1,4 +1,4 @@
-package io.bootique.cli;
+package io.bootique.cli.meta;
 
 /**
  * @since 0.12
