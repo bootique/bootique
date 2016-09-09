@@ -28,7 +28,7 @@ public class DefaultHelpGeneratorTest {
 
         assertLines(new DefaultHelpGenerator(app),
                 "NAME",
-                "   myapp"
+                "      myapp"
         );
     }
 
@@ -39,7 +39,7 @@ public class DefaultHelpGeneratorTest {
 
         assertLines(new DefaultHelpGenerator(app),
                 "NAME",
-                "   myapp: this is my app"
+                "      myapp: this is my app"
         );
     }
 
@@ -59,15 +59,15 @@ public class DefaultHelpGeneratorTest {
 
         assertLines(new DefaultHelpGenerator(app),
                 "NAME",
-                "   myapp",
+                "      myapp",
                 "",
                 "OPTIONS",
-                "   -d [level], --debug[=level]",
-                "        Switches to debug mode",
-                "   -l, --list",
-                "        Lists everything",
-                "   -r val, --run=val",
-                "        Runs specified command"
+                "      -d [level], --debug[=level]",
+                "           Switches to debug mode",
+                "      -l, --list",
+                "           Lists everything",
+                "      -r val, --run=val",
+                "           Runs specified command"
         );
     }
 
@@ -86,15 +86,15 @@ public class DefaultHelpGeneratorTest {
 
         assertLines(new DefaultHelpGenerator(app),
                 "NAME",
-                "   myapp",
+                "      myapp",
                 "",
                 "OPTIONS",
-                "   -l, --list",
-                "        Lists everything",
-                "   --reset",
-                "        Resets everything",
-                "   --run",
-                "        Runs everything"
+                "      -l, --list",
+                "           Lists everything",
+                "      --reset",
+                "           Resets everything",
+                "      --run",
+                "           Runs everything"
         );
     }
 }

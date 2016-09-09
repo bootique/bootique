@@ -2,6 +2,7 @@ package io.bootique;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
+import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.multibindings.MapBinder;
@@ -12,9 +13,9 @@ import io.bootique.annotation.EnvironmentProperties;
 import io.bootique.annotation.EnvironmentVariables;
 import io.bootique.annotation.LogLevels;
 import io.bootique.cli.Cli;
+import io.bootique.cli.meta.CliApplication;
 import io.bootique.cli.meta.CliCommand;
 import io.bootique.cli.meta.CliOption;
-import io.bootique.cli.meta.CliApplication;
 import io.bootique.command.Command;
 import io.bootique.command.CommandManager;
 import io.bootique.command.CommandMetadata;
@@ -25,6 +26,8 @@ import io.bootique.config.ConfigurationFactory;
 import io.bootique.config.ConfigurationSource;
 import io.bootique.env.DefaultEnvironment;
 import io.bootique.env.Environment;
+import io.bootique.help.DefaultHelpGenerator;
+import io.bootique.help.HelpGenerator;
 import io.bootique.jackson.DefaultJacksonService;
 import io.bootique.jackson.JacksonService;
 import io.bootique.jopt.JoptCliProvider;
@@ -182,14 +185,20 @@ public class BQCoreModule implements Module {
 
     @Provides
     @Singleton
-    HelpCommand provideHelpCommand(BootLogger bootLogger) {
-        return new HelpCommand(bootLogger);
+    HelpCommand provideHelpCommand(BootLogger bootLogger, Provider<HelpGenerator> helpGeneratorProvider) {
+        return new HelpCommand(bootLogger, helpGeneratorProvider);
     }
 
     @Provides
     @Singleton
     CommandManager provideCommandManager(Set<Command> commands, @DefaultCommand Command defaultCommand) {
         return DefaultCommandManager.create(commands, defaultCommand);
+    }
+
+    @Provides
+    @Singleton
+    HelpGenerator provideHelpGenerator(CliApplication application) {
+        return new DefaultHelpGenerator(application);
     }
 
     @Provides

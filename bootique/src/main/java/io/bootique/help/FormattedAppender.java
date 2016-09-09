@@ -17,7 +17,7 @@ public class FormattedAppender {
     static final String NEWLINE = System.getProperty("line.separator");
 
     private static final String NO_OFFSET = "";
-    private static final String TEXT_OFFSET = "   ";
+    private static final String TEXT_OFFSET = "      ";
     private static final String DESCRIPTION_OFFSET = TEXT_OFFSET + "     ";
 
     private Appendable out;
