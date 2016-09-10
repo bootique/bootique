@@ -3,6 +3,7 @@
 
 * #89 Don't print debug info to stdout
 * #91 bootique-test: test helper for PolymorphicConfiguration
+* #92 Standalone service for printing help
 * #93 A concept of "app name" for help purposes
 
 ## 0.19
