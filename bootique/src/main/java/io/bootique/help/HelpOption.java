@@ -13,10 +13,12 @@ public class HelpOption implements Comparable<HelpOption> {
 
     private CliOption option;
     private boolean shortNameAllowed;
+    private boolean longNameAllowed;
 
     public HelpOption(CliOption option) {
         this.option = Objects.requireNonNull(option);
         this.shortNameAllowed = true;
+        this.longNameAllowed = option.getName().length() > 1;
     }
 
     @Override
@@ -34,6 +36,10 @@ public class HelpOption implements Comparable<HelpOption> {
 
     public boolean isShortNameAllowed() {
         return shortNameAllowed;
+    }
+
+    public boolean isLongNameAllowed() {
+        return longNameAllowed;
     }
 
     public void setShortNameAllowed(boolean shortNameAllowed) {

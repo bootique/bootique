@@ -14,13 +14,15 @@ import java.util.Objects;
 public class DefaultHelpGenerator implements HelpGenerator {
 
     private CliApplication application;
+    private int lineWidth;
 
-    public DefaultHelpGenerator(CliApplication application) {
+    public DefaultHelpGenerator(CliApplication application, int lineWidth) {
         this.application = application;
+        this.lineWidth = lineWidth;
     }
 
     protected FormattedAppender createAppender(Appendable out) {
-        return new FormattedAppender(out);
+        return new FormattedAppender(out, lineWidth);
     }
 
     @Override
@@ -50,6 +52,7 @@ public class DefaultHelpGenerator implements HelpGenerator {
 
 
     protected void printName(FormattedAppender out, String name, String description) {
+
         out.printSectionName("NAME");
 
         Objects.requireNonNull(name);
@@ -92,24 +95,32 @@ public class DefaultHelpGenerator implements HelpGenerator {
                         break;
                 }
 
-                parts.add(", ");
+
             }
 
-            parts.add("--");
-            parts.add(o.getOption().getName());
-            switch (o.getOption().getValueCardinality()) {
-                case REQUIRED:
-                    parts.add("=");
-                    parts.add(valueName);
-                    break;
-                case OPTIONAL:
-                    parts.add("[=");
-                    parts.add(valueName);
-                    parts.add("]");
-                    break;
+            if (o.isLongNameAllowed()) {
+
+                if(!parts.isEmpty()) {
+                    parts.add(", ");
+                }
+
+                parts.add("--");
+                parts.add(o.getOption().getName());
+                switch (o.getOption().getValueCardinality()) {
+                    case REQUIRED:
+                        parts.add("=");
+                        parts.add(valueName);
+                        break;
+                    case OPTIONAL:
+                        parts.add("[=");
+                        parts.add(valueName);
+                        parts.add("]");
+                        break;
+                }
             }
 
-            out.printText(parts);
+
+            out.printSubsectionHeader(parts);
 
             String description = o.getOption().getDescription();
             if (description != null) {

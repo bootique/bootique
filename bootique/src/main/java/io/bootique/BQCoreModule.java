@@ -198,7 +198,9 @@ public class BQCoreModule implements Module {
     @Provides
     @Singleton
     HelpGenerator provideHelpGenerator(CliApplication application) {
-        return new DefaultHelpGenerator(application);
+
+        // TODO: use stty or some other mechanism to determine line width dynamically..
+        return new DefaultHelpGenerator(application, 80);
     }
 
     @Provides

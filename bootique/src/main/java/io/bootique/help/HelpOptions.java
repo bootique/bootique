@@ -38,11 +38,23 @@ public class HelpOptions {
 
             Stream<HelpOption> options = list.stream();
 
-            // suppress short options if 2 or more long options resolve into a single short opt=
+            // suppress short options if 2 or more long options resolve into a single short opt.
+            // although if one of those options is 1 char long, it can be exposed as a short option...
             if (list.size() > 1) {
 
+                boolean[] shortCounter = new boolean[1];
+
                 options = options.map(o -> {
-                    o.setShortNameAllowed(false);
+
+                    if (o.isLongNameAllowed()) {
+                        o.setShortNameAllowed(false);
+                    } else if (shortCounter[0]) {
+                        throw new IllegalStateException("Conflicting short option name: " + o.getShortName());
+                    }
+                    else {
+                        shortCounter[0] = true;
+                    }
+
                     return o;
                 });
             }
