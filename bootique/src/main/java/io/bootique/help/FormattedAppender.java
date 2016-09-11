@@ -120,16 +120,51 @@ public class FormattedAppender {
                     if (line.length() + separator.length() + word.length() <= maxLength) {
                         line.append(separator).append(word);
                     } else {
-                        folded.add(line.toString());
-                        line.setLength(0);
-                        line.append(word);
+
+                        if (word.length() <= maxLength) {
+                            folded.add(line.toString());
+                            line.setLength(0);
+                            line.append(word);
+                        } else {
+
+                            // fold long words...
+
+                            // append head to existing line
+                            int head = maxLength - separator.length() - line.length();
+                            if (head > 0) {
+                                line.append(separator).append(word.substring(0, head));
+                                folded.add(line.toString());
+                                line.setLength(0);
+                            }
+
+                            int len = word.length();
+                            int start = head;
+                            int end = -1;
+                            while (start < len) {
+
+                                end = start + maxLength;
+                                if (end > len) {
+                                    // don't fold yet, there may be more words...
+                                    end = len;
+                                    line.append(word.substring(start, end));
+                                } else {
+                                    line.append(word.substring(start, end));
+                                    folded.add(line.toString());
+                                    line.setLength(0);
+                                }
+
+                                start = end;
+                            }
+                        }
                     }
                 });
 
+        // save leftovers
         if (line.length() > 0) {
             folded.add(line.toString());
         }
 
         return folded;
     }
+
 }

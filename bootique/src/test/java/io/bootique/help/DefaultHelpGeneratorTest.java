@@ -191,4 +191,38 @@ public class DefaultHelpGeneratorTest {
                 "           Word15, word16"
         );
     }
+
+    @Test
+    public void testGenerate_LineFolding_VeryLongWord() {
+
+        CliOption opt1 = CliOption.builder("a1", "Word1_word2_word3_word4_longword5_longerword6_morewords7").build();
+        CliOption opt2 = CliOption.builder("b1", "Word1 word2_word3_word4_longword5_longerword6_morewords7").build();
+        CliOption opt3 = CliOption.builder("c1", "Word1_word2_word3_word4_longword5_longerword6 morewords7").build();
+
+        CliApplication app = CliApplication
+                .builder("myapp")
+                .addOption(opt1)
+                .addOption(opt2)
+                .addOption(opt3)
+                .build();
+
+        // must insert a forced break...
+        assertLines(new DefaultHelpGenerator(app, 41),
+                "NAME",
+                "      myapp",
+                "",
+                "OPTIONS",
+                "      -a, --a1",
+                "           Word1_word2_word3_word4_longwo",
+                "           rd5_longerword6_morewords7",
+                "",
+                "      -b, --b1",
+                "           Word1 word2_word3_word4_longwo",
+                "           rd5_longerword6_morewords7",
+                "",
+                "      -c, --c1",
+                "           Word1_word2_word3_word4_longwo",
+                "           rd5_longerword6 morewords7"
+        );
+    }
 }
