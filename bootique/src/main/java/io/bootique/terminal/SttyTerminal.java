@@ -22,8 +22,8 @@ public class SttyTerminal extends ExternalCommandTerminal {
     // "stty" seems to be present in /bin on OSX, CentOS, Ubuntu...
     private static final String[] STTY_COMMAND = new String[]{"/bin/stty", "-a"};
 
-    public SttyTerminal(Terminal failoverTerminal, BootLogger logger) {
-        super(failoverTerminal, logger);
+    public SttyTerminal(BootLogger logger) {
+        super(logger);
     }
 
     @Override

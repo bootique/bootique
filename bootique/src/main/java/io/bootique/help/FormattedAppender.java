@@ -22,10 +22,9 @@ public class FormattedAppender {
     private static final String TEXT_OFFSET = "      ";
     private static final String DESCRIPTION_OFFSET = TEXT_OFFSET + "     ";
 
-    // Total width of 40 chars ensures that the option lines do not require folding.
+    // Enforcing min total width of 40 chars ensures that the option lines do not require folding.
     // So the folding procedure will be limited to description text only...
-    private static final int MIN_DESCRIPTION_LINE_WIDTH = 29;
-    private static final int MIN_LINE_WIDTH = DESCRIPTION_OFFSET.length() + MIN_DESCRIPTION_LINE_WIDTH;
+    private static final int MIN_LINE_WIDTH = 40;
 
     private static final Pattern SPACE = Pattern.compile("\\s+");
 

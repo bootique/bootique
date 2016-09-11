@@ -4,25 +4,33 @@ import io.bootique.log.BootLogger;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.BufferedReader;
+import java.io.StringReader;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 
 public class SttyTerminalTest {
 
-    private Terminal mockFailover;
     private SttyTerminal terminal;
 
     @Before
     public void before() {
-        mockFailover = mock(Terminal.class);
-        terminal = new SttyTerminal(mockFailover, mock(BootLogger.class));
+        terminal = new SttyTerminal(mock(BootLogger.class));
     }
 
     @Test
     public void testParseLine_OSX() {
         String line = "speed 9600 baud; 39 rows; 136 columns;";
         assertEquals(new Integer(136), terminal.parseLine(line));
+    }
+
+    @Test
+    public void testParseColumns_OSX() {
+        String line = "speed 9600 baud; 39 rows; 136 columns;";
+        BufferedReader in = new BufferedReader(new StringReader(line));
+        assertEquals(new Integer(136), terminal.parseColumns(in));
     }
 
     @Test

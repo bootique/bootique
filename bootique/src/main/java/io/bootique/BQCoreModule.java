@@ -37,7 +37,7 @@ import io.bootique.run.Runner;
 import io.bootique.shutdown.DefaultShutdownManager;
 import io.bootique.shutdown.ShutdownManager;
 import io.bootique.shutdown.ShutdownTimeout;
-import io.bootique.terminal.DefaultTerminal;
+import io.bootique.terminal.FixedWidthTerminal;
 import io.bootique.terminal.SttyTerminal;
 import io.bootique.terminal.Terminal;
 
@@ -55,6 +55,10 @@ import java.util.logging.Level;
  * line, reading configuration, selectign and running a Command.
  */
 public class BQCoreModule implements Module {
+
+    // TODO: duplicate of FormattedAppender.MIN_LINE_WIDTH
+    private static final int TTY_MIN_COLUMNS = 40;
+    private static final int TTY_DEFAULT_COLUMNS = 80;
 
     private String[] args;
     private BootLogger bootLogger;
@@ -201,7 +205,12 @@ public class BQCoreModule implements Module {
     @Provides
     @Singleton
     HelpGenerator provideHelpGenerator(CliApplication application, Terminal terminal) {
+
         int maxColumns = terminal.getColumns();
+        if (maxColumns < TTY_MIN_COLUMNS) {
+            maxColumns = TTY_DEFAULT_COLUMNS;
+        }
+
         return new DefaultHelpGenerator(application, maxColumns);
     }
 
@@ -235,15 +244,9 @@ public class BQCoreModule implements Module {
     @Singleton
     Terminal provideTerminal(BootLogger bootLogger) {
 
-        // TODO: test across OSs (especially UNIX's)... perhaps we need to resurrect shell_api
-        // branch and use Shell.which(..) to see if stty is available.
-
-        // .. or we can just run it and see if it succeeds .. something we are
-        // currently doing. Shell API may be overengineering...
+        // very simple OS test...
         boolean isUnix = "/".equals(System.getProperty("file.separator"));
-
-        Terminal defaultTerminal = new DefaultTerminal();
-        return isUnix ? new SttyTerminal(defaultTerminal, bootLogger) : defaultTerminal;
+        return isUnix ? new SttyTerminal(bootLogger) : new FixedWidthTerminal(TTY_DEFAULT_COLUMNS);
     }
 
     public static class Builder {

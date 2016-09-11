@@ -5,7 +5,6 @@ import io.bootique.log.BootLogger;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
@@ -17,10 +16,8 @@ import java.util.function.Function;
 public abstract class ExternalCommandTerminal implements Terminal {
 
     protected BootLogger logger;
-    private Terminal failoverTerminal;
 
-    public ExternalCommandTerminal(Terminal failoverTerminal, BootLogger logger) {
-        this.failoverTerminal = Objects.requireNonNull(failoverTerminal);
+    public ExternalCommandTerminal(BootLogger logger) {
         this.logger = logger;
     }
 
@@ -36,7 +33,7 @@ public abstract class ExternalCommandTerminal implements Terminal {
     public int getColumns() {
         String[] command = getColumnsCommand();
         Integer columns = runCommand(command, this::parseColumns);
-        return columns != null ? columns.intValue() : failoverTerminal.getColumns();
+        return columns != null ? columns.intValue() : 0;
     }
 
     protected <T> T runCommand(String[] command, Function<BufferedReader, T> resultParser) {
