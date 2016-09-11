@@ -5,6 +5,7 @@
 * #91 bootique-test: test helper for PolymorphicConfiguration
 * #92 Standalone service for printing help
 * #93 A concept of "app name" for help purposes
+* #95 Support for terminal width detection
 
 ## 0.19
 
