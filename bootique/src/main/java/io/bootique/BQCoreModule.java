@@ -37,6 +37,9 @@ import io.bootique.run.Runner;
 import io.bootique.shutdown.DefaultShutdownManager;
 import io.bootique.shutdown.ShutdownManager;
 import io.bootique.shutdown.ShutdownTimeout;
+import io.bootique.terminal.DefaultTerminal;
+import io.bootique.terminal.SttyTerminal;
+import io.bootique.terminal.Terminal;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -197,10 +200,9 @@ public class BQCoreModule implements Module {
 
     @Provides
     @Singleton
-    HelpGenerator provideHelpGenerator(CliApplication application) {
-
-        // TODO: use stty or some other mechanism to determine line width dynamically..
-        return new DefaultHelpGenerator(application, 80);
+    HelpGenerator provideHelpGenerator(CliApplication application, Terminal terminal) {
+        int maxColumns = terminal.getColumns();
+        return new DefaultHelpGenerator(application, maxColumns);
     }
 
     @Provides
@@ -227,6 +229,21 @@ public class BQCoreModule implements Module {
     Environment createEnvironment(@EnvironmentProperties Map<String, String> diProperties,
                                   @EnvironmentVariables Map<String, String> diVars) {
         return new DefaultEnvironment(diProperties, diVars);
+    }
+
+    @Provides
+    @Singleton
+    Terminal provideTerminal(BootLogger bootLogger) {
+
+        // TODO: test across OSs (especially UNIX's)... perhaps we need to resurrect shell_api
+        // branch and use Shell.which(..) to see if stty is available.
+
+        // .. or we can just run it and see if it succeeds .. something we are
+        // currently doing. Shell API may be overengineering...
+        boolean isUnix = "/".equals(System.getProperty("file.separator"));
+
+        Terminal defaultTerminal = new DefaultTerminal();
+        return isUnix ? new SttyTerminal(defaultTerminal, bootLogger) : defaultTerminal;
     }
 
     public static class Builder {
