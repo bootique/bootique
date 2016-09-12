@@ -4,9 +4,9 @@
 
 * [bootique-cayenne #92](https://github.com/bootique/bootique/issues/92): We created a new application metadata package 
 at ```io.bootique.application```. The existing metadata objects where moved to this package from different places. 
-Specifically ```io.bootique.command.CommandMetadata``` and ```io.bootique.cli.CliOption``` were moved to this package. 
-**This is a breaking change.**  You will need to use module versions aligned with 0.20 Bootique BOM and fix any imports 
-in your own code (especially in custom Commands). 
+Specifically ```io.bootique.command.CommandMetadata``` was moved and ```io.bootique.cli.CliOption``` was moved and 
+renamed to ```OptionMetadata```.  **This is a breaking change.**  You will need to use module versions aligned with 
+0.20 Bootique BOM and fix any imports in your own code (especially in custom Commands). 
 
 ## 0.19
 
