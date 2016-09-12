@@ -1,19 +1,19 @@
-package io.bootique.cli.meta;
+package io.bootique.application;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Metadata for the app application command invocation structure.
+ * Metadata object representing an application with commands.
  *
  * @since 0.20
  */
-public class CliApplication extends CliNode {
+public class ApplicationMetadata extends ApplicationMetadataNode {
 
-    private Collection<CliCommand> commands;
-    private Collection<CliOption> options;
+    private Collection<CommandMetadata> commands;
+    private Collection<OptionMetadata> options;
 
-    private CliApplication() {
+    private ApplicationMetadata() {
         this.commands = new ArrayList<>();
         this.options = new ArrayList<>();
     }
@@ -31,23 +31,23 @@ public class CliApplication extends CliNode {
     }
 
 
-    public Collection<CliCommand> getCommands() {
+    public Collection<CommandMetadata> getCommands() {
         return commands;
     }
 
-    public Collection<CliOption> getOptions() {
+    public Collection<OptionMetadata> getOptions() {
         return options;
     }
 
     public static class Builder {
 
-        private CliApplication application;
+        private ApplicationMetadata application;
 
         private Builder() {
-            this.application = new CliApplication();
+            this.application = new ApplicationMetadata();
         }
 
-        public CliApplication build() {
+        public ApplicationMetadata build() {
             return application;
         }
 
@@ -65,22 +65,22 @@ public class CliApplication extends CliNode {
             return this;
         }
 
-        public Builder addCommand(CliCommand commandMetadata) {
+        public Builder addCommand(CommandMetadata commandMetadata) {
             application.commands.add(commandMetadata);
             return this;
         }
 
-        public Builder addCommands(Collection<CliCommand> commandMetadata) {
+        public Builder addCommands(Collection<CommandMetadata> commandMetadata) {
             application.commands.addAll(commandMetadata);
             return this;
         }
 
-        public Builder addOption(CliOption option) {
+        public Builder addOption(OptionMetadata option) {
             application.options.add(option);
             return this;
         }
 
-        public Builder addOptions(Collection<CliOption> options) {
+        public Builder addOptions(Collection<OptionMetadata> options) {
             application.options.addAll(options);
             return this;
         }

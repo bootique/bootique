@@ -1,4 +1,4 @@
-package io.bootique.cli.meta;
+package io.bootique.application;
 
 import io.bootique.Bootique;
 
@@ -6,7 +6,9 @@ import java.net.URL;
 import java.util.Map;
 
 /**
- * A helper class to determine the app main class and user-freindly name.
+ * A helper class to determine the app main class and user-friendly name.
+ *
+ * @since 0.20
  */
 public class ApplicationIntrospector {
 

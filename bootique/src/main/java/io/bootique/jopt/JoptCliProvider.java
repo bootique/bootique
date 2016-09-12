@@ -3,11 +3,11 @@ package io.bootique.jopt;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import io.bootique.annotation.Args;
+import io.bootique.application.CommandMetadata;
+import io.bootique.application.OptionMetadata;
 import io.bootique.cli.Cli;
-import io.bootique.cli.meta.CliOption;
 import io.bootique.command.Command;
 import io.bootique.command.CommandManager;
-import io.bootique.command.CommandMetadata;
 import io.bootique.log.BootLogger;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -23,12 +23,12 @@ import static java.util.stream.Collectors.joining;
 public class JoptCliProvider implements Provider<Cli> {
 
 	private String[] args;
-	private Set<CliOption> options;
+	private Set<OptionMetadata> options;
 	private BootLogger bootLogger;
 	private CommandManager commandManager;
 
 	@Inject
-	public JoptCliProvider(BootLogger bootLogger, CommandManager commandManager, Set<CliOption> options,
+	public JoptCliProvider(BootLogger bootLogger, CommandManager commandManager, Set<OptionMetadata> options,
 			@Args String[] args) {
 		this.commandManager = commandManager;
 		this.options = options;
@@ -58,7 +58,7 @@ public class JoptCliProvider implements Provider<Cli> {
 
 			// using option-bound command strategy...
 
-			addOption(parser, CliOption.builder(md.getName()).description(md.getDescription()).build());
+			addOption(parser, OptionMetadata.builder(md.getName()).description(md.getDescription()).build());
 		});
 
 		// load global options; TODO: check for conflicts with other options
@@ -67,7 +67,7 @@ public class JoptCliProvider implements Provider<Cli> {
 		return parser;
 	}
 
-	protected void addOption(OptionParser parser, CliOption option) {
+	protected void addOption(OptionParser parser, OptionMetadata option) {
 
 		// ensure non-null description
 		String description = Optional.ofNullable(option.getDescription()).orElse("");

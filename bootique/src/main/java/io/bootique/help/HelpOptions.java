@@ -1,6 +1,6 @@
 package io.bootique.help;
 
-import io.bootique.cli.meta.CliOption;
+import io.bootique.application.OptionMetadata;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,7 +22,7 @@ public class HelpOptions {
         this.byShortName = new HashMap<>();
     }
 
-    public void add(CliOption option) {
+    public void add(OptionMetadata option) {
         HelpOption ho = new HelpOption(option);
         byShortName.computeIfAbsent(ho.getShortName(), sn -> new ArrayList<HelpOption>()).add(ho);
     }

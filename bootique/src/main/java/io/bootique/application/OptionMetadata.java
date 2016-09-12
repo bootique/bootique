@@ -1,13 +1,13 @@
-package io.bootique.cli.meta;
+package io.bootique.application;
 
 /**
  * A descriptor of a command-line option.
  *
- * @since 0.12
+ * @since 0.20
  */
-public class CliOption extends CliNode {
+public class OptionMetadata extends ApplicationMetadataNode {
 
-    private CliOptionValueCardinality valueCardinality;
+    private OptionValueCardinality valueCardinality;
     private String valueName;
 
     public static Builder builder(String name) {
@@ -18,7 +18,7 @@ public class CliOption extends CliNode {
         return new Builder().name(name).description(description);
     }
 
-    public CliOptionValueCardinality getValueCardinality() {
+    public OptionValueCardinality getValueCardinality() {
         return valueCardinality;
     }
 
@@ -28,11 +28,11 @@ public class CliOption extends CliNode {
 
     public static class Builder {
 
-        private CliOption option;
+        private OptionMetadata option;
 
         private Builder() {
-            this.option = new CliOption();
-            this.option.valueCardinality = CliOptionValueCardinality.NONE;
+            this.option = new OptionMetadata();
+            this.option.valueCardinality = OptionValueCardinality.NONE;
         }
 
         public Builder name(String name) {
@@ -50,7 +50,7 @@ public class CliOption extends CliNode {
         }
 
         public Builder valueRequired(String valueName) {
-            this.option.valueCardinality = CliOptionValueCardinality.REQUIRED;
+            this.option.valueCardinality = OptionValueCardinality.REQUIRED;
             this.option.valueName = valueName;
             return this;
         }
@@ -60,12 +60,12 @@ public class CliOption extends CliNode {
         }
 
         public Builder valueOptional(String valueName) {
-            this.option.valueCardinality = CliOptionValueCardinality.OPTIONAL;
+            this.option.valueCardinality = OptionValueCardinality.OPTIONAL;
             this.option.valueName = valueName;
             return this;
         }
 
-        public CliOption build() {
+        public OptionMetadata build() {
             return option;
         }
     }

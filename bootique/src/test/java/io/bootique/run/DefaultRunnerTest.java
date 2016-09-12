@@ -1,5 +1,19 @@
 package io.bootique.run;
 
+import io.bootique.application.CommandMetadata;
+import io.bootique.application.OptionMetadata;
+import io.bootique.cli.Cli;
+import io.bootique.command.Command;
+import io.bootique.command.CommandManager;
+import io.bootique.command.CommandOutcome;
+import io.bootique.command.DefaultCommandManager;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -8,22 +22,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import io.bootique.cli.Cli;
-import io.bootique.cli.meta.CliOption;
-import io.bootique.command.Command;
-import io.bootique.command.CommandManager;
-import io.bootique.command.CommandMetadata;
-import io.bootique.command.CommandMetadata.Builder;
-import io.bootique.command.CommandOutcome;
-import io.bootique.command.DefaultCommandManager;
 
 public class DefaultRunnerTest {
 
@@ -133,8 +131,8 @@ public class DefaultRunnerTest {
 		// using this option in command line would match the original command
 		// name
 
-		Builder builder = CommandMetadata.builder(name);
-		Arrays.asList(options).forEach(opt -> builder.addOption(CliOption.builder(opt)));
+		CommandMetadata.Builder builder = CommandMetadata.builder(name);
+		Arrays.asList(options).forEach(opt -> builder.addOption(OptionMetadata.builder(opt)));
 
 		CommandMetadata md = builder.build();
 

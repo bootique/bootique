@@ -1,4 +1,4 @@
-package io.bootique.cli.meta;
+package io.bootique.application;
 
 import io.bootique.command.Command;
 
@@ -8,11 +8,11 @@ import java.util.Collection;
 /**
  * @since 0.20
  */
-public class CliCommand extends CliNode {
+public class CommandMetadata extends ApplicationMetadataNode {
 
-    private Collection<CliOption> options;
+    private Collection<OptionMetadata> options;
 
-    public CliCommand() {
+    public CommandMetadata() {
         this.options = new ArrayList<>();
     }
 
@@ -24,19 +24,19 @@ public class CliCommand extends CliNode {
         return new Builder().name(commandName);
     }
 
-    public Collection<CliOption> getOptions() {
+    public Collection<OptionMetadata> getOptions() {
         return options;
     }
 
     public static class Builder {
 
-        private CliCommand command;
+        private CommandMetadata command;
 
         private Builder() {
-            this.command = new CliCommand();
+            this.command = new CommandMetadata();
         }
 
-        public CliCommand build() {
+        public CommandMetadata build() {
             return command;
         }
 
@@ -55,17 +55,17 @@ public class CliCommand extends CliNode {
             return this;
         }
 
-        public Builder addOption(CliOption option) {
+        public Builder addOption(OptionMetadata option) {
             this.command.options.add(option);
             return this;
         }
 
-        public Builder addOptions(Collection<CliOption> options) {
+        public Builder addOptions(Collection<OptionMetadata> options) {
             this.command.options.addAll(options);
             return this;
         }
 
-        public Builder addOption(CliOption.Builder optionBuilder) {
+        public Builder addOption(OptionMetadata.Builder optionBuilder) {
             return addOption(optionBuilder.build());
         }
 

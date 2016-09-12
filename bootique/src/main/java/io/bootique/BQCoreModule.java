@@ -12,13 +12,12 @@ import io.bootique.annotation.DefaultCommand;
 import io.bootique.annotation.EnvironmentProperties;
 import io.bootique.annotation.EnvironmentVariables;
 import io.bootique.annotation.LogLevels;
+import io.bootique.application.CommandMetadata;
 import io.bootique.cli.Cli;
-import io.bootique.cli.meta.CliApplication;
-import io.bootique.cli.meta.CliCommand;
-import io.bootique.cli.meta.CliOption;
+import io.bootique.application.ApplicationMetadata;
+import io.bootique.application.OptionMetadata;
 import io.bootique.command.Command;
 import io.bootique.command.CommandManager;
-import io.bootique.command.CommandMetadata;
 import io.bootique.command.DefaultCommandManager;
 import io.bootique.command.HelpCommand;
 import io.bootique.config.CliConfigurationSource;
@@ -91,8 +90,8 @@ public class BQCoreModule implements Module {
      * @return {@link Multibinder} for Bootique options.
      * @since 0.12
      */
-    public static Multibinder<CliOption> contributeOptions(Binder binder) {
-        return Multibinder.newSetBinder(binder, CliOption.class);
+    public static Multibinder<OptionMetadata> contributeOptions(Binder binder) {
+        return Multibinder.newSetBinder(binder, OptionMetadata.class);
     }
 
     /**
@@ -152,8 +151,8 @@ public class BQCoreModule implements Module {
         BQCoreModule.contributeLogLevels(binder);
     }
 
-    CliOption createConfigOption() {
-        return CliOption
+    OptionMetadata createConfigOption() {
+        return OptionMetadata
                 .builder(CliConfigurationSource.CONFIG_OPTION,
                         "Specifies YAML config location, which can be a file path or a URL.")
                 .valueRequired("yaml_location").build();
@@ -204,7 +203,7 @@ public class BQCoreModule implements Module {
 
     @Provides
     @Singleton
-    HelpGenerator provideHelpGenerator(CliApplication application, Terminal terminal) {
+    HelpGenerator provideHelpGenerator(ApplicationMetadata application, Terminal terminal) {
 
         int maxColumns = terminal.getColumns();
         if (maxColumns < TTY_MIN_COLUMNS) {
@@ -216,21 +215,21 @@ public class BQCoreModule implements Module {
 
     @Provides
     @Singleton
-    CliApplication provideCliApplication(Set<Command> commands,
-                                         Set<CliOption> options) {
+    ApplicationMetadata provideCliApplication(Set<Command> commands,
+                                              Set<OptionMetadata> options) {
 
-        // TODO: deprecate CommandMetadata, replacing it with CliCommand
-        Collection<CliCommand> cliCommands = new ArrayList<>();
+        // TODO: deprecate CommandMetadata, replacing it with CommandMetadata
+        Collection<CommandMetadata> cliCommands = new ArrayList<>();
         commands.forEach(c -> {
             CommandMetadata md = c.getMetadata();
-            cliCommands.add(CliCommand
+            cliCommands.add(CommandMetadata
                     .builder(md.getName())
                     .description(md.getDescription())
                     .addOptions(md.getOptions())
                     .build());
         });
 
-        return CliApplication.builder().addCommands(cliCommands).addOptions(options).build();
+        return ApplicationMetadata.builder().addCommands(cliCommands).addOptions(options).build();
     }
 
     @Provides

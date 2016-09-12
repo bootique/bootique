@@ -1,21 +1,21 @@
 package io.bootique.help;
 
-import io.bootique.cli.meta.CliOption;
+import io.bootique.application.OptionMetadata;
 
 import java.util.Objects;
 
 /**
- * A wrapper for {@link io.bootique.cli.meta.CliOption} that handles option sorting, short names and conflicts.
+ * A wrapper for {@link OptionMetadata} that handles option sorting, short names and conflicts.
  *
  * @since 0.20
  */
 public class HelpOption implements Comparable<HelpOption> {
 
-    private CliOption option;
+    private OptionMetadata option;
     private boolean shortNameAllowed;
     private boolean longNameAllowed;
 
-    public HelpOption(CliOption option) {
+    public HelpOption(OptionMetadata option) {
         this.option = Objects.requireNonNull(option);
         this.shortNameAllowed = true;
         this.longNameAllowed = option.getName().length() > 1;
@@ -26,7 +26,7 @@ public class HelpOption implements Comparable<HelpOption> {
         return option.getName().compareTo(o.getOption().getName());
     }
 
-    public CliOption getOption() {
+    public OptionMetadata getOption() {
         return option;
     }
 

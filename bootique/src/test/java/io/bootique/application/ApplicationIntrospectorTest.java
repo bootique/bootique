@@ -1,4 +1,4 @@
-package io.bootique.cli.meta;
+package io.bootique.application;
 
 import io.bootique.Bootique;
 import org.junit.Assert;

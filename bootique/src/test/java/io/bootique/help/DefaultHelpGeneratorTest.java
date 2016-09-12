@@ -1,7 +1,7 @@
 package io.bootique.help;
 
-import io.bootique.cli.meta.CliApplication;
-import io.bootique.cli.meta.CliOption;
+import io.bootique.application.ApplicationMetadata;
+import io.bootique.application.OptionMetadata;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -24,7 +24,7 @@ public class DefaultHelpGeneratorTest {
     @Test
     public void testGenerate_Name() {
 
-        CliApplication app = CliApplication.builder("myapp").build();
+        ApplicationMetadata app = ApplicationMetadata.builder("myapp").build();
 
         assertLines(new DefaultHelpGenerator(app, 80),
                 "NAME",
@@ -35,7 +35,7 @@ public class DefaultHelpGeneratorTest {
     @Test
     public void testGenerate_Name_Description() {
 
-        CliApplication app = CliApplication.builder("myapp", "this is my app").build();
+        ApplicationMetadata app = ApplicationMetadata.builder("myapp", "this is my app").build();
 
         assertLines(new DefaultHelpGenerator(app, 80),
                 "NAME",
@@ -46,11 +46,11 @@ public class DefaultHelpGeneratorTest {
     @Test
     public void testGenerate_Name_Options() {
 
-        CliOption listOpt = CliOption.builder("list", "Lists everything").build();
-        CliOption runOpt = CliOption.builder("run", "Runs specified command").valueRequired().build();
-        CliOption debugOpt = CliOption.builder("debug", "Switches to debug mode").valueOptional("level").build();
+        OptionMetadata listOpt = OptionMetadata.builder("list", "Lists everything").build();
+        OptionMetadata runOpt = OptionMetadata.builder("run", "Runs specified command").valueRequired().build();
+        OptionMetadata debugOpt = OptionMetadata.builder("debug", "Switches to debug mode").valueOptional("level").build();
 
-        CliApplication app = CliApplication
+        ApplicationMetadata app = ApplicationMetadata
                 .builder("myapp")
                 .addOption(listOpt)
                 .addOption(runOpt)
@@ -76,11 +76,11 @@ public class DefaultHelpGeneratorTest {
     @Test
     public void testGenerate_Name_ShortOptions() {
 
-        CliOption listOpt = CliOption.builder("l", "Lists everything").build();
-        CliOption runOpt = CliOption.builder("r", "Runs specified command").valueRequired().build();
-        CliOption debugOpt = CliOption.builder("debug", "Switches to debug mode").valueOptional("level").build();
+        OptionMetadata listOpt = OptionMetadata.builder("l", "Lists everything").build();
+        OptionMetadata runOpt = OptionMetadata.builder("r", "Runs specified command").valueRequired().build();
+        OptionMetadata debugOpt = OptionMetadata.builder("debug", "Switches to debug mode").valueOptional("level").build();
 
-        CliApplication app = CliApplication
+        ApplicationMetadata app = ApplicationMetadata
                 .builder("myapp")
                 .addOption(listOpt)
                 .addOption(runOpt)
@@ -106,10 +106,10 @@ public class DefaultHelpGeneratorTest {
     @Test
     public void testGenerate_Name_Options_ShortNameConflict() {
 
-        CliOption resetOpt = CliOption.builder("reset", "Resets everything").build();
-        CliOption listOpt = CliOption.builder("list", "Lists everything").build();
-        CliOption runOpt = CliOption.builder("run", "Runs everything").build();
-        CliApplication app = CliApplication
+        OptionMetadata resetOpt = OptionMetadata.builder("reset", "Resets everything").build();
+        OptionMetadata listOpt = OptionMetadata.builder("list", "Lists everything").build();
+        OptionMetadata runOpt = OptionMetadata.builder("run", "Runs everything").build();
+        ApplicationMetadata app = ApplicationMetadata
                 .builder("myapp")
                 .addOption(resetOpt)
                 .addOption(listOpt)
@@ -134,16 +134,16 @@ public class DefaultHelpGeneratorTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testGenerate_LineFoldingTooShort() {
-        CliApplication app = CliApplication.builder("myapp").build();
+        ApplicationMetadata app = ApplicationMetadata.builder("myapp").build();
         new DefaultHelpGenerator(app, 30).generate();
     }
 
     @Test
     public void testGenerate_TrimSpace() {
 
-        CliOption opt1 = CliOption.builder("a1", "  Word1 word2 \t\n").build();
+        OptionMetadata opt1 = OptionMetadata.builder("a1", "  Word1 word2 \t\n").build();
 
-        CliApplication app = CliApplication
+        ApplicationMetadata app = ApplicationMetadata
                 .builder("myapp")
                 .addOption(opt1)
                 .build();
@@ -161,11 +161,11 @@ public class DefaultHelpGeneratorTest {
     @Test
     public void testGenerate_LineFolding() {
 
-        CliOption opt1 = CliOption.builder("a1", "Word1 word2 word3 word4 longword5 longerword6 morewords7").build();
-        CliOption opt2 = CliOption.builder("b1", "Word8 word9 word10 word11 longword12 longerword13 morewords14").build();
-        CliOption opt3 = CliOption.builder("c1", "Word15, word16").build();
+        OptionMetadata opt1 = OptionMetadata.builder("a1", "Word1 word2 word3 word4 longword5 longerword6 morewords7").build();
+        OptionMetadata opt2 = OptionMetadata.builder("b1", "Word8 word9 word10 word11 longword12 longerword13 morewords14").build();
+        OptionMetadata opt3 = OptionMetadata.builder("c1", "Word15, word16").build();
 
-        CliApplication app = CliApplication
+        ApplicationMetadata app = ApplicationMetadata
                 .builder("myapp")
                 .addOption(opt1)
                 .addOption(opt2)
@@ -195,11 +195,11 @@ public class DefaultHelpGeneratorTest {
     @Test
     public void testGenerate_LineFolding_VeryLongWord() {
 
-        CliOption opt1 = CliOption.builder("a1", "Word1_word2_word3_word4_longword5_longerword6_morewords7").build();
-        CliOption opt2 = CliOption.builder("b1", "Word1 word2_word3_word4_longword5_longerword6_morewords7").build();
-        CliOption opt3 = CliOption.builder("c1", "Word1_word2_word3_word4_longword5_longerword6 morewords7").build();
+        OptionMetadata opt1 = OptionMetadata.builder("a1", "Word1_word2_word3_word4_longword5_longerword6_morewords7").build();
+        OptionMetadata opt2 = OptionMetadata.builder("b1", "Word1 word2_word3_word4_longword5_longerword6_morewords7").build();
+        OptionMetadata opt3 = OptionMetadata.builder("c1", "Word1_word2_word3_word4_longword5_longerword6 morewords7").build();
 
-        CliApplication app = CliApplication
+        ApplicationMetadata app = ApplicationMetadata
                 .builder("myapp")
                 .addOption(opt1)
                 .addOption(opt2)

@@ -12,7 +12,7 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import io.bootique.annotation.EnvironmentProperties;
-import io.bootique.cli.meta.CliOption;
+import io.bootique.application.OptionMetadata;
 
 public class BQCoreModule_StaticsTest {
 
@@ -33,8 +33,8 @@ public class BQCoreModule_StaticsTest {
 
 	@Test
 	public void testContributeOptions() {
-		CliOption o1 = CliOption.builder("o1").build();
-		CliOption o2 = CliOption.builder("o2").build();
+		OptionMetadata o1 = OptionMetadata.builder("o1").build();
+		OptionMetadata o2 = OptionMetadata.builder("o2").build();
 
 		Injector i = Guice.createInjector(b -> {
 			BQCoreModule.contributeOptions(b).addBinding().toInstance(o1);
@@ -60,10 +60,10 @@ public class BQCoreModule_StaticsTest {
 	}
 
 	static class OptionsInspector {
-		Set<CliOption> options;
+		Set<OptionMetadata> options;
 
 		@Inject
-		public OptionsInspector(Set<CliOption> options) {
+		public OptionsInspector(Set<OptionMetadata> options) {
 			this.options = options;
 		}
 	}

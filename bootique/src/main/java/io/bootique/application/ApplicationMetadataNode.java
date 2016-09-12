@@ -1,9 +1,11 @@
-package io.bootique.cli.meta;
+package io.bootique.application;
 
 /**
+ * A base superclass of the app metadata nodes.
+ *
  * @since 0.20
  */
-public abstract class CliNode {
+public abstract class ApplicationMetadataNode {
 
     protected String name;
     protected String description;

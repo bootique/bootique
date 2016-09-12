@@ -2,6 +2,7 @@ package io.bootique.command;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import io.bootique.application.CommandMetadata;
 import io.bootique.cli.Cli;
 import io.bootique.help.HelpGenerator;
 import io.bootique.log.BootLogger;

@@ -1,5 +1,6 @@
 package io.bootique.command;
 
+import io.bootique.application.CommandMetadata;
 import io.bootique.cli.Cli;
 
 /**

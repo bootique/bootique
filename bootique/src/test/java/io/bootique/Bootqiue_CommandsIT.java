@@ -1,23 +1,20 @@
 package io.bootique;
 
+import com.google.inject.Binder;
+import com.google.inject.Injector;
+import com.google.inject.Module;
+import io.bootique.application.CommandMetadata;
+import io.bootique.command.Command;
+import io.bootique.command.CommandManager;
+import io.bootique.command.DefaultCommandManager;
+import org.junit.Test;
+
+import java.util.Collections;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
-import java.util.Collections;
-
-import io.bootique.BQCoreModule;
-import io.bootique.Bootique;
-import org.junit.Test;
-
-import com.google.inject.Binder;
-import com.google.inject.Injector;
-import com.google.inject.Module;
-import io.bootique.command.Command;
-import io.bootique.command.CommandManager;
-import io.bootique.command.CommandMetadata;
-import io.bootique.command.DefaultCommandManager;
 
 public class Bootqiue_CommandsIT {
 
