@@ -215,7 +215,7 @@ public class BQCoreModule implements Module {
 
     @Provides
     @Singleton
-    ApplicationMetadata provideCliApplication(Set<Command> commands,
+    ApplicationMetadata provideApplicationMetadata(Set<Command> commands,
                                               Set<OptionMetadata> options) {
 
         // TODO: deprecate CommandMetadata, replacing it with CommandMetadata
@@ -234,7 +234,7 @@ public class BQCoreModule implements Module {
 
     @Provides
     @Singleton
-    Environment createEnvironment(@EnvironmentProperties Map<String, String> diProperties,
+    Environment provideEnvironment(@EnvironmentProperties Map<String, String> diProperties,
                                   @EnvironmentVariables Map<String, String> diVars) {
         return new DefaultEnvironment(diProperties, diVars);
     }
