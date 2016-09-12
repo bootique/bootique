@@ -215,8 +215,7 @@ public class BQCoreModule implements Module {
 
     @Provides
     @Singleton
-    ApplicationMetadata provideApplicationMetadata(Set<Command> commands,
-                                              Set<OptionMetadata> options) {
+    ApplicationMetadata provideApplicationMetadata(Set<Command> commands, Set<OptionMetadata> options) {
 
         // TODO: deprecate CommandMetadata, replacing it with CommandMetadata
         Collection<CommandMetadata> cliCommands = new ArrayList<>();
