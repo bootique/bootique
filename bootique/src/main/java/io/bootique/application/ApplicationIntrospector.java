@@ -10,7 +10,7 @@ import java.util.Map;
  *
  * @since 0.20
  */
-public class ApplicationIntrospector {
+class ApplicationIntrospector {
 
     /**
      * Returns application name that is the name of the main class derived from runtime stack.
