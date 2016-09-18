@@ -1,12 +1,7 @@
 package io.bootique.test;
 
 import io.bootique.BQRuntime;
-import io.bootique.Bootique;
 import io.bootique.command.CommandOutcome;
-import io.bootique.log.BootLogger;
-import io.bootique.log.DefaultBootLogger;
-
-import java.util.function.Consumer;
 
 /**
  * A base class of test "shells" that allow to run various modules in Bootique
@@ -18,15 +13,12 @@ public class BQTestRuntime {
 
     private InMemoryPrintStream stdout;
     private InMemoryPrintStream stderr;
-    private Consumer<Bootique> configurator;
-
     private BQRuntime runtime;
 
-    public BQTestRuntime(Consumer<Bootique> configurator, String... args) {
-        this.stdout = new InMemoryPrintStream(System.out);
-        this.stderr = new InMemoryPrintStream(System.err);
-        this.configurator = configurator;
-        this.runtime = createRuntime(args);
+    public BQTestRuntime(BQRuntime runtime, InMemoryPrintStream stdout, InMemoryPrintStream stderr) {
+        this.stdout = stdout;
+        this.stderr = stderr;
+        this.runtime = runtime;
     }
 
     /**
@@ -43,16 +35,6 @@ public class BQTestRuntime {
 
     public String getStderr() {
         return stderr.toString();
-    }
-
-    protected BootLogger createBootLogger() {
-        return new DefaultBootLogger(true, stdout, stderr);
-    }
-
-    protected BQRuntime createRuntime(String... args) {
-        Bootique bootique = Bootique.app(args).bootLogger(createBootLogger());
-        configurator.accept(bootique);
-        return bootique.createRuntime();
     }
 
     /**

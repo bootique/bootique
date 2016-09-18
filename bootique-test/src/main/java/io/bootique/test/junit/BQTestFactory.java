@@ -1,21 +1,18 @@
 package io.bootique.test.junit;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Consumer;
-
+import io.bootique.BQRuntime;
+import io.bootique.Bootique;
+import io.bootique.config.ConfigurationFactory;
+import io.bootique.log.BootLogger;
+import io.bootique.log.DefaultBootLogger;
 import io.bootique.test.BQTestRuntime;
+import io.bootique.test.InMemoryPrintStream;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.rules.ExternalResource;
 
-import com.google.inject.multibindings.MapBinder;
-import io.bootique.BQCoreModule;
-import io.bootique.Bootique;
-import io.bootique.config.ConfigurationFactory;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Manages a simple Bootique stack within a lifecycle of the a JUnit test. It
@@ -24,87 +21,96 @@ import io.bootique.config.ConfigurationFactory;
  * <p>
  * Instances should be annotated within the unit tests with {@link Rule} or
  * {@link ClassRule}. E.g.:
- * 
+ * <p>
  * <pre>
  * public class MyTest {
- * 
+ *
  * 	&#64;Rule
  * 	public BQTestFactory testFactory = new BQTestFactory();
  * }
  * </pre>
- * 
+ *
  * @since 0.15
  */
 public class BQTestFactory extends ExternalResource {
 
-	private Collection<BQTestRuntime> runtimes;
+    private Collection<BQTestRuntime> runtimes;
 
-	@Override
-	protected void after() {
-		Collection<BQTestRuntime> localRuntimes = this.runtimes;
+    @Override
+    protected void after() {
+        Collection<BQTestRuntime> localRuntimes = this.runtimes;
 
-		if (localRuntimes != null) {
-			localRuntimes.forEach(runtime -> {
-				try {
-					runtime.stop();
-				} catch (Exception e) {
-					// ignore...
-				}
-			});
-		}
-	}
+        if (localRuntimes != null) {
+            localRuntimes.forEach(runtime -> {
+                try {
+                    runtime.stop();
+                } catch (Exception e) {
+                    // ignore...
+                }
+            });
+        }
+    }
 
-	@Override
-	protected void before() {
-		this.runtimes = new ArrayList<>();
-	}
+    @Override
+    protected void before() {
+        this.runtimes = new ArrayList<>();
+    }
 
-	public Builder newRuntime() {
-		return new Builder(runtimes);
-	}
+    /**
+     * @return a new instance of builder for the test runtime stack.
+     * @deprecated since 0.20 in favor of {@link #app(String...)}.
+     */
+    public Builder newRuntime() {
+        return app();
+    }
 
-	public static class Builder {
+    /**
+     * @return a new instance of builder for the test runtime stack.
+     * @since 0.20
+     */
+    public Builder app(String... args) {
+        return new Builder(runtimes, args);
+    }
 
-		private static final Consumer<Bootique> DO_NOTHING_CONFIGURATOR = bootique -> {
-		};
+    public static class Builder extends BQTestRuntimeBuilder<Builder> {
 
-		private Collection<BQTestRuntime> runtimes;
-		private Consumer<Bootique> configurator;
-		private Map<String, String> properties;
+        private Collection<BQTestRuntime> runtimes;
+        private Bootique bootique;
 
-		private Builder(Collection<BQTestRuntime> runtimes) {
-			this.runtimes = runtimes;
-			this.properties = new HashMap<>();
-			this.configurator = DO_NOTHING_CONFIGURATOR;
-		}
+        private Builder(Collection<BQTestRuntime> runtimes, String[] args) {
+            super(args);
+            this.runtimes = runtimes;
+        }
 
-		public Builder property(String key, String value) {
-			properties.put(key, value);
-			return this;
-		}
+        /**
+         * @param args arguments for the test stack app.
+         * @return a new instance of test runtime.
+         * @deprecated since 0.20 in favor of {@link #createRuntime()}.
+         */
+        @Deprecated
+        public BQTestRuntime build(String... args) {
+            bootique.args(args);
+            return createRuntime();
+        }
 
-		public Builder configurator(Consumer<Bootique> configurator) {
-			this.configurator = Objects.requireNonNull(configurator);
-			return this;
-		}
+        /**
+         * The main build method that creates and returns a {@link BQTestRuntime}, which is a thin wrapper for
+         * Bootique runtime.
+         *
+         * @return a new instance of {@link BQTestRuntime} configured in this builder.
+         */
+        public BQTestRuntime createRuntime() {
 
-		public BQTestRuntime build(String... args) {
+            InMemoryPrintStream stdout = new InMemoryPrintStream(System.out);
+            InMemoryPrintStream stderr = new InMemoryPrintStream(System.err);
 
-			Consumer<Bootique> localConfigurator = configurator;
+            // TODO: allow to turn off tracing, which can be either useful or annoying dependning on the context...
+            BootLogger bootLogger = new DefaultBootLogger(true, stdout, stderr);
 
-			if (!properties.isEmpty()) {
-
-				Consumer<Bootique> propsConfigurator = bootique -> bootique.module(binder -> {
-					MapBinder<String, String> mapBinder = BQCoreModule.contributeProperties(binder);
-					properties.forEach((k, v) -> mapBinder.addBinding(k).toInstance(v));
-				});
-
-				localConfigurator = localConfigurator.andThen(propsConfigurator);
-			}
-
-			BQTestRuntime runtime = new BQTestRuntime(localConfigurator, args);
-			runtimes.add(runtime);
-			return runtime;
-		}
-	}
+            BQRuntime runtime = bootique.bootLogger(bootLogger).createRuntime();
+            BQTestRuntime testRuntime = new BQTestRuntime(runtime, stdout, stderr);
+            runtimes.add(testRuntime);
+            return testRuntime;
+        }
+    }
 }

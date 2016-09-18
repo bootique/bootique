@@ -268,8 +268,8 @@ public class Bootique {
 	 *         overriding other modules.
 	 */
 	@SafeVarargs
-	public final BQModuleOverrideBuilder override(Class<? extends Module>... overriddenTypes) {
-		return new BQModuleOverrideBuilder() {
+	public final BQModuleOverrideBuilder<Bootique> override(Class<? extends Module>... overriddenTypes) {
+		return new BQModuleOverrideBuilder<Bootique>() {
 
 			@Override
 			public Bootique with(Class<? extends Module> moduleType) {

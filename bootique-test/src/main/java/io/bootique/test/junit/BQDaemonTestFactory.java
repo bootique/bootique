@@ -1,22 +1,19 @@
 package io.bootique.test.junit;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
+import io.bootique.BQRuntime;
+import io.bootique.log.BootLogger;
+import io.bootique.log.DefaultBootLogger;
+import io.bootique.test.BQDaemonTestRuntime;
+import io.bootique.test.InMemoryPrintStream;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.rules.ExternalResource;
 
-import com.google.inject.multibindings.MapBinder;
-import io.bootique.BQCoreModule;
-import io.bootique.Bootique;
-import io.bootique.test.BQDaemonTestRuntime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 /**
  * Manages a "daemon" Bootique stack within a lifecycle of the a JUnit test.
@@ -25,138 +22,129 @@ import io.bootique.test.BQDaemonTestRuntime;
  * <p>
  * Instances should be annotated within the unit tests with {@link Rule} or
  * {@link ClassRule}. E.g.:
- * 
+ * <p>
  * <pre>
  * public class MyTest {
- * 
+ *
  * 	&#64;Rule
  * 	public BQDaemonTestFactory testFactory = new BQDaemonTestFactory();
  * }
  * </pre>
- * 
+ *
  * @since 0.15
  */
 public class BQDaemonTestFactory extends ExternalResource {
 
-	protected Collection<BQDaemonTestRuntime> runtimes;
+    protected Collection<BQDaemonTestRuntime> runtimes;
 
-	@Override
-	protected void after() {
-		Collection<BQDaemonTestRuntime> localRuntimes = this.runtimes;
+    @Override
+    protected void after() {
+        Collection<BQDaemonTestRuntime> localRuntimes = this.runtimes;
 
-		if (localRuntimes != null) {
-			localRuntimes.forEach(runtime -> {
-				try {
-					runtime.stop();
-				} catch (Exception e) {
-					// ignore...
-				}
-			});
-		}
-	}
+        if (localRuntimes != null) {
+            localRuntimes.forEach(runtime -> {
+                try {
+                    runtime.stop();
+                } catch (Exception e) {
+                    // ignore...
+                }
+            });
+        }
+    }
 
-	@Override
-	protected void before() {
-		this.runtimes = new ArrayList<>();
-	}
+    @Override
+    protected void before() {
+        this.runtimes = new ArrayList<>();
+    }
 
-	public Builder newRuntime() {
-		return new Builder(runtimes);
-	}
+    /**
+     * @return a new instance of builder for the test runtime stack.
+     * @deprecated since 0.20 in favor of {@link #app(String...)}.
+     */
+    public Builder newRuntime() {
+        return app();
+    }
 
-	public static class Builder {
+    /**
+     * @return a new instance of builder for the test runtime stack.
+     * @since 0.20
+     */
+    public Builder app(String... args) {
+        return new Builder(runtimes, args);
+    }
 
-		private static final Consumer<Bootique> DO_NOTHING_CONFIGURATOR = bootique -> {
-		};
+    public static class Builder<T extends Builder<T>> extends BQTestRuntimeBuilder<T> {
 
-		private static final Function<BQDaemonTestRuntime, Boolean> AFFIRMATIVE_STARTUP_CHECK = runtime -> true;
+        private static final Function<BQDaemonTestRuntime, Boolean> AFFIRMATIVE_STARTUP_CHECK = runtime -> true;
 
-		private Collection<BQDaemonTestRuntime> runtimes;
-		private Function<BQDaemonTestRuntime, Boolean> startupCheck;
-		private Consumer<Bootique> configurator;
-		private Map<String, String> properties;
-		private long startupTimeout;
-		private TimeUnit startupTimeoutTimeUnit;
+        private Collection<BQDaemonTestRuntime> runtimes;
+        private Function<BQDaemonTestRuntime, Boolean> startupCheck;
+        private long startupTimeout;
+        private TimeUnit startupTimeoutTimeUnit;
 
-		protected Builder(Collection<BQDaemonTestRuntime> runtimes) {
+        protected Builder(Collection<BQDaemonTestRuntime> runtimes, String[] args) {
+            super(args);
+            this.startupTimeout = 5;
+            this.startupTimeoutTimeUnit = TimeUnit.SECONDS;
+            this.runtimes = runtimes;
+            this.startupCheck = AFFIRMATIVE_STARTUP_CHECK;
+        }
 
-			this.startupTimeout = 5;
-			this.startupTimeoutTimeUnit = TimeUnit.SECONDS;
-			this.runtimes = runtimes;
-			this.properties = new HashMap<>();
-			this.configurator = DO_NOTHING_CONFIGURATOR;
-			this.startupCheck = AFFIRMATIVE_STARTUP_CHECK;
-		}
+        public T startupCheck(Function<BQDaemonTestRuntime, Boolean> startupCheck) {
+            this.startupCheck = Objects.requireNonNull(startupCheck);
+            return (T) this;
+        }
 
-		public Builder property(String key, String value) {
-			properties.put(key, value);
-			return this;
-		}
+        /**
+         * Adds a startup check that waits till the runtime finishes, within the
+         * startup timeout bounds.
+         *
+         * @return this builder
+         * @since 0.16
+         */
+        public T startupAndWaitCheck() {
+            this.startupCheck = (runtime) -> runtime.getOutcome().isPresent();
+            return (T) this;
+        }
 
-		/**
-		 * Appends configurator to any existing configurators.
-		 * 
-		 * @param configurator
-		 *            configurator function.
-		 * @return this builder.
-		 */
-		public Builder configurator(Consumer<Bootique> configurator) {
-			Objects.requireNonNull(configurator);
-			this.configurator = this.configurator != null ? this.configurator.andThen(configurator) : configurator;
-			return this;
-		}
+        public T startupTimeout(long timeout, TimeUnit unit) {
+            this.startupTimeout = timeout;
+            this.startupTimeoutTimeUnit = unit;
+            return (T) this;
+        }
 
-		public Builder startupCheck(Function<BQDaemonTestRuntime, Boolean> startupCheck) {
-			this.startupCheck = Objects.requireNonNull(startupCheck);
-			return this;
-		}
+        /**
+         * @return {@link BQDaemonTestRuntime} instance created by the builder.
+         * @deprecated since 0.20 in favor of no-argument {@link #start()}. Arguments can be passed when creating the
+         * Builder.
+         */
+        @Deprecated
+        public BQDaemonTestRuntime start(String... args) {
+            bootique.args(args);
+            return start();
+        }
 
-		/**
-		 * Adds a startup check that waits till the runtime finishes, within the
-		 * startup timeout bounds.
-		 * 
-		 * @since 0.16
-		 * @return this builder
-		 */
-		public Builder startupAndWaitCheck() {
-			this.startupCheck = (runtime) -> runtime.getOutcome().isPresent();
-			return this;
-		}
+        /**
+         * Starts the test app in a background thread.
+         *
+         * @return {@link BQDaemonTestRuntime} instance created by the builder. The caller doesn't need to shut it down.
+         * Usually JUnit lifecycle takes care of it.
+         * @since 0.20
+         */
+        public BQDaemonTestRuntime start() {
 
-		public Builder startupTimeout(long timeout, TimeUnit unit) {
-			this.startupTimeout = timeout;
-			this.startupTimeoutTimeUnit = unit;
-			return this;
-		}
+            InMemoryPrintStream stdout = new InMemoryPrintStream(System.out);
+            InMemoryPrintStream stderr = new InMemoryPrintStream(System.err);
 
-		/**
-		 * Starts the test app in a background thread.
-		 * 
-		 * @param args
-		 *            String[] emulating command-line arguments passed to a Java
-		 *            app.
-		 * @return {@link BQDaemonTestRuntime} instance created by the builder.
-		 *         The caller doesn't need to shut it down. Usually JUnit
-		 *         lifecycle takes care of it.
-		 */
-		public BQDaemonTestRuntime start(String... args) {
+            // TODO: allow to turn off tracing, which can be either useful or annoying dependning on the context...
+            BootLogger bootLogger = new DefaultBootLogger(true, stdout, stderr);
 
-			Consumer<Bootique> localConfigurator = configurator;
+            BQRuntime runtime = bootique.bootLogger(bootLogger).createRuntime();
+            BQDaemonTestRuntime testRuntime = new BQDaemonTestRuntime(runtime, stdout, stderr, startupCheck);
+            runtimes.add(testRuntime);
 
-			if (!properties.isEmpty()) {
-
-				Consumer<Bootique> propsConfigurator = bootique -> bootique.module(binder -> {
-					MapBinder<String, String> mapBinder = BQCoreModule.contributeProperties(binder);
-					properties.forEach((k, v) -> mapBinder.addBinding(k).toInstance(v));
-				});
-
-				localConfigurator = localConfigurator.andThen(propsConfigurator);
-			}
-
-			BQDaemonTestRuntime runtime = new BQDaemonTestRuntime(localConfigurator, startupCheck, args);
-			runtimes.add(runtime);
-			runtime.start(startupTimeout, startupTimeoutTimeUnit);
-			return runtime;
-		}
-	}
+            testRuntime.start(startupTimeout, startupTimeoutTimeUnit);
+            return testRuntime;
+        }
+    }
 }

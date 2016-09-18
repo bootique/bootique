@@ -5,9 +5,9 @@ import com.google.inject.Module;
 /**
  * @since 0.10
  */
-public interface BQModuleOverrideBuilder {
+public interface BQModuleOverrideBuilder<T> {
 
-	Bootique with(Class<? extends Module> moduleType);
+	T with(Class<? extends Module> moduleType);
 
 	/**
 	 * @since 0.12
@@ -15,5 +15,5 @@ public interface BQModuleOverrideBuilder {
 	 *            overrding Module.
 	 * @return {@link Bootique} instance we are configuring.
 	 */
-	Bootique with(Module module);
+	T with(Module module);
 }

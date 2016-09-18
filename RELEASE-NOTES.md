@@ -6,6 +6,7 @@
 * #92 Standalone service for printing help
 * #93 A concept of "app name" for help purposes
 * #95 Support for terminal width detection
+* #97 Bootique-like builder API for unit tests
 
 ## 0.19
 

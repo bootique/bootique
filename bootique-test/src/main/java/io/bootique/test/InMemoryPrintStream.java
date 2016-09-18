@@ -4,8 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.Charset;
 
-//TODO: move to bootique-test
-class InMemoryPrintStream extends PrintStream {
+public class InMemoryPrintStream extends PrintStream {
 
 	private PrintStream splitOut;
 

@@ -1,6 +1,6 @@
 package io.bootique.test;
 
-import io.bootique.Bootique;
+import io.bootique.BQRuntime;
 import io.bootique.command.CommandOutcome;
 import io.bootique.log.BootLogger;
 
@@ -11,7 +11,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -19,86 +18,86 @@ import java.util.function.Function;
  */
 public class BQDaemonTestRuntime extends BQTestRuntime {
 
-	private ExecutorService executor;
-	private Function<BQDaemonTestRuntime, Boolean> startupCheck;
-	private Optional<CommandOutcome> outcome;
+    private ExecutorService executor;
+    private Function<BQDaemonTestRuntime, Boolean> startupCheck;
+    private Optional<CommandOutcome> outcome;
 
-	public BQDaemonTestRuntime(Consumer<Bootique> configurator, Function<BQDaemonTestRuntime, Boolean> startupCheck,
-			String... args) {
-		super(configurator, args);
-		this.startupCheck = startupCheck;
-		this.executor = Executors.newCachedThreadPool();
-		this.outcome = Optional.empty();
-	}
+    public BQDaemonTestRuntime(BQRuntime runtime, InMemoryPrintStream stdout, InMemoryPrintStream stderr,
+                               Function<BQDaemonTestRuntime, Boolean> startupCheck) {
+        super(runtime, stdout, stderr);
+        this.startupCheck = startupCheck;
+        this.executor = Executors.newCachedThreadPool();
+        this.outcome = Optional.empty();
+    }
 
-	/**
-	 * @since 0.16
-	 * @return an optional outcome, available if the test runtime has finished.
-	 */
-	public Optional<CommandOutcome> getOutcome() {
-		return outcome;
-	}
+    /**
+     * @return an optional outcome, available if the test runtime has finished.
+     * @since 0.16
+     */
+    public Optional<CommandOutcome> getOutcome() {
+        return outcome;
+    }
 
-	public void start(long timeout, TimeUnit unit) {
-		start();
-		checkStartupSucceeded(timeout, unit);
-	}
+    public void start(long timeout, TimeUnit unit) {
+        start();
+        checkStartupSucceeded(timeout, unit);
+    }
 
-	protected void start() {
-		this.executor.submit(() -> outcome = Optional.of(run()));
-	}
+    protected void start() {
+        this.executor.submit(() -> outcome = Optional.of(run()));
+    }
 
-	protected void checkStartupSucceeded(long timeout, TimeUnit unit) {
-		BootLogger logger = getRuntime().getBootLogger();
+    protected void checkStartupSucceeded(long timeout, TimeUnit unit) {
+        BootLogger logger = getRuntime().getBootLogger();
 
-		Future<Boolean> startupFuture = executor.submit(() -> {
+        Future<Boolean> startupFuture = executor.submit(() -> {
 
-			try {
-				while (!startupCheck.apply(this)) {
-					logger.stderr("Daemon runtime hasn't started yet...");
-					Thread.sleep(500);
-				}
+            try {
+                while (!startupCheck.apply(this)) {
+                    logger.stderr("Daemon runtime hasn't started yet...");
+                    Thread.sleep(500);
+                }
 
-				return true;
-			} catch (InterruptedException e) {
-				logger.stderr("Timed out waiting for server to start");
-				return false;
-			} catch (Throwable th) {
-				logger.stderr("Server error", th);
-				return false;
-			}
+                return true;
+            } catch (InterruptedException e) {
+                logger.stderr("Timed out waiting for server to start");
+                return false;
+            } catch (Throwable th) {
+                logger.stderr("Server error", th);
+                return false;
+            }
 
-		});
+        });
 
-		boolean success;
-		try {
-			success = startupFuture.get(timeout, unit);
-		} catch (InterruptedException | ExecutionException | TimeoutException e) {
-			throw new RuntimeException(String.format("Daemon failed to start in %s ms", unit.toMillis(timeout)));
-		}
+        boolean success;
+        try {
+            success = startupFuture.get(timeout, unit);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            throw new RuntimeException(String.format("Daemon failed to start in %s ms", unit.toMillis(timeout)));
+        }
 
-		if (success) {
-			logger.stdout("Daemon runtime started...");
-		} else {
-			throw new RuntimeException("Daemon failed to start");
-		}
-	}
+        if (success) {
+            logger.stdout("Daemon runtime started...");
+        } else {
+            throw new RuntimeException("Daemon failed to start");
+        }
+    }
 
-	@Override
-	public void stop() {
+    @Override
+    public void stop() {
 
-		BootLogger logger = getRuntime().getBootLogger();
+        BootLogger logger = getRuntime().getBootLogger();
 
-		super.stop();
+        super.stop();
 
-		// must interrupt execution (using "shutdown()" is not enough to stop
-		// Jetty for instance
-		executor.shutdownNow();
-		try {
-			executor.awaitTermination(3, TimeUnit.SECONDS);
-			logger.stdout("Daemon runtime stopped...");
-		} catch (InterruptedException e) {
-			logger.stderr("Interrupted while waiting for shutdown", e);
-		}
-	}
+        // must interrupt execution (using "shutdown()" is not enough to stop
+        // Jetty for instance
+        executor.shutdownNow();
+        try {
+            executor.awaitTermination(3, TimeUnit.SECONDS);
+            logger.stdout("Daemon runtime stopped...");
+        } catch (InterruptedException e) {
+            logger.stderr("Interrupted while waiting for shutdown", e);
+        }
+    }
 }
