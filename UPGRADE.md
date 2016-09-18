@@ -8,7 +8,10 @@ Specifically ```io.bootique.command.CommandMetadata``` was moved and ```io.booti
 renamed to ```OptionMetadata```.  **This is a breaking change.**  You will need to use module versions aligned with 
 0.20 Bootique BOM and fix any imports in your own code (especially in custom Commands).
 
-* [bootique #97](https://github.com/bootique/bootique/issues/97): We simplifed integration test API. It now looks pretty much the same as a regular ```main(String[])``` method. There's no longer a need to use "configurator" lambda to configure test runtime. Instead you'd call Bootique-like methods on the test factory. When upgrading your tests you will need to change ```*Factory.newRuntime()``` to ```*Factory.app(args)``` And terminating methods no longer take args. Pay attention to deprecating warnings and use your IDE for available APIs of the test factories.
+* [bootique #97](https://github.com/bootique/bootique/issues/97): We simplifed integration test API. It now looks pretty much the same as a regular ```main(String[])``` method. There's no longer a need to use "configurator" lambda to configure test runtime. Instead you'd call Bootique-like methods on the test factory. When upgrading your tests you will need to change calls on ```BQTestFactory``` and ```BQDaemonTestFactory``` from ```newRuntime()``` to ```app(args)```. Terminating builder methods no longer take args (it is passed in the "app" method at the start of the chain). Pay attention to deprecating warnings and use your IDE for available APIs of the test factories.
+
+* [bootique-jetty #52](https://github.com/bootique/bootique-jetty/issues/52): ```JettyTestFactory``` received the same API upgrades as ```BQTestFactory``` and ```BQDaemonTestFactory``` as described above. The upgrade instructions are similar.
+
 
 ## 0.19
 
