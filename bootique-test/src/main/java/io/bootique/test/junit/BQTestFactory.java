@@ -1,7 +1,6 @@
 package io.bootique.test.junit;
 
 import io.bootique.BQRuntime;
-import io.bootique.Bootique;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.log.BootLogger;
 import io.bootique.log.DefaultBootLogger;
@@ -75,7 +74,6 @@ public class BQTestFactory extends ExternalResource {
     public static class Builder extends BQTestRuntimeBuilder<Builder> {
 
         private Collection<BQTestRuntime> runtimes;
-        private Bootique bootique;
 
         private Builder(Collection<BQTestRuntime> runtimes, String[] args) {
             super(args);

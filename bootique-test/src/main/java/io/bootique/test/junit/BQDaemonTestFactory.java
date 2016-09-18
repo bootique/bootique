@@ -61,7 +61,8 @@ public class BQDaemonTestFactory extends ExternalResource {
      * @return a new instance of builder for the test runtime stack.
      * @deprecated since 0.20 in favor of {@link #app(String...)}.
      */
-    public Builder newRuntime() {
+    @Deprecated
+    public <T extends Builder<T>> Builder<T> newRuntime() {
         return app();
     }
 
@@ -69,10 +70,11 @@ public class BQDaemonTestFactory extends ExternalResource {
      * @return a new instance of builder for the test runtime stack.
      * @since 0.20
      */
-    public Builder app(String... args) {
+    public <T extends Builder<T>> Builder<T> app(String... args) {
         return new Builder(runtimes, args);
     }
 
+    // parameterization is needed to enable covariant return types in subclasses
     public static class Builder<T extends Builder<T>> extends BQTestRuntimeBuilder<T> {
 
         private static final Function<BQDaemonTestRuntime, Boolean> AFFIRMATIVE_STARTUP_CHECK = runtime -> true;

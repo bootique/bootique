@@ -13,6 +13,7 @@ import java.util.function.Consumer;
 /**
  * @since 0.20
  */
+// parameterization is needed to enable covariant return types in subclasses
 public abstract class BQTestRuntimeBuilder<T extends BQTestRuntimeBuilder<T>> {
 
     protected Bootique bootique;
@@ -74,8 +75,7 @@ public abstract class BQTestRuntimeBuilder<T extends BQTestRuntimeBuilder<T>> {
      * @return this instance of test runtime builder.
      * @see #autoLoadModules()
      */
-    @SafeVarargs
-    public final T modules(Class<? extends Module>... moduleTypes) {
+    public T modules(Class<? extends Module>... moduleTypes) {
         bootique.modules(moduleTypes);
         return (T) this;
     }
@@ -119,8 +119,7 @@ public abstract class BQTestRuntimeBuilder<T extends BQTestRuntimeBuilder<T>> {
      * @return {@link BQModuleOverrideBuilder} object to specify a Module
      * overriding other modules.
      */
-    @SafeVarargs
-    public final BQModuleOverrideBuilder<T> override(Class<? extends Module>... overriddenTypes) {
+    public BQModuleOverrideBuilder<T> override(Class<? extends Module>... overriddenTypes) {
 
         BQModuleOverrideBuilder<Bootique> subBuilder = bootique.override(overriddenTypes);
         return new BQModuleOverrideBuilder<T>() {
