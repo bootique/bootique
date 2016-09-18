@@ -1,7 +1,8 @@
 package io.bootique;
 
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
+import com.google.inject.Module;
+import com.google.inject.util.Modules;
+import io.bootique.log.BootLogger;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -10,9 +11,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import com.google.inject.Module;
-import com.google.inject.util.Modules;
-import io.bootique.log.BootLogger;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 
 class ModuleMerger {
 
@@ -33,6 +33,10 @@ class ModuleMerger {
 
 	private Map<Class<? extends Module>, ModuleMergeNode> toNodeMap(Collection<BQModuleProvider> providers) {
 
+		// TODO: looking up modules by java type limits the use of lambdas as modules. E.g. we loaded test
+		// properties are dynamically created modules in a repeatedly called Lambda. This didn't work..
+		// So perhaps use provider name as a unique key?
+		
 		Map<Class<? extends Module>, ModuleMergeNode> nodes = new LinkedHashMap<>();
 
 		providers.forEach(p -> {

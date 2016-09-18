@@ -1,12 +1,15 @@
 package io.bootique.test.junit;
 
 import com.google.inject.Module;
+import com.google.inject.multibindings.MapBinder;
 import io.bootique.BQCoreModule;
 import io.bootique.BQModuleOverrideBuilder;
 import io.bootique.BQModuleProvider;
 import io.bootique.Bootique;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -17,9 +20,29 @@ import java.util.function.Consumer;
 public abstract class BQTestRuntimeBuilder<T extends BQTestRuntimeBuilder<T>> {
 
     protected Bootique bootique;
+    protected Map<String, String> properties;
 
     protected BQTestRuntimeBuilder(String[] args) {
-        this.bootique = Bootique.app(args);
+        this.properties = new HashMap<>();
+        this.bootique = Bootique.app(args).module(createPropertiesProvider());
+    }
+
+    protected BQModuleProvider createPropertiesProvider() {
+        return new BQModuleProvider() {
+
+            @Override
+            public Module module() {
+                return binder -> {
+                    MapBinder<String, String> props = BQCoreModule.contributeProperties(binder);
+                    properties.forEach((k, v) -> props.addBinding(k).toInstance(v));
+                };
+            }
+
+            @Override
+            public String name() {
+                return "BQTestRuntimeBuilder:properties";
+            }
+        };
     }
 
     /**
@@ -139,9 +162,7 @@ public abstract class BQTestRuntimeBuilder<T extends BQTestRuntimeBuilder<T>> {
     }
 
     public T property(String key, String value) {
-        bootique.module(binder -> {
-            BQCoreModule.contributeProperties(binder).addBinding(key).toInstance(value);
-        });
+        properties.put(key, value);
         return (T) this;
     }
 
