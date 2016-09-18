@@ -1,12 +1,5 @@
 package io.bootique;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.ServiceLoader;
-
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -15,8 +8,14 @@ import io.bootique.command.CommandOutcome;
 import io.bootique.env.DefaultEnvironment;
 import io.bootique.log.BootLogger;
 import io.bootique.log.DefaultBootLogger;
-
 import joptsimple.OptionException;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Objects;
+import java.util.ServiceLoader;
 
 /**
  * A main launcher class of Bootique. To start a Bootique app, you may write
@@ -24,7 +23,7 @@ import joptsimple.OptionException;
  * 
  * <pre>
  * public static void main(String[] args) {
- * 	Bootique.app(args).commands(_optional_commands_).modules(_optional_extensions_).run();
+ * 	Bootique.app(args).modules(_optional_extensions_).run();
  * }
  * </pre>
  * 
@@ -32,7 +31,7 @@ import joptsimple.OptionException;
  * 
  * <pre>
  * public static void main(String[] args) {
- * 	Bootique.app(args).commands(_optional_commands_).autoLoadModules().run();
+ * 	Bootique.app(args).autoLoadModules().run();
  * }
  * </pre>
  * 
