@@ -33,7 +33,7 @@
 
 	@Test
 	public void testXyz() {
-		BQTestRuntime runtime = testFactory.newRuntime().build("--help");
+		BQTestRuntime runtime = testFactory.app("--help").createRuntime();
 		...
 	}
 }</programlisting>As
@@ -51,35 +51,33 @@
 	
 	@Test
 	public void testBackground() {
-		BQDaemonTestRuntime runtime = testFactory.newRuntime().start("--server");
+		BQDaemonTestRuntime runtime = testFactory.app("--server").start();
 		... 
 	}
 }</programlisting></para>
         <para>You don't need to stop it explicitly. <code>BQDaemonTestFactory</code> will take care
             of it via JUnit lifecycle.</para>
         <para>The next thing you may want to do is to add various modules to the basic stack (either
-            foreground or background). <code>testFactory.newRuntime()</code> returns a builder
-            object that optionally takes a special "configurator" instance that can add new
-            modules,each of those adding or overriding runtime
-            services:<programlisting language="java">@Test
+            foreground or background). <code>testFactory.app()</code> returns a builder object that
+            allows loading extra modules to add or override runtime services. This API is designed
+            to mimic  <code>Bootique</code> class, so that your tests look similar to actual
+            applications:<programlisting language="java">@Test
 public void testAbc() {
-
-	Consumer&lt;Bootique> configurator = (bootique) -> {
-		bootique
-			// ensure all classpath modules are included
-			.autoLoadModules()
-			// add an adhoc module specific to the test
-			.module((binder) -> {
-			   binder.bind(MyService.class).to(MyServiceImpl.class);
-		       });
-	};
 	
-	testFactory.newRuntime().configurator(configurator).build("--help");
+	testFactory.app("--help")
+		// ensure all classpath modules are included
+		.autoLoadModules()
+		// add an adhoc module specific to the test
+		.module((binder) -> {
+		   binder.bind(MyService.class).to(MyServiceImpl.class);
+		})
+		.createRuntime();
 	... 
 }</programlisting></para>
         <para>In real test suites creating configurators for every test becomes unwieldy rather
             quickly. So consider subclassing <code>BQDaemonTestFactory</code> or
-                <code>BQTestFactory</code> to reuse configurators common for your entire app.</para>
+                <code>BQTestFactory</code> to build reusable configurators for your entire
+            app.</para>
     </chapter>
     
     <chapter>
@@ -98,7 +96,7 @@ public void testAbc() {
                 <programlisting language="java">@Test
 public void testService() {
 
-	BQTestRuntime runtime = testFactory.newRuntime().build("--config=src/test/resources/my.yml");
+	BQTestRuntime runtime = testFactory.app("--config=src/test/resources/my.yml").createRuntime();
 
 	MyService service = runtime.getRuntime().getInstance(MyService.class);
 	assertEquals("xyz", service.someMethod());
@@ -113,7 +111,7 @@ public void testService() {
                 E.g.:<programlisting language="java">@Test
 public void testServer() {
 
-	BQDaemonTestRuntime runtime = testFactory.newRuntime().start("--server");
+	BQDaemonTestRuntime runtime = testFactory.app("--server").start();
 
 	// using JAX-RS client API
 	WebTarget base = ClientBuilder.newClient().target("http://localhost:8080/");
@@ -128,7 +126,7 @@ public void testServer() {
                 checking the values of the exist code and <code>stdin</code> and <code>stderr</code>
                 contents:<programlisting>@Test
 public void testCommand() {
-	BQTestRuntime runtime = testFactory.newRuntime().build("--help");
+	BQTestRuntime runtime = testFactory.app("--help").createRuntime();
 	CommandOutcome outcome = runtime.run();
 
 	assertEquals(0, outcome.getExitCode());

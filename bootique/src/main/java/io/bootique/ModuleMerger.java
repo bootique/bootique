@@ -36,7 +36,7 @@ class ModuleMerger {
 		// TODO: looking up modules by java type limits the use of lambdas as modules. E.g. we loaded test
 		// properties are dynamically created modules in a repeatedly called Lambda. This didn't work..
 		// So perhaps use provider name as a unique key?
-		
+
 		Map<Class<? extends Module>, ModuleMergeNode> nodes = new LinkedHashMap<>();
 
 		providers.forEach(p -> {
