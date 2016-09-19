@@ -30,7 +30,7 @@ public class CliConfigurationSource implements ConfigurationSource {
 	}
 
 	protected URL toURL(String location) {
-		bootLogger.stderr("Reading configuration at " + location);
+		bootLogger.trace(() -> "Reading configuration at " + location);
 		return new ResourceFactory(location).getUrl();
 	}
 }
