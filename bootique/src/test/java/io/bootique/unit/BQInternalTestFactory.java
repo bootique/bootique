@@ -1,115 +1,157 @@
 package io.bootique.unit;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Consumer;
-
+import com.google.inject.Module;
+import com.google.inject.multibindings.MapBinder;
+import io.bootique.BQCoreModule;
+import io.bootique.BQModuleProvider;
+import io.bootique.BQRuntime;
+import io.bootique.Bootique;
 import org.junit.rules.ExternalResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.inject.multibindings.MapBinder;
-import io.bootique.BQCoreModule;
-import io.bootique.BQRuntime;
-import io.bootique.Bootique;
-import io.bootique.log.DefaultBootLogger;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class BQInternalTestFactory extends ExternalResource {
-	private static final Logger LOGGER = LoggerFactory.getLogger(BQInternalTestFactory.class);
 
-	protected Collection<BQRuntime> runtimes;
+    private static final Logger LOGGER = LoggerFactory.getLogger(BQInternalTestFactory.class);
 
-	@Override
-	protected void after() {
+    protected Collection<BQRuntime> runtimes;
 
-		LOGGER.info("Stopping runtime...");
+    @Override
+    protected void after() {
 
-		Collection<BQRuntime> localRuntimes = this.runtimes;
+        LOGGER.info("Stopping runtime...");
 
-		if (localRuntimes != null) {
-			localRuntimes.forEach(runtime -> {
-				try {
-					runtime.shutdown();
-				} catch (Exception e) {
-					// ignore...
-				}
-			});
-		}
-	}
+        Collection<BQRuntime> localRuntimes = this.runtimes;
 
-	@Override
-	protected void before() {
-		this.runtimes = new ArrayList<>();
-	}
+        if (localRuntimes != null) {
+            localRuntimes.forEach(runtime -> {
+                try {
+                    runtime.shutdown();
+                } catch (Exception e) {
+                    // ignore...
+                }
+            });
+        }
+    }
 
-	public Builder newRuntime() {
-		return new Builder(runtimes);
-	}
+    @Override
+    protected void before() {
+        this.runtimes = new ArrayList<>();
+    }
 
-	public static class Builder {
+    public Builder app(String... args) {
+        return new Builder(runtimes, args);
+    }
 
-		private static final Consumer<Bootique> DO_NOTHING_CONFIGURATOR = bootique -> {
-		};
+    public static class Builder<T extends Builder<T>> {
 
-		private Collection<BQRuntime> runtimes;
-		private Consumer<Bootique> configurator;
-		private Map<String, String> properties;
-		private Map<String, String> variables;
+        private Collection<BQRuntime> runtimes;
+        private Bootique bootique;
+        private Map<String, String> properties;
+        private Map<String, String> variables;
 
-		protected Builder(Collection<BQRuntime> runtimes) {
-			this.runtimes = runtimes;
-			this.properties = new HashMap<>();
-			this.variables = new HashMap<>();
-			this.configurator = DO_NOTHING_CONFIGURATOR;
-		}
+        protected Builder(Collection<BQRuntime> runtimes, String[] args) {
+            this.runtimes = runtimes;
+            this.properties = new HashMap<>();
+            this.variables = new HashMap<>();
+            this.bootique = Bootique.app(args).module(createPropertiesProvider()).module(createVariablesProvider());
+        }
 
-		public Builder property(String key, String value) {
-			properties.put(key, value);
-			return this;
-		}
+        protected BQModuleProvider createPropertiesProvider() {
+            return new BQModuleProvider() {
 
-		public Builder var(String key, String value) {
-			variables.put(key, value);
-			return this;
-		}
+                @Override
+                public Module module() {
+                    return binder -> {
+                        MapBinder<String, String> props = BQCoreModule.contributeProperties(binder);
+                        properties.forEach((k, v) -> props.addBinding(k).toInstance(v));
+                    };
+                }
 
-		public Builder configurator(Consumer<Bootique> configurator) {
-			this.configurator = configurator.andThen(Objects.requireNonNull(configurator));
-			return this;
-		}
+                @Override
+                public String name() {
+                    return "BQInternalTestFactory:Builder:properties";
+                }
+            };
+        }
 
-		public BQRuntime build(String... args) {
+        protected BQModuleProvider createVariablesProvider() {
+            return new BQModuleProvider() {
 
-			Consumer<Bootique> localConfigurator = configurator;
+                @Override
+                public Module module() {
+                    return binder -> {
+                        MapBinder<String, String> vars = BQCoreModule.contributeVariables(binder);
+                        variables.forEach((k, v) -> vars.addBinding(k).toInstance(v));
+                    };
+                }
 
-			if (!properties.isEmpty()) {
+                @Override
+                public String name() {
+                    return "BQInternalTestFactory:Builder:variables";
+                }
+            };
+        }
 
-				Consumer<Bootique> propsConfigurator = bootique -> bootique.module(binder -> {
-					MapBinder<String, String> mapBinder = BQCoreModule.contributeProperties(binder);
-					properties.forEach((k, v) -> mapBinder.addBinding(k).toInstance(v));
-				});
+        public T property(String key, String value) {
+            properties.put(key, value);
+            return (T) this;
+        }
 
-				localConfigurator = localConfigurator.andThen(propsConfigurator);
-			}
+        public T var(String key, String value) {
+            variables.put(key, value);
+            return (T) this;
+        }
 
-			if (!variables.isEmpty()) {
-				Consumer<Bootique> varsConfigurator = bootique -> bootique.module(binder -> {
-					MapBinder<String, String> mapBinder = BQCoreModule.contributeVariables(binder);
-					variables.forEach((k, v) -> mapBinder.addBinding(k).toInstance(v));
-				});
+        public T args(String... args) {
+            bootique.args(args);
+            return (T) this;
+        }
 
-				localConfigurator = localConfigurator.andThen(varsConfigurator);
-			}
+        public T args(Collection<String> args) {
+            bootique.args(args);
+            return (T) this;
+        }
 
-			Bootique bootique = Bootique.app(args).bootLogger(new DefaultBootLogger(true));
-			localConfigurator.accept(bootique);
-			BQRuntime runtime = bootique.createRuntime();
+        public T autoLoadModules() {
+            bootique.autoLoadModules();
+            return (T) this;
+        }
 
-			runtimes.add(runtime);
-			return runtime;
-		}
-	}
+        public T module(Class<? extends Module> moduleType) {
+            bootique.module(moduleType);
+            return (T) this;
+        }
+
+        public T modules(Class<? extends Module>... moduleTypes) {
+            bootique.modules(moduleTypes);
+            return (T) this;
+        }
+
+        public T module(Module m) {
+            bootique.module(m);
+            return (T) this;
+        }
+
+        public T modules(Module... modules) {
+            bootique.modules(modules);
+            return (T) this;
+        }
+
+        public T module(BQModuleProvider moduleProvider) {
+            bootique.module(moduleProvider);
+            return (T) this;
+        }
+
+        public BQRuntime createRuntime() {
+            BQRuntime runtime = bootique.createRuntime();
+            runtimes.add(runtime);
+            return runtime;
+        }
+    }
 }

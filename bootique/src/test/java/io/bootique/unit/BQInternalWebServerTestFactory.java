@@ -1,17 +1,5 @@
 package io.bootique.unit;
 
-import java.util.Collection;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.servlet.DefaultServlet;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-
 import com.google.inject.Binder;
 import com.google.inject.Inject;
 import com.google.inject.Module;
@@ -20,128 +8,112 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
-import io.bootique.Bootique;
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandOutcome;
 import io.bootique.env.Environment;
 import io.bootique.resource.ResourceFactory;
 import io.bootique.shutdown.ShutdownManager;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.servlet.DefaultServlet;
+import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.servlet.ServletHolder;
+
+import java.util.Collection;
+import java.util.concurrent.ExecutorService;
+import java.util.function.Function;
 
 /**
  * A test factory that serves static resources out of "target"
  */
 public class BQInternalWebServerTestFactory extends BQInternalDaemonTestFactory {
 
-	@Override
-	public Builder newRuntime() {
-		Function<BQRuntime, Boolean> startupCheck = r -> r.getInstance(Server.class).isStarted();
-		return new Builder(runtimes, executor).startupCheck(startupCheck)
-				.configurator(b -> b.module(new InternalJettyModule()));
-	}
+    @Override
+    public Builder app(String... args) {
+        Function<BQRuntime, Boolean> startupCheck = r -> r.getInstance(Server.class).isStarted();
+        return new Builder(runtimes, executor, args)
+                .startupCheck(startupCheck)
+                .module(new InternalJettyModule());
+    }
 
-	public static class Builder extends BQInternalDaemonTestFactory.Builder {
+    public static class Builder extends BQInternalDaemonTestFactory.Builder<Builder> {
 
-		private ResourceFactory resourceUrl;
+        private ResourceFactory resourceUrl;
 
-		Builder(Collection<BQRuntime> runtimes, ExecutorService executor) {
-			super(runtimes, executor);
-			this.resourceUrl = new ResourceFactory("classpath:");
-		}
+        Builder(Collection<BQRuntime> runtimes, ExecutorService executor, String[] args) {
+            super(runtimes, executor, args);
+            this.resourceUrl = new ResourceFactory("classpath:");
+        }
 
-		public Builder resourceUrl(ResourceFactory resourceUrl) {
-			this.resourceUrl = resourceUrl;
-			return this;
-		}
+        public Builder resourceUrl(ResourceFactory resourceUrl) {
+            this.resourceUrl = resourceUrl;
+            return this;
+        }
 
-		@Override
-		public Builder property(String key, String value) {
-			return (Builder) super.property(key, value);
-		}
+        @Override
+        public BQRuntime createRuntime() {
+            property("bq.internaljetty.base", resourceUrl.getUrl().toExternalForm());
+            return super.createRuntime();
+        }
+    }
 
-		@Override
-		public Builder configurator(Consumer<Bootique> configurator) {
-			return (Builder) super.configurator(configurator);
-		}
+    static class InternalJettyModule implements Module {
 
-		@Override
-		public Builder var(String key, String value) {
-			return (Builder) super.var(key, value);
-		}
+        @Override
+        public void configure(Binder binder) {
+            BQCoreModule.contributeCommands(binder).addBinding().to(ServerCommand.class);
+        }
 
-		@Override
-		public Builder startupCheck(Function<BQRuntime, Boolean> startupCheck) {
-			return (Builder) super.startupCheck(startupCheck);
-		}
+        @Provides
+        @Singleton
+        Server provideServer(Environment env, ShutdownManager shutdownManager) {
+            Server server = new Server();
 
-		@Override
-		public Builder startupTimeout(long timeout, TimeUnit unit) {
-			return (Builder) super.startupTimeout(timeout, unit);
-		}
+            ServerConnector connector = new ServerConnector(server);
+            connector.setPort(12025);
+            server.addConnector(connector);
 
-		@Override
-		public BQRuntime build(String... args) {
-			property("bq.internaljetty.base", resourceUrl.getUrl().toExternalForm());
-			return super.build(args);
-		}
-	}
+            ServletContextHandler handler = new ServletContextHandler();
+            handler.setContextPath("/");
 
-	static class InternalJettyModule implements Module {
+            DefaultServlet servlet = new DefaultServlet();
 
-		@Override
-		public void configure(Binder binder) {
-			BQCoreModule.contributeCommands(binder).addBinding().to(ServerCommand.class);
-		}
+            ServletHolder holder = new ServletHolder(servlet);
+            handler.addServlet(holder, "/*");
+            handler.setResourceBase(env.getProperty("bq.internaljetty.base"));
 
-		@Provides
-		@Singleton
-		Server provideServer(Environment env, ShutdownManager shutdownManager) {
-			Server server = new Server();
+            server.setHandler(handler);
 
-			ServerConnector connector = new ServerConnector(server);
-			connector.setPort(12025);
-			server.addConnector(connector);
+            shutdownManager.addShutdownHook(() -> {
+                server.stop();
+            });
 
-			ServletContextHandler handler = new ServletContextHandler();
-			handler.setContextPath("/");
+            return server;
+        }
+    }
 
-			DefaultServlet servlet = new DefaultServlet();
+    static class ServerCommand implements Command {
 
-			ServletHolder holder = new ServletHolder(servlet);
-			handler.addServlet(holder, "/*");
-			handler.setResourceBase(env.getProperty("bq.internaljetty.base"));
+        @Inject
+        private Provider<Server> serverProvider;
 
-			server.setHandler(handler);
-			
-			shutdownManager.addShutdownHook(() -> {
-				server.stop();
-			});
+        @Override
+        public CommandOutcome run(Cli cli) {
+            Server server = serverProvider.get();
+            try {
+                server.start();
+            } catch (Exception e) {
+                return CommandOutcome.failed(1, e);
+            }
 
-			return server;
-		}
-	}
+            try {
+                Thread.currentThread().join();
+            } catch (InterruptedException e) {
+                return CommandOutcome.failed(1, e);
+            }
 
-	static class ServerCommand implements Command {
-
-		@Inject
-		private Provider<Server> serverProvider;
-
-		@Override
-		public CommandOutcome run(Cli cli) {
-			Server server = serverProvider.get();
-			try {
-				server.start();
-			} catch (Exception e) {
-				return CommandOutcome.failed(1, e);
-			}
-
-			try {
-				Thread.currentThread().join();
-			} catch (InterruptedException e) {
-				return CommandOutcome.failed(1, e);
-			}
-
-			return CommandOutcome.succeeded();
-		}
-	}
+            return CommandOutcome.succeeded();
+        }
+    }
 }

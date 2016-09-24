@@ -1,21 +1,20 @@
 package io.bootique;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Collections;
-
-import io.bootique.unit.BQInternalWebServerTestFactory;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import io.bootique.config.ConfigurationSource;
 import io.bootique.env.Environment;
 import io.bootique.jackson.JacksonService;
 import io.bootique.resource.ResourceFactory;
 import io.bootique.unit.BQInternalTestFactory;
+import io.bootique.unit.BQInternalWebServerTestFactory;
+import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.Test;
+
+import java.util.Collections;
+
+import static org.junit.Assert.assertEquals;
 
 public class JsonNodeConfigurationFactoryProviderIT {
 
@@ -24,8 +23,8 @@ public class JsonNodeConfigurationFactoryProviderIT {
 
 	@BeforeClass
 	public static void beforeClass() {
-		WEB_CONFIG_FACTORY.newRuntime().resourceUrl(new ResourceFactory("classpath:io/bootique"))
-				.build("--server");
+		WEB_CONFIG_FACTORY.app("--server").resourceUrl(new ResourceFactory("classpath:io/bootique"))
+				.createRuntime();
 	}
 
 	@Rule
@@ -34,7 +33,7 @@ public class JsonNodeConfigurationFactoryProviderIT {
 	@Test
 	public void testLoadConfiguration_NoConfig() {
 
-		BQRuntime runtime = testFactory.newRuntime().build();
+		BQRuntime runtime = testFactory.app().createRuntime();
 
 		JsonNodeConfigurationFactoryProvider provider = new JsonNodeConfigurationFactoryProvider(
 				runtime.getInstance(ConfigurationSource.class), runtime.getInstance(Environment.class),
@@ -47,7 +46,7 @@ public class JsonNodeConfigurationFactoryProviderIT {
 	@Test
 	public void testLoadConfiguration_Yaml() {
 
-		BQRuntime runtime = testFactory.newRuntime().build("--config=http://127.0.0.1:12025/test1.yml");
+		BQRuntime runtime = testFactory.app("--config=http://127.0.0.1:12025/test1.yml").createRuntime();
 
 		JsonNodeConfigurationFactoryProvider provider = new JsonNodeConfigurationFactoryProvider(
 				runtime.getInstance(ConfigurationSource.class), runtime.getInstance(Environment.class),
@@ -60,7 +59,7 @@ public class JsonNodeConfigurationFactoryProviderIT {
 	@Test
 	public void testLoadConfiguration_Json() {
 
-		BQRuntime runtime = testFactory.newRuntime().build("--config=http://127.0.0.1:12025/test1.json");
+		BQRuntime runtime = testFactory.app("--config=http://127.0.0.1:12025/test1.json").createRuntime();
 
 		JsonNodeConfigurationFactoryProvider provider = new JsonNodeConfigurationFactoryProvider(
 				runtime.getInstance(ConfigurationSource.class), runtime.getInstance(Environment.class),
@@ -73,8 +72,8 @@ public class JsonNodeConfigurationFactoryProviderIT {
 	@Test
 	public void testLoadConfiguration_JsonYaml() {
 
-		BQRuntime runtime = testFactory.newRuntime().build("--config=http://127.0.0.1:12025/test1.json",
-				"--config=http://127.0.0.1:12025/test1.yml");
+		BQRuntime runtime = testFactory.app("--config=http://127.0.0.1:12025/test1.json",
+				"--config=http://127.0.0.1:12025/test1.yml").createRuntime();
 
 		JsonNodeConfigurationFactoryProvider provider = new JsonNodeConfigurationFactoryProvider(
 				runtime.getInstance(ConfigurationSource.class), runtime.getInstance(Environment.class),

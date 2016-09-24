@@ -1,20 +1,19 @@
 package io.bootique.config;
 
-import static java.util.stream.Collectors.joining;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-
-import java.net.URL;
-import java.util.function.Function;
-
+import io.bootique.cli.Cli;
+import io.bootique.log.BootLogger;
+import io.bootique.resource.ResourceFactory;
 import io.bootique.unit.BQInternalWebServerTestFactory;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import io.bootique.cli.Cli;
-import io.bootique.log.BootLogger;
-import io.bootique.resource.ResourceFactory;
+import java.net.URL;
+import java.util.function.Function;
+
+import static java.util.stream.Collectors.joining;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 public class CliConfigurationSource_WebConfigSourceIT {
 
@@ -33,8 +32,8 @@ public class CliConfigurationSource_WebConfigSourceIT {
 	@Test
 	public void testGet_HttpUrl() {
 
-		testFactory.newRuntime().resourceUrl(new ResourceFactory("classpath:io/bootique/config"))
-				.build("--server");
+		testFactory.app("--server").resourceUrl(new ResourceFactory("classpath:io/bootique/config"))
+				.createRuntime();
 
 		String url = "http://localhost:12025/CliConfigurationSource_WebConfigSourceIT1.yml";
 		Cli cli = CliConfigurationSourceTest.createCli(url);
