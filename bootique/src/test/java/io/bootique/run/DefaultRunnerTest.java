@@ -11,9 +11,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -25,119 +27,152 @@ import static org.mockito.Mockito.when;
 
 public class DefaultRunnerTest {
 
-	private Command mockDefaultCommand;
+    private Cli mockCli;
 
-	private Cli mockCli;
+    private static Command mockCommand(String name, CommandOutcome outcome, String... options) {
 
-	@Before
-	public void before() {
+        CommandMetadata.Builder builder = CommandMetadata.builder(name);
+        Arrays.asList(options).forEach(opt -> builder.addOption(OptionMetadata.builder(opt)));
+        CommandMetadata md = builder.build();
 
-		this.mockDefaultCommand = createMockCommand("d1", CommandOutcome.succeeded());
-		this.mockCli = mock(Cli.class);
-	}
+        Command mock = mock(Command.class);
+        when(mock.run(any())).thenReturn(outcome);
+        when(mock.getMetadata()).thenReturn(md);
 
-	@Test
-	public void testRun() {
+        return mock;
+    }
 
-		when(mockCli.commandName()).thenReturn("c1");
+    @Before
+    public void before() {
+        this.mockCli = mock(Cli.class);
+    }
 
-		Command mockC1 = createMockCommand("c1", CommandOutcome.succeeded(), "c1o1", "c1o2");
-		Command mockC2 = createMockCommand("c2", CommandOutcome.succeeded(), "c2o1");
+    @Test
+    public void testRun() {
 
-		CommandOutcome result = run(mockC1, mockC2);
-		assertTrue(result.isSuccess());
+        when(mockCli.commandName()).thenReturn("c1");
 
-		verify(mockC1).run(mockCli);
-		verify(mockC2, times(0)).run(mockCli);
-		verify(mockDefaultCommand, times(0)).run(mockCli);
-	}
+        Command mockDefault = mockCommand("d1", CommandOutcome.succeeded());
+        Command mockHelp = mockCommand("h1", CommandOutcome.succeeded());
 
-	@Test
-	public void testRun_ReverseOrder() {
+        Command mockC1 = mockCommand("c1", CommandOutcome.succeeded(), "c1o1", "c1o2");
+        Command mockC2 = mockCommand("c2", CommandOutcome.succeeded(), "c2o1");
 
-		when(mockCli.commandName()).thenReturn("c2");
+        CommandOutcome result = run(Optional.of(mockDefault), Optional.of(mockHelp), mockC1, mockC2);
+        assertTrue(result.isSuccess());
 
-		Command mockC1 = createMockCommand("c1", CommandOutcome.succeeded(), "c1o1", "c1o2");
-		Command mockC2 = createMockCommand("c2", CommandOutcome.succeeded(), "c2o1");
+        verify(mockC1).run(mockCli);
+        verify(mockC2, times(0)).run(mockCli);
+        verify(mockDefault, times(0)).run(mockCli);
+        verify(mockHelp, times(0)).run(mockCli);
+    }
 
-		CommandOutcome result = run(mockC1, mockC2);
-		assertTrue(result.isSuccess());
+    @Test
+    public void testRun_ReverseOrder() {
 
-		verify(mockC2).run(mockCli);
-		verify(mockC1, times(0)).run(mockCli);
-		verify(mockDefaultCommand, times(0)).run(mockCli);
-	}
+        when(mockCli.commandName()).thenReturn("c2");
 
-	@Test
-	public void testRun_NoMatch() {
+        Command mockDefault = mockCommand("d1", CommandOutcome.succeeded());
+        Command mockHelp = mockCommand("h1", CommandOutcome.succeeded());
 
-		when(mockCli.commandName()).thenReturn("c3");
+        Command mockC1 = mockCommand("c1", CommandOutcome.succeeded(), "c1o1", "c1o2");
+        Command mockC2 = mockCommand("c2", CommandOutcome.succeeded(), "c2o1");
 
-		Command mockC1 = createMockCommand("c1", CommandOutcome.succeeded(), "c1o1", "c1o2");
-		Command mockC2 = createMockCommand("c2", CommandOutcome.succeeded(), "c2o1");
+        CommandOutcome result = run(Optional.of(mockDefault), Optional.of(mockHelp), mockC1, mockC2);
+        assertTrue(result.isSuccess());
 
-		CommandOutcome result = run(mockC1, mockC2);
-		assertTrue(result.isSuccess());
+        verify(mockC2).run(mockCli);
+        verify(mockC1, times(0)).run(mockCli);
+        verify(mockDefault, times(0)).run(mockCli);
+        verify(mockHelp, times(0)).run(mockCli);
+    }
 
-		verify(mockDefaultCommand).run(mockCli);
-		verify(mockC1, times(0)).run(mockCli);
-		verify(mockC2, times(0)).run(mockCli);
-	}
+    @Test(expected = IllegalStateException.class)
+    public void testRun_NoMatch() {
 
-	@Test
-	public void testRun_NullName() {
+        when(mockCli.commandName()).thenReturn("c3");
 
-		when(mockCli.commandName()).thenReturn(null);
+        Command mockDefault = mockCommand("d1", CommandOutcome.succeeded());
+        Command mockHelp = mockCommand("h1", CommandOutcome.succeeded());
 
-		Command mockC1 = createMockCommand("c1", CommandOutcome.succeeded(), "c1o1", "c1o2");
-		Command mockC2 = createMockCommand("c2", CommandOutcome.succeeded(), "c2o1");
+        Command mockC1 = mockCommand("c1", CommandOutcome.succeeded(), "c1o1", "c1o2");
+        Command mockC2 = mockCommand("c2", CommandOutcome.succeeded(), "c2o1");
 
-		CommandOutcome result = run(mockC1, mockC2);
-		assertTrue(result.isSuccess());
+        run(Optional.of(mockDefault), Optional.of(mockHelp), mockC1, mockC2);
+    }
 
-		verify(mockDefaultCommand).run(mockCli);
-		verify(mockC1, times(0)).run(mockCli);
-		verify(mockC2, times(0)).run(mockCli);
-	}
+    @Test
+    public void testRun_NullName_Default() {
 
-	@Test
-	public void testRun_Failure() {
+        when(mockCli.commandName()).thenReturn(null);
 
-		when(mockCli.commandName()).thenReturn("c1");
+        Command mockDefault = mockCommand("d1", CommandOutcome.succeeded());
+        Command mockHelp = mockCommand("h1", CommandOutcome.succeeded());
 
-		Command mockC1 = createMockCommand("c1", CommandOutcome.failed(-1, "fff"), "c1o1", "c1o2");
-		Command mockC2 = createMockCommand("c2", CommandOutcome.succeeded(), "c2o1");
+        Command mockC1 = mockCommand("c1", CommandOutcome.succeeded(), "c1o1", "c1o2");
+        Command mockC2 = mockCommand("c2", CommandOutcome.succeeded(), "c2o1");
 
-		CommandOutcome result = run(mockC1, mockC2);
-		assertFalse(result.isSuccess());
-		assertEquals(-1, result.getExitCode());
-		assertEquals("fff", result.getMessage());
-	}
+        CommandOutcome result = run(Optional.of(mockDefault), Optional.of(mockHelp), mockC1, mockC2);
+        assertTrue(result.isSuccess());
 
-	private CommandOutcome run(Command... commands) {
-		Set<Command> commandSet = new HashSet<>(Arrays.asList(commands));
-		CommandManager commandManager = DefaultCommandManager.create(commandSet, mockDefaultCommand);
+        verify(mockC1, times(0)).run(mockCli);
+        verify(mockC2, times(0)).run(mockCli);
+        verify(mockDefault).run(mockCli);
+        verify(mockHelp, times(0)).run(mockCli);
+    }
 
-		return new DefaultRunner(mockCli, commandManager).run();
-	}
+    @Test
+    public void testRun_NullName_Help() {
 
-	private Command createMockCommand(String name, CommandOutcome outcome, String... options) {
+        when(mockCli.commandName()).thenReturn(null);
 
-		Command mock = mock(Command.class);
+        Command mockHelp = mockCommand("h1", CommandOutcome.succeeded());
 
-		when(mock.run(any())).thenReturn(outcome);
+        Command mockC1 = mockCommand("c1", CommandOutcome.succeeded(), "c1o1", "c1o2");
+        Command mockC2 = mockCommand("c2", CommandOutcome.succeeded(), "c2o1");
 
-		// for now JopCLiProvider adds command name as an option;
-		// using this option in command line would match the original command
-		// name
+        CommandOutcome result = run(Optional.empty(), Optional.of(mockHelp), mockC1, mockC2);
+        assertTrue(result.isSuccess());
 
-		CommandMetadata.Builder builder = CommandMetadata.builder(name);
-		Arrays.asList(options).forEach(opt -> builder.addOption(OptionMetadata.builder(opt)));
+        verify(mockC1, times(0)).run(mockCli);
+        verify(mockC2, times(0)).run(mockCli);
+        verify(mockHelp).run(mockCli);
+    }
 
-		CommandMetadata md = builder.build();
+    @Test
+    public void testRun_NullName_NoFallback() {
 
-		when(mock.getMetadata()).thenReturn(md);
+        when(mockCli.commandName()).thenReturn(null);
 
-		return mock;
-	}
+        Command mockC1 = mockCommand("c1", CommandOutcome.succeeded(), "c1o1", "c1o2");
+        Command mockC2 = mockCommand("c2", CommandOutcome.succeeded(), "c2o1");
+
+        CommandOutcome result = run(Optional.empty(), Optional.empty(), mockC1, mockC2);
+        assertTrue(result.isSuccess());
+
+        verify(mockC1, times(0)).run(mockCli);
+        verify(mockC2, times(0)).run(mockCli);
+    }
+
+    @Test
+    public void testRun_Failure() {
+
+        when(mockCli.commandName()).thenReturn("c1");
+
+        Command mockC1 = mockCommand("c1", CommandOutcome.failed(-1, "fff"), "c1o1", "c1o2");
+        Command mockC2 = mockCommand("c2", CommandOutcome.succeeded(), "c2o1");
+
+        CommandOutcome result = run(Optional.empty(), Optional.empty(), mockC1, mockC2);
+        assertFalse(result.isSuccess());
+        assertEquals(-1, result.getExitCode());
+        assertEquals("fff", result.getMessage());
+    }
+
+    private CommandOutcome run(Optional<Command> defaultCommand, Optional<Command> helpCommand, Command... commands) {
+
+        Map<String, Command> commandMap = new HashMap<>();
+        asList(commands).forEach(c -> commandMap.put(c.getMetadata().getName(), c));
+        CommandManager commandManager = new DefaultCommandManager(commandMap, defaultCommand, helpCommand);
+        return new DefaultRunner(mockCli, commandManager).run();
+    }
 }

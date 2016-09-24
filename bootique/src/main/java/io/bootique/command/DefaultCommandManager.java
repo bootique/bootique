@@ -1,63 +1,38 @@
 package io.bootique.command;
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.Optional;
 
 /**
  * @since 0.12
  */
 public class DefaultCommandManager implements CommandManager {
 
-	private Map<String, Command> activeCommands;
-	private Command defaultCommand;
+    private Map<String, Command> commands;
+    private Optional<Command> defaultCommand;
+    private Optional<Command> helpCommand;
 
-	public static DefaultCommandManager create(Set<Command> commands, Command defaultCommand) {
-		Map<String, Command> commandMap = new HashMap<>();
+    public DefaultCommandManager(Map<String, Command> commands,
+                                 Optional<Command> defaultCommand,
+                                 Optional<Command> helpCommand) {
 
-		commands.forEach(c -> {
+        this.commands = commands;
+        this.defaultCommand = defaultCommand;
+        this.helpCommand = helpCommand;
+    }
 
-			String name = c.getMetadata().getName();
-			Command existing = commandMap.put(name, c);
+    @Override
+    public Optional<Command> getHelpCommand() {
+        return helpCommand;
+    }
 
-			// complain on dupes
-			if (existing != null && existing != c) {
-				String c1 = existing.getClass().getName();
-				String c2 = c.getClass().getName();
-				throw new RuntimeException(
-						String.format("Duplicate command for name %s (provided by: %s and %s) ", name, c1, c2));
-			}
-		});
+    @Override
+    public Optional<Command> getDefaultCommand() {
+        return defaultCommand;
+    }
 
-		DefaultCommandManager commandManager = new DefaultCommandManager();
-		commandManager.defaultCommand = defaultCommand;
-		commandManager.activeCommands = commandMap;
-		return commandManager;
-	}
-
-	public static DefaultCommandManager create(Map<String, Command> commands, Command defaultCommand) {
-		DefaultCommandManager commandManager = new DefaultCommandManager();
-		commandManager.defaultCommand = defaultCommand;
-		commandManager.activeCommands = commands;
-		return commandManager;
-	}
-
-	private DefaultCommandManager() {
-	}
-
-	@Override
-	public Command getCommand(String name) {
-		return activeCommands.getOrDefault(name, defaultCommand);
-	}
-
-	@Override
-	public Collection<Command> getCommands() {
-		return activeCommands.values();
-	}
-
-	@Override
-	public Command getDefaultCommand() {
-		return defaultCommand;
-	}
+    @Override
+    public Map<String, Command> getCommands() {
+        return commands;
+    }
 }

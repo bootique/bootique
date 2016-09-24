@@ -1,13 +1,9 @@
 package io.bootique.command;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import com.google.inject.Binder;
+import com.google.inject.Binding;
+import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -16,6 +12,14 @@ import io.bootique.BQCoreModule;
 import io.bootique.BQModuleProvider;
 import io.bootique.annotation.DefaultCommand;
 import io.bootique.log.BootLogger;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * A helper to build a non-standard command set in an app.
@@ -52,7 +56,7 @@ public class Commands implements Module {
 	@Provides
 	@Singleton
 	CommandManager createManager(Set<Command> moduleCommands, @ExtraCommands Set<Command> extraCommands,
-                                 @DefaultCommand Command defaultCommand, BootLogger bootLogger) {
+								 HelpCommand helpCommand, Injector injector, BootLogger bootLogger) {
 
 		// merge two sets, checking for dupe names within the set, but allowing
 		// extras to override module commands...
@@ -76,7 +80,11 @@ public class Commands implements Module {
 			});
 		}
 
-		return DefaultCommandManager.create(map, defaultCommand);
+		// copy/paste from BQCoreModule
+		Binding<Command> binding = injector.getExistingBinding(Key.get(Command.class, DefaultCommand.class));
+		Command defaultCommand = binding != null ? binding.getProvider().get() : null;
+
+		return new DefaultCommandManager(map, Optional.ofNullable(defaultCommand), Optional.of(helpCommand));
 	}
 
 	private Map<String, Command> toDistinctCommands(Set<Command> commands) {

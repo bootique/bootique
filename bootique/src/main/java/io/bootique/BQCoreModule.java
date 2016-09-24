@@ -1,6 +1,9 @@
 package io.bootique;
 
 import com.google.inject.Binder;
+import com.google.inject.Binding;
+import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
@@ -43,8 +46,10 @@ import io.bootique.terminal.Terminal;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -131,10 +136,38 @@ public class BQCoreModule implements Module {
      * Binds an optional application description used in help messages, etc.
      *
      * @param description optional application description used in help messages, etc.
+     * @param binder      DI binder passed to the Module that invokes this method.
      * @since 0.20
      */
     public static void setApplicationDescription(Binder binder, String description) {
         binder.bind(ApplicationDescription.class).toInstance(new ApplicationDescription(description));
+    }
+
+    /**
+     * Initializes optional default command that will be executed if no explicit command is matched.
+     *
+     * @param binder      DI binder passed to the Module that invokes this method.
+     * @param commandType a class of the default command.
+     * @since 0.20
+     */
+    public static void setDefaultCommand(Binder binder, Class<? extends Command> commandType) {
+        binder.bind(Key.get(Command.class, DefaultCommand.class)).to(commandType);
+    }
+
+    /**
+     * Initializes optional default command that will be executed if no explicit command is matched.
+     *
+     * @param binder  DI binder passed to the Module that invokes this method.
+     * @param command an instance of the default command.
+     * @since 0.20
+     */
+    public static void setDefaultCommand(Binder binder, Command command) {
+        binder.bind(Key.get(Command.class, DefaultCommand.class)).toInstance(command);
+    }
+
+    private static Optional<Command> defaultCommand(Injector injector) {
+        Binding<Command> binding = injector.getExistingBinding(Key.get(Command.class, DefaultCommand.class));
+        return binding != null ? Optional.of(binding.getProvider().get()) : Optional.empty();
     }
 
     @Override
@@ -156,7 +189,11 @@ public class BQCoreModule implements Module {
         // trigger extension points creation and provide default contributions
         BQCoreModule.contributeProperties(binder);
         BQCoreModule.contributeVariables(binder);
+
+        // while "help" is a special command, we still store it in the common list of commands,
+        // so that "--help" is exposed as an explicit option
         BQCoreModule.contributeCommands(binder).addBinding().to(HelpCommand.class).in(Singleton.class);
+
         BQCoreModule.contributeOptions(binder).addBinding().toInstance(createConfigOption());
         BQCoreModule.contributeLogLevels(binder);
     }
@@ -194,21 +231,41 @@ public class BQCoreModule implements Module {
 
     @Provides
     @Singleton
-    @DefaultCommand
-    Command provideDefaultCommand(HelpCommand helpCommand) {
-        return helpCommand;
-    }
-
-    @Provides
-    @Singleton
     HelpCommand provideHelpCommand(BootLogger bootLogger, Provider<HelpGenerator> helpGeneratorProvider) {
         return new HelpCommand(bootLogger, helpGeneratorProvider);
     }
 
     @Provides
     @Singleton
-    CommandManager provideCommandManager(Set<Command> commands, @DefaultCommand Command defaultCommand) {
-        return DefaultCommandManager.create(commands, defaultCommand);
+    CommandManager provideCommandManager(Set<Command> commands,
+                                         HelpCommand helpCommand,
+                                         Injector injector) {
+
+        // help command is bound, but default is optional, so check via injector...
+        Optional<Command> defaultCommand = defaultCommand(injector);
+
+        Map<String, Command> commandMap = new HashMap<>();
+
+        commands.forEach(c -> {
+
+            String name = c.getMetadata().getName();
+
+            // if command's name matches default command, exclude it from command map (it is implicit)
+            if (!defaultCommand.isPresent() || !defaultCommand.get().getMetadata().getName().equals(name)) {
+
+                Command existing = commandMap.put(name, c);
+
+                // complain on dupes
+                if (existing != null && existing != c) {
+                    String c1 = existing.getClass().getName();
+                    String c2 = c.getClass().getName();
+                    throw new RuntimeException(
+                            String.format("Duplicate command for name %s (provided by: %s and %s) ", name, c1, c2));
+                }
+            }
+        });
+
+        return new DefaultCommandManager(commandMap, defaultCommand, Optional.of(helpCommand));
     }
 
     @Provides
@@ -226,24 +283,23 @@ public class BQCoreModule implements Module {
     @Provides
     @Singleton
     ApplicationMetadata provideApplicationMetadata(ApplicationDescription descriptionHolder,
-                                                   Set<Command> commands,
+                                                   CommandManager commandManager,
                                                    Set<OptionMetadata> options) {
 
-        // TODO: deprecate CommandMetadata, replacing it with CommandMetadata
         Collection<CommandMetadata> cliCommands = new ArrayList<>();
-        commands.forEach(c -> {
-            CommandMetadata md = c.getMetadata();
-            cliCommands.add(CommandMetadata
-                    .builder(md.getName())
-                    .description(md.getDescription())
-                    .addOptions(md.getOptions())
-                    .build());
+        commandManager.getCommands().values().forEach(c -> {
+            cliCommands.add(c.getMetadata());
         });
 
-        return ApplicationMetadata.builder()
+        ApplicationMetadata.Builder builder = ApplicationMetadata.builder()
                 .description(descriptionHolder.getDescription())
                 .addCommands(cliCommands)
-                .addOptions(options).build();
+                .addOptions(options);
+
+        // merge default command options with top-level app options
+        commandManager.getDefaultCommand().ifPresent(c -> builder.addOptions(c.getMetadata().getOptions()));
+
+        return builder.build();
     }
 
     @Provides

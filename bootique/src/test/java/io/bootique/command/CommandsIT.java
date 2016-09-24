@@ -8,10 +8,6 @@ import io.bootique.cli.Cli;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -32,11 +28,10 @@ public class CommandsIT {
 		BQRuntime runtime = Bootique.app(args).module(provider).createRuntime();
 		CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
-		Collection<Command> commands = commandManager.getCommands();
+		Map<String, Command> commands = commandManager.getCommands();
 		assertEquals(1, commands.size());
 
-		Map<String, List<Command>> map = mapCommands(commands);
-		assertTrue(map.containsKey(HelpCommand.class.getName()));
+		assertTrue(commands.containsKey("help"));
 	}
 
 	@Test
@@ -53,12 +48,11 @@ public class CommandsIT {
 		BQRuntime runtime = Bootique.app(args).module(provider).createRuntime();
 		CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
-		Collection<Command> commands = commandManager.getCommands();
+		Map<String, Command> commands = commandManager.getCommands();
 		assertEquals(2, commands.size());
 
-		Map<String, List<Command>> map = mapCommands(commands);
-		assertTrue(map.containsKey(C1.class.getName()));
-		assertTrue(map.containsKey(HelpCommand.class.getName()));
+		assertTrue(commands.containsKey("c1"));
+		assertTrue(commands.containsKey("help"));
 	}
 
 	@Test
@@ -67,12 +61,11 @@ public class CommandsIT {
 		BQRuntime runtime = Bootique.app(args).module(provider).createRuntime();
 		CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
-		Collection<Command> commands = commandManager.getCommands();
+		Map<String, Command> commands = commandManager.getCommands();
 		assertEquals(2, commands.size());
 
-		Map<String, List<Command>> map = mapCommands(commands);
-		assertTrue(map.containsKey(C1.class.getName()));
-		assertTrue(map.containsKey(HelpCommand.class.getName()));
+		assertTrue(commands.containsKey("c1"));
+		assertTrue(commands.containsKey("help"));
 	}
 
 	@Test
@@ -81,21 +74,10 @@ public class CommandsIT {
 		BQRuntime runtime = Bootique.app(args).module(provider).createRuntime();
 		CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
-		Collection<Command> commands = commandManager.getCommands();
+		Map<String, Command> commands = commandManager.getCommands();
 		assertEquals(1, commands.size());
 
-		Map<String, List<Command>> map = mapCommands(commands);
-		assertTrue(map.containsKey(C2_Help.class.getName()));
-	}
-
-	private Map<String, List<Command>> mapCommands(Collection<Command> commands) {
-
-		Map<String, List<Command>> map = new HashMap<>();
-		commands.forEach(c -> {
-			map.computeIfAbsent(c.getClass().getName(), s -> new ArrayList<>()).add(c);
-		});
-
-		return map;
+		assertTrue(commands.containsKey("help"));
 	}
 
 	static class C1 implements Command {

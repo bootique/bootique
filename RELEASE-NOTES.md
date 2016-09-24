@@ -5,6 +5,7 @@
 * #92 Standalone service for printing help
 * #93 A concept of "app name" for help purposes
 * #95 Support for terminal width detection
+* #96 Separate default and help commands
 * #97 Bootique-like builder API for unit tests
 * #98 Support setting app text description to use in help
 

@@ -22,91 +22,90 @@ import static java.util.stream.Collectors.joining;
 
 public class JoptCliProvider implements Provider<Cli> {
 
-	private String[] args;
-	private Set<OptionMetadata> options;
-	private BootLogger bootLogger;
-	private CommandManager commandManager;
+    private String[] args;
+    private Set<OptionMetadata> options;
+    private BootLogger bootLogger;
+    private CommandManager commandManager;
 
-	@Inject
-	public JoptCliProvider(BootLogger bootLogger, CommandManager commandManager, Set<OptionMetadata> options,
-			@Args String[] args) {
-		this.commandManager = commandManager;
-		this.options = options;
-		this.args = args;
-		this.bootLogger = bootLogger;
-	}
+    @Inject
+    public JoptCliProvider(BootLogger bootLogger, CommandManager commandManager, Set<OptionMetadata> options,
+                           @Args String[] args) {
+        this.commandManager = commandManager;
+        this.options = options;
+        this.args = args;
+        this.bootLogger = bootLogger;
+    }
 
-	@Override
-	public Cli get() {
-		OptionParser parser = createParser();
-		OptionSet parsed = parser.parse(args);
-		String commandName = commandName(parsed);
+    @Override
+    public Cli get() {
+        OptionParser parser = createParser();
+        OptionSet parsed = parser.parse(args);
+        String commandName = commandName(parsed);
 
-		return new JoptCli(bootLogger, parser, parsed, commandName);
-	}
+        return new JoptCli(bootLogger, parser, parsed, commandName);
+    }
 
-	protected OptionParser createParser() {
-		OptionParser parser = new OptionParser();
+    protected OptionParser createParser() {
+        OptionParser parser = new OptionParser();
 
-		commandManager.getCommands().forEach(c -> {
+        commandManager.getCommands().values().forEach(c -> {
 
-			CommandMetadata md = c.getMetadata();
+            CommandMetadata md = c.getMetadata();
 
-			md.getOptions().forEach(o -> {
-				addOption(parser, o);
-			});
+            md.getOptions().forEach(o -> {
+                addOption(parser, o);
+            });
 
-			// using option-bound command strategy...
+            // using option-bound command strategy...
 
-			addOption(parser, OptionMetadata.builder(md.getName()).description(md.getDescription()).build());
-		});
+            addOption(parser, OptionMetadata.builder(md.getName()).description(md.getDescription()).build());
+        });
 
-		// load global options; TODO: check for conflicts with other options
-		options.forEach(o -> addOption(parser, o));
+        // load global options; TODO: check for conflicts with other options
+        options.forEach(o -> addOption(parser, o));
 
-		return parser;
-	}
+        return parser;
+    }
 
-	protected void addOption(OptionParser parser, OptionMetadata option) {
+    protected void addOption(OptionParser parser, OptionMetadata option) {
 
-		// ensure non-null description
-		String description = Optional.ofNullable(option.getDescription()).orElse("");
+        // ensure non-null description
+        String description = Optional.ofNullable(option.getDescription()).orElse("");
 
-		OptionSpecBuilder optionBuilder = parser.accepts(option.getName(), description);
-		switch (option.getValueCardinality()) {
-		case OPTIONAL:
-			optionBuilder.withOptionalArg().describedAs(option.getValueName());
-			break;
-		case REQUIRED:
-			optionBuilder.withRequiredArg().describedAs(option.getValueName());
-		default:
-			break;
-		}
-	}
+        OptionSpecBuilder optionBuilder = parser.accepts(option.getName(), description);
+        switch (option.getValueCardinality()) {
+            case OPTIONAL:
+                optionBuilder.withOptionalArg().describedAs(option.getValueName());
+                break;
+            case REQUIRED:
+                optionBuilder.withRequiredArg().describedAs(option.getValueName());
+            default:
+                break;
+        }
+    }
 
-	// using option-bound command strategy...
-	protected String commandName(OptionSet optionSet) {
+    // using option-bound command strategy...
+    protected String commandName(OptionSet optionSet) {
 
-		Map<String, Command> matches = new HashMap<>(3);
-		commandManager.getCommands().forEach(c -> {
-			String name = c.getMetadata().getName();
-			if (optionSet.has(name) && !optionSet.hasArgument(name)) {
-				matches.put(name, c);
-			}
-		});
+        Map<String, Command> matches = new HashMap<>(3);
+        commandManager.getCommands().forEach((name, c) -> {
+            if (optionSet.has(name) && !optionSet.hasArgument(name)) {
+                matches.put(name, c);
+            }
+        });
 
-		switch (matches.size()) {
-		case 0:
-			// default command should be invoked
-			return null;
-		case 1:
-			return matches.keySet().iterator().next();
-		default:
-			String opts = matches.keySet().stream().collect(joining(", "));
-			String message = String.format("Ambiguous options, matched multiple commands: %s", opts);
+        switch (matches.size()) {
+            case 0:
+                // default command should be invoked
+                return null;
+            case 1:
+                return matches.keySet().iterator().next();
+            default:
+                String opts = matches.keySet().stream().collect(joining(", "));
+                String message = String.format("Ambiguous options, matched multiple commands: %s", opts);
 
-			// TODO: BootiqueException?
-			throw new RuntimeException(message);
-		}
-	}
+                // TODO: BootiqueException?
+                throw new RuntimeException(message);
+        }
+    }
 }
