@@ -12,10 +12,10 @@ import io.bootique.annotation.DefaultCommand;
 import io.bootique.annotation.EnvironmentProperties;
 import io.bootique.annotation.EnvironmentVariables;
 import io.bootique.annotation.LogLevels;
-import io.bootique.application.CommandMetadata;
-import io.bootique.cli.Cli;
 import io.bootique.application.ApplicationMetadata;
+import io.bootique.application.CommandMetadata;
 import io.bootique.application.OptionMetadata;
+import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandManager;
 import io.bootique.command.DefaultCommandManager;
@@ -127,6 +127,16 @@ public class BQCoreModule implements Module {
         return MapBinder.newMapBinder(binder, String.class, Level.class, LogLevels.class);
     }
 
+    /**
+     * Binds an optional application description used in help messages, etc.
+     *
+     * @param description optional application description used in help messages, etc.
+     * @since 0.20
+     */
+    public static void setApplicationDescription(Binder binder, String description) {
+        binder.bind(ApplicationDescription.class).toInstance(new ApplicationDescription(description));
+    }
+
     @Override
     public void configure(Binder binder) {
 
@@ -215,7 +225,9 @@ public class BQCoreModule implements Module {
 
     @Provides
     @Singleton
-    ApplicationMetadata provideApplicationMetadata(Set<Command> commands, Set<OptionMetadata> options) {
+    ApplicationMetadata provideApplicationMetadata(ApplicationDescription descriptionHolder,
+                                                   Set<Command> commands,
+                                                   Set<OptionMetadata> options) {
 
         // TODO: deprecate CommandMetadata, replacing it with CommandMetadata
         Collection<CommandMetadata> cliCommands = new ArrayList<>();
@@ -228,13 +240,16 @@ public class BQCoreModule implements Module {
                     .build());
         });
 
-        return ApplicationMetadata.builder().addCommands(cliCommands).addOptions(options).build();
+        return ApplicationMetadata.builder()
+                .description(descriptionHolder.getDescription())
+                .addCommands(cliCommands)
+                .addOptions(options).build();
     }
 
     @Provides
     @Singleton
     Environment provideEnvironment(@EnvironmentProperties Map<String, String> diProperties,
-                                  @EnvironmentVariables Map<String, String> diVars) {
+                                   @EnvironmentVariables Map<String, String> diVars) {
         return new DefaultEnvironment(diProperties, diVars);
     }
 
@@ -245,6 +260,21 @@ public class BQCoreModule implements Module {
         // very simple OS test...
         boolean isUnix = "/".equals(System.getProperty("file.separator"));
         return isUnix ? new SttyTerminal(bootLogger) : new FixedWidthTerminal(TTY_DEFAULT_COLUMNS);
+    }
+
+    static class ApplicationDescription {
+        private String description;
+
+        public ApplicationDescription() {
+        }
+
+        public ApplicationDescription(String description) {
+            this.description = description;
+        }
+
+        public String getDescription() {
+            return description;
+        }
     }
 
     public static class Builder {
