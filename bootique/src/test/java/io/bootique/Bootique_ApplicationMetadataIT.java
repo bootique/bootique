@@ -2,16 +2,17 @@ package io.bootique;
 
 import io.bootique.application.ApplicationMetadata;
 import io.bootique.unit.BQInternalTestFactory;
-import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-public class BQCoreModule_ApplicationMetadataIT {
-    @ClassRule
-    public static BQInternalTestFactory runtimeFactory = new BQInternalTestFactory();
+public class Bootique_ApplicationMetadataIT {
+
+    @Rule
+    public BQInternalTestFactory runtimeFactory = new BQInternalTestFactory();
 
     @Test
     public void testDefault() {
