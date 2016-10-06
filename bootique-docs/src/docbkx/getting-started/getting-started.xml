@@ -14,7 +14,7 @@
 		&lt;dependency>
 			&lt;groupId>io.bootique.bom&lt;/groupId>
 			&lt;artifactId>bootique-bom&lt;/artifactId>
-			&lt;version>0.19&lt;/version>
+			&lt;version>0.20&lt;/version>
 			&lt;type>pom&lt;/type>
 			&lt;scope>import&lt;/scope>
 		&lt;/dependency>
