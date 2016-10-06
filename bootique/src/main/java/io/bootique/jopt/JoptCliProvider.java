@@ -3,7 +3,7 @@ package io.bootique.jopt;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import io.bootique.annotation.Args;
-import io.bootique.application.CommandMetadata;
+import io.bootique.application.ApplicationMetadata;
 import io.bootique.application.OptionMetadata;
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
@@ -16,22 +16,24 @@ import joptsimple.OptionSpecBuilder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import static java.util.stream.Collectors.joining;
 
 public class JoptCliProvider implements Provider<Cli> {
 
     private String[] args;
-    private Set<OptionMetadata> options;
     private BootLogger bootLogger;
+    private ApplicationMetadata application;
     private CommandManager commandManager;
 
     @Inject
-    public JoptCliProvider(BootLogger bootLogger, CommandManager commandManager, Set<OptionMetadata> options,
+    public JoptCliProvider(BootLogger bootLogger,
+                           CommandManager commandManager,
+                           ApplicationMetadata application,
                            @Args String[] args) {
+
         this.commandManager = commandManager;
-        this.options = options;
+        this.application = application;
         this.args = args;
         this.bootLogger = bootLogger;
     }
@@ -48,22 +50,18 @@ public class JoptCliProvider implements Provider<Cli> {
     protected OptionParser createParser() {
         OptionParser parser = new OptionParser();
 
-        commandManager.getCommands().values().forEach(c -> {
+        application.getCommands().forEach(c -> {
 
-            CommandMetadata md = c.getMetadata();
-
-            md.getOptions().forEach(o -> {
+            c.getOptions().forEach(o -> {
                 addOption(parser, o);
             });
 
             // using option-bound command strategy...
-
-            addOption(parser, OptionMetadata.builder(md.getName()).description(md.getDescription()).build());
+            addOption(parser, OptionMetadata.builder(c.getName()).description(c.getDescription()).build());
         });
 
-        // load global options; TODO: check for conflicts with other options
-        options.forEach(o -> addOption(parser, o));
-
+        // load global options
+        application.getOptions().forEach(o -> addOption(parser, o));
         return parser;
     }
 

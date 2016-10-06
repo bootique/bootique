@@ -1,6 +1,7 @@
 ## 0.21
 
 * #99 Empty YAML troubles
+* #100 Default command options are visible in help, but can't be used
 
 ## 0.20
 

@@ -1,8 +1,13 @@
 package io.bootique;
 
+import io.bootique.application.CommandMetadata;
+import io.bootique.application.OptionMetadata;
 import io.bootique.cli.Cli;
+import io.bootique.command.CommandOutcome;
+import io.bootique.command.CommandWithMetadata;
 import io.bootique.config.CliConfigurationSource;
 import io.bootique.unit.BQInternalTestFactory;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -44,5 +49,32 @@ public class Bootique_CliOptionsIT {
 
     private void assertEquals(Collection<String> result, String... expected) {
         assertArrayEquals(expected, result.toArray());
+    }
+
+    @Test
+    public void testDefaultCommandOptions() {
+        BQRuntime runtime = runtimeFactory.app("-l", "x", "--long=y", "-s")
+                .module(binder -> BQCoreModule.setDefaultCommand(binder, TestCommand.class))
+                .createRuntime();
+
+
+        Cli cli = runtime.getInstance(Cli.class);
+
+        assertTrue(cli.hasOption("s"));
+        Assert.assertEquals("x_y", String.join("_", cli.optionStrings("long")));
+    }
+
+    static final class TestCommand extends CommandWithMetadata {
+
+        public TestCommand() {
+            super(CommandMetadata.builder(TestCommand.class)
+                    .addOption(OptionMetadata.builder("long").valueRequired())
+                    .addOption(OptionMetadata.builder("s")));
+        }
+
+        @Override
+        public CommandOutcome run(Cli cli) {
+            return CommandOutcome.succeeded();
+        }
     }
 }

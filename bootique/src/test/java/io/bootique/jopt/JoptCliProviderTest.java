@@ -1,5 +1,6 @@
 package io.bootique.jopt;
 
+import io.bootique.application.ApplicationMetadata;
 import io.bootique.application.CommandMetadata;
 import io.bootique.application.OptionMetadata;
 import io.bootique.cli.Cli;
@@ -13,10 +14,8 @@ import org.junit.Test;
 import java.io.StringWriter;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertFalse;
@@ -28,13 +27,11 @@ public class JoptCliProviderTest {
 
     private BootLogger mockBootLogger;
     private Map<String, Command> commands;
-    private Set<OptionMetadata> options;
 
     @Before
     public void before() {
         this.mockBootLogger = mock(BootLogger.class);
         this.commands = new HashMap<>();
-        this.options = new HashSet<>();
     }
 
     @Test
@@ -153,6 +150,9 @@ public class JoptCliProviderTest {
         Optional<Command> mockHelpCommand = Optional.of(mock(Command.class));
         CommandManager commandManager = new DefaultCommandManager(commands, mockDefaultCommand, mockHelpCommand);
 
-        return new JoptCliProvider(mockBootLogger, commandManager, options, argsArray).get();
+        ApplicationMetadata.Builder appBuilder = ApplicationMetadata.builder();
+        commands.values().forEach(c -> appBuilder.addCommand(c.getMetadata()));
+
+        return new JoptCliProvider(mockBootLogger, commandManager, appBuilder.build(), argsArray).get();
     }
 }
