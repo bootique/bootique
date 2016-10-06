@@ -16,6 +16,27 @@ public class Bootique_ConfigurationIT {
     public BQInternalTestFactory runtimeFactory = new BQInternalTestFactory();
 
     @Test
+    public void testEmptyConfig() {
+        BQRuntime runtime = runtimeFactory.app("--config=src/test/resources/io/bootique/empty.yml").createRuntime();
+
+        Map<String, String> config = runtime.getInstance(ConfigurationFactory.class)
+                .config(new TypeRef<Map<String, String>>() {
+                }, "");
+        assertEquals("{}", config.toString());
+    }
+
+    @Test
+    public void testConfigEmptyConfig() {
+        BQRuntime runtime = runtimeFactory.app("--config=src/test/resources/io/bootique/test1.yml",
+                "--config=src/test/resources/io/bootique/empty.yml").createRuntime();
+
+        Map<String, String> config = runtime.getInstance(ConfigurationFactory.class)
+                .config(new TypeRef<Map<String, String>>() {
+                }, "");
+        assertEquals("{a=b}", config.toString());
+    }
+
+    @Test
     public void testConfigConfig() {
         BQRuntime runtime = runtimeFactory.app("--config=src/test/resources/io/bootique/test1.yml",
                 "--config=src/test/resources/io/bootique/test2.yml").createRuntime();

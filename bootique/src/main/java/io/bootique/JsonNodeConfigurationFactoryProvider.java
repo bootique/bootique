@@ -1,12 +1,5 @@
 package io.bootique;
 
-import java.io.InputStream;
-import java.net.URL;
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,6 +18,14 @@ import io.bootique.config.jackson.MultiFormatJsonNodeParser.ParserType;
 import io.bootique.env.Environment;
 import io.bootique.jackson.JacksonService;
 import io.bootique.log.BootLogger;
+
+import java.io.InputStream;
+import java.net.URL;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
 
 /**
  * @since 0.17
@@ -51,11 +52,11 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
 		// hopefully sharing the mapper between parsers is safe... Does it
 		// change the state during parse?
 		ObjectMapper textToJsonMapper = jacksonService.newObjectMapper();
-		Map<ParserType, Function<InputStream, JsonNode>> parsers = new EnumMap<>(ParserType.class);
+		Map<ParserType, Function<InputStream, Optional<JsonNode>>> parsers = new EnumMap<>(ParserType.class);
 		parsers.put(ParserType.YAML, new JsonNodeYamlParser(textToJsonMapper));
 		parsers.put(ParserType.JSON, new JsonNodeJsonParser(textToJsonMapper));
 
-		Function<URL, JsonNode> parser = new MultiFormatJsonNodeParser(parsers, bootLogger);
+		Function<URL, Optional<JsonNode>> parser = new MultiFormatJsonNodeParser(parsers, bootLogger);
 
 		BinaryOperator<JsonNode> singleConfigMerger = new InPlaceLeftHandMerger(bootLogger);
 		Function<JsonNode, JsonNode> overrider = new InPlaceMapOverrider(properties, true, '.');

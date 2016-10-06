@@ -1,11 +1,11 @@
 package io.bootique.config.jackson;
 
-import java.util.Iterator;
-import java.util.function.BinaryOperator;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.bootique.log.BootLogger;
+
+import java.util.Iterator;
+import java.util.function.BinaryOperator;
 
 /**
  * A configuration merger that merges right-hand config argument into left-hand
@@ -29,6 +29,10 @@ public class InPlaceLeftHandMerger implements BinaryOperator<JsonNode> {
 
 		if (target == null) {
 			return source;
+		}
+
+		if(source == null) {
+			return target;
 		}
 
 		if (source.getNodeType() != target.getNodeType()) {

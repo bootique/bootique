@@ -1,3 +1,7 @@
+## 0.21
+
+* #99 Empty YAML troubles
+
 ## 0.20
 
 * #89 Don't print debug info to stdout

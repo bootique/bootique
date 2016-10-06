@@ -1,10 +1,9 @@
 package io.bootique.config.jackson;
 
-import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.mockito.Mockito.mock;
+import com.fasterxml.jackson.databind.JsonNode;
+import io.bootique.config.jackson.MultiFormatJsonNodeParser.ParserType;
+import io.bootique.log.BootLogger;
+import org.junit.Test;
 
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -12,21 +11,21 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
-import io.bootique.config.jackson.MultiFormatJsonNodeParser;
-import org.junit.Test;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import io.bootique.config.jackson.MultiFormatJsonNodeParser.ParserType;
-import io.bootique.log.BootLogger;
+import static java.util.Arrays.asList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.mockito.Mockito.mock;
 
 public class MultiFormatJsonNodeParserTest {
 
 	@SuppressWarnings("unchecked")
-	private Map<ParserType, Function<InputStream, JsonNode>> createParsersMap(ParserType... types) {
+	private Map<ParserType, Function<InputStream, Optional<JsonNode>>> createParsersMap(ParserType... types) {
 
-		Map<ParserType, Function<InputStream, JsonNode>> map = new EnumMap<>(ParserType.class);
+		Map<ParserType, Function<InputStream, Optional<JsonNode>>> map = new EnumMap<>(ParserType.class);
 		asList(types).forEach(t -> map.put(t, mock(Function.class)));
 
 		return map;
@@ -34,7 +33,7 @@ public class MultiFormatJsonNodeParserTest {
 
 	@Test
 	public void testParser() {
-		Map<ParserType, Function<InputStream, JsonNode>> parsers = createParsersMap(ParserType.JSON, ParserType.YAML);
+		Map<ParserType, Function<InputStream, Optional<JsonNode>>> parsers = createParsersMap(ParserType.JSON, ParserType.YAML);
 
 		MultiFormatJsonNodeParser parser = new MultiFormatJsonNodeParser(parsers, mock(BootLogger.class));
 		assertSame(parsers.get(ParserType.YAML), parser.parser(ParserType.YAML));
@@ -43,7 +42,7 @@ public class MultiFormatJsonNodeParserTest {
 
 	@Test(expected = IllegalStateException.class)
 	public void testParser_MissingYaml() {
-		Map<ParserType, Function<InputStream, JsonNode>> parsers = createParsersMap(ParserType.JSON);
+		Map<ParserType, Function<InputStream, Optional<JsonNode>>> parsers = createParsersMap(ParserType.JSON);
 		new MultiFormatJsonNodeParser(parsers, mock(BootLogger.class)).parser(ParserType.YAML);
 	}
 

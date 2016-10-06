@@ -1,31 +1,32 @@
 package io.bootique.config.jackson;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import io.bootique.log.BootLogger;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import io.bootique.log.BootLogger;
-
-public class MultiFormatJsonNodeParser implements Function<URL, JsonNode> {
+public class MultiFormatJsonNodeParser implements Function<URL, Optional<JsonNode>> {
 
 	public static enum ParserType {
 		YAML, JSON
 	}
 
-	private Map<ParserType, Function<InputStream, JsonNode>> parsers;
+	private Map<ParserType, Function<InputStream, Optional<JsonNode>>> parsers;
 	private BootLogger bootLogger;
 
-	public MultiFormatJsonNodeParser(Map<ParserType, Function<InputStream, JsonNode>> parsers, BootLogger bootLogger) {
+	public MultiFormatJsonNodeParser(Map<ParserType, Function<InputStream, Optional<JsonNode>>> parsers, BootLogger bootLogger) {
 		this.parsers = parsers;
 		this.bootLogger = bootLogger;
 	}
 
 	@Override
-	public JsonNode apply(URL url) {
+	public Optional<JsonNode> apply(URL url) {
 
 		URLConnection connection;
 		try {
@@ -44,7 +45,7 @@ public class MultiFormatJsonNodeParser implements Function<URL, JsonNode> {
 			type = ParserType.YAML;
 		}
 
-		Function<InputStream, JsonNode> parser = parser(type);
+		Function<InputStream, Optional<JsonNode>> parser = parser(type);
 
 		try (InputStream in = connection.getInputStream();) {
 			return parser.apply(in);
@@ -53,9 +54,9 @@ public class MultiFormatJsonNodeParser implements Function<URL, JsonNode> {
 		}
 	}
 
-	Function<InputStream, JsonNode> parser(ParserType type) {
+	Function<InputStream, Optional<JsonNode>> parser(ParserType type) {
 
-		Function<InputStream, JsonNode> parser = parsers.get(type);
+		Function<InputStream, Optional<JsonNode>> parser = parsers.get(type);
 
 		if (parser == null) {
 			bootLogger.trace(() -> "No parser for type: " + type);

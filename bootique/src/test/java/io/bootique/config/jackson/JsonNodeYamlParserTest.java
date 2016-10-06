@@ -1,16 +1,15 @@
 package io.bootique.config.jackson;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Optional;
 
-import org.junit.Test;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.bootique.config.jackson.JsonNodeYamlParser;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class JsonNodeYamlParserTest {
 
@@ -20,11 +19,11 @@ public class JsonNodeYamlParserTest {
 		InputStream in = new ByteArrayInputStream("a: b\nb: c".getBytes());
 		ObjectMapper mapper = new ObjectMapper();
 
-		JsonNode node = new JsonNodeYamlParser(mapper).apply(in);
-		assertNotNull(node);
+		Optional<JsonNode> node = new JsonNodeYamlParser(mapper).apply(in);
+		assertTrue(node.isPresent());
 
-		assertEquals("b", node.get("a").asText());
-		assertEquals("c", node.get("b").asText());
+		assertEquals("b", node.get().get("a").asText());
+		assertEquals("c", node.get().get("b").asText());
 	}
 
 }
