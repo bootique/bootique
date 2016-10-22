@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Metadata object representing an application with commands.
+ * Metadata object representing current application and its command-line interface.
  *
  * @since 0.20
  */
@@ -29,7 +29,6 @@ public class ApplicationMetadata extends ApplicationMetadataNode {
     public static Builder builder(String name, String description) {
         return new Builder().name(name).description(description);
     }
-
 
     public Collection<CommandMetadata> getCommands() {
         return commands;

@@ -75,8 +75,13 @@ public class BQInternalTestFactory extends ExternalResource {
                 }
 
                 @Override
-                public String name() {
+                public String moduleName(Class<?> moduleType) {
                     return "BQInternalTestFactory:Builder:properties";
+                }
+
+                @Override
+                public String name() {
+                    return "BQInternalTestFactory:Builder:properties:provider";
                 }
             };
         }
@@ -93,8 +98,13 @@ public class BQInternalTestFactory extends ExternalResource {
                 }
 
                 @Override
-                public String name() {
+                public String moduleName(Class<?> moduleType) {
                     return "BQInternalTestFactory:Builder:variables";
+                }
+
+                @Override
+                public String name() {
+                    return "BQInternalTestFactory:Builder:variables:provider";
                 }
             };
         }

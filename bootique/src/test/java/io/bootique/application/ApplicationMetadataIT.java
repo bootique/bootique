@@ -1,6 +1,7 @@
-package io.bootique;
+package io.bootique.application;
 
-import io.bootique.application.ApplicationMetadata;
+import io.bootique.BQCoreModule;
+import io.bootique.BQRuntime;
 import io.bootique.unit.BQInternalTestFactory;
 import org.junit.Rule;
 import org.junit.Test;
@@ -9,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-public class Bootique_ApplicationMetadataIT {
+public class ApplicationMetadataIT {
 
     @Rule
     public BQInternalTestFactory runtimeFactory = new BQInternalTestFactory();

@@ -16,7 +16,7 @@ import io.bootique.annotation.EnvironmentProperties;
 import io.bootique.annotation.EnvironmentVariables;
 import io.bootique.annotation.LogLevels;
 import io.bootique.application.ApplicationMetadata;
-import io.bootique.application.CommandMetadata;
+import io.bootique.module.ModuleMetadata;
 import io.bootique.application.OptionMetadata;
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
@@ -34,6 +34,7 @@ import io.bootique.jackson.DefaultJacksonService;
 import io.bootique.jackson.JacksonService;
 import io.bootique.jopt.JoptCliProvider;
 import io.bootique.log.BootLogger;
+import io.bootique.module.ModulesMetadata;
 import io.bootique.run.DefaultRunner;
 import io.bootique.run.Runner;
 import io.bootique.shutdown.DefaultShutdownManager;
@@ -44,13 +45,13 @@ import io.bootique.terminal.SttyTerminal;
 import io.bootique.terminal.Terminal;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 
 /**
@@ -67,6 +68,7 @@ public class BQCoreModule implements Module {
     private String[] args;
     private BootLogger bootLogger;
     private Duration shutdownTimeout;
+    private Supplier<Collection<ModuleMetadata>> modulesMetadata;
 
     private BQCoreModule() {
         this.shutdownTimeout = Duration.ofMillis(10000l);
@@ -282,19 +284,31 @@ public class BQCoreModule implements Module {
 
     @Provides
     @Singleton
+    ModulesMetadata provideModulesMetadata() {
+
+        ModulesMetadata.Builder builder = ModulesMetadata.builder();
+
+        if(this.modulesMetadata != null) {
+            builder.addModules(this.modulesMetadata.get());
+        }
+
+        return builder.build();
+    }
+
+    @Provides
+    @Singleton
     ApplicationMetadata provideApplicationMetadata(ApplicationDescription descriptionHolder,
                                                    CommandManager commandManager,
                                                    Set<OptionMetadata> options) {
 
-        Collection<CommandMetadata> cliCommands = new ArrayList<>();
-        commandManager.getCommands().values().forEach(c -> {
-            cliCommands.add(c.getMetadata());
-        });
-
-        ApplicationMetadata.Builder builder = ApplicationMetadata.builder()
+        ApplicationMetadata.Builder builder = ApplicationMetadata
+                .builder()
                 .description(descriptionHolder.getDescription())
-                .addCommands(cliCommands)
                 .addOptions(options);
+
+        commandManager.getCommands().values().forEach(c -> {
+            builder.addCommand(c.getMetadata());
+        });
 
         // merge default command options with top-level app options
         commandManager.getDefaultCommand().ifPresent(c -> builder.addOptions(c.getMetadata().getOptions()));
@@ -346,6 +360,19 @@ public class BQCoreModule implements Module {
 
         public Builder bootLogger(BootLogger bootLogger) {
             module.bootLogger = bootLogger;
+            return this;
+        }
+
+        /**
+         * Sets a supplier of metadata information about runtime modules. It has to be provided externally by Bootique
+         * code that assembles the stack. We have no way of discovering this information when inside the DI container.
+         *
+         * @param modulesMetadata a supplier of metadata information about runtime modules.
+         * @return this builder instance.
+         * @since 0.21
+         */
+        public Builder moduleMetadata(Supplier<Collection<ModuleMetadata>> modulesMetadata) {
+            module.modulesMetadata = modulesMetadata;
             return this;
         }
 
