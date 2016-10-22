@@ -4,6 +4,7 @@ import com.google.inject.Module;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
 /**
  * A provider of a DI module of a given kind. Central to Bootique module auto-loading and metadata discovery.
@@ -36,7 +37,20 @@ public interface BQModuleProvider {
                 .module(module)
                 .overrides(overrides())
                 .providerName(name())
+                .configs(configs())
                 .build();
+    }
+
+    /**
+     * A potentially empty map of configuration types supported by this module, keyed by default configuration
+     * prefix.
+     *
+     * @return a potentially empty map of configuration types supported by this module, keyed by default configuration
+     * prefix.
+     * @since 0.21
+     */
+    default Map<String, Class<?>> configs() {
+        return Collections.emptyMap();
     }
 
     /**

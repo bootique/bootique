@@ -1,8 +1,12 @@
 package io.bootique;
 
+import io.bootique.module.ConfigMetadata;
 import io.bootique.module.ModuleMetadata;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -19,7 +23,7 @@ class DeferredModuleMetadataSupplier implements Supplier<Collection<ModuleMetada
             throw new IllegalStateException("DeferredModuleMetadataSupplier is not initialized");
         }
 
-        return modules.stream().map(this::toMetadata).collect(toList());
+        return modules.stream().map(this::toModuleMetadata).collect(toList());
     }
 
     // this method must be called exactly once before 'get' can be invoked....
@@ -32,8 +36,33 @@ class DeferredModuleMetadataSupplier implements Supplier<Collection<ModuleMetada
         this.modules = Objects.requireNonNull(modules);
     }
 
-    private ModuleMetadata toMetadata(BQModule module) {
-        // TODO: description, config objects....
-        return ModuleMetadata.builder().name(module.getName()).build();
+    private ModuleMetadata toModuleMetadata(BQModule module) {
+        // TODO: description?
+        return ModuleMetadata
+                .builder()
+                .name(module.getName())
+                .addConfigs(toConfigs(module))
+                .build();
+    }
+
+    private Map<String, ConfigMetadata> toConfigs(BQModule module) {
+
+        Map<String, Class<?>> configTypes = module.getConfigs();
+        if (configTypes.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        Map<String, ConfigMetadata> configs = new HashMap<>();
+
+        configTypes.forEach((prefix, type) -> {
+
+            // TODO: compile annotations of config objects, discover properties
+            ConfigMetadata config = ConfigMetadata
+                    .builder()
+                    .name(type.getSimpleName()).build();
+            configs.put(prefix, config);
+        });
+
+        return configs;
     }
 }

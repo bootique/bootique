@@ -3,6 +3,7 @@ package io.bootique;
 import com.google.inject.Module;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * Bootique application module. A thin wrapper around Guice DI module that helps Bootique to manage module metadata
@@ -16,6 +17,7 @@ public class BQModule {
     private String name;
     private String providerName;
     private Collection<Class<? extends Module>> overrides;
+    private Map<String, Class<?>> configs;
 
     private BQModule() {
     }
@@ -38,6 +40,10 @@ public class BQModule {
 
     public Collection<Class<? extends Module>> getOverrides() {
         return overrides;
+    }
+
+    public Map<String, Class<?>> getConfigs() {
+        return configs;
     }
 
     public static class Builder {
@@ -68,6 +74,11 @@ public class BQModule {
 
         public Builder overrides(Collection<Class<? extends Module>> overrides) {
             module.overrides = overrides;
+            return this;
+        }
+
+        public Builder configs(Map<String, Class<?>> configs) {
+            module.configs = configs;
             return this;
         }
     }

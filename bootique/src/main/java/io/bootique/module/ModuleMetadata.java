@@ -12,10 +12,10 @@ import java.util.Map;
  */
 public class ModuleMetadata extends ApplicationMetadataNode {
 
-    private Map<String, ConfigMetadata> configMetadata;
+    private Map<String, ConfigMetadata> configs;
 
     private ModuleMetadata() {
-        this.configMetadata = new HashMap<>();
+        this.configs = new HashMap<>();
     }
 
     public static Builder builder() {
@@ -30,8 +30,8 @@ public class ModuleMetadata extends ApplicationMetadataNode {
         return new Builder().name(name).description(description);
     }
 
-    public Map<String, ConfigMetadata> getConfigMetadata() {
-        return configMetadata;
+    public Map<String, ConfigMetadata> getConfigs() {
+        return configs;
     }
 
     public static class Builder {
@@ -53,6 +53,16 @@ public class ModuleMetadata extends ApplicationMetadataNode {
 
         public Builder description(String description) {
             moduleMetadata.description = description;
+            return this;
+        }
+
+        public Builder addConfig(String prefix, ConfigMetadata config) {
+            moduleMetadata.configs.put(prefix, config);
+            return this;
+        }
+
+        public Builder addConfigs(Map<String, ConfigMetadata> configs) {
+            moduleMetadata.configs.putAll(configs);
             return this;
         }
     }
