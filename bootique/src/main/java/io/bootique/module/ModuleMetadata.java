@@ -2,8 +2,8 @@ package io.bootique.module;
 
 import io.bootique.application.ApplicationMetadataNode;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Metadata descriptor of a DI module.
@@ -12,10 +12,10 @@ import java.util.Map;
  */
 public class ModuleMetadata extends ApplicationMetadataNode {
 
-    private Map<String, ConfigMetadata> configs;
+    private Collection<ConfigMetadata> configs;
 
     private ModuleMetadata() {
-        this.configs = new HashMap<>();
+        this.configs = new ArrayList<>();
     }
 
     public static Builder builder() {
@@ -30,7 +30,7 @@ public class ModuleMetadata extends ApplicationMetadataNode {
         return new Builder().name(name).description(description);
     }
 
-    public Map<String, ConfigMetadata> getConfigs() {
+    public Collection<ConfigMetadata> getConfigs() {
         return configs;
     }
 
@@ -56,13 +56,13 @@ public class ModuleMetadata extends ApplicationMetadataNode {
             return this;
         }
 
-        public Builder addConfig(String prefix, ConfigMetadata config) {
-            moduleMetadata.configs.put(prefix, config);
+        public Builder addConfig(ConfigMetadata config) {
+            moduleMetadata.configs.add(config);
             return this;
         }
 
-        public Builder addConfigs(Map<String, ConfigMetadata> configs) {
-            moduleMetadata.configs.putAll(configs);
+        public Builder addConfigs(Collection<ConfigMetadata> configs) {
+            moduleMetadata.configs.addAll(configs);
             return this;
         }
     }

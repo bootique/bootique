@@ -9,6 +9,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
@@ -39,7 +40,7 @@ public class ConfigMetadataIT {
             }
         }).createRuntime();
 
-        Map<String, ConfigMetadata> configs = runtime
+       Collection<ConfigMetadata> configs = runtime
                 .getInstance(ModulesMetadata.class)
                 .getModules()
                 .stream()
@@ -49,12 +50,27 @@ public class ConfigMetadataIT {
                 .getConfigs();
 
         assertEquals(1, configs.size());
-        assertTrue(configs.containsKey("pf"));
 
-        ConfigMetadata cm = configs.get("pf");
-        assertEquals("TestConfig", cm.getName());
+        ConfigMetadata cm = configs.iterator().next();
+        assertTrue("pf".equals(cm.getName()));
 
-        cm.getProperties()
+        String walkThrough = cm.accept(new ConfigMetadataVisitor<String>() {
+
+            @Override
+            public String visitConfigMetadata(ConfigMetadata metadata) {
+                StringBuilder buffer = new StringBuilder(visitConfigPropertyMetadata(metadata));
+                metadata.getProperties().forEach(p -> buffer.append(":[").append(p.accept(this)).append("]"));
+                return buffer.toString();
+            }
+
+            @Override
+            public String visitConfigPropertyMetadata(ConfigPropertyMetadata metadata) {
+                return metadata.getName() + ":" + metadata.getType().getName() + ":" + metadata.getDescription();
+            }
+        });
+
+        assertEquals("pf:io.bootique.module.ConfigMetadataIT$TestConfig:null:[p1:java.lang.String:(p1 desc)]" ,
+                walkThrough);
     }
 
     public static class TestConfig {

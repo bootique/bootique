@@ -45,6 +45,10 @@ public class ConfigPropertyMetadata extends ApplicationMetadataNode {
         }
 
         public B description(String description) {
+            if(description != null && description.length() == 0) {
+                description = null;
+            }
+
             toBuild.description = description;
             return (B) this;
         }
