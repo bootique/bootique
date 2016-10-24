@@ -2,6 +2,7 @@
 
 * #99 Empty YAML troubles
 * #100 Default command options are visible in help, but can't be used
+* #102 Metadata model for modules and their configs
 
 ## 0.20
 
