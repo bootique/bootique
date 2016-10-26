@@ -1,5 +1,13 @@
 # UPGRADE INSTRUCTIONS
 
+## 0.21
+
+* [bootique-liquibase #4](https://github.com/bootique/bootique-liquibase/issues/4):  'liquibase.changeLog' YAML config 
+property is deprecated, but still supported. The new alternative is 'changeLogs' collection. When migrating to 
+'changeLogs', ensure that you rewrite the paths in Bootique YAML files as well as in Liquibase XML/YAML change logs to
+follow Bootique ResourceFactory approach. Specifically, if the resource is expected to be on classpath, it requires
+"classpath:" prefix. Otherwise it will be treated as a file path.
+
 ## 0.20
 
 * [bootique #92](https://github.com/bootique/bootique/issues/92): We created a new application metadata package 
