@@ -56,6 +56,16 @@ public class ResourceFactory {
         return resolveUrl(this.resourceId);
     }
 
+    /**
+     * Returns resource ID string used to initialize this ResourceFactory.
+     *
+     * @return resource ID string used to initialize this ResourceFactory.
+     * @since 0.21
+     */
+    public String getResourceId() {
+        return resourceId;
+    }
+
     protected URL resolveUrl(String resourceId) {
 
         // resourceId can be either a file path or a URL or a classpath: URL
@@ -73,7 +83,7 @@ public class ResourceFactory {
             URL cpUrl = ResourceFactory.class.getClassLoader().getResource(path);
 
             if (cpUrl == null) {
-                throw new NullPointerException("Classpath URL not found: " + resourceId);
+                throw new IllegalArgumentException("Classpath URL not found: " + resourceId);
             }
 
             return cpUrl;
