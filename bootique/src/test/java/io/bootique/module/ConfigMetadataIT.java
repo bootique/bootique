@@ -1,6 +1,7 @@
 package io.bootique.module;
 
 import com.google.inject.Module;
+import io.bootique.BQModule;
 import io.bootique.BQModuleProvider;
 import io.bootique.BQRuntime;
 import io.bootique.annotation.BQConfigProperty;
@@ -35,8 +36,10 @@ public class ConfigMetadataIT {
             }
 
             @Override
-            public String moduleName(Class<?> moduleType) {
-                return "my";
+            public BQModule.Builder moduleBuilder() {
+                return BQModuleProvider.super
+                        .moduleBuilder()
+                        .name("my");
             }
         }).createRuntime();
 

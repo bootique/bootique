@@ -4,6 +4,7 @@ import com.google.inject.Module;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Bootique application module. A thin wrapper around Guice DI module that helps Bootique to manage module metadata
@@ -15,6 +16,7 @@ public class BQModule {
 
     private Module module;
     private String name;
+    private String description;
     private String providerName;
     private Collection<Class<? extends Module>> overrides;
     private Map<String, Class<?>> configs;
@@ -22,8 +24,8 @@ public class BQModule {
     private BQModule() {
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public static Builder builder(Module module) {
+        return new Builder(module);
     }
 
     public Module getModule() {
@@ -32,6 +34,10 @@ public class BQModule {
 
     public String getName() {
         return name;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public String getProviderName() {
@@ -49,11 +55,17 @@ public class BQModule {
     public static class Builder {
         private BQModule module;
 
-        private Builder() {
+        private Builder(Module module) {
             this.module = new BQModule();
+            this.module.module = Objects.requireNonNull(module);
         }
 
         public BQModule build() {
+
+            if(module.name == null) {
+                module.name = module.module.getClass().getSimpleName();
+            }
+
             return module;
         }
 
@@ -62,13 +74,13 @@ public class BQModule {
             return this;
         }
 
-        public Builder providerName(String name) {
-            module.providerName = name;
+        public Builder description(String descrption) {
+            module.description = descrption;
             return this;
         }
 
-        public Builder module(Module module) {
-            this.module.module = module;
+        public Builder providerName(String name) {
+            module.providerName = name;
             return this;
         }
 

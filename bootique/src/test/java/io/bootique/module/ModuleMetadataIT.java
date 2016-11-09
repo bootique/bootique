@@ -1,15 +1,15 @@
 package io.bootique.module;
 
 import com.google.inject.Module;
+import io.bootique.BQModule;
 import io.bootique.BQModuleProvider;
 import io.bootique.BQRuntime;
 import io.bootique.unit.BQInternalTestFactory;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.util.Collection;
+import java.util.Optional;
 
-import static java.util.stream.Collectors.toSet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -20,21 +20,26 @@ public class ModuleMetadataIT {
 
     @Test
     public void testDefault() {
-        BQRuntime runtime = runtimeFactory.app().createRuntime();
-        ModulesMetadata md = runtime.getInstance(ModulesMetadata.class);
+        ModulesMetadata md = runtimeFactory.app().createRuntime().getInstance(ModulesMetadata.class);
 
         assertEquals("Expected BQCoreModule + 2 test modules", 3, md.getModules().size());
 
-        Collection<String> names = md.getModules().stream().map(ModuleMetadata::getName).collect(toSet());
-        assertEquals(3, names.size());
-        assertTrue(names.contains("BQCore"));
+        Optional<ModuleMetadata> coreMd = md.getModules()
+                .stream()
+                .filter(m -> "BQCore".equals(m.getName()))
+                .findFirst();
+        assertTrue(coreMd.isPresent());
+        assertEquals("Bootique core module", coreMd.get().getDescription());
     }
 
     @Test
     public void testCustomModule() {
-        BQRuntime runtime = runtimeFactory.app().module(b -> {
-        }).createRuntime();
-        ModulesMetadata md = runtime.getInstance(ModulesMetadata.class);
+        ModulesMetadata md = runtimeFactory.app()
+                .module(b -> {
+                })
+                .createRuntime()
+                .getInstance(ModulesMetadata.class);
+
         assertEquals("Expected BQCoreModule + 2 test modules + custom module", 4, md.getModules().size());
     }
 
@@ -48,16 +53,20 @@ public class ModuleMetadataIT {
             }
 
             @Override
-            public String moduleName(Class<?> moduleType) {
-                return "mymodule";
+            public BQModule.Builder moduleBuilder() {
+                return BQModuleProvider.super
+                        .moduleBuilder()
+                        .name("mymodule");
             }
         }).createRuntime();
 
         ModulesMetadata md = runtime.getInstance(ModulesMetadata.class);
         assertEquals("Expected BQCoreModule + 2 test modules + custom module", 4, md.getModules().size());
 
-        Collection<String> names = md.getModules().stream().map(ModuleMetadata::getName).collect(toSet());
-        assertEquals(4, names.size());
-        assertTrue(names.contains("mymodule"));
+        Optional<ModuleMetadata> myMd = md.getModules()
+                .stream()
+                .filter(m -> "mymodule".equals(m.getName()))
+                .findFirst();
+        assertTrue(myMd.isPresent());
     }
 }

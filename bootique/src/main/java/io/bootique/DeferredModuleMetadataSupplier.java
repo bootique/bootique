@@ -45,10 +45,10 @@ class DeferredModuleMetadataSupplier implements Supplier<Collection<ModuleMetada
     }
 
     private ModuleMetadata toModuleMetadata(BQModule module) {
-        // TODO: description?
         return ModuleMetadata
                 .builder()
                 .name(module.getName())
+                .description(module.getDescription())
                 .addConfigs(toConfigs(module))
                 .build();
     }

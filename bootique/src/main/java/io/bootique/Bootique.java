@@ -392,12 +392,12 @@ public class Bootique {
 
         // note that 'moduleMetadata' is invalid at this point; it will be initialized later in this method, which
         // is safe to do, as it won't be used until the Injector is created by the method caller.
-        bqModules.add(coreModuleProvider(moduleMetadata).bootiqueModule());
+        bqModules.add(coreModuleProvider(moduleMetadata).moduleBuilder().build());
 
-        builderProviders().forEach(p -> bqModules.add(p.bootiqueModule()));
+        builderProviders().forEach(p -> bqModules.add(p.moduleBuilder().build()));
 
         if (autoLoadModules) {
-            autoLoadedProviders().forEach(p -> bqModules.add(p.bootiqueModule()));
+            autoLoadedProviders().forEach(p -> bqModules.add(p.moduleBuilder().build()));
         }
 
         // now that all modules are collected, finish 'moduleMetadata' initialization
@@ -426,8 +426,11 @@ public class Bootique {
             }
 
             @Override
-            public String moduleName(Class<?> moduleType) {
-                return "BQCore";
+            public BQModule.Builder moduleBuilder() {
+                return BQModuleProvider.super
+                        .moduleBuilder()
+                        .name("BQCore")
+                        .description("Bootique core module");
             }
         };
     }

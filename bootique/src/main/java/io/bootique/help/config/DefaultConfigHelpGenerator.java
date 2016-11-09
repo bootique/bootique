@@ -37,9 +37,11 @@ public class DefaultConfigHelpGenerator implements ConfigHelpGenerator {
         }
 
         out.printSectionName("MODULES");
-        modules.forEach(m -> {
-            printModuleName(out, m.getName(), m.getDescription());
-        });
+        modules.stream()
+                .sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
+                .forEach(m -> {
+                    printModuleName(out, m.getName(), m.getDescription());
+                });
     }
 
     protected void printModuleName(FormattedAppender out, String moduleName, String description) {

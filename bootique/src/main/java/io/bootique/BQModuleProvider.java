@@ -24,21 +24,18 @@ public interface BQModuleProvider {
     Module module();
 
     /**
-     * Returns a new instance of {@link BQModule} specific to this provider.
+     * Returns a new instance of {@link io.bootique.BQModule.Builder} initialized with module for this provider.
+     * Subclasses can invoke extra builder methods to provide metadata, etc.
      *
      * @return a new instance of {@link BQModule} specific to this provider.
      * @since 0.21
      */
-    default BQModule bootiqueModule() {
-        Module module = module();
+    default BQModule.Builder moduleBuilder() {
         return BQModule
-                .builder()
-                .name(moduleName(module.getClass()))
-                .module(module)
+                .builder(module())
                 .overrides(overrides())
                 .providerName(name())
-                .configs(configs())
-                .build();
+                .configs(configs());
     }
 
     /**
@@ -74,14 +71,5 @@ public interface BQModuleProvider {
      */
     default String name() {
         return getClass().getSimpleName();
-    }
-
-    /**
-     * @param moduleType Java class of the module.
-     * @return human-readable name for a given module type.
-     * @since 0.21
-     */
-    default String moduleName(Class<?> moduleType) {
-        return moduleType.getSimpleName();
     }
 }

@@ -58,6 +58,28 @@ public class DefaultConfigHelpGeneratorTest {
     }
 
     @Test
+    public void testGenerate_Name_MultiModule_Sorting() {
+
+        ModuleMetadata module0 = ModuleMetadata.builder("MB").build();
+        ModuleMetadata module1 = ModuleMetadata.builder("MA").build();
+        ModuleMetadata module2 = ModuleMetadata.builder("MC").build();
+        ModulesMetadata modules = ModulesMetadata.builder()
+                .addModule(module0)
+                .addModule(module1)
+                .addModule(module2)
+                .build();
+
+        assertLines(new DefaultConfigHelpGenerator(modules, 80),
+                "MODULES",
+                "      MA",
+                "",
+                "      MB",
+                "",
+                "      MC"
+        );
+    }
+
+    @Test
     public void testGenerate_Name_Description() {
 
         ModuleMetadata module1 = ModuleMetadata.builder("M1").description("Module called M1").build();

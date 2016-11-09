@@ -3,6 +3,7 @@ package io.bootique.unit;
 import com.google.inject.Module;
 import com.google.inject.multibindings.MapBinder;
 import io.bootique.BQCoreModule;
+import io.bootique.BQModule;
 import io.bootique.BQModuleOverrideBuilder;
 import io.bootique.BQModuleProvider;
 import io.bootique.BQRuntime;
@@ -75,8 +76,10 @@ public class BQInternalTestFactory extends ExternalResource {
                 }
 
                 @Override
-                public String moduleName(Class<?> moduleType) {
-                    return "BQInternalTestFactory:Builder:properties";
+                public BQModule.Builder moduleBuilder() {
+                    return BQModuleProvider.super
+                            .moduleBuilder()
+                            .name("BQInternalTestFactory:Builder:properties");
                 }
 
                 @Override
@@ -98,8 +101,10 @@ public class BQInternalTestFactory extends ExternalResource {
                 }
 
                 @Override
-                public String moduleName(Class<?> moduleType) {
-                    return "BQInternalTestFactory:Builder:variables";
+                public BQModule.Builder moduleBuilder() {
+                    return BQModuleProvider.super
+                            .moduleBuilder()
+                            .name("BQInternalTestFactory:Builder:variables");
                 }
 
                 @Override
