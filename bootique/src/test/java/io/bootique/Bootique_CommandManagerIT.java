@@ -29,7 +29,7 @@ public class Bootique_CommandManagerIT {
         BQRuntime runtime = runtimeFactory.app().modules(M0.class, M1.class).createRuntime();
 
         CommandManager commandManager = runtime.getInstance(CommandManager.class);
-        assertEquals("help and module commands must be present", 3, commandManager.getCommands().size());
+        assertEquals("help, helpconfig and module commands must be present", 4, commandManager.getCommands().size());
         assertTrue(commandManager.getCommands().values().contains(M0.mockCommand));
         assertTrue(commandManager.getCommands().values().contains(M1.mockCommand));
         assertFalse(commandManager.getDefaultCommand().isPresent());
@@ -46,7 +46,7 @@ public class Bootique_CommandManagerIT {
         BQRuntime runtime = runtimeFactory.app().modules(M0.class, M1.class).module(defaultCommandModule).createRuntime();
 
         CommandManager commandManager = runtime.getInstance(CommandManager.class);
-        assertEquals("help and module commands must be present", 3, commandManager.getCommands().size());
+        assertEquals("help and module commands must be present", 4, commandManager.getCommands().size());
         assertTrue(commandManager.getCommands().values().contains(M0.mockCommand));
         assertTrue(commandManager.getCommands().values().contains(M1.mockCommand));
         assertSame(defaultCommand, commandManager.getDefaultCommand().get());
@@ -79,7 +79,7 @@ public class Bootique_CommandManagerIT {
         CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
         // the main assertion we care about...
-        assertEquals("command matching default name must be suppressed", 2, commandManager.getCommands().size());
+        assertEquals("command matching default name must be suppressed", 3, commandManager.getCommands().size());
 
         // sanity check
         assertFalse(commandManager.getCommands().values().contains(M0.mockCommand));

@@ -27,7 +27,7 @@ public class ModuleMetadataIT {
 
         Collection<String> names = md.getModules().stream().map(ModuleMetadata::getName).collect(toSet());
         assertEquals(3, names.size());
-        assertTrue(names.contains("BQCoreModule"));
+        assertTrue(names.contains("BQCore"));
     }
 
     @Test

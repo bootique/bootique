@@ -92,8 +92,6 @@ public class DefaultHelpGenerator implements HelpGenerator {
                         parts.add("]");
                         break;
                 }
-
-
             }
 
             if (o.isLongNameAllowed()) {

@@ -29,9 +29,11 @@ public class CommandsIT {
 		CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
 		Map<String, Command> commands = commandManager.getCommands();
-		assertEquals(1, commands.size());
+		assertEquals(2, commands.size());
 
 		assertTrue(commands.containsKey("help"));
+		// TODO: should this be "help-config"?
+		assertTrue(commands.containsKey("helpconfig"));
 	}
 
 	@Test
@@ -49,10 +51,12 @@ public class CommandsIT {
 		CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
 		Map<String, Command> commands = commandManager.getCommands();
-		assertEquals(2, commands.size());
+		assertEquals(3, commands.size());
 
 		assertTrue(commands.containsKey("c1"));
 		assertTrue(commands.containsKey("help"));
+		// TODO: should this be "help-config"?
+		assertTrue(commands.containsKey("helpconfig"));
 	}
 
 	@Test
@@ -62,10 +66,12 @@ public class CommandsIT {
 		CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
 		Map<String, Command> commands = commandManager.getCommands();
-		assertEquals(2, commands.size());
+		assertEquals(3, commands.size());
 
 		assertTrue(commands.containsKey("c1"));
 		assertTrue(commands.containsKey("help"));
+		// TODO: should this be "help-config"?
+		assertTrue(commands.containsKey("helpconfig"));
 	}
 
 	@Test
@@ -75,9 +81,11 @@ public class CommandsIT {
 		CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
 		Map<String, Command> commands = commandManager.getCommands();
-		assertEquals(1, commands.size());
+		assertEquals(2, commands.size());
 
 		assertTrue(commands.containsKey("help"));
+		// TODO: should this be "help-config"?
+		assertTrue(commands.containsKey("helpconfig"));
 	}
 
 	static class C1 implements Command {

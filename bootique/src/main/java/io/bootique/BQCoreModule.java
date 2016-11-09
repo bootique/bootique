@@ -16,7 +16,6 @@ import io.bootique.annotation.EnvironmentProperties;
 import io.bootique.annotation.EnvironmentVariables;
 import io.bootique.annotation.LogLevels;
 import io.bootique.application.ApplicationMetadata;
-import io.bootique.module.ModuleMetadata;
 import io.bootique.application.OptionMetadata;
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
@@ -30,10 +29,14 @@ import io.bootique.env.DefaultEnvironment;
 import io.bootique.env.Environment;
 import io.bootique.help.DefaultHelpGenerator;
 import io.bootique.help.HelpGenerator;
+import io.bootique.help.config.ConfigHelpGenerator;
+import io.bootique.help.config.DefaultConfigHelpGenerator;
+import io.bootique.help.config.HelpConfigCommand;
 import io.bootique.jackson.DefaultJacksonService;
 import io.bootique.jackson.JacksonService;
 import io.bootique.jopt.JoptCliProvider;
 import io.bootique.log.BootLogger;
+import io.bootique.module.ModuleMetadata;
 import io.bootique.module.ModulesMetadata;
 import io.bootique.run.DefaultRunner;
 import io.bootique.run.Runner;
@@ -195,6 +198,7 @@ public class BQCoreModule implements Module {
         // while "help" is a special command, we still store it in the common list of commands,
         // so that "--help" is exposed as an explicit option
         BQCoreModule.contributeCommands(binder).addBinding().to(HelpCommand.class).in(Singleton.class);
+        BQCoreModule.contributeCommands(binder).addBinding().to(HelpConfigCommand.class).in(Singleton.class);
 
         BQCoreModule.contributeOptions(binder).addBinding().toInstance(createConfigOption());
         BQCoreModule.contributeLogLevels(binder);
@@ -235,6 +239,12 @@ public class BQCoreModule implements Module {
     @Singleton
     HelpCommand provideHelpCommand(BootLogger bootLogger, Provider<HelpGenerator> helpGeneratorProvider) {
         return new HelpCommand(bootLogger, helpGeneratorProvider);
+    }
+
+    @Provides
+    @Singleton
+    HelpConfigCommand provideHelpConfigCommand(BootLogger bootLogger, Provider<ConfigHelpGenerator> helpGeneratorProvider) {
+        return new HelpConfigCommand(bootLogger, helpGeneratorProvider);
     }
 
     @Provides
@@ -280,6 +290,18 @@ public class BQCoreModule implements Module {
         }
 
         return new DefaultHelpGenerator(application, maxColumns);
+    }
+
+    @Provides
+    @Singleton
+    ConfigHelpGenerator provideConfigHelpGenerator(ModulesMetadata modulesMetadata, Terminal terminal) {
+
+        int maxColumns = terminal.getColumns();
+        if (maxColumns < TTY_MIN_COLUMNS) {
+            maxColumns = TTY_DEFAULT_COLUMNS;
+        }
+
+        return new DefaultConfigHelpGenerator(modulesMetadata, maxColumns);
     }
 
     @Provides

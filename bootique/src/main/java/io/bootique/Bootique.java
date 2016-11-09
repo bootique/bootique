@@ -424,6 +424,11 @@ public class Bootique {
             public String name() {
                 return "Bootique";
             }
+
+            @Override
+            public String moduleName(Class<?> moduleType) {
+                return "BQCore";
+            }
         };
     }
 

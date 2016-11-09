@@ -24,7 +24,7 @@ public class ApplicationMetadataIT {
         // we really don't know what the generated name is. It varies depending on the unit test execution environment
         assertNotNull(md.getName());
         assertNull(md.getDescription());
-        assertEquals(1, md.getCommands().size());
+        assertEquals(2, md.getCommands().size());
         assertEquals(1, md.getOptions().size());
     }
 
@@ -38,7 +38,7 @@ public class ApplicationMetadataIT {
         // we really don't know what the generated name is. It varies depending on the unit test execution environment
         assertNotNull(md.getName());
         assertEquals("app desc", md.getDescription());
-        assertEquals(1, md.getCommands().size());
+        assertEquals(2, md.getCommands().size());
         assertEquals(1, md.getOptions().size());
     }
 }
