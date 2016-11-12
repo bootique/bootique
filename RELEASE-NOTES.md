@@ -3,6 +3,7 @@
 * #99 Empty YAML troubles
 * #100 Default command options are visible in help, but can't be used
 * #102 Metadata model for modules and their configs
+* #105 Default command name generation should convert camel-case to dashes 
 
 ## 0.20
 

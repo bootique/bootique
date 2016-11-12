@@ -1,6 +1,7 @@
 package io.bootique.application;
 
 import io.bootique.command.Command;
+import io.bootique.names.ClassToName;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,6 +31,13 @@ public class CommandMetadata extends ApplicationMetadataNode {
 
     public static class Builder {
 
+        private static ClassToName NAME_BUILDER = ClassToName
+                .builder()
+                .convertToLowerCase()
+                .partsSeparator("-")
+                .stripSuffix("Command")
+                .build();
+
         private CommandMetadata command;
 
         private Builder() {
@@ -41,7 +49,7 @@ public class CommandMetadata extends ApplicationMetadataNode {
         }
 
         public Builder commandType(Class<? extends Command> commandType) {
-            command.name = defaultName(commandType);
+            command.name = NAME_BUILDER.toName(commandType);
             return this;
         }
 
@@ -69,11 +77,5 @@ public class CommandMetadata extends ApplicationMetadataNode {
             return addOption(optionBuilder.build());
         }
 
-        // TODO: copy/paste from ConfigModule... reuse somehow...
-        private String defaultName(Class<? extends Command> commandType) {
-            String name = commandType.getSimpleName().toLowerCase();
-            final String stripSuffix = "command";
-            return (name.endsWith(stripSuffix)) ? name.substring(0, name.length() - stripSuffix.length()) : name;
-        }
     }
 }

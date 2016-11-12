@@ -1,9 +1,10 @@
 package io.bootique;
 
-import java.util.Objects;
-
 import com.google.inject.Binder;
 import com.google.inject.Module;
+import io.bootique.names.ClassToName;
+
+import java.util.Objects;
 
 /**
  * A Bootique-specific Guice Module that sets up a one or another application
@@ -14,6 +15,12 @@ import com.google.inject.Module;
  * @since 0.9
  */
 public abstract class ConfigModule implements Module {
+
+	protected static ClassToName CONFIG_PREFIX_BUILDER = ClassToName
+			.builder()
+			.convertToLowerCase()
+			.stripSuffix("Module")
+			.build();
 
 	protected String configPrefix;
 
@@ -39,9 +46,7 @@ public abstract class ConfigModule implements Module {
 	}
 
 	protected String defaultConfigPrefix() {
-		String name = getClass().getSimpleName().toLowerCase();
-		final String stripSuffix = "module";
-		return (name.endsWith(stripSuffix)) ? name.substring(0, name.length() - stripSuffix.length()) : name;
+		return CONFIG_PREFIX_BUILDER.toName(getClass());
 	}
 
 }
