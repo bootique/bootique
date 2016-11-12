@@ -32,8 +32,7 @@ public class CommandsIT {
 		assertEquals(2, commands.size());
 
 		assertTrue(commands.containsKey("help"));
-		// TODO: should this be "help-config"?
-		assertTrue(commands.containsKey("helpconfig"));
+		assertTrue(commands.containsKey("help-config"));
 	}
 
 	@Test
@@ -55,8 +54,7 @@ public class CommandsIT {
 
 		assertTrue(commands.containsKey("c1"));
 		assertTrue(commands.containsKey("help"));
-		// TODO: should this be "help-config"?
-		assertTrue(commands.containsKey("helpconfig"));
+		assertTrue(commands.containsKey("help-config"));
 	}
 
 	@Test
@@ -70,8 +68,7 @@ public class CommandsIT {
 
 		assertTrue(commands.containsKey("c1"));
 		assertTrue(commands.containsKey("help"));
-		// TODO: should this be "help-config"?
-		assertTrue(commands.containsKey("helpconfig"));
+		assertTrue(commands.containsKey("help-config"));
 	}
 
 	@Test
@@ -84,8 +81,7 @@ public class CommandsIT {
 		assertEquals(2, commands.size());
 
 		assertTrue(commands.containsKey("help"));
-		// TODO: should this be "help-config"?
-		assertTrue(commands.containsKey("helpconfig"));
+		assertTrue(commands.containsKey("help-config"));
 	}
 
 	static class C1 implements Command {
