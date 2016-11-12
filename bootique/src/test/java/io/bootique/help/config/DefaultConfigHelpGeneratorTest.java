@@ -33,7 +33,7 @@ public class DefaultConfigHelpGeneratorTest {
     @Test
     public void testGenerate_Name() {
 
-        ModuleMetadata module1 = ModuleMetadata.builder("M1").build();
+        ModuleMetadata module1 = ModuleMetadata.builder().name("M1").build();
         ModulesMetadata modules = ModulesMetadata.builder().addModule(module1).build();
 
         assertLines(new DefaultConfigHelpGenerator(modules, 80),
@@ -45,8 +45,8 @@ public class DefaultConfigHelpGeneratorTest {
     @Test
     public void testGenerate_Name_MultiModule() {
 
-        ModuleMetadata module1 = ModuleMetadata.builder("M1").build();
-        ModuleMetadata module2 = ModuleMetadata.builder("M2").build();
+        ModuleMetadata module1 = ModuleMetadata.builder().name("M1").build();
+        ModuleMetadata module2 = ModuleMetadata.builder().name("M2").build();
         ModulesMetadata modules = ModulesMetadata.builder().addModule(module1).addModule(module2).build();
 
         assertLines(new DefaultConfigHelpGenerator(modules, 80),
@@ -60,9 +60,9 @@ public class DefaultConfigHelpGeneratorTest {
     @Test
     public void testGenerate_Name_MultiModule_Sorting() {
 
-        ModuleMetadata module0 = ModuleMetadata.builder("MB").build();
-        ModuleMetadata module1 = ModuleMetadata.builder("MA").build();
-        ModuleMetadata module2 = ModuleMetadata.builder("MC").build();
+        ModuleMetadata module0 = ModuleMetadata.builder().name("MB").build();
+        ModuleMetadata module1 = ModuleMetadata.builder().name("MA").build();
+        ModuleMetadata module2 = ModuleMetadata.builder().name("MC").build();
         ModulesMetadata modules = ModulesMetadata.builder()
                 .addModule(module0)
                 .addModule(module1)
@@ -82,8 +82,8 @@ public class DefaultConfigHelpGeneratorTest {
     @Test
     public void testGenerate_Name_Description() {
 
-        ModuleMetadata module1 = ModuleMetadata.builder("M1").description("Module called M1").build();
-        ModuleMetadata module2 = ModuleMetadata.builder("M2").build();
+        ModuleMetadata module1 = ModuleMetadata.builder().name("M1").description("Module called M1").build();
+        ModuleMetadata module2 = ModuleMetadata.builder().name("M2").build();
 
         ModulesMetadata modules = ModulesMetadata.builder().addModule(module1).addModule(module2).build();
 

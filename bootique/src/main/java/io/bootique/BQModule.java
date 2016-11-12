@@ -1,6 +1,7 @@
 package io.bootique;
 
 import com.google.inject.Module;
+import io.bootique.names.ClassToName;
 
 import java.util.Collection;
 import java.util.Map;
@@ -13,6 +14,11 @@ import java.util.Objects;
  * @since 0.21
  */
 public class BQModule {
+
+    // for now module names are simple class names... maybe change this to use Maven module names?
+    protected static ClassToName MODULE_NAME_BUILDER = ClassToName
+            .builder()
+            .build();
 
     private Module module;
     private String name;
@@ -63,7 +69,7 @@ public class BQModule {
         public BQModule build() {
 
             if(module.name == null) {
-                module.name = module.module.getClass().getSimpleName();
+                module.name = MODULE_NAME_BUILDER.toName(module.module.getClass());
             }
 
             return module;
