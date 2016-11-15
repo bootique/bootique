@@ -24,30 +24,47 @@ public class ClassToName {
 
         String name = type.getSimpleName();
 
-        if (stripSuffix != null && name.endsWith(stripSuffix)) {
-            name = name.substring(0, name.length() - stripSuffix.length());
-        }
-
-        if (partsSeparator != null) {
-
-            StringBuilder transformed = new StringBuilder();
-
-            for (char c : name.toCharArray()) {
-                if(Character.isUpperCase(c) && transformed.length() > 0) {
-                    transformed.append(partsSeparator);
-                }
-
-                transformed.append(c);
-            }
-
-            name = transformed.toString();
-        }
-
-        if (convertToLowerCase) {
-            name = name.toLowerCase();
-        }
+        name = applyStripSuffix(name);
+        name = applyPartsSeparator(name);
+        name = applyCaseConversion(name);
 
         return name;
+    }
+
+    protected String applyStripSuffix(String name) {
+        return stripSuffix != null && name.endsWith(stripSuffix)
+                ? name.substring(0, name.length() - stripSuffix.length())
+                : name;
+    }
+
+    protected String applyCaseConversion(String name) {
+        return convertToLowerCase ? name.toLowerCase() : name;
+    }
+
+    protected String applyPartsSeparator(String name) {
+        if (partsSeparator == null) {
+            return name;
+        }
+
+        StringBuilder transformed = new StringBuilder();
+
+        boolean wasUpper = false;
+        for (char c : name.toCharArray()) {
+
+            if (Character.isUpperCase(c) && transformed.length() > 0) {
+
+                if (!wasUpper) {
+                    transformed.append(partsSeparator);
+                }
+                wasUpper = true;
+            } else {
+                wasUpper = false;
+            }
+
+            transformed.append(c);
+        }
+
+        return transformed.toString();
     }
 
     public static class Builder {

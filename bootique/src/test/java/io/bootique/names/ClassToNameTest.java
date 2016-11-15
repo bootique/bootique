@@ -34,6 +34,12 @@ public class ClassToNameTest {
         assertEquals("C3-Camel-Case", classToName.toName(C3CamelCase.class));
     }
 
+    @Test
+    public void testSeparatorAbbrevs() {
+        ClassToName classToName = ClassToName.builder().partsSeparator("-").build();
+        assertEquals("Cx-ABC", classToName.toName(CxABC.class));
+    }
+
     static class Inner1StaticSuffix {
     }
 
@@ -48,5 +54,8 @@ class C2Suffix {
 }
 
 class C3CamelCase {
+}
+
+class CxABC {
 }
 
