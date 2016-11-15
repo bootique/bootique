@@ -8,6 +8,13 @@ property is deprecated, but still supported. The new alternative is 'changeLogs'
 follow Bootique ResourceFactory approach. Specifically, if the resource is expected to be on classpath, it requires
 "classpath:" prefix. Otherwise it will be treated as a file path.
 
+* [bootique #105](https://github.com/bootique/bootique/issues/105): The new default style for multi-word command classes
+that are spelled in camel-case will result in the name parts separated with dash, while previously
+we'd use no separators. E.g. ```MySpecialCommand.java``` will result in command name being "--myspecial" in 0.20, 
+and "--my-special" in 0.21. This affects you if you've written custom command classes with multi-word names. 
+You can manually override public command names in metadata to return to the old style (see 
+[CommandWithMetadata](https://github.com/bootique/bootique/blob/master/bootique/src/main/java/io/bootique/command/CommandWithMetadata.java)) or embrace the new naming scheme. 
+
 ## 0.20
 
 * [bootique #92](https://github.com/bootique/bootique/issues/92): We created a new application metadata package 
