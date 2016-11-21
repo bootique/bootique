@@ -80,7 +80,7 @@
 					<highlightSource>true</highlightSource>
 					<targetDirectory>${basedir}/target/site</targetDirectory>
 					<includes>getting-started/index.xml,bootique-docs/index.xml</includes>
-\				</configuration>
+				</configuration>
 				<executions>
 					<execution>
 						<id>build-html</id>
