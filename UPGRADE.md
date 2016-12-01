@@ -19,7 +19,8 @@ You can manually override public command names in metadata to return to the old 
  a few dozens of config properties. As we migrated JDBC configuration from a map to a 
  [specific class](https://github.com/bootique/bootique-jdbc/blob/master/bootique-jdbc/src/main/java/io/bootique/jdbc/TomcatDataSourceFactory.java),
  we dropped support for certain noop properties there were supported but ignored in the previous configuration. If you 
- get configuration errors, review your configs and remove those properties. Also some more info on specific properties:
+ get configuration errors, review your configs and remove those properties. Additionally the following properties
+ are treated differently as before:
  
   - ```connectionProperties``` property is not supported (as it is unclear why it may be useful)
   - ```jmxEnabled``` default is changed from true to false.
