@@ -15,6 +15,16 @@ and "--my-special" in 0.21. This affects you if you've written custom command cl
 You can manually override public command names in metadata to return to the old style (see 
 [CommandWithMetadata](https://github.com/bootique/bootique/blob/master/bootique/src/main/java/io/bootique/command/CommandWithMetadata.java)) or embrace the new naming scheme. 
 
+* [bootique-jdbc #6](https://github.com/bootique/bootique-jdbc/issues/6): bootuqye-jdbc uses Tomcat DataSource that has 
+ a few dozens of config properties. As we migrated JDBC configuration from a map to a []specific class](https://github.com/bootique/bootique-jdbc/blob/master/bootique-jdbc/src/main/java/io/bootique/jdbc/TomcatDataSourceFactory.java),
+ we dropped support for certain noop properties there were supported but ignored in the previous configuration. If you 
+ get configuration errors, review your configs and remove those properties. Also some more info on specific properties:
+ 
+  - ```connectionProperties``` property is not supported (as it is unclear why it may be useful)
+  - ```jmxEnabled``` default is changed from true to false.
+  - ```object_name``` is renamed to ```jmxObjectName```.
+  
+
 ## 0.20
 
 * [bootique #92](https://github.com/bootique/bootique/issues/92): We created a new application metadata package 
