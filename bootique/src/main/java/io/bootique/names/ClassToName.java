@@ -51,14 +51,16 @@ public class ClassToName {
         boolean wasUpper = false;
         for (char c : name.toCharArray()) {
 
-            if (Character.isUpperCase(c) && transformed.length() > 0) {
+            boolean isUpper = Character.isUpperCase(c);
+
+            if (isUpper && transformed.length() > 0) {
 
                 if (!wasUpper) {
                     transformed.append(partsSeparator);
                 }
                 wasUpper = true;
             } else {
-                wasUpper = false;
+                wasUpper = isUpper;
             }
 
             transformed.append(c);

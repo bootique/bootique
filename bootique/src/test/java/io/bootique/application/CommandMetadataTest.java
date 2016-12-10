@@ -19,6 +19,11 @@ public class CommandMetadataTest {
         assertEquals("my-camel-case", CommandMetadata.builder(MyCamelCaseCommand.class).build().getName());
     }
 
+    @Test
+    public void testGetName_UpperCase() {
+        assertEquals("myx", CommandMetadata.builder(MYXCommand.class).build().getName());
+    }
+
     static class MyCommand implements Command {
 
         @Override
@@ -29,6 +34,13 @@ public class CommandMetadataTest {
 
     static class MyCamelCaseCommand implements Command {
 
+        @Override
+        public CommandOutcome run(Cli cli) {
+            return CommandOutcome.succeeded();
+        }
+    }
+
+    static class MYXCommand implements Command {
         @Override
         public CommandOutcome run(Cli cli) {
             return CommandOutcome.succeeded();
