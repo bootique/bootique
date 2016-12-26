@@ -1,6 +1,7 @@
 package io.bootique.help;
 
 import io.bootique.application.ApplicationMetadata;
+import io.bootique.application.CommandMetadata;
 import io.bootique.application.OptionMetadata;
 import org.junit.Test;
 
@@ -135,9 +136,10 @@ public class DefaultHelpGeneratorTest {
     @Test
     public void testGenerate_Name_Options_ShortAliases() {
 
-        OptionMetadata resetOpt = OptionMetadata.builder("reset", "Resets everything").shortName('R').build();
+        OptionMetadata resetOpt = OptionMetadata.builder("reset", "Resets everything").build();
         OptionMetadata listOpt = OptionMetadata.builder("list", "Lists everything").build();
-        OptionMetadata runOpt = OptionMetadata.builder("run", "Runs everything").build();
+        OptionMetadata runOpt = OptionMetadata.builder("reset-for-real", "Resets everything and then does it again")
+                .shortName('R').build();
         ApplicationMetadata app = ApplicationMetadata
                 .builder("myapp")
                 .addOption(resetOpt)
@@ -153,13 +155,40 @@ public class DefaultHelpGeneratorTest {
                 "      -l, --list",
                 "           Lists everything",
                 "",
-                "      -R, --reset",
+                "      -r, --reset",
                 "           Resets everything",
                 "",
-                "      -r, --run",
-                "           Runs everything"
+                "      -R, --reset-for-real",
+                "           Resets everything and then does it again"
         );
     }
+
+    @Test
+    public void testGenerate_Name_Command_ShortAliases() {
+
+        CommandMetadata resetOpt = CommandMetadata.builder("reset").description("Resets everything").build();
+        CommandMetadata runOpt = CommandMetadata.builder("reset-for-real")
+                .description("Resets everything and then does it again")
+                .shortName('R').build();
+        ApplicationMetadata app = ApplicationMetadata
+                .builder("myapp")
+                .addCommand(resetOpt)
+                .addCommand(runOpt)
+                .build();
+
+        assertLines(new DefaultHelpGenerator(app, 80),
+                "NAME",
+                "      myapp",
+                "",
+                "OPTIONS",
+                "      -r, --reset",
+                "           Resets everything",
+                "",
+                "      -R, --reset-for-real",
+                "           Resets everything and then does it again"
+        );
+    }
+
 
     @Test(expected = IllegalArgumentException.class)
     public void testGenerate_LineFoldingTooShort() {
