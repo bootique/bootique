@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Helper class to collect CLI options from various models, sort them and resolve conflicts before inlcuding them in help.
+ * Helper class to collect CLI options from various models, sort them and resolve conflicts before including them in help.
  *
  * @since 0.20
  */
