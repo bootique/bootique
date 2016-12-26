@@ -1,6 +1,5 @@
 package io.bootique.cli;
 
-import java.io.Writer;
 import java.util.List;
 
 /**
@@ -16,13 +15,6 @@ public interface Cli {
      * standalone arguments.
      */
     String commandName();
-
-    /**
-     * @param out a writer to print help to.
-     * @deprecated since 0.20 in favor of pluggable {@link io.bootique.help.HelpGenerator}.
-     */
-    @Deprecated
-    void printHelp(Writer out);
 
     boolean hasOption(String name);
 

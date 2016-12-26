@@ -6,8 +6,6 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 
 import javax.swing.*;
-import java.io.IOException;
-import java.io.Writer;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -32,20 +30,6 @@ public class JoptCli implements Cli {
 	@Override
 	public String commandName() {
 		return commandName;
-	}
-
-	/**
-	 * @param out a writer to print help to.
-	 * @deprecated since 0.20 in favor of pluggable {@link io.bootique.help.HelpGenerator}.
-	 */
-	@Deprecated
-	@Override
-	public void printHelp(Writer out) {
-		try {
-			parser.printHelpOn(out);
-		} catch (IOException e) {
-			bootLogger.stderr("Error printing help", e);
-		}
 	}
 
 	@Override

@@ -132,6 +132,35 @@ public class DefaultHelpGeneratorTest {
         );
     }
 
+    @Test
+    public void testGenerate_Name_Options_ShortAliases() {
+
+        OptionMetadata resetOpt = OptionMetadata.builder("reset", "Resets everything").shortName('R').build();
+        OptionMetadata listOpt = OptionMetadata.builder("list", "Lists everything").build();
+        OptionMetadata runOpt = OptionMetadata.builder("run", "Runs everything").build();
+        ApplicationMetadata app = ApplicationMetadata
+                .builder("myapp")
+                .addOption(resetOpt)
+                .addOption(listOpt)
+                .addOption(runOpt)
+                .build();
+
+        assertLines(new DefaultHelpGenerator(app, 80),
+                "NAME",
+                "      myapp",
+                "",
+                "OPTIONS",
+                "      -l, --list",
+                "           Lists everything",
+                "",
+                "      -R, --reset",
+                "           Resets everything",
+                "",
+                "      -r, --run",
+                "           Runs everything"
+        );
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void testGenerate_LineFoldingTooShort() {
         ApplicationMetadata app = ApplicationMetadata.builder("myapp").build();

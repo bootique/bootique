@@ -11,7 +11,6 @@ import io.bootique.log.BootLogger;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.StringWriter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +41,7 @@ public class JoptCliProviderTest {
         assertTrue(createCli("-m").hasOption("me"));
         assertTrue(createCli("--me").hasOption("me"));
         assertFalse(createCli("-m").hasOption("not_me"));
-        assertFalse(createCli("-m").hasOption("m"));
+        assertTrue(createCli("-m").hasOption("m"));
     }
 
     @Test
@@ -98,38 +97,6 @@ public class JoptCliProviderTest {
                 .addOption(OptionMetadata.builder("other").valueOptional(null)));
 
         assertEquals(createCli("a --me=v1 -- --other v2").standaloneArguments(), "a", "--other", "v2");
-    }
-
-    @Test
-    @Deprecated
-    public void testPrintHelp_BareCommand() {
-
-        addMockCommand(CommandMetadata.builder("c1"));
-
-        StringWriter out = new StringWriter();
-        createCli("").printHelp(out);
-
-        String help = out.toString();
-        assertTrue(help.indexOf("--c1") >= 0);
-    }
-
-    @Test
-    @Deprecated
-    public void testPrintHelp_CommandWithOptions() {
-
-        addMockCommand(CommandMetadata.builder("c1").description("c1_description")
-                .addOption(OptionMetadata.builder("o1").valueOptional("value_of_o1"))
-                .addOption(OptionMetadata.builder("o2").valueOptional(null)));
-
-        StringWriter out = new StringWriter();
-        createCli("").printHelp(out);
-
-        String help = out.toString();
-        assertTrue(help.indexOf("--c1") >= 0);
-        assertTrue(help.indexOf("c1_description") >= 0);
-        assertTrue(help.indexOf("--o1") >= 0);
-        assertTrue(help.indexOf("--o2") >= 0);
-        assertTrue(help.indexOf("value_of_o1") >= 0);
     }
 
     private void assertEquals(Collection<String> result, String... expected) {

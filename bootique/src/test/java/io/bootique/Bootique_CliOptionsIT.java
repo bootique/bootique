@@ -67,9 +67,8 @@ public class Bootique_CliOptionsIT {
         assertFalse(runtime.getInstance(Cli.class).hasOption("o2"));
     }
 
-    // TODO: ignoring this test, this is a bug in Joptsimple 5.0.3...
-    // When the options are conflicting, this should be detected and exception should be thrown.
-    // Instead JOpts triggers second option.
+    // TODO: ignoring this test for now. There is a bug in JOpt 5.0.3...
+    // JOpt should detect conflicting options and throw an exception. Instead JOpts triggers second option.
     @Test(expected = ProvisionException.class)
     @Ignore
     public void testOverlappingOptions_Short() {
