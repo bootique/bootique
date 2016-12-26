@@ -112,6 +112,16 @@ public class Bootique_CliOptionsIT {
         runtime.getInstance(Cli.class);
     }
 
+    @Test(expected = ProvisionException.class)
+    public void testIllegalAbbreviation() {
+        BQRuntime runtime = runtimeFactory.app("--xc")
+                .module(b -> {
+                    BQCoreModule.contributeCommands(b).addBinding().to(XccCommand.class);
+                })
+                .createRuntime();
+        runtime.getInstance(Cli.class);
+    }
+
     @Test
     public void testOverlappingCommands_Short() {
         BQRuntime runtime = runtimeFactory.app("-A")
@@ -172,6 +182,18 @@ public class Bootique_CliOptionsIT {
 
         public XbCommand() {
             super(CommandMetadata.builder(XbCommand.class).shortName('B'));
+        }
+
+        @Override
+        public CommandOutcome run(Cli cli) {
+            return CommandOutcome.succeeded();
+        }
+    }
+
+    static final class XccCommand extends CommandWithMetadata {
+
+        public XccCommand() {
+            super(CommandMetadata.builder(XccCommand.class).shortName('B'));
         }
 
         @Override
