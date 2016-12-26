@@ -26,13 +26,28 @@ public class CommandMetadata extends ApplicationMetadataNode {
         return new Builder().name(commandName);
     }
 
+    /**
+     * Returns an option representation of this command, that may be used in help generation or exposing the command
+     * in a CLI parser.
+     *
+     * @return option representation of this command.
+     * @since 0.21
+     */
+    public OptionMetadata asOption() {
+        // TODO: cache the value?
+        // using getters instead of vars ; some getters have logic
+        return OptionMetadata.builder(getName()).shortName(getShortName()).description(getDescription()).build();
+    }
+
     public Collection<OptionMetadata> getOptions() {
         return options;
     }
 
     /**
-     * @since 0.21
+     * Returns the short name
+     *
      * @return command short name.
+     * @since 0.21
      */
     public String getShortName() {
         return (shortName != null) ? shortName : name.substring(0, 1);
@@ -93,11 +108,11 @@ public class CommandMetadata extends ApplicationMetadataNode {
         }
 
         private String validateName(String name) {
-            if(name == null) {
+            if (name == null) {
                 throw new IllegalArgumentException("Null 'name'");
             }
 
-            if(name.length() == 0) {
+            if (name.length() == 0) {
                 throw new IllegalArgumentException("Empty 'name'");
             }
 

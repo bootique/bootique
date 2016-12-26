@@ -61,10 +61,7 @@ public class JoptCliProvider implements Provider<Cli> {
             });
 
             // using option-bound command strategy...
-            OptionMetadata commandAsOption = OptionMetadata.builder(c.getName())
-                    .shortName(c.getShortName())
-                    .description(c.getDescription())
-                    .build();
+            OptionMetadata commandAsOption = c.asOption();
             addOption(parser, commandAsOption);
         });
 

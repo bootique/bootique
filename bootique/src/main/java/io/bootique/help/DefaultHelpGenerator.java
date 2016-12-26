@@ -1,7 +1,6 @@
 package io.bootique.help;
 
 import io.bootique.application.ApplicationMetadata;
-import io.bootique.application.OptionMetadata;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,8 +40,7 @@ public class DefaultHelpGenerator implements HelpGenerator {
         application.getCommands().forEach(c -> {
 
             // for now expose commands as simply options (commands are options in a default CLI parser)
-            helpOptions.add(OptionMetadata.builder(c.getName(), c.getDescription()).shortName(c.getShortName()).build());
-
+            helpOptions.add(c.asOption());
             c.getOptions().forEach(o -> helpOptions.add(o));
         });
 
