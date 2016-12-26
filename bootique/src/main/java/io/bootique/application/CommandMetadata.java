@@ -11,6 +11,7 @@ import java.util.Collection;
  */
 public class CommandMetadata extends ApplicationMetadataNode {
 
+    private String shortName;
     private Collection<OptionMetadata> options;
 
     public CommandMetadata() {
@@ -29,6 +30,14 @@ public class CommandMetadata extends ApplicationMetadataNode {
         return options;
     }
 
+    /**
+     * @since 0.21
+     * @return command short name.
+     */
+    public String getShortName() {
+        return (shortName != null) ? shortName : name.substring(0, 1);
+    }
+
     public static class Builder {
 
         private static ClassToName NAME_BUILDER = ClassToName
@@ -45,6 +54,7 @@ public class CommandMetadata extends ApplicationMetadataNode {
         }
 
         public CommandMetadata build() {
+            validateName(command.name);
             return command;
         }
 
@@ -54,7 +64,12 @@ public class CommandMetadata extends ApplicationMetadataNode {
         }
 
         public Builder name(String name) {
-            command.name = name;
+            command.name = validateName(name);
+            return this;
+        }
+
+        public Builder shortName(char shortName) {
+            command.shortName = String.valueOf(shortName);
             return this;
         }
 
@@ -77,5 +92,16 @@ public class CommandMetadata extends ApplicationMetadataNode {
             return addOption(optionBuilder.build());
         }
 
+        private String validateName(String name) {
+            if(name == null) {
+                throw new IllegalArgumentException("Null 'name'");
+            }
+
+            if(name.length() == 0) {
+                throw new IllegalArgumentException("Empty 'name'");
+            }
+
+            return name;
+        }
     }
 }

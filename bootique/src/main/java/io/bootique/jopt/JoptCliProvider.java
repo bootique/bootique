@@ -14,9 +14,11 @@ import joptsimple.OptionSet;
 import joptsimple.OptionSpecBuilder;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
 
 public class JoptCliProvider implements Provider<Cli> {
@@ -48,7 +50,9 @@ public class JoptCliProvider implements Provider<Cli> {
     }
 
     protected OptionParser createParser() {
-        OptionParser parser = new OptionParser();
+
+        // do not allow option abbreviations .. we will provide short forms explicitly
+        OptionParser parser = new OptionParser(false);
 
         application.getCommands().forEach(c -> {
 
@@ -57,7 +61,11 @@ public class JoptCliProvider implements Provider<Cli> {
             });
 
             // using option-bound command strategy...
-            addOption(parser, OptionMetadata.builder(c.getName()).description(c.getDescription()).build());
+            OptionMetadata commandAsOption = OptionMetadata.builder(c.getName())
+                    .shortName(c.getShortName())
+                    .description(c.getDescription())
+                    .build();
+            addOption(parser, commandAsOption);
         });
 
         // load global options
@@ -70,7 +78,9 @@ public class JoptCliProvider implements Provider<Cli> {
         // ensure non-null description
         String description = Optional.ofNullable(option.getDescription()).orElse("");
 
-        OptionSpecBuilder optionBuilder = parser.accepts(option.getName(), description);
+        // TODO: how do we resolve short name conflicts?
+        List<String> longAndShort = asList(option.getShortName(), option.getName());
+        OptionSpecBuilder optionBuilder = parser.acceptsAll(longAndShort, description);
         switch (option.getValueCardinality()) {
             case OPTIONAL:
                 optionBuilder.withOptionalArg().describedAs(option.getValueName());

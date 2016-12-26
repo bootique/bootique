@@ -30,10 +30,6 @@ public class HelpOption implements Comparable<HelpOption> {
         return option;
     }
 
-    public String getShortName() {
-        return option.getName().substring(0, 1);
-    }
-
     public boolean isShortNameAllowed() {
         return shortNameAllowed;
     }

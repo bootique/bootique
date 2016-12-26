@@ -26,7 +26,7 @@ public class HelpOptions {
 
     public void add(OptionMetadata option) {
         HelpOption ho = new HelpOption(option);
-        byShortName.computeIfAbsent(ho.getShortName(), sn -> new ArrayList<HelpOption>()).add(ho);
+        byShortName.computeIfAbsent(ho.getOption().getShortName(), sn -> new ArrayList<HelpOption>()).add(ho);
     }
 
     /**
@@ -51,7 +51,7 @@ public class HelpOptions {
                     if (o.isLongNameAllowed()) {
                         o.setShortNameAllowed(false);
                     } else if (shortCounter[0]) {
-                        throw new IllegalStateException("Conflicting short option name: " + o.getShortName());
+                        throw new IllegalStateException("Conflicting short option name: " + o.getOption().getShortName());
                     } else {
                         shortCounter[0] = true;
                     }

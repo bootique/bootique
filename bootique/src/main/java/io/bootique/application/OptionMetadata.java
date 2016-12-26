@@ -7,6 +7,7 @@ package io.bootique.application;
  */
 public class OptionMetadata extends ApplicationMetadataNode {
 
+    private String shortName;
     private OptionValueCardinality valueCardinality;
     private String valueName;
 
@@ -16,6 +17,14 @@ public class OptionMetadata extends ApplicationMetadataNode {
 
     public static Builder builder(String name, String description) {
         return new Builder().name(name).description(description);
+    }
+
+    /**
+     * @since 0.21
+     * @return option short name.
+     */
+    public String getShortName() {
+        return (shortName != null) ? shortName : name.substring(0, 1);
     }
 
     public OptionValueCardinality getValueCardinality() {
@@ -36,7 +45,17 @@ public class OptionMetadata extends ApplicationMetadataNode {
         }
 
         public Builder name(String name) {
-            this.option.name = name;
+            this.option.name = validateName(name);
+            return this;
+        }
+
+        public Builder shortName(String shortName) {
+            option.shortName = validateShortName(shortName);
+            return this;
+        }
+
+        public Builder shortName(char shortName) {
+            option.shortName = String.valueOf(shortName);
             return this;
         }
 
@@ -66,7 +85,32 @@ public class OptionMetadata extends ApplicationMetadataNode {
         }
 
         public OptionMetadata build() {
+            validateName(option.name);
             return option;
+        }
+
+        private String validateName(String name) {
+            if(name == null) {
+                throw new IllegalArgumentException("Null 'name'");
+            }
+
+            if(name.length() == 0) {
+                throw new IllegalArgumentException("Empty 'name'");
+            }
+
+            return name;
+        }
+
+        private String validateShortName(String shortName) {
+            if(shortName == null) {
+                throw new IllegalArgumentException("Null 'shortName'");
+            }
+
+            if(shortName.length() != 1) {
+                throw new IllegalArgumentException("'shortName' must be exactly one char long: " + shortName);
+            }
+
+            return shortName;
         }
     }
 

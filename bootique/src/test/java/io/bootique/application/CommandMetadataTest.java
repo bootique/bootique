@@ -10,18 +10,31 @@ import static org.junit.Assert.assertEquals;
 public class CommandMetadataTest {
 
     @Test
+    public void testGetShortName() {
+        CommandMetadata md = CommandMetadata.builder(MyCommand.class).shortName('M').build();
+        assertEquals("my", md.getName());
+        assertEquals("M", md.getShortName());
+    }
+
+    @Test
     public void testGetName() {
-        assertEquals("my", CommandMetadata.builder(MyCommand.class).build().getName());
+        CommandMetadata md = CommandMetadata.builder(MyCommand.class).build();
+        assertEquals("my", md.getName());
+        assertEquals("m", md.getShortName());
     }
 
     @Test
     public void testGetName_CamelCase() {
-        assertEquals("my-camel-case", CommandMetadata.builder(MyCamelCaseCommand.class).build().getName());
+        CommandMetadata md = CommandMetadata.builder(MyCamelCaseCommand.class).build();
+        assertEquals("my-camel-case", md.getName());
+        assertEquals("m", md.getShortName());
     }
 
     @Test
     public void testGetName_UpperCase() {
-        assertEquals("myx", CommandMetadata.builder(MYXCommand.class).build().getName());
+        CommandMetadata md = CommandMetadata.builder(MYXCommand.class).build();
+        assertEquals("myx", md.getName());
+        assertEquals("m", md.getShortName());
     }
 
     static class MyCommand implements Command {

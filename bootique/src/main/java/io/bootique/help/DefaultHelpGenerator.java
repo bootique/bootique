@@ -81,7 +81,7 @@ public class DefaultHelpGenerator implements HelpGenerator {
             List<String> parts = new ArrayList<>();
             if (o.isShortNameAllowed()) {
                 parts.add("-");
-                parts.add(o.getShortName());
+                parts.add(String.valueOf(o.getOption().getShortName()));
 
                 switch (o.getOption().getValueCardinality()) {
                     case REQUIRED:
