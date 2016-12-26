@@ -15,6 +15,12 @@ and "--my-special" in 0.21. This affects you if you've written custom command cl
 You can manually override public command names in metadata to return to the old style (see 
 [CommandWithMetadata](https://github.com/bootique/bootique/blob/master/bootique/src/main/java/io/bootique/command/CommandWithMetadata.java)) or embrace the new naming scheme. 
 
+* [bootique #112](https://github.com/bootique/bootique/issues/112): The implementation of this feature has a few 
+(intentional) side-effects: (1) joptsimple library was upgraded to 5.0.6, (2) CLI option abbreviations are no longer 
+supported. You may have not known this, but before 0.21, you could use partial option names (e.g. "--he" for help). Not
+anymore. Now either a short option or a long option with full name must be used (i.e. "-h" or "--help" in case of the 
+help command).
+
 * [bootique-jdbc #6](https://github.com/bootique/bootique-jdbc/issues/6): bootique-jdbc uses Tomcat DataSource that has 
  a few dozens of config properties. As we migrated JDBC configuration from a map to a 
  [specific class](https://github.com/bootique/bootique-jdbc/blob/master/bootique-jdbc/src/main/java/io/bootique/jdbc/TomcatDataSourceFactory.java),
