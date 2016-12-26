@@ -14,6 +14,8 @@ import java.util.stream.Stream;
  *
  * @since 0.20
  */
+// TODO: this is in no way synchronized with JOpt parser, so we need extensive unit tests to verify that help behavior
+// matches the actual runtime behavior.
 public class HelpOptions {
 
     private Map<String, List<HelpOption>> byShortName;
@@ -50,8 +52,7 @@ public class HelpOptions {
                         o.setShortNameAllowed(false);
                     } else if (shortCounter[0]) {
                         throw new IllegalStateException("Conflicting short option name: " + o.getShortName());
-                    }
-                    else {
+                    } else {
                         shortCounter[0] = true;
                     }
 

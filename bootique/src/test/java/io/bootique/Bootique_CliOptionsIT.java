@@ -1,5 +1,6 @@
 package io.bootique;
 
+import com.google.inject.ProvisionException;
 import io.bootique.application.CommandMetadata;
 import io.bootique.application.OptionMetadata;
 import io.bootique.cli.Cli;
@@ -42,13 +43,38 @@ public class Bootique_CliOptionsIT {
     }
 
     @Test
+    public void testHelpOption_Short() {
+        BQRuntime runtime = runtimeFactory.app("-h").createRuntime();
+        assertTrue(runtime.getInstance(Cli.class).hasOption("help"));
+    }
+
+    @Test
     public void testNoHelpOption() {
         BQRuntime runtime = runtimeFactory.app("a", "b").createRuntime();
         assertFalse(runtime.getInstance(Cli.class).hasOption("help"));
     }
 
-    private void assertEquals(Collection<String> result, String... expected) {
-        assertArrayEquals(expected, result.toArray());
+    @Test
+    public void testOverlappingOptions() {
+        BQRuntime runtime = runtimeFactory.app("--o1")
+                .module(b -> {
+                    BQCoreModule.contributeOptions(b).addBinding().toInstance(OptionMetadata.builder("o1").build());
+                    BQCoreModule.contributeOptions(b).addBinding().toInstance(OptionMetadata.builder("o2").build());
+                })
+                .createRuntime();
+        assertTrue(runtime.getInstance(Cli.class).hasOption("o1"));
+        assertFalse(runtime.getInstance(Cli.class).hasOption("o2"));
+    }
+
+    @Test(expected = ProvisionException.class)
+    public void testOverlappingOptions_Short() {
+        BQRuntime runtime = runtimeFactory.app("-o")
+                .module(b -> {
+                    BQCoreModule.contributeOptions(b).addBinding().toInstance(OptionMetadata.builder("o1").build());
+                    BQCoreModule.contributeOptions(b).addBinding().toInstance(OptionMetadata.builder("o2").build());
+                })
+                .createRuntime();
+        runtime.getInstance(Cli.class);
     }
 
     @Test
@@ -62,6 +88,10 @@ public class Bootique_CliOptionsIT {
 
         assertTrue(cli.hasOption("s"));
         Assert.assertEquals("x_y", String.join("_", cli.optionStrings("long")));
+    }
+
+    private void assertEquals(Collection<String> result, String... expected) {
+        assertArrayEquals(expected, result.toArray());
     }
 
     static final class TestCommand extends CommandWithMetadata {
