@@ -15,7 +15,7 @@ public class HelpConfigCommand extends CommandWithMetadata {
     public HelpConfigCommand(BootLogger bootLogger, Provider<ConfigHelpGenerator> helpGeneratorProvider) {
         super(CommandMetadata
                 .builder(HelpConfigCommand.class)
-                .description("Prints information about application modules and their configuration options")
+                .description("Prints information about application modules and their configuration options.")
                 .shortName('H'));
 
         this.bootLogger = bootLogger;
