@@ -1,6 +1,7 @@
 package io.bootique.help.config;
 
 import io.bootique.help.FormattedAppender;
+import io.bootique.module.ConfigListMetadata;
 import io.bootique.module.ConfigMetadataNode;
 import io.bootique.module.ConfigObjectMetadata;
 import io.bootique.module.ConfigMetadataVisitor;
@@ -43,7 +44,7 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
             p.accept(childGenerator);
 
             if (p != last) {
-                out.println();
+                println();
             }
         });
 
@@ -56,10 +57,28 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
         printTypeHeader(metadata);
 
         if (metadata.getType() != null) {
-            out.printText(metadata.getName(), ": ", sampleValue(metadata.getType()));
+            printText(metadata.getName(), ": ", sampleValue(metadata.getType()));
         } else {
-            out.printText(metadata.getName(), ": ?");
+            printText(metadata.getName(), ": ?");
         }
+        return null;
+    }
+
+    @Override
+    public Object visitConfigListMetadata(ConfigListMetadata metadata) {
+
+        // TODO: decipher collection type... for now hardcoding List type
+        printText("# Type: List");
+
+        if (metadata.getDescription() != null) {
+            printText("# ", metadata.getDescription());
+        }
+
+        printText(metadata.getName(), ":");
+
+        // TODO: should support multiple element types (from META-INF/services/PolymorphicConfiguration)
+        metadata.getElementType().accept(new ConfigSectionListChildGenerator(withOffset()));
+
         return null;
     }
 
@@ -67,16 +86,27 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
         return new ConfigSectionGenerator(out.withOffset());
     }
 
+    protected ConfigSectionGenerator withOffset(int offset) {
+        return new ConfigSectionGenerator(out.withOffset(offset));
+    }
+
+    protected void printText(String... parts) {
+        out.printText(parts);
+    }
+
+    protected void println() {
+        out.println();
+    }
 
     protected void printTypeHeader(ConfigPropertyMetadata metadata) {
         Class<?> valueType = metadata.getType();
 
         if (valueType != null) {
-            out.printText("# Type: ", typeLabel(valueType));
+            printText("# Type: ", typeLabel(valueType));
         }
 
         if (metadata.getDescription() != null) {
-            out.printText("# ", metadata.getDescription());
+            printText("# ", metadata.getDescription());
         }
     }
 

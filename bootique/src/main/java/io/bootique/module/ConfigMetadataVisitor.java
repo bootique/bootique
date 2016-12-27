@@ -12,4 +12,8 @@ public interface ConfigMetadataVisitor<T> {
     default T visitConfigPropertyMetadata(ConfigPropertyMetadata metadata) {
         return null;
     }
+
+    default T visitConfigListMetadata(ConfigListMetadata metadata) {
+        return null;
+    }
 }

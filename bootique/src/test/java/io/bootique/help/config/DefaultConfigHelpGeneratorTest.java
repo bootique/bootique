@@ -1,6 +1,7 @@
 package io.bootique.help.config;
 
 import io.bootique.Bootique;
+import io.bootique.module.ConfigListMetadata;
 import io.bootique.module.ConfigObjectMetadata;
 import io.bootique.module.ConfigPropertyMetadata;
 import io.bootique.module.ModuleMetadata;
@@ -144,13 +145,62 @@ public class DefaultConfigHelpGeneratorTest {
                 "            p4: value"
         );
     }
-    
+
+    @Test
+    public void testGenerate_ConfigsLists() {
+
+        ConfigPropertyMetadata listMd1 = ConfigPropertyMetadata.builder().type(Integer.TYPE).build();
+        ConfigObjectMetadata listMd2 = ConfigObjectMetadata.builder()
+                .type(ConfigRoot3.class)
+                .addProperty(ConfigPropertyMetadata.builder("p4").type(String.class).build())
+                .addProperty(ConfigPropertyMetadata.builder("p3").type(Boolean.TYPE).build())
+                .build();
+
+        ConfigObjectMetadata m1Config = ConfigObjectMetadata
+                .builder("m1root")
+                .description("Root config of M1")
+                .type(ConfigRoot1.class)
+                .addProperty(ConfigListMetadata.builder("p2").elementType(listMd2).description("I am a list").build())
+                .addProperty(ConfigListMetadata.builder("p1").elementType(listMd1).build())
+                .build();
+
+        ModuleMetadata module1 = ModuleMetadata.builder("M1").addConfig(m1Config).build();
+        ModulesMetadata modules = ModulesMetadata.builder(module1).build();
+
+        assertLines(new DefaultConfigHelpGenerator(modules, 80),
+                "MODULES",
+                "      M1",
+                "",
+                "CONFIGURATION",
+                "      # Type: io.bootique.help.config.DefaultConfigHelpGeneratorTest$ConfigRoot1",
+                "      # Root config of M1",
+                "      m1root:",
+                "            # Type: List",
+                "            p1:",
+                "                  - # Element type: int",
+                "                    100",
+                "",
+                "            # Type: List",
+                "            # I am a list",
+                "            p2:",
+                "                  - # Element type: io.bootique.help.config.DefaultConfigHelpGeneratorTest$ConfigRoot3",
+                "                    # Type: boolean",
+                "                    p3: false",
+                "",
+                "                    # Type: String",
+                "                    p4: 'string'"
+        );
+    }
 
     public static class ConfigRoot1 {
 
     }
 
     public static class ConfigRoot2 {
+
+    }
+
+    public static class ConfigRoot3 {
 
     }
 }
