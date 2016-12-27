@@ -7,7 +7,7 @@ import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandManager;
 import io.bootique.command.CommandOutcome;
-import io.bootique.command.HelpCommand;
+import io.bootique.help.HelpCommand;
 import io.bootique.unit.BQInternalTestFactory;
 import org.junit.Rule;
 import org.junit.Test;

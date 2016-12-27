@@ -11,6 +11,7 @@ import com.google.inject.multibindings.Multibinder;
 import io.bootique.BQCoreModule;
 import io.bootique.BQModuleProvider;
 import io.bootique.annotation.DefaultCommand;
+import io.bootique.help.HelpCommand;
 import io.bootique.log.BootLogger;
 
 import java.util.Collection;
@@ -56,7 +57,7 @@ public class Commands implements Module {
 	@Provides
 	@Singleton
 	CommandManager createManager(Set<Command> moduleCommands, @ExtraCommands Set<Command> extraCommands,
-								 HelpCommand helpCommand, Injector injector, BootLogger bootLogger) {
+                                 HelpCommand helpCommand, Injector injector, BootLogger bootLogger) {
 
 		// merge two sets, checking for dupe names within the set, but allowing
 		// extras to override module commands...

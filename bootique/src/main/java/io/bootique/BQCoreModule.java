@@ -22,7 +22,7 @@ import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandManager;
 import io.bootique.command.DefaultCommandManager;
-import io.bootique.command.HelpCommand;
+import io.bootique.help.HelpCommand;
 import io.bootique.config.CliConfigurationSource;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.config.ConfigurationSource;
