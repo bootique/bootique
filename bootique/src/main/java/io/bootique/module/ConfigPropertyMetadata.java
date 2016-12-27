@@ -18,6 +18,10 @@ public class ConfigPropertyMetadata extends ApplicationMetadataNode implements C
         return new Builder(new ConfigPropertyMetadata());
     }
 
+    public static Builder builder(String name) {
+        return builder().name(name);
+    }
+
     @Override
     public <T> T accept(ConfigMetadataVisitor<T> visitor) {
         return visitor.visitConfigPropertyMetadata(this);

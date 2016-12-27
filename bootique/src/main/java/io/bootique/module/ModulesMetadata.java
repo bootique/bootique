@@ -3,6 +3,8 @@ package io.bootique.module;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import static java.util.Arrays.asList;
+
 /**
  * Metadata object representing
  *
@@ -18,6 +20,16 @@ public class ModulesMetadata {
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    public static Builder builder(ModuleMetadata module, ModuleMetadata... moreModules) {
+        Builder b = builder().addModule(module);
+
+        if (moreModules != null) {
+            b.addModules(asList(moreModules));
+        }
+
+        return b;
     }
 
     /**
@@ -40,7 +52,6 @@ public class ModulesMetadata {
         public ModulesMetadata build() {
             return modules;
         }
-
 
         public Builder addModule(ModuleMetadata moduleMetadata) {
             modules.modules.add(moduleMetadata);

@@ -22,6 +22,10 @@ public class ModuleMetadata extends ApplicationMetadataNode {
         return new Builder();
     }
 
+    public static Builder builder(String name) {
+        return builder().name(name);
+    }
+
     public Collection<ConfigObjectMetadata> getConfigs() {
         return configs;
     }

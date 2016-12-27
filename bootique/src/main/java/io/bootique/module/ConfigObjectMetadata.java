@@ -20,6 +20,10 @@ public class ConfigObjectMetadata extends ConfigPropertyMetadata implements Conf
         return new Builder(new ConfigObjectMetadata());
     }
 
+    public static Builder builder(String name) {
+        return builder().name(name);
+    }
+
     @Override
     public <T> T accept(ConfigMetadataVisitor<T> visitor) {
         return visitor.visitConfigMetadata(this);

@@ -46,8 +46,7 @@ class DeferredModuleMetadataSupplier implements Supplier<Collection<ModuleMetada
 
     private ModuleMetadata toModuleMetadata(BQModule module) {
         return ModuleMetadata
-                .builder()
-                .name(module.getName())
+                .builder(module.getName())
                 .description(module.getDescription())
                 .addConfigs(toConfigs(module))
                 .build();
@@ -71,9 +70,7 @@ class DeferredModuleMetadataSupplier implements Supplier<Collection<ModuleMetada
 
     private ConfigObjectMetadata toConfig(String name, Class<?> type) {
 
-        ConfigObjectMetadata.Builder builder = ConfigObjectMetadata.builder()
-                .name(name)
-                .type(type);
+        ConfigObjectMetadata.Builder builder = ConfigObjectMetadata.builder(name).type(type);
 
         // note that root config object known to Bootique doesn't require BQConfig annotation (though it would help in
         // determining description). Objects nested within the root config do. Otherwise they will be treated as
@@ -104,8 +101,7 @@ class DeferredModuleMetadataSupplier implements Supplier<Collection<ModuleMetada
 
     private ConfigPropertyMetadata toConfigProperty(String name, Class<?> type, BQConfigProperty annotation) {
         return ConfigPropertyMetadata
-                .builder()
-                .name(name)
+                .builder(name)
                 .type(type)
                 .description(annotation.value())
                 .build();

@@ -36,8 +36,8 @@ public class DefaultConfigHelpGeneratorTest {
     @Test
     public void testGenerate_Name() {
 
-        ModuleMetadata module1 = ModuleMetadata.builder().name("M1").build();
-        ModulesMetadata modules = ModulesMetadata.builder().addModule(module1).build();
+        ModuleMetadata module1 = ModuleMetadata.builder("M1").build();
+        ModulesMetadata modules = ModulesMetadata.builder(module1).build();
 
         assertLines(new DefaultConfigHelpGenerator(modules, 80),
                 "MODULES",
@@ -48,9 +48,9 @@ public class DefaultConfigHelpGeneratorTest {
     @Test
     public void testGenerate_Name_MultiModule() {
 
-        ModuleMetadata module1 = ModuleMetadata.builder().name("M1").build();
-        ModuleMetadata module2 = ModuleMetadata.builder().name("M2").build();
-        ModulesMetadata modules = ModulesMetadata.builder().addModule(module1).addModule(module2).build();
+        ModuleMetadata module1 = ModuleMetadata.builder("M1").build();
+        ModuleMetadata module2 = ModuleMetadata.builder("M2").build();
+        ModulesMetadata modules = ModulesMetadata.builder(module1, module2).build();
 
         assertLines(new DefaultConfigHelpGenerator(modules, 80),
                 "MODULES",
@@ -63,14 +63,10 @@ public class DefaultConfigHelpGeneratorTest {
     @Test
     public void testGenerate_Name_MultiModule_Sorting() {
 
-        ModuleMetadata module0 = ModuleMetadata.builder().name("MB").build();
-        ModuleMetadata module1 = ModuleMetadata.builder().name("MA").build();
-        ModuleMetadata module2 = ModuleMetadata.builder().name("MC").build();
-        ModulesMetadata modules = ModulesMetadata.builder()
-                .addModule(module0)
-                .addModule(module1)
-                .addModule(module2)
-                .build();
+        ModuleMetadata module0 = ModuleMetadata.builder("MB").build();
+        ModuleMetadata module1 = ModuleMetadata.builder("MA").build();
+        ModuleMetadata module2 = ModuleMetadata.builder("MC").build();
+        ModulesMetadata modules = ModulesMetadata.builder(module0, module1, module2).build();
 
         assertLines(new DefaultConfigHelpGenerator(modules, 80),
                 "MODULES",
@@ -85,10 +81,10 @@ public class DefaultConfigHelpGeneratorTest {
     @Test
     public void testGenerate_Name_Description() {
 
-        ModuleMetadata module1 = ModuleMetadata.builder().name("M1").description("Module called M1").build();
-        ModuleMetadata module2 = ModuleMetadata.builder().name("M2").build();
+        ModuleMetadata module1 = ModuleMetadata.builder("M1").description("Module called M1").build();
+        ModuleMetadata module2 = ModuleMetadata.builder("M2").build();
 
-        ModulesMetadata modules = ModulesMetadata.builder().addModule(module1).addModule(module2).build();
+        ModulesMetadata modules = ModulesMetadata.builder(module1, module2).build();
 
         assertLines(new DefaultConfigHelpGenerator(modules, 80),
                 "MODULES",
@@ -103,26 +99,24 @@ public class DefaultConfigHelpGeneratorTest {
     public void testGenerate_Configs() {
 
         ConfigObjectMetadata m1Config = ConfigObjectMetadata
-                .builder()
-                .name("m1root")
+                .builder("m1root")
                 .description("Root config of M1")
                 .type(ConfigRoot1.class)
-                .addProperty(ConfigPropertyMetadata.builder().name("p2").type(Integer.TYPE).description("Designates an integer value").build())
-                .addProperty(ConfigPropertyMetadata.builder().name("p1").type(String.class).build())
+                .addProperty(ConfigPropertyMetadata.builder("p2").type(Integer.TYPE).description("Designates an integer value").build())
+                .addProperty(ConfigPropertyMetadata.builder("p1").type(String.class).build())
                 .build();
 
         ConfigObjectMetadata m2Config = ConfigObjectMetadata
-                .builder()
-                .name("m2root")
+                .builder("m2root")
                 .type(ConfigRoot2.class)
-                .addProperty(ConfigPropertyMetadata.builder().name("p0").type(Boolean.class).build())
-                .addProperty(ConfigPropertyMetadata.builder().name("p4").type(Bootique.class).build())
+                .addProperty(ConfigPropertyMetadata.builder("p0").type(Boolean.class).build())
+                .addProperty(ConfigPropertyMetadata.builder("p4").type(Bootique.class).build())
                 .build();
 
-        ModuleMetadata module1 = ModuleMetadata.builder().name("M1").addConfig(m1Config).build();
-        ModuleMetadata module2 = ModuleMetadata.builder().name("M2").addConfig(m2Config).build();
+        ModuleMetadata module1 = ModuleMetadata.builder("M1").addConfig(m1Config).build();
+        ModuleMetadata module2 = ModuleMetadata.builder("M2").addConfig(m2Config).build();
 
-        ModulesMetadata modules = ModulesMetadata.builder().addModule(module1).addModule(module2).build();
+        ModulesMetadata modules = ModulesMetadata.builder(module1, module2).build();
 
         assertLines(new DefaultConfigHelpGenerator(modules, 80),
                 "MODULES",
@@ -150,6 +144,7 @@ public class DefaultConfigHelpGeneratorTest {
                 "            p4: value"
         );
     }
+    
 
     public static class ConfigRoot1 {
 
