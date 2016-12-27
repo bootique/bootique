@@ -429,7 +429,7 @@ public class Bootique {
             public BQModule.Builder moduleBuilder() {
                 return BQModuleProvider.super
                         .moduleBuilder()
-                        .description("Bootique core module");
+                        .description("Bootique core module.");
             }
         };
     }

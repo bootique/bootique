@@ -1,11 +1,16 @@
 package io.bootique.help.config;
 
+import io.bootique.application.ApplicationMetadataNode;
 import io.bootique.help.FormattedAppender;
+import io.bootique.module.ConfigMetadataNode;
 import io.bootique.module.ModuleMetadata;
 import io.bootique.module.ModulesMetadata;
 
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @since 0.21
@@ -27,7 +32,22 @@ public class DefaultConfigHelpGenerator implements ConfigHelpGenerator {
     @Override
     public void append(Appendable out) {
         FormattedAppender appender = createAppender(out);
-        printModules(appender, modulesMetadata.getModules());
+
+        List<ModuleMetadata> sortedModules = modulesMetadata
+                .getModules()
+                .stream()
+                .sorted(Comparator.comparing(ModuleMetadata::getName))
+                .collect(Collectors.toList());
+
+        printModules(appender, sortedModules);
+
+        List<ConfigMetadataNode> sortedConfigs = sortedModules.stream()
+                .map(ModuleMetadata::getConfigs)
+                .flatMap(Collection::stream)
+                .sorted(Comparator.comparing(ApplicationMetadataNode::getName))
+                .collect(Collectors.toList());
+
+        printConfigurations(appender, sortedConfigs);
     }
 
     protected void printModules(FormattedAppender out, Collection<ModuleMetadata> modules) {
@@ -37,11 +57,28 @@ public class DefaultConfigHelpGenerator implements ConfigHelpGenerator {
         }
 
         out.printSectionName("MODULES");
-        modules.stream()
-                .sorted((m1, m2) -> m1.getName().compareTo(m2.getName()))
-                .forEach(m -> {
-                    printModuleName(out, m.getName(), m.getDescription());
-                });
+        modules.forEach(m -> {
+            printModuleName(out, m.getName(), m.getDescription());
+        });
+    }
+
+    protected void printConfigurations(FormattedAppender out, List<ConfigMetadataNode> configs) {
+
+        if (configs.isEmpty()) {
+            return;
+        }
+
+        out.printSectionName("CONFIGURATION");
+        ConfigSectionGenerator generator = new ConfigSectionGenerator(out);
+        ConfigMetadataNode last = configs.get(configs.size() - 1);
+
+        configs.forEach(c -> {
+            printConfiguration(generator, c);
+
+            if (c != last) {
+                out.println();
+            }
+        });
     }
 
     protected void printModuleName(FormattedAppender out, String moduleName, String description) {
@@ -52,5 +89,9 @@ public class DefaultConfigHelpGenerator implements ConfigHelpGenerator {
         } else {
             out.printSubsectionHeader(moduleName);
         }
+    }
+
+    protected void printConfiguration(ConfigSectionGenerator generator, ConfigMetadataNode node) {
+        node.accept(generator);
     }
 }

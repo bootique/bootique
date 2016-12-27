@@ -2,7 +2,7 @@ package io.bootique;
 
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
-import io.bootique.module.ConfigMetadata;
+import io.bootique.module.ConfigObjectMetadata;
 import io.bootique.module.ConfigPropertyMetadata;
 import io.bootique.module.ModuleMetadata;
 
@@ -53,14 +53,14 @@ class DeferredModuleMetadataSupplier implements Supplier<Collection<ModuleMetada
                 .build();
     }
 
-    private Collection<ConfigMetadata> toConfigs(BQModule module) {
+    private Collection<ConfigObjectMetadata> toConfigs(BQModule module) {
 
         Map<String, Class<?>> configTypes = module.getConfigs();
         if (configTypes.isEmpty()) {
             return Collections.emptyList();
         }
 
-        Collection<ConfigMetadata> configs = new ArrayList<>();
+        Collection<ConfigObjectMetadata> configs = new ArrayList<>();
 
         configTypes.forEach((prefix, type) -> {
             configs.add(toConfig(prefix, type));
@@ -69,9 +69,9 @@ class DeferredModuleMetadataSupplier implements Supplier<Collection<ModuleMetada
         return configs;
     }
 
-    private ConfigMetadata toConfig(String name, Class<?> type) {
+    private ConfigObjectMetadata toConfig(String name, Class<?> type) {
 
-        ConfigMetadata.Builder builder = ConfigMetadata.builder()
+        ConfigObjectMetadata.Builder builder = ConfigObjectMetadata.builder()
                 .name(name)
                 .type(type);
 

@@ -43,7 +43,7 @@ public class ConfigMetadataIT {
             }
         }).createRuntime();
 
-       Collection<ConfigMetadata> configs = runtime
+       Collection<ConfigObjectMetadata> configs = runtime
                 .getInstance(ModulesMetadata.class)
                 .getModules()
                 .stream()
@@ -54,13 +54,13 @@ public class ConfigMetadataIT {
 
         assertEquals(1, configs.size());
 
-        ConfigMetadata cm = configs.iterator().next();
+        ConfigObjectMetadata cm = configs.iterator().next();
         assertTrue("pf".equals(cm.getName()));
 
         String walkThrough = cm.accept(new ConfigMetadataVisitor<String>() {
 
             @Override
-            public String visitConfigMetadata(ConfigMetadata metadata) {
+            public String visitConfigMetadata(ConfigObjectMetadata metadata) {
                 StringBuilder buffer = new StringBuilder(visitConfigPropertyMetadata(metadata));
                 metadata.getProperties().forEach(p -> buffer.append(":[").append(p.accept(this)).append("]"));
                 return buffer.toString();

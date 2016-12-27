@@ -1,5 +1,8 @@
 package io.bootique.help.config;
 
+import io.bootique.Bootique;
+import io.bootique.module.ConfigObjectMetadata;
+import io.bootique.module.ConfigPropertyMetadata;
 import io.bootique.module.ModuleMetadata;
 import io.bootique.module.ModulesMetadata;
 import org.junit.Test;
@@ -93,5 +96,66 @@ public class DefaultConfigHelpGeneratorTest {
                 "",
                 "      M2"
         );
+    }
+
+
+    @Test
+    public void testGenerate_Configs() {
+
+        ConfigObjectMetadata m1Config = ConfigObjectMetadata
+                .builder()
+                .name("m1root")
+                .description("Root config of M1")
+                .type(ConfigRoot1.class)
+                .addProperty(ConfigPropertyMetadata.builder().name("p2").type(Integer.TYPE).description("Designates an integer value").build())
+                .addProperty(ConfigPropertyMetadata.builder().name("p1").type(String.class).build())
+                .build();
+
+        ConfigObjectMetadata m2Config = ConfigObjectMetadata
+                .builder()
+                .name("m2root")
+                .type(ConfigRoot2.class)
+                .addProperty(ConfigPropertyMetadata.builder().name("p0").type(Boolean.class).build())
+                .addProperty(ConfigPropertyMetadata.builder().name("p4").type(Bootique.class).build())
+                .build();
+
+        ModuleMetadata module1 = ModuleMetadata.builder().name("M1").addConfig(m1Config).build();
+        ModuleMetadata module2 = ModuleMetadata.builder().name("M2").addConfig(m2Config).build();
+
+        ModulesMetadata modules = ModulesMetadata.builder().addModule(module1).addModule(module2).build();
+
+        assertLines(new DefaultConfigHelpGenerator(modules, 80),
+                "MODULES",
+                "      M1",
+                "",
+                "      M2",
+                "",
+                "CONFIGURATION",
+                "      # Type: io.bootique.help.config.DefaultConfigHelpGeneratorTest$ConfigRoot1",
+                "      # Root config of M1",
+                "      m1root:",
+                "            # Type: String",
+                "            p1: 'string'",
+                "",
+                "            # Type: int",
+                "            # Designates an integer value",
+                "            p2: 100",
+                "",
+                "      # Type: io.bootique.help.config.DefaultConfigHelpGeneratorTest$ConfigRoot2",
+                "      m2root:",
+                "            # Type: boolean",
+                "            p0: false",
+                "",
+                "            # Type: io.bootique.Bootique",
+                "            p4: value"
+        );
+    }
+
+    public static class ConfigRoot1 {
+
+    }
+
+    public static class ConfigRoot2 {
+
     }
 }

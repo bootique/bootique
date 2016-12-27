@@ -5,7 +5,7 @@ package io.bootique.module;
  */
 public interface ConfigMetadataVisitor<T> {
 
-    default T visitConfigMetadata(ConfigMetadata metadata) {
+    default T visitConfigMetadata(ConfigObjectMetadata metadata) {
         return null;
     }
 

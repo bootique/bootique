@@ -7,7 +7,7 @@ import io.bootique.application.ApplicationMetadataNode;
  *
  * @since 0.21
  */
-public class ConfigPropertyMetadata extends ApplicationMetadataNode {
+public class ConfigPropertyMetadata extends ApplicationMetadataNode implements ConfigMetadataNode {
 
     protected Class<?> type;
 
@@ -18,6 +18,7 @@ public class ConfigPropertyMetadata extends ApplicationMetadataNode {
         return new Builder(new ConfigPropertyMetadata());
     }
 
+    @Override
     public <T> T accept(ConfigMetadataVisitor<T> visitor) {
         return visitor.visitConfigPropertyMetadata(this);
     }
@@ -45,7 +46,7 @@ public class ConfigPropertyMetadata extends ApplicationMetadataNode {
         }
 
         public B description(String description) {
-            if(description != null && description.length() == 0) {
+            if (description != null && description.length() == 0) {
                 description = null;
             }
 

@@ -8,16 +8,16 @@ import java.util.Collection;
  *
  * @since 0.21
  */
-public class ConfigMetadata extends ConfigPropertyMetadata {
+public class ConfigObjectMetadata extends ConfigPropertyMetadata implements ConfigMetadataNode {
 
     private Collection<ConfigPropertyMetadata> properties;
 
-    public ConfigMetadata() {
+    public ConfigObjectMetadata() {
         this.properties = new ArrayList<>();
     }
 
     public static Builder builder() {
-        return new Builder(new ConfigMetadata());
+        return new Builder(new ConfigObjectMetadata());
     }
 
     @Override
@@ -29,9 +29,9 @@ public class ConfigMetadata extends ConfigPropertyMetadata {
         return properties;
     }
 
-    public static class Builder extends ConfigPropertyMetadata.Builder<ConfigMetadata, Builder> {
+    public static class Builder extends ConfigPropertyMetadata.Builder<ConfigObjectMetadata, Builder> {
 
-        public Builder(ConfigMetadata toBuild) {
+        public Builder(ConfigObjectMetadata toBuild) {
             super(toBuild);
         }
 

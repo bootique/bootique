@@ -30,7 +30,7 @@ public class ModuleMetadataIT {
                 .filter(m -> "BQCoreModule".equals(m.getName()))
                 .findFirst();
         assertTrue(coreMd.isPresent());
-        assertEquals("Bootique core module", coreMd.get().getDescription());
+        assertEquals("Bootique core module.", coreMd.get().getDescription());
     }
 
     @Test

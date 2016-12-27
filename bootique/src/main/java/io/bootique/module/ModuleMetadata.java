@@ -12,7 +12,7 @@ import java.util.Collection;
  */
 public class ModuleMetadata extends ApplicationMetadataNode {
 
-    private Collection<ConfigMetadata> configs;
+    private Collection<ConfigObjectMetadata> configs;
 
     private ModuleMetadata() {
         this.configs = new ArrayList<>();
@@ -22,7 +22,7 @@ public class ModuleMetadata extends ApplicationMetadataNode {
         return new Builder();
     }
 
-    public Collection<ConfigMetadata> getConfigs() {
+    public Collection<ConfigObjectMetadata> getConfigs() {
         return configs;
     }
 
@@ -48,12 +48,12 @@ public class ModuleMetadata extends ApplicationMetadataNode {
             return this;
         }
 
-        public Builder addConfig(ConfigMetadata config) {
+        public Builder addConfig(ConfigObjectMetadata config) {
             moduleMetadata.configs.add(config);
             return this;
         }
 
-        public Builder addConfigs(Collection<ConfigMetadata> configs) {
+        public Builder addConfigs(Collection<ConfigObjectMetadata> configs) {
             moduleMetadata.configs.addAll(configs);
             return this;
         }

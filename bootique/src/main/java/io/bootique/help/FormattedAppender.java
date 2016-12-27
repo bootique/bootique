@@ -30,9 +30,11 @@ public class FormattedAppender {
 
     private Appendable out;
     private int lineWidth;
+    private String baseOffset;
 
-    private int sectionCount;
-    private int subsectionCount;
+    // TODO: get rid of appender state in favor of "withOffset"
+    private transient int sectionCount;
+    private transient int subsectionCount;
 
     public FormattedAppender(Appendable out, int lineWidth) {
 
@@ -40,17 +42,57 @@ public class FormattedAppender {
             throw new IllegalArgumentException("Line width is too small. Minimal supported width is " + MIN_LINE_WIDTH);
         }
 
+        this.baseOffset = "";
         this.out = out;
         this.lineWidth = lineWidth;
+    }
+
+    protected FormattedAppender(FormattedAppender proto) {
+        out = proto.out;
+        lineWidth = proto.lineWidth;
+        baseOffset = proto.baseOffset;
+
+        // do not copy "transient" properties
     }
 
     private static List<String> asList(String... parts) {
         return parts != null ? Arrays.asList(parts) : Collections.emptyList();
     }
 
+    /**
+     * Creates and returns a new appender with base offset equals to default text offset.
+     *
+     * @return a new appender with base offset equals to default text offset.
+     * @since 0.21
+     */
+    public FormattedAppender withOffset() {
+        return withOffset(TEXT_OFFSET.length());
+    }
+
+    /**
+     * Creates and returns a new appender with the specified base offset.
+     *
+     * @return a new appender with the specified base offset.
+     * @since 0.21
+     */
+    public FormattedAppender withOffset(int offset) {
+        FormattedAppender offsetAppender = new FormattedAppender(this);
+
+        if (offset > 0) {
+            StringBuilder padding = new StringBuilder(baseOffset);
+            for (int i = 0; i < offset; i++) {
+                padding.append(" ");
+            }
+
+            offsetAppender.baseOffset = padding.toString();
+        }
+
+        return offsetAppender;
+    }
 
     public void printSectionName(String name) {
 
+        // line break between sections
         if (sectionCount++ > 0) {
             subsectionCount = 0;
             println(NO_OFFSET, Collections.emptyList());
@@ -64,12 +106,15 @@ public class FormattedAppender {
     }
 
     public void printSubsectionHeader(Collection<String> parts) {
+
+        // line break between subsections
         if (subsectionCount++ > 0) {
             println(NO_OFFSET, Collections.emptyList());
         }
 
         println(TEXT_OFFSET, parts);
     }
+
 
     public void printText(String... parts) {
         println(TEXT_OFFSET, asList(parts));
@@ -80,31 +125,43 @@ public class FormattedAppender {
     }
 
     public void printDescription(String... parts) {
-        foldWithOffset(DESCRIPTION_OFFSET, parts)
+        foldWithOffset(DESCRIPTION_OFFSET.length(), parts)
                 .forEach(s -> println(DESCRIPTION_OFFSET, Collections.singleton(s)));
     }
 
-    protected void println(String offset, Collection<String> parts) {
-
+    public void println() {
         try {
-            out.append(offset);
-            for (String p : parts) {
-                out.append(p);
-            }
             out.append(NEWLINE);
         } catch (IOException e) {
             throw new RuntimeException("Error printing help", e);
         }
     }
 
-    private Collection<String> foldWithOffset(String offset, String... parts) {
+    protected void println(String offset, Collection<String> parts) {
 
-        if (offset.length() > DESCRIPTION_OFFSET.length()) {
+        try {
+            out.append(baseOffset);
+            out.append(offset);
+            for (String p : parts) {
+                out.append(p);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error printing help", e);
+        }
+
+        println();
+    }
+
+    protected Collection<String> foldWithOffset(int offset, String... parts) {
+
+        offset += baseOffset.length();
+
+        if (offset > DESCRIPTION_OFFSET.length()) {
             throw new IllegalArgumentException("Offset is too big: " + offset
                     + ". Can't fit the text in remaining space.");
         }
 
-        int maxLength = lineWidth - offset.length();
+        int maxLength = lineWidth - offset;
 
         List<String> folded = new ArrayList<>();
         StringBuilder line = new StringBuilder();
