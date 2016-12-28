@@ -4,6 +4,7 @@ import com.google.inject.Module;
 import io.bootique.BQModule;
 import io.bootique.BQModuleProvider;
 import io.bootique.BQRuntime;
+import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.meta.module.ModulesMetadata;
 import io.bootique.unit.BQInternalTestFactory;
@@ -77,6 +78,7 @@ public class ConfigMetadataIT {
                 walkThrough);
     }
 
+    @BQConfig
     public static class TestConfig {
 
         private String p1;
