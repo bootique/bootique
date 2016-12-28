@@ -61,42 +61,28 @@ public class ConfigMetadataCompiler {
         return Character.toLowerCase(raw.charAt(0)) + raw.substring(1);
     }
 
-    private static Class<?> typeClass(Type type) {
-
-        if (type instanceof Class) {
-            return (Class<?>) type;
-        } else if (type instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType) type;
-            if (parameterizedType.getRawType() instanceof Class) {
-                return (Class<?>) parameterizedType.getRawType();
-            }
-        }
-
-        return Object.class;
-    }
-
     public ConfigMetadataNode compile(String name, Class<?> type) {
-        return compile(name, new Descriptor(type));
+        return compile(new Descriptor(name, type));
     }
 
-    protected ConfigMetadataNode compile(String name, Descriptor descriptor) {
+    protected ConfigMetadataNode compile(Descriptor descriptor) {
 
         // see if there's already a metadata object for this type... proxy it to avoid compile cycles...
         ConfigMetadataNode seenNode = seen.get(descriptor.getType());
         if (seenNode != null) {
-            return new ConfigMetadataNodeProxy(name, descriptor.getDescription(), seenNode);
+            return new ConfigMetadataNodeProxy(descriptor.getName(), descriptor.getDescription(), seenNode);
         }
 
         Class<?> typeClass = descriptor.getTypeClass();
 
         if (Collection.class.isAssignableFrom(typeClass)) {
-            return compileCollectionMetadata(name, descriptor);
+            return compileCollectionMetadata(descriptor);
         } else if (Map.class.isAssignableFrom(typeClass)) {
-            return compileMapMetadata(name, descriptor);
+            return compileMapMetadata(descriptor);
         } else if (typeClass.isAnnotationPresent(BQConfig.class)) {
-            return compileObjectMetadata(name, descriptor);
+            return compileObjectMetadata(descriptor);
         } else {
-            return compileValueMetadata(name, descriptor);
+            return compileValueMetadata(descriptor);
         }
     }
 
@@ -105,17 +91,17 @@ public class ConfigMetadataCompiler {
         return (T) seen.computeIfAbsent(type, factory);
     }
 
-    protected ConfigMetadataNode compileObjectMetadata(String name, Descriptor descriptor) {
+    protected ConfigMetadataNode compileObjectMetadata(Descriptor descriptor) {
 
         // create an empty object ourselves, as we need to cache it before we descend down the stack to prevent
         // endless cycles during compilation...
 
-        // TODO
 
         // note that we are only caching ConfigObjectMetadata... That's the place where cycles can occur.
         ConfigObjectMetadata baseObject = createAndCache(descriptor.getType(), t -> new ConfigObjectMetadata());
-        ConfigObjectMetadata.Builder builder = ConfigObjectMetadata.builder(baseObject)
-                .name(name)
+        ConfigObjectMetadata.Builder builder = ConfigObjectMetadata
+                .builder(baseObject)
+                .name(descriptor.getName())
                 .type(descriptor.getType());
 
         // note that root config object known to Bootique doesn't require BQConfig annotation (though it would help in
@@ -130,22 +116,22 @@ public class ConfigMetadataCompiler {
             BQConfigProperty configProperty = m.getAnnotation(BQConfigProperty.class);
             if (configProperty != null) {
                 Type propType = propertyTypeFromSetter(m);
-                builder.addProperty(compile(propertyNameFromSetter(m), new Descriptor(propType, configProperty)));
+                builder.addProperty(compile(new Descriptor(propertyNameFromSetter(m), configProperty, propType)));
             }
         }
 
         return builder.build();
     }
 
-    protected ConfigMetadataNode compileValueMetadata(String name, Descriptor descriptor) {
+    protected ConfigMetadataNode compileValueMetadata(Descriptor descriptor) {
         return ConfigValueMetadata
-                .builder(name)
+                .builder(descriptor.getName())
                 .type(descriptor.getType())
                 .description(descriptor.getDescription())
                 .build();
     }
 
-    protected ConfigMetadataNode compileMapMetadata(String name, Descriptor descriptor) {
+    protected ConfigMetadataNode compileMapMetadata(Descriptor descriptor) {
 
         Type type = descriptor.getType();
         Class<?> keysType = Object.class;
@@ -164,10 +150,10 @@ public class ConfigMetadataCompiler {
             }
         }
 
-        ConfigMetadataNode valueMetadata = compile(null, new Descriptor(valuesType));
+        ConfigMetadataNode valueMetadata = compile(new Descriptor(null, valuesType));
 
         return ConfigMapMetadata
-                .builder(name)
+                .builder(descriptor.getName())
                 .type(type)
                 .description(descriptor.getDescription())
                 .keysType(keysType)
@@ -175,7 +161,7 @@ public class ConfigMetadataCompiler {
                 .build();
     }
 
-    protected ConfigMetadataNode compileCollectionMetadata(String name, Descriptor descriptor) {
+    protected ConfigMetadataNode compileCollectionMetadata(Descriptor descriptor) {
 
         Type type = descriptor.getType();
         Type elementType = Object.class;
@@ -189,9 +175,9 @@ public class ConfigMetadataCompiler {
             }
         }
 
-        ConfigMetadataNode elementMetadata = compile(null, new Descriptor(elementType));
+        ConfigMetadataNode elementMetadata = compile(new Descriptor(null, elementType));
         return ConfigListMetadata
-                .builder(name)
+                .builder(descriptor.getName())
                 .type(type)
                 .description(descriptor.getDescription())
                 .elementType(elementMetadata)
@@ -200,29 +186,50 @@ public class ConfigMetadataCompiler {
 
     protected static class Descriptor {
 
+        private String name;
         private String description;
         private Class<?> typeClass;
         private Type type;
 
         // describe type that is another type's property using property descriptor
-        public Descriptor(Type type, BQConfigProperty description) {
+        public Descriptor(String name, BQConfigProperty description, Type type) {
             this.type = type;
             this.typeClass = typeClass(type);
 
+            this.name = name;
             if (description != null) {
                 this.description = description.value();
             }
         }
 
         // describe root type that using type descriptor
-        public Descriptor(Type type) {
+        public Descriptor(String name, Type type) {
             this.type = type;
             this.typeClass = typeClass(type);
+            this.name = name;
 
             BQConfig config = typeClass.getAnnotation(BQConfig.class);
             if (config != null) {
                 this.description = config.value();
             }
+        }
+
+        private static Class<?> typeClass(Type type) {
+
+            if (type instanceof Class) {
+                return (Class<?>) type;
+            } else if (type instanceof ParameterizedType) {
+                ParameterizedType parameterizedType = (ParameterizedType) type;
+                if (parameterizedType.getRawType() instanceof Class) {
+                    return (Class<?>) parameterizedType.getRawType();
+                }
+            }
+
+            return Object.class;
+        }
+
+        public String getName() {
+            return name;
         }
 
         public String getDescription() {
