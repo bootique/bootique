@@ -1,6 +1,7 @@
 package io.bootique.meta.module;
 
 import io.bootique.meta.MetadataNode;
+import io.bootique.meta.config.ConfigMetadataNode;
 import io.bootique.meta.config.ConfigObjectMetadata;
 
 import java.util.ArrayList;
@@ -11,9 +12,11 @@ import java.util.Collection;
  *
  * @since 0.21
  */
-public class ModuleMetadata extends MetadataNode {
+public class ModuleMetadata implements MetadataNode {
 
-    private Collection<ConfigObjectMetadata> configs;
+    private String name;
+    private String description;
+    private Collection<ConfigMetadataNode> configs;
 
     private ModuleMetadata() {
         this.configs = new ArrayList<>();
@@ -27,7 +30,17 @@ public class ModuleMetadata extends MetadataNode {
         return builder().name(name);
     }
 
-    public Collection<ConfigObjectMetadata> getConfigs() {
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    public Collection<ConfigMetadataNode> getConfigs() {
         return configs;
     }
 
@@ -58,7 +71,7 @@ public class ModuleMetadata extends MetadataNode {
             return this;
         }
 
-        public Builder addConfigs(Collection<ConfigObjectMetadata> configs) {
+        public Builder addConfigs(Collection<ConfigMetadataNode> configs) {
             moduleMetadata.configs.addAll(configs);
             return this;
         }

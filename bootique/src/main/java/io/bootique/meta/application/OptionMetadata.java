@@ -7,8 +7,10 @@ import io.bootique.meta.MetadataNode;
  *
  * @since 0.20
  */
-public class OptionMetadata extends MetadataNode {
+public class OptionMetadata implements MetadataNode {
 
+    private String name;
+    private String description;
     private String shortName;
     private OptionValueCardinality valueCardinality;
     private String valueName;
@@ -21,9 +23,19 @@ public class OptionMetadata extends MetadataNode {
         return new Builder().name(name).description(description);
     }
 
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
     /**
-     * @since 0.21
      * @return option short name.
+     * @since 0.21
      */
     public String getShortName() {
         return (shortName != null) ? shortName : name.substring(0, 1);
@@ -92,11 +104,11 @@ public class OptionMetadata extends MetadataNode {
         }
 
         private String validateName(String name) {
-            if(name == null) {
+            if (name == null) {
                 throw new IllegalArgumentException("Null 'name'");
             }
 
-            if(name.length() == 0) {
+            if (name.length() == 0) {
                 throw new IllegalArgumentException("Empty 'name'");
             }
 
@@ -104,11 +116,11 @@ public class OptionMetadata extends MetadataNode {
         }
 
         private String validateShortName(String shortName) {
-            if(shortName == null) {
+            if (shortName == null) {
                 throw new IllegalArgumentException("Null 'shortName'");
             }
 
-            if(shortName.length() != 1) {
+            if (shortName.length() != 1) {
                 throw new IllegalArgumentException("'shortName' must be exactly one char long: " + shortName);
             }
 

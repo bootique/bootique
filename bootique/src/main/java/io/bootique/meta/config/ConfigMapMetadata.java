@@ -9,7 +9,7 @@ import java.util.Objects;
 public class ConfigMapMetadata extends ConfigValueMetadata {
 
     private Class<?> keysType;
-    private ConfigValueMetadata valuesType;
+    private ConfigMetadataNode valuesType;
 
     public static Builder builder() {
         return new Builder(new ConfigMapMetadata()).type(Map.class);
@@ -28,7 +28,7 @@ public class ConfigMapMetadata extends ConfigValueMetadata {
         return keysType;
     }
 
-    public ConfigValueMetadata getValuesType() {
+    public ConfigMetadataNode getValuesType() {
         return valuesType;
     }
 
@@ -49,7 +49,7 @@ public class ConfigMapMetadata extends ConfigValueMetadata {
             return this;
         }
 
-        public Builder valuesType(ConfigValueMetadata elementType) {
+        public Builder valuesType(ConfigMetadataNode elementType) {
             toBuild.valuesType = elementType;
             return this;
         }

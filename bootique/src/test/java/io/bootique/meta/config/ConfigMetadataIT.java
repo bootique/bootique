@@ -44,7 +44,7 @@ public class ConfigMetadataIT {
             }
         }).createRuntime();
 
-       Collection<ConfigObjectMetadata> configs = runtime
+        Collection<ConfigMetadataNode> configs = runtime
                 .getInstance(ModulesMetadata.class)
                 .getModules()
                 .stream()
@@ -55,7 +55,7 @@ public class ConfigMetadataIT {
 
         assertEquals(1, configs.size());
 
-        ConfigObjectMetadata cm = configs.iterator().next();
+        ConfigValueMetadata cm = (ConfigValueMetadata) configs.iterator().next();
         assertTrue("pf".equals(cm.getName()));
 
         String walkThrough = cm.accept(new ConfigMetadataVisitor<String>() {
@@ -69,11 +69,11 @@ public class ConfigMetadataIT {
 
             @Override
             public String visitConfigPropertyMetadata(ConfigValueMetadata metadata) {
-                return metadata.getName() + ":" + metadata.getType().getName() + ":" + metadata.getDescription();
+                return metadata.getName() + ":" + metadata.getType().getTypeName() + ":" + metadata.getDescription();
             }
         });
 
-        assertEquals("pf:io.bootique.meta.config.ConfigMetadataIT$TestConfig:null:[p1:java.lang.String:(p1 desc)]" ,
+        assertEquals("pf:io.bootique.meta.config.ConfigMetadataIT$TestConfig:null:[p1:java.lang.String:(p1 desc)]",
                 walkThrough);
     }
 

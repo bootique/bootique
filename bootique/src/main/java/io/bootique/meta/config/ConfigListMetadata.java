@@ -8,7 +8,7 @@ import java.util.Objects;
  */
 public class ConfigListMetadata extends ConfigValueMetadata {
 
-    private ConfigValueMetadata elementType;
+    private ConfigMetadataNode elementType;
 
     public static Builder builder() {
         return new Builder(new ConfigListMetadata()).type(List.class);
@@ -23,7 +23,7 @@ public class ConfigListMetadata extends ConfigValueMetadata {
         return visitor.visitConfigListMetadata(this);
     }
 
-    public ConfigValueMetadata getElementType() {
+    public ConfigMetadataNode getElementType() {
         return elementType;
     }
 
@@ -39,7 +39,7 @@ public class ConfigListMetadata extends ConfigValueMetadata {
             return super.build();
         }
 
-        public Builder elementType(ConfigValueMetadata elementType) {
+        public Builder elementType(ConfigMetadataNode elementType) {
             toBuild.elementType = elementType;
             return this;
         }

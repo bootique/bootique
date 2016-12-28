@@ -8,16 +8,27 @@ import java.util.Collection;
  *
  * @since 0.21
  */
-public class ConfigObjectMetadata extends ConfigValueMetadata implements ConfigMetadataNode {
+public class ConfigObjectMetadata extends ConfigValueMetadata {
 
-    private Collection<ConfigValueMetadata> properties;
+    private Collection<ConfigMetadataNode> properties;
 
     public ConfigObjectMetadata() {
         this.properties = new ArrayList<>();
     }
 
+    /**
+     * Returns a builder that starts with an already available object. Occasionally it is useful for the caller to
+     * provide the initial object, e.g. to cache the instance before the builder is finished to avoid compilation cycles.
+     *
+     * @param baseObject an initial object that will be further customized by the builder.
+     * @return a builder that starts with the provided base object instead of creating a new one.
+     */
+    public static Builder builder(ConfigObjectMetadata baseObject) {
+        return new Builder(baseObject);
+    }
+
     public static Builder builder() {
-        return new Builder(new ConfigObjectMetadata());
+        return builder(new ConfigObjectMetadata());
     }
 
     public static Builder builder(String name) {
@@ -29,7 +40,7 @@ public class ConfigObjectMetadata extends ConfigValueMetadata implements ConfigM
         return visitor.visitConfigMetadata(this);
     }
 
-    public Collection<ConfigValueMetadata> getProperties() {
+    public Collection<ConfigMetadataNode> getProperties() {
         return properties;
     }
 
@@ -39,7 +50,7 @@ public class ConfigObjectMetadata extends ConfigValueMetadata implements ConfigM
             super(toBuild);
         }
 
-        public Builder addProperty(ConfigValueMetadata property) {
+        public Builder addProperty(ConfigMetadataNode property) {
             toBuild.properties.add(property);
             return this;
         }

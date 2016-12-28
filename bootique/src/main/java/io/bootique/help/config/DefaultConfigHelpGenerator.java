@@ -1,7 +1,7 @@
 package io.bootique.help.config;
 
-import io.bootique.meta.MetadataNode;
 import io.bootique.help.FormattedAppender;
+import io.bootique.meta.MetadataNode;
 import io.bootique.meta.config.ConfigMetadataNode;
 import io.bootique.meta.module.ModuleMetadata;
 import io.bootique.meta.module.ModulesMetadata;

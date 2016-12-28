@@ -1,15 +1,17 @@
 package io.bootique.meta.config;
 
-import io.bootique.meta.MetadataNode;
+import java.lang.reflect.Type;
 
 /**
  * Descriptor of a configuration value property.
  *
  * @since 0.21
  */
-public class ConfigValueMetadata extends MetadataNode implements ConfigMetadataNode {
+public class ConfigValueMetadata implements ConfigMetadataNode {
 
-    protected Class<?> type;
+    protected Type type;
+    protected String name;
+    protected String description;
 
     protected ConfigValueMetadata() {
     }
@@ -23,11 +25,22 @@ public class ConfigValueMetadata extends MetadataNode implements ConfigMetadataN
     }
 
     @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
     public <T> T accept(ConfigMetadataVisitor<T> visitor) {
         return visitor.visitConfigPropertyMetadata(this);
     }
 
-    public Class<?> getType() {
+    @Override
+    public Type getType() {
         return type;
     }
 
@@ -58,7 +71,7 @@ public class ConfigValueMetadata extends MetadataNode implements ConfigMetadataN
             return (B) this;
         }
 
-        public B type(Class<?> type) {
+        public B type(Type type) {
             toBuild.type = type;
             return (B) this;
         }

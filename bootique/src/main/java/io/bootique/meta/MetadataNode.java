@@ -5,16 +5,8 @@ package io.bootique.meta;
  *
  * @since 0.21
  */
-public abstract class MetadataNode {
+public interface MetadataNode {
 
-    protected String name;
-    protected String description;
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
+    String getName();
+    String getDescription();
 }

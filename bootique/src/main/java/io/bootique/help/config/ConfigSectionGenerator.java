@@ -1,12 +1,14 @@
 package io.bootique.help.config;
 
 import io.bootique.help.FormattedAppender;
+import io.bootique.meta.MetadataNode;
 import io.bootique.meta.config.ConfigListMetadata;
 import io.bootique.meta.config.ConfigMetadataNode;
 import io.bootique.meta.config.ConfigObjectMetadata;
 import io.bootique.meta.config.ConfigMetadataVisitor;
 import io.bootique.meta.config.ConfigValueMetadata;
 
+import java.lang.reflect.Type;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -30,7 +32,7 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
 
         List<ConfigMetadataNode> sortedChildren = metadata.getProperties()
                 .stream()
-                .sorted(Comparator.comparing(ConfigValueMetadata::getName))
+                .sorted(Comparator.comparing(MetadataNode::getName))
                 .collect(Collectors.toList());
 
         if (sortedChildren.isEmpty()) {
@@ -99,7 +101,7 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
     }
 
     protected void printTypeHeader(ConfigValueMetadata metadata) {
-        Class<?> valueType = metadata.getType();
+        Type valueType = metadata.getType();
 
         if (valueType != null) {
             printText("# Type: ", typeLabel(valueType));
@@ -110,7 +112,7 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
         }
     }
 
-    protected String sampleValue(Class<?> type) {
+    protected String sampleValue(Type type) {
 
         // TODO: allow to provide sample values in metadata, so that we can display something useful
 
@@ -145,7 +147,7 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
         }
     }
 
-    protected String typeLabel(Class<?> type) {
+    protected String typeLabel(Type type) {
 
         String typeName = type.getTypeName();
 

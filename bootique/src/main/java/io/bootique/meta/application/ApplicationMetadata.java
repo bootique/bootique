@@ -10,8 +10,10 @@ import java.util.Collection;
  *
  * @since 0.20
  */
-public class ApplicationMetadata extends MetadataNode {
+public class ApplicationMetadata implements MetadataNode {
 
+    private String name;
+    private String description;
     private Collection<CommandMetadata> commands;
     private Collection<OptionMetadata> options;
 
@@ -30,6 +32,16 @@ public class ApplicationMetadata extends MetadataNode {
 
     public static Builder builder(String name, String description) {
         return new Builder().name(name).description(description);
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
     }
 
     public Collection<CommandMetadata> getCommands() {

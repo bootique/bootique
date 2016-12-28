@@ -1,11 +1,9 @@
-package io.bootique;
+package io.bootique.meta.config;
 
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
-import io.bootique.meta.config.ConfigListMetadata;
-import io.bootique.meta.config.ConfigMapMetadata;
-import io.bootique.meta.config.ConfigObjectMetadata;
-import io.bootique.meta.config.ConfigValueMetadata;
+import io.bootique.meta.MetadataNode;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -19,12 +17,19 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-public class DeferredModuleMetadataSupplierTest {
+public class ConfigMetadataCompilerTest {
+
+    private ConfigMetadataCompiler compiler;
+
+    @Before
+    public void before() {
+        compiler = new ConfigMetadataCompiler();
+    }
 
     @Test
-    public void testToConfig() {
+    public void testCompile() {
 
-        ConfigObjectMetadata md = DeferredModuleMetadataSupplier.toConfig("prefix", Config1.class);
+        ConfigObjectMetadata md = (ConfigObjectMetadata) compiler.compile("prefix", Config1.class);
         assertNotNull(md);
 
         assertEquals("prefix", md.getName());
@@ -33,50 +38,49 @@ public class DeferredModuleMetadataSupplierTest {
 
         assertEquals(7, md.getProperties().size());
 
-        Map<String, ConfigValueMetadata> propMap = md
+        Map<String, ConfigMetadataNode> propMap = md
                 .getProperties()
                 .stream()
-                .collect(Collectors.toMap(ConfigValueMetadata::getName, Function.identity()));
+                .collect(Collectors.toMap(MetadataNode::getName, Function.identity()));
 
-        ConfigValueMetadata p1 = propMap.get("p1");
+        ConfigValueMetadata p1 = (ConfigValueMetadata) propMap.get("p1");
         assertEquals(Integer.TYPE, p1.getType());
         assertNull(p1.getDescription());
 
-        ConfigValueMetadata p2 = propMap.get("p2");
+        ConfigValueMetadata p2 = (ConfigValueMetadata) propMap.get("p2");
         assertEquals(BigDecimal.class, p2.getType());
         assertEquals("description of p2", p2.getDescription());
 
-        ConfigObjectMetadata p3 = (ConfigObjectMetadata) propMap.get("p3");
+        ConfigMetadataNode p3 = propMap.get("p3");
         assertEquals(Config2.class, p3.getType());
-        assertEquals(1, p3.getProperties().size());
 
         ConfigListMetadata p4 = (ConfigListMetadata) propMap.get("p4");
-        assertEquals(List.class, p4.getType());
+        assertEquals("java.util.List<java.lang.String>", p4.getType().getTypeName());
         assertEquals(String.class, p4.getElementType().getType());
         assertEquals(ConfigValueMetadata.class, p4.getElementType().getClass());
 
         ConfigListMetadata p5 = (ConfigListMetadata) propMap.get("p5");
-        assertEquals(List.class, p5.getType());
+        assertEquals("java.util.List<io.bootique.meta.config.ConfigMetadataCompilerTest$Config2>",
+                p5.getType().getTypeName());
         assertEquals(Config2.class, p5.getElementType().getType());
-        assertEquals(ConfigObjectMetadata.class, p5.getElementType().getClass());
 
         ConfigMapMetadata p6 = (ConfigMapMetadata) propMap.get("p6");
-        assertEquals(Map.class, p6.getType());
+        assertEquals("java.util.Map<java.lang.String, java.math.BigDecimal>", p6.getType().getTypeName());
         assertEquals(String.class, p6.getKeysType());
         assertEquals(BigDecimal.class, p6.getValuesType().getType());
         assertEquals(ConfigValueMetadata.class, p6.getValuesType().getClass());
 
         ConfigMapMetadata p7 = (ConfigMapMetadata) propMap.get("p7");
-        assertEquals(Map.class, p7.getType());
+        assertEquals("java.util.Map<java.lang.Integer, io.bootique.meta.config.ConfigMetadataCompilerTest$Config2>",
+                p7.getType().getTypeName());
         assertEquals(Integer.class, p7.getKeysType());
         assertEquals(Config2.class, p7.getValuesType().getType());
-        assertEquals(ConfigObjectMetadata.class, p7.getValuesType().getClass());
     }
 
     @Test
-    public void testToConfig_Cycle() {
+    public void testCompile_Cycle() {
 
-        ConfigObjectMetadata md = DeferredModuleMetadataSupplier.toConfig("prefix", Config3.class);
+        ConfigObjectMetadata md = (ConfigObjectMetadata) compiler.compile("prefix", Config3.class);
         assertNotNull(md);
 
         assertEquals("prefix", md.getName());
@@ -85,9 +89,8 @@ public class DeferredModuleMetadataSupplierTest {
         assertEquals(1, md.getProperties().size());
 
         ConfigListMetadata p1 = (ConfigListMetadata) md.getProperties().iterator().next();
-        assertEquals(List.class, p1.getType());
+        assertEquals("java.util.Collection<io.bootique.meta.config.ConfigMetadataCompilerTest$Config4>", p1.getType().toString());
         assertEquals(Config4.class, p1.getElementType().getType());
-        assertEquals(ConfigObjectMetadata.class, p1.getElementType().getClass());
     }
 
     @BQConfig("Describes Config1")
