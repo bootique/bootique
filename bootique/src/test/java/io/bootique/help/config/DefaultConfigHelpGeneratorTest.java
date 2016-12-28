@@ -130,19 +130,19 @@ public class DefaultConfigHelpGeneratorTest {
                 "      # Root config of M1",
                 "      m1root:",
                 "            # Type: String",
-                "            p1: 'string'",
+                "            p1: <string>",
                 "",
                 "            # Type: int",
                 "            # Designates an integer value",
-                "            p2: 100",
+                "            p2: <int>",
                 "",
                 "      # Type: io.bootique.help.config.DefaultConfigHelpGeneratorTest$ConfigRoot2",
                 "      m2root:",
                 "            # Type: boolean",
-                "            p0: false",
+                "            p0: <true|false>",
                 "",
                 "            # Type: io.bootique.Bootique",
-                "            p4: value"
+                "            p4: <value>"
         );
     }
 
@@ -178,17 +178,17 @@ public class DefaultConfigHelpGeneratorTest {
                 "            # Type: List",
                 "            p1:",
                 "                  - # Element type: int",
-                "                    100",
+                "                    <int>",
                 "",
                 "            # Type: List",
                 "            # I am a list",
                 "            p2:",
                 "                  - # Element type: io.bootique.help.config.DefaultConfigHelpGeneratorTest$ConfigRoot3",
                 "                    # Type: boolean",
-                "                    p3: false",
+                "                    p3: <true|false>",
                 "",
                 "                    # Type: String",
-                "                    p4: 'string'"
+                "                    p4: <string>"
         );
     }
 

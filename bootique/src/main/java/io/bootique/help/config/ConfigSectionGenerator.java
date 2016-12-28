@@ -119,29 +119,29 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
         switch (typeName) {
             case "boolean":
             case "java.lang.Boolean":
-                return "false";
+                return "<true|false>";
             case "int":
             case "java.lang.Integer":
-                return "100";
+                return "<int>";
             case "byte":
             case "java.lang.Byte":
-                return "1";
+                return "<byte>";
             case "double":
             case "java.lang.Double":
-                return "double";
+                return "<double>";
             case "float":
             case "java.lang.Float":
-                return "1.1";
+                return "<float>";
             case "short":
             case "java.lang.Short":
-                return "1";
+                return "<short>";
             case "long":
             case "java.lang.Long":
-                return "10000000";
+                return "<long>";
             case "java.lang.String":
-                return "'string'";
+                return "<string>";
             default:
-                return "value";
+                return "<value>";
         }
     }
 
