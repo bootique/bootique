@@ -21,6 +21,10 @@ supported. You may have not known this, but before 0.21, you could use partial o
 anymore. Now either a short option or a long option with full name must be used (i.e. "-h" or "--help" in case of the 
 help command).
 
+* [bootique #113](https://github.com/bootique/bootique/issues/113): Classes in ```io.bootique.application``` package 
+were moved under ```io.bootique.meta.application``` in an effort to centralize Bootique metadata facilities. If you 
+referenced them in your code, you will need to fix the imports and recompile. This will primarily affect custom Commands.
+
 * [bootique-jdbc #6](https://github.com/bootique/bootique-jdbc/issues/6): bootique-jdbc uses Tomcat DataSource that has 
  a few dozens of config properties. As we migrated JDBC configuration from a map to a 
  [specific class](https://github.com/bootique/bootique-jdbc/blob/master/bootique-jdbc/src/main/java/io/bootique/jdbc/TomcatDataSourceFactory.java),
