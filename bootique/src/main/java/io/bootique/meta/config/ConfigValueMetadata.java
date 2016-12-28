@@ -36,7 +36,7 @@ public class ConfigValueMetadata implements ConfigMetadataNode {
 
     @Override
     public <T> T accept(ConfigMetadataVisitor<T> visitor) {
-        return visitor.visitConfigPropertyMetadata(this);
+        return visitor.visitValueMetadata(this);
     }
 
     @Override

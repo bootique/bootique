@@ -26,7 +26,7 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
     }
 
     @Override
-    public Object visitConfigMetadata(ConfigObjectMetadata metadata) {
+    public Object visitObjectMetadata(ConfigObjectMetadata metadata) {
         printTypeHeader(metadata);
         out.printText(metadata.getName(), ":");
 
@@ -54,7 +54,7 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
     }
 
     @Override
-    public Object visitConfigPropertyMetadata(ConfigValueMetadata metadata) {
+    public Object visitValueMetadata(ConfigValueMetadata metadata) {
 
         printTypeHeader(metadata);
 
@@ -67,7 +67,7 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
     }
 
     @Override
-    public Object visitConfigListMetadata(ConfigListMetadata metadata) {
+    public Object visitListMetadata(ConfigListMetadata metadata) {
 
         // TODO: decipher collection type... for now hardcoding List type
         printText("# Type: List");

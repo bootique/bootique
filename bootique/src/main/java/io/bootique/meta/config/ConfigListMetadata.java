@@ -20,7 +20,7 @@ public class ConfigListMetadata extends ConfigValueMetadata {
 
     @Override
     public <T> T accept(ConfigMetadataVisitor<T> visitor) {
-        return visitor.visitConfigListMetadata(this);
+        return visitor.visitListMetadata(this);
     }
 
     public ConfigMetadataNode getElementType() {

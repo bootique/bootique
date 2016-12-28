@@ -37,7 +37,7 @@ public class ConfigObjectMetadata extends ConfigValueMetadata {
 
     @Override
     public <T> T accept(ConfigMetadataVisitor<T> visitor) {
-        return visitor.visitConfigMetadata(this);
+        return visitor.visitObjectMetadata(this);
     }
 
     public Collection<ConfigMetadataNode> getProperties() {

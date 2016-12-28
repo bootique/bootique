@@ -21,7 +21,7 @@ public class ConfigMapMetadata extends ConfigValueMetadata {
 
     @Override
     public <T> T accept(ConfigMetadataVisitor<T> visitor) {
-        return visitor.visitConfigMapMetadata(this);
+        return visitor.visitMapMetadata(this);
     }
 
     public Class<?> getKeysType() {

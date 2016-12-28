@@ -5,19 +5,19 @@ package io.bootique.meta.config;
  */
 public interface ConfigMetadataVisitor<T> {
 
-    default T visitConfigMetadata(ConfigObjectMetadata metadata) {
+    default T visitObjectMetadata(ConfigObjectMetadata metadata) {
         return null;
     }
 
-    default T visitConfigPropertyMetadata(ConfigValueMetadata metadata) {
+    default T visitValueMetadata(ConfigValueMetadata metadata) {
         return null;
     }
 
-    default T visitConfigListMetadata(ConfigListMetadata metadata) {
+    default T visitListMetadata(ConfigListMetadata metadata) {
         return null;
     }
 
-    default T visitConfigMapMetadata(ConfigMapMetadata metadata) {
+    default T visitMapMetadata(ConfigMapMetadata metadata) {
         return null;
     }
 }

@@ -61,14 +61,14 @@ public class ConfigMetadataIT {
         String walkThrough = cm.accept(new ConfigMetadataVisitor<String>() {
 
             @Override
-            public String visitConfigMetadata(ConfigObjectMetadata metadata) {
-                StringBuilder buffer = new StringBuilder(visitConfigPropertyMetadata(metadata));
+            public String visitObjectMetadata(ConfigObjectMetadata metadata) {
+                StringBuilder buffer = new StringBuilder(visitValueMetadata(metadata));
                 metadata.getProperties().forEach(p -> buffer.append(":[").append(p.accept(this)).append("]"));
                 return buffer.toString();
             }
 
             @Override
-            public String visitConfigPropertyMetadata(ConfigValueMetadata metadata) {
+            public String visitValueMetadata(ConfigValueMetadata metadata) {
                 return metadata.getName() + ":" + metadata.getType().getTypeName() + ":" + metadata.getDescription();
             }
         });

@@ -23,7 +23,7 @@ class ConfigSectionListChildGenerator implements ConfigMetadataVisitor<Object> {
     }
 
     @Override
-    public Object visitConfigPropertyMetadata(ConfigValueMetadata metadata) {
+    public Object visitValueMetadata(ConfigValueMetadata metadata) {
         printTypeHeader(metadata);
 
         String line = metadata.getType() != null ? parent.sampleValue(metadata.getType()) : "?";
@@ -32,7 +32,7 @@ class ConfigSectionListChildGenerator implements ConfigMetadataVisitor<Object> {
     }
 
     @Override
-    public Object visitConfigMetadata(ConfigObjectMetadata metadata) {
+    public Object visitObjectMetadata(ConfigObjectMetadata metadata) {
         printTypeHeader(metadata);
 
         List<ConfigMetadataNode> sortedChildren = metadata.getProperties()
