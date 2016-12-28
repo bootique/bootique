@@ -3,6 +3,7 @@ package io.bootique;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.meta.config.ConfigListMetadata;
+import io.bootique.meta.config.ConfigMapMetadata;
 import io.bootique.meta.config.ConfigObjectMetadata;
 import io.bootique.meta.config.ConfigValueMetadata;
 import io.bootique.meta.module.ModuleMetadata;
@@ -52,25 +53,24 @@ class DeferredModuleMetadataSupplier implements Supplier<Collection<ModuleMetada
     private static ConfigValueMetadata compile(Type type, String name, BQConfigProperty propertyAnnotation) {
 
         Class<?> typeClass = Object.class;
-        Class<?> parameterType = Object.class;
+        Type[] parameterTypes = null;
 
         if (type instanceof Class) {
             typeClass = (Class<?>) type;
         } else if (type instanceof ParameterizedType) {
+
             ParameterizedType parameterizedType = (ParameterizedType) type;
 
             if (parameterizedType.getRawType() instanceof Class) {
                 typeClass = (Class<?>) parameterizedType.getRawType();
-            }
-
-            Type[] args = parameterizedType.getActualTypeArguments();
-            if (args.length == 1 && args[0] instanceof Class) {
-                parameterType = (Class<?>) args[0];
+                parameterTypes = parameterizedType.getActualTypeArguments();
             }
         }
 
         if (Collection.class.isAssignableFrom(typeClass)) {
-            return toCollectionProperty(name, typeClass, parameterType, propertyAnnotation);
+            return toCollectionProperty(name, typeClass, parameterTypes, propertyAnnotation);
+        } else if (Map.class.isAssignableFrom(typeClass)) {
+            return toMapProperty(name, typeClass, parameterTypes, propertyAnnotation);
         } else if (typeClass.isAnnotationPresent(BQConfig.class)) {
             return toConfig(name, typeClass);
         } else {
@@ -81,10 +81,15 @@ class DeferredModuleMetadataSupplier implements Supplier<Collection<ModuleMetada
     private static ConfigListMetadata toCollectionProperty(
             String name,
             Class<?> collectionType,
-            Class<?> elementType,
+            Type[] collectionParameters,
             BQConfigProperty annotation) {
 
-        ConfigValueMetadata elementMetadata = ConfigValueMetadata.builder().type(elementType).build();
+        Class<?> elementType = collectionParameters != null
+                && collectionParameters.length == 1
+                && collectionParameters[0] instanceof Class
+                ? (Class<?>) collectionParameters[0] : Object.class;
+
+        ConfigValueMetadata elementMetadata = compile(elementType, null, null);
 
         return ConfigListMetadata
                 .builder(name)
@@ -94,11 +99,42 @@ class DeferredModuleMetadataSupplier implements Supplier<Collection<ModuleMetada
                 .build();
     }
 
+    private static ConfigMapMetadata toMapProperty(
+            String name,
+            Class<?> mapType,
+            Type[] mapParameters,
+            BQConfigProperty annotation) {
+
+        Class<?> keysType = Object.class;
+        Class<?> valuesType = Object.class;
+
+        if (mapParameters != null && mapParameters.length == 2) {
+
+            if (mapParameters[0] instanceof Class) {
+                keysType = (Class<?>) mapParameters[0];
+            }
+
+            if (mapParameters[1] instanceof Class) {
+                valuesType = (Class<?>) mapParameters[1];
+            }
+        }
+
+        ConfigValueMetadata valueMetadata = compile(valuesType, null, null);
+
+        return ConfigMapMetadata
+                .builder(name)
+                .type(mapType)
+                .description(annotation.value())
+                .keysType(keysType)
+                .valuesType(valueMetadata)
+                .build();
+    }
+
     private static ConfigValueMetadata toConfigProperty(String name, Class<?> type, BQConfigProperty annotation) {
         return ConfigValueMetadata
                 .builder(name)
                 .type(type)
-                .description(annotation.value())
+                .description(annotation != null ? annotation.value() : null)
                 .build();
     }
 
@@ -176,10 +212,5 @@ class DeferredModuleMetadataSupplier implements Supplier<Collection<ModuleMetada
         });
 
         return configs;
-    }
-
-    private enum PropertyType {
-
-        scalar, object, collection
     }
 }

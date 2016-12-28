@@ -16,4 +16,8 @@ public interface ConfigMetadataVisitor<T> {
     default T visitConfigListMetadata(ConfigListMetadata metadata) {
         return null;
     }
+
+    default T visitConfigMapMetadata(ConfigMapMetadata metadata) {
+        return null;
+    }
 }

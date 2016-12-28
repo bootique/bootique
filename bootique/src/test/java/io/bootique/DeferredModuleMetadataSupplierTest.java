@@ -3,6 +3,7 @@ package io.bootique;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.meta.config.ConfigListMetadata;
+import io.bootique.meta.config.ConfigMapMetadata;
 import io.bootique.meta.config.ConfigObjectMetadata;
 import io.bootique.meta.config.ConfigValueMetadata;
 import org.junit.Test;
@@ -29,7 +30,7 @@ public class DeferredModuleMetadataSupplierTest {
         assertEquals("Describes Config1", md.getDescription());
         assertEquals(Config1.class, md.getType());
 
-        assertEquals(4, md.getProperties().size());
+        assertEquals(7, md.getProperties().size());
 
         Map<String, ConfigValueMetadata> propMap = md
                 .getProperties()
@@ -47,15 +48,30 @@ public class DeferredModuleMetadataSupplierTest {
         assertEquals("description of p2", p2.getDescription());
 
         ConfigObjectMetadata p3 = (ConfigObjectMetadata) propMap.get("p3");
-        assertNotNull(p3);
         assertEquals(Config2.class, p3.getType());
         assertEquals(1, p3.getProperties().size());
 
         ConfigListMetadata p4 = (ConfigListMetadata) propMap.get("p4");
-        assertNotNull(p4);
         assertEquals(List.class, p4.getType());
-        assertNotNull(p4.getElementType());
         assertEquals(String.class, p4.getElementType().getType());
+        assertEquals(ConfigValueMetadata.class, p4.getElementType().getClass());
+
+        ConfigListMetadata p5 = (ConfigListMetadata) propMap.get("p5");
+        assertEquals(List.class, p5.getType());
+        assertEquals(Config2.class, p5.getElementType().getType());
+        assertEquals(ConfigObjectMetadata.class, p5.getElementType().getClass());
+
+        ConfigMapMetadata p6 = (ConfigMapMetadata) propMap.get("p6");
+        assertEquals(Map.class, p6.getType());
+        assertEquals(String.class, p6.getKeysType());
+        assertEquals(BigDecimal.class, p6.getValuesType().getType());
+        assertEquals(ConfigValueMetadata.class, p6.getValuesType().getClass());
+
+        ConfigMapMetadata p7 = (ConfigMapMetadata) propMap.get("p7");
+        assertEquals(Map.class, p7.getType());
+        assertEquals(Integer.class, p7.getKeysType());
+        assertEquals(Config2.class, p7.getValuesType().getType());
+        assertEquals(ConfigObjectMetadata.class, p7.getValuesType().getClass());
     }
 
     @BQConfig("Describes Config1")
@@ -75,6 +91,18 @@ public class DeferredModuleMetadataSupplierTest {
 
         @BQConfigProperty
         public void setP4(List<String> v) {
+        }
+
+        @BQConfigProperty
+        public void setP5(List<Config2> v) {
+        }
+
+        @BQConfigProperty
+        public void setP6(Map<String, BigDecimal> v) {
+        }
+
+        @BQConfigProperty
+        public void setP7(Map<Integer, Config2> v) {
         }
 
         public void setNonP(String v) {
