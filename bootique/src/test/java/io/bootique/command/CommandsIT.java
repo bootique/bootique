@@ -3,7 +3,7 @@ package io.bootique.command;
 import io.bootique.BQModuleProvider;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
-import io.bootique.application.CommandMetadata;
+import io.bootique.meta.application.CommandMetadata;
 import io.bootique.cli.Cli;
 import org.junit.Before;
 import org.junit.Test;

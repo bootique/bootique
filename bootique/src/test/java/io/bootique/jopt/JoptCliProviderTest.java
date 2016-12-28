@@ -1,8 +1,8 @@
 package io.bootique.jopt;
 
-import io.bootique.application.ApplicationMetadata;
-import io.bootique.application.CommandMetadata;
-import io.bootique.application.OptionMetadata;
+import io.bootique.meta.application.ApplicationMetadata;
+import io.bootique.meta.application.CommandMetadata;
+import io.bootique.meta.application.OptionMetadata;
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandManager;

@@ -1,6 +1,6 @@
 package io.bootique.help;
 
-import io.bootique.application.OptionMetadata;
+import io.bootique.meta.application.OptionMetadata;
 
 import java.util.ArrayList;
 import java.util.HashMap;

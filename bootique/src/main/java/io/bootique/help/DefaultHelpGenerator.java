@@ -1,6 +1,6 @@
 package io.bootique.help;
 
-import io.bootique.application.ApplicationMetadata;
+import io.bootique.meta.application.ApplicationMetadata;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -1,4 +1,4 @@
-package io.bootique.application;
+package io.bootique.meta.application;
 
 import io.bootique.meta.MetadataNode;
 

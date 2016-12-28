@@ -1,8 +1,8 @@
 package io.bootique;
 
 import com.google.inject.ProvisionException;
-import io.bootique.application.CommandMetadata;
-import io.bootique.application.OptionMetadata;
+import io.bootique.meta.application.CommandMetadata;
+import io.bootique.meta.application.OptionMetadata;
 import io.bootique.cli.Cli;
 import io.bootique.command.CommandOutcome;
 import io.bootique.command.CommandWithMetadata;

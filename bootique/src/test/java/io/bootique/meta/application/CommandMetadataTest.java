@@ -1,8 +1,9 @@
-package io.bootique.application;
+package io.bootique.meta.application;
 
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandOutcome;
+import io.bootique.meta.application.CommandMetadata;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

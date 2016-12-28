@@ -2,7 +2,7 @@ package io.bootique;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
-import io.bootique.application.CommandMetadata;
+import io.bootique.meta.application.CommandMetadata;
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandManager;

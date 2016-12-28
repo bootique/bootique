@@ -1,7 +1,7 @@
 package io.bootique.help;
 
 import com.google.inject.Provider;
-import io.bootique.application.CommandMetadata;
+import io.bootique.meta.application.CommandMetadata;
 import io.bootique.cli.Cli;
 import io.bootique.command.CommandOutcome;
 import io.bootique.command.CommandWithMetadata;

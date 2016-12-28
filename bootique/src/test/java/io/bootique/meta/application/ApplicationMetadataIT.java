@@ -1,7 +1,8 @@
-package io.bootique.application;
+package io.bootique.meta.application;
 
 import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
+import io.bootique.meta.application.ApplicationMetadata;
 import io.bootique.unit.BQInternalTestFactory;
 import org.junit.Rule;
 import org.junit.Test;

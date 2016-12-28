@@ -5,6 +5,7 @@
 * #102 Metadata model for modules and their configs
 * #105 Default command name generation should convert camel-case to dashes 
 * #112 Explicit short option names 
+* #113 Move io.bootique.application to io.bootique.meta.application
 
 ## 0.20
 

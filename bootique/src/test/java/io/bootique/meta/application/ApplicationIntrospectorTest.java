@@ -1,6 +1,7 @@
-package io.bootique.application;
+package io.bootique.meta.application;
 
 import io.bootique.Bootique;
+import io.bootique.meta.application.ApplicationIntrospector;
 import org.junit.Assert;
 import org.junit.Test;
 

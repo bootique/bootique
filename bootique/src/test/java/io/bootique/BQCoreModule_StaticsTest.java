@@ -12,7 +12,7 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import io.bootique.annotation.EnvironmentProperties;
-import io.bootique.application.OptionMetadata;
+import io.bootique.meta.application.OptionMetadata;
 
 public class BQCoreModule_StaticsTest {
 
