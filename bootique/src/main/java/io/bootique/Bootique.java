@@ -8,7 +8,7 @@ import io.bootique.command.CommandOutcome;
 import io.bootique.env.DefaultEnvironment;
 import io.bootique.log.BootLogger;
 import io.bootique.log.DefaultBootLogger;
-import io.bootique.module.ModuleMetadata;
+import io.bootique.meta.module.ModuleMetadata;
 import joptsimple.OptionException;
 
 import java.util.ArrayList;

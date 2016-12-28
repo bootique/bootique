@@ -1,6 +1,7 @@
-package io.bootique.module;
+package io.bootique.meta.module;
 
-import io.bootique.application.ApplicationMetadataNode;
+import io.bootique.meta.MetadataNode;
+import io.bootique.meta.config.ConfigObjectMetadata;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,7 +11,7 @@ import java.util.Collection;
  *
  * @since 0.21
  */
-public class ModuleMetadata extends ApplicationMetadataNode {
+public class ModuleMetadata extends MetadataNode {
 
     private Collection<ConfigObjectMetadata> configs;
 

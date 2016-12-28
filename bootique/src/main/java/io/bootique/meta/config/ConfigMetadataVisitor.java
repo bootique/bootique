@@ -1,4 +1,4 @@
-package io.bootique.module;
+package io.bootique.meta.config;
 
 /**
  * @since 0.21
@@ -9,7 +9,7 @@ public interface ConfigMetadataVisitor<T> {
         return null;
     }
 
-    default T visitConfigPropertyMetadata(ConfigPropertyMetadata metadata) {
+    default T visitConfigPropertyMetadata(ConfigValueMetadata metadata) {
         return null;
     }
 

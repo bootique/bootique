@@ -1,11 +1,11 @@
 package io.bootique.help.config;
 
 import io.bootique.Bootique;
-import io.bootique.module.ConfigListMetadata;
-import io.bootique.module.ConfigObjectMetadata;
-import io.bootique.module.ConfigPropertyMetadata;
-import io.bootique.module.ModuleMetadata;
-import io.bootique.module.ModulesMetadata;
+import io.bootique.meta.config.ConfigListMetadata;
+import io.bootique.meta.config.ConfigObjectMetadata;
+import io.bootique.meta.config.ConfigValueMetadata;
+import io.bootique.meta.module.ModuleMetadata;
+import io.bootique.meta.module.ModulesMetadata;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -103,15 +103,15 @@ public class DefaultConfigHelpGeneratorTest {
                 .builder("m1root")
                 .description("Root config of M1")
                 .type(ConfigRoot1.class)
-                .addProperty(ConfigPropertyMetadata.builder("p2").type(Integer.TYPE).description("Designates an integer value").build())
-                .addProperty(ConfigPropertyMetadata.builder("p1").type(String.class).build())
+                .addProperty(ConfigValueMetadata.builder("p2").type(Integer.TYPE).description("Designates an integer value").build())
+                .addProperty(ConfigValueMetadata.builder("p1").type(String.class).build())
                 .build();
 
         ConfigObjectMetadata m2Config = ConfigObjectMetadata
                 .builder("m2root")
                 .type(ConfigRoot2.class)
-                .addProperty(ConfigPropertyMetadata.builder("p0").type(Boolean.class).build())
-                .addProperty(ConfigPropertyMetadata.builder("p4").type(Bootique.class).build())
+                .addProperty(ConfigValueMetadata.builder("p0").type(Boolean.class).build())
+                .addProperty(ConfigValueMetadata.builder("p4").type(Bootique.class).build())
                 .build();
 
         ModuleMetadata module1 = ModuleMetadata.builder("M1").addConfig(m1Config).build();
@@ -149,11 +149,11 @@ public class DefaultConfigHelpGeneratorTest {
     @Test
     public void testGenerate_ConfigsLists() {
 
-        ConfigPropertyMetadata listMd1 = ConfigPropertyMetadata.builder().type(Integer.TYPE).build();
+        ConfigValueMetadata listMd1 = ConfigValueMetadata.builder().type(Integer.TYPE).build();
         ConfigObjectMetadata listMd2 = ConfigObjectMetadata.builder()
                 .type(ConfigRoot3.class)
-                .addProperty(ConfigPropertyMetadata.builder("p4").type(String.class).build())
-                .addProperty(ConfigPropertyMetadata.builder("p3").type(Boolean.TYPE).build())
+                .addProperty(ConfigValueMetadata.builder("p4").type(String.class).build())
+                .addProperty(ConfigValueMetadata.builder("p3").type(Boolean.TYPE).build())
                 .build();
 
         ConfigObjectMetadata m1Config = ConfigObjectMetadata

@@ -1,11 +1,11 @@
-package io.bootique.application;
+package io.bootique.meta;
 
 /**
- * A base superclass of the app metadata nodes.
+ * A base superclass of metadata tree nodes.
  *
- * @since 0.20
+ * @since 0.21
  */
-public abstract class ApplicationMetadataNode {
+public abstract class MetadataNode {
 
     protected String name;
     protected String description;

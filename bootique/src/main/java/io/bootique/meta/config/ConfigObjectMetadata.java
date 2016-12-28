@@ -1,4 +1,4 @@
-package io.bootique.module;
+package io.bootique.meta.config;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,9 +8,9 @@ import java.util.Collection;
  *
  * @since 0.21
  */
-public class ConfigObjectMetadata extends ConfigPropertyMetadata implements ConfigMetadataNode {
+public class ConfigObjectMetadata extends ConfigValueMetadata implements ConfigMetadataNode {
 
-    private Collection<ConfigPropertyMetadata> properties;
+    private Collection<ConfigValueMetadata> properties;
 
     public ConfigObjectMetadata() {
         this.properties = new ArrayList<>();
@@ -29,22 +29,22 @@ public class ConfigObjectMetadata extends ConfigPropertyMetadata implements Conf
         return visitor.visitConfigMetadata(this);
     }
 
-    public Collection<ConfigPropertyMetadata> getProperties() {
+    public Collection<ConfigValueMetadata> getProperties() {
         return properties;
     }
 
-    public static class Builder extends ConfigPropertyMetadata.Builder<ConfigObjectMetadata, Builder> {
+    public static class Builder extends ConfigValueMetadata.Builder<ConfigObjectMetadata, Builder> {
 
         public Builder(ConfigObjectMetadata toBuild) {
             super(toBuild);
         }
 
-        public Builder addProperty(ConfigPropertyMetadata property) {
+        public Builder addProperty(ConfigValueMetadata property) {
             toBuild.properties.add(property);
             return this;
         }
 
-        public Builder addProperties(Collection<? extends ConfigPropertyMetadata> properties) {
+        public Builder addProperties(Collection<? extends ConfigValueMetadata> properties) {
             toBuild.properties.addAll(properties);
             return this;
         }

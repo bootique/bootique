@@ -1,6 +1,7 @@
 package io.bootique.application;
 
 import io.bootique.command.Command;
+import io.bootique.meta.MetadataNode;
 import io.bootique.names.ClassToName;
 
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ import java.util.Collection;
 /**
  * @since 0.20
  */
-public class CommandMetadata extends ApplicationMetadataNode {
+public class CommandMetadata extends MetadataNode {
 
     private String shortName;
     private Collection<OptionMetadata> options;

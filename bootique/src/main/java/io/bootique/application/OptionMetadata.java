@@ -1,11 +1,13 @@
 package io.bootique.application;
 
+import io.bootique.meta.MetadataNode;
+
 /**
  * A descriptor of a command-line option.
  *
  * @since 0.20
  */
-public class OptionMetadata extends ApplicationMetadataNode {
+public class OptionMetadata extends MetadataNode {
 
     private String shortName;
     private OptionValueCardinality valueCardinality;

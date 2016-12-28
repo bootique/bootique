@@ -1,10 +1,10 @@
 package io.bootique.help.config;
 
-import io.bootique.application.ApplicationMetadataNode;
+import io.bootique.meta.MetadataNode;
 import io.bootique.help.FormattedAppender;
-import io.bootique.module.ConfigMetadataNode;
-import io.bootique.module.ModuleMetadata;
-import io.bootique.module.ModulesMetadata;
+import io.bootique.meta.config.ConfigMetadataNode;
+import io.bootique.meta.module.ModuleMetadata;
+import io.bootique.meta.module.ModulesMetadata;
 
 import java.util.Collection;
 import java.util.Comparator;
@@ -44,7 +44,7 @@ public class DefaultConfigHelpGenerator implements ConfigHelpGenerator {
         List<ConfigMetadataNode> sortedConfigs = sortedModules.stream()
                 .map(ModuleMetadata::getConfigs)
                 .flatMap(Collection::stream)
-                .sorted(Comparator.comparing(ApplicationMetadataNode::getName))
+                .sorted(Comparator.comparing(MetadataNode::getName))
                 .collect(Collectors.toList());
 
         printConfigurations(appender, sortedConfigs);

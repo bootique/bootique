@@ -1,4 +1,4 @@
-package io.bootique.module;
+package io.bootique.meta.config;
 
 /**
  * @since 0.21

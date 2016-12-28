@@ -2,9 +2,9 @@ package io.bootique;
 
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
-import io.bootique.module.ConfigListMetadata;
-import io.bootique.module.ConfigObjectMetadata;
-import io.bootique.module.ConfigPropertyMetadata;
+import io.bootique.meta.config.ConfigListMetadata;
+import io.bootique.meta.config.ConfigObjectMetadata;
+import io.bootique.meta.config.ConfigValueMetadata;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -31,17 +31,17 @@ public class DeferredModuleMetadataSupplierTest {
 
         assertEquals(4, md.getProperties().size());
 
-        Map<String, ConfigPropertyMetadata> propMap = md
+        Map<String, ConfigValueMetadata> propMap = md
                 .getProperties()
                 .stream()
-                .collect(Collectors.toMap(ConfigPropertyMetadata::getName, Function.identity()));
+                .collect(Collectors.toMap(ConfigValueMetadata::getName, Function.identity()));
 
-        ConfigPropertyMetadata p1 = propMap.get("p1");
+        ConfigValueMetadata p1 = propMap.get("p1");
         assertNotNull(p1);
         assertEquals(Integer.TYPE, p1.getType());
         assertNull(p1.getDescription());
 
-        ConfigPropertyMetadata p2 = propMap.get("p2");
+        ConfigValueMetadata p2 = propMap.get("p2");
         assertNotNull(p2);
         assertEquals(BigDecimal.class, p2.getType());
         assertEquals("description of p2", p2.getDescription());
@@ -56,7 +56,6 @@ public class DeferredModuleMetadataSupplierTest {
         assertEquals(List.class, p4.getType());
         assertNotNull(p4.getElementType());
         assertEquals(String.class, p4.getElementType().getType());
-
     }
 
     @BQConfig("Describes Config1")

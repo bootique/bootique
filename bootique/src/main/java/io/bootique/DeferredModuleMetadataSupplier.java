@@ -2,10 +2,10 @@ package io.bootique;
 
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
-import io.bootique.module.ConfigListMetadata;
-import io.bootique.module.ConfigObjectMetadata;
-import io.bootique.module.ConfigPropertyMetadata;
-import io.bootique.module.ModuleMetadata;
+import io.bootique.meta.config.ConfigListMetadata;
+import io.bootique.meta.config.ConfigObjectMetadata;
+import io.bootique.meta.config.ConfigValueMetadata;
+import io.bootique.meta.module.ModuleMetadata;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -49,7 +49,7 @@ class DeferredModuleMetadataSupplier implements Supplier<Collection<ModuleMetada
         return builder.build();
     }
 
-    private static ConfigPropertyMetadata compile(Type type, String name, BQConfigProperty propertyAnnotation) {
+    private static ConfigValueMetadata compile(Type type, String name, BQConfigProperty propertyAnnotation) {
 
         Class<?> typeClass = Object.class;
         Class<?> parameterType = Object.class;
@@ -84,7 +84,7 @@ class DeferredModuleMetadataSupplier implements Supplier<Collection<ModuleMetada
             Class<?> elementType,
             BQConfigProperty annotation) {
 
-        ConfigPropertyMetadata elementMetadata = ConfigPropertyMetadata.builder().type(elementType).build();
+        ConfigValueMetadata elementMetadata = ConfigValueMetadata.builder().type(elementType).build();
 
         return ConfigListMetadata
                 .builder(name)
@@ -94,8 +94,8 @@ class DeferredModuleMetadataSupplier implements Supplier<Collection<ModuleMetada
                 .build();
     }
 
-    private static ConfigPropertyMetadata toConfigProperty(String name, Class<?> type, BQConfigProperty annotation) {
-        return ConfigPropertyMetadata
+    private static ConfigValueMetadata toConfigProperty(String name, Class<?> type, BQConfigProperty annotation) {
+        return ConfigValueMetadata
                 .builder(name)
                 .type(type)
                 .description(annotation.value())

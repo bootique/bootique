@@ -1,4 +1,4 @@
-package io.bootique.module;
+package io.bootique.meta.module;
 
 import java.util.ArrayList;
 import java.util.Collection;

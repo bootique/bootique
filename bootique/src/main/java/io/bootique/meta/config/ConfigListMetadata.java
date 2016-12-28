@@ -1,4 +1,4 @@
-package io.bootique.module;
+package io.bootique.meta.config;
 
 import java.util.List;
 import java.util.Objects;
@@ -6,9 +6,9 @@ import java.util.Objects;
 /**
  * @since 0.21
  */
-public class ConfigListMetadata extends ConfigPropertyMetadata {
+public class ConfigListMetadata extends ConfigValueMetadata {
 
-    private ConfigPropertyMetadata elementType;
+    private ConfigValueMetadata elementType;
 
     public static Builder builder() {
         return new Builder(new ConfigListMetadata()).type(List.class);
@@ -23,11 +23,11 @@ public class ConfigListMetadata extends ConfigPropertyMetadata {
         return visitor.visitConfigListMetadata(this);
     }
 
-    public ConfigPropertyMetadata getElementType() {
+    public ConfigValueMetadata getElementType() {
         return elementType;
     }
 
-    public static class Builder extends ConfigPropertyMetadata.Builder<ConfigListMetadata, ConfigListMetadata.Builder> {
+    public static class Builder extends ConfigValueMetadata.Builder<ConfigListMetadata, ConfigListMetadata.Builder> {
 
         public Builder(ConfigListMetadata toBuild) {
             super(toBuild);
@@ -39,7 +39,7 @@ public class ConfigListMetadata extends ConfigPropertyMetadata {
             return super.build();
         }
 
-        public Builder elementType(ConfigPropertyMetadata elementType) {
+        public Builder elementType(ConfigValueMetadata elementType) {
             toBuild.elementType = elementType;
             return this;
         }

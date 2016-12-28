@@ -1,10 +1,11 @@
-package io.bootique.module;
+package io.bootique.meta.config;
 
 import com.google.inject.Module;
 import io.bootique.BQModule;
 import io.bootique.BQModuleProvider;
 import io.bootique.BQRuntime;
 import io.bootique.annotation.BQConfigProperty;
+import io.bootique.meta.module.ModulesMetadata;
 import io.bootique.unit.BQInternalTestFactory;
 import org.junit.Rule;
 import org.junit.Test;
@@ -67,12 +68,12 @@ public class ConfigMetadataIT {
             }
 
             @Override
-            public String visitConfigPropertyMetadata(ConfigPropertyMetadata metadata) {
+            public String visitConfigPropertyMetadata(ConfigValueMetadata metadata) {
                 return metadata.getName() + ":" + metadata.getType().getName() + ":" + metadata.getDescription();
             }
         });
 
-        assertEquals("pf:io.bootique.module.ConfigMetadataIT$TestConfig:null:[p1:java.lang.String:(p1 desc)]" ,
+        assertEquals("pf:io.bootique.meta.config.ConfigMetadataIT$TestConfig:null:[p1:java.lang.String:(p1 desc)]" ,
                 walkThrough);
     }
 

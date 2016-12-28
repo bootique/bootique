@@ -1,10 +1,12 @@
-package io.bootique.module;
+package io.bootique.meta.module;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import io.bootique.BQModule;
 import io.bootique.BQModuleProvider;
 import io.bootique.BQRuntime;
+import io.bootique.meta.module.ModuleMetadata;
+import io.bootique.meta.module.ModulesMetadata;
 import io.bootique.unit.BQInternalTestFactory;
 import org.junit.Rule;
 import org.junit.Test;

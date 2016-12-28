@@ -1,21 +1,21 @@
-package io.bootique.module;
+package io.bootique.meta.config;
 
-import io.bootique.application.ApplicationMetadataNode;
+import io.bootique.meta.MetadataNode;
 
 /**
  * Descriptor of a configuration value property.
  *
  * @since 0.21
  */
-public class ConfigPropertyMetadata extends ApplicationMetadataNode implements ConfigMetadataNode {
+public class ConfigValueMetadata extends MetadataNode implements ConfigMetadataNode {
 
     protected Class<?> type;
 
-    protected ConfigPropertyMetadata() {
+    protected ConfigValueMetadata() {
     }
 
     public static Builder builder() {
-        return new Builder(new ConfigPropertyMetadata());
+        return new Builder(new ConfigValueMetadata());
     }
 
     public static Builder builder(String name) {
@@ -32,7 +32,7 @@ public class ConfigPropertyMetadata extends ApplicationMetadataNode implements C
     }
 
     // parameterization is needed to enable covariant return types in subclasses
-    public static class Builder<T extends ConfigPropertyMetadata, B extends Builder<T, B>> {
+    public static class Builder<T extends ConfigValueMetadata, B extends Builder<T, B>> {
 
         protected T toBuild;
 

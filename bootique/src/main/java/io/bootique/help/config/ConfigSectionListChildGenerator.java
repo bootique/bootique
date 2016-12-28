@@ -1,9 +1,9 @@
 package io.bootique.help.config;
 
-import io.bootique.module.ConfigMetadataNode;
-import io.bootique.module.ConfigMetadataVisitor;
-import io.bootique.module.ConfigObjectMetadata;
-import io.bootique.module.ConfigPropertyMetadata;
+import io.bootique.meta.config.ConfigMetadataNode;
+import io.bootique.meta.config.ConfigMetadataVisitor;
+import io.bootique.meta.config.ConfigObjectMetadata;
+import io.bootique.meta.config.ConfigValueMetadata;
 
 import java.util.Comparator;
 import java.util.List;
@@ -21,7 +21,7 @@ class ConfigSectionListChildGenerator implements ConfigMetadataVisitor<Object> {
     }
 
     @Override
-    public Object visitConfigPropertyMetadata(ConfigPropertyMetadata metadata) {
+    public Object visitConfigPropertyMetadata(ConfigValueMetadata metadata) {
         printTypeHeader(metadata);
 
         String line = metadata.getType() != null ? parent.sampleValue(metadata.getType()) : "?";
@@ -35,7 +35,7 @@ class ConfigSectionListChildGenerator implements ConfigMetadataVisitor<Object> {
 
         List<ConfigMetadataNode> sortedChildren = metadata.getProperties()
                 .stream()
-                .sorted(Comparator.comparing(ConfigPropertyMetadata::getName))
+                .sorted(Comparator.comparing(ConfigValueMetadata::getName))
                 .collect(Collectors.toList());
 
         if (sortedChildren.isEmpty()) {
@@ -58,7 +58,7 @@ class ConfigSectionListChildGenerator implements ConfigMetadataVisitor<Object> {
 
     // TODO: visit list?
 
-    protected void printTypeHeader(ConfigPropertyMetadata metadata) {
+    protected void printTypeHeader(ConfigValueMetadata metadata) {
         Class<?> valueType = metadata.getType();
 
         if (valueType != null) {

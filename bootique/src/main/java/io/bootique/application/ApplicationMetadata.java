@@ -1,5 +1,7 @@
 package io.bootique.application;
 
+import io.bootique.meta.MetadataNode;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -8,7 +10,7 @@ import java.util.Collection;
  *
  * @since 0.20
  */
-public class ApplicationMetadata extends ApplicationMetadataNode {
+public class ApplicationMetadata extends MetadataNode {
 
     private Collection<CommandMetadata> commands;
     private Collection<OptionMetadata> options;
