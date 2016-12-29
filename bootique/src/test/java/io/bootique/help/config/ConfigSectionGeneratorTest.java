@@ -1,7 +1,7 @@
 package io.bootique.help.config;
 
 import io.bootique.Bootique;
-import io.bootique.help.FormattedAppender;
+import io.bootique.help.ConsoleAppender;
 import io.bootique.meta.config.ConfigListMetadata;
 import io.bootique.meta.config.ConfigMapMetadata;
 import io.bootique.meta.config.ConfigMetadataNode;
@@ -22,7 +22,7 @@ public class ConfigSectionGeneratorTest {
         }
 
         StringBuilder buffer = new StringBuilder();
-        FormattedAppender out = new FormattedAppender(buffer, 80);
+        ConsoleAppender out = new ConsoleAppender(buffer, 80);
         node.accept(new ConfigSectionGenerator(out));
         String help = buffer.toString();
         assertNotNull(help);
@@ -43,21 +43,21 @@ public class ConfigSectionGeneratorTest {
                 .build();
 
         assertLines(m1Config,
-                "      # Type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1",
-                "      # Root config of M1",
-                "      m1root:",
-                "            # Type: boolean",
-                "            p0: <true|false>",
+                "# Type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1",
+                "# Root config of M1",
+                "m1root:",
+                "      # Type: boolean",
+                "      p0: <true|false>",
                 "",
-                "            # Type: String",
-                "            p1: <string>",
+                "      # Type: String",
+                "      p1: <string>",
                 "",
-                "            # Type: int",
-                "            # Designates an integer value",
-                "            p2: <int>",
+                "      # Type: int",
+                "      # Designates an integer value",
+                "      p2: <int>",
                 "",
-                "            # Type: io.bootique.Bootique",
-                "            p3: <value>"
+                "      # Type: io.bootique.Bootique",
+                "      p3: <value>"
         );
     }
 
@@ -74,13 +74,13 @@ public class ConfigSectionGeneratorTest {
                 .build();
 
         assertLines(m1Config,
-                "      # Type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1",
-                "      # Root config of M1",
-                "      m1root:",
-                "            # Type: List",
-                "            p1:",
-                "                  - # Element type: int",
-                "                    <int>"
+                "# Type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1",
+                "# Root config of M1",
+                "m1root:",
+                "      # Type: List",
+                "      p1:",
+                "            - # Element type: int",
+                "              <int>"
         );
     }
 
@@ -101,18 +101,18 @@ public class ConfigSectionGeneratorTest {
                 .build();
 
         assertLines(m1Config,
-                "      # Type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1",
-                "      # Root config of M1",
-                "      m1root:",
-                "            # Type: List",
-                "            # I am a list",
-                "            p2:",
-                "                  - # Element type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot2",
-                "                    # Type: boolean",
-                "                    p3: <true|false>",
+                "# Type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1",
+                "# Root config of M1",
+                "m1root:",
+                "      # Type: List",
+                "      # I am a list",
+                "      p2:",
+                "            - # Element type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot2",
+                "              # Type: boolean",
+                "              p3: <true|false>",
                 "",
-                "                    # Type: String",
-                "                    p4: <string>"
+                "              # Type: String",
+                "              p4: <string>"
         );
     }
 
@@ -129,14 +129,14 @@ public class ConfigSectionGeneratorTest {
                 .build();
 
         assertLines(rootMd,
-                "      # Type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1",
-                "      # Root config of M1",
-                "      m1root:",
-                "            # Type: Map",
-                "            p1:",
-                "                  # Keys type: int",
-                "                  # Values type: int",
-                "                  <int>: <int>"
+                "# Type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1",
+                "# Root config of M1",
+                "m1root:",
+                "      # Type: Map",
+                "      p1:",
+                "            # Keys type: int",
+                "            # Values type: int",
+                "            <int>: <int>"
         );
     }
 
@@ -157,23 +157,21 @@ public class ConfigSectionGeneratorTest {
                 .build();
 
         assertLines(rootMd,
-                "      # Type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1",
-                "      # Root config of M1",
-                "      m1root:",
-                "            # Type: Map",
-                "            p1:",
-                "                  # Keys type: String",
-                "                  # Values type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot2",
-                "                  <string>:",
-                "                        # Type: boolean",
-                "                        p3: <true|false>",
+                "# Type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1",
+                "# Root config of M1",
+                "m1root:",
+                "      # Type: Map",
+                "      p1:",
+                "            # Keys type: String",
+                "            # Values type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot2",
+                "            <string>:",
+                "                  # Type: boolean",
+                "                  p3: <true|false>",
                 "",
-                "                        # Type: String",
-                "                        p4: <string>"
+                "                  # Type: String",
+                "                  p4: <string>"
         );
     }
-
-
 
     public static class ConfigRoot1 {
 

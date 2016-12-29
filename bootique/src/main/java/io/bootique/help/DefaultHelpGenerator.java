@@ -20,14 +20,19 @@ public class DefaultHelpGenerator implements HelpGenerator {
         this.lineWidth = lineWidth;
     }
 
-    protected FormattedAppender createAppender(Appendable out) {
-        return new FormattedAppender(out, lineWidth);
+    protected HelpAppender createAppender(Appendable out) {
+        return new HelpAppender(createConsoleAppender(out));
     }
+
+    protected ConsoleAppender createConsoleAppender(Appendable out) {
+        return new ConsoleAppender(out, lineWidth);
+    }
+
 
     @Override
     public void append(Appendable out) {
 
-        FormattedAppender appender = createAppender(out);
+        HelpAppender appender = createAppender(out);
 
         printName(appender, application.getName(), application.getDescription());
         printOptions(appender, collectOptions());
@@ -49,7 +54,7 @@ public class DefaultHelpGenerator implements HelpGenerator {
     }
 
 
-    protected void printName(FormattedAppender out, String name, String description) {
+    protected void printName(HelpAppender out, String name, String description) {
 
         out.printSectionName("NAME");
 
@@ -62,7 +67,7 @@ public class DefaultHelpGenerator implements HelpGenerator {
         }
     }
 
-    protected void printOptions(FormattedAppender out, Collection<HelpOption> options) {
+    protected void printOptions(HelpAppender out, Collection<HelpOption> options) {
 
         if (options.isEmpty()) {
             return;
@@ -96,7 +101,7 @@ public class DefaultHelpGenerator implements HelpGenerator {
 
             if (o.isLongNameAllowed()) {
 
-                if(!parts.isEmpty()) {
+                if (!parts.isEmpty()) {
                     parts.add(", ");
                 }
 
@@ -114,7 +119,6 @@ public class DefaultHelpGenerator implements HelpGenerator {
                         break;
                 }
             }
-
 
             out.printSubsectionHeader(parts);
 

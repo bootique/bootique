@@ -1,6 +1,7 @@
 package io.bootique.help.config;
 
-import io.bootique.help.FormattedAppender;
+import io.bootique.help.ConsoleAppender;
+import io.bootique.help.HelpAppender;
 import io.bootique.meta.MetadataNode;
 import io.bootique.meta.config.ConfigMetadataNode;
 import io.bootique.meta.module.ModuleMetadata;
@@ -25,13 +26,17 @@ public class DefaultConfigHelpGenerator implements ConfigHelpGenerator {
         this.modulesMetadata = modulesMetadata;
     }
 
-    protected FormattedAppender createAppender(Appendable out) {
-        return new FormattedAppender(out, lineWidth);
+    protected HelpAppender createAppender(Appendable out) {
+        return new HelpAppender(createConsoleAppender(out));
+    }
+
+    protected ConsoleAppender createConsoleAppender(Appendable out) {
+        return new ConsoleAppender(out, lineWidth);
     }
 
     @Override
     public void append(Appendable out) {
-        FormattedAppender appender = createAppender(out);
+        HelpAppender appender = createAppender(out);
 
         List<ModuleMetadata> sortedModules = modulesMetadata
                 .getModules()
@@ -50,7 +55,7 @@ public class DefaultConfigHelpGenerator implements ConfigHelpGenerator {
         printConfigurations(appender, sortedConfigs);
     }
 
-    protected void printModules(FormattedAppender out, Collection<ModuleMetadata> modules) {
+    protected void printModules(HelpAppender out, Collection<ModuleMetadata> modules) {
 
         if (modules.isEmpty()) {
             return;
@@ -62,14 +67,17 @@ public class DefaultConfigHelpGenerator implements ConfigHelpGenerator {
         });
     }
 
-    protected void printConfigurations(FormattedAppender out, List<ConfigMetadataNode> configs) {
+    protected void printConfigurations(HelpAppender out, List<ConfigMetadataNode> configs) {
 
         if (configs.isEmpty()) {
             return;
         }
 
         out.printSectionName("CONFIGURATION");
-        ConfigSectionGenerator generator = new ConfigSectionGenerator(out);
+
+        // using the underlying appender for config section body. Unlike HelpAppender it allows
+        // controlling any number of nested offsets
+        ConfigSectionGenerator generator = new ConfigSectionGenerator(out.getAppender().withOffset());
         ConfigMetadataNode last = configs.get(configs.size() - 1);
 
         configs.forEach(c -> {
@@ -81,7 +89,7 @@ public class DefaultConfigHelpGenerator implements ConfigHelpGenerator {
         });
     }
 
-    protected void printModuleName(FormattedAppender out, String moduleName, String description) {
+    protected void printModuleName(HelpAppender out, String moduleName, String description) {
         Objects.requireNonNull(moduleName);
 
         if (description != null) {

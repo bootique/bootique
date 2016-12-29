@@ -1,6 +1,6 @@
 package io.bootique.help.config;
 
-import io.bootique.help.FormattedAppender;
+import io.bootique.help.ConsoleAppender;
 import io.bootique.meta.MetadataNode;
 import io.bootique.meta.config.ConfigListMetadata;
 import io.bootique.meta.config.ConfigMapMetadata;
@@ -20,16 +20,16 @@ import java.util.stream.Collectors;
  */
 class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
 
-    private FormattedAppender out;
+    private ConsoleAppender out;
 
-    public ConfigSectionGenerator(FormattedAppender out) {
+    public ConfigSectionGenerator(ConsoleAppender out) {
         this.out = Objects.requireNonNull(out);
     }
 
     @Override
     public Object visitObjectMetadata(ConfigObjectMetadata metadata) {
         printTypeHeader(metadata);
-        out.printText(metadata.getName(), ":");
+        out.println(metadata.getName(), ":");
 
         List<ConfigMetadataNode> sortedChildren = metadata.getProperties()
                 .stream()
@@ -112,7 +112,7 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
     }
 
     protected void printText(String... parts) {
-        out.printText(parts);
+        out.println(parts);
     }
 
     protected void println() {

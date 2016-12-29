@@ -9,48 +9,36 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * A helper for building a text help document with consistent formatting. It will include line breaks to separate
- * sections, will provide consistent offsets, text wrapping, etc.
+ * A helper for printing text to a fixed-width console that handles text folding and offsets.
  *
- * @since 0.20
+ * @since 0.21
  */
-public class FormattedAppender {
+public class ConsoleAppender {
 
     static final String NEWLINE = System.getProperty("line.separator");
 
-    private static final String NO_OFFSET = "";
-    private static final String TEXT_OFFSET = "      ";
-    private static final String DESCRIPTION_OFFSET = TEXT_OFFSET + "     ";
-
-    // Enforcing min total width of 40 chars ensures that the option lines do not require folding.
-    // So the folding procedure will be limited to description text only...
     private static final int MIN_LINE_WIDTH = 40;
-
     private static final Pattern SPACE = Pattern.compile("\\s+");
 
     private Appendable out;
     private int lineWidth;
-    private String baseOffset;
+    private String offset;
 
-    // TODO: get rid of appender state in favor of "withOffset"
-    private transient int sectionCount;
-    private transient int subsectionCount;
-
-    public FormattedAppender(Appendable out, int lineWidth) {
+    public ConsoleAppender(Appendable out, int lineWidth) {
 
         if (lineWidth < MIN_LINE_WIDTH) {
             throw new IllegalArgumentException("Line width is too small. Minimal supported width is " + MIN_LINE_WIDTH);
         }
 
-        this.baseOffset = "";
+        this.offset = "";
         this.out = out;
         this.lineWidth = lineWidth;
     }
 
-    protected FormattedAppender(FormattedAppender proto) {
+    protected ConsoleAppender(ConsoleAppender proto) {
         out = proto.out;
         lineWidth = proto.lineWidth;
-        baseOffset = proto.baseOffset;
+        offset = proto.offset;
 
         // do not copy "transient" properties
     }
@@ -60,73 +48,32 @@ public class FormattedAppender {
     }
 
     /**
-     * Creates and returns a new appender with base offset equals to default text offset.
+     * Creates and returns a new appender with base offset equals to default text offset of 6 spaces.
      *
      * @return a new appender with base offset equals to default text offset.
-     * @since 0.21
      */
-    public FormattedAppender withOffset() {
-        return withOffset(TEXT_OFFSET.length());
+    public ConsoleAppender withOffset() {
+        return withOffset(6);
     }
 
     /**
      * Creates and returns a new appender with the specified base offset.
      *
      * @return a new appender with the specified base offset.
-     * @since 0.21
      */
-    public FormattedAppender withOffset(int offset) {
-        FormattedAppender offsetAppender = new FormattedAppender(this);
+    public ConsoleAppender withOffset(int offset) {
+        ConsoleAppender offsetAppender = new ConsoleAppender(this);
 
         if (offset > 0) {
-            StringBuilder padding = new StringBuilder(baseOffset);
+            StringBuilder padding = new StringBuilder(this.offset);
             for (int i = 0; i < offset; i++) {
                 padding.append(" ");
             }
 
-            offsetAppender.baseOffset = padding.toString();
+            offsetAppender.offset = padding.toString();
         }
 
         return offsetAppender;
-    }
-
-    public void printSectionName(String name) {
-
-        // line break between sections
-        if (sectionCount++ > 0) {
-            subsectionCount = 0;
-            println(NO_OFFSET, Collections.emptyList());
-        }
-
-        println(NO_OFFSET, Collections.singletonList(name));
-    }
-
-    public void printSubsectionHeader(String... parts) {
-        printSubsectionHeader(asList(parts));
-    }
-
-    public void printSubsectionHeader(Collection<String> parts) {
-
-        // line break between subsections
-        if (subsectionCount++ > 0) {
-            println(NO_OFFSET, Collections.emptyList());
-        }
-
-        println(TEXT_OFFSET, parts);
-    }
-
-
-    public void printText(String... parts) {
-        println(TEXT_OFFSET, asList(parts));
-    }
-
-    public void printText(Collection<String> parts) {
-        println(TEXT_OFFSET, parts);
-    }
-
-    public void printDescription(String... parts) {
-        foldWithOffset(DESCRIPTION_OFFSET.length(), parts)
-                .forEach(s -> println(DESCRIPTION_OFFSET, Collections.singleton(s)));
     }
 
     public void println() {
@@ -137,12 +84,15 @@ public class FormattedAppender {
         }
     }
 
-    protected void println(String offset, Collection<String> parts) {
+    public void println(String... phrases) {
+        println(asList(phrases));
+    }
+
+    public void println(Collection<String> phrases) {
 
         try {
-            out.append(baseOffset);
-            out.append(offset);
-            for (String p : parts) {
+            out.append(this.offset);
+            for (String p : phrases) {
                 out.append(p);
             }
         } catch (IOException e) {
@@ -152,22 +102,35 @@ public class FormattedAppender {
         println();
     }
 
-    protected Collection<String> foldWithOffset(int offset, String... parts) {
+    public void foldPrintln(String... phrases) {
+        foldPrintln(asList(phrases));
+    }
 
-        offset += baseOffset.length();
+    public void foldPrintln(Collection<String> phrases) {
 
-        if (offset > DESCRIPTION_OFFSET.length()) {
-            throw new IllegalArgumentException("Offset is too big: " + offset
-                    + ". Can't fit the text in remaining space.");
-        }
+        foldToLines(phrases).forEach(line -> {
+            try {
+                out.append(this.offset);
+                out.append(line);
+                out.append(NEWLINE);
+            } catch (IOException e) {
+                throw new RuntimeException("Error printing help", e);
+            }
+        });
+    }
 
-        int maxLength = lineWidth - offset;
+    protected Collection<String> foldToLines(Collection<String> phrases) {
+
+        int offset = this.offset.length();
+
+        // refuse to fold lines to columns shorter than MIN_WIDTH
+        int maxLength = lineWidth - offset < MIN_LINE_WIDTH ? lineWidth - offset : MIN_LINE_WIDTH;
 
         List<String> folded = new ArrayList<>();
         StringBuilder line = new StringBuilder();
 
         // must split even shorter strings as they may be combined with the following pieces
-        FormattedAppender.asList(parts).stream().map(String::trim)
+        phrases.stream().map(String::trim)
                 .map(s -> SPACE.split(s))
                 .flatMap(lines -> Arrays.asList(lines).stream())
                 .forEach(word -> {

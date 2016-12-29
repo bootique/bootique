@@ -14,7 +14,7 @@ public class DefaultHelpGeneratorTest {
 
         StringBuilder expected = new StringBuilder();
         for (String s : expectedLines) {
-            expected.append(s).append(FormattedAppender.NEWLINE);
+            expected.append(s).append(ConsoleAppender.NEWLINE);
         }
 
         String help = generator.generate();
@@ -64,13 +64,13 @@ public class DefaultHelpGeneratorTest {
                 "",
                 "OPTIONS",
                 "      -d [level], --debug[=level]",
-                "           Switches to debug mode",
+                "            Switches to debug mode",
                 "",
                 "      -l, --list",
-                "           Lists everything",
+                "            Lists everything",
                 "",
                 "      -r val, --run=val",
-                "           Runs specified command"
+                "            Runs specified command"
         );
     }
 
@@ -94,13 +94,13 @@ public class DefaultHelpGeneratorTest {
                 "",
                 "OPTIONS",
                 "      -d [level], --debug[=level]",
-                "           Switches to debug mode",
+                "            Switches to debug mode",
                 "",
                 "      -l",
-                "           Lists everything",
+                "            Lists everything",
                 "",
                 "      -r val",
-                "           Runs specified command"
+                "            Runs specified command"
         );
     }
 
@@ -123,13 +123,13 @@ public class DefaultHelpGeneratorTest {
                 "",
                 "OPTIONS",
                 "      -l, --list",
-                "           Lists everything",
+                "            Lists everything",
                 "",
                 "      --reset",
-                "           Resets everything",
+                "            Resets everything",
                 "",
                 "      --run",
-                "           Runs everything"
+                "            Runs everything"
         );
     }
 
@@ -153,13 +153,13 @@ public class DefaultHelpGeneratorTest {
                 "",
                 "OPTIONS",
                 "      -l, --list",
-                "           Lists everything",
+                "            Lists everything",
                 "",
                 "      -r, --reset",
-                "           Resets everything",
+                "            Resets everything",
                 "",
                 "      -R, --reset-for-real",
-                "           Resets everything and then does it again"
+                "            Resets everything and then does it again"
         );
     }
 
@@ -182,10 +182,10 @@ public class DefaultHelpGeneratorTest {
                 "",
                 "OPTIONS",
                 "      -r, --reset",
-                "           Resets everything",
+                "            Resets everything",
                 "",
                 "      -R, --reset-for-real",
-                "           Resets everything and then does it again"
+                "            Resets everything and then does it again"
         );
     }
 
@@ -212,7 +212,7 @@ public class DefaultHelpGeneratorTest {
                 "",
                 "OPTIONS",
                 "      -a, --a1",
-                "           Word1 word2"
+                "            Word1 word2"
         );
     }
 
@@ -236,17 +236,17 @@ public class DefaultHelpGeneratorTest {
                 "",
                 "OPTIONS",
                 "      -a, --a1",
-                "           Word1 word2 word3 word4",
-                "           longword5 longerword6",
-                "           morewords7",
+                "            Word1 word2 word3 word4",
+                "            longword5 longerword6",
+                "            morewords7",
                 "",
                 "      -b, --b1",
-                "           Word8 word9 word10 word11",
-                "           longword12 longerword13",
-                "           morewords14",
+                "            Word8 word9 word10 word11",
+                "            longword12 longerword13",
+                "            morewords14",
                 "",
                 "      -c, --c1",
-                "           Word15, word16"
+                "            Word15, word16"
         );
     }
 
@@ -271,16 +271,16 @@ public class DefaultHelpGeneratorTest {
                 "",
                 "OPTIONS",
                 "      -a, --a1",
-                "           Word1_word2_word3_word4_longwo",
-                "           rd5_longerword6_morewords7",
+                "            Word1_word2_word3_word4_longw",
+                "            ord5_longerword6_morewords7",
                 "",
                 "      -b, --b1",
-                "           Word1 word2_word3_word4_longwo",
-                "           rd5_longerword6_morewords7",
+                "            Word1 word2_word3_word4_longw",
+                "            ord5_longerword6_morewords7",
                 "",
                 "      -c, --c1",
-                "           Word1_word2_word3_word4_longwo",
-                "           rd5_longerword6 morewords7"
+                "            Word1_word2_word3_word4_longw",
+                "            ord5_longerword6 morewords7"
         );
     }
 }
