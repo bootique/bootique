@@ -64,13 +64,13 @@ public class DefaultHelpGeneratorTest {
                 "",
                 "OPTIONS",
                 "      -d [level], --debug[=level]",
-                "            Switches to debug mode",
+                "           Switches to debug mode",
                 "",
                 "      -l, --list",
-                "            Lists everything",
+                "           Lists everything",
                 "",
                 "      -r val, --run=val",
-                "            Runs specified command"
+                "           Runs specified command"
         );
     }
 
@@ -94,13 +94,13 @@ public class DefaultHelpGeneratorTest {
                 "",
                 "OPTIONS",
                 "      -d [level], --debug[=level]",
-                "            Switches to debug mode",
+                "           Switches to debug mode",
                 "",
                 "      -l",
-                "            Lists everything",
+                "           Lists everything",
                 "",
                 "      -r val",
-                "            Runs specified command"
+                "           Runs specified command"
         );
     }
 
@@ -123,13 +123,13 @@ public class DefaultHelpGeneratorTest {
                 "",
                 "OPTIONS",
                 "      -l, --list",
-                "            Lists everything",
+                "           Lists everything",
                 "",
                 "      --reset",
-                "            Resets everything",
+                "           Resets everything",
                 "",
                 "      --run",
-                "            Runs everything"
+                "           Runs everything"
         );
     }
 
@@ -153,13 +153,13 @@ public class DefaultHelpGeneratorTest {
                 "",
                 "OPTIONS",
                 "      -l, --list",
-                "            Lists everything",
+                "           Lists everything",
                 "",
                 "      -r, --reset",
-                "            Resets everything",
+                "           Resets everything",
                 "",
                 "      -R, --reset-for-real",
-                "            Resets everything and then does it again"
+                "           Resets everything and then does it again"
         );
     }
 
@@ -182,18 +182,11 @@ public class DefaultHelpGeneratorTest {
                 "",
                 "OPTIONS",
                 "      -r, --reset",
-                "            Resets everything",
+                "           Resets everything",
                 "",
                 "      -R, --reset-for-real",
-                "            Resets everything and then does it again"
+                "           Resets everything and then does it again"
         );
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testGenerate_LineFoldingTooShort() {
-        ApplicationMetadata app = ApplicationMetadata.builder("myapp").build();
-        new DefaultHelpGenerator(app, 30).generate();
     }
 
     @Test
@@ -212,7 +205,7 @@ public class DefaultHelpGeneratorTest {
                 "",
                 "OPTIONS",
                 "      -a, --a1",
-                "            Word1 word2"
+                "           Word1 word2"
         );
     }
 
@@ -236,17 +229,17 @@ public class DefaultHelpGeneratorTest {
                 "",
                 "OPTIONS",
                 "      -a, --a1",
-                "            Word1 word2 word3 word4",
-                "            longword5 longerword6",
-                "            morewords7",
+                "           Word1 word2 word3 word4",
+                "           longword5 longerword6",
+                "           morewords7",
                 "",
                 "      -b, --b1",
-                "            Word8 word9 word10 word11",
-                "            longword12 longerword13",
-                "            morewords14",
+                "           Word8 word9 word10 word11",
+                "           longword12 longerword13",
+                "           morewords14",
                 "",
                 "      -c, --c1",
-                "            Word15, word16"
+                "           Word15, word16"
         );
     }
 
@@ -271,16 +264,47 @@ public class DefaultHelpGeneratorTest {
                 "",
                 "OPTIONS",
                 "      -a, --a1",
-                "            Word1_word2_word3_word4_longw",
-                "            ord5_longerword6_morewords7",
+                "           Word1_word2_word3_word4_longwo",
+                "           rd5_longerword6_morewords7",
                 "",
                 "      -b, --b1",
-                "            Word1 word2_word3_word4_longw",
-                "            ord5_longerword6_morewords7",
+                "           Word1 word2_word3_word4_longwo",
+                "           rd5_longerword6_morewords7",
                 "",
                 "      -c, --c1",
-                "            Word1_word2_word3_word4_longw",
-                "            ord5_longerword6 morewords7"
+                "           Word1_word2_word3_word4_longwo",
+                "           rd5_longerword6 morewords7"
+        );
+    }
+
+    @Test
+    public void testGenerate_LineFolding_BigDisplay() {
+
+        OptionMetadata opt1 = OptionMetadata.builder("a1", "Word1_word2_word3_word4_longword5_longerword6_morewords7").build();
+        OptionMetadata opt2 = OptionMetadata.builder("b1", "Word1 word2_word3_word4_longword5_longerword6_morewords7").build();
+        OptionMetadata opt3 = OptionMetadata.builder("c1", "Word1_word2_word3_word4_longword5_longerword6 morewords7").build();
+
+        ApplicationMetadata app = ApplicationMetadata
+                .builder("myapp")
+                .addOption(opt1)
+                .addOption(opt2)
+                .addOption(opt3)
+                .build();
+
+        // must insert a forced break...
+        assertLines(new DefaultHelpGenerator(app, 80),
+                "NAME",
+                "      myapp",
+                "",
+                "OPTIONS",
+                "      -a, --a1",
+                "           Word1_word2_word3_word4_longword5_longerword6_morewords7",
+                "",
+                "      -b, --b1",
+                "           Word1 word2_word3_word4_longword5_longerword6_morewords7",
+                "",
+                "      -c, --c1",
+                "           Word1_word2_word3_word4_longword5_longerword6 morewords7"
         );
     }
 }

@@ -50,7 +50,7 @@ public class ConfigSectionMapChildGenerator implements ConfigMetadataVisitor<Obj
 
         ConfigMetadataNode last = sortedChildren.get(sortedChildren.size() - 1);
 
-        ConfigSectionGenerator childGenerator = parent.withOffset();
+        ConfigSectionGenerator childGenerator = parent.withOffset(ConfigSectionGenerator.DEFAULT_OFFSET);
         sortedChildren.forEach(p -> {
             p.accept(childGenerator);
 

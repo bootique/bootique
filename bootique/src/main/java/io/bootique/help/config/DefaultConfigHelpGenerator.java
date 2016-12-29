@@ -18,6 +18,8 @@ import java.util.stream.Collectors;
  */
 public class DefaultConfigHelpGenerator implements ConfigHelpGenerator {
 
+    static final int DEFAULT_OFFSET = 6;
+
     private ModulesMetadata modulesMetadata;
     private int lineWidth;
 
@@ -77,7 +79,7 @@ public class DefaultConfigHelpGenerator implements ConfigHelpGenerator {
 
         // using the underlying appender for config section body. Unlike HelpAppender it allows
         // controlling any number of nested offsets
-        ConfigSectionGenerator generator = new ConfigSectionGenerator(out.getAppender().withOffset());
+        ConfigSectionGenerator generator = new ConfigSectionGenerator(out.getAppender().withOffset(DEFAULT_OFFSET));
         ConfigMetadataNode last = configs.get(configs.size() - 1);
 
         configs.forEach(c -> {

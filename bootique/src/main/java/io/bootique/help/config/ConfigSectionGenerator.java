@@ -20,6 +20,8 @@ import java.util.stream.Collectors;
  */
 class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
 
+    static final int DEFAULT_OFFSET = DefaultConfigHelpGenerator.DEFAULT_OFFSET;
+
     private ConsoleAppender out;
 
     public ConfigSectionGenerator(ConsoleAppender out) {
@@ -42,7 +44,7 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
 
         ConfigMetadataNode last = sortedChildren.get(sortedChildren.size() - 1);
 
-        ConfigSectionGenerator childGenerator = withOffset();
+        ConfigSectionGenerator childGenerator = withOffset(DEFAULT_OFFSET);
         sortedChildren.forEach(p -> {
             p.accept(childGenerator);
 
@@ -80,7 +82,7 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
         printText(metadata.getName(), ":");
 
         // TODO: should support multiple element types (from META-INF/services/PolymorphicConfiguration)
-        metadata.getElementType().accept(new ConfigSectionListChildGenerator(withOffset()));
+        metadata.getElementType().accept(new ConfigSectionListChildGenerator(withOffset(DEFAULT_OFFSET)));
 
         return null;
     }
@@ -98,13 +100,9 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
         printText(metadata.getName(), ":");
 
         // TODO: should support multiple element types (from META-INF/services/PolymorphicConfiguration)
-        metadata.getValuesType().accept(new ConfigSectionMapChildGenerator(metadata.getKeysType(), withOffset()));
+        metadata.getValuesType().accept(new ConfigSectionMapChildGenerator(metadata.getKeysType(), withOffset(DEFAULT_OFFSET)));
 
         return null;
-    }
-
-    protected ConfigSectionGenerator withOffset() {
-        return new ConfigSectionGenerator(out.withOffset());
     }
 
     protected ConfigSectionGenerator withOffset(int offset) {

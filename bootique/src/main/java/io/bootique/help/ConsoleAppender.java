@@ -17,7 +17,7 @@ public class ConsoleAppender {
 
     static final String NEWLINE = System.getProperty("line.separator");
 
-    private static final int MIN_LINE_WIDTH = 40;
+    private static final int MIN_LINE_WIDTH = 10;
     private static final Pattern SPACE = Pattern.compile("\\s+");
 
     private Appendable out;
@@ -45,15 +45,6 @@ public class ConsoleAppender {
 
     private static List<String> asList(String... parts) {
         return parts != null ? Arrays.asList(parts) : Collections.emptyList();
-    }
-
-    /**
-     * Creates and returns a new appender with base offset equals to default text offset of 6 spaces.
-     *
-     * @return a new appender with base offset equals to default text offset.
-     */
-    public ConsoleAppender withOffset() {
-        return withOffset(6);
     }
 
     /**
@@ -124,7 +115,7 @@ public class ConsoleAppender {
         int offset = this.offset.length();
 
         // refuse to fold lines to columns shorter than MIN_WIDTH
-        int maxLength = lineWidth - offset < MIN_LINE_WIDTH ? lineWidth - offset : MIN_LINE_WIDTH;
+        int maxLength = lineWidth - offset > MIN_LINE_WIDTH ? lineWidth - offset : MIN_LINE_WIDTH;
 
         List<String> folded = new ArrayList<>();
         StringBuilder line = new StringBuilder();

@@ -66,7 +66,7 @@ public class HelpAppender {
 
     private ConsoleAppender getOrCreateOffsetAppender() {
         if (this.offsetAppender == null) {
-            this.offsetAppender = rootAppender.withOffset();
+            this.offsetAppender = rootAppender.withOffset(6);
         }
 
         return offsetAppender;
@@ -74,7 +74,9 @@ public class HelpAppender {
 
     private ConsoleAppender getOrCreateDoubleOffsetAppender() {
         if (this.doubleOffsetAppender == null) {
-            this.doubleOffsetAppender = getOrCreateOffsetAppender().withOffset();
+            // "5" is the magic number used for decsription offset. It seems to look best when description is printed
+            // under the options
+            this.doubleOffsetAppender = getOrCreateOffsetAppender().withOffset(5);
         }
 
         return doubleOffsetAppender;
