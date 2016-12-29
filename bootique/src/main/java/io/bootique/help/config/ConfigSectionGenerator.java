@@ -3,6 +3,7 @@ package io.bootique.help.config;
 import io.bootique.help.FormattedAppender;
 import io.bootique.meta.MetadataNode;
 import io.bootique.meta.config.ConfigListMetadata;
+import io.bootique.meta.config.ConfigMapMetadata;
 import io.bootique.meta.config.ConfigMetadataNode;
 import io.bootique.meta.config.ConfigObjectMetadata;
 import io.bootique.meta.config.ConfigMetadataVisitor;
@@ -80,6 +81,24 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
 
         // TODO: should support multiple element types (from META-INF/services/PolymorphicConfiguration)
         metadata.getElementType().accept(new ConfigSectionListChildGenerator(withOffset()));
+
+        return null;
+    }
+
+    @Override
+    public Object visitMapMetadata(ConfigMapMetadata metadata) {
+
+        // TODO: decipher collection type... for now hardcoding List type
+        printText("# Type: Map");
+
+        if (metadata.getDescription() != null) {
+            printText("# ", metadata.getDescription());
+        }
+
+        printText(metadata.getName(), ":");
+
+        // TODO: should support multiple element types (from META-INF/services/PolymorphicConfiguration)
+        metadata.getValuesType().accept(new ConfigSectionMapChildGenerator(metadata.getKeysType(), withOffset()));
 
         return null;
     }
