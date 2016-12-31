@@ -2,6 +2,7 @@ package io.bootique.meta.config;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Stream;
 
 /**
  * Descriptor of a configuration object.
@@ -10,10 +11,12 @@ import java.util.Collection;
  */
 public class ConfigObjectMetadata extends ConfigValueMetadata {
 
+    private Collection<ConfigObjectMetadata> subConfigs;
     private Collection<ConfigMetadataNode> properties;
 
     public ConfigObjectMetadata() {
         this.properties = new ArrayList<>();
+        this.subConfigs = new ArrayList<>();
     }
 
     /**
@@ -44,6 +47,21 @@ public class ConfigObjectMetadata extends ConfigValueMetadata {
         return properties;
     }
 
+    /**
+     * Returns all directly or indirectly inherited subconfigs, including this config.
+     *
+     * @return all directly or indirectly inherited subconfigs, including this config.
+     */
+    public Stream<ConfigObjectMetadata> getAllSubConfigs() {
+
+        if (subConfigs.isEmpty()) {
+            return Stream.of(this);
+        }
+
+        Stream<ConfigObjectMetadata> subconfigs = subConfigs.stream().flatMap(ConfigObjectMetadata::getAllSubConfigs);
+        return Stream.concat(Stream.of(this), subconfigs);
+    }
+
     public static class Builder extends ConfigValueMetadata.Builder<ConfigObjectMetadata, Builder> {
 
         public Builder(ConfigObjectMetadata toBuild) {
@@ -57,6 +75,11 @@ public class ConfigObjectMetadata extends ConfigValueMetadata {
 
         public Builder addProperties(Collection<? extends ConfigValueMetadata> properties) {
             toBuild.properties.addAll(properties);
+            return this;
+        }
+
+        public Builder addSubConfig(ConfigObjectMetadata subConfig) {
+            toBuild.subConfigs.add(subConfig);
             return this;
         }
     }
