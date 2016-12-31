@@ -47,10 +47,20 @@ public class ConfigObjectMetadata extends ConfigValueMetadata {
         return properties;
     }
 
+
     /**
-     * Returns all directly or indirectly inherited subconfigs, including this config.
+     * Returns subconfigs that directly inherit from this config.
      *
-     * @return all directly or indirectly inherited subconfigs, including this config.
+     * @return subconfigs that directly inherit from this config.
+     */
+    public Collection<ConfigObjectMetadata> getSubConfigs() {
+        return subConfigs;
+    }
+
+    /**
+     * Returns this config plus all subconfigs that directly or indirectly inherit from this config.
+     *
+     * @return this config plus all subconfigs that directly or indirectly inherit from this config.
      */
     public Stream<ConfigObjectMetadata> getAllSubConfigs() {
 

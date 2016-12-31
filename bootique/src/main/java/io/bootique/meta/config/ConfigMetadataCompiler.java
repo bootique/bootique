@@ -96,7 +96,6 @@ public class ConfigMetadataCompiler {
         // create an empty object ourselves, as we need to cache it before we descend down the stack to prevent
         // endless cycles during compilation...
 
-
         // note that we are only caching ConfigObjectMetadata... That's the place where cycles can occur.
         ConfigObjectMetadata baseObject = createAndCache(descriptor.getType(), t -> new ConfigObjectMetadata());
         ConfigObjectMetadata.Builder builder = ConfigObjectMetadata
@@ -106,7 +105,7 @@ public class ConfigMetadataCompiler {
 
         // note that root config object known to Bootique doesn't require BQConfig annotation (though it would help in
         // determining description). Objects nested within the root config do. Otherwise they will be treated as
-        // "simple" properties.
+        // "value" properties.
         BQConfig typeAnnotation = descriptor.getTypeClass().getAnnotation(BQConfig.class);
         if (typeAnnotation != null) {
             builder.description(typeAnnotation.value());

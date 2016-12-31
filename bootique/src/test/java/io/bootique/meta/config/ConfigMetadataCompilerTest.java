@@ -2,10 +2,12 @@ package io.bootique.meta.config;
 
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
+import io.bootique.config.PolymorphicConfiguration;
 import io.bootique.meta.MetadataNode;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
@@ -93,6 +95,34 @@ public class ConfigMetadataCompilerTest {
         assertEquals(Config4.class, p1.getElementType().getType());
     }
 
+    @Test
+    public void testCompile_Inheritance() {
+
+        ConfigObjectMetadata c5 = (ConfigObjectMetadata) compiler.compile("prefix", Config5.class);
+        assertNotNull(c5);
+
+        assertEquals("prefix", c5.getName());
+        assertEquals(Config5.class, c5.getType());
+
+        Map<Type, ConfigObjectMetadata> sc5 = c5.getSubConfigs().stream()
+                .collect(Collectors.toMap(ConfigObjectMetadata::getType, Function.identity()));
+        assertEquals(2, sc5.size());
+
+        ConfigObjectMetadata c6 = sc5.get(Config6.class);
+        assertNotNull(c6);
+        Map<Type, ConfigObjectMetadata> sc6 = c6.getSubConfigs().stream()
+                .collect(Collectors.toMap(ConfigObjectMetadata::getType, Function.identity()));
+        assertEquals(1, sc6.size());
+
+        ConfigObjectMetadata c8 = sc6.get(Config8.class);
+        assertNotNull(c8);
+        assertEquals(0, c8.getSubConfigs().size());
+
+        ConfigObjectMetadata c7 = sc5.get(Config7.class);
+        assertNotNull(c7);
+        assertEquals(0, c7.getSubConfigs().size());
+    }
+
     @BQConfig("Describes Config1")
     public static class Config1 {
 
@@ -149,6 +179,38 @@ public class ConfigMetadataCompilerTest {
 
         @BQConfigProperty
         public void setC3(Config3 v) {
+        }
+    }
+
+    @BQConfig
+    public static class Config5 implements PolymorphicConfiguration {
+
+        @BQConfigProperty
+        public void setP1(long v) {
+        }
+    }
+
+    @BQConfig
+    public static class Config6 extends Config5 {
+
+        @BQConfigProperty
+        public void setP2(String v) {
+        }
+    }
+
+    @BQConfig
+    public static class Config7 extends Config5 {
+
+        @BQConfigProperty
+        public void setP3(String v) {
+        }
+    }
+
+    @BQConfig
+    public static class Config8 extends Config6 {
+
+        @BQConfigProperty
+        public void setP4(BigDecimal v) {
         }
     }
 }
