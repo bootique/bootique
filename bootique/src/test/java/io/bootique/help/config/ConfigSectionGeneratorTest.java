@@ -141,7 +141,7 @@ public class ConfigSectionGeneratorTest {
     }
 
     @Test
-    public void testVisitMapOfObjects() {
+    public void testVisitObjectWithMapOfObjects() {
 
         ConfigObjectMetadata mapMd = ConfigObjectMetadata.builder()
                 .type(ConfigRoot2.class)
@@ -170,6 +170,87 @@ public class ConfigSectionGeneratorTest {
                 "",
                 "                  # Type: String",
                 "                  p4: <string>"
+        );
+    }
+
+    @Test
+    public void testVisitMapOfMapsOfObjects() {
+
+        ConfigObjectMetadata objectMd = ConfigObjectMetadata.builder()
+                .type(ConfigRoot2.class)
+                .addProperty(ConfigValueMetadata.builder("p4").type(String.class).build())
+                .addProperty(ConfigValueMetadata.builder("p3").type(Boolean.TYPE).build())
+                .build();
+
+        ConfigMapMetadata subMapMd = ConfigMapMetadata
+                .builder()
+                .description("Submap description")
+                .keysType(String.class)
+                .valuesType(objectMd)
+                .build();
+
+        ConfigMapMetadata rootMapMd = ConfigMapMetadata
+                .builder("root")
+                .description("Root map")
+                .keysType(String.class)
+                .valuesType(subMapMd)
+                .build();
+
+        assertLines(rootMapMd,
+                "# Type: Map",
+                "# Root map",
+                "root:",
+                "      # Keys type: String",
+                "      # Values type: Map",
+                "      # Submap description",
+                "      <string>:",
+                "            # Keys type: String",
+                "            # Values type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot2",
+                "            <string>:",
+                "                  # Type: boolean",
+                "                  p3: <true|false>",
+                "",
+                "                  # Type: String",
+                "                  p4: <string>"
+        );
+    }
+
+    @Test
+    public void testVisitMapOfListsOfObjects() {
+
+        ConfigObjectMetadata objectMd = ConfigObjectMetadata.builder()
+                .type(ConfigRoot2.class)
+                .addProperty(ConfigValueMetadata.builder("p4").type(String.class).build())
+                .addProperty(ConfigValueMetadata.builder("p3").type(Boolean.TYPE).build())
+                .build();
+
+        ConfigListMetadata subListMd = ConfigListMetadata
+                .builder()
+                .description("Sublist description")
+                .elementType(objectMd)
+                .build();
+
+        ConfigMapMetadata rootMapMd = ConfigMapMetadata
+                .builder("root")
+                .description("Root map")
+                .keysType(String.class)
+                .valuesType(subListMd)
+                .build();
+
+        assertLines(rootMapMd,
+                "# Type: Map",
+                "# Root map",
+                "root:",
+                "      # Keys type: String",
+                "      # Values type: List",
+                "      # Sublist description",
+                "      <string>:",
+                "            - # Element type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot2",
+                "              # Type: boolean",
+                "              p3: <true|false>",
+                "",
+                "              # Type: String",
+                "              p4: <string>"
         );
     }
 

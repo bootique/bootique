@@ -27,7 +27,7 @@ class ConfigSectionListChildGenerator implements ConfigMetadataVisitor<Object> {
         printTypeHeader(metadata);
 
         String line = metadata.getType() != null ? parent.sampleValue(metadata.getType()) : "?";
-        parent.printText("  ", line);
+        parent.println("  ", line);
         return null;
     }
 
@@ -64,11 +64,11 @@ class ConfigSectionListChildGenerator implements ConfigMetadataVisitor<Object> {
         Type valueType = metadata.getType();
 
         if (valueType != null) {
-            parent.printText("- # Element type: ", parent.typeLabel(valueType));
+            parent.println("- # Element type: ", parent.typeLabel(valueType));
         }
 
         if (metadata.getDescription() != null) {
-            parent.printText("  # ", metadata.getDescription());
+            parent.println("  # ", metadata.getDescription());
         }
     }
 }

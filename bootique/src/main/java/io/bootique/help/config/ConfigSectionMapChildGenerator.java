@@ -1,6 +1,8 @@
 package io.bootique.help.config;
 
 import io.bootique.meta.MetadataNode;
+import io.bootique.meta.config.ConfigListMetadata;
+import io.bootique.meta.config.ConfigMapMetadata;
 import io.bootique.meta.config.ConfigMetadataNode;
 import io.bootique.meta.config.ConfigMetadataVisitor;
 import io.bootique.meta.config.ConfigObjectMetadata;
@@ -24,20 +26,13 @@ public class ConfigSectionMapChildGenerator implements ConfigMetadataVisitor<Obj
 
     @Override
     public Object visitValueMetadata(ConfigValueMetadata metadata) {
-        printTypeHeader(metadata);
-
-        String keyLabel = parent.sampleValue(keysType);
-        String line = metadata.getType() != null ? parent.sampleValue(metadata.getType()) : "?";
-        parent.printText(keyLabel, ": ", line);
+        printTypeHeader(metadata, true);
         return null;
     }
 
     @Override
     public Object visitObjectMetadata(ConfigObjectMetadata metadata) {
-        printTypeHeader(metadata);
-
-        String keyLabel = parent.sampleValue(keysType);
-        parent.printText(keyLabel, ":");
+        printTypeHeader(metadata, false);
 
         List<ConfigMetadataNode> sortedChildren = metadata.getProperties()
                 .stream()
@@ -62,19 +57,47 @@ public class ConfigSectionMapChildGenerator implements ConfigMetadataVisitor<Obj
         return null;
     }
 
-    // TODO: visit list and map...
+    @Override
+    public Object visitMapMetadata(ConfigMapMetadata metadata) {
+        printTypeHeader(metadata, false);
 
-    protected void printTypeHeader(ConfigValueMetadata metadata) {
+        // TODO: should support multiple element types (from META-INF/services/PolymorphicConfiguration)
+        ConfigSectionGenerator childGenerator = parent.withOffset(ConfigSectionGenerator.DEFAULT_OFFSET);
+        metadata.getValuesType().accept(
+                new ConfigSectionMapChildGenerator(metadata.getKeysType(), childGenerator));
 
-        parent.printText("# Keys type: ", parent.typeLabel(keysType));
+        return null;
+    }
+
+    @Override
+    public Object visitListMetadata(ConfigListMetadata metadata) {
+        printTypeHeader(metadata, false);
+
+        // TODO: should support multiple element types (from META-INF/services/PolymorphicConfiguration)
+        ConfigSectionGenerator childGenerator = parent.withOffset(ConfigSectionGenerator.DEFAULT_OFFSET);
+        metadata.getElementType().accept(new ConfigSectionListChildGenerator(childGenerator));
+
+        return null;
+    }
+
+    protected void printTypeHeader(ConfigValueMetadata metadata, boolean asValue) {
+
+        parent.println("# Keys type: ", parent.typeLabel(keysType));
 
         Type valueType = metadata.getType();
         if (valueType != null) {
-            parent.printText("# Values type: ", parent.typeLabel(valueType));
+            parent.println("# Values type: ", parent.typeLabel(valueType));
         }
 
         if (metadata.getDescription() != null) {
-            parent.printText("# ", metadata.getDescription());
+            parent.println("# ", metadata.getDescription());
+        }
+
+        if (asValue) {
+            String valueLabel = metadata.getType() != null ? parent.sampleValue(metadata.getType()) : "?";
+            parent.println(parent.sampleValue(keysType), ": ", valueLabel);
+        } else {
+            parent.println(parent.sampleValue(keysType), ":");
         }
     }
 }

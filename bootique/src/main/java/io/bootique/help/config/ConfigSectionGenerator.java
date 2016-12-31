@@ -10,8 +10,10 @@ import io.bootique.meta.config.ConfigMetadataVisitor;
 import io.bootique.meta.config.ConfigValueMetadata;
 
 import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -30,8 +32,7 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
 
     @Override
     public Object visitObjectMetadata(ConfigObjectMetadata metadata) {
-        printTypeHeader(metadata);
-        out.println(metadata.getName(), ":");
+        printTypeHeader(metadata, false);
 
         List<ConfigMetadataNode> sortedChildren = metadata.getProperties()
                 .stream()
@@ -58,28 +59,13 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
 
     @Override
     public Object visitValueMetadata(ConfigValueMetadata metadata) {
-
-        printTypeHeader(metadata);
-
-        if (metadata.getType() != null) {
-            printText(metadata.getName(), ": ", sampleValue(metadata.getType()));
-        } else {
-            printText(metadata.getName(), ": ?");
-        }
+        printTypeHeader(metadata, true);
         return null;
     }
 
     @Override
     public Object visitListMetadata(ConfigListMetadata metadata) {
-
-        // TODO: decipher collection type... for now hardcoding List type
-        printText("# Type: List");
-
-        if (metadata.getDescription() != null) {
-            printText("# ", metadata.getDescription());
-        }
-
-        printText(metadata.getName(), ":");
+        printTypeHeader(metadata, false);
 
         // TODO: should support multiple element types (from META-INF/services/PolymorphicConfiguration)
         metadata.getElementType().accept(new ConfigSectionListChildGenerator(withOffset(DEFAULT_OFFSET)));
@@ -89,18 +75,11 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
 
     @Override
     public Object visitMapMetadata(ConfigMapMetadata metadata) {
-
-        // TODO: decipher collection type... for now hardcoding List type
-        printText("# Type: Map");
-
-        if (metadata.getDescription() != null) {
-            printText("# ", metadata.getDescription());
-        }
-
-        printText(metadata.getName(), ":");
+        printTypeHeader(metadata, false);
 
         // TODO: should support multiple element types (from META-INF/services/PolymorphicConfiguration)
-        metadata.getValuesType().accept(new ConfigSectionMapChildGenerator(metadata.getKeysType(), withOffset(DEFAULT_OFFSET)));
+        metadata.getValuesType().accept(
+                new ConfigSectionMapChildGenerator(metadata.getKeysType(), withOffset(DEFAULT_OFFSET)));
 
         return null;
     }
@@ -109,23 +88,30 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
         return new ConfigSectionGenerator(out.withOffset(offset));
     }
 
-    protected void printText(String... parts) {
-        out.println(parts);
+    protected void println(String... phrases) {
+        out.println(phrases);
     }
 
     protected void println() {
         out.println();
     }
 
-    protected void printTypeHeader(ConfigValueMetadata metadata) {
+    protected void printTypeHeader(ConfigValueMetadata metadata, boolean asValue) {
         Type valueType = metadata.getType();
 
         if (valueType != null) {
-            printText("# Type: ", typeLabel(valueType));
+            println("# Type: ", typeLabel(valueType));
         }
 
         if (metadata.getDescription() != null) {
-            printText("# ", metadata.getDescription());
+            println("# ", metadata.getDescription());
+        }
+
+        if (asValue) {
+            String valueLabel = metadata.getType() != null ? sampleValue(metadata.getType()) : "?";
+            println(metadata.getName(), ": ", valueLabel);
+        } else {
+            println(metadata.getName(), ":");
         }
     }
 
@@ -186,6 +172,18 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
             case "java.lang.String":
                 return "String";
             default:
+
+                if(type instanceof Class) {
+                    Class<?> classType = (Class<?>) type;
+                    if(Map.class.isAssignableFrom(classType)) {
+                        return "Map";
+                    }
+                    // TODO: decipher collection type... for now hardcoding List type
+                    else if(Collection.class.isAssignableFrom(classType)) {
+                        return "List";
+                    }
+                }
+
                 return typeName;
         }
     }
