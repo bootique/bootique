@@ -108,11 +108,11 @@ public class ConfigSectionGeneratorTest {
                 "      # I am a list",
                 "      p2:",
                 "            - # Element type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot2",
-                "              # Type: boolean",
-                "              p3: <true|false>",
+                "                  # Type: boolean",
+                "                  p3: <true|false>",
                 "",
-                "              # Type: String",
-                "              p4: <string>"
+                "                  # Type: String",
+                "                  p4: <string>"
         );
     }
 
@@ -246,11 +246,11 @@ public class ConfigSectionGeneratorTest {
                 "      # Sublist description",
                 "      <string>:",
                 "            - # Element type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot2",
-                "              # Type: boolean",
-                "              p3: <true|false>",
+                "                  # Type: boolean",
+                "                  p3: <true|false>",
                 "",
-                "              # Type: String",
-                "              p4: <string>"
+                "                  # Type: String",
+                "                  p4: <string>"
         );
     }
 

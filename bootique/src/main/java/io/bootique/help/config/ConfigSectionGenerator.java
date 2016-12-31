@@ -24,7 +24,7 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
 
     static final int DEFAULT_OFFSET = DefaultConfigHelpGenerator.DEFAULT_OFFSET;
 
-    private ConsoleAppender out;
+    protected ConsoleAppender out;
 
     public ConfigSectionGenerator(ConsoleAppender out) {
         this.out = Objects.requireNonNull(out);
@@ -32,7 +32,7 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
 
     @Override
     public Object visitObjectMetadata(ConfigObjectMetadata metadata) {
-        printTypeHeader(metadata, false);
+        printNode(metadata, false);
 
         List<ConfigMetadataNode> sortedChildren = metadata.getProperties()
                 .stream()
@@ -45,12 +45,12 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
 
         ConfigMetadataNode last = sortedChildren.get(sortedChildren.size() - 1);
 
-        ConfigSectionGenerator childGenerator = withOffset(DEFAULT_OFFSET);
+        ConfigSectionGenerator childGenerator = new ConfigSectionGenerator(out.withOffset(DEFAULT_OFFSET));
         sortedChildren.forEach(p -> {
             p.accept(childGenerator);
 
             if (p != last) {
-                println();
+                out.println();
             }
         });
 
@@ -59,59 +59,47 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
 
     @Override
     public Object visitValueMetadata(ConfigValueMetadata metadata) {
-        printTypeHeader(metadata, true);
+        printNode(metadata, true);
         return null;
     }
 
     @Override
     public Object visitListMetadata(ConfigListMetadata metadata) {
-        printTypeHeader(metadata, false);
+        printNode(metadata, false);
 
         // TODO: should support multiple element types (from META-INF/services/PolymorphicConfiguration)
-        metadata.getElementType().accept(new ConfigSectionListChildGenerator(withOffset(DEFAULT_OFFSET)));
+        metadata.getElementType().accept(new ConfigSectionListGenerator(out.withOffset(DEFAULT_OFFSET)));
 
         return null;
     }
 
     @Override
     public Object visitMapMetadata(ConfigMapMetadata metadata) {
-        printTypeHeader(metadata, false);
+        printNode(metadata, false);
 
         // TODO: should support multiple element types (from META-INF/services/PolymorphicConfiguration)
         metadata.getValuesType().accept(
-                new ConfigSectionMapChildGenerator(metadata.getKeysType(), withOffset(DEFAULT_OFFSET)));
+                new ConfigSectionMapGenerator(metadata.getKeysType(), out.withOffset(DEFAULT_OFFSET)));
 
         return null;
     }
 
-    protected ConfigSectionGenerator withOffset(int offset) {
-        return new ConfigSectionGenerator(out.withOffset(offset));
-    }
-
-    protected void println(String... phrases) {
-        out.println(phrases);
-    }
-
-    protected void println() {
-        out.println();
-    }
-
-    protected void printTypeHeader(ConfigValueMetadata metadata, boolean asValue) {
+    protected void printNode(ConfigValueMetadata metadata, boolean asValue) {
         Type valueType = metadata.getType();
 
         if (valueType != null) {
-            println("# Type: ", typeLabel(valueType));
+            out.println("# Type: ", typeLabel(valueType));
         }
 
         if (metadata.getDescription() != null) {
-            println("# ", metadata.getDescription());
+            out.println("# ", metadata.getDescription());
         }
 
         if (asValue) {
             String valueLabel = metadata.getType() != null ? sampleValue(metadata.getType()) : "?";
-            println(metadata.getName(), ": ", valueLabel);
+            out.println(metadata.getName(), ": ", valueLabel);
         } else {
-            println(metadata.getName(), ":");
+            out.println(metadata.getName(), ":");
         }
     }
 
@@ -173,13 +161,13 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
                 return "String";
             default:
 
-                if(type instanceof Class) {
+                if (type instanceof Class) {
                     Class<?> classType = (Class<?>) type;
-                    if(Map.class.isAssignableFrom(classType)) {
+                    if (Map.class.isAssignableFrom(classType)) {
                         return "Map";
                     }
                     // TODO: decipher collection type... for now hardcoding List type
-                    else if(Collection.class.isAssignableFrom(classType)) {
+                    else if (Collection.class.isAssignableFrom(classType)) {
                         return "List";
                     }
                 }
