@@ -15,29 +15,34 @@ import io.bootique.annotation.DefaultCommand;
 import io.bootique.annotation.EnvironmentProperties;
 import io.bootique.annotation.EnvironmentVariables;
 import io.bootique.annotation.LogLevels;
-import io.bootique.meta.application.ApplicationMetadata;
-import io.bootique.meta.application.OptionMetadata;
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandManager;
 import io.bootique.command.DefaultCommandManager;
-import io.bootique.help.HelpCommand;
 import io.bootique.config.CliConfigurationSource;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.config.ConfigurationSource;
+import io.bootique.config.PolymorphicConfiguration;
+import io.bootique.config.TypesFactory;
 import io.bootique.env.DefaultEnvironment;
 import io.bootique.env.Environment;
 import io.bootique.help.DefaultHelpGenerator;
+import io.bootique.help.HelpCommand;
 import io.bootique.help.HelpGenerator;
 import io.bootique.help.config.ConfigHelpGenerator;
 import io.bootique.help.config.DefaultConfigHelpGenerator;
 import io.bootique.help.config.HelpConfigCommand;
 import io.bootique.jackson.DefaultJacksonService;
+import io.bootique.jackson.ImmutableSubtypeResolver;
 import io.bootique.jackson.JacksonService;
 import io.bootique.jopt.JoptCliProvider;
 import io.bootique.log.BootLogger;
-import io.bootique.meta.module.ModuleMetadata;
+import io.bootique.meta.application.ApplicationMetadata;
+import io.bootique.meta.application.OptionMetadata;
+import io.bootique.meta.config.ConfigHierarchyResolver;
+import io.bootique.meta.config.ConfigMetadataCompiler;
 import io.bootique.meta.module.ModulesMetadata;
+import io.bootique.meta.module.ModulesMetadataCompiler;
 import io.bootique.run.DefaultRunner;
 import io.bootique.run.Runner;
 import io.bootique.shutdown.DefaultShutdownManager;
@@ -49,6 +54,7 @@ import io.bootique.terminal.Terminal;
 
 import java.time.Duration;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -71,7 +77,7 @@ public class BQCoreModule implements Module {
     private String[] args;
     private BootLogger bootLogger;
     private Duration shutdownTimeout;
-    private Supplier<Collection<ModuleMetadata>> modulesMetadata;
+    private Supplier<Collection<BQModule>> modulesSource;
 
     private BQCoreModule() {
         this.shutdownTimeout = Duration.ofMillis(10000l);
@@ -213,8 +219,14 @@ public class BQCoreModule implements Module {
 
     @Provides
     @Singleton
-    JacksonService provideJacksonService(BootLogger bootLogger) {
-        return new DefaultJacksonService(bootLogger);
+    JacksonService provideJacksonService(BootLogger bootLogger, TypesFactory<PolymorphicConfiguration> typesFactory) {
+        return new DefaultJacksonService(new ImmutableSubtypeResolver(typesFactory.getTypes()), bootLogger);
+    }
+
+    @Provides
+    @Singleton
+    TypesFactory<PolymorphicConfiguration> provideConfigTypesFactory(BootLogger logger) {
+        return new TypesFactory<>(getClass().getClassLoader(), PolymorphicConfiguration.class, logger);
     }
 
     @Provides
@@ -306,15 +318,15 @@ public class BQCoreModule implements Module {
 
     @Provides
     @Singleton
-    ModulesMetadata provideModulesMetadata() {
+    ConfigHierarchyResolver provideConfigHierarchyResolver(TypesFactory<PolymorphicConfiguration> typesFactory) {
+        return ConfigHierarchyResolver.create(typesFactory.getTypes());
+    }
 
-        ModulesMetadata.Builder builder = ModulesMetadata.builder();
-
-        if(this.modulesMetadata != null) {
-            builder.addModules(this.modulesMetadata.get());
-        }
-
-        return builder.build();
+    @Provides
+    @Singleton
+    ModulesMetadata provideModulesMetadata(ConfigHierarchyResolver hierarchyResolver) {
+        return new ModulesMetadataCompiler(new ConfigMetadataCompiler(hierarchyResolver::directSubclasses))
+                .compile(this.modulesSource != null ? modulesSource.get() : Collections.emptyList());
     }
 
     @Provides
@@ -386,15 +398,15 @@ public class BQCoreModule implements Module {
         }
 
         /**
-         * Sets a supplier of metadata information about runtime modules. It has to be provided externally by Bootique
-         * code that assembles the stack. We have no way of discovering this information when inside the DI container.
+         * Sets a supplier of the app modules collection. It has to be provided externally by Bootique code that
+         * assembles the stack. We have no way of discovering this information when inside the DI container.
          *
-         * @param modulesMetadata a supplier of metadata information about runtime modules.
+         * @param modulesSource a supplier of module collection.
          * @return this builder instance.
          * @since 0.21
          */
-        public Builder moduleMetadata(Supplier<Collection<ModuleMetadata>> modulesMetadata) {
-            module.modulesMetadata = modulesMetadata;
+        public Builder moduleSource(Supplier<Collection<BQModule>> modulesSource) {
+            module.modulesSource = modulesSource;
             return this;
         }
 

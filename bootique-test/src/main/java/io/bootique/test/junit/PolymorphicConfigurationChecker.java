@@ -3,10 +3,9 @@ package io.bootique.test.junit;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.bootique.config.PolymorphicConfiguration;
-import io.bootique.jackson.SubtypeResolverFactory;
+import io.bootique.config.TypesFactory;
 import io.bootique.log.DefaultBootLogger;
 
-import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.HashSet;
@@ -121,11 +120,11 @@ public class PolymorphicConfigurationChecker<T extends PolymorphicConfiguration>
 
         Collection<Class<? extends PolymorphicConfiguration>> types;
         try {
-            types = new SubtypeResolverFactory(getClass().getClassLoader(),
+            types = new TypesFactory<>(
+                    getClass().getClassLoader(),
                     PolymorphicConfiguration.class,
-                    new DefaultBootLogger(false))
-                    .resolveSubclasses();
-        } catch (IOException | ClassNotFoundException e) {
+                    new DefaultBootLogger(false)).getTypes();
+        } catch (Exception e) {
             fail(e.getMessage());
             // dead code; still required to compile...
             throw new RuntimeException(e);

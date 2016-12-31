@@ -1,31 +1,37 @@
 package io.bootique.jackson;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-
-import io.bootique.jackson.DefaultJacksonService;
-import org.junit.Test;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.TreeTraversingParser;
 import io.bootique.config.PolymorphicConfiguration;
+import io.bootique.config.TypesFactory;
+import io.bootique.log.BootLogger;
 import io.bootique.log.DefaultBootLogger;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class DefaultJacksonServiceIT {
 
-	protected <T> T readValue(Class<T> type, ObjectMapper mapper, String json)
-			throws JsonParseException, JsonMappingException, IOException {
+	private BootLogger bootLogger;
+	private TypesFactory<PolymorphicConfiguration> typesFactory;
+
+	@Before
+	public void before() {
+		bootLogger = new DefaultBootLogger(true);
+		typesFactory = new TypesFactory<>(getClass().getClassLoader(), PolymorphicConfiguration.class, bootLogger);
+	}
+
+	protected <T> T readValue(Class<T> type, ObjectMapper mapper, String json) throws IOException {
 		JsonParser parser = new JsonFactory().createParser(json);
 		JsonNode node = mapper.readTree(parser);
 		assertNotNull(node);
@@ -34,8 +40,9 @@ public class DefaultJacksonServiceIT {
 	}
 
 	@Test
-	public void testNewObjectMapper_Inheritance() throws JsonProcessingException, IOException {
-		ObjectMapper mapper = new DefaultJacksonService(new DefaultBootLogger(true)).newObjectMapper();
+	public void testNewObjectMapper_Inheritance() throws IOException {
+		ObjectMapper mapper = new DefaultJacksonService(new ImmutableSubtypeResolver(typesFactory.getTypes()), bootLogger)
+				.newObjectMapper();
 
 		Sup1 su1 = readValue(Sup1.class, mapper, "{\"type\":\"sub1\",\"p1\":\"p1111\"}");
 		assertTrue(su1 instanceof Sub1);

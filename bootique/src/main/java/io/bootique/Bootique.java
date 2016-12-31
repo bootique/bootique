@@ -8,7 +8,6 @@ import io.bootique.command.CommandOutcome;
 import io.bootique.env.DefaultEnvironment;
 import io.bootique.log.BootLogger;
 import io.bootique.log.DefaultBootLogger;
-import io.bootique.meta.module.ModuleMetadata;
 import joptsimple.OptionException;
 
 import java.util.ArrayList;
@@ -386,13 +385,13 @@ public class Bootique {
 
     protected Injector createInjector() {
 
-        DeferredModuleMetadataSupplier moduleMetadata = new DeferredModuleMetadataSupplier();
+        DeferredModulesSource modulesSource = new DeferredModulesSource();
 
         Collection<BQModule> bqModules = new ArrayList<>();
 
         // note that 'moduleMetadata' is invalid at this point; it will be initialized later in this method, which
         // is safe to do, as it won't be used until the Injector is created by the method caller.
-        bqModules.add(coreModuleProvider(moduleMetadata).moduleBuilder().build());
+        bqModules.add(coreModuleProvider(modulesSource).moduleBuilder().build());
 
         builderProviders().forEach(p -> bqModules.add(p.moduleBuilder().build()));
 
@@ -401,7 +400,7 @@ public class Bootique {
         }
 
         // now that all modules are collected, finish 'moduleMetadata' initialization
-        moduleMetadata.init(bqModules);
+        modulesSource.init(bqModules);
 
         // convert to Guice modules respecting overrides, etc.
         Collection<Module> modules = new RuntimeModuleMerger(bootLogger).toGuiceModules(bqModules);
@@ -412,12 +411,12 @@ public class Bootique {
         return providers;
     }
 
-    protected BQModuleProvider coreModuleProvider(Supplier<Collection<ModuleMetadata>> moduleMetadata) {
+    protected BQModuleProvider coreModuleProvider(Supplier<Collection<BQModule>> moduleSource) {
         return new BQModuleProvider() {
 
             @Override
             public Module module() {
-                return BQCoreModule.builder().args(args).bootLogger(bootLogger).moduleMetadata(moduleMetadata).build();
+                return BQCoreModule.builder().args(args).bootLogger(bootLogger).moduleSource(moduleSource).build();
             }
 
             @Override

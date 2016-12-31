@@ -1,42 +1,29 @@
-package io.bootique;
+package io.bootique.meta.module;
 
+import io.bootique.BQModule;
 import io.bootique.meta.config.ConfigMetadataCompiler;
 import io.bootique.meta.config.ConfigMetadataNode;
-import io.bootique.meta.module.ModuleMetadata;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Objects;
-import java.util.function.Supplier;
 
-import static java.util.stream.Collectors.toList;
+/**
+ * @since 0.21
+ */
+public class ModulesMetadataCompiler {
 
-class DeferredModuleMetadataSupplier implements Supplier<Collection<ModuleMetadata>> {
-
-    private Collection<BQModule> modules;
     private ConfigMetadataCompiler configCompiler;
 
-    @Override
-    public Collection<ModuleMetadata> get() {
-
-        if (modules == null) {
-            throw new IllegalStateException("DeferredModuleMetadataSupplier is not initialized");
-        }
-
-        return modules.stream().map(this::toModuleMetadata).collect(toList());
+    public ModulesMetadataCompiler(ConfigMetadataCompiler configCompiler) {
+        this.configCompiler = configCompiler;
     }
 
-    // this method must be called exactly once before 'get' can be invoked....
-    void init(Collection<BQModule> modules) {
-
-        if (this.modules != null) {
-            throw new IllegalStateException("DeferredModuleMetadataSupplier is already initialized");
-        }
-
-        this.modules = Objects.requireNonNull(modules);
-        this.configCompiler = new ConfigMetadataCompiler();
+    public ModulesMetadata compile(Collection<BQModule> modules) {
+        ModulesMetadata.Builder builder = ModulesMetadata.builder();
+        modules.forEach(m -> builder.addModule(toModuleMetadata(m)));
+        return builder.build();
     }
 
     private ModuleMetadata toModuleMetadata(BQModule module) {

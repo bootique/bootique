@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 /**
  * A thread-safe caching compiler of configuration metadata for objects annotated with {@link BQConfig} and
@@ -23,9 +24,11 @@ public class ConfigMetadataCompiler {
 
     private static final Pattern SETTER = Pattern.compile("^set([A-Z].*)$");
 
-    private Map<Type, ConfigMetadataNode> seen;
+    private Function<Class<?>, Stream<Class<?>>> subclassProvider;
+    private Map<Type, ConfigObjectMetadata> seen;
 
-    public ConfigMetadataCompiler() {
+    public ConfigMetadataCompiler(Function<Class<?>, Stream<Class<?>>> subclassProvider) {
+        this.subclassProvider = subclassProvider;
         this.seen = new ConcurrentHashMap<>();
     }
 
@@ -67,12 +70,6 @@ public class ConfigMetadataCompiler {
 
     protected ConfigMetadataNode compile(Descriptor descriptor) {
 
-        // see if there's already a metadata object for this type... proxy it to avoid compile cycles...
-        ConfigMetadataNode seenNode = seen.get(descriptor.getType());
-        if (seenNode != null) {
-            return new ConfigMetadataNodeProxy(descriptor.getName(), descriptor.getDescription(), seenNode);
-        }
-
         Class<?> typeClass = descriptor.getTypeClass();
 
         if (Collection.class.isAssignableFrom(typeClass)) {
@@ -86,18 +83,20 @@ public class ConfigMetadataCompiler {
         }
     }
 
-    protected <T extends ConfigMetadataNode> T createAndCache(Type type, Function<Type, T> factory) {
-        // TODO: check for existing objects and throw?
-        return (T) seen.computeIfAbsent(type, factory);
-    }
-
     protected ConfigMetadataNode compileObjectMetadata(Descriptor descriptor) {
 
-        // create an empty object ourselves, as we need to cache it before we descend down the stack to prevent
-        // endless cycles during compilation...
+        // see if there's already a metadata object for this type... proxy it to avoid compile cycles...
+        ConfigMetadataNode seenNode = seen.get(descriptor.getType());
+        if (seenNode != null) {
+            return new ConfigMetadataNodeProxy(descriptor.getName(), descriptor.getDescription(), seenNode);
+        }
 
-        // note that we are only caching ConfigObjectMetadata... That's the place where cycles can occur.
-        ConfigObjectMetadata baseObject = createAndCache(descriptor.getType(), t -> new ConfigObjectMetadata());
+        // create an empty object ourselves, as we need to cache it before we descend down the stack to prevent
+        // endless cycles during compilation... note that we are only caching inside 'compileObjectMetadata'...
+        // That's the place to break the cycles..
+
+        ConfigObjectMetadata baseObject = new ConfigObjectMetadata();
+        seen.put(descriptor.getType(), baseObject);
         ConfigObjectMetadata.Builder builder = ConfigObjectMetadata
                 .builder(baseObject)
                 .name(descriptor.getName())
@@ -118,6 +117,12 @@ public class ConfigMetadataCompiler {
                 builder.addProperty(compile(new Descriptor(propertyNameFromSetter(m), configProperty, propType)));
             }
         }
+
+        // compile subconfigs...
+        subclassProvider.apply(descriptor.getTypeClass())
+                .map(sc -> new Descriptor(null, sc))
+                .map(this::compileObjectMetadata)
+                .forEach(builder::addSubConfig);
 
         return builder.build();
     }

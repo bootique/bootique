@@ -8,12 +8,14 @@ import java.util.Collection;
 
 /**
  * A hack that allows to prevent modifications to SubtypeResolver outside the initialization code.
+ *
+ * @since 0.21
  */
-class ImmutableSubtypeResolver<T> extends StdSubtypeResolver {
+public class ImmutableSubtypeResolver<T> extends StdSubtypeResolver {
 
     private boolean locked;
 
-    ImmutableSubtypeResolver(Collection<Class<? extends T>> subtypes) {
+    public ImmutableSubtypeResolver(Collection<Class<? extends T>> subtypes) {
 
         Class<?>[] subtypesArray = subtypes.toArray(new Class<?>[subtypes.size()]);
         registerSubtypes(subtypesArray);

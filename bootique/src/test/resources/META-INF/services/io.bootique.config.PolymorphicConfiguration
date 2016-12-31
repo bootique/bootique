@@ -4,7 +4,3 @@ io.bootique.jackson.DefaultJacksonServiceIT$Sub1
 io.bootique.jackson.DefaultJacksonServiceIT$Sub2
 io.bootique.jackson.DefaultJacksonServiceIT$Sub3
 io.bootique.jackson.DefaultJacksonServiceIT$Sub4
-io.bootique.meta.config.ConfigMetadataCompilerTest$Config5
-io.bootique.meta.config.ConfigMetadataCompilerTest$Config6
-io.bootique.meta.config.ConfigMetadataCompilerTest$Config7
-io.bootique.meta.config.ConfigMetadataCompilerTest$Config8

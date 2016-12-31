@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -25,7 +26,7 @@ public class ConfigMetadataCompilerTest {
 
     @Before
     public void before() {
-        compiler = new ConfigMetadataCompiler();
+        compiler = new ConfigMetadataCompiler(t -> Stream.empty());
     }
 
     @Test
@@ -98,30 +99,44 @@ public class ConfigMetadataCompilerTest {
     @Test
     public void testCompile_Inheritance() {
 
-        ConfigObjectMetadata c5 = (ConfigObjectMetadata) compiler.compile("prefix", Config5.class);
-        assertNotNull(c5);
+        compiler = new ConfigMetadataCompiler(t -> {
 
-        assertEquals("prefix", c5.getName());
-        assertEquals(Config5.class, c5.getType());
+            if (Config5.class.equals(t)) {
+                return Stream.of(Config6.class, Config7.class);
+            }
 
-        Map<Type, ConfigObjectMetadata> sc5 = c5.getSubConfigs().stream()
-                .collect(Collectors.toMap(ConfigObjectMetadata::getType, Function.identity()));
-        assertEquals(2, sc5.size());
+            if (Config6.class.equals(t)) {
+                return Stream.of(Config8.class);
+            }
 
-        ConfigObjectMetadata c6 = sc5.get(Config6.class);
-        assertNotNull(c6);
-        Map<Type, ConfigObjectMetadata> sc6 = c6.getSubConfigs().stream()
-                .collect(Collectors.toMap(ConfigObjectMetadata::getType, Function.identity()));
-        assertEquals(1, sc6.size());
+            return Stream.empty();
+        });
 
-        ConfigObjectMetadata c8 = sc6.get(Config8.class);
-        assertNotNull(c8);
-        assertEquals(0, c8.getSubConfigs().size());
+        ConfigObjectMetadata c1 = (ConfigObjectMetadata) compiler.compile("prefix", Config5.class);
+        assertNotNull(c1);
 
-        ConfigObjectMetadata c7 = sc5.get(Config7.class);
-        assertNotNull(c7);
-        assertEquals(0, c7.getSubConfigs().size());
+        assertEquals("prefix", c1.getName());
+        assertEquals(Config5.class, c1.getType());
+
+        Map<Type, ConfigMetadataNode> sc1 = c1.getSubConfigs().stream()
+                .collect(Collectors.toMap(ConfigMetadataNode::getType, Function.identity()));
+        assertEquals(2, sc1.size());
+
+        ConfigObjectMetadata c2 = (ConfigObjectMetadata) sc1.get(Config6.class);
+        assertNotNull(c2);
+        Map<Type, ConfigMetadataNode> sc2 = c2.getSubConfigs().stream()
+                .collect(Collectors.toMap(ConfigMetadataNode::getType, Function.identity()));
+        assertEquals(1, sc2.size());
+
+        ConfigObjectMetadata c4 = (ConfigObjectMetadata) sc2.get(Config8.class);
+        assertNotNull(c4);
+        assertEquals(0, c4.getSubConfigs().size());
+
+        ConfigObjectMetadata c3 = (ConfigObjectMetadata) sc1.get(Config7.class);
+        assertNotNull(c3);
+        assertEquals(0, c3.getSubConfigs().size());
     }
+
 
     @BQConfig("Describes Config1")
     public static class Config1 {
@@ -213,4 +228,6 @@ public class ConfigMetadataCompilerTest {
         public void setP4(BigDecimal v) {
         }
     }
+
+
 }

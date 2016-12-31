@@ -22,7 +22,7 @@ public class ConfigObjectMetadataTest {
 
         ConfigObjectMetadata o6 = ConfigObjectMetadata.builder().addSubConfig(o4).addSubConfig(o5).build();
 
-        List<ConfigObjectMetadata> all6 = o6.getAllSubConfigs().collect(toList());
+        List<ConfigMetadataNode> all6 = o6.getAllSubConfigs().collect(toList());
         assertEquals(6, all6.size());
         assertTrue(all6.contains(o1));
         assertTrue(all6.contains(o2));
@@ -31,12 +31,12 @@ public class ConfigObjectMetadataTest {
         assertTrue(all6.contains(o5));
         assertTrue(all6.contains(o6));
 
-        List<ConfigObjectMetadata> all4 = o4.getAllSubConfigs().collect(toList());
+        List<ConfigMetadataNode> all4 = o4.getAllSubConfigs().collect(toList());
         assertEquals(2, all4.size());
         assertTrue(all4.contains(o1));
         assertTrue(all4.contains(o4));
 
-        List<ConfigObjectMetadata> all1 = o1.getAllSubConfigs().collect(toList());
+        List<ConfigMetadataNode> all1 = o1.getAllSubConfigs().collect(toList());
         assertEquals(1, all1.size());
         assertTrue(all1.contains(o1));
     }
