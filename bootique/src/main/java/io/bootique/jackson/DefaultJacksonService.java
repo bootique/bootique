@@ -2,16 +2,33 @@ package io.bootique.jackson;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.SubtypeResolver;
-import io.bootique.log.BootLogger;
+
+import java.util.Collection;
 
 public class DefaultJacksonService implements JacksonService {
 
-    private BootLogger bootLogger;
     private SubtypeResolver subtypeResolver;
 
-    public DefaultJacksonService(SubtypeResolver subtypeResolver, BootLogger bootLogger) {
-        this.bootLogger = bootLogger;
-        this.subtypeResolver = subtypeResolver;
+    /**
+     * @param subtypes a collection of annotated classes to use in subclass resolution.
+     * @param <T>      upper boundary of the subclass. Usually {@link io.bootique.config.PolymorphicConfiguration}.
+     * @since 0.21
+     */
+    public <T> DefaultJacksonService(Collection<Class<? extends T>> subtypes) {
+        this(toArray(subtypes));
+    }
+
+    /**
+     * @since 0.21
+     * @param subtypes a collection of annotated classes to use in subclass resolution.
+     */
+    public DefaultJacksonService(Class<?>... subtypes) {
+        this.subtypeResolver = new ImmutableSubtypeResolver(subtypes);
+    }
+
+    private static <T> Class<?>[] toArray(Collection<Class<? extends T>> subtypes) {
+        Class<?>[] array = new Class<?>[subtypes.size()];
+        return subtypes.toArray(array);
     }
 
     @Override

@@ -3,22 +3,18 @@ package io.bootique.jackson;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.jsontype.impl.StdSubtypeResolver;
 
-import java.util.Collection;
-
 
 /**
  * A hack that allows to prevent modifications to SubtypeResolver outside the initialization code.
  *
  * @since 0.21
  */
-public class ImmutableSubtypeResolver<T> extends StdSubtypeResolver {
+class ImmutableSubtypeResolver extends StdSubtypeResolver {
 
     private boolean locked;
 
-    public ImmutableSubtypeResolver(Collection<Class<? extends T>> subtypes) {
-
-        Class<?>[] subtypesArray = subtypes.toArray(new Class<?>[subtypes.size()]);
-        registerSubtypes(subtypesArray);
+    ImmutableSubtypeResolver(Class<?>... subtypes) {
+        registerSubtypes(subtypes);
 
         // lock the object against further modification
         locked = true;

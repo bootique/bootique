@@ -33,7 +33,6 @@ import io.bootique.help.config.ConfigHelpGenerator;
 import io.bootique.help.config.DefaultConfigHelpGenerator;
 import io.bootique.help.config.HelpConfigCommand;
 import io.bootique.jackson.DefaultJacksonService;
-import io.bootique.jackson.ImmutableSubtypeResolver;
 import io.bootique.jackson.JacksonService;
 import io.bootique.jopt.JoptCliProvider;
 import io.bootique.log.BootLogger;
@@ -219,8 +218,8 @@ public class BQCoreModule implements Module {
 
     @Provides
     @Singleton
-    JacksonService provideJacksonService(BootLogger bootLogger, TypesFactory<PolymorphicConfiguration> typesFactory) {
-        return new DefaultJacksonService(new ImmutableSubtypeResolver(typesFactory.getTypes()), bootLogger);
+    JacksonService provideJacksonService(TypesFactory<PolymorphicConfiguration> typesFactory) {
+        return new DefaultJacksonService(typesFactory.getTypes());
     }
 
     @Provides

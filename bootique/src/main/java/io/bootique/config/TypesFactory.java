@@ -27,9 +27,8 @@ public class TypesFactory<T> {
         this.serviceType = serviceType;
     }
 
-
     // TODO: presumably this is not called more than once in an app, but if it is, we
-    // should start caching the types...
+    // must start caching the types...
     public Collection<Class<? extends T>> getTypes() {
 
         Collection<Class<? extends T>> types;
