@@ -40,7 +40,7 @@ public class SubtypeResolverFactory<T> {
 
     public Collection<Class<? extends T>> resolveSubclasses() throws IOException, ClassNotFoundException {
 
-        // note that unlike java.util.ServiceLoader, SubtypeResolverFactory can work with abstarct supertypes
+        // note that unlike java.util.ServiceLoader, SubtypeResolverFactory can work with abstract supertypes
         // as they are not instantiated....
 
         Collection<Class<? extends T>> subclasses = new ArrayList<>();
