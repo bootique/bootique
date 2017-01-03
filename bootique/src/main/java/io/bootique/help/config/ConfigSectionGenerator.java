@@ -34,25 +34,26 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
     public Object visitObjectMetadata(ConfigObjectMetadata metadata) {
         printNode(metadata, false);
 
-        List<ConfigMetadataNode> sortedChildren = metadata.getProperties()
-                .stream()
-                .sorted(Comparator.comparing(MetadataNode::getName))
+        List<ConfigObjectMetadata> subconfigs = metadata.getAllSubConfigs()
+                .map(md -> md.accept(new ConfigMetadataVisitor<ConfigObjectMetadata>() {
+                    @Override
+                    public ConfigObjectMetadata visitObjectMetadata(ConfigObjectMetadata metadata) {
+                        return metadata.isAbstractType() || metadata.getProperties().isEmpty() ? null : metadata;
+                    }
+                }))
+                .filter(md -> md != null)
                 .collect(Collectors.toList());
 
-        if (sortedChildren.isEmpty()) {
-            return null;
+        if (!subconfigs.isEmpty()) {
+            ConfigObjectMetadata last = subconfigs.get(subconfigs.size() - 1);
+            subconfigs.forEach(md -> {
+                printObjectNoSubclasses(md);
+
+                if (md != last) {
+                    out.println();
+                }
+            });
         }
-
-        ConfigMetadataNode last = sortedChildren.get(sortedChildren.size() - 1);
-
-        ConfigSectionGenerator childGenerator = new ConfigSectionGenerator(out.withOffset(DEFAULT_OFFSET));
-        sortedChildren.forEach(p -> {
-            p.accept(childGenerator);
-
-            if (p != last) {
-                out.println();
-            }
-        });
 
         return null;
     }
@@ -67,7 +68,6 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
     public Object visitListMetadata(ConfigListMetadata metadata) {
         printNode(metadata, false);
 
-        // TODO: should support multiple element types (from META-INF/services/PolymorphicConfiguration)
         metadata.getElementType().accept(new ConfigSectionListGenerator(out.withOffset(DEFAULT_OFFSET)));
 
         return null;
@@ -77,11 +77,37 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
     public Object visitMapMetadata(ConfigMapMetadata metadata) {
         printNode(metadata, false);
 
-        // TODO: should support multiple element types (from META-INF/services/PolymorphicConfiguration)
         metadata.getValuesType().accept(
                 new ConfigSectionMapGenerator(metadata.getKeysType(), out.withOffset(DEFAULT_OFFSET)));
 
         return null;
+    }
+
+    protected void printObjectNoSubclasses(ConfigObjectMetadata metadata) {
+
+        ConsoleAppender shifted = out.withOffset(DEFAULT_OFFSET);
+
+        if (metadata.getTypeLabel() != null) {
+            shifted.println("# Designator of subtype: ", typeLabel(metadata.getType()));
+            shifted.println("type: ", metadata.getTypeLabel());
+            shifted.println();
+        }
+
+        List<ConfigMetadataNode> sortedChildren = metadata.getProperties()
+                .stream()
+                .sorted(Comparator.comparing(MetadataNode::getName))
+                .collect(Collectors.toList());
+
+        ConfigMetadataNode last = sortedChildren.get(sortedChildren.size() - 1);
+        ConfigSectionGenerator childGenerator = new ConfigSectionGenerator(shifted);
+        sortedChildren.forEach(p -> {
+            p.accept(childGenerator);
+
+            if (p != last) {
+                out.println();
+            }
+        });
+
     }
 
     protected void printNode(ConfigValueMetadata metadata, boolean asValue) {

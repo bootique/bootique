@@ -6,6 +6,7 @@
 * #105 Default command name generation should convert camel-case to dashes 
 * #112 Explicit short option names 
 * #113 Move io.bootique.application to io.bootique.meta.application
+* #114 Config metadata: Support for polymorphic types
 
 ## 0.20
 

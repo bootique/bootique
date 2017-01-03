@@ -254,11 +254,71 @@ public class ConfigSectionGeneratorTest {
         );
     }
 
+    @Test
+    public void testVisitObjectConfig_Inheritance() {
+
+        ConfigObjectMetadata sub1 = ConfigObjectMetadata.builder()
+                .type(Config3.class)
+                .typeLabel("c3")
+                .addProperty(ConfigValueMetadata.builder("p0").type(Boolean.class).build())
+                .addProperty(ConfigValueMetadata.builder("p1").type(String.class).build())
+                .build();
+
+        ConfigObjectMetadata sub2 = ConfigObjectMetadata.builder()
+                .type(Config4.class)
+                .typeLabel("c4")
+                .addProperty(ConfigValueMetadata.builder("p2").type(Integer.TYPE).description("Designates an integer value").build())
+                .addProperty(ConfigValueMetadata.builder("p3").type(Bootique.class).build())
+                .build();
+
+        ConfigObjectMetadata m1Config = ConfigObjectMetadata
+                .builder("m1root")
+                .description("Root config of M1")
+                .type(ConfigRoot1.class)
+                .abstractType(true)
+                .addProperty(ConfigValueMetadata.builder("pa1").type(Integer.TYPE).build())
+                .addSubConfig(sub1)
+                .addSubConfig(sub2)
+                .build();
+
+        assertLines(m1Config,
+                "# Type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1",
+                "# Root config of M1",
+                "m1root:",
+                "      # Designator of subtype: io.bootique.help.config.ConfigSectionGeneratorTest$Config3",
+                "      type: c3",
+                "",
+                "      # Type: boolean",
+                "      p0: <true|false>",
+                "",
+                "      # Type: String",
+                "      p1: <string>",
+                "",
+                "      # Designator of subtype: io.bootique.help.config.ConfigSectionGeneratorTest$Config4",
+                "      type: c4",
+                "",
+                "      # Type: int",
+                "      # Designates an integer value",
+                "      p2: <int>",
+                "",
+                "      # Type: io.bootique.Bootique",
+                "      p3: <value>"
+        );
+    }
+
     public static class ConfigRoot1 {
 
     }
 
     public static class ConfigRoot2 {
+
+    }
+
+    public static class Config3 {
+
+    }
+
+    public static class Config4 {
 
     }
 }

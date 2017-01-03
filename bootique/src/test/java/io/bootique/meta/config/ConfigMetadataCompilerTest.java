@@ -1,10 +1,11 @@
 package io.bootique.meta.config;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.config.PolymorphicConfiguration;
 import io.bootique.meta.MetadataNode;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.lang.reflect.Type;
@@ -17,22 +18,25 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class ConfigMetadataCompilerTest {
 
-    private ConfigMetadataCompiler compiler;
+    private ConfigMetadataCompiler createCompiler() {
+        return createCompiler(t -> Stream.empty());
+    }
 
-    @Before
-    public void before() {
-        compiler = new ConfigMetadataCompiler(t -> Stream.empty());
+    private ConfigMetadataCompiler createCompiler(Function<Class<?>, Stream<Class<?>>> subclassProvider) {
+        return new ConfigMetadataCompiler(subclassProvider);
     }
 
     @Test
     public void testCompile() {
 
-        ConfigObjectMetadata md = (ConfigObjectMetadata) compiler.compile("prefix", Config1.class);
+        ConfigObjectMetadata md = (ConfigObjectMetadata) createCompiler().compile("prefix", Config1.class);
         assertNotNull(md);
 
         assertEquals("prefix", md.getName());
@@ -83,7 +87,7 @@ public class ConfigMetadataCompilerTest {
     @Test
     public void testCompile_Cycle() {
 
-        ConfigObjectMetadata md = (ConfigObjectMetadata) compiler.compile("prefix", Config3.class);
+        ConfigObjectMetadata md = (ConfigObjectMetadata) createCompiler().compile("prefix", Config3.class);
         assertNotNull(md);
 
         assertEquals("prefix", md.getName());
@@ -99,7 +103,7 @@ public class ConfigMetadataCompilerTest {
     @Test
     public void testCompile_Inheritance() {
 
-        compiler = new ConfigMetadataCompiler(t -> {
+        ConfigObjectMetadata c5 = (ConfigObjectMetadata) createCompiler(t -> {
 
             if (Config5.class.equals(t)) {
                 return Stream.of(Config6.class, Config7.class);
@@ -110,31 +114,36 @@ public class ConfigMetadataCompilerTest {
             }
 
             return Stream.empty();
-        });
+        }).compile("prefix", Config5.class);
 
-        ConfigObjectMetadata c1 = (ConfigObjectMetadata) compiler.compile("prefix", Config5.class);
-        assertNotNull(c1);
+        assertNotNull(c5);
+        assertEquals("prefix", c5.getName());
+        assertEquals(Config5.class, c5.getType());
+        assertTrue(c5.isAbstractType());
 
-        assertEquals("prefix", c1.getName());
-        assertEquals(Config5.class, c1.getType());
-
-        Map<Type, ConfigMetadataNode> sc1 = c1.getSubConfigs().stream()
+        Map<Type, ConfigMetadataNode> sc5 = c5.getSubConfigs().stream()
                 .collect(Collectors.toMap(ConfigMetadataNode::getType, Function.identity()));
-        assertEquals(2, sc1.size());
+        assertEquals(2, sc5.size());
 
-        ConfigObjectMetadata c2 = (ConfigObjectMetadata) sc1.get(Config6.class);
-        assertNotNull(c2);
-        Map<Type, ConfigMetadataNode> sc2 = c2.getSubConfigs().stream()
+        ConfigObjectMetadata c6 = (ConfigObjectMetadata) sc5.get(Config6.class);
+        assertNotNull(c6);
+        assertEquals("c6", c6.getTypeLabel());
+        assertFalse(c6.isAbstractType());
+        Map<Type, ConfigMetadataNode> sc6 = c6.getSubConfigs().stream()
                 .collect(Collectors.toMap(ConfigMetadataNode::getType, Function.identity()));
-        assertEquals(1, sc2.size());
+        assertEquals(1, sc6.size());
 
-        ConfigObjectMetadata c4 = (ConfigObjectMetadata) sc2.get(Config8.class);
-        assertNotNull(c4);
-        assertEquals(0, c4.getSubConfigs().size());
+        ConfigObjectMetadata c8 = (ConfigObjectMetadata) sc6.get(Config8.class);
+        assertNotNull(c8);
+        assertEquals("c8", c8.getTypeLabel());
+        assertFalse(c8.isAbstractType());
+        assertEquals(0, c8.getSubConfigs().size());
 
-        ConfigObjectMetadata c3 = (ConfigObjectMetadata) sc1.get(Config7.class);
-        assertNotNull(c3);
-        assertEquals(0, c3.getSubConfigs().size());
+        ConfigObjectMetadata c7 = (ConfigObjectMetadata) sc5.get(Config7.class);
+        assertNotNull(c7);
+        assertEquals("c7", c7.getTypeLabel());
+        assertFalse(c7.isAbstractType());
+        assertEquals(0, c7.getSubConfigs().size());
     }
 
 
@@ -198,7 +207,8 @@ public class ConfigMetadataCompilerTest {
     }
 
     @BQConfig
-    public static class Config5 implements PolymorphicConfiguration {
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
+    public static abstract class Config5 implements PolymorphicConfiguration {
 
         @BQConfigProperty
         public void setP1(long v) {
@@ -206,6 +216,7 @@ public class ConfigMetadataCompilerTest {
     }
 
     @BQConfig
+    @JsonTypeName("c6")
     public static class Config6 extends Config5 {
 
         @BQConfigProperty
@@ -214,6 +225,7 @@ public class ConfigMetadataCompilerTest {
     }
 
     @BQConfig
+    @JsonTypeName("c7")
     public static class Config7 extends Config5 {
 
         @BQConfigProperty
@@ -222,12 +234,11 @@ public class ConfigMetadataCompilerTest {
     }
 
     @BQConfig
+    @JsonTypeName("c8")
     public static class Config8 extends Config6 {
 
         @BQConfigProperty
         public void setP4(BigDecimal v) {
         }
     }
-
-
 }

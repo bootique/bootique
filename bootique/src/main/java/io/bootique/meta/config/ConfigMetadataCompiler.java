@@ -1,9 +1,11 @@
 package io.bootique.meta.config;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -100,7 +102,9 @@ public class ConfigMetadataCompiler {
         ConfigObjectMetadata.Builder builder = ConfigObjectMetadata
                 .builder(baseObject)
                 .name(descriptor.getName())
-                .type(descriptor.getType());
+                .type(descriptor.getType())
+                .abstractType(isAbstract(descriptor.getTypeClass()))
+                .typeLabel(extractTypeLabel(descriptor.getTypeClass()));
 
         // note that root config object known to Bootique doesn't require BQConfig annotation (though it would help in
         // determining description). Objects nested within the root config do. Otherwise they will be treated as
@@ -125,6 +129,19 @@ public class ConfigMetadataCompiler {
                 .forEach(builder::addSubConfig);
 
         return builder.build();
+    }
+
+    protected String extractTypeLabel(Class<?> type) {
+        // TODO: get rid of Jackson annotations dependency .. devise our own that reflect Bootique style of config factory
+        // subclassing...
+
+        JsonTypeName typeName = type.getAnnotation(JsonTypeName.class);
+        return typeName != null ? typeName.value() : null;
+    }
+
+    protected boolean isAbstract(Class<?> type) {
+        int modifiers = type.getModifiers();
+        return Modifier.isAbstract(modifiers) || Modifier.isInterface(modifiers);
     }
 
     protected ConfigMetadataNode compileValueMetadata(Descriptor descriptor) {

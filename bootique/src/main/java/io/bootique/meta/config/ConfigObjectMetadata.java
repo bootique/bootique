@@ -33,6 +33,8 @@ public class ConfigObjectMetadata extends ConfigValueMetadata {
         }
     };
 
+    private boolean abstractType;
+    private String typeLabel;
     private Collection<ConfigMetadataNode> subConfigs;
     private Collection<ConfigMetadataNode> properties;
 
@@ -63,6 +65,19 @@ public class ConfigObjectMetadata extends ConfigValueMetadata {
     @Override
     public <T> T accept(ConfigMetadataVisitor<T> visitor) {
         return visitor.visitObjectMetadata(this);
+    }
+
+    /**
+     * Returns an optional label that is used as a type designator for polymorphic config objects.
+     *
+     * @return an optional label that is used as a type designator for polymorphic config objects.
+     */
+    public String getTypeLabel() {
+        return typeLabel;
+    }
+
+    public boolean isAbstractType() {
+        return abstractType;
     }
 
     public Collection<ConfigMetadataNode> getProperties() {
@@ -111,6 +126,16 @@ public class ConfigObjectMetadata extends ConfigValueMetadata {
 
         public Builder addSubConfig(ConfigMetadataNode subConfig) {
             toBuild.subConfigs.add(subConfig);
+            return this;
+        }
+
+        public Builder typeLabel(String label) {
+            toBuild.typeLabel = label;
+            return this;
+        }
+
+        public Builder abstractType(boolean isAbstract) {
+            toBuild.abstractType = isAbstract;
             return this;
         }
     }
