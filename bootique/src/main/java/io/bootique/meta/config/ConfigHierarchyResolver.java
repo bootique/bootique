@@ -26,7 +26,7 @@ public class ConfigHierarchyResolver {
         // Types are graph nodes
         typeSet.forEach(c -> hierarchies.put(c, new Type(c)));
 
-        // subclass relationship are graph edges
+        // subclass and interface implementation relationship are graph edges
         hierarchies.values().forEach(t -> {
 
             Class<?> superClass = t.getRootClass().getSuperclass();
@@ -38,6 +38,13 @@ public class ConfigHierarchyResolver {
                 }
 
                 superClass = superClass.getSuperclass();
+            }
+
+            for(Class<?> iface : t.getRootClass().getInterfaces()) {
+                Type iType = hierarchies.get(iface);
+                if(iType != null) {
+                    iType.getDirectSubclasses().add(t);
+                }
             }
         });
 
