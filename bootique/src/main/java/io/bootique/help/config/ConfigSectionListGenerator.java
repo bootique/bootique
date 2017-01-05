@@ -19,7 +19,7 @@ class ConfigSectionListGenerator extends ConfigSectionGenerator {
         Type valueType = metadata.getType();
 
         if (valueType != null) {
-            out.println("- # Element type: ", typeLabel(valueType));
+            out.println("- # Type: ", typeLabel(valueType));
         }
 
         if (metadata.getDescription() != null) {

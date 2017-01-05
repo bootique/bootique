@@ -18,11 +18,9 @@ public class ConfigSectionMapGenerator extends ConfigSectionGenerator {
     @Override
     protected void printNode(ConfigValueMetadata metadata, boolean asValue) {
 
-        out.println("# Keys type: ", typeLabel(keysType));
-
         Type valueType = metadata.getType();
         if (valueType != null) {
-            out.println("# Values type: ", typeLabel(valueType));
+            out.println("# Type: ", typeLabel(valueType));
         }
 
         if (metadata.getDescription() != null) {
