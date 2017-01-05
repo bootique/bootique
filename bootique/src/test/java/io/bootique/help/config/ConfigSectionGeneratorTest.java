@@ -9,8 +9,15 @@ import io.bootique.meta.config.ConfigObjectMetadata;
 import io.bootique.meta.config.ConfigValueMetadata;
 import org.junit.Test;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
 
 public class ConfigSectionGeneratorTest {
 
@@ -117,26 +124,32 @@ public class ConfigSectionGeneratorTest {
     }
 
     @Test
-    public void testVisitMapOfValues() {
+    public void testVisitMapOfValues() throws NoSuchFieldException {
 
-        ConfigValueMetadata mapMd = ConfigValueMetadata.builder().type(Integer.TYPE).build();
+        Type genericMapType = ConfigRoot2.class.getField("map").getGenericType();
+
+        ConfigValueMetadata mapValueMd = ConfigValueMetadata.builder().type(String.class).build();
+        ConfigMapMetadata mapMd = ConfigMapMetadata.builder("p1")
+                .type(genericMapType)
+                .keysType(Integer.class)
+                .valuesType(mapValueMd).build();
 
         ConfigObjectMetadata rootMd = ConfigObjectMetadata
                 .builder("m1root")
                 .description("Root config of M1")
                 .type(ConfigRoot1.class)
-                .addProperty(ConfigMapMetadata.builder("p1").keysType(Integer.class).valuesType(mapMd).build())
+                .addProperty(mapMd)
                 .build();
 
         assertLines(rootMd,
                 "# Type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1",
                 "# Root config of M1",
                 "m1root:",
-                "      # Type: Map",
+                "      # Type: Map<int, String>",
                 "      p1:",
                 "            # Keys type: int",
-                "            # Values type: int",
-                "            <int>: <int>"
+                "            # Values type: String",
+                "            <int>: <string>"
         );
     }
 
@@ -306,11 +319,98 @@ public class ConfigSectionGeneratorTest {
         );
     }
 
+    @Test
+    public void testVisitMapConfig_ValueInheritance() throws NoSuchFieldException {
+
+        Type genericMapType = ConfigRoot2.class.getField("mapOfRoot1").getGenericType();
+
+        ConfigObjectMetadata sub1 = ConfigObjectMetadata.builder()
+                .type(Config3.class)
+                .typeLabel("c3")
+                .addProperty(ConfigValueMetadata.builder("p0").type(Boolean.class).build())
+                .addProperty(ConfigValueMetadata.builder("p1").type(String.class).build())
+                .build();
+
+        ConfigObjectMetadata sub2 = ConfigObjectMetadata.builder()
+                .type(Config4.class)
+                .typeLabel("c4")
+                .addProperty(ConfigValueMetadata.builder("p2").type(Integer.TYPE).description("Designates an integer value").build())
+                .addProperty(ConfigValueMetadata.builder("p3").type(Bootique.class).build())
+                .build();
+
+        ConfigObjectMetadata m1Config = ConfigObjectMetadata
+                .builder()
+                .description("One config")
+                .type(ConfigRoot1.class)
+                .abstractType(true)
+                .addProperty(ConfigValueMetadata.builder("pa1").type(Integer.TYPE).build())
+                .addSubConfig(sub1)
+                .addSubConfig(sub2)
+                .build();
+
+        ConfigMapMetadata mapMd = ConfigMapMetadata.builder("root")
+                .description("Map root")
+                .type(genericMapType)
+                .keysType(String.class)
+                .valuesType(m1Config).build();
+
+        assertLines(mapMd,
+                "# Type: Map<String, io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1>",
+                "# Map root",
+                "root:",
+                "      # Keys type: String",
+                "      # Values type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1",
+                "      # One config",
+                "      <string>:",
+                "            # Designator of subtype: io.bootique.help.config.ConfigSectionGeneratorTest$Config3",
+                "            type: c3",
+                "",
+                "            # Type: boolean",
+                "            p0: <true|false>",
+                "",
+                "            # Type: String",
+                "            p1: <string>",
+                "",
+                "            # Designator of subtype: io.bootique.help.config.ConfigSectionGeneratorTest$Config4",
+                "            type: c4",
+                "",
+                "            # Type: int",
+                "            # Designates an integer value",
+                "            p2: <int>",
+                "",
+                "            # Type: io.bootique.Bootique",
+                "            p3: <value>"
+        );
+    }
+
+    @Test
+    public void testTypeLabel() throws NoSuchFieldException {
+        ConfigSectionGenerator generator = new ConfigSectionGenerator(mock(ConsoleAppender.class));
+        assertEquals("int", generator.typeLabel(Integer.class));
+        assertEquals("int", generator.typeLabel(Integer.TYPE));
+        assertEquals("boolean", generator.typeLabel(Boolean.class));
+        assertEquals("boolean", generator.typeLabel(Boolean.TYPE));
+        assertEquals("String", generator.typeLabel(String.class));
+        assertEquals("io.bootique.Bootique", generator.typeLabel(Bootique.class));
+        assertEquals("Map", generator.typeLabel(HashMap.class));
+        assertEquals("List", generator.typeLabel(ArrayList.class));
+
+        Type genericMapType = ConfigRoot2.class.getField("map").getGenericType();
+        assertEquals("Map<int, String>", generator.typeLabel(genericMapType));
+
+        Type genericListType = ConfigRoot2.class.getField("list").getGenericType();
+        assertEquals("List<String>", generator.typeLabel(genericListType));
+    }
+
     public static class ConfigRoot1 {
 
     }
 
     public static class ConfigRoot2 {
+
+        public Map<Integer, String> map;
+        public Map<String, ConfigRoot1> mapOfRoot1;
+        public List<String> list;
 
     }
 

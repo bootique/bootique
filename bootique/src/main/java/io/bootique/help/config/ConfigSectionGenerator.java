@@ -9,6 +9,7 @@ import io.bootique.meta.config.ConfigObjectMetadata;
 import io.bootique.meta.config.ConfigMetadataVisitor;
 import io.bootique.meta.config.ConfigValueMetadata;
 
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Comparator;
@@ -196,6 +197,24 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
                     else if (Collection.class.isAssignableFrom(classType)) {
                         return "List";
                     }
+                } else if (type instanceof ParameterizedType) {
+                    ParameterizedType parameterizedType = (ParameterizedType) type;
+
+                    StringBuilder out = new StringBuilder(typeLabel(parameterizedType.getRawType()));
+                    out.append("<");
+
+                    Type[] args = parameterizedType.getActualTypeArguments();
+                    if (args != null) {
+                        for (int i = 0; i < args.length; i++) {
+                            if(i > 0) {
+                                out.append(", ");
+                            }
+                            out.append(typeLabel(args[i]));
+                        }
+                    }
+
+                    out.append(">");
+                    return out.toString();
                 }
 
                 return typeName;
