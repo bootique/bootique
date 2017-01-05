@@ -146,6 +146,45 @@ public class ConfigMetadataCompilerTest {
         assertEquals(0, c7.getSubConfigs().size());
     }
 
+    @Test
+    public void testCompile_InheritanceFromInterface() {
+
+        ConfigObjectMetadata c9 = (ConfigObjectMetadata) createCompiler(t -> {
+
+            if (Config9.class.equals(t)) {
+                return Stream.of(Config10.class, Config11.class);
+            }
+
+            return Stream.empty();
+        }).compile("prefix", Config9.class);
+
+        assertNotNull(c9);
+        assertEquals("prefix", c9.getName());
+        assertEquals(Config9.class, c9.getType());
+        assertTrue(c9.isAbstractType());
+
+        Map<Type, ConfigMetadataNode> sc9 = c9.getSubConfigs().stream()
+                .collect(Collectors.toMap(ConfigMetadataNode::getType, Function.identity()));
+        assertEquals(2, sc9.size());
+
+        ConfigObjectMetadata c10 = (ConfigObjectMetadata) sc9.get(Config10.class);
+        assertNotNull(c10);
+        assertEquals("c10", c10.getTypeLabel());
+        assertFalse(c10.isAbstractType());
+        assertEquals(0, c10.getSubConfigs().size());
+
+        ConfigObjectMetadata c11 = (ConfigObjectMetadata) sc9.get(Config11.class);
+        assertNotNull(c11);
+        assertEquals("c11", c11.getTypeLabel());
+        assertFalse(c11.isAbstractType());
+        assertEquals(0, c11.getSubConfigs().size());
+    }
+
+
+    @BQConfig
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
+    public static interface Config9 extends PolymorphicConfiguration {
+    }
 
     @BQConfig("Describes Config1")
     public static class Config1 {
@@ -241,4 +280,23 @@ public class ConfigMetadataCompilerTest {
         public void setP4(BigDecimal v) {
         }
     }
+
+    @BQConfig
+    @JsonTypeName("c10")
+    public static class Config10 implements Config9 {
+
+        @BQConfigProperty
+        public void setP2(String v) {
+        }
+    }
+
+    @BQConfig
+    @JsonTypeName("c11")
+    public static class Config11 implements Config9 {
+
+        @BQConfigProperty
+        public void setP3(String v) {
+        }
+    }
+
 }
