@@ -100,12 +100,12 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
     protected void printValueHeader(ConfigValueMetadata metadata) {
 
         if (metadata.getDescription() != null) {
-            out.println("# ", metadata.getDescription());
+            out.withOffset("# ").foldPrintln(metadata.getDescription());
         }
 
         Type valueType = metadata.getType();
         if (valueType != null && !isImpliedType(valueType)) {
-            out.println("# Resolved as '", typeLabel(valueType), "'.");
+            out.withOffset("# ").foldPrintln("Resolved as '", typeLabel(valueType), "'.");
         }
     }
 

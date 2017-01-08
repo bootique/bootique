@@ -30,7 +30,7 @@ public class DefaultConfigHelpGeneratorTest {
     @Test
     public void testGenerate_Empty() {
         ModulesMetadata modules = ModulesMetadata.builder().build();
-        assertLines(new DefaultConfigHelpGenerator(modules, 80));
+        assertLines(new DefaultConfigHelpGenerator(modules, 300));
     }
 
     @Test
@@ -39,7 +39,7 @@ public class DefaultConfigHelpGeneratorTest {
         ModuleMetadata module1 = ModuleMetadata.builder("M1").build();
         ModulesMetadata modules = ModulesMetadata.builder(module1).build();
 
-        assertLines(new DefaultConfigHelpGenerator(modules, 80),
+        assertLines(new DefaultConfigHelpGenerator(modules, 300),
                 "MODULES",
                 "      M1"
         );
@@ -52,7 +52,7 @@ public class DefaultConfigHelpGeneratorTest {
         ModuleMetadata module2 = ModuleMetadata.builder("M2").build();
         ModulesMetadata modules = ModulesMetadata.builder(module1, module2).build();
 
-        assertLines(new DefaultConfigHelpGenerator(modules, 80),
+        assertLines(new DefaultConfigHelpGenerator(modules, 300),
                 "MODULES",
                 "      M1",
                 "",
@@ -68,7 +68,7 @@ public class DefaultConfigHelpGeneratorTest {
         ModuleMetadata module2 = ModuleMetadata.builder("MC").build();
         ModulesMetadata modules = ModulesMetadata.builder(module0, module1, module2).build();
 
-        assertLines(new DefaultConfigHelpGenerator(modules, 80),
+        assertLines(new DefaultConfigHelpGenerator(modules, 300),
                 "MODULES",
                 "      MA",
                 "",
@@ -86,7 +86,7 @@ public class DefaultConfigHelpGeneratorTest {
 
         ModulesMetadata modules = ModulesMetadata.builder(module1, module2).build();
 
-        assertLines(new DefaultConfigHelpGenerator(modules, 80),
+        assertLines(new DefaultConfigHelpGenerator(modules, 300),
                 "MODULES",
                 "      M1: Module called M1",
                 "",
@@ -117,7 +117,7 @@ public class DefaultConfigHelpGeneratorTest {
 
         ModulesMetadata modules = ModulesMetadata.builder(module1, module2).build();
 
-        assertLines(new DefaultConfigHelpGenerator(modules, 80),
+        assertLines(new DefaultConfigHelpGenerator(modules, 300),
                 "MODULES",
                 "      M1",
                 "",

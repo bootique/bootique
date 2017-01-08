@@ -6,7 +6,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * A helper for printing text to a fixed-width console that handles text folding and offsets.
@@ -17,7 +20,7 @@ public class ConsoleAppender {
 
     static final String NEWLINE = System.getProperty("line.separator");
 
-    private static final int MIN_LINE_WIDTH = 10;
+    static final int MIN_LINE_WIDTH = 10;
     private static final Pattern SPACE = Pattern.compile("\\s+");
 
     private Appendable out;
@@ -53,17 +56,18 @@ public class ConsoleAppender {
      * @return a new appender with the specified base offset.
      */
     public ConsoleAppender withOffset(int offset) {
-        ConsoleAppender offsetAppender = new ConsoleAppender(this);
 
-        if (offset > 0) {
-            StringBuilder padding = new StringBuilder(this.offset);
-            for (int i = 0; i < offset; i++) {
-                padding.append(" ");
-            }
-
-            offsetAppender.offset = padding.toString();
+        StringBuilder padding = new StringBuilder();
+        for (int i = 0; i < offset; i++) {
+            padding.append(" ");
         }
 
+        return withOffset(padding.toString());
+    }
+
+    public ConsoleAppender withOffset(String offset) {
+        ConsoleAppender offsetAppender = new ConsoleAppender(this);
+        offsetAppender.offset = offsetAppender.offset + Objects.requireNonNull(offset);
         return offsetAppender;
     }
 
@@ -120,55 +124,59 @@ public class ConsoleAppender {
         List<String> folded = new ArrayList<>();
         StringBuilder line = new StringBuilder();
 
-        // must split even shorter strings as they may be combined with the following pieces
-        phrases.stream().map(String::trim)
-                .map(s -> SPACE.split(s))
-                .flatMap(lines -> Arrays.asList(lines).stream())
-                .forEach(word -> {
+        String joined = phrases.stream().collect(joining());
 
-                    String separator = line.length() > 0 ? " " : "";
+        SPACE.splitAsStream(joined).forEach(word -> {
 
-                    if (line.length() + separator.length() + word.length() <= maxLength) {
-                        line.append(separator).append(word);
-                    } else {
+            String separator = line.length() > 0 ? " " : "";
 
-                        if (word.length() <= maxLength) {
-                            folded.add(line.toString());
-                            line.setLength(0);
-                            line.append(word);
+            if (line.length() + separator.length() + word.length() <= maxLength) {
+                line.append(separator).append(word);
+            } else {
+
+                if (word.length() <= maxLength) {
+                    folded.add(line.toString());
+                    line.setLength(0);
+                    line.append(word);
+                } else {
+
+                    // fold long words...
+
+                    // append head to existing line
+                    int head = maxLength - separator.length() - line.length();
+                    if (head > 0) {
+                        line.append(separator).append(word.substring(0, head));
+                        folded.add(line.toString());
+                        line.setLength(0);
+                    }
+                    else if(head < 0) {
+                        // this happens when the line is full and even the separator won't fit.
+                        head = 0;
+                    }
+
+                    int len = word.length();
+                    int start = head;
+
+                    int end = -1;
+                    while (start < len) {
+
+                        end = start + maxLength;
+                        if (end > len) {
+                            // don't fold yet, there may be more words...
+                            end = len;
+                            line.append(word.substring(start, end));
                         } else {
 
-                            // fold long words...
-
-                            // append head to existing line
-                            int head = maxLength - separator.length() - line.length();
-                            if (head > 0) {
-                                line.append(separator).append(word.substring(0, head));
-                                folded.add(line.toString());
-                                line.setLength(0);
-                            }
-
-                            int len = word.length();
-                            int start = head;
-                            int end = -1;
-                            while (start < len) {
-
-                                end = start + maxLength;
-                                if (end > len) {
-                                    // don't fold yet, there may be more words...
-                                    end = len;
-                                    line.append(word.substring(start, end));
-                                } else {
-                                    line.append(word.substring(start, end));
-                                    folded.add(line.toString());
-                                    line.setLength(0);
-                                }
-
-                                start = end;
-                            }
+                            line.append(word.substring(start, end));
+                            folded.add(line.toString());
+                            line.setLength(0);
                         }
+
+                        start = end;
                     }
-                });
+                }
+            }
+        });
 
         // save leftovers
         if (line.length() > 0) {

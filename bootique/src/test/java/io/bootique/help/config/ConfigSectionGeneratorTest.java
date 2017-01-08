@@ -23,7 +23,11 @@ import static org.mockito.Mockito.mock;
 
 public class ConfigSectionGeneratorTest {
 
-    private static void assertLines(ConfigMetadataNode node, String... expectedLines) {
+    static void assertLines(ConfigMetadataNode node, String... expectedLines) {
+        assertLines(node, 300, expectedLines);
+    }
+
+    static void assertLines(ConfigMetadataNode node, int lineWidth, String... expectedLines) {
 
         StringBuilder expected = new StringBuilder();
         for (String s : expectedLines) {
@@ -31,7 +35,7 @@ public class ConfigSectionGeneratorTest {
         }
 
         StringBuilder buffer = new StringBuilder();
-        ConsoleAppender out = new ConsoleAppender(buffer, 80);
+        ConsoleAppender out = new ConsoleAppender(buffer, lineWidth);
         node.accept(new ConfigSectionGenerator(out));
         String help = buffer.toString();
         assertNotNull(help);
@@ -464,6 +468,7 @@ public class ConfigSectionGeneratorTest {
                 "            p1: <string>"
         );
     }
+
     @Test
     public void testTypeLabel() throws NoSuchFieldException {
         ConfigSectionGenerator generator = new ConfigSectionGenerator(mock(ConsoleAppender.class));
