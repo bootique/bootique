@@ -30,6 +30,7 @@ public class ModulesMetadataCompiler {
         return ModuleMetadata
                 .builder(module.getName())
                 .description(module.getDescription())
+                .providerName(module.getProviderName())
                 .addConfigs(toConfigs(module))
                 .build();
     }

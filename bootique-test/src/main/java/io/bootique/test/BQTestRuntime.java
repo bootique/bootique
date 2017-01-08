@@ -4,8 +4,7 @@ import io.bootique.BQRuntime;
 import io.bootique.command.CommandOutcome;
 
 /**
- * A base class of test "shells" that allow to run various modules in Bootique
- * environment.
+ * A base class of test "shells" that allow to run various modules in Bootique environment.
  *
  * @since 0.14
  */

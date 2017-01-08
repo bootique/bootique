@@ -8,8 +8,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Bootique application module. A thin wrapper around Guice DI module that helps Bootique to manage module metadata
- * and override dependencies.
+ * A thin wrapper around Guice DI module that helps Bootique to extract module metadata and override dependencies.
  *
  * @since 0.21
  */

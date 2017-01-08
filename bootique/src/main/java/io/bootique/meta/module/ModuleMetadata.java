@@ -15,6 +15,7 @@ import java.util.Collection;
 public class ModuleMetadata implements MetadataNode {
 
     private String name;
+    private String providerName;
     private String description;
     private Collection<ConfigMetadataNode> configs;
 
@@ -33,6 +34,10 @@ public class ModuleMetadata implements MetadataNode {
     @Override
     public String getName() {
         return name;
+    }
+
+    public String getProviderName() {
+        return providerName;
     }
 
     @Override
@@ -58,6 +63,11 @@ public class ModuleMetadata implements MetadataNode {
 
         public Builder name(String name) {
             moduleMetadata.name = name;
+            return this;
+        }
+
+        public Builder providerName(String name) {
+            moduleMetadata.providerName = name;
             return this;
         }
 
