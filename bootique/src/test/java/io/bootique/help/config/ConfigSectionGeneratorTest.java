@@ -268,6 +268,7 @@ public class ConfigSectionGeneratorTest {
         ConfigObjectMetadata sub1 = ConfigObjectMetadata.builder()
                 .type(Config3.class)
                 .typeLabel("c3")
+                .description("Subtype desc")
                 .addProperty(ConfigValueMetadata.builder("p0").type(Boolean.class).build())
                 .addProperty(ConfigValueMetadata.builder("p1").type(String.class).build())
                 .build();
@@ -293,8 +294,12 @@ public class ConfigSectionGeneratorTest {
                 "# Type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1",
                 "# Root config of M1",
                 "m1root:",
+                "      #",
                 "      # Subtype: io.bootique.help.config.ConfigSectionGeneratorTest$Config3",
-                "      # Subtype label",
+                "      # Subtype desc",
+                "      #",
+                "",
+                "      # Subtype identifier.",
                 "      type: c3",
                 "",
                 "      # Type: boolean",
@@ -303,8 +308,11 @@ public class ConfigSectionGeneratorTest {
                 "      # Type: String",
                 "      p1: <string>",
                 "",
+                "      #",
                 "      # Subtype: io.bootique.help.config.ConfigSectionGeneratorTest$Config4",
-                "      # Subtype label",
+                "      #",
+                "",
+                "      # Subtype identifier.",
                 "      type: c4",
                 "",
                 "      # Type: int",
@@ -358,8 +366,11 @@ public class ConfigSectionGeneratorTest {
                 "      # Type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1",
                 "      # One config",
                 "      <string>:",
+                "            #",
                 "            # Subtype: io.bootique.help.config.ConfigSectionGeneratorTest$Config3",
-                "            # Subtype label",
+                "            #",
+                "",
+                "            # Subtype identifier.",
                 "            type: c3",
                 "",
                 "            # Type: boolean",
@@ -368,8 +379,11 @@ public class ConfigSectionGeneratorTest {
                 "            # Type: String",
                 "            p1: <string>",
                 "",
+                "            #",
                 "            # Subtype: io.bootique.help.config.ConfigSectionGeneratorTest$Config4",
-                "            # Subtype label",
+                "            #",
+                "",
+                "            # Subtype identifier.",
                 "            type: c4",
                 "",
                 "            # Type: int",

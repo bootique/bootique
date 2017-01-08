@@ -89,8 +89,17 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
         ConsoleAppender shifted = out.withOffset(DEFAULT_OFFSET);
 
         if (metadata.getTypeLabel() != null) {
+            shifted.println("#");
             shifted.println("# Subtype: ", typeLabel(metadata.getType()));
-            shifted.println("# Subtype label");
+
+            // subtype description is printed here (while supertype description is printed inside 'printNode')
+            if(metadata.getDescription() != null) {
+                shifted.println("# ", metadata.getDescription());
+            }
+            shifted.println("#");
+
+            shifted.println();
+            shifted.println("# Subtype identifier.");
             shifted.println("type: ", metadata.getTypeLabel());
             shifted.println();
         }
