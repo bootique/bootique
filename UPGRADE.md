@@ -36,6 +36,11 @@ property is deprecated, but still supported. The new alternative is 'changeLogs'
 follow Bootique ResourceFactory approach. Specifically, if the resource is expected to be on classpath, it requires
 "classpath:" prefix. Otherwise it will be treated as a file path.
 
+* [bootique-logback #26](https://github.com/bootique/bootique-logback/issues/26):  'log.level' and 
+'log.loggers.<xyz>.level' must be specified in lowercase. I.e. ```level: debug``` instead of ```level: DEBUG```. 
+Uppercase values will now cause an exception.
+
+
 ## 0.20
 
 * [bootique #92](https://github.com/bootique/bootique/issues/92): We created a new application metadata package 
