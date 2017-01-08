@@ -236,9 +236,9 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
             case "java.lang.String":
                 return "<string>";
             case "io.bootique.resource.ResourceFactory":
-                return "<resource>";
+                return "<resource-uri>";
             case "io.bootique.resource.FolderResourceFactory":
-                return "<folder-resource>";
+                return "<folder-resource-uri>";
             default:
                 if (type instanceof Class) {
                     Class<?> classType = (Class<?>) type;
@@ -280,6 +280,8 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
             case "long":
             case "java.lang.Long":
             case "java.lang.String":
+            case "io.bootique.resource.ResourceFactory":
+            case "io.bootique.resource.FolderResourceFactory":
                 return true;
             default:
                 return false;

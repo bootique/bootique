@@ -495,8 +495,8 @@ public class ConfigSectionGeneratorTest {
         assertEquals("<value>", generator.sampleValue(HashMap.class));
         assertEquals("<value>", generator.sampleValue(ArrayList.class));
         assertEquals("<a|B|Cd>", generator.sampleValue(E.class));
-        assertEquals("<resource>", generator.sampleValue(ResourceFactory.class));
-        assertEquals("<folder-resource>", generator.sampleValue(FolderResourceFactory.class));
+        assertEquals("<resource-uri>", generator.sampleValue(ResourceFactory.class));
+        assertEquals("<folder-resource-uri>", generator.sampleValue(FolderResourceFactory.class));
     }
 
     public static enum E {
