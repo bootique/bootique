@@ -93,7 +93,7 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
             shifted.println("# Subtype: ", typeLabel(metadata.getType()));
 
             // subtype description is printed here (while supertype description is printed inside 'printNode')
-            if(metadata.getDescription() != null) {
+            if (metadata.getDescription() != null) {
                 shifted.println("# ", metadata.getDescription());
             }
             shifted.println("#");
@@ -171,6 +171,23 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
             case "java.lang.String":
                 return "<string>";
             default:
+                if (type instanceof Class) {
+                    Class<?> classType = (Class<?>) type;
+                    if (classType.isEnum()) {
+
+                        StringBuilder out = new StringBuilder("<");
+                        Object[] values = classType.getEnumConstants();
+                        for (int i = 0; i < values.length; i++) {
+                            if (i > 0) {
+                                out.append("|");
+                            }
+                            out.append(values[i]);
+                        }
+                        out.append(">");
+                        return out.toString();
+                    }
+                }
+
                 return "<value>";
         }
     }
@@ -216,7 +233,7 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
                     Type[] args = parameterizedType.getActualTypeArguments();
                     if (args != null) {
                         for (int i = 0; i < args.length; i++) {
-                            if(i > 0) {
+                            if (i > 0) {
                                 out.append(", ");
                             }
                             out.append(typeLabel(args[i]));
