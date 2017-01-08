@@ -100,7 +100,7 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
 
             shifted.println();
             shifted.println("# Subtype identifier.");
-            shifted.println("type: ", metadata.getTypeLabel());
+            shifted.println("type: '", metadata.getTypeLabel() + "'");
             shifted.println();
         }
 
@@ -124,7 +124,7 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
     protected void printNode(ConfigValueMetadata metadata, boolean asValue) {
         Type valueType = metadata.getType();
 
-        if (valueType != null) {
+        if (valueType != null && !isImpliedType(valueType)) {
             out.println("# Type: ", typeLabel(valueType));
         }
 
@@ -189,6 +189,31 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
                 }
 
                 return "<value>";
+        }
+    }
+
+    protected boolean isImpliedType(Type type) {
+        String typeName = type.getTypeName();
+
+        switch (typeName) {
+            case "boolean":
+            case "java.lang.Boolean":
+            case "int":
+            case "java.lang.Integer":
+            case "byte":
+            case "java.lang.Byte":
+            case "double":
+            case "java.lang.Double":
+            case "float":
+            case "java.lang.Float":
+            case "short":
+            case "java.lang.Short":
+            case "long":
+            case "java.lang.Long":
+            case "java.lang.String":
+                return true;
+            default:
+                return false;
         }
     }
 

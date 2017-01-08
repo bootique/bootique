@@ -18,17 +18,20 @@ class ConfigSectionListGenerator extends ConfigSectionGenerator {
     protected void printNode(ConfigValueMetadata metadata, boolean asValue) {
         Type valueType = metadata.getType();
 
-        if (valueType != null) {
+        boolean dash = false;
+        if (valueType != null && !isImpliedType(valueType)) {
+            dash = true;
             out.println("- # Type: ", typeLabel(valueType));
         }
 
         if (metadata.getDescription() != null) {
-            out.println("  # ", metadata.getDescription());
+            out.println(dash ? "  # " : "- # ", metadata.getDescription());
+            dash = true;
         }
 
         if (asValue) {
             String valueLabel = metadata.getType() != null ? sampleValue(metadata.getType()) : "?";
-            out.println("  ", valueLabel);
+            out.println(dash ? "  " : "- ", valueLabel);
         }
     }
 }

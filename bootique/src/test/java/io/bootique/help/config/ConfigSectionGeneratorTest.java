@@ -53,13 +53,10 @@ public class ConfigSectionGeneratorTest {
                 "# Type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1",
                 "# Root config of M1",
                 "m1root:",
-                "      # Type: boolean",
                 "      p0: <true|false>",
                 "",
-                "      # Type: String",
                 "      p1: <string>",
                 "",
-                "      # Type: int",
                 "      # Designates an integer value",
                 "      p2: <int>",
                 "",
@@ -86,8 +83,7 @@ public class ConfigSectionGeneratorTest {
                 "m1root:",
                 "      # Type: List",
                 "      p1:",
-                "            - # Type: int",
-                "              <int>"
+                "            - <int>"
         );
     }
 
@@ -115,10 +111,8 @@ public class ConfigSectionGeneratorTest {
                 "      # I am a list",
                 "      p2:",
                 "            - # Type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot2",
-                "                  # Type: boolean",
                 "                  p3: <true|false>",
                 "",
-                "                  # Type: String",
                 "                  p4: <string>"
         );
     }
@@ -147,7 +141,6 @@ public class ConfigSectionGeneratorTest {
                 "m1root:",
                 "      # Type: Map<int, String>",
                 "      p1:",
-                "            # Type: String",
                 "            <int>: <string>"
         );
     }
@@ -176,10 +169,8 @@ public class ConfigSectionGeneratorTest {
                 "      p1:",
                 "            # Type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot2",
                 "            <string>:",
-                "                  # Type: boolean",
                 "                  p3: <true|false>",
                 "",
-                "                  # Type: String",
                 "                  p4: <string>"
         );
     }
@@ -216,10 +207,8 @@ public class ConfigSectionGeneratorTest {
                 "      <string>:",
                 "            # Type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot2",
                 "            <string>:",
-                "                  # Type: boolean",
                 "                  p3: <true|false>",
                 "",
-                "                  # Type: String",
                 "                  p4: <string>"
         );
     }
@@ -254,10 +243,8 @@ public class ConfigSectionGeneratorTest {
                 "      # Sublist description",
                 "      <string>:",
                 "            - # Type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot2",
-                "                  # Type: boolean",
                 "                  p3: <true|false>",
                 "",
-                "                  # Type: String",
                 "                  p4: <string>"
         );
     }
@@ -300,12 +287,10 @@ public class ConfigSectionGeneratorTest {
                 "      #",
                 "",
                 "      # Subtype identifier.",
-                "      type: c3",
+                "      type: 'c3'",
                 "",
-                "      # Type: boolean",
                 "      p0: <true|false>",
                 "",
-                "      # Type: String",
                 "      p1: <string>",
                 "",
                 "      #",
@@ -313,9 +298,8 @@ public class ConfigSectionGeneratorTest {
                 "      #",
                 "",
                 "      # Subtype identifier.",
-                "      type: c4",
+                "      type: 'c4'",
                 "",
-                "      # Type: int",
                 "      # Designates an integer value",
                 "      p2: <int>",
                 "",
@@ -371,12 +355,10 @@ public class ConfigSectionGeneratorTest {
                 "            #",
                 "",
                 "            # Subtype identifier.",
-                "            type: c3",
+                "            type: 'c3'",
                 "",
-                "            # Type: boolean",
                 "            p0: <true|false>",
                 "",
-                "            # Type: String",
                 "            p1: <string>",
                 "",
                 "            #",
@@ -384,9 +366,8 @@ public class ConfigSectionGeneratorTest {
                 "            #",
                 "",
                 "            # Subtype identifier.",
-                "            type: c4",
+                "            type: 'c4'",
                 "",
-                "            # Type: int",
                 "            # Designates an integer value",
                 "            p2: <int>",
                 "",
