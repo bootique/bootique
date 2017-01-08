@@ -52,9 +52,12 @@ public class ConfigSectionGeneratorTest {
                 .build();
 
         assertLines(m1Config,
-                "# Root config of M1",
-                "# Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1'.",
                 "m1root:",
+                "      #",
+                "      # Root config of M1",
+                "      # Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1'.",
+                "      #",
+                "",
                 "      p0: <true|false>",
                 "      p1: <string>",
                 "      # Designates an integer value",
@@ -77,11 +80,16 @@ public class ConfigSectionGeneratorTest {
                 .build();
 
         assertLines(m1Config,
-                "# Root config of M1",
-                "# Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1'.",
                 "m1root:",
-                "      # Resolved as 'List'.",
+                "      #",
+                "      # Root config of M1",
+                "      # Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1'.",
+                "      #",
+                "",
                 "      p1:",
+                "            #",
+                "            # Resolved as 'List'.",
+                "            #",
                 "            - <int>"
         );
     }
@@ -103,13 +111,22 @@ public class ConfigSectionGeneratorTest {
                 .build();
 
         assertLines(m1Config,
-                "# Root config of M1",
-                "# Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1'.",
                 "m1root:",
-                "      # I am a list",
-                "      # Resolved as 'List'.",
+                "      #",
+                "      # Root config of M1",
+                "      # Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1'.",
+                "      #",
+                "",
                 "      p2:",
-                "            - # Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot2'.",
+                "            #",
+                "            # I am a list",
+                "            # Resolved as 'List'.",
+                "            #",
+                "            -",
+                "                  #",
+                "                  # Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot2'.",
+                "                  #",
+                "",
                 "                  p3: <true|false>",
                 "                  p4: <string>"
         );
@@ -134,11 +151,16 @@ public class ConfigSectionGeneratorTest {
                 .build();
 
         assertLines(rootMd,
-                "# Root config of M1",
-                "# Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1'.",
                 "m1root:",
-                "      # Resolved as 'Map<int, String>'.",
+                "      #",
+                "      # Root config of M1",
+                "      # Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1'.",
+                "      #",
+                "",
                 "      p1:",
+                "            #",
+                "            # Resolved as 'Map<int, String>'.",
+                "            #",
                 "            <int>: <string>"
         );
     }
@@ -160,13 +182,21 @@ public class ConfigSectionGeneratorTest {
                 .build();
 
         assertLines(rootMd,
-                "# Root config of M1",
-                "# Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1'.",
                 "m1root:",
-                "      # Resolved as 'Map'.",
+                "      #",
+                "      # Root config of M1",
+                "      # Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1'.",
+                "      #",
+                "",
                 "      p1:",
-                "            # Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot2'.",
+                "            #",
+                "            # Resolved as 'Map'.",
+                "            #",
                 "            <string>:",
+                "                  #",
+                "                  # Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot2'.",
+                "                  #",
+                "",
                 "                  p3: <true|false>",
                 "                  p4: <string>"
         );
@@ -196,14 +226,21 @@ public class ConfigSectionGeneratorTest {
                 .build();
 
         assertLines(rootMapMd,
-                "# Root map",
-                "# Resolved as 'Map'.",
                 "root:",
-                "      # Submap description",
+                "      #",
+                "      # Root map",
                 "      # Resolved as 'Map'.",
+                "      #",
                 "      <string>:",
-                "            # Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot2'.",
+                "            #",
+                "            # Submap description",
+                "            # Resolved as 'Map'.",
+                "            #",
                 "            <string>:",
+                "                  #",
+                "                  # Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot2'.",
+                "                  #",
+                "",
                 "                  p3: <true|false>",
                 "                  p4: <string>"
         );
@@ -226,19 +263,27 @@ public class ConfigSectionGeneratorTest {
 
         ConfigMapMetadata rootMapMd = ConfigMapMetadata
                 .builder("root")
-                .description("Root map")
+                .description("This is a map of lists.")
                 .keysType(String.class)
                 .valuesType(subListMd)
                 .build();
 
         assertLines(rootMapMd,
-                "# Root map",
-                "# Resolved as 'Map'.",
                 "root:",
-                "      # Sublist description",
-                "      # Resolved as 'List'.",
+                "      #",
+                "      # This is a map of lists.",
+                "      # Resolved as 'Map'.",
+                "      #",
                 "      <string>:",
-                "            - # Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot2'.",
+                "            #",
+                "            # Sublist description",
+                "            # Resolved as 'List'.",
+                "            #",
+                "            -",
+                "                  #",
+                "                  # Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot2'.",
+                "                  #",
+                "",
                 "                  p3: <true|false>",
                 "                  p4: <string>"
         );
@@ -267,15 +312,17 @@ public class ConfigSectionGeneratorTest {
                 .description("Root config of M1")
                 .type(ConfigRoot1.class)
                 .abstractType(true)
-                .addProperty(ConfigValueMetadata.builder("pa1").type(Integer.TYPE).build())
                 .addSubConfig(sub1)
                 .addSubConfig(sub2)
                 .build();
 
         assertLines(m1Config,
-                "# Root config of M1",
-                "# Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1'.",
                 "m1root:",
+                "      #",
+                "      # Root config of M1",
+                "      # Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1'.",
+                "      #",
+                "",
                 "      #",
                 "      # Type option: c3",
                 "      # Subtype desc",
@@ -323,24 +370,28 @@ public class ConfigSectionGeneratorTest {
                 .description("One config")
                 .type(ConfigRoot1.class)
                 .abstractType(true)
-                .addProperty(ConfigValueMetadata.builder("pa1").type(Integer.TYPE).build())
                 .addSubConfig(sub1)
                 .addSubConfig(sub2)
                 .build();
 
         ConfigMapMetadata mapMd = ConfigMapMetadata.builder("root")
-                .description("Map root")
+                .description("Map of things")
                 .type(genericMapType)
                 .keysType(String.class)
                 .valuesType(m1Config).build();
 
         assertLines(mapMd,
-                "# Map root",
-                "# Resolved as 'Map<String, io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1>'.",
                 "root:",
-                "      # One config",
-                "      # Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1'.",
+                "      #",
+                "      # Map of things",
+                "      # Resolved as 'Map<String, io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1>'.",
+                "      #",
                 "      <string>:",
+                "            #",
+                "            # One config",
+                "            # Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1'.",
+                "            #",
+                "",
                 "            #",
                 "            # Type option: c3",
                 "            # Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$Config3'.",
@@ -363,6 +414,56 @@ public class ConfigSectionGeneratorTest {
         );
     }
 
+
+    @Test
+    public void testVisitMapConfig_ValueInheritance_AbstractProps() throws NoSuchFieldException {
+
+        Type genericMapType = ConfigRoot2.class.getField("mapOfRoot1").getGenericType();
+
+        ConfigObjectMetadata sub1 = ConfigObjectMetadata.builder()
+                .type(Config3.class)
+                .typeLabel("c3")
+                .addProperty(ConfigValueMetadata.builder("p0").type(Boolean.class).build())
+                .addProperty(ConfigValueMetadata.builder("p1").type(String.class).build())
+                .build();
+
+        ConfigObjectMetadata m1Config = ConfigObjectMetadata
+                .builder()
+                .description("One config")
+                .type(ConfigRoot1.class)
+                .abstractType(true)
+                .addProperty(ConfigValueMetadata.builder("shouldNotBePrinted").type(Bootique.class).build())
+                .addSubConfig(sub1)
+                .build();
+
+        ConfigMapMetadata mapMd = ConfigMapMetadata.builder("root")
+                .description("Map of things")
+                .type(genericMapType)
+                .keysType(String.class)
+                .valuesType(m1Config).build();
+
+        assertLines(mapMd,
+                "root:",
+                "      #",
+                "      # Map of things",
+                "      # Resolved as 'Map<String, io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1>'.",
+                "      #",
+                "      <string>:",
+                "            #",
+                "            # One config",
+                "            # Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1'.",
+                "            #",
+                "",
+                "            #",
+                "            # Type option: c3",
+                "            # Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$Config3'.",
+                "            #",
+                "",
+                "            type: 'c3'",
+                "            p0: <true|false>",
+                "            p1: <string>"
+        );
+    }
     @Test
     public void testTypeLabel() throws NoSuchFieldException {
         ConfigSectionGenerator generator = new ConfigSectionGenerator(mock(ConsoleAppender.class));

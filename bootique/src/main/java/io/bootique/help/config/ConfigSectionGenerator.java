@@ -4,6 +4,7 @@ import io.bootique.help.ConsoleAppender;
 import io.bootique.meta.MetadataNode;
 import io.bootique.meta.config.ConfigListMetadata;
 import io.bootique.meta.config.ConfigMapMetadata;
+import io.bootique.meta.config.ConfigMetadataNode;
 import io.bootique.meta.config.ConfigMetadataVisitor;
 import io.bootique.meta.config.ConfigObjectMetadata;
 import io.bootique.meta.config.ConfigValueMetadata;
@@ -34,19 +35,27 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
     public Object visitObjectMetadata(ConfigObjectMetadata metadata) {
         printNode(metadata, false);
 
-        List<ConfigObjectMetadata> subconfigs = metadata.getAllSubConfigs()
+        List<ConfigObjectMetadata> selfAndSubconfigs = metadata
+                .getAllSubConfigs()
                 .map(md -> md.accept(new ConfigMetadataVisitor<ConfigObjectMetadata>() {
                     @Override
-                    public ConfigObjectMetadata visitObjectMetadata(ConfigObjectMetadata metadata) {
-                        return metadata.isAbstractType() || metadata.getProperties().isEmpty() ? null : metadata;
+                    public ConfigObjectMetadata visitObjectMetadata(ConfigObjectMetadata visited) {
+
+                        // include the root type even if it has no properties.. This ensure its header is printed in
+                        // maps and lists
+                        if (metadata == visited) {
+                            return visited;
+                        }
+
+                        return visited.isAbstractType() || visited.getProperties().isEmpty() ? null : visited;
                     }
                 }))
                 .filter(md -> md != null)
                 .collect(Collectors.toList());
 
-        if (!subconfigs.isEmpty()) {
-            ConfigObjectMetadata last = subconfigs.get(subconfigs.size() - 1);
-            subconfigs.forEach(md -> {
+        if (!selfAndSubconfigs.isEmpty()) {
+            ConfigObjectMetadata last = selfAndSubconfigs.get(selfAndSubconfigs.size() - 1);
+            selfAndSubconfigs.forEach(md -> {
                 printObjectNoSubclasses(md);
 
                 if (md != last) {
@@ -68,7 +77,9 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
     public Object visitListMetadata(ConfigListMetadata metadata) {
         printNode(metadata, false);
 
-        metadata.getElementType().accept(new ConfigSectionListGenerator(out.withOffset(DEFAULT_OFFSET)));
+        ConfigSectionListGenerator childGenerator = new ConfigSectionListGenerator(out.withOffset(DEFAULT_OFFSET));
+        childGenerator.printListHeader(metadata);
+        metadata.getElementType().accept(childGenerator);
 
         return null;
     }
@@ -77,58 +88,119 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
     public Object visitMapMetadata(ConfigMapMetadata metadata) {
         printNode(metadata, false);
 
-        metadata.getValuesType().accept(
-                new ConfigSectionMapGenerator(metadata.getKeysType(), out.withOffset(DEFAULT_OFFSET)));
+        ConfigSectionMapGenerator childGenerator = new ConfigSectionMapGenerator(
+                metadata.getKeysType(),
+                out.withOffset(DEFAULT_OFFSET));
 
+        childGenerator.printMapHeader(metadata);
+        metadata.getValuesType().accept(childGenerator);
         return null;
     }
 
-    protected void printObjectNoSubclasses(ConfigObjectMetadata metadata) {
-
-        ConsoleAppender shifted = out.withOffset(DEFAULT_OFFSET);
-
-        if (metadata.getTypeLabel() != null) {
-            shifted.println("#");
-            shifted.println("# Type option: ", metadata.getTypeLabel());
-
-            // subtype description is printed here (while supertype description is printed inside 'printNode')
-            if (metadata.getDescription() != null) {
-                shifted.println("# ", metadata.getDescription());
-            }
-
-            shifted.println("# Resolved as '", typeLabel(metadata.getType()), "'.");
-            shifted.println("#");
-
-            shifted.println();
-            shifted.println("type: '", metadata.getTypeLabel() + "'");
-        }
-
-        ConfigSectionGenerator childGenerator = new ConfigSectionGenerator(shifted);
-
-        metadata.getProperties()
-                .stream()
-                .sorted(Comparator.comparing(MetadataNode::getName))
-                .forEach(p -> {
-                    p.accept(childGenerator);
-                });
-
-    }
-
-    protected void printNode(ConfigValueMetadata metadata, boolean asValue) {
-        Type valueType = metadata.getType();
+    protected void printValueHeader(ConfigValueMetadata metadata) {
 
         if (metadata.getDescription() != null) {
             out.println("# ", metadata.getDescription());
         }
 
+        Type valueType = metadata.getType();
+        if (valueType != null && !isImpliedType(valueType)) {
+            out.println("# Resolved as '", typeLabel(valueType), "'.");
+        }
+    }
+
+    protected void printObjectHeader(ConfigObjectMetadata metadata) {
+
+        out.println("#");
+
+        if (metadata.getTypeLabel() != null) {
+            out.println("# Type option: ", metadata.getTypeLabel());
+        }
+
+        printValueHeader(metadata);
+        out.println("#");
+    }
+
+    protected void printMapHeader(ConfigMapMetadata metadata) {
+        out.println("#");
+        printValueHeader(metadata);
+        out.println("#");
+    }
+
+    protected void printListHeader(ConfigListMetadata metadata) {
+
+        out.println("#");
+        printValueHeader(metadata);
+        out.println("#");
+    }
+
+    protected void printMapHeader(ConfigMetadataNode metadata, boolean padded) {
+
+        if (padded) {
+            out.println("#");
+        }
+
+        String typeLabel = metadata.accept(new ConfigMetadataVisitor<String>() {
+            @Override
+            public String visitObjectMetadata(ConfigObjectMetadata metadata) {
+                return metadata.getTypeLabel();
+            }
+        });
+
+        if (typeLabel != null) {
+            out.println("# Type option: ", typeLabel);
+        }
+
+        if (metadata.getDescription() != null) {
+            out.println("# ", metadata.getDescription());
+        }
+
+        Type valueType = metadata.getType();
         if (valueType != null && !isImpliedType(valueType)) {
             out.println("# Resolved as '", typeLabel(valueType), "'.");
         }
 
+        if (padded) {
+            out.println("#");
+        }
+    }
+
+    protected void printObjectNoSubclasses(ConfigObjectMetadata metadata) {
+
+        ConsoleAppender shifted = out.withOffset(DEFAULT_OFFSET);
+        ConfigSectionGenerator childGenerator = new ConfigSectionGenerator(shifted);
+        childGenerator.printObjectHeader(metadata);
+
+        boolean willPrintProperties = !metadata.isAbstractType() && !metadata.getProperties().isEmpty();
+        boolean willPrintType = metadata.getTypeLabel() != null;
+
+        if (willPrintProperties || willPrintType) {
+            shifted.println();
+        }
+
+        if (willPrintType) {
+            shifted.println("type: '", metadata.getTypeLabel() + "'");
+        }
+
+        if (willPrintProperties) {
+            metadata.getProperties()
+                    .stream()
+                    .sorted(Comparator.comparing(MetadataNode::getName))
+                    .forEach(p -> {
+                        p.accept(childGenerator);
+                    });
+        }
+    }
+
+    protected void printNode(ConfigValueMetadata metadata, boolean asValue) {
+
         if (asValue) {
+            // value header goes on top of property name
+            printValueHeader(metadata);
             String valueLabel = metadata.getType() != null ? sampleValue(metadata.getType()) : "?";
             out.println(metadata.getName(), ": ", valueLabel);
         } else {
+            // headers for other types are printed below the property with the object contents
             out.println(metadata.getName(), ":");
         }
     }
