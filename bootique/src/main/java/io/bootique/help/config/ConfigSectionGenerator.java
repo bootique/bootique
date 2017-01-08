@@ -163,6 +163,10 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
                 return "<long>";
             case "java.lang.String":
                 return "<string>";
+            case "io.bootique.resource.ResourceFactory":
+                return "<resource>";
+            case "io.bootique.resource.FolderResourceFactory":
+                return "<folder-resource>";
             default:
                 if (type instanceof Class) {
                     Class<?> classType = (Class<?>) type;

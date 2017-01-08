@@ -7,6 +7,8 @@ import io.bootique.meta.config.ConfigMapMetadata;
 import io.bootique.meta.config.ConfigMetadataNode;
 import io.bootique.meta.config.ConfigObjectMetadata;
 import io.bootique.meta.config.ConfigValueMetadata;
+import io.bootique.resource.FolderResourceFactory;
+import io.bootique.resource.ResourceFactory;
 import org.junit.Test;
 
 import java.lang.reflect.Type;
@@ -392,6 +394,8 @@ public class ConfigSectionGeneratorTest {
         assertEquals("<value>", generator.sampleValue(HashMap.class));
         assertEquals("<value>", generator.sampleValue(ArrayList.class));
         assertEquals("<a|B|Cd>", generator.sampleValue(E.class));
+        assertEquals("<resource>", generator.sampleValue(ResourceFactory.class));
+        assertEquals("<folder-resource>", generator.sampleValue(FolderResourceFactory.class));
     }
 
     public static enum E {
