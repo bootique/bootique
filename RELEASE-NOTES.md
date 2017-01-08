@@ -7,6 +7,7 @@
 * #112 Explicit short option names 
 * #113 Move io.bootique.application to io.bootique.meta.application
 * #114 Config metadata: Support for polymorphic types
+* #115 Config metadata: Fold long descriptions
 
 ## 0.20
 

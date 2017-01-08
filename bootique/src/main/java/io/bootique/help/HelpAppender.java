@@ -49,7 +49,7 @@ public class HelpAppender {
             rootAppender.println();
         }
 
-        getOrCreateOffsetAppender().println(parts);
+        getOrCreateOffsetAppender().foldPrintln(parts);
     }
 
     public void printText(String... parts) {

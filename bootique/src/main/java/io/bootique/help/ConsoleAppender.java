@@ -150,7 +150,7 @@ public class ConsoleAppender {
                         line.setLength(0);
                     }
                     else if(head < 0) {
-                        // this happens when the line is full and even the separator won't fit.
+                        // head is -1 when the line is full and even the separator won't fit.
                         head = 0;
                     }
 
