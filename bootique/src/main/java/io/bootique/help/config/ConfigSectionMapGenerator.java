@@ -18,13 +18,14 @@ public class ConfigSectionMapGenerator extends ConfigSectionGenerator {
     @Override
     protected void printNode(ConfigValueMetadata metadata, boolean asValue) {
 
-        Type valueType = metadata.getType();
-        if (valueType != null && !isImpliedType(valueType)) {
-            out.println("# Type: ", typeLabel(valueType));
-        }
 
         if (metadata.getDescription() != null) {
             out.println("# ", metadata.getDescription());
+        }
+
+        Type valueType = metadata.getType();
+        if (valueType != null && !isImpliedType(valueType)) {
+            out.println("# Resolved as '", typeLabel(valueType), "'.");
         }
 
         if (asValue) {

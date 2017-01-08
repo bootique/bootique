@@ -4,9 +4,8 @@ import io.bootique.help.ConsoleAppender;
 import io.bootique.meta.MetadataNode;
 import io.bootique.meta.config.ConfigListMetadata;
 import io.bootique.meta.config.ConfigMapMetadata;
-import io.bootique.meta.config.ConfigMetadataNode;
-import io.bootique.meta.config.ConfigObjectMetadata;
 import io.bootique.meta.config.ConfigMetadataVisitor;
+import io.bootique.meta.config.ConfigObjectMetadata;
 import io.bootique.meta.config.ConfigValueMetadata;
 
 import java.lang.reflect.ParameterizedType;
@@ -90,46 +89,40 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
 
         if (metadata.getTypeLabel() != null) {
             shifted.println("#");
-            shifted.println("# Subtype: ", typeLabel(metadata.getType()));
+            shifted.println("# Type option: ", metadata.getTypeLabel());
 
             // subtype description is printed here (while supertype description is printed inside 'printNode')
             if (metadata.getDescription() != null) {
                 shifted.println("# ", metadata.getDescription());
             }
+
+            shifted.println("# Resolved as '", typeLabel(metadata.getType()), "'.");
             shifted.println("#");
 
             shifted.println();
-            shifted.println("# Subtype identifier.");
             shifted.println("type: '", metadata.getTypeLabel() + "'");
-            shifted.println();
         }
 
-        List<ConfigMetadataNode> sortedChildren = metadata.getProperties()
+        ConfigSectionGenerator childGenerator = new ConfigSectionGenerator(shifted);
+
+        metadata.getProperties()
                 .stream()
                 .sorted(Comparator.comparing(MetadataNode::getName))
-                .collect(Collectors.toList());
-
-        ConfigMetadataNode last = sortedChildren.get(sortedChildren.size() - 1);
-        ConfigSectionGenerator childGenerator = new ConfigSectionGenerator(shifted);
-        sortedChildren.forEach(p -> {
-            p.accept(childGenerator);
-
-            if (p != last) {
-                out.println();
-            }
-        });
+                .forEach(p -> {
+                    p.accept(childGenerator);
+                });
 
     }
 
     protected void printNode(ConfigValueMetadata metadata, boolean asValue) {
         Type valueType = metadata.getType();
 
-        if (valueType != null && !isImpliedType(valueType)) {
-            out.println("# Type: ", typeLabel(valueType));
-        }
-
         if (metadata.getDescription() != null) {
             out.println("# ", metadata.getDescription());
+        }
+
+        if (valueType != null && !isImpliedType(valueType)) {
+            out.println("# Resolved as '", typeLabel(valueType), "'.");
         }
 
         if (asValue) {

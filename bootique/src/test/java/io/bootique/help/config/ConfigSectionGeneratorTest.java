@@ -50,17 +50,14 @@ public class ConfigSectionGeneratorTest {
                 .build();
 
         assertLines(m1Config,
-                "# Type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1",
                 "# Root config of M1",
+                "# Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1'.",
                 "m1root:",
                 "      p0: <true|false>",
-                "",
                 "      p1: <string>",
-                "",
                 "      # Designates an integer value",
                 "      p2: <int>",
-                "",
-                "      # Type: io.bootique.Bootique",
+                "      # Resolved as 'io.bootique.Bootique'.",
                 "      p3: <value>"
         );
     }
@@ -78,10 +75,10 @@ public class ConfigSectionGeneratorTest {
                 .build();
 
         assertLines(m1Config,
-                "# Type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1",
                 "# Root config of M1",
+                "# Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1'.",
                 "m1root:",
-                "      # Type: List",
+                "      # Resolved as 'List'.",
                 "      p1:",
                 "            - <int>"
         );
@@ -104,15 +101,14 @@ public class ConfigSectionGeneratorTest {
                 .build();
 
         assertLines(m1Config,
-                "# Type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1",
                 "# Root config of M1",
+                "# Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1'.",
                 "m1root:",
-                "      # Type: List",
                 "      # I am a list",
+                "      # Resolved as 'List'.",
                 "      p2:",
-                "            - # Type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot2",
+                "            - # Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot2'.",
                 "                  p3: <true|false>",
-                "",
                 "                  p4: <string>"
         );
     }
@@ -136,10 +132,10 @@ public class ConfigSectionGeneratorTest {
                 .build();
 
         assertLines(rootMd,
-                "# Type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1",
                 "# Root config of M1",
+                "# Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1'.",
                 "m1root:",
-                "      # Type: Map<int, String>",
+                "      # Resolved as 'Map<int, String>'.",
                 "      p1:",
                 "            <int>: <string>"
         );
@@ -162,15 +158,14 @@ public class ConfigSectionGeneratorTest {
                 .build();
 
         assertLines(rootMd,
-                "# Type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1",
                 "# Root config of M1",
+                "# Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1'.",
                 "m1root:",
-                "      # Type: Map",
+                "      # Resolved as 'Map'.",
                 "      p1:",
-                "            # Type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot2",
+                "            # Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot2'.",
                 "            <string>:",
                 "                  p3: <true|false>",
-                "",
                 "                  p4: <string>"
         );
     }
@@ -199,16 +194,15 @@ public class ConfigSectionGeneratorTest {
                 .build();
 
         assertLines(rootMapMd,
-                "# Type: Map",
                 "# Root map",
+                "# Resolved as 'Map'.",
                 "root:",
-                "      # Type: Map",
                 "      # Submap description",
+                "      # Resolved as 'Map'.",
                 "      <string>:",
-                "            # Type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot2",
+                "            # Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot2'.",
                 "            <string>:",
                 "                  p3: <true|false>",
-                "",
                 "                  p4: <string>"
         );
     }
@@ -236,15 +230,14 @@ public class ConfigSectionGeneratorTest {
                 .build();
 
         assertLines(rootMapMd,
-                "# Type: Map",
                 "# Root map",
+                "# Resolved as 'Map'.",
                 "root:",
-                "      # Type: List",
                 "      # Sublist description",
+                "      # Resolved as 'List'.",
                 "      <string>:",
-                "            - # Type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot2",
+                "            - # Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot2'.",
                 "                  p3: <true|false>",
-                "",
                 "                  p4: <string>"
         );
     }
@@ -278,32 +271,28 @@ public class ConfigSectionGeneratorTest {
                 .build();
 
         assertLines(m1Config,
-                "# Type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1",
                 "# Root config of M1",
+                "# Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1'.",
                 "m1root:",
                 "      #",
-                "      # Subtype: io.bootique.help.config.ConfigSectionGeneratorTest$Config3",
+                "      # Type option: c3",
                 "      # Subtype desc",
+                "      # Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$Config3'.",
                 "      #",
                 "",
-                "      # Subtype identifier.",
                 "      type: 'c3'",
-                "",
                 "      p0: <true|false>",
-                "",
                 "      p1: <string>",
                 "",
                 "      #",
-                "      # Subtype: io.bootique.help.config.ConfigSectionGeneratorTest$Config4",
+                "      # Type option: c4",
+                "      # Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$Config4'.",
                 "      #",
                 "",
-                "      # Subtype identifier.",
                 "      type: 'c4'",
-                "",
                 "      # Designates an integer value",
                 "      p2: <int>",
-                "",
-                "      # Type: io.bootique.Bootique",
+                "      # Resolved as 'io.bootique.Bootique'.",
                 "      p3: <value>"
         );
     }
@@ -344,34 +333,30 @@ public class ConfigSectionGeneratorTest {
                 .valuesType(m1Config).build();
 
         assertLines(mapMd,
-                "# Type: Map<String, io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1>",
                 "# Map root",
+                "# Resolved as 'Map<String, io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1>'.",
                 "root:",
-                "      # Type: io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1",
                 "      # One config",
+                "      # Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1'.",
                 "      <string>:",
                 "            #",
-                "            # Subtype: io.bootique.help.config.ConfigSectionGeneratorTest$Config3",
+                "            # Type option: c3",
+                "            # Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$Config3'.",
                 "            #",
                 "",
-                "            # Subtype identifier.",
                 "            type: 'c3'",
-                "",
                 "            p0: <true|false>",
-                "",
                 "            p1: <string>",
                 "",
                 "            #",
-                "            # Subtype: io.bootique.help.config.ConfigSectionGeneratorTest$Config4",
+                "            # Type option: c4",
+                "            # Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$Config4'.",
                 "            #",
                 "",
-                "            # Subtype identifier.",
                 "            type: 'c4'",
-                "",
                 "            # Designates an integer value",
                 "            p2: <int>",
-                "",
-                "            # Type: io.bootique.Bootique",
+                "            # Resolved as 'io.bootique.Bootique'.",
                 "            p3: <value>"
         );
     }
