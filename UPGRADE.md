@@ -40,7 +40,19 @@ follow Bootique ResourceFactory approach. Specifically, if the resource is expec
 'log.loggers.<xyz>.level' must be specified in lowercase. I.e. ```level: debug``` instead of ```level: DEBUG```. 
 Uppercase values will now cause an exception.
 
-* [bootique-job #15](https://github.com/bootique/bootique-job/issues/15):  'scheduler.jobPropertiesPrefix' property is no longer supported in configuration and needs to be removed from the config files, etc.
+* [bootique-job #15](https://github.com/bootique/bootique-job/issues/15):  'scheduler.jobPropertiesPrefix' property is no longer supported in configuration and needs to be removed from the config files, etc. Parameters for individual jobs should now be specified under 'params' key (previously they were specified under the job's name). 
+```yaml
+# prior to 0.21
+jobs:
+  myjob:
+    param1: value1
+    
+# starting with 0.21
+jobs:
+  myjob:
+    params:
+        param1: value1
+```
 
 ## 0.20
 
