@@ -12,6 +12,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -33,7 +34,7 @@ public class ConfigMetadataIT {
             }
 
             @Override
-            public Map<String, Class<?>> configs() {
+            public Map<String, Type> configs() {
                 return Collections.singletonMap("pf", TestConfig.class);
             }
 

@@ -2,6 +2,7 @@ package io.bootique;
 
 import com.google.inject.Module;
 
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -46,7 +47,7 @@ public interface BQModuleProvider {
      * prefix.
      * @since 0.21
      */
-    default Map<String, Class<?>> configs() {
+    default Map<String, Type> configs() {
         return Collections.emptyMap();
     }
 

@@ -66,7 +66,7 @@ public class ConfigMetadataCompiler {
         return Character.toLowerCase(raw.charAt(0)) + raw.substring(1);
     }
 
-    public ConfigMetadataNode compile(String name, Class<?> type) {
+    public ConfigMetadataNode compile(String name, Type type) {
         return compile(new Descriptor(name, type));
     }
 

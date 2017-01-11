@@ -6,6 +6,7 @@ import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.config.PolymorphicConfiguration;
 import io.bootique.meta.MetadataNode;
+import io.bootique.type.TypeRef;
 import org.junit.Test;
 
 import java.lang.reflect.Type;
@@ -118,6 +119,81 @@ public class ConfigMetadataCompilerTest {
 
         assertNotNull(c5);
         assertEquals("prefix", c5.getName());
+        assertEquals(Config5.class, c5.getType());
+        assertTrue(c5.isAbstractType());
+
+        Map<Type, ConfigMetadataNode> sc5 = c5.getSubConfigs().stream()
+                .collect(Collectors.toMap(ConfigMetadataNode::getType, Function.identity()));
+        assertEquals(2, sc5.size());
+
+        ConfigObjectMetadata c6 = (ConfigObjectMetadata) sc5.get(Config6.class);
+        assertNotNull(c6);
+        assertEquals("c6", c6.getTypeLabel());
+        assertFalse(c6.isAbstractType());
+        Map<Type, ConfigMetadataNode> sc6 = c6.getSubConfigs().stream()
+                .collect(Collectors.toMap(ConfigMetadataNode::getType, Function.identity()));
+        assertEquals(1, sc6.size());
+
+        ConfigObjectMetadata c8 = (ConfigObjectMetadata) sc6.get(Config8.class);
+        assertNotNull(c8);
+        assertEquals("c8", c8.getTypeLabel());
+        assertFalse(c8.isAbstractType());
+        assertEquals(0, c8.getSubConfigs().size());
+
+        ConfigObjectMetadata c7 = (ConfigObjectMetadata) sc5.get(Config7.class);
+        assertNotNull(c7);
+        assertEquals("c7", c7.getTypeLabel());
+        assertFalse(c7.isAbstractType());
+        assertEquals(0, c7.getSubConfigs().size());
+    }
+
+    @Test
+    public void testCompile_Map() {
+
+        TypeRef<Map<String, BigDecimal>> tr1 = new TypeRef<Map<String, BigDecimal>>() {
+        };
+
+        ConfigMapMetadata md = (ConfigMapMetadata) createCompiler(t -> Stream.empty())
+                .compile("prefix", tr1.getType());
+
+        assertNotNull(md);
+        assertEquals("prefix", md.getName());
+        assertEquals(tr1.getType(), md.getType());
+
+        assertEquals(String.class, md.getKeysType());
+        assertEquals(BigDecimal.class, md.getValuesType().getType());
+        assertEquals(ConfigValueMetadata.class, md.getValuesType().getClass());
+    }
+
+    @Test
+    public void testCompile_Map_Inheritance() {
+
+        TypeRef<Map<String, Config5>> tr1 = new TypeRef<Map<String, Config5>>() {
+        };
+
+        ConfigMapMetadata md = (ConfigMapMetadata) createCompiler(t -> {
+
+            if (Config5.class.equals(t)) {
+                return Stream.of(Config6.class, Config7.class);
+            }
+
+            if (Config6.class.equals(t)) {
+                return Stream.of(Config8.class);
+            }
+
+            return Stream.empty();
+        }).compile("prefix", tr1.getType());
+
+        assertNotNull(md);
+        assertEquals("prefix", md.getName());
+        assertEquals(tr1.getType(), md.getType());
+
+        assertEquals(String.class, md.getKeysType());
+        assertEquals(Config5.class, md.getValuesType().getType());
+        assertEquals(ConfigObjectMetadata.class, md.getValuesType().getClass());
+
+        ConfigObjectMetadata c5 = (ConfigObjectMetadata) md.getValuesType();
+        assertNotNull(c5);
         assertEquals(Config5.class, c5.getType());
         assertTrue(c5.isAbstractType());
 

@@ -3,6 +3,7 @@ package io.bootique;
 import com.google.inject.Module;
 import io.bootique.names.ClassToName;
 
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
@@ -24,7 +25,7 @@ public class BQModule {
     private String description;
     private String providerName;
     private Collection<Class<? extends Module>> overrides;
-    private Map<String, Class<?>> configs;
+    private Map<String, Type> configs;
 
     private BQModule() {
     }
@@ -53,7 +54,7 @@ public class BQModule {
         return overrides;
     }
 
-    public Map<String, Class<?>> getConfigs() {
+    public Map<String, Type> getConfigs() {
         return configs;
     }
 
@@ -94,7 +95,7 @@ public class BQModule {
             return this;
         }
 
-        public Builder configs(Map<String, Class<?>> configs) {
+        public Builder configs(Map<String, Type> configs) {
             module.configs = configs;
             return this;
         }

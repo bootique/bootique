@@ -4,31 +4,29 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 /**
- * A class intended for subclassing for the purpose of obtaining a {@link Type}
- * instance describing a specific generic type.
- * 
+ * A class intended for subclassing for the purpose of obtaining a {@link Type} instance describing a specific generic
+ * type.
  * <p>
- * Inspired by similar Guice and Jackson constructs that work around java
- * generics inference limitations.
- * 
+ * Inspired by the similar Guice and Jackson constructs that work around Java generics inference limitations.
+ *
  * @since 0.10
  */
 public abstract class TypeRef<T> {
 
-	protected Type type;
+    protected Type type;
 
-	protected TypeRef() {
+    protected TypeRef() {
 
-		Type superClass = getClass().getGenericSuperclass();
-		if (superClass instanceof Class<?>) {
-			// should not happen
-			throw new IllegalArgumentException("TypeRef constructed without actual type information");
-		}
+        Type superClass = getClass().getGenericSuperclass();
+        if (superClass instanceof Class<?>) {
+            // should not happen
+            throw new IllegalArgumentException("TypeRef created without type information.");
+        }
 
-		this.type = ((ParameterizedType) superClass).getActualTypeArguments()[0];
-	}
+        this.type = ((ParameterizedType) superClass).getActualTypeArguments()[0];
+    }
 
-	public Type getType() {
-		return type;
-	}
+    public Type getType() {
+        return type;
+    }
 }

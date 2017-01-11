@@ -4,6 +4,7 @@ import io.bootique.BQModule;
 import io.bootique.meta.config.ConfigMetadataCompiler;
 import io.bootique.meta.config.ConfigMetadataNode;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -37,7 +38,7 @@ public class ModulesMetadataCompiler {
 
     private Collection<ConfigMetadataNode> toConfigs(BQModule module) {
 
-        Map<String, Class<?>> configTypes = module.getConfigs();
+        Map<String, Type> configTypes = module.getConfigs();
         if (configTypes.isEmpty()) {
             return Collections.emptyList();
         }
