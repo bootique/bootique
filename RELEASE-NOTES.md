@@ -1,3 +1,7 @@
+## 0.22
+
+* #119 Relax @BQConfigProperty restrictions.
+
 ## 0.21
 
 * #27 ConfigHelpCommand: Help for configs
