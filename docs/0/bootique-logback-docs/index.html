@@ -8,7 +8,7 @@
 
   ga('create', 'UA-73654436-1', 'auto');
   ga('send', 'pageview');
-        </script></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="book" title="Bootique Logback Documentation"><div class="titlepage"><div><div><h1 class="title"><a name="bootique-jetty-guide"></a>Bootique Logback Documentation</h1></div><div><p class="copyright">Copyright &copy; 2016 ObjectStyle LLC and individual authors</p></div></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><ul><li><span class="chapter"><a href="#overview">1. Bootique Integration with Logback</a></span></li><li><span class="chapter"><a href="#configuration">2. Configuration Reference</a></span><ul><li><span class="section"><a href="#d0e42">log</a></span></li><li><span class="section"><a href="#d0e128">log.appenders</a></span></li><li><span class="section"><a href="#d0e459">log.loggers</a></span></li></ul></li></ul></div><div class="chapter" title="Chapter&nbsp;1.&nbsp;Bootique Integration with Logback"><div class="titlepage"><div><div><h2 class="title"><a name="overview"></a>Chapter&nbsp;1.&nbsp;Bootique Integration with Logback</h2></div></div></div><p>As mentioned in Bootique <a class="link" href="http://bootique.io/docs/0/bootique-docs/index.html#logging" target="_top">general
+        </script></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="book" title="Bootique Logback Documentation"><div class="titlepage"><div><div><h1 class="title"><a name="bootique-jetty-guide"></a>Bootique Logback Documentation</h1></div><div><p class="copyright">Copyright &copy; 2017 ObjectStyle LLC and individual authors</p></div></div><hr></div><div class="toc"><p><b>Table of Contents</b></p><ul><li><span class="chapter"><a href="#overview">1. Bootique Integration with Logback</a></span></li><li><span class="chapter"><a href="#configuration">2. Configuration Reference</a></span><ul><li><span class="section"><a href="#d0e42">log</a></span></li><li><span class="section"><a href="#d0e128">log.appenders</a></span></li><li><span class="section"><a href="#d0e477">log.loggers</a></span></li></ul></li></ul></div><div class="chapter" title="Chapter&nbsp;1.&nbsp;Bootique Integration with Logback"><div class="titlepage"><div><div><h2 class="title"><a name="overview"></a>Chapter&nbsp;1.&nbsp;Bootique Integration with Logback</h2></div></div></div><p>As mentioned in Bootique <a class="link" href="http://bootique.io/docs/0/bootique-docs/index.html#logging" target="_top">general
             documentation on logging</a>, standard modules rely on SLF4J loggers that can be
         easily bridged to various  advanced logging frameworks. Same maximally neutral logging
         approach is reasonable to apply in the user modules as well.</p><p><a class="link" href="https://github.com/bootique/bootique-logback" target="_top"><code class="code">bootique-logback</code></a> is a "drag-and-drop" module integrating Bootique
@@ -74,7 +74,12 @@
                     <td><code class="code">logFormat</code></td>
                     <td><code class="code">%-5p [%d{ISO8601,UTC}] %thread %c{20}: %m%n%rEx</code></td>
                     <td>A format of the log lines. See Logback <a class="link" href="http://logback.qos.ch/manual/layouts.html#ClassicPatternLayout" target="_top">PatternLayout</a> for details.</td>
-                </tr></tbody></table><table frame="void" id="d0e170"><caption>Table&nbsp;2.3.&nbsp;"file" Appender Property Reference</caption><col width="20%"><col width="53%"><col width="27%"><thead><tr>
+                </tr><tr>
+                    <td><code class="code">target</code></td>
+                    <td><code class="code">stdout</code></td>
+                    <td>Whether to log to standard output or standard error. Possible values are
+                            <code class="code">stdout</code> and <code class="code">stderr</code></td>
+                </tr></tbody></table><table frame="void" id="d0e188"><caption>Table&nbsp;2.3.&nbsp;"file" Appender Property Reference</caption><col width="20%"><col width="53%"><col width="27%"><thead><tr>
                     <th>Property</th>
                     <th>Default</th>
                     <th>Description</th>
@@ -92,7 +97,7 @@
                     <td>An object that defines a log rotation policy. Examples are given below. </td>
                 </tr></tbody></table><p>There are a few ways log file rotation can be configured for the "file" appender, as
             defined by the <code class="code">rollingPolicy</code>. Out of the box the following Logback policies
-            are supported: <a class="link" href="http://logback.qos.ch/manual/appenders.html#FixedWindowRollingPolicy" target="_top"><code class="code">fixedWindow</code></a>, <a class="link" href="http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy" target="_top"><code class="code">time</code></a>, <code class="code">sizeAndTime</code>.</p><div class="section" title="&#34;fixedWindow&#34; Rolling Policy"><div class="titlepage"><div><div><h3 class="title"><a name="d0e246"></a>"fixedWindow" Rolling Policy</h3></div></div></div><pre class="programlisting">log:
+            are supported: <a class="link" href="http://logback.qos.ch/manual/appenders.html#FixedWindowRollingPolicy" target="_top"><code class="code">fixedWindow</code></a>, <a class="link" href="http://logback.qos.ch/manual/appenders.html#TimeBasedRollingPolicy" target="_top"><code class="code">time</code></a>, <code class="code">sizeAndTime</code>.</p><div class="section" title="&#34;fixedWindow&#34; Rolling Policy"><div class="titlepage"><div><div><h3 class="title"><a name="d0e264"></a>"fixedWindow" Rolling Policy</h3></div></div></div><pre class="programlisting">log:
   appenders:
     - type: file
       logFormat: '%c{20}: %m%n'
@@ -103,7 +108,7 @@
         historySize: 5
         fileSize: 20</pre><p>"fixedWindow"
                 policy rotates the main log file when it reaches a certain size, keeping one or more
-                rotated files.</p><table frame="void" id="d0e253"><caption>Table&nbsp;2.4.&nbsp;"fixedWindow" rolling policy Property Reference</caption><col width="20%"><col width="53%"><col width="27%"><thead><tr>
+                rotated files.</p><table frame="void" id="d0e271"><caption>Table&nbsp;2.4.&nbsp;"fixedWindow" rolling policy Property Reference</caption><col width="20%"><col width="53%"><col width="27%"><thead><tr>
                             <th>Property</th>
                             <th>Default</th>
                             <th>Description</th>
@@ -123,7 +128,7 @@
                             <td>Max file size that causes rotation. Expressed in bytes, kilobytes,
                                 megabytes or gigabytes by suffixing a numeric value with KB, MB and
                                 respectively GB. For example: 5000000, 5000KB, 5MB and 2GB.</td>
-                        </tr></tbody></table></div><div class="section" title="&#34;time&#34; Rolling Policy"><div class="titlepage"><div><div><h3 class="title"><a name="d0e311"></a>"time" Rolling Policy</h3></div></div></div><pre class="programlisting">log:
+                        </tr></tbody></table></div><div class="section" title="&#34;time&#34; Rolling Policy"><div class="titlepage"><div><div><h3 class="title"><a name="d0e329"></a>"time" Rolling Policy</h3></div></div></div><pre class="programlisting">log:
   appenders:
     - type: file
       logFormat: '%c{20}: %m%n'
@@ -132,7 +137,7 @@
         type: time
         fileNamePattern: '/var/log/myapp-%d{yyyyMMDDHHmmss}.log'</pre><p>"time"
                 policy rotates the main log file at a fixed time interval determined by the file
-                name pattern.</p><table frame="void" id="d0e318"><caption>Table&nbsp;2.5.&nbsp;"time" rolling policy Property Reference</caption><col width="20%"><col width="53%"><col width="27%"><thead><tr>
+                name pattern.</p><table frame="void" id="d0e336"><caption>Table&nbsp;2.5.&nbsp;"time" rolling policy Property Reference</caption><col width="20%"><col width="53%"><col width="27%"><thead><tr>
                             <th>Property</th>
                             <th>Default</th>
                             <th>Description</th>
@@ -156,7 +161,7 @@
                             <td>Max size of all log files combined. Expressed in bytes, kilobytes,
                                 megabytes or gigabytes by suffixing a numeric value with KB, MB and
                                 respectively GB. For example: 5000000, 5000KB, 5MB and 2GB.</td>
-                        </tr></tbody></table></div><div class="section" title="&#34;sizeAndTime&#34; Rolling Policy"><div class="titlepage"><div><div><h3 class="title"><a name="d0e379"></a>"sizeAndTime" Rolling Policy</h3></div></div></div><pre class="programlisting">log:
+                        </tr></tbody></table></div><div class="section" title="&#34;sizeAndTime&#34; Rolling Policy"><div class="titlepage"><div><div><h3 class="title"><a name="d0e397"></a>"sizeAndTime" Rolling Policy</h3></div></div></div><pre class="programlisting">log:
   appenders:
     - type: file
       logFormat: '%c{20}: %m%n'
@@ -168,7 +173,7 @@
         fileSize: 50
         totalSize: 150</pre><p>"sizeAndTime"
                 policy rotates the main log file either at a fixed time interval determined by the
-                file name pattern or when the log file reaches a certain size.</p><table frame="void" id="d0e386"><caption>Table&nbsp;2.6.&nbsp;"sizeAndTime" rolling policy Property Reference</caption><col width="20%"><col width="53%"><col width="27%"><thead><tr>
+                file name pattern or when the log file reaches a certain size.</p><table frame="void" id="d0e404"><caption>Table&nbsp;2.6.&nbsp;"sizeAndTime" rolling policy Property Reference</caption><col width="20%"><col width="53%"><col width="27%"><thead><tr>
                             <th>Property</th>
                             <th>Default</th>
                             <th>Description</th>
@@ -198,7 +203,7 @@
                             <td>Max file size that causes rotation. Expressed in bytes, kilobytes,
                                 megabytes or gigabytes by suffixing a numeric value with KB, MB and
                                 respectively GB. For example: 5000000, 5000KB, 5MB and 2GB.</td>
-                        </tr></tbody></table></div></div><div class="section" title="log.loggers"><div class="titlepage"><div><div><h2 class="title"><a name="d0e459"></a>log.loggers</h2></div></div></div><pre class="programlisting">log:
+                        </tr></tbody></table></div></div><div class="section" title="log.loggers"><div class="titlepage"><div><div><h2 class="title"><a name="d0e477"></a>log.loggers</h2></div></div></div><pre class="programlisting">log:
   loggers:
     com.foo:
       level: debug
@@ -206,7 +211,7 @@
       level: debug</pre><p>This
             is a map of <a class="link" href="https://github.com/bootique/bootique-logback/blob/master/bootique-logback/src/main/java/io/bootique/logback/LoggerFactory.java" target="_top">logger factories</a> by logger name. Logger name is either a package name
             (applied recursively to subpackages and their classes) or a class name. Each
-            LoggerFactory has the following properties:</p><table frame="void" id="d0e469"><caption>Table&nbsp;2.7.&nbsp;Logger Property Reference</caption><col width="20%"><col width="53%"><col width="27%"><thead><tr>
+            LoggerFactory has the following properties:</p><table frame="void" id="d0e487"><caption>Table&nbsp;2.7.&nbsp;Logger Property Reference</caption><col width="20%"><col width="53%"><col width="27%"><thead><tr>
                     <th>Property</th>
                     <th>Default</th>
                     <th>Description</th>
