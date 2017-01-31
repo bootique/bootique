@@ -44,7 +44,7 @@ public class ConfigMetadataCompilerTest {
         assertEquals("Describes Config1", md.getDescription());
         assertEquals(Config1.class, md.getType());
 
-        assertEquals(7, md.getProperties().size());
+        assertEquals(9, md.getProperties().size());
 
         Map<String, ConfigMetadataNode> propMap = md
                 .getProperties()
@@ -291,6 +291,16 @@ public class ConfigMetadataCompilerTest {
 
         @BQConfigProperty
         public void setP7(Map<Integer, Config2> v) {
+        }
+
+        @BQConfigProperty
+        public Config1 setP8(String v) {
+            return this;
+        }
+
+        @BQConfigProperty
+        public String setP9(String v) {
+            return v;
         }
 
         public void setNonP(String v) {

@@ -35,14 +35,6 @@ public class ConfigMetadataCompiler {
     }
 
     private static Type propertyTypeFromSetter(Method maybeSetter) {
-
-        if (!Void.TYPE.equals(maybeSetter.getReturnType())) {
-            throw new IllegalStateException("Method '" + maybeSetter.getDeclaringClass().getName() + "."
-                    + maybeSetter.getName() +
-                    "' is annotated with @BQConfigProperty, but does not match expected setter signature."
-                    + " It must be void.");
-        }
-
         Type[] paramTypes = maybeSetter.getGenericParameterTypes();
         if (paramTypes.length != 1) {
             throw new IllegalStateException("Method '" + maybeSetter.getDeclaringClass().getName() + "."
