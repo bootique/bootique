@@ -49,16 +49,26 @@
 	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">static</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">void</span> main(String[] args) {
 		Bootique.app(args).autoLoadModules().run();
 	}
-}</pre><p>There's only one line of meaningful code inside the  <code class="code">main()</code> method, but
-            this is already a working Bootique app. Meaning it is runnable  and can do a few things.
+}</pre><p>There's only one line of meaningful code inside the <code class="code">main()</code> method, but
+            this is already a working Bootique app. Meaning it is runnable and can do a few things.
             So let's try running this class from your IDE. You will see the output like this on the
             IDE
-            console:</p><pre class="programlisting">Option                    Description                          
-------                    -----------                          
---config &lt;yaml_location&gt;  Specifies YAML config location, which
-                            can be a file path or a URL.       
---help                    Prints this message.                 
---server                  Starts Jetty server</pre><p>So the app printed its help message telling us which commands and options it
+            console:</p><pre class="programlisting">NAME
+      idea_rt.jar
+
+OPTIONS
+      -c yaml_location, --config=yaml_location
+           Specifies YAML config location, which can be a file path or a URL.
+
+      -h, --help
+           Prints this message.
+
+      -H, --help-config
+           Prints information about application modules and their configuration
+           options.
+
+      -s, --server
+           Starts Jetty server.</pre><p>So the app printed its help message telling us which commands and options it
             understands. &nbsp;<code class="code">--server</code> option looks promising, but before we use it, let's
             actually write a REST endpoint that will answer to our requests. We'll use standard Java
                 <a class="link" href="https://en.wikipedia.org/wiki/Java_API_for_RESTful_Web_Services" target="_top">JAX-RS API</a> for
@@ -97,13 +107,15 @@
             JerseyModule. Now let's try to run the app with the changes. Add <code class="code">--server</code>
             to the command run parameters before doing it. Now when the app is started, you will see
             different
-            output:</p><pre class="programlisting">INFO  main i.b.j.c.ServerCommand: Starting jetty...
-INFO  main o.e.jetty.util.log: Logging initialized @933ms
-INFO  main i.b.j.s.ServerFactory: Adding servlet mapped to /*
-INFO  main o.e.j.server.Server: jetty-9.3.6.v20151106
-INFO  main o.e.j.s.h.ContextHandler: Started o.e.j.s.ServletContextHandler@cf65451{/,null,AVAILABLE}
-INFO  main o.e.j.s.ServerConnector: Started ServerConnector@60cf80e7{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
-INFO  main o.e.j.server.Server: Started @1554ms</pre><p>Notice
+            output:</p><pre class="programlisting">INFO main o.e.jetty.util.log: Logging initialized @1328ms
+INFO main i.b.j.s.ServerFactory: Adding listener io.bootique.jetty.servlet.DefaultServletEnvironment
+INFO main i.b.j.s.ServletFactory: Adding servlet 'jersey' mapped to /*
+INFO main i.b.j.s.ServerLifecycleLogger: Starting jetty...
+INFO main o.e.j.server.Server: jetty-9.3.6.v20151106
+INFO main o.e.j.s.h.ContextHandler: Started o.e.j.s.ServletContextHandler@27dc79f7{/,null,AVAILABLE}
+INFO main o.e.j.s.ServerConnector: Started ServerConnector@3a45c42a{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+INFO main o.e.j.server.Server: Started @2005ms
+INFO main i.b.j.s.ServerLifecycleLogger: Started Jetty in 584 ms. Base URL: http://127.0.0.1:8080/</pre><p>Notice
             that the app did not terminate immediately, and is waiting for user requests. Now let's
             try opening the URL <a class="link" href="http://localhost:8080/" target="_top">http://localhost:8080/</a> in the browser. We should see 'Hello, world!' as
             request output. We just built a working REST app that does not require deployment to a
