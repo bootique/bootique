@@ -15,6 +15,7 @@ import io.bootique.annotation.DefaultCommand;
 import io.bootique.annotation.EnvironmentProperties;
 import io.bootique.annotation.EnvironmentVariables;
 import io.bootique.annotation.LogLevels;
+import io.bootique.annotation.PublicEnvironmentVariables;
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandManager;
@@ -130,6 +131,27 @@ public class BQCoreModule implements Module {
     }
 
     /**
+     * Starts a binding for exposing application configuration variables. "Exposing" means inclusion in the help
+     * "ENVIRONMENT" section. Variables can be exposed under their "canonical" names derived from Bootique configuration
+     * structure (e.g. BQ_JDBC_DS1_PASSWORD), or be aliased to an arbitrary, presumably more application-centric name
+     * (e.g. MYAPP_DB_PASSWORD).
+     *
+     * @param binder        DI binder passed to the Module that invokes this method.
+     * @param canonicalName a "canonical" name of the variable derived from configuration structure, such as
+     *                      "BQ_JDBC_MYDS_PASSWORD".
+     * @return an {@link AliasBinder} object that can be used to rename and expose the variable.
+     * @since 0.22
+     */
+    public static AliasBinder exposeVariable(Binder binder, String canonicalName) {
+        MapBinder<String, String> publicVarBinder = contributeExposedVariables(binder);
+        return new AliasBinder(publicVarBinder, canonicalName);
+    }
+
+    static MapBinder<String, String> contributeExposedVariables(Binder binder) {
+        return MapBinder.newMapBinder(binder, String.class, String.class, PublicEnvironmentVariables.class);
+    }
+
+    /**
      * Provides a way to set default log levels for specific loggers. These settings can be overridden via Bootique
      * configuration of whatever logging module you might use, like bootique-logback. This feature may be handy to
      * suppress chatty third-party loggers, but still allow users to turn them on via configuration.
@@ -199,6 +221,7 @@ public class BQCoreModule implements Module {
         // trigger extension points creation and provide default contributions
         BQCoreModule.contributeProperties(binder);
         BQCoreModule.contributeVariables(binder);
+        BQCoreModule.contributeExposedVariables(binder);
 
         // while "help" is a special command, we still store it in the common list of commands,
         // so that "--help" is exposed as an explicit option

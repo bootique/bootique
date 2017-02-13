@@ -56,11 +56,13 @@ public class BQInternalTestFactory extends ExternalResource {
         private Bootique bootique;
         private Map<String, String> properties;
         private Map<String, String> variables;
+        private Map<String, String> varAliases;
 
         protected Builder(Collection<BQRuntime> runtimes, String[] args) {
             this.runtimes = runtimes;
             this.properties = new HashMap<>();
             this.variables = new HashMap<>();
+            this.varAliases = new HashMap<>();
             this.bootique = Bootique.app(args).module(createPropertiesProvider()).module(createVariablesProvider());
         }
 
@@ -97,6 +99,7 @@ public class BQInternalTestFactory extends ExternalResource {
                     return binder -> {
                         MapBinder<String, String> vars = BQCoreModule.contributeVariables(binder);
                         variables.forEach((k, v) -> vars.addBinding(k).toInstance(v));
+                        varAliases.forEach((k, v) -> BQCoreModule.exposeVariable(binder, k).as(v));
                     };
                 }
 
@@ -121,6 +124,11 @@ public class BQInternalTestFactory extends ExternalResource {
 
         public T var(String key, String value) {
             variables.put(key, value);
+            return (T) this;
+        }
+
+        public T varAlias(String key, String value) {
+            varAliases.put(key, value);
             return (T) this;
         }
 

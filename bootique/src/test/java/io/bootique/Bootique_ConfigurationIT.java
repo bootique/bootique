@@ -85,6 +85,26 @@ public class Bootique_ConfigurationIT {
         assertEquals("F1", b1.c.m.f);
     }
 
+    @Test
+    public void testConfigEnvOverrides_Alias() {
+        BQRuntime runtime = runtimeFactory.app("--config=src/test/resources/io/bootique/test3.yml")
+                .varAlias("BQ_A", "V1")
+                .varAlias("BQ_C_M_F", "V2")
+                .varAlias("BQ_C_M_K", "V3")
+                .var("V1", "K")
+                .var("V2", "K1")
+                .var("V3", "4")
+
+                .createRuntime();
+
+        Bean1 b1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
+
+        assertEquals("K", b1.a);
+        assertEquals(4, b1.c.m.k);
+        assertEquals("n", b1.c.m.l);
+        assertEquals("K1", b1.c.m.f);
+    }
+
     static class Bean1 {
         private String a;
         private Bean2 c;
