@@ -1,9 +1,11 @@
 package io.bootique.help;
 
 import io.bootique.meta.application.ApplicationMetadata;
+import io.bootique.meta.config.ConfigValueMetadata;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -36,6 +38,7 @@ public class DefaultHelpGenerator implements HelpGenerator {
 
         printName(appender, application.getName(), application.getDescription());
         printOptions(appender, collectOptions());
+        printEnvironment(appender, application.getVariables());
     }
 
     protected Collection<HelpOption> collectOptions() {
@@ -53,7 +56,6 @@ public class DefaultHelpGenerator implements HelpGenerator {
         return helpOptions.getOptions();
     }
 
-
     protected void printName(HelpAppender out, String name, String description) {
 
         out.printSectionName("NAME");
@@ -65,6 +67,21 @@ public class DefaultHelpGenerator implements HelpGenerator {
         } else {
             out.printText(name);
         }
+    }
+
+    protected void printEnvironment(HelpAppender out, Collection<ConfigValueMetadata> variables) {
+        if (variables.isEmpty()) {
+            return;
+        }
+
+        out.printSectionName("ENVIRONMENT");
+        variables.stream().sorted(Comparator.comparing(ConfigValueMetadata::getName)).forEach(v -> {
+            out.printSubsectionHeader(v.getName());
+            String description = v.getDescription();
+            if (description != null) {
+                out.printDescription(description);
+            }
+        });
     }
 
     protected void printOptions(HelpAppender out, Collection<HelpOption> options) {

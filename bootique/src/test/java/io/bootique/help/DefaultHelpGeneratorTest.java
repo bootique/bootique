@@ -3,6 +3,7 @@ package io.bootique.help;
 import io.bootique.meta.application.ApplicationMetadata;
 import io.bootique.meta.application.CommandMetadata;
 import io.bootique.meta.application.OptionMetadata;
+import io.bootique.meta.config.ConfigValueMetadata;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -305,6 +306,33 @@ public class DefaultHelpGeneratorTest {
                 "",
                 "      -c, --c1",
                 "           Word1_word2_word3_word4_longword5_longerword6 morewords7"
+        );
+    }
+
+    @Test
+    public void testGenerate_EnvironmentSection() {
+
+        ConfigValueMetadata var1 = ConfigValueMetadata.builder("VAR1").description("var1 description").build();
+        ConfigValueMetadata var2 = ConfigValueMetadata.builder("VAR2").description("var2 description.").build();
+
+
+        ApplicationMetadata app = ApplicationMetadata
+                .builder("myapp")
+                .addVariable(var2)
+                .addVariable(var1)
+                .build();
+
+        // must insert a forced break...
+        assertLines(new DefaultHelpGenerator(app, 80),
+                "NAME",
+                "      myapp",
+                "",
+                "ENVIRONMENT",
+                "      VAR1",
+                "           var1 description",
+                "",
+                "      VAR2",
+                "           var2 description."
         );
     }
 }

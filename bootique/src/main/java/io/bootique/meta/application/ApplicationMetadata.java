@@ -1,6 +1,7 @@
 package io.bootique.meta.application;
 
 import io.bootique.meta.MetadataNode;
+import io.bootique.meta.config.ConfigValueMetadata;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,10 +17,12 @@ public class ApplicationMetadata implements MetadataNode {
     private String description;
     private Collection<CommandMetadata> commands;
     private Collection<OptionMetadata> options;
+    private Collection<ConfigValueMetadata> variables;
 
     private ApplicationMetadata() {
         this.commands = new ArrayList<>();
         this.options = new ArrayList<>();
+        this.variables = new ArrayList<>();
     }
 
     public static Builder builder() {
@@ -50,6 +53,16 @@ public class ApplicationMetadata implements MetadataNode {
 
     public Collection<OptionMetadata> getOptions() {
         return options;
+    }
+
+    /**
+     * Returns a collection of metadata objects representing publicly exposed environment variables.
+     *
+     * @since 0.22
+     * @return a collection of metadata objects representing publicly exposed environment variables.
+     */
+    public Collection<ConfigValueMetadata> getVariables() {
+        return variables;
     }
 
     public static class Builder {
@@ -95,6 +108,16 @@ public class ApplicationMetadata implements MetadataNode {
 
         public Builder addOptions(Collection<OptionMetadata> options) {
             application.options.addAll(options);
+            return this;
+        }
+
+        public Builder addVariable(ConfigValueMetadata var) {
+            application.variables.add(var);
+            return this;
+        }
+
+        public Builder addVariables(Collection<ConfigValueMetadata> vars) {
+            application.variables.addAll(vars);
             return this;
         }
     }

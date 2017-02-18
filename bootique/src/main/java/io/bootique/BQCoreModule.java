@@ -365,7 +365,9 @@ public class BQCoreModule implements Module {
     @Singleton
     ApplicationMetadata provideApplicationMetadata(ApplicationDescription descriptionHolder,
                                                    CommandManager commandManager,
-                                                   Set<OptionMetadata> options) {
+                                                   Set<OptionMetadata> options,
+                                                   Map<String, String> variableAliases,
+                                                   ModulesMetadata modulesMetadata) {
 
         ApplicationMetadata.Builder builder = ApplicationMetadata
                 .builder()
