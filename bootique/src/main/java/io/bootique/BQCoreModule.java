@@ -137,14 +137,14 @@ public class BQCoreModule implements Module {
      * (e.g. MYAPP_DB_PASSWORD).
      *
      * @param binder        DI binder passed to the Module that invokes this method.
-     * @param canonicalName a "canonical" name of the variable derived from configuration structure, such as
-     *                      "BQ_JDBC_MYDS_PASSWORD".
+     * @param configPath    a dot-separated "path" that navigates through the configuration tree to the property that
+     *                      should be bound form a variable. E.g. "jdbc.myds.password".
      * @return an {@link AliasBinder} object that can be used to rename and expose the variable.
      * @since 0.22
      */
-    public static AliasBinder exposeVariable(Binder binder, String canonicalName) {
+    public static AliasBinder exposeVariable(Binder binder, String configPath) {
         MapBinder<String, String> publicVarBinder = contributeExposedVariables(binder);
-        return new AliasBinder(publicVarBinder, canonicalName);
+        return new AliasBinder(publicVarBinder, configPath);
     }
 
     static MapBinder<String, String> contributeExposedVariables(Binder binder) {

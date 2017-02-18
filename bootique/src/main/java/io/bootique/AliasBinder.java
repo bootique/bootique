@@ -1,6 +1,7 @@
 package io.bootique;
 
 import com.google.inject.multibindings.MapBinder;
+import io.bootique.env.Environment;
 
 /**
  * Provides fluent API for exposing application configuration variables. "Exposing" means inclusion in the help
@@ -13,26 +14,41 @@ import com.google.inject.multibindings.MapBinder;
 public class AliasBinder {
 
     private MapBinder<String, String> publicVarBinder;
-    private String canonicalName;
+    private String configPath;
 
-    public AliasBinder(MapBinder<String, String> publicVarBinder, String canonicalName) {
+    public AliasBinder(MapBinder<String, String> publicVarBinder, String configPath) {
         this.publicVarBinder = publicVarBinder;
-        this.canonicalName = canonicalName;
+        this.configPath = configPath;
     }
 
     /**
      * Exposes the variable under an alternative, presumably human-readable name.
      *
-     * @param alias
+     * @param alias a variable name to be bound to a given property path.
      */
     public void as(String alias) {
-        publicVarBinder.addBinding(canonicalName).toInstance(alias);
+        publicVarBinder.addBinding(alias).toInstance(configPath);
     }
 
     /**
      * Exposes the variable without renaming, using its canonical name.
      */
     public void asIs() {
-        as(canonicalName);
+        as(getCanonicalVariableName());
+    }
+
+    protected String getCanonicalVariableName() {
+
+        StringBuilder varName = new StringBuilder(Environment.FRAMEWORK_VARIABLES_PREFIX);
+        int dot;
+        String subpath = this.configPath;
+        while((dot = subpath.indexOf('.')) >= 0) {
+            varName.append(subpath.substring(0, dot).toUpperCase()).append('_');
+            subpath = subpath.substring(dot + 1);
+        }
+
+        varName.append(subpath.toUpperCase());
+
+        return varName.toString();
     }
 }
