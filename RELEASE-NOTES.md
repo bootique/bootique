@@ -1,6 +1,7 @@
 ## 0.22
 
 * #119 Relax @BQConfigProperty restrictions.
+* #124 Exposing and aliasing app config environment variables 
 
 ## 0.21
 

@@ -375,8 +375,9 @@ public class BQCoreModule implements Module {
     @Provides
     @Singleton
     Environment provideEnvironment(@EnvironmentProperties Map<String, String> diProperties,
-                                   @EnvironmentVariables Map<String, String> diVars) {
-        return new DefaultEnvironment(diProperties, diVars);
+                                   @EnvironmentVariables Map<String, String> diVars,
+                                   @PublicEnvironmentVariables Map<String, String> varAliases) {
+        return new DefaultEnvironment(diProperties, diVars, varAliases);
     }
 
     @Provides

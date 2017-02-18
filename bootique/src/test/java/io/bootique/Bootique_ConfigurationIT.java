@@ -94,7 +94,6 @@ public class Bootique_ConfigurationIT {
                 .var("V1", "K")
                 .var("V2", "K1")
                 .var("V3", "4")
-
                 .createRuntime();
 
         Bean1 b1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
