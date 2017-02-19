@@ -366,7 +366,7 @@ public class BQCoreModule implements Module {
     ApplicationMetadata provideApplicationMetadata(ApplicationDescription descriptionHolder,
                                                    CommandManager commandManager,
                                                    Set<OptionMetadata> options,
-                                                   Map<String, String> variableAliases,
+                                                   Set<DeclaredVariable> declaredVariables,
                                                    ModulesMetadata modulesMetadata) {
 
         ApplicationMetadata.Builder builder = ApplicationMetadata
@@ -380,6 +380,8 @@ public class BQCoreModule implements Module {
 
         // merge default command options with top-level app options
         commandManager.getDefaultCommand().ifPresent(c -> builder.addOptions(c.getMetadata().getOptions()));
+
+        new DeclaredVariableMetaResolver(modulesMetadata).resolve(declaredVariables).forEach(builder::addVariable);
 
         return builder.build();
     }

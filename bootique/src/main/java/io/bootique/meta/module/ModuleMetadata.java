@@ -1,11 +1,17 @@
 package io.bootique.meta.module;
 
 import io.bootique.meta.MetadataNode;
+import io.bootique.meta.config.ConfigListMetadata;
+import io.bootique.meta.config.ConfigMapMetadata;
 import io.bootique.meta.config.ConfigMetadataNode;
+import io.bootique.meta.config.ConfigMetadataVisitor;
 import io.bootique.meta.config.ConfigObjectMetadata;
+import io.bootique.meta.config.ConfigValueMetadata;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Metadata descriptor of a DI module.
@@ -47,6 +53,74 @@ public class ModuleMetadata implements MetadataNode {
 
     public Collection<ConfigMetadataNode> getConfigs() {
         return configs;
+    }
+
+    /**
+     * Locates configuration node for the specified dot-separated path.
+     *
+     * @param configPath a dot-separated path that presumably corresponds to a configuration node.
+     * @return an optional result of a search for the node matching config path.
+     * @since 0.22
+     */
+    public Optional<ConfigMetadataNode> findConfig(String configPath) {
+
+        String[] split = splitFirstComponent(configPath);
+        return configs
+                .stream()
+                .filter(c -> c.getName().equals(split[0]))
+                .map(c -> findConfig(c, split[1]))
+                .findFirst().orElse(Optional.empty());
+    }
+
+    protected Optional<ConfigMetadataNode> findConfig(ConfigMetadataNode root, String configPath) {
+        Objects.requireNonNull(root);
+
+        if (configPath.length() == 0) {
+            return Optional.of(root);
+        }
+
+        String[] split = splitFirstComponent(configPath);
+
+        return root.accept(new ConfigMetadataVisitor<Optional<ConfigMetadataNode>>() {
+
+            @Override
+            public Optional<ConfigMetadataNode> visitObjectMetadata(ConfigObjectMetadata metadata) {
+
+                // TODO: inheritance hierarchy analysis
+                return metadata
+                        .getProperties()
+                        .stream()
+                        .filter(c -> c.getName().equals(split[0]))
+                        .map(c -> findConfig(c, split[1]))
+                        .findFirst().orElse(Optional.empty());
+            }
+
+            @Override
+            public Optional<ConfigMetadataNode> visitMapMetadata(ConfigMapMetadata metadata) {
+
+                // map can have arbitrary keys, so any name is valid
+                return findConfig(metadata.getValuesType(), split[1]);
+            }
+
+            @Override
+            public Optional<ConfigMetadataNode> visitValueMetadata(ConfigValueMetadata metadata) {
+                return Optional.empty();
+            }
+
+            @Override
+            public Optional<ConfigMetadataNode> visitListMetadata(ConfigListMetadata metadata) {
+                return Optional.empty();
+            }
+        });
+    }
+
+    private String[] splitFirstComponent(String configPath) {
+        int dot = configPath.indexOf('.');
+
+        return dot < 0 ? new String[]{configPath, ""} : new String[]{
+                configPath.substring(0, dot),
+                configPath.substring(dot + 1)
+        };
     }
 
     public static class Builder {
