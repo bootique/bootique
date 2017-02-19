@@ -1,22 +1,22 @@
 package io.bootique;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Map;
-import java.util.Set;
-
-import org.junit.Test;
-
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import io.bootique.annotation.EnvironmentProperties;
 import io.bootique.meta.application.OptionMetadata;
+import org.junit.Test;
+
+import java.util.Map;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class BQCoreModule_StaticsTest {
 
 	@Test
+	@Deprecated
 	public void testContributeProperties() {
 		Injector i = Guice.createInjector(b -> {
 			BQCoreModule.contributeProperties(b).addBinding("a").toInstance("b");
@@ -32,6 +32,7 @@ public class BQCoreModule_StaticsTest {
 	}
 
 	@Test
+    @Deprecated
 	public void testContributeOptions() {
 		OptionMetadata o1 = OptionMetadata.builder("o1").build();
 		OptionMetadata o2 = OptionMetadata.builder("o2").build();

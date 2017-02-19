@@ -2,14 +2,11 @@ package io.bootique.meta.application;
 
 import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
-import io.bootique.meta.application.ApplicationMetadata;
 import io.bootique.unit.BQInternalTestFactory;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 public class ApplicationMetadataIT {
 
@@ -31,7 +28,8 @@ public class ApplicationMetadataIT {
 
     @Test
     public void testCustomDescription() {
-        BQRuntime runtime = runtimeFactory.app().module(b -> BQCoreModule.setApplicationDescription(b, "app desc"))
+        BQRuntime runtime = runtimeFactory.app()
+                .module(b -> BQCoreModule.contribute(b).setApplicationDescription("app desc"))
                 .createRuntime();
 
         ApplicationMetadata md = runtime.getInstance(ApplicationMetadata.class);

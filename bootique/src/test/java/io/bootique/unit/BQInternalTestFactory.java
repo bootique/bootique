@@ -1,7 +1,6 @@
 package io.bootique.unit;
 
 import com.google.inject.Module;
-import com.google.inject.multibindings.MapBinder;
 import io.bootique.BQCoreModule;
 import io.bootique.BQModule;
 import io.bootique.BQModuleOverrideBuilder;
@@ -56,13 +55,13 @@ public class BQInternalTestFactory extends ExternalResource {
         private Bootique bootique;
         private Map<String, String> properties;
         private Map<String, String> variables;
-        private Map<String, String> varAliases;
+        private Map<String, String> declaredVars;
 
         protected Builder(Collection<BQRuntime> runtimes, String[] args) {
             this.runtimes = runtimes;
             this.properties = new HashMap<>();
             this.variables = new HashMap<>();
-            this.varAliases = new HashMap<>();
+            this.declaredVars = new HashMap<>();
             this.bootique = Bootique.app(args).module(createPropertiesProvider()).module(createVariablesProvider());
         }
 
@@ -71,10 +70,7 @@ public class BQInternalTestFactory extends ExternalResource {
 
                 @Override
                 public Module module() {
-                    return binder -> {
-                        MapBinder<String, String> props = BQCoreModule.contributeProperties(binder);
-                        properties.forEach((k, v) -> props.addBinding(k).toInstance(v));
-                    };
+                    return binder -> BQCoreModule.contribute(binder).setProperties(properties);
                 }
 
                 @Override
@@ -97,9 +93,7 @@ public class BQInternalTestFactory extends ExternalResource {
                 @Override
                 public Module module() {
                     return binder -> {
-                        MapBinder<String, String> vars = BQCoreModule.contributeVariables(binder);
-                        variables.forEach((k, v) -> vars.addBinding(k).toInstance(v));
-                        varAliases.forEach((name, path) -> BQCoreModule.declareVariable(binder, path, name));
+                        BQCoreModule.contribute(binder).setVars(variables).declareVars(declaredVars);
                     };
                 }
 
@@ -127,8 +121,8 @@ public class BQInternalTestFactory extends ExternalResource {
             return (T) this;
         }
 
-        public T varAlias(String path, String alias) {
-            varAliases.put(alias, path);
+        public T varAlias(String path, String var) {
+            declaredVars.put(path, var);
             return (T) this;
         }
 

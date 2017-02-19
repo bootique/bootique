@@ -1,7 +1,6 @@
 package io.bootique.test.junit;
 
 import com.google.inject.Module;
-import com.google.inject.multibindings.MapBinder;
 import io.bootique.BQCoreModule;
 import io.bootique.BQModuleOverrideBuilder;
 import io.bootique.BQModuleProvider;
@@ -32,10 +31,7 @@ public abstract class BQTestRuntimeBuilder<T extends BQTestRuntimeBuilder<T>> {
 
             @Override
             public Module module() {
-                return binder -> {
-                    MapBinder<String, String> props = BQCoreModule.contributeProperties(binder);
-                    properties.forEach((k, v) -> props.addBinding(k).toInstance(v));
-                };
+                return binder -> BQCoreModule.contribute(binder).setProperties(properties);
             }
 
             @Override

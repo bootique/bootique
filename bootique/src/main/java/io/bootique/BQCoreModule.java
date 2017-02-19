@@ -93,6 +93,17 @@ public class BQCoreModule implements Module {
     }
 
     /**
+     * Creates and returns an instance of {@link BQCoreModuleExtender} that helps to load custom extensions to the
+     * Bootique core. Usually invoked from another Module's "configure" method.
+     *
+     * @param binder DI binder passed to the Module that invokes this method.
+     * @return an instance of {@link BQCoreModuleExtender} that can be used to load custom extensions to the Bootique core.
+     */
+    public static BQCoreModuleExtender contribute(Binder binder) {
+        return new BQCoreModuleExtender(binder);
+    }
+
+    /**
      * @param binder DI binder passed to the Module that invokes this method.
      * @return {@link Multibinder} for Bootique commands.
      * @since 0.12
@@ -105,7 +116,10 @@ public class BQCoreModule implements Module {
      * @param binder DI binder passed to the Module that invokes this method.
      * @return {@link Multibinder} for Bootique options.
      * @since 0.12
+     * @deprecated since 0.22 use {@link #contribute(Binder)} to get an extender object, and
+     * then call {@link BQCoreModuleExtender#setOption(OptionMetadata)}.
      */
+    @Deprecated
     public static Multibinder<OptionMetadata> contributeOptions(Binder binder) {
         return Multibinder.newSetBinder(binder, OptionMetadata.class);
     }
@@ -115,7 +129,10 @@ public class BQCoreModule implements Module {
      * @return {@link MapBinder} for Bootique properties.
      * @see EnvironmentProperties
      * @since 0.12
+     * @deprecated since 0.22 use {@link #contribute(Binder)} to get an extender object, and
+     * then call {@link BQCoreModuleExtender#setProperty(String, String)}.
      */
+    @Deprecated
     public static MapBinder<String, String> contributeProperties(Binder binder) {
         return MapBinder.newMapBinder(binder, String.class, String.class, EnvironmentProperties.class);
     }
@@ -125,40 +142,12 @@ public class BQCoreModule implements Module {
      * @return {@link MapBinder} for values emulating environment variables.
      * @see EnvironmentVariables
      * @since 0.17
+     * @deprecated since 0.22 use {@link #contribute(Binder)} to get an extender object, and
+     * then call {@link BQCoreModuleExtender#setVar(String, String)}.
      */
+    @Deprecated
     public static MapBinder<String, String> contributeVariables(Binder binder) {
         return MapBinder.newMapBinder(binder, String.class, String.class, EnvironmentVariables.class);
-    }
-
-    /**
-     * Declares a configuration variable for the given config path. The variable will be included in the help
-     * "ENVIRONMENT" section. The name of the variable will be derived from the config path.  E.g.
-     * "jdbc.myds.password" becomes "BQ_JDBC_MYDS_PASSWORD".
-     *
-     * @param binder     DI binder passed to the Module that invokes this method.
-     * @param configPath a dot-separated "path" that navigates through the configuration tree to the property that
-     *                   should be bound form a variable. E.g. "jdbc.myds.password".
-     * @since 0.22
-     */
-    public static void declareVariable(Binder binder, String configPath) {
-        new DeclaredVariableBinder(contributeDeclaredVariables(binder), configPath).withCanonicalName();
-    }
-
-    /**
-     * Declares a configuration variable for the given config path and given name.
-     *
-     * @param binder     DI binder passed to the Module that invokes this method.
-     * @param configPath a dot-separated "path" that navigates through the configuration tree to the property that
-     *                   should be bound form a variable. E.g. "jdbc.myds.password".
-     * @param name       public name of the variable.
-     * @since 0.22
-     */
-    public static void declareVariable(Binder binder, String configPath, String name) {
-        new DeclaredVariableBinder(contributeDeclaredVariables(binder), configPath).withName(name);
-    }
-
-    static Multibinder<DeclaredVariable> contributeDeclaredVariables(Binder binder) {
-        return Multibinder.newSetBinder(binder, DeclaredVariable.class);
     }
 
     /**
@@ -169,7 +158,10 @@ public class BQCoreModule implements Module {
      * @param binder DI binder passed to the Module that invokes this method.
      * @return {@link MapBinder} for Bootique properties.
      * @since 0.19
+     * @deprecated since 0.22 use {@link #contribute(Binder)} to get an extender object, and
+     * then call {@link BQCoreModuleExtender#setLogLevel(String, Level)}.
      */
+    @Deprecated
     public static MapBinder<String, Level> contributeLogLevels(Binder binder) {
         return MapBinder.newMapBinder(binder, String.class, Level.class, LogLevels.class);
     }
@@ -180,8 +172,12 @@ public class BQCoreModule implements Module {
      * @param description optional application description used in help messages, etc.
      * @param binder      DI binder passed to the Module that invokes this method.
      * @since 0.20
+     * @deprecated since 0.22 use {@link #contribute(Binder)} to get an extender object, and
+     * then call {@link BQCoreModuleExtender#setApplicationDescription(String)}.
      */
+    @Deprecated
     public static void setApplicationDescription(Binder binder, String description) {
+        contribute(binder).setApplicationDescription(description);
         binder.bind(ApplicationDescription.class).toInstance(new ApplicationDescription(description));
     }
 
@@ -191,7 +187,10 @@ public class BQCoreModule implements Module {
      * @param binder      DI binder passed to the Module that invokes this method.
      * @param commandType a class of the default command.
      * @since 0.20
+     * @deprecated since 0.22 use {@link #contribute(Binder)} to get an extender object, and
+     * then call {@link BQCoreModuleExtender#setDefaultCommand(Class)}.
      */
+    @Deprecated
     public static void setDefaultCommand(Binder binder, Class<? extends Command> commandType) {
         binder.bind(Key.get(Command.class, DefaultCommand.class)).to(commandType);
     }
@@ -215,6 +214,11 @@ public class BQCoreModule implements Module {
     @Override
     public void configure(Binder binder) {
 
+        // trigger extension points creation and add default contributions
+        BQCoreModule.contribute(binder)
+                .initAllExtensions()
+                .setOption(createConfigOption());
+
         // bind instances
         binder.bind(BootLogger.class).toInstance(Objects.requireNonNull(bootLogger));
         binder.bind(String[].class).annotatedWith(Args.class).toInstance(Objects.requireNonNull(args));
@@ -228,18 +232,10 @@ public class BQCoreModule implements Module {
         // we can't bind Provider with @Provides, so declaring it here...
         binder.bind(Cli.class).toProvider(JoptCliProvider.class).in(Singleton.class);
 
-        // trigger extension points creation and provide default contributions
-        BQCoreModule.contributeProperties(binder);
-        BQCoreModule.contributeVariables(binder);
-        BQCoreModule.contributeDeclaredVariables(binder);
-
         // while "help" is a special command, we still store it in the common list of commands,
         // so that "--help" is exposed as an explicit option
         BQCoreModule.contributeCommands(binder).addBinding().to(HelpCommand.class).in(Singleton.class);
         BQCoreModule.contributeCommands(binder).addBinding().to(HelpConfigCommand.class).in(Singleton.class);
-
-        BQCoreModule.contributeOptions(binder).addBinding().toInstance(createConfigOption());
-        BQCoreModule.contributeLogLevels(binder);
     }
 
     OptionMetadata createConfigOption() {
@@ -406,21 +402,6 @@ public class BQCoreModule implements Module {
         // very simple OS test...
         boolean isUnix = "/".equals(System.getProperty("file.separator"));
         return isUnix ? new SttyTerminal(bootLogger) : new FixedWidthTerminal(TTY_DEFAULT_COLUMNS);
-    }
-
-    static class ApplicationDescription {
-        private String description;
-
-        public ApplicationDescription() {
-        }
-
-        public ApplicationDescription(String description) {
-            this.description = description;
-        }
-
-        public String getDescription() {
-            return description;
-        }
     }
 
     public static class Builder {

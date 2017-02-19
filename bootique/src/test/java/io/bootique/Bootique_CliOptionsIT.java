@@ -58,10 +58,10 @@ public class Bootique_CliOptionsIT {
     @Test
     public void testOverlappingOptions() {
         BQRuntime runtime = runtimeFactory.app("--o1")
-                .module(b -> {
-                    BQCoreModule.contributeOptions(b).addBinding().toInstance(OptionMetadata.builder("o1").build());
-                    BQCoreModule.contributeOptions(b).addBinding().toInstance(OptionMetadata.builder("o2").build());
-                })
+                .module(b -> BQCoreModule.contribute(b).setOptions(
+                        OptionMetadata.builder("o1").build(),
+                        OptionMetadata.builder("o2").build()
+                ))
                 .createRuntime();
         assertTrue(runtime.getInstance(Cli.class).hasOption("o1"));
         assertFalse(runtime.getInstance(Cli.class).hasOption("o2"));
@@ -73,10 +73,10 @@ public class Bootique_CliOptionsIT {
     @Ignore
     public void testOverlappingOptions_Short() {
         BQRuntime runtime = runtimeFactory.app("-o")
-                .module(b -> {
-                    BQCoreModule.contributeOptions(b).addBinding().toInstance(OptionMetadata.builder("o1").build());
-                    BQCoreModule.contributeOptions(b).addBinding().toInstance(OptionMetadata.builder("o2").build());
-                })
+                .module(b -> BQCoreModule.contribute(b).setOptions(
+                        OptionMetadata.builder("o1").build(),
+                        OptionMetadata.builder("o2").build()
+                ))
                 .createRuntime();
         runtime.getInstance(Cli.class);
     }
@@ -132,7 +132,7 @@ public class Bootique_CliOptionsIT {
     @Test
     public void testDefaultCommandOptions() {
         BQRuntime runtime = runtimeFactory.app("-l", "x", "--long=y", "-s")
-                .module(binder -> BQCoreModule.setDefaultCommand(binder, TestCommand.class))
+                .module(binder -> BQCoreModule.contribute(binder).setDefaultCommand(TestCommand.class))
                 .createRuntime();
 
 
