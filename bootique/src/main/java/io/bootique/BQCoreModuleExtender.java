@@ -41,6 +41,8 @@ public class BQCoreModuleExtender {
     /**
      * Should be called by owning Module to initialize all contribution maps and collections. Failure to call this
      * method may result in injection failures for empty maps and collections.
+     *
+     * @return this extender instance.
      */
     BQCoreModuleExtender initAllExtensions() {
         getOrCreatePropertiesBinder();
