@@ -58,7 +58,7 @@ public class Bootique_CliOptionsIT {
     @Test
     public void testOverlappingOptions() {
         BQRuntime runtime = runtimeFactory.app("--o1")
-                .module(b -> BQCoreModule.contribute(b).setOptions(
+                .module(b -> BQCoreModule.extend(b).setOptions(
                         OptionMetadata.builder("o1").build(),
                         OptionMetadata.builder("o2").build()
                 ))
@@ -73,7 +73,7 @@ public class Bootique_CliOptionsIT {
     @Ignore
     public void testOverlappingOptions_Short() {
         BQRuntime runtime = runtimeFactory.app("-o")
-                .module(b -> BQCoreModule.contribute(b).setOptions(
+                .module(b -> BQCoreModule.extend(b).setOptions(
                         OptionMetadata.builder("o1").build(),
                         OptionMetadata.builder("o2").build()
                 ))
@@ -132,7 +132,7 @@ public class Bootique_CliOptionsIT {
     @Test
     public void testDefaultCommandOptions() {
         BQRuntime runtime = runtimeFactory.app("-l", "x", "--long=y", "-s")
-                .module(binder -> BQCoreModule.contribute(binder).setDefaultCommand(TestCommand.class))
+                .module(binder -> BQCoreModule.extend(binder).setDefaultCommand(TestCommand.class))
                 .createRuntime();
 
 

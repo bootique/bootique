@@ -29,7 +29,7 @@ public class ApplicationMetadataIT {
     @Test
     public void testCustomDescription() {
         BQRuntime runtime = runtimeFactory.app()
-                .module(b -> BQCoreModule.contribute(b).setApplicationDescription("app desc"))
+                .module(b -> BQCoreModule.extend(b).setApplicationDescription("app desc"))
                 .createRuntime();
 
         ApplicationMetadata md = runtime.getInstance(ApplicationMetadata.class);

@@ -93,13 +93,15 @@ public class BQCoreModule implements Module {
     }
 
     /**
-     * Creates and returns an instance of {@link BQCoreModuleExtender} that helps to load custom extensions to the
-     * Bootique core. Usually invoked from another Module's "configure" method.
+     * Returns an instance of {@link BQCoreModuleExtender} used by downstream modules to load custom extensions to the
+     * Bootique core module. Should be invoked from a downstream Module's "configure" method.
      *
      * @param binder DI binder passed to the Module that invokes this method.
-     * @return an instance of {@link BQCoreModuleExtender} that can be used to load custom extensions to the Bootique core.
+     * @return an instance of {@link BQCoreModuleExtender} that can be used to load custom extensions to the Bootique
+     * core.
+     * @since 0.22
      */
-    public static BQCoreModuleExtender contribute(Binder binder) {
+    public static BQCoreModuleExtender extend(Binder binder) {
         return new BQCoreModuleExtender(binder);
     }
 
@@ -116,7 +118,7 @@ public class BQCoreModule implements Module {
      * @param binder DI binder passed to the Module that invokes this method.
      * @return {@link Multibinder} for Bootique options.
      * @since 0.12
-     * @deprecated since 0.22 use {@link #contribute(Binder)} to get an extender object, and
+     * @deprecated since 0.22 use {@link #extend(Binder)} to get an extender object, and
      * then call {@link BQCoreModuleExtender#setOption(OptionMetadata)}.
      */
     @Deprecated
@@ -129,7 +131,7 @@ public class BQCoreModule implements Module {
      * @return {@link MapBinder} for Bootique properties.
      * @see EnvironmentProperties
      * @since 0.12
-     * @deprecated since 0.22 use {@link #contribute(Binder)} to get an extender object, and
+     * @deprecated since 0.22 use {@link #extend(Binder)} to get an extender object, and
      * then call {@link BQCoreModuleExtender#setProperty(String, String)}.
      */
     @Deprecated
@@ -142,7 +144,7 @@ public class BQCoreModule implements Module {
      * @return {@link MapBinder} for values emulating environment variables.
      * @see EnvironmentVariables
      * @since 0.17
-     * @deprecated since 0.22 use {@link #contribute(Binder)} to get an extender object, and
+     * @deprecated since 0.22 use {@link #extend(Binder)} to get an extender object, and
      * then call {@link BQCoreModuleExtender#setVar(String, String)}.
      */
     @Deprecated
@@ -158,7 +160,7 @@ public class BQCoreModule implements Module {
      * @param binder DI binder passed to the Module that invokes this method.
      * @return {@link MapBinder} for Bootique properties.
      * @since 0.19
-     * @deprecated since 0.22 use {@link #contribute(Binder)} to get an extender object, and
+     * @deprecated since 0.22 use {@link #extend(Binder)} to get an extender object, and
      * then call {@link BQCoreModuleExtender#setLogLevel(String, Level)}.
      */
     @Deprecated
@@ -172,12 +174,12 @@ public class BQCoreModule implements Module {
      * @param description optional application description used in help messages, etc.
      * @param binder      DI binder passed to the Module that invokes this method.
      * @since 0.20
-     * @deprecated since 0.22 use {@link #contribute(Binder)} to get an extender object, and
+     * @deprecated since 0.22 use {@link #extend(Binder)} to get an extender object, and
      * then call {@link BQCoreModuleExtender#setApplicationDescription(String)}.
      */
     @Deprecated
     public static void setApplicationDescription(Binder binder, String description) {
-        contribute(binder).setApplicationDescription(description);
+        extend(binder).setApplicationDescription(description);
         binder.bind(ApplicationDescription.class).toInstance(new ApplicationDescription(description));
     }
 
@@ -187,7 +189,7 @@ public class BQCoreModule implements Module {
      * @param binder      DI binder passed to the Module that invokes this method.
      * @param commandType a class of the default command.
      * @since 0.20
-     * @deprecated since 0.22 use {@link #contribute(Binder)} to get an extender object, and
+     * @deprecated since 0.22 use {@link #extend(Binder)} to get an extender object, and
      * then call {@link BQCoreModuleExtender#setDefaultCommand(Class)}.
      */
     @Deprecated
@@ -215,7 +217,7 @@ public class BQCoreModule implements Module {
     public void configure(Binder binder) {
 
         // trigger extension points creation and add default contributions
-        BQCoreModule.contribute(binder)
+        BQCoreModule.extend(binder)
                 .initAllExtensions()
                 .setOption(createConfigOption());
 

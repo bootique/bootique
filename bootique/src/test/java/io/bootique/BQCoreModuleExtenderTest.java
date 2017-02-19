@@ -20,7 +20,7 @@ public class BQCoreModuleExtenderTest {
 
         Injector i = Guice.createInjector(b -> {
 
-            BQCoreModule.contribute(b).setProperty("a", "b").setProperty("c", "d");
+            BQCoreModule.extend(b).setProperty("a", "b").setProperty("c", "d");
             b.bind(MapInspector.class);
         });
 
@@ -36,7 +36,7 @@ public class BQCoreModuleExtenderTest {
         OptionMetadata o2 = OptionMetadata.builder("o2").build();
 
         Injector i = Guice.createInjector(b -> {
-            BQCoreModule.contribute(b).setOptions(o1, o2);
+            BQCoreModule.extend(b).setOptions(o1, o2);
 
             b.bind(OptionsInspector.class);
         });

@@ -70,7 +70,7 @@ public class BQInternalTestFactory extends ExternalResource {
 
                 @Override
                 public Module module() {
-                    return binder -> BQCoreModule.contribute(binder).setProperties(properties);
+                    return binder -> BQCoreModule.extend(binder).setProperties(properties);
                 }
 
                 @Override
@@ -93,7 +93,7 @@ public class BQInternalTestFactory extends ExternalResource {
                 @Override
                 public Module module() {
                     return binder -> {
-                        BQCoreModule.contribute(binder).setVars(variables).declareVars(declaredVars);
+                        BQCoreModule.extend(binder).setVars(variables).declareVars(declaredVars);
                     };
                 }
 

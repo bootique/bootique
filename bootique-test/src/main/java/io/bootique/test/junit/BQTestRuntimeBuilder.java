@@ -31,7 +31,7 @@ public abstract class BQTestRuntimeBuilder<T extends BQTestRuntimeBuilder<T>> {
 
             @Override
             public Module module() {
-                return binder -> BQCoreModule.contribute(binder).setProperties(properties);
+                return binder -> BQCoreModule.extend(binder).setProperties(properties);
             }
 
             @Override
