@@ -62,7 +62,7 @@ public class BQInternalWebServerTestFactory extends BQInternalDaemonTestFactory 
 
         @Override
         public void configure(Binder binder) {
-            BQCoreModule.contributeCommands(binder).addBinding().to(ServerCommand.class);
+            BQCoreModule.extend(binder).addCommand(ServerCommand.class);
         }
 
         @Provides

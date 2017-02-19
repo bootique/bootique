@@ -58,7 +58,7 @@ public class Bootique_CliOptionsIT {
     @Test
     public void testOverlappingOptions() {
         BQRuntime runtime = runtimeFactory.app("--o1")
-                .module(b -> BQCoreModule.extend(b).setOptions(
+                .module(b -> BQCoreModule.extend(b).addOptions(
                         OptionMetadata.builder("o1").build(),
                         OptionMetadata.builder("o2").build()
                 ))
@@ -73,7 +73,7 @@ public class Bootique_CliOptionsIT {
     @Ignore
     public void testOverlappingOptions_Short() {
         BQRuntime runtime = runtimeFactory.app("-o")
-                .module(b -> BQCoreModule.extend(b).setOptions(
+                .module(b -> BQCoreModule.extend(b).addOptions(
                         OptionMetadata.builder("o1").build(),
                         OptionMetadata.builder("o2").build()
                 ))
@@ -84,7 +84,7 @@ public class Bootique_CliOptionsIT {
     @Test(expected = ProvisionException.class)
     public void testCommand_IllegalShort() {
         BQRuntime runtime = runtimeFactory.app("-x")
-                .module(b -> BQCoreModule.contributeCommands(b).addBinding().to(XaCommand.class))
+                .module(b -> BQCoreModule.extend(b).addCommand(XaCommand.class))
                 .createRuntime();
         runtime.getInstance(Cli.class);
     }
@@ -92,7 +92,7 @@ public class Bootique_CliOptionsIT {
     @Test
     public void testCommand_ExplicitShort() {
         BQRuntime runtime = runtimeFactory.app("-A")
-                .module(b -> BQCoreModule.contributeCommands(b).addBinding().to(XaCommand.class))
+                .module(b -> BQCoreModule.extend(b).addCommand(XaCommand.class))
                 .createRuntime();
         assertTrue(runtime.getInstance(Cli.class).hasOption("xa"));
     }
@@ -100,10 +100,7 @@ public class Bootique_CliOptionsIT {
     @Test(expected = ProvisionException.class)
     public void testOverlappingCommands_IllegalShort() {
         BQRuntime runtime = runtimeFactory.app("-x")
-                .module(b -> {
-                    BQCoreModule.contributeCommands(b).addBinding().to(XaCommand.class);
-                    BQCoreModule.contributeCommands(b).addBinding().to(XbCommand.class);
-                })
+                .module(b -> BQCoreModule.extend(b).addCommand(XaCommand.class).addCommand(XbCommand.class))
                 .createRuntime();
         runtime.getInstance(Cli.class);
     }
@@ -111,7 +108,7 @@ public class Bootique_CliOptionsIT {
     @Test(expected = ProvisionException.class)
     public void testIllegalAbbreviation() {
         BQRuntime runtime = runtimeFactory.app("--xc")
-                .module(b -> BQCoreModule.contributeCommands(b).addBinding().to(XccCommand.class))
+                .module(b -> BQCoreModule.extend(b).addCommand(XccCommand.class))
                 .createRuntime();
         runtime.getInstance(Cli.class);
     }
@@ -119,10 +116,7 @@ public class Bootique_CliOptionsIT {
     @Test
     public void testOverlappingCommands_Short() {
         BQRuntime runtime = runtimeFactory.app("-A")
-                .module(b -> {
-                    BQCoreModule.contributeCommands(b).addBinding().to(XaCommand.class);
-                    BQCoreModule.contributeCommands(b).addBinding().to(XbCommand.class);
-                })
+                .module(b -> BQCoreModule.extend(b).addCommand(XaCommand.class).addCommand(XbCommand.class))
                 .createRuntime();
 
         assertTrue(runtime.getInstance(Cli.class).hasOption("xa"));

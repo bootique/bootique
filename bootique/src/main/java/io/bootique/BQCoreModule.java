@@ -80,7 +80,7 @@ public class BQCoreModule implements Module {
     private Supplier<Collection<BQModule>> modulesSource;
 
     private BQCoreModule() {
-        this.shutdownTimeout = Duration.ofMillis(10000l);
+        this.shutdownTimeout = Duration.ofMillis(10000L);
     }
 
     /**
@@ -109,7 +109,10 @@ public class BQCoreModule implements Module {
      * @param binder DI binder passed to the Module that invokes this method.
      * @return {@link Multibinder} for Bootique commands.
      * @since 0.12
+     * @deprecated since 0.22 use {@link #extend(Binder)} to get an extender object, and
+     * then call {@link BQCoreModuleExtender#addCommand(Class)}.
      */
+    @Deprecated
     public static Multibinder<Command> contributeCommands(Binder binder) {
         return Multibinder.newSetBinder(binder, Command.class);
     }
@@ -119,7 +122,7 @@ public class BQCoreModule implements Module {
      * @return {@link Multibinder} for Bootique options.
      * @since 0.12
      * @deprecated since 0.22 use {@link #extend(Binder)} to get an extender object, and
-     * then call {@link BQCoreModuleExtender#setOption(OptionMetadata)}.
+     * then call {@link BQCoreModuleExtender#addOption(OptionMetadata)}.
      */
     @Deprecated
     public static Multibinder<OptionMetadata> contributeOptions(Binder binder) {
@@ -194,7 +197,7 @@ public class BQCoreModule implements Module {
      */
     @Deprecated
     public static void setDefaultCommand(Binder binder, Class<? extends Command> commandType) {
-        binder.bind(Key.get(Command.class, DefaultCommand.class)).to(commandType);
+        extend(binder).setDefaultCommand(commandType);
     }
 
     /**
@@ -203,9 +206,12 @@ public class BQCoreModule implements Module {
      * @param binder  DI binder passed to the Module that invokes this method.
      * @param command an instance of the default command.
      * @since 0.20
+     * @deprecated since 0.22 use {@link #extend(Binder)} to get an extender object, and
+     * then call {@link BQCoreModuleExtender#setDefaultCommand(Command)}.
      */
+    @Deprecated
     public static void setDefaultCommand(Binder binder, Command command) {
-        binder.bind(Key.get(Command.class, DefaultCommand.class)).toInstance(command);
+        extend(binder).setDefaultCommand(command);
     }
 
     private static Optional<Command> defaultCommand(Injector injector) {
@@ -219,7 +225,7 @@ public class BQCoreModule implements Module {
         // trigger extension points creation and add default contributions
         BQCoreModule.extend(binder)
                 .initAllExtensions()
-                .setOption(createConfigOption());
+                .addOption(createConfigOption());
 
         // bind instances
         binder.bind(BootLogger.class).toInstance(Objects.requireNonNull(bootLogger));
@@ -236,8 +242,8 @@ public class BQCoreModule implements Module {
 
         // while "help" is a special command, we still store it in the common list of commands,
         // so that "--help" is exposed as an explicit option
-        BQCoreModule.contributeCommands(binder).addBinding().to(HelpCommand.class).in(Singleton.class);
-        BQCoreModule.contributeCommands(binder).addBinding().to(HelpConfigCommand.class).in(Singleton.class);
+        BQCoreModule.extend(binder).addCommand(HelpCommand.class);
+        BQCoreModule.extend(binder).addCommand(HelpConfigCommand.class);
     }
 
     OptionMetadata createConfigOption() {
@@ -372,9 +378,7 @@ public class BQCoreModule implements Module {
                 .description(descriptionHolder.getDescription())
                 .addOptions(options);
 
-        commandManager.getCommands().values().forEach(c -> {
-            builder.addCommand(c.getMetadata());
-        });
+        commandManager.getCommands().values().forEach(c -> builder.addCommand(c.getMetadata()));
 
         // merge default command options with top-level app options
         commandManager.getDefaultCommand().ifPresent(c -> builder.addOptions(c.getMetadata().getOptions()));

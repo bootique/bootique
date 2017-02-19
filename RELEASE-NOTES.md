@@ -1,5 +1,6 @@
 ## 0.22
 
+* #90  Module "extend" API - a better version of "contribute*"
 * #119 Relax @BQConfigProperty restrictions.
 * #123 ENVIRONMENT section in help
 * #124 Exposing and aliasing app config environment variables 

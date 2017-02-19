@@ -40,8 +40,7 @@ public class Bootique_CommandManagerIT {
     public void testDefaultAndHelpAndModuleCommands() {
 
         Command defaultCommand = cli -> CommandOutcome.succeeded();
-        Module defaultCommandModule =
-                binder -> BQCoreModule.setDefaultCommand(binder, defaultCommand);
+        Module defaultCommandModule = binder -> BQCoreModule.extend(binder).setDefaultCommand(defaultCommand);
 
         BQRuntime runtime = runtimeFactory.app().modules(M0.class, M1.class).module(defaultCommandModule).createRuntime();
 
@@ -68,8 +67,7 @@ public class Bootique_CommandManagerIT {
             }
         };
 
-        Module defaultCommandModule =
-                binder -> BQCoreModule.setDefaultCommand(binder, defaultCommand);
+        Module defaultCommandModule = binder -> BQCoreModule.extend(binder).setDefaultCommand(defaultCommand);
 
         BQRuntime runtime = runtimeFactory.app()
                 .modules(M0.class, M1.class)
@@ -101,7 +99,7 @@ public class Bootique_CommandManagerIT {
 
         @Override
         public void configure(Binder binder) {
-            BQCoreModule.contributeCommands(binder).addBinding().toInstance(mockCommand);
+            BQCoreModule.extend(binder).addCommand(mockCommand);
         }
     }
 
@@ -116,7 +114,7 @@ public class Bootique_CommandManagerIT {
 
         @Override
         public void configure(Binder binder) {
-            BQCoreModule.contributeCommands(binder).addBinding().toInstance(mockCommand);
+            BQCoreModule.extend(binder).addCommand(mockCommand);
         }
     }
 }

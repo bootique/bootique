@@ -36,7 +36,7 @@ public class BQCoreModuleExtenderTest {
         OptionMetadata o2 = OptionMetadata.builder("o2").build();
 
         Injector i = Guice.createInjector(b -> {
-            BQCoreModule.extend(b).setOptions(o1, o2);
+            BQCoreModule.extend(b).addOptions(o1, o2);
 
             b.bind(OptionsInspector.class);
         });

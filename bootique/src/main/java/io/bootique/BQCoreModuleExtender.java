@@ -32,6 +32,7 @@ public class BQCoreModuleExtender {
     private MapBinder<String, Level> logLevels;
     private Multibinder<DeclaredVariable> declaredVariables;
     private Multibinder<OptionMetadata> options;
+    private Multibinder<Command> commands;
 
     protected BQCoreModuleExtender(Binder binder) {
         this.binder = binder;
@@ -47,6 +48,7 @@ public class BQCoreModuleExtender {
         getOrCreateDeclaredVariablesBinder();
         getOrCreateLogLevelsBinder();
         getOrCreateOptionsBinder();
+        getOrCreateCommandsBinder();
 
         return this;
     }
@@ -61,6 +63,18 @@ public class BQCoreModuleExtender {
         binder.bind(Key.get(Command.class, DefaultCommand.class)).to(commandType).in(Singleton.class);
         return this;
     }
+
+    /**
+     * Initializes optional default command that will be executed if no explicit command is found in startup arguments.
+     *
+     * @param command an instance of the default command.
+     * @return this extender instance.
+     */
+    public BQCoreModuleExtender setDefaultCommand(Command command) {
+        binder.bind(Key.get(Command.class, DefaultCommand.class)).toInstance(command);
+        return this;
+    }
+
 
     /**
      * Binds an optional application description used in help messages, etc.
@@ -135,15 +149,25 @@ public class BQCoreModuleExtender {
         return this;
     }
 
-    public BQCoreModuleExtender setOption(OptionMetadata option) {
+    public BQCoreModuleExtender addOption(OptionMetadata option) {
         getOrCreateOptionsBinder().addBinding().toInstance(option);
         return this;
     }
 
-    public BQCoreModuleExtender setOptions(OptionMetadata... options) {
+    public BQCoreModuleExtender addOptions(OptionMetadata... options) {
         if (options != null) {
-            asList(options).forEach(this::setOption);
+            asList(options).forEach(this::addOption);
         }
+        return this;
+    }
+
+    public BQCoreModuleExtender addCommand(Command command) {
+        getOrCreateCommandsBinder().addBinding().toInstance(command);
+        return this;
+    }
+
+    public BQCoreModuleExtender addCommand(Class<? extends Command> commandType) {
+        getOrCreateCommandsBinder().addBinding().to(commandType).in(Singleton.class);
         return this;
     }
 
@@ -175,6 +199,15 @@ public class BQCoreModuleExtender {
         return declaredVariables;
     }
 
+    protected Multibinder<Command> getOrCreateCommandsBinder() {
+
+        // no synchronization. we don't care if it is created twice. It will still work with Guice.
+        if (commands == null) {
+            commands = Multibinder.newSetBinder(binder, Command.class);
+        }
+
+        return commands;
+    }
 
     protected MapBinder<String, String> getOrCreatePropertiesBinder() {
 
