@@ -19,7 +19,8 @@ import java.util.logging.Level;
 import static java.util.Arrays.asList;
 
 /**
- * Provides API to contribute custom extensions to BQCoreModule.  This is a convenience API facade to Google Guice MapBinder and Multibinder.
+ * Provides API to contribute custom extensions to BQCoreModule.  This class is a syntactic sugar for Guice
+ * MapBinder and Multibinder.
  *
  * @since 0.22
  */
