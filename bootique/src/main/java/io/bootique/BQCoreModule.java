@@ -113,7 +113,7 @@ public class BQCoreModule implements Module {
      */
     @Deprecated
     public static Multibinder<Command> contributeCommands(Binder binder) {
-        return extend(binder).getOrCreateCommandsBinder();
+        return extend(binder).contributeCommands();
     }
 
     /**
@@ -125,7 +125,7 @@ public class BQCoreModule implements Module {
      */
     @Deprecated
     public static Multibinder<OptionMetadata> contributeOptions(Binder binder) {
-        return extend(binder).getOrCreateOptionsBinder();
+        return extend(binder).contributeOptions();
     }
 
     /**
@@ -138,7 +138,7 @@ public class BQCoreModule implements Module {
      */
     @Deprecated
     public static MapBinder<String, String> contributeProperties(Binder binder) {
-        return extend(binder).getOrCreatePropertiesBinder();
+        return extend(binder).contributeProperties();
     }
 
     /**
@@ -151,7 +151,7 @@ public class BQCoreModule implements Module {
      */
     @Deprecated
     public static MapBinder<String, String> contributeVariables(Binder binder) {
-        return extend(binder).getOrCreateVariablesBinder();
+        return extend(binder).contributeVariables();
     }
 
     /**
@@ -167,7 +167,7 @@ public class BQCoreModule implements Module {
      */
     @Deprecated
     public static MapBinder<String, Level> contributeLogLevels(Binder binder) {
-        return extend(binder).getOrCreateLogLevelsBinder();
+        return extend(binder).contributeLogLevels();
     }
 
     /**

@@ -46,12 +46,12 @@ public class BQCoreModuleExtender {
      * @return this extender instance.
      */
     BQCoreModuleExtender initAllExtensions() {
-        getOrCreatePropertiesBinder();
-        getOrCreateVariablesBinder();
-        getOrCreateDeclaredVariablesBinder();
-        getOrCreateLogLevelsBinder();
-        getOrCreateOptionsBinder();
-        getOrCreateCommandsBinder();
+        contributeProperties();
+        contributeVariables();
+        contributeVariableDeclarations();
+        contributeLogLevels();
+        contributeOptions();
+        contributeCommands();
 
         return this;
     }
@@ -91,7 +91,7 @@ public class BQCoreModuleExtender {
     }
 
     public BQCoreModuleExtender setLogLevel(String name, Level level) {
-        getOrCreateLogLevelsBinder().addBinding(name).toInstance(level);
+        contributeLogLevels().addBinding(name).toInstance(level);
         return this;
     }
 
@@ -101,7 +101,7 @@ public class BQCoreModuleExtender {
     }
 
     public BQCoreModuleExtender setProperty(String name, String value) {
-        getOrCreatePropertiesBinder().addBinding(name).toInstance(value);
+        contributeProperties().addBinding(name).toInstance(value);
         return this;
     }
 
@@ -111,7 +111,7 @@ public class BQCoreModuleExtender {
     }
 
     public BQCoreModuleExtender setVar(String name, String value) {
-        getOrCreateVariablesBinder().addBinding(name).toInstance(value);
+        contributeVariables().addBinding(name).toInstance(value);
         return this;
     }
 
@@ -130,7 +130,7 @@ public class BQCoreModuleExtender {
      * @return this extender instance.
      */
     public BQCoreModuleExtender declareVar(String configPath) {
-        new DeclaredVariableBinder(getOrCreateDeclaredVariablesBinder(), configPath).withCanonicalName();
+        new DeclaredVariableBinder(contributeVariableDeclarations(), configPath).withCanonicalName();
         return this;
     }
 
@@ -143,7 +143,7 @@ public class BQCoreModuleExtender {
      * @return this extender instance.
      */
     public BQCoreModuleExtender declareVar(String configPath, String name) {
-        new DeclaredVariableBinder(getOrCreateDeclaredVariablesBinder(), configPath).withName(name);
+        new DeclaredVariableBinder(contributeVariableDeclarations(), configPath).withName(name);
         return this;
     }
 
@@ -153,7 +153,7 @@ public class BQCoreModuleExtender {
     }
 
     public BQCoreModuleExtender addOption(OptionMetadata option) {
-        getOrCreateOptionsBinder().addBinding().toInstance(option);
+        contributeOptions().addBinding().toInstance(option);
         return this;
     }
 
@@ -165,16 +165,16 @@ public class BQCoreModuleExtender {
     }
 
     public BQCoreModuleExtender addCommand(Command command) {
-        getOrCreateCommandsBinder().addBinding().toInstance(command);
+        contributeCommands().addBinding().toInstance(command);
         return this;
     }
 
     public BQCoreModuleExtender addCommand(Class<? extends Command> commandType) {
-        getOrCreateCommandsBinder().addBinding().to(commandType).in(Singleton.class);
+        contributeCommands().addBinding().to(commandType).in(Singleton.class);
         return this;
     }
 
-    protected MapBinder<String, Level> getOrCreateLogLevelsBinder() {
+    protected MapBinder<String, Level> contributeLogLevels() {
         if (logLevels == null) {
             logLevels = MapBinder.newMapBinder(binder, String.class, Level.class, LogLevels.class);
         }
@@ -182,7 +182,7 @@ public class BQCoreModuleExtender {
         return logLevels;
     }
 
-    protected Multibinder<OptionMetadata> getOrCreateOptionsBinder() {
+    protected Multibinder<OptionMetadata> contributeOptions() {
 
         // no synchronization. we don't care if it is created twice. It will still work with Guice.
         if (options == null) {
@@ -192,7 +192,7 @@ public class BQCoreModuleExtender {
         return options;
     }
 
-    protected Multibinder<DeclaredVariable> getOrCreateDeclaredVariablesBinder() {
+    protected Multibinder<DeclaredVariable> contributeVariableDeclarations() {
 
         // no synchronization. we don't care if it is created twice. It will still work with Guice.
         if (declaredVariables == null) {
@@ -202,7 +202,7 @@ public class BQCoreModuleExtender {
         return declaredVariables;
     }
 
-    protected Multibinder<Command> getOrCreateCommandsBinder() {
+    protected Multibinder<Command> contributeCommands() {
 
         // no synchronization. we don't care if it is created twice. It will still work with Guice.
         if (commands == null) {
@@ -212,7 +212,7 @@ public class BQCoreModuleExtender {
         return commands;
     }
 
-    protected MapBinder<String, String> getOrCreatePropertiesBinder() {
+    protected MapBinder<String, String> contributeProperties() {
 
         // no synchronization. we don't care if it is created twice. It will still work with Guice.
         if (properties == null) {
@@ -222,7 +222,7 @@ public class BQCoreModuleExtender {
         return properties;
     }
 
-    protected MapBinder<String, String> getOrCreateVariablesBinder() {
+    protected MapBinder<String, String> contributeVariables() {
 
         // no synchronization. we don't care if it is created twice. It will still work with Guice.
         if (variables == null) {
