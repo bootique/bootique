@@ -84,9 +84,7 @@ public class Bootique_CliOptionsIT {
     @Test(expected = ProvisionException.class)
     public void testCommand_IllegalShort() {
         BQRuntime runtime = runtimeFactory.app("-x")
-                .module(b -> {
-                    BQCoreModule.contributeCommands(b).addBinding().to(XaCommand.class);
-                })
+                .module(b -> BQCoreModule.contributeCommands(b).addBinding().to(XaCommand.class))
                 .createRuntime();
         runtime.getInstance(Cli.class);
     }
@@ -94,9 +92,7 @@ public class Bootique_CliOptionsIT {
     @Test
     public void testCommand_ExplicitShort() {
         BQRuntime runtime = runtimeFactory.app("-A")
-                .module(b -> {
-                    BQCoreModule.contributeCommands(b).addBinding().to(XaCommand.class);
-                })
+                .module(b -> BQCoreModule.contributeCommands(b).addBinding().to(XaCommand.class))
                 .createRuntime();
         assertTrue(runtime.getInstance(Cli.class).hasOption("xa"));
     }
@@ -115,9 +111,7 @@ public class Bootique_CliOptionsIT {
     @Test(expected = ProvisionException.class)
     public void testIllegalAbbreviation() {
         BQRuntime runtime = runtimeFactory.app("--xc")
-                .module(b -> {
-                    BQCoreModule.contributeCommands(b).addBinding().to(XccCommand.class);
-                })
+                .module(b -> BQCoreModule.contributeCommands(b).addBinding().to(XccCommand.class))
                 .createRuntime();
         runtime.getInstance(Cli.class);
     }
