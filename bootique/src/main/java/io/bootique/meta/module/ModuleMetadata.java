@@ -86,10 +86,9 @@ public class ModuleMetadata implements MetadataNode {
             @Override
             public Optional<ConfigMetadataNode> visitObjectMetadata(ConfigObjectMetadata metadata) {
 
-                // TODO: inheritance hierarchy analysis
-                return metadata
-                        .getProperties()
-                        .stream()
+                return metadata.getAllSubConfigs()
+                        .map(c -> c.getProperties())
+                        .flatMap(Collection::stream)
                         .filter(c -> c.getName().equals(split[0]))
                         .map(c -> findConfig(c, split[1]))
                         .findFirst().orElse(Optional.empty());
