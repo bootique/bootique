@@ -14,7 +14,6 @@ import io.bootique.annotation.Args;
 import io.bootique.annotation.DefaultCommand;
 import io.bootique.annotation.EnvironmentProperties;
 import io.bootique.annotation.EnvironmentVariables;
-import io.bootique.annotation.LogLevels;
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandManager;
@@ -114,7 +113,7 @@ public class BQCoreModule implements Module {
      */
     @Deprecated
     public static Multibinder<Command> contributeCommands(Binder binder) {
-        return Multibinder.newSetBinder(binder, Command.class);
+        return extend(binder).getOrCreateCommandsBinder();
     }
 
     /**
@@ -126,7 +125,7 @@ public class BQCoreModule implements Module {
      */
     @Deprecated
     public static Multibinder<OptionMetadata> contributeOptions(Binder binder) {
-        return Multibinder.newSetBinder(binder, OptionMetadata.class);
+        return extend(binder).getOrCreateOptionsBinder();
     }
 
     /**
@@ -139,7 +138,7 @@ public class BQCoreModule implements Module {
      */
     @Deprecated
     public static MapBinder<String, String> contributeProperties(Binder binder) {
-        return MapBinder.newMapBinder(binder, String.class, String.class, EnvironmentProperties.class);
+        return extend(binder).getOrCreatePropertiesBinder();
     }
 
     /**
@@ -152,7 +151,7 @@ public class BQCoreModule implements Module {
      */
     @Deprecated
     public static MapBinder<String, String> contributeVariables(Binder binder) {
-        return MapBinder.newMapBinder(binder, String.class, String.class, EnvironmentVariables.class);
+        return extend(binder).getOrCreateVariablesBinder();
     }
 
     /**
@@ -168,7 +167,7 @@ public class BQCoreModule implements Module {
      */
     @Deprecated
     public static MapBinder<String, Level> contributeLogLevels(Binder binder) {
-        return MapBinder.newMapBinder(binder, String.class, Level.class, LogLevels.class);
+        return extend(binder).getOrCreateLogLevelsBinder();
     }
 
     /**
@@ -183,7 +182,6 @@ public class BQCoreModule implements Module {
     @Deprecated
     public static void setApplicationDescription(Binder binder, String description) {
         extend(binder).setApplicationDescription(description);
-        binder.bind(ApplicationDescription.class).toInstance(new ApplicationDescription(description));
     }
 
     /**
