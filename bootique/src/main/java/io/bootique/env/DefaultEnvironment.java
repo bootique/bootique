@@ -1,13 +1,13 @@
 package io.bootique.env;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toMap;
 
 /**
- * An {@link Environment} implementation that reads properties from the Map
- * passed on constructor.
+ * An {@link Environment} implementation that reads properties and variables from the Map passed in constructor.
  */
 public class DefaultEnvironment implements Environment {
 
@@ -19,42 +19,11 @@ public class DefaultEnvironment implements Environment {
     private Map<String, String> properties;
     private Map<String, String> variables;
 
-    public DefaultEnvironment(Map<String, String> diProperties,
-                              Map<String, String> diVariables,
-                              Map<String, String> variableAliases) {
-
-        this.properties = new HashMap<>(diProperties);
-        this.variables = new HashMap<>(resolveAliases(diVariables, variableAliases));
-
-        // override DI props from system...
-        System.getProperties().forEach((k, v) -> properties.put((String) k, (String) v));
-        resolveAliases(System.getenv(), variableAliases).forEach((k, v) -> variables.put(k, v));
+    public static Builder withSystemPropertiesAndVariables() {
+        return new Builder().includeSystemProperties().includeSystemVariables();
     }
 
-    protected static Map<String, String> resolveAliases(Map<String, String> in, Map<String, String> keyAliases) {
-
-        if (keyAliases.isEmpty() || in.isEmpty()) {
-            return in;
-        }
-
-        Map<String, String> resolved = new HashMap<>(in);
-
-        keyAliases.forEach((k, v) -> {
-            if (!k.equals(v)) {
-                String aliasedVal = resolved.get(v);
-                if (aliasedVal != null) {
-                    String unaliasedVal = resolved.putIfAbsent(k, aliasedVal);
-                    if (unaliasedVal != null && !unaliasedVal.equals(aliasedVal)) {
-                        String message = String.format("Can't resolve aliases. Both aliased (%s) and unaliased (%s) " +
-                                        "values are defined.",
-                                k, v);
-                        throw new RuntimeException(message);
-                    }
-                }
-            }
-        });
-
-        return resolved;
+    protected DefaultEnvironment() {
     }
 
     @Override
@@ -83,5 +52,109 @@ public class DefaultEnvironment implements Environment {
 
         return unfiltered.entrySet().stream().filter(e -> e.getKey().startsWith(lPrefix))
                 .collect(toMap(e -> e.getKey().substring(len), e -> e.getValue()));
+    }
+
+    public static class Builder {
+        private Map<String, String> properties;
+        private Map<String, String> variables;
+        private Collection<DeclaredVariable> declaredVariables;
+        private boolean includeSystemProperties;
+        private boolean includeSystemVariables;
+
+        private Builder() {
+        }
+
+        public DefaultEnvironment build() {
+
+            DefaultEnvironment env = new DefaultEnvironment();
+
+            env.properties = buildProperties();
+            env.variables = buildVariables();
+
+            return env;
+        }
+
+        public Builder includeSystemProperties() {
+            includeSystemProperties = true;
+            return this;
+        }
+
+        public Builder includeSystemVariables() {
+            includeSystemVariables = true;
+            return this;
+        }
+
+        public Builder properties(Map<String, String> properties) {
+            this.properties = properties;
+            return this;
+        }
+
+        public Builder variables(Map<String, String> variables) {
+            this.variables = variables;
+            return this;
+        }
+
+        public Builder declaredVariables(Collection<DeclaredVariable> declaredVariables) {
+            this.declaredVariables = declaredVariables;
+            return this;
+        }
+
+        protected Map<String, String> buildProperties() {
+
+            Map<String, String> properties = new HashMap<>();
+            if (this.properties != null) {
+                properties.putAll(this.properties);
+            }
+
+            if (includeSystemProperties) {
+                // override DI props from system...
+                System.getProperties().forEach((k, v) -> properties.put((String) k, (String) v));
+            }
+
+            return properties;
+        }
+
+        protected Map<String, String> buildVariables() {
+
+            Map<String, String> vars = new HashMap<>();
+            vars.putAll(canonicalizeVariableNames(this.variables));
+
+            if (includeSystemVariables) {
+                vars.putAll(canonicalizeVariableNames(System.getenv()));
+            }
+
+            return vars;
+        }
+
+        protected Map<String, String> canonicalizeVariableNames(Map<String, String> vars) {
+
+            if (declaredVariables == null || declaredVariables.isEmpty() || vars.isEmpty()) {
+                return vars;
+            }
+
+            Map<String, String> canonical = new HashMap<>(vars);
+
+            declaredVariables.forEach(dv -> {
+                if (!dv.isCanonical()) {
+
+                    String val = vars.get(dv.getName());
+                    if (val != null) {
+                        String existingVal = canonical.putIfAbsent(dv.getCanonicalName(), val);
+
+                        // sanity check
+                        if (existingVal != null && !existingVal.equals(val)) {
+                            String message = String.format("Conflict canonicalizing var name. Public (%s) and " +
+                                            "canonical (%s) names are bound to different values.",
+                                    dv.getName(),
+                                    dv.getCanonicalName());
+
+                            throw new RuntimeException(message);
+                        }
+                    }
+                }
+            });
+
+            return canonical;
+        }
     }
 }

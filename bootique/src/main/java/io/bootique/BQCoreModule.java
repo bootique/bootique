@@ -15,7 +15,6 @@ import io.bootique.annotation.DefaultCommand;
 import io.bootique.annotation.EnvironmentProperties;
 import io.bootique.annotation.EnvironmentVariables;
 import io.bootique.annotation.LogLevels;
-import io.bootique.annotation.PublicEnvironmentVariables;
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandManager;
@@ -25,6 +24,7 @@ import io.bootique.config.ConfigurationFactory;
 import io.bootique.config.ConfigurationSource;
 import io.bootique.config.PolymorphicConfiguration;
 import io.bootique.config.TypesFactory;
+import io.bootique.env.DeclaredVariable;
 import io.bootique.env.DefaultEnvironment;
 import io.bootique.env.Environment;
 import io.bootique.help.DefaultHelpGenerator;
@@ -131,24 +131,34 @@ public class BQCoreModule implements Module {
     }
 
     /**
-     * Starts a binding for exposing application configuration variables. "Exposing" means inclusion in the help
-     * "ENVIRONMENT" section. Variables can be exposed under their "canonical" names derived from Bootique configuration
-     * structure (e.g. BQ_JDBC_DS1_PASSWORD), or be aliased to an arbitrary, presumably more application-centric name
-     * (e.g. MYAPP_DB_PASSWORD).
+     * Declares a configuration variable for the given config path. The variable will be included in the help
+     * "ENVIRONMENT" section. The name of the variable will be derived from the config path.  E.g.
+     * "jdbc.myds.password" becomes "BQ_JDBC_MYDS_PASSWORD".
      *
-     * @param binder        DI binder passed to the Module that invokes this method.
-     * @param configPath    a dot-separated "path" that navigates through the configuration tree to the property that
-     *                      should be bound form a variable. E.g. "jdbc.myds.password".
-     * @return an {@link AliasBinder} object that can be used to rename and expose the variable.
+     * @param binder     DI binder passed to the Module that invokes this method.
+     * @param configPath a dot-separated "path" that navigates through the configuration tree to the property that
+     *                   should be bound form a variable. E.g. "jdbc.myds.password".
      * @since 0.22
      */
-    public static AliasBinder exposeVariable(Binder binder, String configPath) {
-        MapBinder<String, String> publicVarBinder = contributeExposedVariables(binder);
-        return new AliasBinder(publicVarBinder, configPath);
+    public static void declareVariable(Binder binder, String configPath) {
+        new DeclaredVariableBinder(contributeDeclaredVariables(binder), configPath).withCanonicalName();
     }
 
-    static MapBinder<String, String> contributeExposedVariables(Binder binder) {
-        return MapBinder.newMapBinder(binder, String.class, String.class, PublicEnvironmentVariables.class);
+    /**
+     * Declares a configuration variable for the given config path and given name.
+     *
+     * @param binder     DI binder passed to the Module that invokes this method.
+     * @param configPath a dot-separated "path" that navigates through the configuration tree to the property that
+     *                   should be bound form a variable. E.g. "jdbc.myds.password".
+     * @param name       public name of the variable.
+     * @since 0.22
+     */
+    public static void declareVariable(Binder binder, String configPath, String name) {
+        new DeclaredVariableBinder(contributeDeclaredVariables(binder), configPath).withName(name);
+    }
+
+    static Multibinder<DeclaredVariable> contributeDeclaredVariables(Binder binder) {
+        return Multibinder.newSetBinder(binder, DeclaredVariable.class);
     }
 
     /**
@@ -221,7 +231,7 @@ public class BQCoreModule implements Module {
         // trigger extension points creation and provide default contributions
         BQCoreModule.contributeProperties(binder);
         BQCoreModule.contributeVariables(binder);
-        BQCoreModule.contributeExposedVariables(binder);
+        BQCoreModule.contributeDeclaredVariables(binder);
 
         // while "help" is a special command, we still store it in the common list of commands,
         // so that "--help" is exposed as an explicit option
@@ -376,8 +386,13 @@ public class BQCoreModule implements Module {
     @Singleton
     Environment provideEnvironment(@EnvironmentProperties Map<String, String> diProperties,
                                    @EnvironmentVariables Map<String, String> diVars,
-                                   @PublicEnvironmentVariables Map<String, String> varAliases) {
-        return new DefaultEnvironment(diProperties, diVars, varAliases);
+                                   Set<DeclaredVariable> declaredVariables) {
+
+        return DefaultEnvironment.withSystemPropertiesAndVariables()
+                .properties(diProperties)
+                .variables(diVars)
+                .declaredVariables(declaredVariables)
+                .build();
     }
 
     @Provides

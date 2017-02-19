@@ -99,7 +99,7 @@ public class BQInternalTestFactory extends ExternalResource {
                     return binder -> {
                         MapBinder<String, String> vars = BQCoreModule.contributeVariables(binder);
                         variables.forEach((k, v) -> vars.addBinding(k).toInstance(v));
-                        varAliases.forEach((k, v) -> BQCoreModule.exposeVariable(binder, k).as(v));
+                        varAliases.forEach((name, path) -> BQCoreModule.declareVariable(binder, path, name));
                     };
                 }
 
@@ -127,8 +127,8 @@ public class BQInternalTestFactory extends ExternalResource {
             return (T) this;
         }
 
-        public T varAlias(String key, String value) {
-            varAliases.put(key, value);
+        public T varAlias(String path, String alias) {
+            varAliases.put(alias, path);
             return (T) this;
         }
 
