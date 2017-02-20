@@ -118,7 +118,7 @@ public class ConfigMetadataCompiler {
         subclassProvider.apply(descriptor.getTypeClass())
                 .map(sc -> new Descriptor(null, sc))
                 .map(this::compileObjectMetadata)
-                .forEach(c -> builder.addSubConfig((ConfigObjectMetadata) c));
+                .forEach(builder::addSubConfig);
 
         return builder.build();
     }

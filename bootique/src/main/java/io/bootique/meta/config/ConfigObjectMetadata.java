@@ -11,32 +11,34 @@ import java.util.stream.Stream;
  */
 public class ConfigObjectMetadata extends ConfigValueMetadata {
 
-    private static final ConfigMetadataVisitor<Stream<ConfigObjectMetadata>> SUB_CONFIGS_EXTRACTOR =
-            new ConfigMetadataVisitor<Stream<ConfigObjectMetadata>>() {
+    private static final ConfigMetadataVisitor<Stream<ConfigMetadataNode>> SUB_CONFIGS_EXTRACTOR =
+            new ConfigMetadataVisitor<Stream<ConfigMetadataNode>>() {
                 @Override
-                public Stream<ConfigObjectMetadata> visitObjectMetadata(ConfigObjectMetadata metadata) {
+                public Stream<ConfigMetadataNode> visitObjectMetadata(ConfigObjectMetadata metadata) {
                     return metadata.getAllSubConfigs();
                 }
 
                 @Override
-                public Stream<ConfigObjectMetadata> visitValueMetadata(ConfigValueMetadata metadata) {
+                public Stream<ConfigMetadataNode> visitValueMetadata(ConfigValueMetadata metadata) {
                     return Stream.empty();
                 }
 
                 @Override
-                public Stream<ConfigObjectMetadata> visitListMetadata(ConfigListMetadata metadata) {
+                public Stream<ConfigMetadataNode> visitListMetadata(ConfigListMetadata metadata) {
                     return Stream.empty();
                 }
 
                 @Override
-                public Stream<ConfigObjectMetadata> visitMapMetadata(ConfigMapMetadata metadata) {
+                public Stream<ConfigMetadataNode> visitMapMetadata(ConfigMapMetadata metadata) {
                     return Stream.empty();
                 }
             };
 
     private boolean abstractType;
     private String typeLabel;
-    private Collection<ConfigObjectMetadata> subConfigs;
+
+    // can't use ConfigObjectMetadata as subconfig type, as it may also be a proxy
+    private Collection<ConfigMetadataNode> subConfigs;
     private Collection<ConfigMetadataNode> properties;
 
     public ConfigObjectMetadata() {
@@ -90,7 +92,7 @@ public class ConfigObjectMetadata extends ConfigValueMetadata {
      *
      * @return subconfigs that directly inherit from this config.
      */
-    public Collection<ConfigObjectMetadata> getSubConfigs() {
+    public Collection<ConfigMetadataNode> getSubConfigs() {
         return subConfigs;
     }
 
@@ -99,13 +101,13 @@ public class ConfigObjectMetadata extends ConfigValueMetadata {
      *
      * @return this config plus all subconfigs that directly or indirectly inherit from this config.
      */
-    public Stream<ConfigObjectMetadata> getAllSubConfigs() {
+    public Stream<ConfigMetadataNode> getAllSubConfigs() {
 
         if (subConfigs.isEmpty()) {
             return Stream.of(this);
         }
 
-        Stream<ConfigObjectMetadata> subconfigs = subConfigs.stream().flatMap(n -> n.accept(SUB_CONFIGS_EXTRACTOR));
+        Stream<ConfigMetadataNode> subconfigs = subConfigs.stream().flatMap(n -> n.accept(SUB_CONFIGS_EXTRACTOR));
         return Stream.concat(Stream.of(this), subconfigs);
     }
 
@@ -125,7 +127,7 @@ public class ConfigObjectMetadata extends ConfigValueMetadata {
             return this;
         }
 
-        public Builder addSubConfig(ConfigObjectMetadata subConfig) {
+        public Builder addSubConfig(ConfigMetadataNode subConfig) {
             toBuild.subConfigs.add(subConfig);
             return this;
         }

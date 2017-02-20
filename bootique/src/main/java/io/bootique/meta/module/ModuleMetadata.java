@@ -20,6 +20,29 @@ import java.util.Optional;
  */
 public class ModuleMetadata implements MetadataNode {
 
+    private static final ConfigMetadataVisitor<Optional<ConfigObjectMetadata>> OBJECT_CONFIG_RESOLVER =
+            new ConfigMetadataVisitor<Optional<ConfigObjectMetadata>>() {
+                @Override
+                public Optional<ConfigObjectMetadata> visitObjectMetadata(ConfigObjectMetadata metadata) {
+                    return Optional.of(metadata);
+                }
+
+                @Override
+                public Optional<ConfigObjectMetadata> visitValueMetadata(ConfigValueMetadata metadata) {
+                    return Optional.empty();
+                }
+
+                @Override
+                public Optional<ConfigObjectMetadata> visitListMetadata(ConfigListMetadata metadata) {
+                    return Optional.empty();
+                }
+
+                @Override
+                public Optional<ConfigObjectMetadata> visitMapMetadata(ConfigMapMetadata metadata) {
+                    return Optional.empty();
+                }
+            };
+
     private String name;
     private String providerName;
     private String description;
@@ -87,7 +110,9 @@ public class ModuleMetadata implements MetadataNode {
             public Optional<ConfigMetadataNode> visitObjectMetadata(ConfigObjectMetadata metadata) {
 
                 return metadata.getAllSubConfigs()
-                        .map(c -> c.getProperties())
+                        .map(c -> c.accept(OBJECT_CONFIG_RESOLVER))
+                        .filter(Optional::isPresent)
+                        .map(c -> c.get().getProperties())
                         .flatMap(Collection::stream)
                         .filter(c -> c.getName().equals(split[0]))
                         .map(c -> findConfig(c, split[1]))
