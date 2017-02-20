@@ -20,6 +20,7 @@ import java.util.Optional;
  */
 public class ModuleMetadata implements MetadataNode {
 
+    // unwraps ConfigObjectMetadata decorated with ConfigMetadataNodeProxy
     private static final ConfigMetadataVisitor<Optional<ConfigObjectMetadata>> OBJECT_CONFIG_RESOLVER =
             new ConfigMetadataVisitor<Optional<ConfigObjectMetadata>>() {
                 @Override
