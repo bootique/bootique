@@ -170,6 +170,7 @@ public class BQCoreModuleExtender {
     }
 
     public BQCoreModuleExtender addCommand(Class<? extends Command> commandType) {
+        // TODO: what does singleton scope means when adding to collection?
         contributeCommands().addBinding().to(commandType).in(Singleton.class);
         return this;
     }
