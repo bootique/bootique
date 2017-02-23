@@ -2,6 +2,7 @@ package io.bootique;
 
 import static java.util.stream.Collectors.joining;
 
+import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -40,6 +41,29 @@ public class BQRuntime {
 		// the fly, if there's no explicit one available. We are overriding this
 		// behavior.
 		return Objects.requireNonNull(binding, "No binding for type: " + type).getProvider().get();
+	}
+
+	/**
+	 * Returns a DI-bound instance of a given class and annotation, throwing if this class is
+	 * not explicitly bound in DI.
+	 *
+	 * @since 0.21
+	 * @param type
+	 *            a type of instance object to return
+	 * @param annotationType
+	 *            an annotation type of instance object to return
+	 * @return a DI-bound instance of a given class and annotation.
+	 */
+	public <T> T getInstance(Class<T> type, Class<? extends Annotation> annotationType) {
+		Binding<T> binding = injector.getExistingBinding(Key.get(type, annotationType));
+
+		// note that Guice default behavior is to attempt creating a binding on
+		// the fly, if there's no explicit one available. We are overriding this
+		// behavior.
+		return Objects
+				.requireNonNull(binding, "No binding for type " + type + " annotated with " + annotationType)
+				.getProvider()
+				.get();
 	}
 
 	public BootLogger getBootLogger() {
