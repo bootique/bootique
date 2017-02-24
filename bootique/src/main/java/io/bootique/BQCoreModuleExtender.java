@@ -24,9 +24,7 @@ import static java.util.Arrays.asList;
  *
  * @since 0.22
  */
-public class BQCoreModuleExtender {
-
-    private Binder binder;
+public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
 
     private MapBinder<String, String> properties;
     private MapBinder<String, String> variables;
@@ -36,16 +34,11 @@ public class BQCoreModuleExtender {
     private Multibinder<Command> commands;
 
     protected BQCoreModuleExtender(Binder binder) {
-        this.binder = binder;
+        super(binder);
     }
 
-    /**
-     * Should be called by owning Module to initialize all contribution maps and collections. Failure to call this
-     * method may result in injection failures for empty maps and collections.
-     *
-     * @return this extender instance.
-     */
-    BQCoreModuleExtender initAllExtensions() {
+    @Override
+    public BQCoreModuleExtender initAllExtensions() {
         contributeProperties();
         contributeVariables();
         contributeVariableDeclarations();
@@ -176,60 +169,29 @@ public class BQCoreModuleExtender {
     }
 
     protected MapBinder<String, Level> contributeLogLevels() {
-        if (logLevels == null) {
-            logLevels = MapBinder.newMapBinder(binder, String.class, Level.class, LogLevels.class);
-        }
-
-        return logLevels;
+        return logLevels != null ? logLevels : (logLevels = newMap(String.class, Level.class, LogLevels.class));
     }
 
     protected Multibinder<OptionMetadata> contributeOptions() {
-
         // no synchronization. we don't care if it is created twice. It will still work with Guice.
-        if (options == null) {
-            options = Multibinder.newSetBinder(binder, OptionMetadata.class);
-        }
-
-        return options;
+        return options != null ? options : (options = newSet(OptionMetadata.class));
     }
 
     protected Multibinder<DeclaredVariable> contributeVariableDeclarations() {
-
         // no synchronization. we don't care if it is created twice. It will still work with Guice.
-        if (declaredVariables == null) {
-            declaredVariables = Multibinder.newSetBinder(binder, DeclaredVariable.class);
-        }
-
-        return declaredVariables;
+        return declaredVariables != null ? declaredVariables : (declaredVariables = newSet(DeclaredVariable.class));
     }
 
     protected Multibinder<Command> contributeCommands() {
-
         // no synchronization. we don't care if it is created twice. It will still work with Guice.
-        if (commands == null) {
-            commands = Multibinder.newSetBinder(binder, Command.class);
-        }
-
-        return commands;
+        return commands != null ? commands : (commands = newSet(Command.class));
     }
 
     protected MapBinder<String, String> contributeProperties() {
-
-        // no synchronization. we don't care if it is created twice. It will still work with Guice.
-        if (properties == null) {
-            properties = MapBinder.newMapBinder(binder, String.class, String.class, EnvironmentProperties.class);
-        }
-
-        return properties;
+        return properties != null ? properties : (properties = newMap(String.class, String.class, EnvironmentProperties.class));
     }
 
     protected MapBinder<String, String> contributeVariables() {
-
-        // no synchronization. we don't care if it is created twice. It will still work with Guice.
-        if (variables == null) {
-            variables = MapBinder.newMapBinder(binder, String.class, String.class, EnvironmentVariables.class);
-        }
-
-        return variables;
+        return variables != null ? variables : (variables = newMap(String.class, String.class, EnvironmentVariables.class));
     }
 }
