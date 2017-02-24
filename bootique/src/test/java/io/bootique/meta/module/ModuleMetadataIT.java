@@ -5,8 +5,6 @@ import com.google.inject.Module;
 import io.bootique.BQModule;
 import io.bootique.BQModuleProvider;
 import io.bootique.BQRuntime;
-import io.bootique.meta.module.ModuleMetadata;
-import io.bootique.meta.module.ModulesMetadata;
 import io.bootique.unit.BQInternalTestFactory;
 import org.junit.Rule;
 import org.junit.Test;
@@ -32,7 +30,7 @@ public class ModuleMetadataIT {
                 .filter(m -> "BQCoreModule".equals(m.getName()))
                 .findFirst();
         assertTrue(coreMd.isPresent());
-        assertEquals("Bootique core module.", coreMd.get().getDescription());
+        assertEquals("The core of Bootique runtime.", coreMd.get().getDescription());
     }
 
     @Test
