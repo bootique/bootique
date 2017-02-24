@@ -1,6 +1,7 @@
 package io.bootique;
 
 import com.google.inject.Binder;
+import com.google.inject.Key;
 import com.google.inject.multibindings.MapBinder;
 import com.google.inject.multibindings.Multibinder;
 
@@ -33,6 +34,10 @@ public abstract class ModuleExtender<T extends ModuleExtender<T>> {
 
     protected <V> Multibinder<V> newSet(Class<V> elementType, Class<? extends Annotation> annotatedWith) {
         return Multibinder.newSetBinder(binder, elementType, annotatedWith);
+    }
+
+    protected <V> Multibinder<V> newSet(Key<V> diKey) {
+        return Multibinder.newSetBinder(binder, diKey);
     }
 
     protected <K, V> MapBinder<K, V> newMap(Class<K> keyType, Class<V> elementType) {
