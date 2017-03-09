@@ -1,10 +1,18 @@
 # UPGRADE INSTRUCTIONS
 
+## 0.22
+
+* [bootique-cayenne #36](https://github.com/bootique/bootique-cayenne/issues/36): If you used `bootique-cayenne-jcache`, 
+note that a big chunk of its functionality is now handled by Cayenne itself. From the upgrade perspective only one thing is affected:
+if you ever used custom `InvalidationHandler`, you will need to switch that to `org.apache.cayenne.lifecycle.cache.InvalidationHandler` 
+that has a slightly different method signature (due to the need to keep Java 7 compatibility in Cayenne 4.0).
+
+
 ## 0.21
 
 * [bootique #105](https://github.com/bootique/bootique/issues/105): The new default style for multi-word command classes
 that are spelled in camel-case will result in the name parts separated with dash, while previously
-we'd use no separators. E.g. ```MySpecialCommand.java``` will result in command name being "--myspecial" in 0.20, 
+we'd use no separators. E.g. `MySpecialCommand.java` will result in command name being "--myspecial" in 0.20, 
 and "--my-special" in 0.21. This affects you if you've written custom command classes with multi-word names. 
 You can manually override public command names in metadata to return to the old style (see 
 [CommandWithMetadata](https://github.com/bootique/bootique/blob/master/bootique/src/main/java/io/bootique/command/CommandWithMetadata.java)) or embrace the new naming scheme. 
