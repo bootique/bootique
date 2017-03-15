@@ -4,6 +4,7 @@
 * #119 Relax @BQConfigProperty restrictions.
 * #123 ENVIRONMENT section in help
 * #124 Exposing and aliasing app config environment variables 
+* #133 Environment variables not merged into configuration
 
 ## 0.21
 

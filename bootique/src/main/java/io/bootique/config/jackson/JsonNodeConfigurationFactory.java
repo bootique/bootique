@@ -1,7 +1,5 @@
 package io.bootique.config.jackson;
 
-import java.io.IOException;
-
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,6 +8,8 @@ import com.fasterxml.jackson.databind.node.TreeTraversingParser;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.type.TypeRef;
+
+import java.io.IOException;
 
 /**
  * {@link ConfigurationFactory} based on Jackson {@link JsonNode} data
@@ -62,7 +62,16 @@ public class JsonNodeConfigurationFactory implements ConfigurationFactory {
 	}
 
 	protected JsonNode findChild(String path) {
-		return new PathSegment(rootNode, path, '.').lastPathComponent().map(t -> t.getNode())
+
+		// assuming prefix is case-insensitive. This allows prefixes that are defined in the shell vars and nowhere
+		// else...
+
+		// TODO: this also makes YAML prefix case-insensitive, and the whole config more ambiguous, which is less than
+		// ideal. Perhaps we can freeze prefix case for YAMLs by starting with a synthetic JsonNode based on the prefix
+		// and then overlay CS config (YAML) only then - CI config (vars)? This will require deep refactoring. Also
+		// we will need to know the type of the root JsonNode (String vs Object vs List, etc.)
+
+		return new CiPathSegment(rootNode, path, '.').lastPathComponent().map(t -> t.getNode())
 				.orElse(new ObjectNode(null));
 	}
 

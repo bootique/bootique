@@ -9,6 +9,7 @@ import org.junit.Test;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class Bootique_ConfigurationIT {
 
@@ -74,7 +75,8 @@ public class Bootique_ConfigurationIT {
     public void testConfigEnvOverrides_Nested() {
         BQRuntime runtime = runtimeFactory.app("--config=src/test/resources/io/bootique/test3.yml")
                 .var("BQ_A", "F")
-                .var("BQ_C_M_F", "F1").var("BQ_C_M_K", "3")
+                .var("BQ_C_M_F", "F1")
+                .var("BQ_C_M_K", "3")
                 .createRuntime();
 
         Bean1 b1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
@@ -83,6 +85,63 @@ public class Bootique_ConfigurationIT {
         assertEquals(3, b1.c.m.k);
         assertEquals("n", b1.c.m.l);
         assertEquals("F1", b1.c.m.f);
+    }
+
+    @Test
+    public void testConfigEnvVars_NoYaml() {
+        BQRuntime runtime = runtimeFactory.app()
+                .var("BQ_A", "F")
+                .var("BQ_C_M_F", "F1")
+                .var("BQ_C_M_K", "3")
+                .createRuntime();
+
+        Bean1 b1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
+
+        assertEquals("F", b1.a);
+        assertEquals(3, b1.c.m.k);
+        assertNull(b1.c.m.l);
+        assertEquals("F1", b1.c.m.f);
+    }
+
+    @Test
+    public void testConfigEnvVars_NoYaml_Prefix() {
+        BQRuntime runtime = runtimeFactory.app()
+                .var("BQ_P_A", "F")
+                .var("BQ_P_C_M_F", "F1")
+                .var("BQ_P_C_M_K", "3")
+                .createRuntime();
+
+        Bean1 b1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "p");
+
+        assertEquals("F", b1.a);
+        assertEquals(3, b1.c.m.k);
+        assertNull(b1.c.m.l);
+        assertEquals("F1", b1.c.m.f);
+    }
+
+    @Test
+    public void testConfigEnvVars_Map() {
+        BQRuntime runtime = runtimeFactory.app()
+                .var("BQ_M_X", "XXX")
+                .createRuntime();
+
+        Bean4 b4 = runtime.getInstance(ConfigurationFactory.class).config(Bean4.class, "");
+
+        // this assertion highlights a limitation of the shell var CI approach - we end up stuck with an uppercase
+        // key that may not be what the end users expect
+        assertEquals("XXX", b4.m.get("X"));
+    }
+
+    @Test
+    public void testConfigEnvVars_MapOverride() {
+        BQRuntime runtime = runtimeFactory.app("--config=src/test/resources/io/bootique/test4.yml")
+                .var("BQ_M_X", "XXX")
+                .createRuntime();
+
+        Bean4 b4 = runtime.getInstance(ConfigurationFactory.class).config(Bean4.class, "");
+
+        assertEquals("XXX", b4.m.get("x"));
+        assertEquals("b", b4.m.get("y"));
     }
 
     @Test
@@ -144,4 +203,11 @@ public class Bootique_ConfigurationIT {
         }
     }
 
+    static class Bean4 {
+        private Map<String, String> m;
+
+        public void setM(Map<String, String> m) {
+            this.m = m;
+        }
+    }
 }
