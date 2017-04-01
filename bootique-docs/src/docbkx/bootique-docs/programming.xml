@@ -189,33 +189,37 @@ jetty:
                     "<code>bq.</code>". This "namespace" makes configuration explicit and helps to
                 avoid random naming conflicts with properties otherwise present in the
                 system.</para>
-            <para>Properties can be provided to Bootique in one of two ways: either via JVM
-                    <code>-D</code> flag or via DI contribution. Examples below demonstrate the two
-                approaches, defining the same
-                properties:<programlisting language="bourne">java -Dbq.my.prop1=valX -Dbq.my.prop2=valY -jar myapp.jar</programlisting><programlisting language="java">class MyModule implements Module {
+            <para>Properties can be provided to Bootique via BQCoreModule
+                extender:<programlisting language="java">class MyModule implements Module {
 	public void configure(Binder binder) {
 
-		BQCoreModule.contributeProperties(binder)
-		  .addBinding("bq.my.prop1")
-		  .toInstance("valX");
+		BQCoreModule.extend(binder)
+		  .setProperty("bq.my.prop1", "valX");
 
-		BQCoreModule.contributeProperties(binder)
-		  .addBinding("bq.my.prop2")
-		  .toInstance("valY");
+		BQCoreModule.extend(binder)
+               .setProperty("bq.my.prop2", "valY");
 	}
 }</programlisting></para>
-            <para>Often the main configuration is specified in YAML, and properties are used to
-                override just a few values. Next we'll discuss another way to override values - via
-                environment variables.</para>
+            <para>Alternatively they can be loaded from system properties.
+                E.g.:<programlisting language="bourne">java -Dbq.my.prop1=valX -Dbq.my.prop2=valY -jar myapp.jar</programlisting></para>
+            <para>Though generally this approach is sneered upon, as the authors of Bootique are
+                striving to make Java apps look minimally "weird" in deployment, and "-D" is one of
+                those unintuitive "Java-only" things. Often a better alternative is to define the
+                bulk of configuration in YAML, and pass values for a few environment-specific
+                properties via shell variables (see the next section) or bind them to CLI
+                flags.</para>
         </section>
         <section>
             <title>Configuration via Environment Variables</title>
-            <para>In addition to JVM properties, Bootique allows to use environment variables to
-                specify/override configuration values. Variable names start with <code>BQ_</code>
-                prefix, the rest of the variable name being case insensitive, with property
-                components separated with underscore.
+            <para>Similarly to properties, Bootique allows to use <emphasis>environment
+                    variables</emphasis> to specify/override configuration values. There are two
+                approaches for matching variables and with configuration values - one based on the
+                variable naming convention, and another - on explicit variable definitions. Let's
+                start with the naming comvention. Bootique recognizes variables whose names start
+                with <code>BQ_</code>, with the rest of the name interpreted as a property path
+                separated with underscores. Variable names are case-insensitive.
                 E.g.:<programlisting>export BQ_MY_PROP1=valX
-export BQ_MY_PROP1=valY</programlisting>While
+export BQ_MY_PROP2=valY</programlisting>While
                 variables work similar to JVM properties, using them has advantages in certain situations:<itemizedlist>
                     <listitem>
                         <para>They may be used to configure credentials, as unlike YAML they won't
@@ -226,8 +230,38 @@ export BQ_MY_PROP1=valY</programlisting>While
                         <para>They provide customized application environment without changing the
                             launch script.</para>
                     </listitem>
-                </itemizedlist>Just watch out for possible naming conflicts due to case-insensitive
-                nature of the properties.</para>
+                </itemizedlist></para>
+            <para>Very often using the naming convention for variable names is not practical. It
+                looks "weird" (similar argument as we've made about "-D" above), it may be too long
+                and unwieldy, and may potentially introduce conflicts due to its case-insensitive
+                nature. Alternatively the app may explicitly map some variable names to
+                configuration paths (notice that no "bq." prefix is necessary here to identify the
+                configuration
+                value):<programlisting>class MyModule implements Module {
+	public void configure(Binder binder) {
+
+		BQCoreModule.extend(binder)
+		  .declareVar("my.prop1", "P1");
+
+		BQCoreModule.extend(binder)
+               .declareVar("my.prop2", "P2");
+	}
+}</programlisting></para>
+            <para>So now a person running the app may set the above configuration
+                as<programlisting>export P1=valX
+export P2=valY</programlisting></para>
+            <para>Moreover, explicitly declared vars will automatically appear in the application
+                help, assisting the admins in cofniguring your app</para>
+            <para><emphasis> (TODO: document BQConfig and BQConfigProperty config factory
+                    annotations required for the help generation to
+                work)</emphasis><programlisting>$ java -jar myapp-1.0.jar --help
+...
+ENVIRONMENT
+      P1
+           Sets value of some property.
+
+      P2
+           Sets value of some other property.</programlisting></para>
         </section>
         <section>
             <title>Polymorphic Configuration Objects</title>
@@ -352,21 +386,19 @@ com.foo.ConcreteType2</programlisting></para>
                     xlink:href="https://github.com/google/guice/wiki/Multibindings"
                     >multibindings</link>, intended to <emphasis>contribute</emphasis> objects
                 defined in a downstream module to collections/maps used by services in upstream
-                modules. E.g. the following code makes <code>MyCommand</code> available in the app
-                set of
+                modules. Bootique hides Guice API complexities, usually providing "extenders" in
+                each module. E.g. the following code adds <code>MyCommand</code> the the app set of
                 commands:<programlisting language="java">public class MyModule implements Module {
 
 	@Override
 	public void configure(Binder binder) {
-		BQCoreModule.contributeCommands(binder)
-			.addBinding()
-			.to(MyCommand.class);
+		BQCoreModule.extend(binder).addCommand(MyCommand.class);
 	}
 }</programlisting></para>
-            <para>Here we obtained a Multibinder instance via a static method on BQCoreModule. Most
-                standard modules define such helper methods for every collection/map that should be
-                populated by module users. This is a pattern you might want to follow in your own
-                modules.</para>
+            <para>Here we obtained an extender instance via a static method on BQCoreModule. Most
+                standard modules define their own extenders accessible via
+                    <code>"extend(Binder)"</code>. This is a pattern you might want to follow in
+                your own modules.</para>
         </section>
         </chapter>
     <chapter xml:id="programming-application-module">
@@ -416,12 +448,23 @@ com.foo.ConcreteType2</programlisting></para>
             without any options will have the same effect).
             E.g.:<programlisting>$ java -jar myapp-1.0.jar --help
 
-Option                    Description                          
-------                    -----------                          
---config &lt;yaml_location>  Specifies YAML config location, which
-                            can be a file path or a URL.       
---help                    Prints this message.                 
---server                  Starts Jetty server.</programlisting></para>
+NAME
+      com.foo.MyApp
+
+OPTIONS
+      -c yaml_location, --config=yaml_location
+           Specifies YAML config location, which can be a file path or a URL.
+
+      -h, --help
+           Prints this message.
+
+      -H, --help-config
+           Prints information about application modules and their configuration
+           options.
+
+      -s, --server
+           Starts Jetty server.
+</programlisting></para>
         <section>
             <title>Writing Commands</title>
             <para>Most common commands are already available in various standard modules, still
@@ -452,16 +495,14 @@ Option                    Description
 }</programlisting></para>
             <para>The command initializes metadata in constructor and implements the "run" method to
                 run its code. The return CommandOutcome object instructs Bootique what to do when
-                command finishes. The object contains system exit code, and exceptions that occurred
-                during execution. To make the new command available to Bootique, "contribute" it to
-                    <code>BQCoreModule</code>, as was already shown
+                the command finishes. The object contains desired system exit code, and exceptions
+                that occurred during execution. To make the new command available to Bootique, add
+                it to <code>BQCoreModule</code>'s extender, as was already shown
                 above:<programlisting language="java">public class MyModule implements Module {
 
 	@Override
 	public void configure(Binder binder) {
-		BQCoreModule.contributeCommands(binder)
-			.addBinding()
-			.to(MyCommand.class);
+		BQCoreModule.extend(binder).addCommand(MyCommand.class);
 	}
 }</programlisting></para>
             <para>To implement a "daemon" command running forever until it receives an OS signal
@@ -511,10 +552,9 @@ public CommandOutcome run(Cli cli) {
 	.builder("email", "An admin email address")
 	.valueRequired("email_address").build();
 
-BQCoreModule.contributeOptions(binder).addBinding().toInstance(option);</programlisting>To
-            read a value of the option, a service should inject
-                <code>io.bootique.cli.Cli</code> object (commands also get this object as a
-            parameter to "run")
+BQCoreModule.extend(binder).addOption(option);</programlisting>To
+            read a value of the option, a service should inject <code>io.bootique.cli.Cli</code>
+            object (commands also get this object as a parameter to "run")
             :<programlisting language="java">@Inject
 private Cli cli;
 

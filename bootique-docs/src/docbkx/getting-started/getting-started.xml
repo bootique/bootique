@@ -14,7 +14,7 @@
 		&lt;dependency>
 			&lt;groupId>io.bootique.bom&lt;/groupId>
 			&lt;artifactId>bootique-bom&lt;/artifactId>
-			&lt;version>0.21&lt;/version>
+			&lt;version>0.22&lt;/version>
 			&lt;type>pom&lt;/type>
 			&lt;scope>import&lt;/scope>
 		&lt;/dependency>
@@ -54,7 +54,7 @@ public class Application {
             So let's try running this class from your IDE. You will see the output like this on the
             IDE
             console:<programlisting language="bourne">NAME
-      idea_rt.jar
+      com.foo.App
 
 OPTIONS
       -c yaml_location, --config=yaml_location
@@ -102,7 +102,7 @@ public class Application {
 	public static void main(String[] args) {
 
 		Module module = binder -> 
-                  JerseyModule.contributeResources(binder).addBinding().to(HelloResource.class);
+                  JerseyModule.extend(binder).addResource(HelloResource.class);
 
 		Bootique.app(args).module(module).autoLoadModules().run();
 	}
@@ -128,7 +128,7 @@ INFO main i.b.j.s.ServerLifecycleLogger: Started Jetty in 584 ms. Base URL: http
         <para>
             <itemizedlist>
                 <listitem>
-                    <para>You start Bootique via <code>Bootique</code> class, that gives you a
+                    <para>You start the app via <code>Bootique</code> class, that gives you a
                         runnable "shell" of your future app in one line of code.</para>
                 </listitem>
                 <listitem>
