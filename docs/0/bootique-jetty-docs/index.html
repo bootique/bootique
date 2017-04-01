@@ -53,7 +53,7 @@ i.b.j.s.Server - Started @490ms</pre><p>Various
             called from your application
             Module:</p><pre class="programlisting"><span xmlns="http://www.w3.org/1999/xhtml" class="hl-annotation">@Override</span>
 <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">void</span> configure(Binder binder) {
-	JettyModule.contributeServlets(binder).addBinding().to(AnnotatedServlet.<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span>);
+	JettyModule.extend(binder).addServlet(AnnotatedServlet.<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span>);
 }</pre><p>But
             what if you are deploying a third-party servlet that is not annotated? Or annotation
             values are off in the context of your application? There are two choices. The first is
@@ -68,7 +68,7 @@ public void configure(Binder binder) {
        Collections.singleton("/c"),
        "myservlet");
 
-    JettyModule.contributeMappedServlets(binder).addBinding().toInstance(mappedServlet);
+    JettyModule.extend(binder).addMappedServlet(mappedServlet);
 }</pre><p>Finally if we need to use MappedServlet for mapping servlet URLs and parameters, but
             also need the ability to initialize the underlying servlet with environment
             dependencies, we can do something like
@@ -83,7 +83,7 @@ MappedServlet&lt;MyServlet&gt; provideMyServlet(MyService1 s1, MyService2 s2) {
 <span xmlns="http://www.w3.org/1999/xhtml" class="hl-annotation">@Override</span>
 <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">void</span> configure(Binder binder) {
     TypeLiteral&lt;MappedServlet&lt;Servlet2&gt;&gt; tl = <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">new</span> TypeLiteral&lt;MappedServlet&lt;MyServlet&gt;&gt;() {};
-    JettyModule.contributeMappedServlets(binder).addBinding().to(Key.get(tl));
+    JettyModule.extend(binder).addMappedServlet(tl);
 }</pre></div><div class="section" title="Servlet Filters"><div class="titlepage"><div><div><h2 class="title"><a name="d0e89"></a>Servlet Filters</h2></div></div></div><p>Just like servlets, you can annotate and register your
             filters:</p><pre class="programlisting">@WebFilter(
 	filterName = "f1", 
@@ -95,17 +95,17 @@ MappedServlet&lt;MyServlet&gt; provideMyServlet(MyService1 s1, MyService2 s2) {
 )
 public class AnnotatedFilter implements Filter { .. }</pre><pre class="programlisting">@Override
 public void configure(Binder binder) {
-	JettyModule.contributeFilters(binder).addBinding().to(AnnotatedFilter.class);
+	JettyModule.extend(binder).addFilter(AnnotatedFilter.class);
 }</pre><p>And
             just like with servlets you can use <code class="code">MappedFilter</code> and
-                <code class="code">JettyModule.contributeMappedFilters(..)</code> to wrap a filter in
-            app-specific metadata.</p></div><div class="section" title="Listeners"><div class="titlepage"><div><div><h2 class="title"><a name="d0e106"></a>Listeners</h2></div></div></div><p>Listeners are simpler then servlets or filters. All you need is to create classes that
+                <code class="code">JettyModule.extend(..).addMappedFilter</code> to wrap a filter in app-specific
+            metadata.</p></div><div class="section" title="Listeners"><div class="titlepage"><div><div><h2 class="title"><a name="d0e106"></a>Listeners</h2></div></div></div><p>Listeners are simpler then servlets or filters. All you need is to create classes that
             implement one of servlet specification listener interfaces
                 (<code class="code">ServletContextListener</code>, <code class="code">HttpSessionListener</code>, etc.) and
             bind them in your
             app:</p><pre class="programlisting">@Override
 public void configure(Binder binder) {
-	JettyModule.contributeListeners(binder).addBinding().to(MyListener.class);
+	JettyModule.extend(binder).addListener(MyListener.class);
 }</pre><p>Listeners can rely on injection to obtain dependencies, just like servlets and
             filters.</p></div><div class="section" title="Serving Static Files"><div class="titlepage"><div><div><h2 class="title"><a name="d0e121"></a>Serving Static Files</h2></div></div></div></div></div><div class="chapter" title="Chapter&nbsp;3.&nbsp;Configuration Reference"><div class="titlepage"><div><div><h2 class="title"><a name="configuration"></a>Chapter&nbsp;3.&nbsp;Configuration Reference</h2></div></div></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><span class="section"><a href="#d0e127">jetty</a></span></dt><dt><span class="section"><a href="#d0e366">jetty.connectors</a></span></dt><dt><span class="section"><a href="#d0e559">jetty.filters</a></span></dt><dt><span class="section"><a href="#d0e566">jetty.servlets</a></span></dt></dl></div><div class="section" title="jetty"><div class="titlepage"><div><div><h2 class="title"><a name="d0e127"></a>jetty</h2></div></div></div><p>
             </p><pre class="programlisting">jetty:
