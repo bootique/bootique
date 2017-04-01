@@ -17,7 +17,7 @@
 		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;dependency&gt;</span>
 			<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;groupId&gt;</span>io.bootique.bom<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/groupId&gt;</span>
 			<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;artifactId&gt;</span>bootique-bom<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/artifactId&gt;</span>
-			<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;version&gt;</span>0.21<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/version&gt;</span>
+			<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;version&gt;</span>0.22<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/version&gt;</span>
 			<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;type&gt;</span>pom<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/type&gt;</span>
 			<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;scope&gt;</span>import<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/scope&gt;</span>
 		<span xmlns="http://www.w3.org/1999/xhtml" class="hl-tag">&lt;/dependency&gt;</span>
@@ -54,7 +54,7 @@
             So let's try running this class from your IDE. You will see the output like this on the
             IDE
             console:</p><pre class="programlisting">NAME
-      idea_rt.jar
+      com.foo.App
 
 OPTIONS
       -c yaml_location, --config=yaml_location
@@ -99,7 +99,7 @@ OPTIONS
 	<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">public</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">static</span> <span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">void</span> main(String[] args) {
 
 		Module module = binder -&gt; 
-                  JerseyModule.contributeResources(binder).addBinding().to(HelloResource.<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span>);
+                  JerseyModule.extend(binder).addResource(HelloResource.<span xmlns="http://www.w3.org/1999/xhtml" class="hl-keyword">class</span>);
 
 		Bootique.app(args).module(module).autoLoadModules().run();
 	}
@@ -120,7 +120,7 @@ INFO main i.b.j.s.ServerLifecycleLogger: Started Jetty in 584 ms. Base URL: http
             try opening the URL <a class="link" href="http://localhost:8080/" target="_top">http://localhost:8080/</a> in the browser. We should see 'Hello, world!' as
             request output. We just built a working REST app that does not require deployment to a
             web container, and generally wasn't that hard to write. The takeway here is this:</p><p>
-            </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem"><p>You start Bootique via <code class="code">Bootique</code> class, that gives you a
+            </p><div class="itemizedlist"><ul class="itemizedlist"><li class="listitem"><p>You start the app via <code class="code">Bootique</code> class, that gives you a
                         runnable "shell" of your future app in one line of code.</p></li><li class="listitem"><p>Declaring modules in the app dependencies and using
                             <code class="code">Bootique.autoLoadModules()</code> gives the app the ability to
                         respond to commands from those modules (in our example <code class="code">--server</code>
