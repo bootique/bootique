@@ -145,11 +145,23 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
         return this;
     }
 
+    /**
+     * Adds a new option to the list of Bootique CLI options.
+     *
+     * @param option a descriptor of the CLI option to be added to Bootique.
+     * @return this extender instance.
+     */
     public BQCoreModuleExtender addOption(OptionMetadata option) {
         contributeOptions().addBinding().toInstance(option);
         return this;
     }
 
+    /**
+     * Adds zero or more new options to the list of Bootique CLI options.
+     *
+     * @param options an array of descriptors of the CLI options to be added to Bootique.
+     * @return this extender instance.
+     */
     public BQCoreModuleExtender addOptions(OptionMetadata... options) {
         if (options != null) {
             asList(options).forEach(this::addOption);
