@@ -18,6 +18,8 @@ import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.function.Supplier;
 
+import static java.util.stream.Collectors.joining;
+
 /**
  * A main launcher class of Bootique. To start a Bootique app, you may write
  * your main method as follows:
@@ -89,7 +91,7 @@ public class Bootique {
      * @since 0.17
      */
     public static void main(String[] args) {
-        Bootique.app(args).autoLoadModules().run();
+        Bootique.app(args).autoLoadModules().execAndExit();
     }
 
     /**
@@ -97,7 +99,7 @@ public class Bootique {
      *
      * @param args command-line arguments.
      * @return Bootique object that can be customized and then executed as an
-     * app via the {@link #run()} method.
+     * app via {@link #execAndExit()} or {@link #exec()} methods.
      */
     public static Bootique app(String... args) {
         if (args == null) {
@@ -113,7 +115,7 @@ public class Bootique {
      *
      * @param args command-line arguments.
      * @return Bootique object that can be customized and then executed as an
-     * app via the {@link #run()} method.
+     * app via {@link #execAndExit()} or {@link #exec()} methods.
      * @since 0.17
      */
     public static Bootique app(Collection<String> args) {
@@ -306,11 +308,9 @@ public class Bootique {
      * Bootique services, commands, etc. This method is only needed if you need
      * to run your code manually, process {@link CommandOutcome} or don't want
      * Bootique to call {@link System#exit(int)}. Normally you should consider
-     * using {@link #run()} instead.
+     * using {@link #execAndExit()} or {@link #exec()} methods instead.
      *
-     * @return a new {@link BQRuntime} instance that contains all Bootique
-     * services, commands, etc.
-     * @see Bootique#run()
+     * @return a new {@link BQRuntime} instance that contains all Bootique services, commands, etc.
      * @since 0.13
      */
     public BQRuntime createRuntime() {
@@ -328,40 +328,88 @@ public class Bootique {
     }
 
     /**
-     * Creates and runs {@link BQRuntime}, and processing its output. This
-     * method is a rough alternative to "runtime().getRunner().run().exit()". In
-     * most cases calling it would result in the current JVM process to
-     * terminate.
+     * Executes Bootique application, exiting the JVM at the end.
      * <p>
-     * If you don't want your app to shutdown after executing Bootique, you may
-     * manually obtain {@link BQRuntime} by calling {@link #createRuntime()},
-     * and run it from your code without calling "exit()".
+     * If you don't want your app to shutdown after executing Bootique, call {@link #exec()} instead.
+     *
+     * @deprecated since 0.23 in favor of a more aptly named {@link #execAndExit()}.
      */
+    @Deprecated
     public void run() {
+        execAndExit();
+    }
 
-        BQRuntime runtime = createRuntime();
-        runtime.addJVMShutdownHook();
+    /**
+     * Executes Bootique application, exiting the JVM at the end.
+     * <p>
+     * If you don't want your app to shutdown after executing Bootique, call {@link #exec()} instead.
+     */
+    public void execAndExit() {
 
-        CommandOutcome o = run(runtime);
+        CommandOutcome o = exec();
 
         // report error
         if (!o.isSuccess()) {
 
             if (o.getMessage() != null) {
-                runtime.getBootLogger().stderr(
-                        String.format("Error running command '%s': %s", runtime.getArgsAsString(), o.getMessage()));
+                bootLogger.stderr(
+                        String.format("Error running command '%s': %s", getArgsAsString(), o.getMessage()));
             } else {
-                runtime.getBootLogger().stderr(String.format("Error running command '%s'", runtime.getArgsAsString()));
-            }
-
-            if (o.getException() != null) {
-                runtime.getBootLogger().stderr("Command exception", o.getException());
+                bootLogger.stderr(String.format("Error running command '%s'", getArgsAsString()));
             }
         }
 
         o.exit();
     }
 
+    /**
+     * Executes this Bootique application, returning the object that denotes the outcome. Execution involves mapping
+     * the CLI arguments to one of the internal commands and delegating execution to that command.
+     *
+     * @return an outcome of command execution.
+     * @since 0.23
+     */
+    public CommandOutcome exec() {
+
+        try {
+            Injector ij = createInjector();
+            BQRuntime rt = createRuntime(ij);
+            rt.addJVMShutdownHook();
+            return rt.getRunner().run();
+        } catch (Throwable th) {
+            return processException(th);
+        }
+    }
+
+    protected CommandOutcome processException(Throwable th) {
+
+        // TODO: map more exceptions to CommandOutcomes per #25.
+
+        if (th instanceof ProvisionException) {
+            // TODO: a dependency on JOPT OptionException shouldn't be here
+            return th.getCause() instanceof OptionException
+                    ? CommandOutcome.failed(1, th.getCause().getMessage())
+                    : CommandOutcome.failed(1, th);
+        }
+
+        // exception unrecognized... generic handler
+        bootLogger.stderr("Command exception: ", th);
+
+        String thMessage = th.getMessage();
+        String message = thMessage != null ? "Command exception: '" + thMessage + "'." : "Command exception.";
+        return CommandOutcome.failed(1, message);
+    }
+
+    protected String getArgsAsString() {
+        return Arrays.asList(args).stream().collect(joining(" "));
+    }
+
+    /**
+     * @param runtime runtime started by Bootique.
+     * @return the outcome of the command execution.
+     * @deprecated since 0.23, since run exceptions are now handled via the Try monad.
+     */
+    @Deprecated
     protected CommandOutcome run(BQRuntime runtime) {
         try {
             return runtime.getRunner().run();

@@ -2,50 +2,62 @@ package io.bootique.command;
 
 public class CommandOutcome {
 
-	private String message;
-	private int exitCode;
-	private Throwable exception;
+    private static final CommandOutcome SUCCESS = new CommandOutcome();
 
-	public static CommandOutcome succeeded() {
-		CommandOutcome o = new CommandOutcome();
-		return o;
-	}
+    // UNIX success exits code
+    private static final int SUCCESS_EXIT_CODE = 0;
 
-	public static CommandOutcome failed(int exitCode, Throwable cause) {
-		CommandOutcome o = succeeded();
-		o.exitCode = exitCode;
-		o.exception = cause;
-		return o;
-	}
+    private String message;
+    private int exitCode;
+    private Throwable exception;
 
-	public static CommandOutcome failed(int exitCode, String message) {
-		CommandOutcome o = succeeded();
-		o.exitCode = exitCode;
-		o.message = message;
-		return o;
-	}
+    public static CommandOutcome succeeded() {
+        return SUCCESS;
+    }
 
-	private CommandOutcome() {
-	}
+    public static CommandOutcome failed(int exitCode, Throwable cause) {
+        if (exitCode == SUCCESS_EXIT_CODE) {
+            throw new IllegalArgumentException("Success code '0' used for failure outcome.");
+        }
 
-	public String getMessage() {
-		return message;
-	}
+        CommandOutcome o = succeeded();
+        o.exitCode = exitCode;
+        o.exception = cause;
+        return o;
+    }
 
-	public int getExitCode() {
-		return exitCode;
-	}
+    public static CommandOutcome failed(int exitCode, String message) {
+        if (exitCode == SUCCESS_EXIT_CODE) {
+            throw new IllegalArgumentException("Success code '0' used for failure outcome.");
+        }
 
-	public Throwable getException() {
-		return exception;
-	}
+        CommandOutcome o = succeeded();
+        o.exitCode = exitCode;
+        o.message = message;
+        return o;
+    }
 
-	public boolean isSuccess() {
-		return exitCode == 0;
-	}
+    private CommandOutcome() {
+    }
 
-	public void exit() {
-		System.exit(exitCode);
-	}
+    public String getMessage() {
+        return message;
+    }
+
+    public int getExitCode() {
+        return exitCode;
+    }
+
+    public Throwable getException() {
+        return exception;
+    }
+
+    public boolean isSuccess() {
+        return exitCode == SUCCESS_EXIT_CODE;
+    }
+
+    public void exit() {
+        System.exit(exitCode);
+    }
 
 }

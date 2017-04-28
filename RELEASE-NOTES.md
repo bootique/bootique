@@ -1,3 +1,7 @@
+## 0.23
+
+#140 Catch Guice CreationException
+
 ## 0.22
 
 * #90  Module "extend" API - a better version of "contribute*"
