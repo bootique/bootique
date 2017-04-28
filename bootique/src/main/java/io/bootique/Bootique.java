@@ -368,11 +368,11 @@ public class Bootique {
             rt.addJVMShutdownHook();
             return rt.getRunner().run();
         } catch (Throwable th) {
-            return processException(th);
+            return processExceptions(th);
         }
     }
 
-    protected CommandOutcome processException(Throwable th) {
+    protected CommandOutcome processExceptions(Throwable th) {
 
         // TODO: map more exceptions to CommandOutcomes per #25.
 
@@ -398,7 +398,8 @@ public class Bootique {
     /**
      * @param runtime runtime started by Bootique.
      * @return the outcome of the command execution.
-     * @deprecated since 0.23, since run exceptions are now handled via the Try monad.
+     * @deprecated since 0.23. Previously this method existed to catch and process run exceptions, but it doesn't
+     * have wide enough scope for this, so exception processing was moved to {@link #exec()}.
      */
     @Deprecated
     protected CommandOutcome run(BQRuntime runtime) {

@@ -2,14 +2,14 @@ package io.bootique.command;
 
 public class CommandOutcome {
 
-    private static final CommandOutcome SUCCESS = new CommandOutcome();
-
     // UNIX success exits code
     private static final int SUCCESS_EXIT_CODE = 0;
 
-    private String message;
-    private int exitCode;
-    private Throwable exception;
+    private static final CommandOutcome SUCCESS = new CommandOutcome(SUCCESS_EXIT_CODE, null, null);
+
+    private final String message;
+    private final int exitCode;
+    private final Throwable exception;
 
     public static CommandOutcome succeeded() {
         return SUCCESS;
@@ -20,10 +20,7 @@ public class CommandOutcome {
             throw new IllegalArgumentException("Success code '0' used for failure outcome.");
         }
 
-        CommandOutcome o = succeeded();
-        o.exitCode = exitCode;
-        o.exception = cause;
-        return o;
+        return new CommandOutcome(exitCode, null, cause);
     }
 
     public static CommandOutcome failed(int exitCode, String message) {
@@ -31,13 +28,13 @@ public class CommandOutcome {
             throw new IllegalArgumentException("Success code '0' used for failure outcome.");
         }
 
-        CommandOutcome o = succeeded();
-        o.exitCode = exitCode;
-        o.message = message;
-        return o;
+        return new CommandOutcome(exitCode, message, null);
     }
 
-    private CommandOutcome() {
+    private CommandOutcome(int exitCode, String message, Throwable exception) {
+        this.message = message;
+        this.exitCode = exitCode;
+        this.exception = exception;
     }
 
     public String getMessage() {

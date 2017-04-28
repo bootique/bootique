@@ -1,5 +1,11 @@
 # UPGRADE INSTRUCTIONS
 
+## 0.23
+
+* [bootique #140](https://github.com/bootique/bootique/issues/140): If you've ever implemented your own "main" method instead of relying
+on the one from `io.bootique.Bootique`, you may want to replace the call to `Bootique.run()` with a more properly named
+`Bootique.execAndExit()`. There's also a new `Bootique.exec()` now that also executes Bootique app, but does not terminate the JVM.
+
 ## 0.22
 
 * [bootique-cayenne #36](https://github.com/bootique/bootique-cayenne/issues/36): If you used `bootique-cayenne-jcache`, 
