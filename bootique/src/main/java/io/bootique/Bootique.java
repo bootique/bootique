@@ -362,8 +362,15 @@ public class Bootique {
                 shutdown(shutdownManager, bootLogger);
                 Runtime.getRuntime().removeShutdownHook(shutdownThread);
             }
-
-        } catch (Throwable th) {
+        }
+        // unwrap standard Guice exceptions...
+        catch (CreationException ce) {
+            o = processExceptions(ce.getCause(), ce);
+        }
+        catch (ProvisionException pe) {
+            o = processExceptions(pe.getCause(), pe);
+        }
+        catch (Throwable th) {
             o = processExceptions(th, th);
         }
 
@@ -404,33 +411,19 @@ public class Bootique {
         });
     }
 
-    protected CommandOutcome processExceptions(Throwable th, Throwable originalTh) {
-
-        if (th instanceof ProvisionException && th.getCause() != th) {
-            return processExceptions(th.getCause(), originalTh);
-        }
-
-        if (th instanceof CreationException && th.getCause() != th) {
-            return processExceptions(th.getCause(), originalTh);
-        }
-
-        if (th instanceof OptionException) {
-            th.printStackTrace();
-            // TODO: a dependency on JOPT OptionException shouldn't be here
-            return CommandOutcome.failed(1, th.getMessage(), originalTh);
-        }
+    protected CommandOutcome processExceptions(Throwable th, Throwable parentTh) {
 
         if (th instanceof BootiqueException) {
             CommandOutcome o = ((BootiqueException) th).getOutcome();
-            return th == originalTh ? o : CommandOutcome.failed(o.getExitCode(), o.getMessage(), originalTh);
+            return th == parentTh ? o : CommandOutcome.failed(o.getExitCode(), o.getMessage(), parentTh);
         }
 
         // exception unrecognized... generic handler
-        bootLogger.stderr("Command exception: ", originalTh);
+        bootLogger.stderr("Command exception: ", parentTh);
 
         String thMessage = th.getMessage();
         String message = thMessage != null ? "Command exception: '" + thMessage + "'." : "Command exception.";
-        return CommandOutcome.failed(1, message, originalTh);
+        return CommandOutcome.failed(1, message, parentTh);
     }
 
     protected String getArgsAsString() {
