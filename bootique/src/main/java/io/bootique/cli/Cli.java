@@ -11,8 +11,9 @@ import java.util.List;
 public interface Cli {
 
     /**
-     * Returns the name of the command to run, possibly derived from options or
-     * standalone arguments.
+     * Returns the name of the command to run, possibly derived from options or standalone arguments.
+     *
+     * @return a String that is a symbolic name of the command to run, derived from CLI options.
      */
     String commandName();
 
