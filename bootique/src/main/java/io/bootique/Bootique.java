@@ -8,8 +8,11 @@ import io.bootique.command.CommandOutcome;
 import io.bootique.env.DefaultEnvironment;
 import io.bootique.log.BootLogger;
 import io.bootique.log.DefaultBootLogger;
+import io.bootique.shutdown.DefaultShutdownManager;
+import io.bootique.shutdown.ShutdownManager;
 import joptsimple.OptionException;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -46,12 +49,14 @@ public class Bootique {
     private String[] args;
     private boolean autoLoadModules;
     private BootLogger bootLogger;
+    private ShutdownManager shutdownManager;
 
     private Bootique(String[] args) {
         this.args = args;
         this.providers = new ArrayList<>();
         this.autoLoadModules = false;
         this.bootLogger = createBootLogger();
+        this.shutdownManager = createShutdownManager();
     }
 
     protected static Module createModule(Class<? extends Module> moduleType) {
@@ -83,15 +88,14 @@ public class Bootique {
     }
 
     /**
-     * A reusable main method that auto-loads available modules and runs
-     * Bootique stack. Useful for apps that don't care to customize their
-     * "main()".
+     * A generic main method that auto-loads available modules and runs Bootique stack. Useful for apps that don't
+     * care to customize their "main()".
      *
      * @param args app arguments passed by the shell.
      * @since 0.17
      */
     public static void main(String[] args) {
-        Bootique.app(args).autoLoadModules().execAndExit();
+        Bootique.app(args).autoLoadModules().exec().exit();
     }
 
     /**
@@ -99,7 +103,7 @@ public class Bootique {
      *
      * @param args command-line arguments.
      * @return Bootique object that can be customized and then executed as an
-     * app via {@link #execAndExit()} or {@link #exec()} methods.
+     * app via {@link #exec()} method.
      */
     public static Bootique app(String... args) {
         if (args == null) {
@@ -115,7 +119,7 @@ public class Bootique {
      *
      * @param args command-line arguments.
      * @return Bootique object that can be customized and then executed as an
-     * app via {@link #execAndExit()} or {@link #exec()} methods.
+     * app via {@link #exec()} method.
      * @since 0.17
      */
     public static Bootique app(Collection<String> args) {
@@ -127,13 +131,25 @@ public class Bootique {
     }
 
     /**
-     * Optionally overrides Bootique BootLogger.
+     * Optionally overrides Bootique's BootLogger.
      *
      * @return this instance of Bootique.
      * @since 0.12
      */
     public Bootique bootLogger(BootLogger bootLogger) {
-        this.bootLogger = bootLogger;
+        this.bootLogger = Objects.requireNonNull(bootLogger);
+        return this;
+    }
+
+    /**
+     * Optionally overrides Bootique's ShutdownManager.
+     *
+     * @param shutdownManager custom {@link ShutdownManager} to use in this execution of Bootique.
+     * @return this instance of Bootique.
+     * @since 0.23
+     */
+    public Bootique shutdownManager(ShutdownManager shutdownManager) {
+        this.shutdownManager = Objects.requireNonNull(shutdownManager);
         return this;
     }
 
@@ -304,11 +320,9 @@ public class Bootique {
     }
 
     /**
-     * Creates and returns an instance of {@link BQRuntime} that contains all
-     * Bootique services, commands, etc. This method is only needed if you need
-     * to run your code manually, process {@link CommandOutcome} or don't want
-     * Bootique to call {@link System#exit(int)}. Normally you should consider
-     * using {@link #execAndExit()} or {@link #exec()} methods instead.
+     * Creates and returns an instance of {@link BQRuntime} that contains all Bootique services, commands, etc.
+     * This method is only needed if you are managing Bootique execution sequence manually. Normally you'd be using
+     * {@link #exec()} method instead of this method.
      *
      * @return a new {@link BQRuntime} instance that contains all Bootique services, commands, etc.
      * @since 0.13
@@ -323,21 +337,39 @@ public class Bootique {
      * <p>
      * If you don't want your app to shutdown after executing Bootique, call {@link #exec()} instead.
      *
-     * @deprecated since 0.23 in favor of a more aptly named {@link #execAndExit()}.
+     * @deprecated since 0.23 in favor of {@link #exec()} followed by {@link CommandOutcome#exit()}.
      */
     @Deprecated
     public void run() {
-        execAndExit();
+        exec().exit();
     }
 
     /**
-     * Executes Bootique application, exiting the JVM at the end.
-     * <p>
-     * If you don't want your app to shutdown after executing Bootique, call {@link #exec()} instead.
+     * Executes this Bootique application, returning the object that denotes the outcome.
+     *
+     * @return an outcome of command execution.
+     * @since 0.23
      */
-    public void execAndExit() {
+    public CommandOutcome exec() {
 
-        CommandOutcome o = exec();
+        CommandOutcome o;
+
+        try {
+            // In case the app gets killed when command is running, let's use an explicit shutdown hook for cleanup.
+            Thread shutdownThread = createJVMShutdownHook();
+            try {
+                Runtime.getRuntime().addShutdownHook(shutdownThread);
+                BQRuntime runtime = createRuntime();
+                o = runtime.run();
+            } finally {
+                // run shutdown explicitly...
+                shutdown(shutdownManager, bootLogger);
+                Runtime.getRuntime().removeShutdownHook(shutdownThread);
+            }
+
+        } catch (Throwable th) {
+            o = processExceptions(th);
+        }
 
         // report error
         if (!o.isSuccess()) {
@@ -350,26 +382,31 @@ public class Bootique {
             }
         }
 
-        o.exit();
+        return o;
     }
 
-    /**
-     * Executes this Bootique application, returning the object that denotes the outcome. Execution involves mapping
-     * the CLI arguments to one of the internal commands and delegating execution to that command.
-     *
-     * @return an outcome of command execution.
-     * @since 0.23
-     */
-    public CommandOutcome exec() {
+    protected Thread createJVMShutdownHook() {
 
-        try {
-            Injector ij = createInjector();
-            BQRuntime rt = createRuntime(ij);
-            rt.addJVMShutdownHook();
-            return rt.getRunner().run();
-        } catch (Throwable th) {
-            return processExceptions(th);
-        }
+        // resolve all services needed for shutdown eagerly and outside shutdown thread to ensure that shutdown hook
+        // will not fail due to misconfiguration, etc.
+
+        ShutdownManager shutdownManager = this.shutdownManager;
+        BootLogger logger = this.bootLogger;
+
+        return new Thread("bootique-shutdown") {
+
+            @Override
+            public void run() {
+                shutdown(shutdownManager, logger);
+            }
+        };
+    }
+
+    protected void shutdown(ShutdownManager shutdownManager, BootLogger logger) {
+        shutdownManager.shutdown().forEach((s, th) -> {
+            logger.stderr(String.format("Error performing shutdown of '%s': %s", s.getClass().getSimpleName(),
+                    th.getMessage()));
+        });
     }
 
     protected CommandOutcome processExceptions(Throwable th) {
@@ -388,7 +425,7 @@ public class Bootique {
 
         String thMessage = th.getMessage();
         String message = thMessage != null ? "Command exception: '" + thMessage + "'." : "Command exception.";
-        return CommandOutcome.failed(1, message);
+        return CommandOutcome.failed(1, message, th);
     }
 
     protected String getArgsAsString() {
@@ -421,6 +458,10 @@ public class Bootique {
 
     protected BootLogger createBootLogger() {
         return new DefaultBootLogger(System.getProperty(DefaultEnvironment.TRACE_PROPERTY) != null);
+    }
+
+    protected ShutdownManager createShutdownManager() {
+        return new DefaultShutdownManager(Duration.ofMillis(10000L));
     }
 
     protected Injector createInjector() {
@@ -456,7 +497,10 @@ public class Bootique {
 
             @Override
             public Module module() {
-                return BQCoreModule.builder().args(args).bootLogger(bootLogger).moduleSource(moduleSource).build();
+                return BQCoreModule.builder().args(args)
+                        .bootLogger(bootLogger)
+                        .shutdownManager(shutdownManager)
+                        .moduleSource(moduleSource).build();
             }
 
             @Override

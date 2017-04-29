@@ -16,19 +16,19 @@ public class CommandOutcome {
     }
 
     public static CommandOutcome failed(int exitCode, Throwable cause) {
-        if (exitCode == SUCCESS_EXIT_CODE) {
-            throw new IllegalArgumentException("Success code '0' used for failure outcome.");
-        }
-
-        return new CommandOutcome(exitCode, null, cause);
+        return failed(exitCode, null, cause);
     }
 
     public static CommandOutcome failed(int exitCode, String message) {
+        return failed(exitCode, message, null);
+    }
+
+    public static CommandOutcome failed(int exitCode, String message, Throwable th) {
         if (exitCode == SUCCESS_EXIT_CODE) {
             throw new IllegalArgumentException("Success code '0' used for failure outcome.");
         }
 
-        return new CommandOutcome(exitCode, message, null);
+        return new CommandOutcome(exitCode, message, th);
     }
 
     private CommandOutcome(int exitCode, String message, Throwable exception) {

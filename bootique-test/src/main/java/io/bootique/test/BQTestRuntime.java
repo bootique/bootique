@@ -40,7 +40,7 @@ public class BQTestRuntime {
      * Executes runtime runner, returning the outcome.
      */
     public CommandOutcome run() {
-        CommandOutcome result = runtime.getRunner().run();
+        CommandOutcome result = runtime.run();
         if (!result.isSuccess()) {
 
             String message = result.getMessage() != null

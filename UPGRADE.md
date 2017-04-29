@@ -2,9 +2,10 @@
 
 ## 0.23
 
-* [bootique #140](https://github.com/bootique/bootique/issues/140): If you've ever implemented your own "main" method instead of relying
-on the one from `io.bootique.Bootique`, you may want to replace the call to `Bootique.run()` with a more properly named
-`Bootique.execAndExit()`. There's also a new `Bootique.exec()` now that also executes Bootique app, but does not terminate the JVM.
+* [bootique #141](https://github.com/bootique/bootique/issues/141): If you've ever implemented your own "main" method 
+instead of relying on the one from `io.bootique.Bootique`, you may want to replace the call to deprecated `Bootique.run()` 
+with `Bootique.exec().exit()`. The new API does not exit the JVM within Bootique code, allowing for extra flexibility 
+(e.g. you may want to insert custom code after Bootique finish but before the app exit).
 
 ## 0.22
 

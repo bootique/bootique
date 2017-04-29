@@ -79,7 +79,7 @@ public class BQInternalDaemonTestFactory extends BQInternalTestFactory {
         public BQRuntime createRuntime() {
             BQRuntime runtime = super.createRuntime();
             LOGGER.info("Starting runtime...");
-            executor.submit(() -> Optional.of(runtime.getRunner().run()));
+            executor.submit(() -> Optional.of(runtime.run()));
             checkStartupSucceeded(runtime, startupTimeout, startupTimeoutTimeUnit);
             return runtime;
         }

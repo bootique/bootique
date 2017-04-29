@@ -44,7 +44,6 @@ import io.bootique.meta.module.ModulesMetadata;
 import io.bootique.meta.module.ModulesMetadataCompiler;
 import io.bootique.run.DefaultRunner;
 import io.bootique.run.Runner;
-import io.bootique.shutdown.DefaultShutdownManager;
 import io.bootique.shutdown.ShutdownManager;
 import io.bootique.shutdown.ShutdownTimeout;
 import io.bootique.terminal.FixedWidthTerminal;
@@ -74,12 +73,11 @@ public class BQCoreModule implements Module {
     private static final int TTY_DEFAULT_COLUMNS = 80;
 
     private String[] args;
+    private ShutdownManager shutdownManager;
     private BootLogger bootLogger;
-    private Duration shutdownTimeout;
     private Supplier<Collection<BQModule>> modulesSource;
 
     private BQCoreModule() {
-        this.shutdownTimeout = Duration.ofMillis(10000L);
     }
 
     /**
@@ -227,9 +225,12 @@ public class BQCoreModule implements Module {
 
         // bind instances
         binder.bind(BootLogger.class).toInstance(Objects.requireNonNull(bootLogger));
+        binder.bind(ShutdownManager.class).toInstance(Objects.requireNonNull(shutdownManager));
         binder.bind(String[].class).annotatedWith(Args.class).toInstance(Objects.requireNonNull(args));
+
+        // deprecated, kept for those users who may have injected this in their own code
         binder.bind(Duration.class).annotatedWith(ShutdownTimeout.class)
-                .toInstance(Objects.requireNonNull(shutdownTimeout));
+                .toInstance(Objects.requireNonNull(Duration.ofMillis(10000L)));
 
         // too much code to create config factory.. extracting it in a provider
         // class...
@@ -267,12 +268,6 @@ public class BQCoreModule implements Module {
     @Singleton
     Runner provideRunner(Cli cli, CommandManager commandManager) {
         return new DefaultRunner(cli, commandManager);
-    }
-
-    @Provides
-    @Singleton
-    ShutdownManager provideShutdownManager(@ShutdownTimeout Duration timeout) {
-        return new DefaultShutdownManager(timeout);
     }
 
     @Provides
@@ -424,6 +419,11 @@ public class BQCoreModule implements Module {
             return this;
         }
 
+        public Builder shutdownManager(ShutdownManager shutdownManager) {
+            module.shutdownManager = shutdownManager;
+            return this;
+        }
+
         /**
          * Sets a supplier of the app modules collection. It has to be provided externally by Bootique code that
          * assembles the stack. We have no way of discovering this information when inside the DI container.
@@ -439,11 +439,6 @@ public class BQCoreModule implements Module {
 
         public Builder args(String[] args) {
             module.args = args;
-            return this;
-        }
-
-        public Builder shutdownTimeout(Duration timeout) {
-            module.shutdownTimeout = timeout;
             return this;
         }
     }
