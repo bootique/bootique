@@ -1,5 +1,8 @@
 package io.bootique.resource;
 
+import io.bootique.BootiqueException;
+import io.bootique.command.CommandOutcome;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -93,12 +96,12 @@ public class ResourceFactory {
         try {
             uri = URI.create(resourceId);
         } catch (IllegalArgumentException e) {
-            throw new ResourceIdFormatException(resourceId, e);
+            throw new BootiqueException(CommandOutcome.failed(1, "Invalid config resource url: " + resourceId, e));
         }
         try {
             return uri.isAbsolute() ? uri.toURL() : getCanonicalFile(resourceId).toURI().toURL();
         } catch (IOException e) {
-            throw new ResourceIdFormatException(resourceId, e);
+            throw new BootiqueException(CommandOutcome.failed(1, "Invalid config resource url: " + resourceId, e));
         }
     }
 

@@ -68,8 +68,8 @@ public class BootiqueExceptionsHandlerIT {
 
         assertEquals(1, out.getExitCode());
         assertTrue(out.getException() instanceof CreationException);
-        assertTrue(out.getMessage().startsWith("Config resource 'file:"));
-        assertTrue(out.getMessage().endsWith("no_such_config.yml' is not found."));
+        assertTrue(out.getMessage(), out.getMessage().startsWith("Config resource is not found or is inaccessible: file:"));
+        assertTrue(out.getMessage(), out.getMessage().endsWith("no_such_config.yml"));
     }
 
     @Test
@@ -80,7 +80,7 @@ public class BootiqueExceptionsHandlerIT {
 
         assertEquals(1, out.getExitCode());
         assertTrue(out.getException() instanceof CreationException);
-        assertEquals("Invalid config resource 'nosuchprotocol://myconfig'.", out.getMessage());
+        assertEquals("Invalid config resource url: nosuchprotocol://myconfig", out.getMessage());
     }
 
     @Test
@@ -92,7 +92,7 @@ public class BootiqueExceptionsHandlerIT {
 
         assertEquals(1, out.getExitCode());
         assertTrue(out.getException() instanceof CreationException);
-        assertEquals("Invalid config resource 'no_such_protocol://myconfig'.", out.getMessage());
+        assertEquals("Invalid config resource url: no_such_protocol://myconfig", out.getMessage());
     }
 
     public static class ConfigDependent {

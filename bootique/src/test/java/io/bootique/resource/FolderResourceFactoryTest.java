@@ -59,7 +59,7 @@ public class FolderResourceFactoryTest {
             fail("Expected exception was not thrown.");
         } catch (BootiqueException e) {
             assertEquals(1, e.getOutcome().getExitCode());
-            assertEquals("Invalid config resource 'Z:/a/b/c/test2.yml'.", e.getMessage());
+            assertEquals("Invalid config resource url: Z:/a/b/c/test2.yml", e.getMessage());
         }
     }
 
@@ -70,7 +70,7 @@ public class FolderResourceFactoryTest {
             fail("Expected exception was not thrown.");
         } catch (BootiqueException e) {
             assertEquals(1, e.getOutcome().getExitCode());
-            assertEquals("Invalid config resource '\\a\\b\\c/test2.yml'.", e.getMessage());
+            assertEquals("Invalid config resource url: \\a\\b\\c/test2.yml", e.getMessage());
         }
     }
 }
