@@ -87,7 +87,7 @@ public class JoptCliProviderCommandNameTest {
         ApplicationMetadata.Builder appBuilder = ApplicationMetadata.builder();
         commands.values().forEach(c -> appBuilder.addCommand(c.getMetadata()));
 
-        return new JoptCliProvider(mockBootLogger, commandManager, appBuilder.build(), argsArray).get();
+        return new JoptCliProvider(mockBootLogger, () -> commandManager, appBuilder.build(), argsArray).get();
     }
 
 }

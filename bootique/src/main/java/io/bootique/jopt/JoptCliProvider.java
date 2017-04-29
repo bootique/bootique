@@ -4,13 +4,13 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import io.bootique.BootiqueException;
 import io.bootique.annotation.Args;
-import io.bootique.command.CommandOutcome;
-import io.bootique.meta.application.ApplicationMetadata;
-import io.bootique.meta.application.OptionMetadata;
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandManager;
+import io.bootique.command.CommandOutcome;
 import io.bootique.log.BootLogger;
+import io.bootique.meta.application.ApplicationMetadata;
+import io.bootique.meta.application.OptionMetadata;
 import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -29,15 +29,21 @@ public class JoptCliProvider implements Provider<Cli> {
     private String[] args;
     private BootLogger bootLogger;
     private ApplicationMetadata application;
-    private CommandManager commandManager;
+    private Provider<CommandManager> commandManagerProvider;
+
 
     @Inject
     public JoptCliProvider(BootLogger bootLogger,
-                           CommandManager commandManager,
+                           Provider<CommandManager> commandManagerProvider,
                            ApplicationMetadata application,
                            @Args String[] args) {
 
-        this.commandManager = commandManager;
+        // injecting CommandManager via provider for an obscure reason - it is injected here and also in
+        // ApplicationMetadata provider (and this class depends on ApplicationMetadata). So when there's an error
+        // during CommandManager construction, it is thrown twice, causing ProvisionException to lose its "cause",
+        // complicating exception analysis.
+
+        this.commandManagerProvider = commandManagerProvider;
         this.application = application;
         this.args = args;
         this.bootLogger = bootLogger;
@@ -103,7 +109,7 @@ public class JoptCliProvider implements Provider<Cli> {
     protected String commandName(OptionSet optionSet) {
 
         Map<String, Command> matches = new HashMap<>(3);
-        commandManager.getCommands().forEach((name, c) -> {
+        commandManagerProvider.get().getCommands().forEach((name, c) -> {
             if (optionSet.has(name) && !optionSet.hasArgument(name)) {
                 matches.put(name, c);
             }

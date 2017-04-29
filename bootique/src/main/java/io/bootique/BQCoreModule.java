@@ -17,6 +17,7 @@ import io.bootique.annotation.EnvironmentVariables;
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandManager;
+import io.bootique.command.CommandOutcome;
 import io.bootique.command.DefaultCommandManager;
 import io.bootique.config.CliConfigurationSource;
 import io.bootique.config.ConfigurationFactory;
@@ -312,8 +313,10 @@ public class BQCoreModule implements Module {
                 if (existing != null && existing != c) {
                     String c1 = existing.getClass().getName();
                     String c2 = c.getClass().getName();
-                    throw new RuntimeException(
-                            String.format("Duplicate command for name %s (provided by: %s and %s) ", name, c1, c2));
+
+                    String message = String.format("More than one DI command named '%s'. Conflicting types: %s, %s.",
+                            name, c1, c2);
+                    throw new BootiqueException(CommandOutcome.failed(1, message));
                 }
             }
         });
