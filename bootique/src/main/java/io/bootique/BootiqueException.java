@@ -2,8 +2,6 @@ package io.bootique;
 
 import io.bootique.command.CommandOutcome;
 
-import java.util.Objects;
-
 /**
  * An exception originating in Bootique that indicates an app-wise configuration error, such as invalid CLI parameters,
  * bad YAML format, etc. Usually only its "outcome" property is of any interest (i.e. <i>what</i> happened). Its stack
@@ -15,8 +13,12 @@ public class BootiqueException extends RuntimeException {
 
     private CommandOutcome outcome;
 
-    public BootiqueException(CommandOutcome outcome) {
-        this.outcome = Objects.requireNonNull(outcome);
+    public BootiqueException(int exitCode, String message) {
+        this.outcome = CommandOutcome.failed(exitCode, message, this);
+    }
+
+    public BootiqueException(int exitCode, String message, Throwable cause) {
+        this.outcome = CommandOutcome.failed(exitCode, message, cause);
     }
 
     public CommandOutcome getOutcome() {
@@ -25,7 +27,7 @@ public class BootiqueException extends RuntimeException {
 
     @Override
     public Throwable getCause() {
-        return outcome.getException();
+        return outcome.getException() != this ? outcome.getException() : null;
     }
 
     @Override

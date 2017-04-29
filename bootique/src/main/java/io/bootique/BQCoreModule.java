@@ -17,7 +17,6 @@ import io.bootique.annotation.EnvironmentVariables;
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandManager;
-import io.bootique.command.CommandOutcome;
 import io.bootique.command.DefaultCommandManager;
 import io.bootique.config.CliConfigurationSource;
 import io.bootique.config.ConfigurationFactory;
@@ -316,7 +315,7 @@ public class BQCoreModule implements Module {
 
                     String message = String.format("More than one DI command named '%s'. Conflicting types: %s, %s.",
                             name, c1, c2);
-                    throw new BootiqueException(CommandOutcome.failed(1, message));
+                    throw new BootiqueException(1, message);
                 }
             }
         });

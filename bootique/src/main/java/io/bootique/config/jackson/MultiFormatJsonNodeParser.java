@@ -2,7 +2,6 @@ package io.bootique.config.jackson;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.bootique.BootiqueException;
-import io.bootique.command.CommandOutcome;
 import io.bootique.log.BootLogger;
 
 import java.io.IOException;
@@ -15,7 +14,7 @@ import java.util.function.Function;
 
 public class MultiFormatJsonNodeParser implements Function<URL, Optional<JsonNode>> {
 
-    public static enum ParserType {
+    public enum ParserType {
         YAML, JSON
     }
 
@@ -37,8 +36,7 @@ public class MultiFormatJsonNodeParser implements Function<URL, Optional<JsonNod
             // The message is dumb. But we don't really expect an exception (as no connection is established here),
             // and don't have a test case to reproduce.
             // TODO: If we ever see this condition occur, perhaps we can create a better message?
-            throw new BootiqueException(
-                    CommandOutcome.failed(1, "Can't create connection to config resource: " + url, e));
+            throw new BootiqueException(1, "Can't create connection to config resource: " + url, e);
         }
 
         ParserType type = parserTypeFromHeaders(connection);
@@ -53,11 +51,10 @@ public class MultiFormatJsonNodeParser implements Function<URL, Optional<JsonNod
 
         Function<InputStream, Optional<JsonNode>> parser = parser(type);
 
-        try (InputStream in = connection.getInputStream();) {
+        try (InputStream in = connection.getInputStream()) {
             return parser.apply(in);
         } catch (IOException e) {
-            throw new BootiqueException(
-                    CommandOutcome.failed(1, "Config resource is not found or is inaccessible: " + url, e));
+            throw new BootiqueException(1, "Config resource is not found or is inaccessible: " + url, e);
         }
     }
 

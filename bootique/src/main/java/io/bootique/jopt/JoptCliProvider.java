@@ -7,7 +7,6 @@ import io.bootique.annotation.Args;
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandManager;
-import io.bootique.command.CommandOutcome;
 import io.bootique.log.BootLogger;
 import io.bootique.meta.application.ApplicationMetadata;
 import io.bootique.meta.application.OptionMetadata;
@@ -56,8 +55,7 @@ public class JoptCliProvider implements Provider<Cli> {
         try {
             parsed = parser.parse(args);
         } catch (OptionException e) {
-            CommandOutcome badOptions = CommandOutcome.failed(1, e.getMessage(), e);
-            throw new BootiqueException(badOptions);
+            throw new BootiqueException(1, e.getMessage(), e);
         }
 
         String commandName = commandName(parsed);
@@ -72,9 +70,7 @@ public class JoptCliProvider implements Provider<Cli> {
 
         application.getCommands().forEach(c -> {
 
-            c.getOptions().forEach(o -> {
-                addOption(parser, o);
-            });
+            c.getOptions().forEach(o -> addOption(parser, o));
 
             // using option-bound command strategy...
             OptionMetadata commandAsOption = c.asOption();
@@ -124,9 +120,7 @@ public class JoptCliProvider implements Provider<Cli> {
             default:
                 String opts = matches.keySet().stream().collect(joining(", "));
                 String message = String.format("CLI options match multiple commands: %s.", opts);
-
-                CommandOutcome multipleCommands = CommandOutcome.failed(1, message);
-                throw new BootiqueException(multipleCommands);
+                throw new BootiqueException(1, message);
         }
     }
 }

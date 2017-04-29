@@ -14,6 +14,9 @@ import io.bootique.config.ConfigurationFactory;
 import io.bootique.meta.application.CommandMetadata;
 import org.junit.Test;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -111,6 +114,32 @@ public class BootiqueExceptionsHandlerIT {
     }
 
     @Test
+    public void testModules_CircularOverrides() {
+        CommandOutcome out = Bootique.app()
+                .module(new ModuleProviderWithOverride1())
+                .module(new ModuleProviderWithOverride2())
+                .exec();
+
+        assertEquals(1, out.getExitCode());
+        assertTrue(out.getException() instanceof BootiqueException);
+        assertEquals("Circular override dependency between DI modules. Culprit: ModuleWithOverride1", out.getMessage());
+    }
+
+    @Test
+    public void testModules_MultipleOverrides() {
+        CommandOutcome out = Bootique.app()
+                .module(new CoreOverrideProvider1())
+                .module(new CoreOverrideProvider2())
+                .exec();
+
+        assertEquals(1, out.getExitCode());
+        assertTrue(out.getException() instanceof BootiqueException);
+        assertTrue(out.getMessage(), out.getMessage()
+                .startsWith("Module BQCoreModule provided by Bootique is overridden more then once by: " +
+                        "BootiqueExceptionsHandlerIT"));
+    }
+
+    @Test
     public void testDI_TwoCommandsSameName() {
         CommandOutcome out = Bootique.app("-x")
                 .module(b -> BQCoreModule.extend(b)
@@ -178,8 +207,75 @@ public class BootiqueExceptionsHandlerIT {
         @Provides
         @Singleton
         public MyCommand provideCommand() {
-            throw new BootiqueException(CommandOutcome.failed(1, "test provider exception"));
+            throw new BootiqueException(1, "test provider exception");
         }
     }
 
+    public static class ModuleProviderWithOverride1 implements BQModuleProvider {
+
+        public static class ModuleWithOverride1 implements Module {
+            @Override
+            public void configure(Binder binder) {
+
+            }
+        }
+
+        @Override
+        public Module module() {
+            return new ModuleWithOverride1();
+        }
+
+        @Override
+        public Collection<Class<? extends Module>> overrides() {
+            return Collections.singleton(ModuleProviderWithOverride2.ModuleWithOverride2.class);
+        }
+    }
+
+    public static class ModuleProviderWithOverride2 implements BQModuleProvider {
+
+        public static class ModuleWithOverride2 implements Module {
+            @Override
+            public void configure(Binder binder) {
+
+            }
+        }
+
+        @Override
+        public Module module() {
+            return new ModuleWithOverride2();
+        }
+
+        @Override
+        public Collection<Class<? extends Module>> overrides() {
+            return Collections.singleton(ModuleProviderWithOverride1.ModuleWithOverride1.class);
+        }
+    }
+
+    public static class CoreOverrideProvider1 implements BQModuleProvider {
+
+        @Override
+        public Module module() {
+            return b -> {
+            };
+        }
+
+        @Override
+        public Collection<Class<? extends Module>> overrides() {
+            return Collections.singleton(BQCoreModule.class);
+        }
+    }
+
+    public static class CoreOverrideProvider2 implements BQModuleProvider {
+
+        @Override
+        public Module module() {
+            return b -> {
+            };
+        }
+
+        @Override
+        public Collection<Class<? extends Module>> overrides() {
+            return Collections.singleton(BQCoreModule.class);
+        }
+    }
 }

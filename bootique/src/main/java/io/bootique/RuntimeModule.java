@@ -55,7 +55,9 @@ class RuntimeModule {
 
     void checkCycles(RuntimeModule root) {
         if (root == this) {
-            throw new RuntimeException("Circular override dependency: " + getModuleName());
+            // TODO: show all modules participating in the detected cycle...
+            throw new BootiqueException(1,
+                    "Circular override dependency between DI modules. Culprit: " + getModuleName());
         }
 
         overriddenBy.forEach(n -> n.checkCycles(root));

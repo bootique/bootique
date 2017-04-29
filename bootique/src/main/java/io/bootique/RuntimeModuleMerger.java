@@ -50,9 +50,9 @@ class RuntimeModuleMerger {
             String overrideList = n.getOverriddenBy().stream().map(RuntimeModule::getModuleName)
                     .collect(joining(", "));
             String message = String.format(
-                    "Module %s provided by %s is overridden more then once. Overriding modules: %s",
+                    "Module %s provided by %s is overridden more then once by: %s",
                     n.getModuleName(), n.getProviderName(), overrideList);
-            throw new RuntimeException(message);
+            throw new BootiqueException(1, message);
         };
 
         Function<RuntimeModule, Module> toModule = (n) -> {

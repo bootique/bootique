@@ -376,7 +376,6 @@ public class Bootique {
 
         // report error
         if (!o.isSuccess()) {
-
             if (o.getMessage() != null) {
                 bootLogger.stderr(String.format("Error running command '%s': %s", getArgsAsString(), o.getMessage()));
             } else {
@@ -414,11 +413,12 @@ public class Bootique {
     protected CommandOutcome processExceptions(Throwable th, Throwable parentTh) {
 
         if (th instanceof BootiqueException) {
+            // TODO: should we still print the stack trace via logger.trace?
             CommandOutcome o = ((BootiqueException) th).getOutcome();
             return th == parentTh ? o : CommandOutcome.failed(o.getExitCode(), o.getMessage(), parentTh);
         }
 
-        // exception unrecognized... generic handler
+        // exception unrecognized, dump the details for users to analyze..
         bootLogger.stderr("Command exception: ", parentTh);
 
         String thMessage = th.getMessage();

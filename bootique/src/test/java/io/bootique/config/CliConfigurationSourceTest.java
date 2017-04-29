@@ -1,9 +1,9 @@
 package io.bootique.config;
 
-import static java.util.stream.Collectors.joining;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import io.bootique.cli.Cli;
+import io.bootique.log.BootLogger;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,12 +15,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.function.Function;
 
-import io.bootique.config.CliConfigurationSource;
-import org.junit.Before;
-import org.junit.Test;
-
-import io.bootique.cli.Cli;
-import io.bootique.log.BootLogger;
+import static java.util.stream.Collectors.joining;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class CliConfigurationSourceTest {
 
@@ -29,16 +27,13 @@ public class CliConfigurationSourceTest {
 
 		switch (configOptions.length) {
 		case 0:
-			when(cli.optionString(CliConfigurationSource.CONFIG_OPTION)).thenReturn(null);
 			when(cli.optionStrings(CliConfigurationSource.CONFIG_OPTION)).thenReturn(Collections.emptyList());
 			break;
 		case 1:
-			when(cli.optionString(CliConfigurationSource.CONFIG_OPTION)).thenReturn(configOptions[0]);
 			when(cli.optionStrings(CliConfigurationSource.CONFIG_OPTION))
 					.thenReturn(Collections.singletonList(configOptions[0]));
 			break;
 		default:
-			when(cli.optionString(CliConfigurationSource.CONFIG_OPTION)).thenThrow(new RuntimeException());
 			when(cli.optionStrings(CliConfigurationSource.CONFIG_OPTION)).thenReturn(Arrays.asList(configOptions));
 			break;
 		}
