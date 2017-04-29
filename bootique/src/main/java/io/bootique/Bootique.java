@@ -319,15 +319,6 @@ public class Bootique {
     }
 
     /**
-     * @return a newly created runtime.
-     * @deprecated since 0.13 in favor of {@link #createRuntime()}.
-     */
-    @Deprecated
-    public BQRuntime runtime() {
-        return createRuntime();
-    }
-
-    /**
      * Executes Bootique application, exiting the JVM at the end.
      * <p>
      * If you don't want your app to shutdown after executing Bootique, call {@link #exec()} instead.
