@@ -26,11 +26,11 @@ public class BQRuntime {
     }
 
     /**
-     * Returns a DI-bound instance of a given class, throwing if this class is
-     * not explicitly bound in DI.
+     * Returns a DI-bound instance of a given class, throwing if this class is not explicitly bound in DI.
      *
-     * @param type a type of instance object to return
-     * @return a DI-bound instance of a given class.
+     * @param <T>  a type of the instance to return.
+     * @param type a class or interface bound in DI.
+     * @return a DI-bound instance of a given type.
      * @since 0.12
      */
     public <T> T getInstance(Class<T> type) {
@@ -80,10 +80,9 @@ public class BQRuntime {
     }
 
     /**
-     * Registers a JVM shutdown hook that is delegated to
-     * {@link ShutdownManager}.
+     * Registers a JVM shutdown hook that is delegated to {@link ShutdownManager}.
      *
-     * @see Bootique#exec().
+     * @see Bootique#exec()
      * @since 0.11
      * @deprecated since 0.23 unused as {@link Bootique} class handles JVM-level shutdown events. BQRuntime should not
      * get involved in that.

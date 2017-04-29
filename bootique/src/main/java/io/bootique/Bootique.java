@@ -25,24 +25,19 @@ import java.util.function.Supplier;
 import static java.util.stream.Collectors.joining;
 
 /**
- * A main launcher class of Bootique. To start a Bootique app, you may write
- * your main method as follows:
- * <p>
+ * A main launcher class of Bootique. To start a Bootique app, you may write your main method as follows:
  * <pre>
  * public static void main(String[] args) {
- * 	Bootique.app(args).modules(_optional_extensions_).run();
+ * 	  Bootique.app(args).modules(...).exec().exit();
  * }
  * </pre>
- * <p>
  * or
- * <p>
  * <pre>
  * public static void main(String[] args) {
- * 	Bootique.app(args).autoLoadModules().run();
+ * 	  Bootique.app(args).autoLoadModules().exec().exit();
  * }
  * </pre>
- * <p>
- * or just use this class as a main app class.
+ * or just use this class as the main app class.
  */
 public class Bootique {
 
@@ -134,6 +129,7 @@ public class Bootique {
     /**
      * Optionally overrides Bootique's BootLogger.
      *
+     * @param bootLogger a custom BootLogger. Has to be non-null.
      * @return this instance of Bootique.
      * @since 0.12
      */
@@ -145,7 +141,7 @@ public class Bootique {
     /**
      * Optionally overrides Bootique's ShutdownManager.
      *
-     * @param shutdownManager custom {@link ShutdownManager} to use in this execution of Bootique.
+     * @param shutdownManager a custom {@link ShutdownManager} to use in this execution of Bootique. Has to be non-null.
      * @return this instance of Bootique.
      * @since 0.23
      */

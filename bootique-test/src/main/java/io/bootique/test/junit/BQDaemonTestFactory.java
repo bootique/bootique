@@ -16,13 +16,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 /**
- * Manages a "daemon" Bootique stack within a lifecycle of the a JUnit test.
- * This allows to start background servers so that tests can execute requests
- * against them, etc.
- * <p>
- * Instances should be annotated within the unit tests with {@link Rule} or
- * {@link ClassRule}. E.g.:
- * <p>
+ * Manages a "daemon" Bootique stack within a lifecycle of the a JUnit test. This allows to start background servers so
+ * that tests can execute requests against them, etc. Instances should be annotated within the unit tests with
+ * {@link Rule} or {@link ClassRule}. E.g.:
  * <pre>
  * public class MyTest {
  *
@@ -58,6 +54,7 @@ public class BQDaemonTestFactory extends ExternalResource {
     }
 
     /**
+     * @param <T> a covariant builder type.
      * @return a new instance of builder for the test runtime stack.
      * @deprecated since 0.20 in favor of {@link #app(String...)}.
      */
@@ -67,6 +64,8 @@ public class BQDaemonTestFactory extends ExternalResource {
     }
 
     /**
+     * @param <T>  a covariant builder type.
+     * @param args a String vararg emulating shell arguments passed to a real app.
      * @return a new instance of builder for the test runtime stack.
      * @since 0.20
      */
@@ -116,6 +115,7 @@ public class BQDaemonTestFactory extends ExternalResource {
         }
 
         /**
+         * @param args a String vararg emulating shell arguments passed to a real app.
          * @return {@link BQDaemonTestRuntime} instance created by the builder.
          * @deprecated since 0.20 in favor of no-argument {@link #start()}. Arguments can be passed when creating the
          * Builder.

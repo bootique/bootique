@@ -38,6 +38,8 @@ public class BQTestRuntime {
 
     /**
      * Executes runtime runner, returning the outcome.
+     *
+     * @return an "outcome" object of the test app run.
      */
     public CommandOutcome run() {
         CommandOutcome result = runtime.run();

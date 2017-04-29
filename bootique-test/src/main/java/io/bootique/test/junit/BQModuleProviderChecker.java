@@ -17,22 +17,17 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**
- * A helper class to simplify writing the tests that need to check that a
- * specified {@link BQModuleProvider} is available via ServiceLoader mechanism.
- * This is a useful test as
- * <code>META-INF/services/BQModuleProvider</code> files can
- * contain typos or omissions. Sample usage:
- * <p>
+ * A helper class to for writing generic tests for {@link BQModuleProvider} implementors. It allows to verify that the
+ * provider and related classes are wired properly, there are no typos in service descriptors, etc. Same usage:
  * <pre>
  * &#64;Test
  * public void testPresentInJar() {
- * 	BQModuleProviderChecker.testPresentInJar(MyModuleProvider.class);
+ * 	   BQModuleProviderChecker.testPresentInJar(MyModuleProvider.class);
  * }
  * </pre>
  *
  * @since 0.15
  */
-// TODO: combine this in some kind of test suite for providers?
 public class BQModuleProviderChecker {
 
     private Class<? extends BQModuleProvider> provider;

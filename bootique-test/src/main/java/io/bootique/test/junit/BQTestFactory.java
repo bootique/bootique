@@ -14,18 +14,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Manages a simple Bootique stack within a lifecycle of the a JUnit test. It
- * doesn't run any commands by default and is usually used for accessing
- * initialized standard services, such as {@link ConfigurationFactory}, etc.
- * <p>
- * Instances should be annotated within the unit tests with {@link Rule} or
- * {@link ClassRule}. E.g.:
- * <p>
+ * Manages a simple Bootique stack within a lifecycle of the a JUnit test. It doesn't run any commands by default and
+ * is usually used for accessing initialized standard services, such as {@link ConfigurationFactory}, etc. Instances
+ * should be annotated within the unit tests with {@link Rule} or {@link ClassRule}. E.g.:
  * <pre>
  * public class MyTest {
  *
- * 	&#64;Rule
- * 	public BQTestFactory testFactory = new BQTestFactory();
+ *   &#64;Rule
+ *   public BQTestFactory testFactory = new BQTestFactory();
  * }
  * </pre>
  *
@@ -64,6 +60,7 @@ public class BQTestFactory extends ExternalResource {
     }
 
     /**
+     * @param args a String vararg emulating shell arguments passed to a real app.
      * @return a new instance of builder for the test runtime stack.
      * @since 0.20
      */
