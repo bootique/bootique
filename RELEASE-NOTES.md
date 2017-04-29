@@ -2,6 +2,7 @@
 
 #25  Map known exceptions to CommandOutcomes
 #140 Catch Guice CreationException
+#141 Refactor startup sequence
 
 ## 0.22
 
