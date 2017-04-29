@@ -2,13 +2,16 @@ package io.bootique.jopt;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import io.bootique.BootiqueException;
 import io.bootique.annotation.Args;
+import io.bootique.command.CommandOutcome;
 import io.bootique.meta.application.ApplicationMetadata;
 import io.bootique.meta.application.OptionMetadata;
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandManager;
 import io.bootique.log.BootLogger;
+import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpecBuilder;
@@ -43,7 +46,14 @@ public class JoptCliProvider implements Provider<Cli> {
     @Override
     public Cli get() {
         OptionParser parser = createParser();
-        OptionSet parsed = parser.parse(args);
+        OptionSet parsed;
+        try {
+            parsed = parser.parse(args);
+        } catch (OptionException e) {
+            CommandOutcome badOptions = CommandOutcome.failed(1, e.getMessage(), e);
+            throw new BootiqueException(badOptions);
+        }
+
         String commandName = commandName(parsed);
 
         return new JoptCli(bootLogger, parser, parsed, commandName);
@@ -107,10 +117,10 @@ public class JoptCliProvider implements Provider<Cli> {
                 return matches.keySet().iterator().next();
             default:
                 String opts = matches.keySet().stream().collect(joining(", "));
-                String message = String.format("Ambiguous options, matched multiple commands: %s", opts);
+                String message = String.format("CLI options match multiple commands: %s.", opts);
 
-                // TODO: BootiqueException?
-                throw new RuntimeException(message);
+                CommandOutcome multipleCommands = CommandOutcome.failed(1, message);
+                throw new BootiqueException(multipleCommands);
         }
     }
 }

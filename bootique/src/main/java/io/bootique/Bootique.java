@@ -1,5 +1,6 @@
 package io.bootique;
 
+import com.google.inject.CreationException;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -357,10 +358,9 @@ public class Bootique {
         try {
             // In case the app gets killed when command is running, let's use an explicit shutdown hook for cleanup.
             Thread shutdownThread = createJVMShutdownHook();
+            Runtime.getRuntime().addShutdownHook(shutdownThread);
             try {
-                Runtime.getRuntime().addShutdownHook(shutdownThread);
-                BQRuntime runtime = createRuntime();
-                o = runtime.run();
+                o = createRuntime().run();
             } finally {
                 // run shutdown explicitly...
                 shutdown(shutdownManager, bootLogger);
@@ -368,15 +368,14 @@ public class Bootique {
             }
 
         } catch (Throwable th) {
-            o = processExceptions(th);
+            o = processExceptions(th, th);
         }
 
         // report error
         if (!o.isSuccess()) {
 
             if (o.getMessage() != null) {
-                bootLogger.stderr(
-                        String.format("Error running command '%s': %s", getArgsAsString(), o.getMessage()));
+                bootLogger.stderr(String.format("Error running command '%s': %s", getArgsAsString(), o.getMessage()));
             } else {
                 bootLogger.stderr(String.format("Error running command '%s'", getArgsAsString()));
             }
@@ -409,23 +408,33 @@ public class Bootique {
         });
     }
 
-    protected CommandOutcome processExceptions(Throwable th) {
+    protected CommandOutcome processExceptions(Throwable th, Throwable originalTh) {
 
-        // TODO: map more exceptions to CommandOutcomes per #25.
+        if (th instanceof ProvisionException && th.getCause() != th) {
+            return processExceptions(th.getCause(), originalTh);
+        }
 
-        if (th instanceof ProvisionException) {
+        if (th instanceof CreationException && th.getCause() != th) {
+            return processExceptions(th.getCause(), originalTh);
+        }
+
+        if (th instanceof OptionException) {
+            th.printStackTrace();
             // TODO: a dependency on JOPT OptionException shouldn't be here
-            return th.getCause() instanceof OptionException
-                    ? CommandOutcome.failed(1, th.getCause().getMessage())
-                    : CommandOutcome.failed(1, th);
+            return CommandOutcome.failed(1, th.getMessage(), originalTh);
+        }
+
+        if (th instanceof BootiqueException) {
+            CommandOutcome o = ((BootiqueException) th).getOutcome();
+            return th == originalTh ? o : CommandOutcome.failed(o.getExitCode(), o.getMessage(), originalTh);
         }
 
         // exception unrecognized... generic handler
-        bootLogger.stderr("Command exception: ", th);
+        bootLogger.stderr("Command exception: ", originalTh);
 
         String thMessage = th.getMessage();
         String message = thMessage != null ? "Command exception: '" + thMessage + "'." : "Command exception.";
-        return CommandOutcome.failed(1, message, th);
+        return CommandOutcome.failed(1, message, originalTh);
     }
 
     protected String getArgsAsString() {

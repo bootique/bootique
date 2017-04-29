@@ -89,11 +89,16 @@ public class ResourceFactory {
             return cpUrl;
         }
 
-        URI uri = URI.create(resourceId);
+        URI uri;
+        try {
+            uri = URI.create(resourceId);
+        } catch (IllegalArgumentException e) {
+            throw new ResourceIdFormatException(resourceId, e);
+        }
         try {
             return uri.isAbsolute() ? uri.toURL() : getCanonicalFile(resourceId).toURI().toURL();
         } catch (IOException e) {
-            throw new RuntimeException("Bad url", e);
+            throw new ResourceIdFormatException(resourceId, e);
         }
     }
 

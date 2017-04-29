@@ -1,14 +1,13 @@
 package io.bootique.resource;
 
+import io.bootique.BootiqueException;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Scanner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class FolderResourceFactoryTest {
 
@@ -53,23 +52,25 @@ public class FolderResourceFactoryTest {
         assertEquals("c: d", resourceContents("file://" + folder, "test2.yml"));
     }
 
-    @Test(expected = Exception.class)
+    @Test
     public void testGetUrl_Exception_InvalidScheme() throws IOException {
         try {
             resourceContents("Z:/a/b/c", "test2.yml");
-        } catch (Throwable e) {
-            assertTrue(e.getMessage().contains("Bad url"));
-            throw e;
+            fail("Expected exception was not thrown.");
+        } catch (BootiqueException e) {
+            assertEquals(1, e.getOutcome().getExitCode());
+            assertEquals("Invalid config resource 'Z:/a/b/c/test2.yml'.", e.getMessage());
         }
     }
 
-    @Test(expected = Exception.class)
+    @Test
     public void testGetUrl_Subresource_ReverseSlashes() throws IOException {
         try {
             resourceContents("\\a\\b\\c", "test2.yml");
-        } catch (Throwable e) {
-            assertTrue(e.getMessage().contains("Illegal character in path at index 0: \\a\\b\\c/test2.yml"));
-            throw e;
+            fail("Expected exception was not thrown.");
+        } catch (BootiqueException e) {
+            assertEquals(1, e.getOutcome().getExitCode());
+            assertEquals("Invalid config resource '\\a\\b\\c/test2.yml'.", e.getMessage());
         }
     }
 }

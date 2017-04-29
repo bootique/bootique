@@ -1,5 +1,6 @@
 ## 0.23
 
+#25  Map known exceptions to CommandOutcomes
 #140 Catch Guice CreationException
 
 ## 0.22
