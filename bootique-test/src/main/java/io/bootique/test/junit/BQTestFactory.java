@@ -2,8 +2,6 @@ package io.bootique.test.junit;
 
 import io.bootique.BQRuntime;
 import io.bootique.config.ConfigurationFactory;
-import io.bootique.log.BootLogger;
-import io.bootique.log.DefaultBootLogger;
 import io.bootique.test.BQTestRuntime;
 import io.bootique.test.InMemoryPrintStream;
 import org.junit.ClassRule;
@@ -99,10 +97,7 @@ public class BQTestFactory extends ExternalResource {
             InMemoryPrintStream stdout = new InMemoryPrintStream(System.out);
             InMemoryPrintStream stderr = new InMemoryPrintStream(System.err);
 
-            // TODO: allow to turn off tracing, which can be either useful or annoying dependning on the context...
-            BootLogger bootLogger = new DefaultBootLogger(true, stdout, stderr);
-
-            BQRuntime runtime = bootique.bootLogger(bootLogger).createRuntime();
+            BQRuntime runtime = bootique.createRuntime();
             BQTestRuntime testRuntime = new BQTestRuntime(runtime, stdout, stderr);
             runtimes.add(testRuntime);
             return testRuntime;

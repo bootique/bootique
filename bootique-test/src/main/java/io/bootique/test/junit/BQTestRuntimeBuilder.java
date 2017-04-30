@@ -5,6 +5,7 @@ import io.bootique.BQCoreModule;
 import io.bootique.BQModuleOverrideBuilder;
 import io.bootique.BQModuleProvider;
 import io.bootique.Bootique;
+import io.bootique.log.BootLogger;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -64,15 +65,24 @@ public abstract class BQTestRuntimeBuilder<T extends BQTestRuntimeBuilder<T>> {
     }
 
     /**
-     * Instructs Bootique to load any modules available on class-path that
-     * expose {@link io.bootique.BQModuleProvider} provider. Auto-loaded modules will be
-     * used in default configuration. Factories within modules will of course be
+     * Instructs Bootique to load any modules available on classpath that expose {@link io.bootique.BQModuleProvider}
+     * provider. Auto-loaded modules will be used in default configuration. Factories within modules will of course be
      * configured dynamically from YAML.
      *
      * @return this instance of test runtime builder.
      */
     public T autoLoadModules() {
         bootique.autoLoadModules();
+        return (T) this;
+    }
+
+    /**
+     * @param bootLogger custom BootLogger to use for a given runtime.
+     * @return this instance of test runtime builder.
+     * @since 0.23
+     */
+    public T bootLogger(BootLogger bootLogger) {
+        bootique.bootLogger(bootLogger);
         return (T) this;
     }
 
