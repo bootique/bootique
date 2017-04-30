@@ -1,14 +1,15 @@
 package io.bootique.test.junit;
 
 import io.bootique.BQRuntime;
-import io.bootique.test.BQDaemonTestRuntime;
+import io.bootique.command.CommandOutcome;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.rules.ExternalResource;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
@@ -28,14 +29,14 @@ import java.util.function.Function;
  */
 public class BQDaemonTestFactory extends ExternalResource {
 
-    protected Collection<BQDaemonTestRuntime> runtimes;
+    protected Map<BQRuntime, BQRuntimeDaemon> runtimes;
 
     @Override
     protected void after() {
-        Collection<BQDaemonTestRuntime> localRuntimes = this.runtimes;
+        Map<BQRuntime, BQRuntimeDaemon> localRuntimes = this.runtimes;
 
         if (localRuntimes != null) {
-            localRuntimes.forEach(runtime -> {
+            localRuntimes.values().forEach(runtime -> {
                 try {
                     runtime.stop();
                 } catch (Exception e) {
@@ -47,17 +48,7 @@ public class BQDaemonTestFactory extends ExternalResource {
 
     @Override
     protected void before() {
-        this.runtimes = new ArrayList<>();
-    }
-
-    /**
-     * @param <T> a covariant builder type.
-     * @return a new instance of builder for the test runtime stack.
-     * @deprecated since 0.20 in favor of {@link #app(String...)}.
-     */
-    @Deprecated
-    public <T extends Builder<T>> Builder<T> newRuntime() {
-        return app();
+        this.runtimes = new HashMap<>();
     }
 
     /**
@@ -73,14 +64,14 @@ public class BQDaemonTestFactory extends ExternalResource {
     // parameterization is needed to enable covariant return types in subclasses
     public static class Builder<T extends Builder<T>> extends BQTestRuntimeBuilder<T> {
 
-        private static final Function<BQDaemonTestRuntime, Boolean> AFFIRMATIVE_STARTUP_CHECK = runtime -> true;
+        private static final Function<BQRuntime, Boolean> AFFIRMATIVE_STARTUP_CHECK = runtime -> true;
 
-        private Collection<BQDaemonTestRuntime> runtimes;
-        private Function<BQDaemonTestRuntime, Boolean> startupCheck;
+        private Map<BQRuntime, BQRuntimeDaemon> runtimes;
+        private Function<BQRuntime, Boolean> startupCheck;
         private long startupTimeout;
         private TimeUnit startupTimeoutTimeUnit;
 
-        protected Builder(Collection<BQDaemonTestRuntime> runtimes, String[] args) {
+        protected Builder(Map<BQRuntime, BQRuntimeDaemon> runtimes, String[] args) {
             super(args);
             this.startupTimeout = 5;
             this.startupTimeoutTimeUnit = TimeUnit.SECONDS;
@@ -88,9 +79,21 @@ public class BQDaemonTestFactory extends ExternalResource {
             this.startupCheck = AFFIRMATIVE_STARTUP_CHECK;
         }
 
-        public T startupCheck(Function<BQDaemonTestRuntime, Boolean> startupCheck) {
+        public T startupCheck(Function<BQRuntime, Boolean> startupCheck) {
             this.startupCheck = Objects.requireNonNull(startupCheck);
             return (T) this;
+        }
+
+        /**
+         * @param runtime a runtime executing in the background.
+         * @return an optional object wrapping the state of the runtime execution. If present, then the runtime
+         * execution has finished.
+         * @since 0.22
+         */
+        public Optional<CommandOutcome> getOutcome(BQRuntime runtime) {
+            return Objects
+                    .requireNonNull(runtimes.get(runtime), "Runtime is not registered with the factory.")
+                    .getOutcome();
         }
 
         /**
@@ -101,7 +104,7 @@ public class BQDaemonTestFactory extends ExternalResource {
          * @since 0.16
          */
         public T startupAndWaitCheck() {
-            this.startupCheck = (runtime) -> runtime.getOutcome().isPresent();
+            this.startupCheck = runtime -> getOutcome(runtime).isPresent();
             return (T) this;
         }
 
@@ -112,32 +115,21 @@ public class BQDaemonTestFactory extends ExternalResource {
         }
 
         /**
-         * @param args a String vararg emulating shell arguments passed to a real app.
-         * @return {@link BQDaemonTestRuntime} instance created by the builder.
-         * @deprecated since 0.20 in favor of no-argument {@link #start()}. Arguments can be passed when creating the
-         * Builder.
-         */
-        @Deprecated
-        public BQDaemonTestRuntime start(String... args) {
-            bootique.args(args);
-            return start();
-        }
-
-        /**
-         * Starts the test app in a background thread.
+         * Starts the test app in a background thread, blocking the test thread until the startup checker succeeds.
          *
-         * @return {@link BQDaemonTestRuntime} instance created by the builder. The caller doesn't need to shut it down.
-         * Usually JUnit lifecycle takes care of it.
-         * @since 0.20
+         * @return {@link BQRuntime} instance. The caller doesn't need to shut it down. JUnit lifecycle takes care of it.
+         * @since 0.23
          */
-        public BQDaemonTestRuntime start() {
+        public BQRuntime start() {
 
             BQRuntime runtime = bootique.createRuntime();
-            BQDaemonTestRuntime testRuntime = new BQDaemonTestRuntime(runtime, startupCheck);
-            runtimes.add(testRuntime);
 
+            // wrap in BQRuntimeDaemon to handle thread pool shutdown and startup checks.
+            BQRuntimeDaemon testRuntime = new BQRuntimeDaemon(runtime, startupCheck);
+            runtimes.put(runtime, testRuntime);
             testRuntime.start(startupTimeout, startupTimeoutTimeUnit);
-            return testRuntime;
+
+            return runtime;
         }
     }
 }

@@ -1,8 +1,9 @@
-package io.bootique.test;
+package io.bootique.test.junit;
 
 import io.bootique.BQRuntime;
 import io.bootique.command.CommandOutcome;
 import io.bootique.log.BootLogger;
+import io.bootique.log.DefaultBootLogger;
 
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -14,17 +15,21 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 
 /**
- * @since 0.13
+ * A wrapper around {@link BQRuntime} that runs it on the background and handles startup and shutdown sequence.
  */
-public class BQDaemonTestRuntime {
+public class BQRuntimeDaemon {
 
+    private BootLogger logger;
     private BQRuntime runtime;
     private ExecutorService executor;
-    private Function<BQDaemonTestRuntime, Boolean> startupCheck;
+    private Function<BQRuntime, Boolean> startupCheck;
     private Optional<CommandOutcome> outcome;
 
-    public BQDaemonTestRuntime(BQRuntime runtime,
-                               Function<BQDaemonTestRuntime, Boolean> startupCheck) {
+    public BQRuntimeDaemon(BQRuntime runtime, Function<BQRuntime, Boolean> startupCheck) {
+
+        // use a separate logger from the tested process to avoid mixing STDERR output
+        this.logger = new DefaultBootLogger(false);
+
         this.runtime = runtime;
         this.startupCheck = startupCheck;
         this.executor = Executors.newCachedThreadPool();
@@ -53,12 +58,11 @@ public class BQDaemonTestRuntime {
     }
 
     protected void checkStartupSucceeded(long timeout, TimeUnit unit) {
-        BootLogger logger = runtime.getBootLogger();
 
         Future<Boolean> startupFuture = executor.submit(() -> {
 
             try {
-                while (!startupCheck.apply(this)) {
+                while (!startupCheck.apply(runtime)) {
                     logger.stderr("Daemon runtime hasn't started yet...");
                     Thread.sleep(500);
                 }
@@ -82,15 +86,13 @@ public class BQDaemonTestRuntime {
         }
 
         if (success) {
-            logger.stdout("Daemon runtime started...");
+            logger.stderr("Daemon runtime started...");
         } else {
             throw new RuntimeException("Daemon failed to start");
         }
     }
 
     public void stop() {
-
-        BootLogger logger = runtime.getBootLogger();
 
         runtime.shutdown();
 
@@ -99,7 +101,7 @@ public class BQDaemonTestRuntime {
         executor.shutdownNow();
         try {
             executor.awaitTermination(3, TimeUnit.SECONDS);
-            logger.stdout("Daemon runtime stopped...");
+            logger.stderr("Daemon runtime stopped...");
         } catch (InterruptedException e) {
             logger.stderr("Interrupted while waiting for shutdown", e);
         }

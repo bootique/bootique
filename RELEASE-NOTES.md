@@ -1,8 +1,9 @@
 ## 0.23
 
-#25  Map known exceptions to CommandOutcomes
-#140 Catch Guice CreationException
-#141 Refactor startup sequence
+* #25  Map known exceptions to CommandOutcomes
+* #140 Catch Guice CreationException
+* #141 Refactor startup sequence
+* #142 Streamline Test API - hide BQTestRuntime wrapper
 
 ## 0.22
 
