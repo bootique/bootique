@@ -1,10 +1,7 @@
 package io.bootique.test.junit;
 
 import io.bootique.BQRuntime;
-import io.bootique.log.BootLogger;
-import io.bootique.log.DefaultBootLogger;
 import io.bootique.test.BQDaemonTestRuntime;
-import io.bootique.test.InMemoryPrintStream;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.rules.ExternalResource;
@@ -135,14 +132,8 @@ public class BQDaemonTestFactory extends ExternalResource {
          */
         public BQDaemonTestRuntime start() {
 
-            InMemoryPrintStream stdout = new InMemoryPrintStream(System.out);
-            InMemoryPrintStream stderr = new InMemoryPrintStream(System.err);
-
-            // TODO: allow to turn off tracing, which can be either useful or annoying dependning on the context...
-            BootLogger bootLogger = new DefaultBootLogger(true, stdout, stderr);
-
-            BQRuntime runtime = bootique.bootLogger(bootLogger).createRuntime();
-            BQDaemonTestRuntime testRuntime = new BQDaemonTestRuntime(runtime, stdout, stderr, startupCheck);
+            BQRuntime runtime = bootique.createRuntime();
+            BQDaemonTestRuntime testRuntime = new BQDaemonTestRuntime(runtime, startupCheck);
             runtimes.add(testRuntime);
 
             testRuntime.start(startupTimeout, startupTimeoutTimeUnit);

@@ -82,7 +82,7 @@ public class BQModuleProviderChecker {
 
         testWithFactory(testFactory -> {
             // must auto-load modules to ensure all tested module dependencies are present...
-            BQRuntime runtime = testFactory.app().autoLoadModules().createRuntime().getRuntime();
+            BQRuntime runtime = testFactory.app().autoLoadModules().createRuntime();
 
             BQModuleProvider provider = matchingProvider();
             String providerName = provider.name();

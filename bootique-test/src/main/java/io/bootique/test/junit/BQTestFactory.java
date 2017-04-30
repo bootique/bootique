@@ -2,8 +2,6 @@ package io.bootique.test.junit;
 
 import io.bootique.BQRuntime;
 import io.bootique.config.ConfigurationFactory;
-import io.bootique.test.BQTestRuntime;
-import io.bootique.test.InMemoryPrintStream;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.rules.ExternalResource;
@@ -27,16 +25,16 @@ import java.util.Collection;
  */
 public class BQTestFactory extends ExternalResource {
 
-    private Collection<BQTestRuntime> runtimes;
+    private Collection<BQRuntime> runtimes;
 
     @Override
     protected void after() {
-        Collection<BQTestRuntime> localRuntimes = this.runtimes;
+        Collection<BQRuntime> localRuntimes = this.runtimes;
 
         if (localRuntimes != null) {
             localRuntimes.forEach(runtime -> {
                 try {
-                    runtime.stop();
+                    runtime.shutdown();
                 } catch (Exception e) {
                     // ignore...
                 }
@@ -68,39 +66,22 @@ public class BQTestFactory extends ExternalResource {
 
     public static class Builder extends BQTestRuntimeBuilder<Builder> {
 
-        private Collection<BQTestRuntime> runtimes;
+        private Collection<BQRuntime> runtimes;
 
-        private Builder(Collection<BQTestRuntime> runtimes, String[] args) {
+        private Builder(Collection<BQRuntime> runtimes, String[] args) {
             super(args);
             this.runtimes = runtimes;
         }
 
         /**
-         * @param args arguments for the test stack app.
-         * @return a new instance of test runtime.
-         * @deprecated since 0.20 in favor of {@link #createRuntime()}.
-         */
-        @Deprecated
-        public BQTestRuntime build(String... args) {
-            bootique.args(args);
-            return createRuntime();
-        }
-
-        /**
-         * The main build method that creates and returns a {@link BQTestRuntime}, which is a thin wrapper for
-         * Bootique runtime.
+         * The main build method that creates and returns a {@link BQRuntime}.
          *
-         * @return a new instance of {@link BQTestRuntime} configured in this builder.
+         * @return a new instance of {@link BQRuntime} configured in this builder.
          */
-        public BQTestRuntime createRuntime() {
-
-            InMemoryPrintStream stdout = new InMemoryPrintStream(System.out);
-            InMemoryPrintStream stderr = new InMemoryPrintStream(System.err);
-
+        public BQRuntime createRuntime() {
             BQRuntime runtime = bootique.createRuntime();
-            BQTestRuntime testRuntime = new BQTestRuntime(runtime, stdout, stderr);
-            runtimes.add(testRuntime);
-            return testRuntime;
+            runtimes.add(runtime);
+            return runtime;
         }
     }
 }

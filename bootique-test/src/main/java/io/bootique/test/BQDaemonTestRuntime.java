@@ -16,15 +16,16 @@ import java.util.function.Function;
 /**
  * @since 0.13
  */
-public class BQDaemonTestRuntime extends BQTestRuntime {
+public class BQDaemonTestRuntime {
 
+    private BQRuntime runtime;
     private ExecutorService executor;
     private Function<BQDaemonTestRuntime, Boolean> startupCheck;
     private Optional<CommandOutcome> outcome;
 
-    public BQDaemonTestRuntime(BQRuntime runtime, InMemoryPrintStream stdout, InMemoryPrintStream stderr,
+    public BQDaemonTestRuntime(BQRuntime runtime,
                                Function<BQDaemonTestRuntime, Boolean> startupCheck) {
-        super(runtime, stdout, stderr);
+        this.runtime = runtime;
         this.startupCheck = startupCheck;
         this.executor = Executors.newCachedThreadPool();
         this.outcome = Optional.empty();
@@ -38,17 +39,21 @@ public class BQDaemonTestRuntime extends BQTestRuntime {
         return outcome;
     }
 
+    public BQRuntime getRuntime() {
+        return runtime;
+    }
+
     public void start(long timeout, TimeUnit unit) {
         start();
         checkStartupSucceeded(timeout, unit);
     }
 
     protected void start() {
-        this.executor.submit(() -> outcome = Optional.of(run()));
+        this.executor.submit(() -> outcome = Optional.of(runtime.run()));
     }
 
     protected void checkStartupSucceeded(long timeout, TimeUnit unit) {
-        BootLogger logger = getRuntime().getBootLogger();
+        BootLogger logger = runtime.getBootLogger();
 
         Future<Boolean> startupFuture = executor.submit(() -> {
 
@@ -83,12 +88,11 @@ public class BQDaemonTestRuntime extends BQTestRuntime {
         }
     }
 
-    @Override
     public void stop() {
 
-        BootLogger logger = getRuntime().getBootLogger();
+        BootLogger logger = runtime.getBootLogger();
 
-        super.stop();
+        runtime.shutdown();
 
         // must interrupt execution (using "shutdown()" is not enough to stop
         // Jetty for instance

@@ -2,19 +2,17 @@ package io.bootique.test.junit;
 
 import com.google.inject.Inject;
 import io.bootique.BQCoreModule;
+import io.bootique.BQRuntime;
 import io.bootique.cli.Cli;
 import io.bootique.command.CommandOutcome;
 import io.bootique.command.CommandWithMetadata;
 import io.bootique.log.BootLogger;
 import io.bootique.meta.application.CommandMetadata;
-import io.bootique.test.BQTestRuntime;
 import io.bootique.test.TestIO;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class BQTestFactoryIT {
 
@@ -23,8 +21,8 @@ public class BQTestFactoryIT {
 
     @Test
     public void testCreateRuntime_Injection() {
-        BQTestRuntime runtime = testFactory.app("-x").autoLoadModules().createRuntime();
-        assertArrayEquals(new String[]{"-x"}, runtime.getRuntime().getArgs());
+        BQRuntime runtime = testFactory.app("-x").autoLoadModules().createRuntime();
+        assertArrayEquals(new String[]{"-x"}, runtime.getArgs());
     }
 
     @Test
@@ -32,13 +30,12 @@ public class BQTestFactoryIT {
 
         TestIO io = TestIO.noTrace();
 
-        BQTestRuntime runtime = testFactory.app("-x")
+        CommandOutcome result = testFactory.app("-x")
                 .autoLoadModules()
                 .module(b -> BQCoreModule.extend(b).addCommand(XCommand.class))
                 .bootLogger(io.getBootLogger())
-                .createRuntime();
-
-        CommandOutcome result = runtime.run();
+                .createRuntime()
+                .run();
 
         assertTrue(result.isSuccess());
         assertEquals("--out--", io.getStdout().trim());
