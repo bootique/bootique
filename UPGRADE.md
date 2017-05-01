@@ -3,9 +3,35 @@
 ## 0.23
 
 * [bootique #141](https://github.com/bootique/bootique/issues/141): If you've ever implemented your own "main" method 
-instead of relying on the one from `io.bootique.Bootique`, you may want to replace the call to deprecated `Bootique.run()` 
-with `Bootique.exec().exit()`. The new API does not exit the JVM within Bootique code, allowing for extra flexibility 
-(e.g. you may want to insert custom code after Bootique finish but before the app exit).
+instead of relying on the one from `io.bootique.Bootique`, you may want to replace the call to the deprecated `Bootique.run()` 
+with `Bootique.exec().exit()`. Notice how the new API allows to insert custom code after Bootique finish, but before the 
+app exit.
+
+* [bootique #142](https://github.com/bootique/bootique/issues/142): This issue introduces API-breaking changes to the
+integration testing API. Instead of `BQTestRuntime` and `BQDaemonTestRuntime`, test factories now produce simply 
+`BQRuntime`, better highlighting our promise of "application as an object" inside the tests. Upgrade instructions:
+
+  1. `BQTestRuntime` and `BQDaemonTestRuntime` are gone, so replace references to them with just `BQRuntime`. 
+  2. A common call to `testRuntime.getRuntime().getInstance(..)` should now be shortened to `testRuntime.getInstance(..)`.
+  3. If you need to get an outcome of a background task execution, instead of `daemonTestRuntime.getOutcome()` you need 
+  to call `daemonTestFactory.getOutcome(runtime)`.
+  4. If you need to capture STDOUT or STDERR of the tested object, use the new `TestIO` API, that additionally allows
+  to suppress trace logging, making your test console much less verbose than before. E.g.:
+  
+```java
+TestIO io = TestIO.noTrace();
+testFactory.app("-x")
+	.bootLogger(io.getBootLogger())
+	.createRuntime()
+	.run();
+
+assertEquals("--out--", io.getStdout();
+assertEquals("--err--", io.getStderr();
+```
+  Other modules that have been affected by this change are 
+  [bootique-jetty-test](https://github.com/bootique/bootique-jetty/issues/59), 
+  [bootique-jdbc-test](https://github.com/bootique/bootique-jdbc/issues/32),
+  [bootique-cayenne-test](https://github.com/bootique/bootique-cayenne/issues/39).
 
 ## 0.22
 
