@@ -16,8 +16,9 @@ integration testing API. Instead of `BQTestRuntime` and `BQDaemonTestRuntime`, t
   3. If you need to get an outcome of a background task execution, instead of `daemonTestRuntime.getOutcome()` you need 
   to call `daemonTestFactory.getOutcome(runtime)` ("daemonTestFactory" is a `BQDaemonTestFactory` or subclasses like
    `JettyTestFactory`, that are the `@Rule`'s in your test). 
-  4. If you need to capture STDOUT or STDERR of the tested object, use the new `TestIO` API, that additionally allows
-  to suppress trace logging, making your test console much less verbose than before. E.g.:
+  4. If you need to capture STDOUT or STDERR of a specific BQRuntime run, use the new `TestIO` class that can capture 
+  this data. It additionally allows to suppress trace logging, making your test console much less verbose than before. 
+  E.g.:
   
 	```java
 	TestIO io = TestIO.noTrace();
