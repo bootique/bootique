@@ -14,7 +14,8 @@ integration testing API. Instead of `BQTestRuntime` and `BQDaemonTestRuntime`, t
   1. `BQTestRuntime` and `BQDaemonTestRuntime` are gone, so replace references to them with just `BQRuntime`. 
   2. A common call to `testRuntime.getRuntime().getInstance(..)` should now be shortened to `testRuntime.getInstance(..)`.
   3. If you need to get an outcome of a background task execution, instead of `daemonTestRuntime.getOutcome()` you need 
-  to call `daemonTestFactory.getOutcome(runtime)`.
+  to call `daemonTestFactory.getOutcome(runtime)` ("daemonTestFactory" is a `BQDaemonTestFactory`, `JettyTestFactory` and 
+  such).
   4. If you need to capture STDOUT or STDERR of the tested object, use the new `TestIO` API, that additionally allows
   to suppress trace logging, making your test console much less verbose than before. E.g.:
   
