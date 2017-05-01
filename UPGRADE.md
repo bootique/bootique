@@ -9,7 +9,7 @@ app exit.
 
 * [bootique #142](https://github.com/bootique/bootique/issues/142): This issue introduces API-breaking changes to the
 integration testing API. Instead of `BQTestRuntime` and `BQDaemonTestRuntime`, test factories now produce simply 
-`BQRuntime`, better highlighting our promise of "application as an object" inside the tests. Upgrade instructions:
+`BQRuntime`, that helps to focus on the object being tested instead of test wrappers. Upgrade instructions:
 
   1. `BQTestRuntime` and `BQDaemonTestRuntime` are gone, so replace references to them with just `BQRuntime`. 
   2. A common call to `testRuntime.getRuntime().getInstance(..)` should now be shortened to `testRuntime.getInstance(..)`.
