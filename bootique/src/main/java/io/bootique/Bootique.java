@@ -421,7 +421,7 @@ public class Bootique {
         // exception unrecognized, dump the details for users to analyze..
         bootLogger.stderr("Command exception: ", parentTh);
 
-        String thMessage = th.getMessage();
+        String thMessage = th != null ? th.getMessage() : null;
         String message = thMessage != null ? "Command exception: '" + thMessage + "'." : "Command exception.";
         return CommandOutcome.failed(1, message, parentTh);
     }
