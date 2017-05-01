@@ -29,8 +29,8 @@ integration testing API. Instead of `BQTestRuntime` and `BQDaemonTestRuntime`, t
 		.createRuntime()
 		.run();
 
-	assertEquals("--out--", io.getStdout();
-	assertEquals("--err--", io.getStderr();
+	assertEquals("--out--", io.getStdout());
+	assertEquals("--err--", io.getStderr());
 	```
 	Other modules that have been affected by this change are 
 	[bootique-jetty-test](https://github.com/bootique/bootique-jetty/issues/59),

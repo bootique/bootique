@@ -33,16 +33,16 @@
 
 	@Test
 	public void testXyz() {
-		BQTestRuntime runtime = testFactory.app("--help").createRuntime();
+		BQRuntime runtime = testFactory.app("--help").createRuntime();
 		...
 	}
 }</programlisting>As
             you see, the test class declares a factory, and test methods can create
-                <code>BQTestRuntime</code> instances with different command-line arguments,
-            including commands (<code>--help</code> in this example), configuration file
+                <code>BQRuntime</code> instances with different command-line arguments, including
+            commands (<code>--help</code> in this example), configuration file
                 (<code>"--config=some.yml"</code>), etc. So your test runtime will behave just like
             a real Java app and will allow to verify various scenarios. </para>
-        <para>If a stack requires a thread pool to run (e.g. we are starting a webserver), it needs
+        <para>If we need to start the app on background (e.g. we are starting a webserver), it needs
             to be started with <code>BQDaemonTestFactory</code> instead of
                 <code>BQTestFactory</code>:<programlisting language="java">public class BackgroundTest {
 	
@@ -51,7 +51,7 @@
 	
 	@Test
 	public void testBackground() {
-		BQDaemonTestRuntime runtime = testFactory.app("--server").start();
+		BQRuntime runtime = testFactory.app("--server").start();
 		... 
 	}
 }</programlisting></para>
@@ -72,10 +72,6 @@ public void testAbc() {
 		.createRuntime();
 	... 
 }</programlisting></para>
-        <para>In real test suites creating configurators for every test becomes unwieldy rather
-            quickly. So consider subclassing <code>BQDaemonTestFactory</code> or
-                <code>BQTestFactory</code> to build reusable configurators for your entire
-            app.</para>
     </chapter>
     
     <chapter>
@@ -94,9 +90,9 @@ public void testAbc() {
                 <programlisting language="java">@Test
 public void testService() {
 
-	BQTestRuntime runtime = testFactory.app("--config=src/test/resources/my.yml").createRuntime();
+	BQRuntime runtime = testFactory.app("--config=src/test/resources/my.yml").createRuntime();
 
-	MyService service = runtime.getRuntime().getInstance(MyService.class);
+	MyService service = runtime.getInstance(MyService.class);
 	assertEquals("xyz", service.someMethod());
 }</programlisting>
             </para>
@@ -109,7 +105,7 @@ public void testService() {
                 E.g.:<programlisting language="java">@Test
 public void testServer() {
 
-	BQDaemonTestRuntime runtime = testFactory.app("--server").start();
+	BQRuntime runtime = testFactory.app("--server").start();
 
 	// using JAX-RS client API
 	WebTarget base = ClientBuilder.newClient().target("http://localhost:8080/");
@@ -124,14 +120,17 @@ public void testServer() {
                 checking the values of the exist code and <code>stdin</code> and <code>stderr</code>
                 contents:<programlisting>@Test
 public void testCommand() {
-	BQTestRuntime runtime = testFactory.app("--help").createRuntime();
-	CommandOutcome outcome = runtime.run();
+
+	TestIO io = TestIO.noTrace();
+	CommandOutcome outcome = testFactory
+		.app("--help")
+		.bootLogger(io.getBootLogger())
+		.createRuntime()
+		.run();
 
 	assertEquals(0, outcome.getExitCode());
-
-	String help = runtime.getStdout();
-	assertTrue(help.contains("--help"));
-	assertTrue(help.contains("--config"));
+	assertTrue(io.getStdout().contains("--help"));
+	assertTrue(io.getStdout().contains("--config"));
 }</programlisting></para>
         </section>
         <section>
