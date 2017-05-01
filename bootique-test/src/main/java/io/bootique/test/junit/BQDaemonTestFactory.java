@@ -61,6 +61,43 @@ public class BQDaemonTestFactory extends ExternalResource {
         return new Builder(runtimes, args);
     }
 
+    /**
+     * @param runtime a runtime executing in the background.
+     * @return an optional object wrapping the state of the runtime execution. If present, then the runtime
+     * execution has finished.
+     * @since 0.22
+     */
+    public Optional<CommandOutcome> getOutcome(BQRuntime runtime) {
+        return getDaemon(runtimes, runtime).getOutcome();
+    }
+
+    /**
+     * Starts the specified runtime on the background. If startup check was specified when building the runtime with
+     * {@link Builder#startupCheck(Function)} and similar, blocks the calling thread until startup check succeeds or
+     * times out.
+     *
+     * @param runtime a runtime being tested. Must be the runtime produced and managed by this factory.
+     * @since 0.23
+     */
+    public void start(BQRuntime runtime) {
+        getDaemon(runtimes, runtime).start();
+    }
+
+    /**
+     * Shuts down the specified runtime running on the background as well as the thread pool supporting its execution.
+     *
+     * @param runtime a runtime being tested. Must be the runtime produced and managed by this factory.
+     * @since 0.23
+     */
+    public void stop(BQRuntime runtime) {
+        getDaemon(runtimes, runtime).stop();
+    }
+
+    static BQRuntimeDaemon getDaemon(Map<BQRuntime, BQRuntimeDaemon> runtimes, BQRuntime runtime) {
+        return Objects
+                .requireNonNull(runtimes.get(runtime), "Runtime is not registered with the factory: " + runtime);
+    }
+
     // parameterization is needed to enable covariant return types in subclasses
     public static class Builder<T extends Builder<T>> extends BQTestRuntimeBuilder<T> {
 
@@ -85,18 +122,6 @@ public class BQDaemonTestFactory extends ExternalResource {
         }
 
         /**
-         * @param runtime a runtime executing in the background.
-         * @return an optional object wrapping the state of the runtime execution. If present, then the runtime
-         * execution has finished.
-         * @since 0.22
-         */
-        public Optional<CommandOutcome> getOutcome(BQRuntime runtime) {
-            return Objects
-                    .requireNonNull(runtimes.get(runtime), "Runtime is not registered with the factory.")
-                    .getOutcome();
-        }
-
-        /**
          * Adds a startup check that waits till the runtime finishes, within the
          * startup timeout bounds.
          *
@@ -104,7 +129,7 @@ public class BQDaemonTestFactory extends ExternalResource {
          * @since 0.16
          */
         public T startupAndWaitCheck() {
-            this.startupCheck = runtime -> getOutcome(runtime).isPresent();
+            this.startupCheck = runtime -> BQDaemonTestFactory.getDaemon(runtimes, runtime).getOutcome().isPresent();
             return (T) this;
         }
 
@@ -115,20 +140,31 @@ public class BQDaemonTestFactory extends ExternalResource {
         }
 
         /**
+         * Creates runtime without starting it. Can be started via {@link BQDaemonTestFactory#start(BQRuntime)}.
+         *
+         * @return newly created managed runtime.
+         * @since 0.23
+         */
+        public BQRuntime createRuntime() {
+            BQRuntime runtime = bootique.createRuntime();
+
+            // wrap in BQRuntimeDaemon to handle thread pool shutdown and startup checks.
+            BQRuntimeDaemon testRuntime =
+                    new BQRuntimeDaemon(runtime, startupCheck, startupTimeout, startupTimeoutTimeUnit);
+            runtimes.put(runtime, testRuntime);
+
+            return runtime;
+        }
+
+        /**
          * Starts the test app in a background thread, blocking the test thread until the startup checker succeeds.
          *
          * @return {@link BQRuntime} instance. The caller doesn't need to shut it down. JUnit lifecycle takes care of it.
          * @since 0.23
          */
         public BQRuntime start() {
-
-            BQRuntime runtime = bootique.createRuntime();
-
-            // wrap in BQRuntimeDaemon to handle thread pool shutdown and startup checks.
-            BQRuntimeDaemon testRuntime = new BQRuntimeDaemon(runtime, startupCheck);
-            runtimes.put(runtime, testRuntime);
-            testRuntime.start(startupTimeout, startupTimeoutTimeUnit);
-
+            BQRuntime runtime = createRuntime();
+            getDaemon(runtimes, runtime).start();
             return runtime;
         }
     }

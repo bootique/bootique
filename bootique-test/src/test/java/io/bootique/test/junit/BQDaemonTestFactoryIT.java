@@ -20,6 +20,17 @@ public class BQDaemonTestFactoryIT {
     public BQDaemonTestFactory testFactory = new BQDaemonTestFactory();
 
     @Test
+    public void test_GetOutcome() throws InterruptedException {
+
+        BQRuntime runtime = testFactory.app().createRuntime();
+
+        assertFalse(testFactory.getOutcome(runtime).isPresent());
+        testFactory.start(runtime);
+        Thread.sleep(300);
+        assertTrue(testFactory.getOutcome(runtime).isPresent());
+    }
+
+    @Test
     public void test_StartupAndWait() {
         BQRuntime r1 = testFactory.app("a1", "a2").startupAndWaitCheck().start();
         assertArrayEquals(new String[]{"a1", "a2"}, r1.getArgs());

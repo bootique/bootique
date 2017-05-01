@@ -21,11 +21,13 @@ public class BQRuntimeDaemon {
 
     private BootLogger logger;
     private BQRuntime runtime;
+    private long startupTimeout;
+    private TimeUnit startupTimeoutTimeUnit;
     private ExecutorService executor;
     private Function<BQRuntime, Boolean> startupCheck;
     private Optional<CommandOutcome> outcome;
 
-    public BQRuntimeDaemon(BQRuntime runtime, Function<BQRuntime, Boolean> startupCheck) {
+    public BQRuntimeDaemon(BQRuntime runtime, Function<BQRuntime, Boolean> startupCheck, long startupTimeout, TimeUnit startupTimeoutTimeUnit) {
 
         // use a separate logger from the tested process to avoid mixing STDERR output
         this.logger = new DefaultBootLogger(false);
@@ -34,6 +36,8 @@ public class BQRuntimeDaemon {
         this.startupCheck = startupCheck;
         this.executor = Executors.newCachedThreadPool();
         this.outcome = Optional.empty();
+        this.startupTimeout = startupTimeout;
+        this.startupTimeoutTimeUnit = startupTimeoutTimeUnit;
     }
 
     /**
@@ -48,13 +52,9 @@ public class BQRuntimeDaemon {
         return runtime;
     }
 
-    public void start(long timeout, TimeUnit unit) {
-        start();
-        checkStartupSucceeded(timeout, unit);
-    }
-
-    protected void start() {
+    public void start() {
         this.executor.submit(() -> outcome = Optional.of(runtime.run()));
+        checkStartupSucceeded(startupTimeout, startupTimeoutTimeUnit);
     }
 
     protected void checkStartupSucceeded(long timeout, TimeUnit unit) {
