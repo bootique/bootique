@@ -18,20 +18,20 @@ integration testing API. Instead of `BQTestRuntime` and `BQDaemonTestRuntime`, t
   4. If you need to capture STDOUT or STDERR of the tested object, use the new `TestIO` API, that additionally allows
   to suppress trace logging, making your test console much less verbose than before. E.g.:
   
-```java
-TestIO io = TestIO.noTrace();
-testFactory.app("-x")
-	.bootLogger(io.getBootLogger())
-	.createRuntime()
-	.run();
+	```java
+	TestIO io = TestIO.noTrace();
+	testFactory.app("-x")
+		.bootLogger(io.getBootLogger())
+		.createRuntime()
+		.run();
 
-assertEquals("--out--", io.getStdout();
-assertEquals("--err--", io.getStderr();
-```
-  Other modules that have been affected by this change are 
-  [bootique-jetty-test](https://github.com/bootique/bootique-jetty/issues/59), 
-  [bootique-jdbc-test](https://github.com/bootique/bootique-jdbc/issues/32),
-  [bootique-cayenne-test](https://github.com/bootique/bootique-cayenne/issues/39).
+	assertEquals("--out--", io.getStdout();
+	assertEquals("--err--", io.getStderr();
+	```
+	Other modules that have been affected by this change are 
+	[bootique-jetty-test](https://github.com/bootique/bootique-jetty/issues/59), 
+	[bootique-jdbc-test](https://github.com/bootique/bootique-jdbc/issues/32),
+	[bootique-cayenne-test](https://github.com/bootique/bootique-cayenne/issues/39).
 
 ## 0.22
 
