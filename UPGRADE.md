@@ -33,7 +33,8 @@ integration testing API. Instead of `BQTestRuntime` and `BQDaemonTestRuntime`, t
 	assertEquals("--err--", io.getStderr();
 	```
 	Other modules that have been affected by this change are 
-	[bootique-jetty-test](https://github.com/bootique/bootique-jetty/issues/59), 
+	[bootique-jetty-test](https://github.com/bootique/bootique-jetty/issues/59),
+	[bootique-undertow-test](https://github.com/bootique/bootique-undertow/issues/3), 
 	[bootique-jdbc-test](https://github.com/bootique/bootique-jdbc/issues/32),
 	[bootique-cayenne-test](https://github.com/bootique/bootique-cayenne/issues/39).
 
