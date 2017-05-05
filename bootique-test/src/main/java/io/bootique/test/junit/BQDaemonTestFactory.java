@@ -29,6 +29,11 @@ import java.util.function.Function;
  */
 public class BQDaemonTestFactory extends ExternalResource {
 
+    static BQRuntimeDaemon getDaemon(Map<BQRuntime, BQRuntimeDaemon> runtimes, BQRuntime runtime) {
+        return Objects
+                .requireNonNull(runtimes.get(runtime), "Runtime is not registered with the factory: " + runtime);
+    }
+
     protected Map<BQRuntime, BQRuntimeDaemon> runtimes;
 
     @Override
@@ -68,7 +73,7 @@ public class BQDaemonTestFactory extends ExternalResource {
      * @since 0.22
      */
     public Optional<CommandOutcome> getOutcome(BQRuntime runtime) {
-        return getDaemon(runtimes, runtime).getOutcome();
+        return getDaemon(runtime).getOutcome();
     }
 
     /**
@@ -80,7 +85,11 @@ public class BQDaemonTestFactory extends ExternalResource {
      * @since 0.23
      */
     public void start(BQRuntime runtime) {
-        getDaemon(runtimes, runtime).start();
+        getDaemon(runtime).start();
+    }
+
+    protected BQRuntimeDaemon getDaemon(BQRuntime runtime) {
+        return BQDaemonTestFactory.getDaemon(this.runtimes, runtime);
     }
 
     /**
@@ -90,13 +99,9 @@ public class BQDaemonTestFactory extends ExternalResource {
      * @since 0.23
      */
     public void stop(BQRuntime runtime) {
-        getDaemon(runtimes, runtime).stop();
+        getDaemon(runtime).stop();
     }
 
-    static BQRuntimeDaemon getDaemon(Map<BQRuntime, BQRuntimeDaemon> runtimes, BQRuntime runtime) {
-        return Objects
-                .requireNonNull(runtimes.get(runtime), "Runtime is not registered with the factory: " + runtime);
-    }
 
     // parameterization is needed to enable covariant return types in subclasses
     public static class Builder<T extends Builder<T>> extends BQTestRuntimeBuilder<T> {
