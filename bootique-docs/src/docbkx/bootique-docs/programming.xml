@@ -251,7 +251,7 @@ export BQ_MY_PROP2=valY</programlisting>While
                 as<programlisting>export P1=valX
 export P2=valY</programlisting></para>
             <para>Moreover, explicitly declared vars will automatically appear in the application
-                help, assisting the admins in cofniguring your app</para>
+                help, assisting the admins in configuring your app</para>
             <para><emphasis> (TODO: document BQConfig and BQConfigProperty config factory
                     annotations required for the help generation to
                 work)</emphasis><programlisting>$ java -jar myapp-1.0.jar --help
