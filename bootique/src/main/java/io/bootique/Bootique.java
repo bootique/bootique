@@ -381,6 +381,10 @@ public class Bootique {
             } else {
                 bootLogger.stderr(String.format("Error running command '%s'", getArgsAsString()));
             }
+            if (o.getException() != null) {
+                // exception unrecognized, dump the details for users to analyze..
+                bootLogger.stderr("Command exception: ", o.getException());
+            }
         }
 
         return o;
@@ -417,9 +421,6 @@ public class Bootique {
             CommandOutcome o = ((BootiqueException) th).getOutcome();
             return th == parentTh ? o : CommandOutcome.failed(o.getExitCode(), o.getMessage(), parentTh);
         }
-
-        // exception unrecognized, dump the details for users to analyze..
-        bootLogger.stderr("Command exception: ", parentTh);
 
         String thMessage = th != null ? th.getMessage() : null;
         String message = thMessage != null ? "Command exception: '" + thMessage + "'." : "Command exception.";
