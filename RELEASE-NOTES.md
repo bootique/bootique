@@ -4,6 +4,7 @@
 * #140 Catch Guice CreationException
 * #141 Refactor startup sequence
 * #142 Streamline Test API - hide BQTestRuntime wrapper
+* #148 Exceptions inside CommandOutcomes are not reported by Bootique
 
 ## 0.22
 
