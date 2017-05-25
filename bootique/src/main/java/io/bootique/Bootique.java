@@ -412,10 +412,13 @@ public class Bootique {
 
     protected CommandOutcome processExceptions(Throwable th, Throwable parentTh) {
 
+
         if (th instanceof BootiqueException) {
+            CommandOutcome originalOutcome = ((BootiqueException) th).getOutcome();
+
+            // BootiqueException should be stripped of the exception cause and reported on a single line
             // TODO: should we still print the stack trace via logger.trace?
-            CommandOutcome o = ((BootiqueException) th).getOutcome();
-            return th == parentTh ? o : CommandOutcome.failed(o.getExitCode(), o.getMessage(), parentTh);
+            return CommandOutcome.failed(originalOutcome.getExitCode(), originalOutcome.getMessage());
         }
 
         String thMessage = th != null ? th.getMessage() : null;

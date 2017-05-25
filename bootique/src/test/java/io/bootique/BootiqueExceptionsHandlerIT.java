@@ -1,11 +1,9 @@
 package io.bootique;
 
 import com.google.inject.Binder;
-import com.google.inject.CreationException;
 import com.google.inject.Inject;
 import com.google.inject.Module;
 import com.google.inject.Provides;
-import com.google.inject.ProvisionException;
 import com.google.inject.Singleton;
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
@@ -17,8 +15,7 @@ import org.junit.Test;
 import java.util.Collection;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class BootiqueExceptionsHandlerIT {
 
@@ -27,7 +24,7 @@ public class BootiqueExceptionsHandlerIT {
         CommandOutcome out = Bootique.app("-x").exec();
 
         assertEquals(1, out.getExitCode());
-        assertTrue(out.getException() instanceof ProvisionException);
+        assertNull(out.getException());
         assertEquals("x is not a recognized option", out.getMessage());
     }
 
@@ -63,7 +60,7 @@ public class BootiqueExceptionsHandlerIT {
                 .exec();
 
         assertEquals(1, out.getExitCode());
-        assertTrue(out.getException() instanceof ProvisionException);
+        assertNull(out.getException());
         assertEquals("CLI options match multiple commands: xcommand, ycommand.", out.getMessage());
     }
 
@@ -74,7 +71,7 @@ public class BootiqueExceptionsHandlerIT {
                 .exec();
 
         assertEquals(1, out.getExitCode());
-        assertTrue(out.getException() instanceof CreationException);
+        assertNull(out.getException());
         assertTrue(out.getMessage(), out.getMessage().startsWith("Config resource is not found or is inaccessible: file:"));
         assertTrue(out.getMessage(), out.getMessage().endsWith("no_such_config.yml"));
     }
@@ -86,7 +83,7 @@ public class BootiqueExceptionsHandlerIT {
                 .exec();
 
         assertEquals(1, out.getExitCode());
-        assertTrue(out.getException() instanceof CreationException);
+        assertNull(out.getException());
         assertEquals("Invalid config resource url: nosuchprotocol://myconfig", out.getMessage());
     }
 
@@ -98,7 +95,7 @@ public class BootiqueExceptionsHandlerIT {
                 .exec();
 
         assertEquals(1, out.getExitCode());
-        assertTrue(out.getException() instanceof CreationException);
+        assertNull(out.getException());
         assertEquals("Invalid config resource url: no_such_protocol://myconfig", out.getMessage());
     }
 
@@ -109,7 +106,7 @@ public class BootiqueExceptionsHandlerIT {
                 .exec();
 
         assertEquals(1, out.getExitCode());
-        assertTrue(out.getException() instanceof ProvisionException);
+        assertNull(out.getException());
         assertEquals("test provider exception", out.getMessage());
     }
 
@@ -121,7 +118,7 @@ public class BootiqueExceptionsHandlerIT {
                 .exec();
 
         assertEquals(1, out.getExitCode());
-        assertTrue(out.getException() instanceof BootiqueException);
+        assertNull(out.getException());
         assertEquals("Circular override dependency between DI modules. Culprit: ModuleWithOverride1", out.getMessage());
     }
 
@@ -133,7 +130,7 @@ public class BootiqueExceptionsHandlerIT {
                 .exec();
 
         assertEquals(1, out.getExitCode());
-        assertTrue(out.getException() instanceof BootiqueException);
+        assertNull(out.getException());
         assertTrue(out.getMessage(), out.getMessage()
                 .startsWith("Module BQCoreModule provided by Bootique is overridden more then once by: " +
                         "BootiqueExceptionsHandlerIT"));
@@ -171,7 +168,7 @@ public class BootiqueExceptionsHandlerIT {
                 .exec();
 
         assertEquals(1, out.getExitCode());
-        assertTrue(out.getException() instanceof ProvisionException);
+        assertNull(out.getException());
         assertEquals("More than one DI command named 'xcommand'. Conflicting types: " +
                         "io.bootique.BootiqueExceptionsHandlerIT$4, io.bootique.BootiqueExceptionsHandlerIT$3.",
                 out.getMessage());
