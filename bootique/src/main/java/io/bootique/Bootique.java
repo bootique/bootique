@@ -377,13 +377,9 @@ public class Bootique {
         // report error
         if (!o.isSuccess()) {
             if (o.getMessage() != null) {
-                bootLogger.stderr(String.format("Error running command '%s': %s", getArgsAsString(), o.getMessage()));
+                bootLogger.stderr(String.format("Error running command '%s': %s", getArgsAsString(), o.getMessage()), o.getException());
             } else {
-                bootLogger.stderr(String.format("Error running command '%s'", getArgsAsString()));
-            }
-            if (o.getException() != null) {
-                // exception unrecognized, dump the details for users to analyze..
-                bootLogger.stderr("Command exception: ", o.getException());
+                bootLogger.stderr(String.format("Error running command '%s'", getArgsAsString()), o.getException());
             }
         }
 
