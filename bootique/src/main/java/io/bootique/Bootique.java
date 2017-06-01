@@ -381,6 +381,10 @@ public class Bootique {
             } else {
                 bootLogger.stderr(String.format("Error running command '%s'", getArgsAsString()), o.getException());
             }
+            if (o.getException() != null) {
+                // exception unrecognized, dump the details for users to analyze..
+                bootLogger.stderr("Command exception: ", o.getException());
+            }
         }
 
         return o;
