@@ -12,29 +12,6 @@ class RuntimeModule {
         this.bqModule = bqModule;
     }
 
-    @Override
-    public boolean equals(Object object) {
-
-        if (object == this) {
-            return true;
-        }
-
-        if (object instanceof RuntimeModule) {
-
-            RuntimeModule otherRuntimeModule = (RuntimeModule) object;
-
-            // equality by module type...
-            return getModule().getClass().equals(otherRuntimeModule.getModule().getClass());
-        }
-
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return 37 + getModule().getClass().hashCode();
-    }
-
     public Module getModule() {
         return bqModule.getModule();
     }
