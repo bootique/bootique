@@ -2,20 +2,18 @@ package io.bootique;
 
 import com.google.inject.Module;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Map;
-
-import static java.util.stream.Collectors.toList;
 
 class RuntimeModule {
 
-    private BQModule module;
-    private Collection<RuntimeModule> overriddenBy;
+    private BQModule bqModule;
+    private RuntimeModule overridesThis;
+    private Collection<RuntimeModule> overridden;
 
-    RuntimeModule(BQModule module) {
-        this.module = module;
-        this.overriddenBy = new LinkedHashSet<>();
+    RuntimeModule(BQModule bqModule) {
+        this.bqModule = bqModule;
+        this.overridden = new ArrayList<>(3);
     }
 
     @Override
@@ -30,7 +28,7 @@ class RuntimeModule {
             RuntimeModule otherRuntimeModule = (RuntimeModule) object;
 
             // equality by module type...
-            return module.getModule().getClass().equals(otherRuntimeModule.module.getModule().getClass());
+            return getModule().getClass().equals(otherRuntimeModule.getModule().getClass());
         }
 
         return false;
@@ -38,48 +36,73 @@ class RuntimeModule {
 
     @Override
     public int hashCode() {
-        return 37 + module.getClass().hashCode();
+        return 37 + getModule().getClass().hashCode();
     }
 
     public Module getModule() {
-        return module.getModule();
+        return bqModule.getModule();
     }
 
-    Collection<RuntimeModule> getModuleOverrides(Map<Class<? extends Module>, RuntimeModule> modules) {
-        return module.getOverrides().stream().map(t -> modules.get(t)).filter(n -> n != null).collect(toList());
+    public BQModule getBqModule() {
+        return bqModule;
+    }
+
+    public Collection<RuntimeModule> getOverridden() {
+        return overridden;
     }
 
     void checkCycles() {
-        overriddenBy.forEach(n -> n.checkCycles(this));
+        if(overridesThis != null) {
+            overridesThis.checkCycles(this);
+        }
     }
 
-    void checkCycles(RuntimeModule root) {
+    private void checkCycles(RuntimeModule root) {
         if (root == this) {
             // TODO: show all modules participating in the detected cycle...
             throw new BootiqueException(1,
                     "Circular override dependency between DI modules. Culprit: " + getModuleName());
         }
 
-        overriddenBy.forEach(n -> n.checkCycles(root));
+        if(overridesThis != null) {
+            overridesThis.checkCycles(root);
+        }
     }
 
     Class<? extends Module> getModuleType() {
-        return module.getModule().getClass();
+        return getModule().getClass();
     }
 
     String getModuleName() {
-        return module.getName();
+        return bqModule.getName();
     }
 
     String getProviderName() {
-        return module.getProviderName();
+        return bqModule.getProviderName();
     }
 
-    Collection<RuntimeModule> getOverriddenBy() {
-        return overriddenBy;
+    boolean isNotOverridden() {
+        return overridesThis == null;
     }
 
-    void addOverriddenBy(RuntimeModule module) {
-        overriddenBy.add(module);
+    void isOverriddenBy(RuntimeModule module) {
+
+        // no more than one override is allowed
+       if(this.overridesThis != null) {
+           String message = String.format(
+                   "Module %s provided by %s is overridden twice by %s and %s",
+                   getModuleName(),
+                   getProviderName(),
+                   this.overridesThis.getModuleName(),
+                   module.getModuleName());
+
+           throw new BootiqueException(1, message);
+       }
+
+       this.overridesThis = module;
+    }
+
+    void overrides(RuntimeModule module) {
+        this.overridden.add(module);
     }
 }

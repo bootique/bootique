@@ -101,10 +101,10 @@ public class RuntimeModuleMergerTest {
 		mockBqModules.set(0, createBQModule(testModules.get(0), M3.class));
 
 		Collection<BQModule> bqModules = Arrays.asList(mockBqModules.get(0), mockBqModules.get(3));
-		List<Module> modules = new RuntimeModuleMerger(bootLogger).toGuiceModules(bqModules);
+		Collection<Module> modules = new RuntimeModuleMerger(bootLogger).toGuiceModules(bqModules);
 		assertEquals(1, modules.size());
 
-		assertOverrideModule(modules.get(0));
+		assertOverrideModule(modules.iterator().next());
 	}
 
 	@Test
