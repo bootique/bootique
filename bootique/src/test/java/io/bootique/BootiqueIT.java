@@ -1,9 +1,12 @@
 package io.bootique;
 
 import com.google.inject.Binder;
+import com.google.inject.BindingAnnotation;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
+import com.google.inject.Provides;
+import com.google.inject.Singleton;
 import io.bootique.annotation.Args;
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
@@ -12,6 +15,10 @@ import io.bootique.it.ItestModuleProvider;
 import io.bootique.meta.application.CommandMetadata;
 import org.junit.Test;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -105,11 +112,36 @@ public class BootiqueIT {
 
     @Test
     public void testCreateInjector_Overrides_Multi_Level() {
-        Injector i = Bootique.app(args).override(BQCoreModule.class).with(M0.class).override(M0.class).with(M1.class)
+        Injector i = Bootique.app(args)
+                .override(BQCoreModule.class).with(M0.class)
+                .override(M0.class).with(M1.class)
                 .createInjector();
 
         String[] args = i.getInstance(Key.get(String[].class, Args.class));
         assertSame(M1.ARGS, args);
+    }
+
+    @Test
+    public void testCreateInjector_Overrides_OriginalModuleServices() {
+        Injector i = Bootique.app(args)
+                .module(M2.class)
+                .override(M2.class).with(SubM2.class)
+                .createInjector();
+
+        String s2 = i.getInstance(Key.get(String.class, S2.class));
+        assertEquals("sub_m2_s2_m2_s1", s2);
+    }
+
+    @Test
+    public void testCreateInjector_Overrides_Multi_Level_OriginalModuleServices() {
+        Injector i = Bootique.app(args)
+                .module(M2.class)
+                .override(M2.class).with(SubM2.class)
+                .override(SubM2.class).with(SubSubM2.class)
+                .createInjector();
+
+        String s2 = i.getInstance(Key.get(String.class, S2.class));
+        assertEquals("sub_sub_m2_s2_m2_s1", s2);
     }
 
     @Test
@@ -150,6 +182,62 @@ public class BootiqueIT {
         @Override
         public void configure(Binder binder) {
             binder.bind(String[].class).annotatedWith(Args.class).toInstance(ARGS);
+        }
+    }
+
+    @Target({ElementType.PARAMETER, ElementType.FIELD, ElementType.METHOD})
+    @Retention(RetentionPolicy.RUNTIME)
+    @BindingAnnotation
+    @interface S1 {
+
+    }
+
+    @Target({ElementType.PARAMETER, ElementType.FIELD, ElementType.METHOD})
+    @Retention(RetentionPolicy.RUNTIME)
+    @BindingAnnotation
+    @interface S2 {
+
+    }
+
+    static class M2 implements Module {
+
+        @Override
+        public void configure(Binder binder) {
+        }
+
+        @S1
+        @Provides
+        @Singleton
+        String getS1() {
+            return "m2_s1";
+        }
+    }
+
+    static class SubM2 implements Module {
+
+        @Override
+        public void configure(Binder binder) {
+        }
+
+        @S2
+        @Provides
+        @Singleton
+        String getS2(@S1 String s1) {
+            return "sub_m2_s2_" + s1;
+        }
+    }
+
+    static class SubSubM2 implements Module {
+
+        @Override
+        public void configure(Binder binder) {
+        }
+
+        @S2
+        @Provides
+        @Singleton
+        String getS2(@S1 String s1) {
+            return "sub_sub_m2_s2_" + s1;
         }
     }
 }
