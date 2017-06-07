@@ -6,7 +6,6 @@ import io.bootique.log.BootLogger;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
@@ -23,12 +22,12 @@ class RuntimeModuleMerger {
         return applyOverrides(checkCycles(collectUnique(bqModules)));
     }
 
-    private List<Module> applyOverrides(Collection<RuntimeModule> modules) {
+    private Collection<Module> applyOverrides(Collection<RuntimeModule> modules) {
         return modules.stream()
-                // find "roots"
-                .filter(RuntimeModule::isNotOverridden)
-                // fold overrides
-                .map(this::merge)
+                // find "heads" in override dependency linked lists.
+                .filter(RuntimeModule::doesNotOverrideOthers)
+                // fold each overrides linked list into a single module
+                .map(this::fold)
                 .collect(toList());
     }
 
@@ -73,29 +72,28 @@ class RuntimeModuleMerger {
                     .map(t -> modules.get(t))
                     .filter(rmn -> rmn != null)
                     .forEach(o -> {
-                        o.isOverriddenBy(rm);
-                        rm.overrides(o);
+                        o.setOverriddenBy(rm);
+                        rm.setOverridesOthers(true);
                     });
         }
     }
 
-    private Module merge(RuntimeModule rm) {
-        bootLogger.trace(() -> String.format("Adding module '%s' provided by '%s'...", rm.getModuleName(),
-                rm.getProviderName()));
+    private Module fold(RuntimeModule rm) {
+        bootLogger.trace(() ->
+                String.format("Adding module '%s' provided by '%s'...", rm.getModuleName(),
+                        rm.getProviderName()));
 
-        Collection<RuntimeModule> overridden = rm.getOverridden();
+        RuntimeModule overriddenBy = rm.getOverriddenBy();
 
-        if (overridden.isEmpty()) {
+        if (overriddenBy == null) {
             return rm.getModule();
         }
 
-        Collection<Module> overrideModules = overridden.stream().map(o -> {
-            bootLogger.trace(() -> String.format("Will override %s provided by %s...", o.getModuleName(),
-                    o.getProviderName()));
-            return o.getModule();
-        }).collect(toList());
+        bootLogger.trace(() -> String.format("Will override %s provided by %s...",
+                rm.getModuleName(),
+                rm.getProviderName()));
 
-        return Modules.override(overrideModules).with(rm.getModule());
+        return Modules.override(rm.getModule()).with(fold(overriddenBy));
     }
 
 }

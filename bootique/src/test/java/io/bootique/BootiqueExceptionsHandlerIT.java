@@ -132,7 +132,7 @@ public class BootiqueExceptionsHandlerIT {
         assertEquals(1, out.getExitCode());
         assertNull(out.getException());
         assertTrue(out.getMessage(), out.getMessage()
-                .startsWith("Module BQCoreModule provided by Bootique is overridden more then once by: " +
+                .startsWith("Module BQCoreModule provided by Bootique is overridden twice by " +
                         "BootiqueExceptionsHandlerIT"));
     }
 
