@@ -93,6 +93,10 @@ class RuntimeModuleMerger {
                 rm.getModuleName(),
                 rm.getProviderName()));
 
+        // WARN: using recursion because fold.. is there a realistic prospect of this blowing the stack? I haven't
+        // see overrides more than 2-4 levels deep.
+
+        // fold must happen in this order (overriding starting from tail). Otherwise the algorithm will not work.
         return Modules.override(rm.getModule()).with(fold(overriddenBy));
     }
 
