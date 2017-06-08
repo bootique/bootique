@@ -34,12 +34,25 @@ public class BQRuntime {
      * @since 0.12
      */
     public <T> T getInstance(Class<T> type) {
-        Binding<T> binding = injector.getExistingBinding(Key.get(type));
+        return getInstance(Key.get(type));
+    }
+
+    /**
+     * Returns a DI-bound instance for a given DI key, throwing if such key is not explicitly bound in DI.
+     *
+     * @param <T>   a type of the instance to return.
+     * @param diKey a DI key for a given instance.
+     * @return a DI-bound instance of a given type.
+     * @since 0.23
+     */
+    // TODO: Guice API is exposed directly... bad
+    public <T> T getInstance(Key<T> diKey) {
+        Binding<T> binding = injector.getExistingBinding(diKey);
 
         // note that Guice default behavior is to attempt creating a binding on
         // the fly, if there's no explicit one available. We are overriding this
         // behavior.
-        return Objects.requireNonNull(binding, "No binding for type: " + type).getProvider().get();
+        return Objects.requireNonNull(binding, "No binding for key: " + diKey).getProvider().get();
     }
 
     public BootLogger getBootLogger() {
