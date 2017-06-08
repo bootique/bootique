@@ -79,19 +79,15 @@ class RuntimeModuleMerger {
     }
 
     private Module fold(RuntimeModule rm) {
-        bootLogger.trace(() ->
-                String.format("Adding module '%s' provided by '%s'...", rm.getModuleName(),
-                        rm.getProviderName()));
 
         RuntimeModule overriddenBy = rm.getOverriddenBy();
 
         if (overriddenBy == null) {
+            trace(rm.getBqModule(), null);
             return rm.getModule();
         }
 
-        bootLogger.trace(() -> String.format("Will override %s provided by %s...",
-                rm.getModuleName(),
-                rm.getProviderName()));
+        trace(rm.getBqModule(), overriddenBy.getBqModule());
 
         // WARN: using recursion because fold.. is there a realistic prospect of this blowing the stack? I haven't
         // seen overrides more than 2-4 levels deep.
@@ -100,4 +96,31 @@ class RuntimeModuleMerger {
         return Modules.override(rm.getModule()).with(fold(overriddenBy));
     }
 
+
+    private void trace(BQModule module, BQModule overriddenBy) {
+        bootLogger.trace(() -> traceMessage(module, overriddenBy));
+    }
+
+    private String traceMessage(BQModule module, BQModule overriddenBy) {
+
+        StringBuilder message = new StringBuilder("Loading module '")
+                .append(module.getName())
+                .append("'");
+
+        String providerName = module.getProviderName();
+        boolean hasProvider = providerName != null && providerName.length() > 0;
+        if (hasProvider) {
+            message.append(" provided by '").append(providerName).append("'");
+        }
+
+        if (overriddenBy != null) {
+            if (hasProvider) {
+                message.append(",");
+            }
+
+            message.append(" overridden by '").append(overriddenBy.getName()).append("'");
+        }
+
+        return message.toString();
+    }
 }
