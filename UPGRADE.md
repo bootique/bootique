@@ -38,6 +38,68 @@ integration testing API. Instead of `BQTestRuntime` and `BQDaemonTestRuntime`, t
 	[bootique-jdbc-test](https://github.com/bootique/bootique-jdbc/issues/32),
 	[bootique-cayenne-test](https://github.com/bootique/bootique-cayenne/issues/39).
 
+* [bootique-liquibase #16](https://github.com/bootique/bootique-liquibase/issues/16): Names of Liquibase module 
+commands have been changed by adding prefix "lb" to distinguish them from commands of others modules.
+
+Old options:    
+                      
+      --changelog-sync
+           Mark all changes as executed in the database.
+
+      --changelog-sync-sql
+           Writes SQL to mark all changes as executed in the database to STDOUT.
+
+      --clear-check-sums
+           Clears all checksums in the current changelog, so they will be
+           recalculated next update.
+
+      --config=yaml_location
+           Specifies YAML config location, which can be a file path or a URL.
+
+      -h, --help
+           Prints this message.
+
+      -H, --help-config
+           Prints information about application modules and their configuration
+           options.
+
+      -u, --update
+           Updates DB with available migrations
+
+      -v, --validate
+           Checks the changelog for errors.
+          
+New options:
+
+      -c yaml_location, --config=yaml_location
+           Specifies YAML config location, which can be a file path or a URL.
+
+      -h, --help
+           Prints this message.
+
+      -H, --help-config
+           Prints information about application modules and their configuration
+           options.
+
+      --lb-changelog-sync
+           Mark all changes as executed in the database.
+
+      --lb-changelog-sync-sql
+           Writes SQL to mark all changes as executed in the database to STDOUT.
+
+      --lb-clear-check-sums
+           Clears all checksums in the current changelog, so they will be
+           recalculated next update.
+
+      -u, --lb-update
+           Updates DB with available migrations
+
+      -v, --lb-validate
+           Checks the changelog for errors.
+
+Short names has been preserved for partial backwards compatibility.
+
+
 ## 0.22
 
 * [bootique-cayenne #36](https://github.com/bootique/bootique-cayenne/issues/36): If you used `bootique-cayenne-jcache`, 
