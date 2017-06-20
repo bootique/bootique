@@ -53,16 +53,6 @@ commands have been changed by adding prefix "lb" to distinguish them from comman
            Clears all checksums in the current changelog, so they will be
            recalculated next update.
 
-      --config=yaml_location
-           Specifies YAML config location, which can be a file path or a URL.
-
-      -h, --help
-           Prints this message.
-
-      -H, --help-config
-           Prints information about application modules and their configuration
-           options.
-
       -u, --update
            Updates DB with available migrations
 
@@ -70,16 +60,6 @@ commands have been changed by adding prefix "lb" to distinguish them from comman
            Checks the changelog for errors.
           
     New options:
-
-      -c yaml_location, --config=yaml_location
-           Specifies YAML config location, which can be a file path or a URL.
-
-      -h, --help
-           Prints this message.
-
-      -H, --help-config
-           Prints information about application modules and their configuration
-           options.
 
       --lb-changelog-sync
            Mark all changes as executed in the database.
