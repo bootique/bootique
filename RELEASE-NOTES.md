@@ -7,6 +7,7 @@
 * #148 Exceptions inside CommandOutcomes are not reported by Bootique
 * #157 Can't access grandparent service in a two-level override
 * #158 Allow access to DI contents by Guice Key
+* #127 Allow @BQConfigProperty to be used on constructors 
 
 ## 0.22
 
