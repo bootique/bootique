@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
@@ -40,6 +41,17 @@ public class ConfigMetadataCompiler {
             throw new IllegalStateException("Method '" + maybeSetter.getDeclaringClass().getName() + "."
                     + maybeSetter.getName() +
                     "' is annotated with @BQConfigProperty, but does not match expected setter signature."
+                    + " It must take exactly one parameter");
+        }
+
+        return paramTypes[0];
+    }
+
+    private static Type propertyTypeFromConstructor(Constructor maybeConstructor) {
+        Type[] paramTypes = maybeConstructor.getGenericParameterTypes();
+        if (paramTypes.length != 1) {
+            throw new IllegalStateException("Constructor '" + maybeConstructor.toString()
+                    + "' is annotated with @BQConfigProperty, but does not match expected signature."
                     + " It must take exactly one parameter");
         }
 
@@ -111,6 +123,14 @@ public class ConfigMetadataCompiler {
             if (configProperty != null) {
                 Type propType = propertyTypeFromSetter(m);
                 builder.addProperty(compile(new Descriptor(propertyNameFromSetter(m), configProperty, propType)));
+            }
+        }
+
+        for (Constructor c : descriptor.getTypeClass().getConstructors()) {
+            BQConfigProperty configProperty = (BQConfigProperty) c.getAnnotation(BQConfigProperty.class);
+            if (configProperty != null) {
+                Type propType = propertyTypeFromConstructor(c);
+                builder.addProperty(compile(new Descriptor(descriptor.getTypeClass().getSimpleName().toLowerCase(), configProperty, propType)));
             }
         }
 

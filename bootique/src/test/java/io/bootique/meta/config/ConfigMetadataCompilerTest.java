@@ -44,12 +44,16 @@ public class ConfigMetadataCompilerTest {
         assertEquals("Describes Config1", md.getDescription());
         assertEquals(Config1.class, md.getType());
 
-        assertEquals(9, md.getProperties().size());
+        assertEquals(10, md.getProperties().size());
 
         Map<String, ConfigMetadataNode> propMap = md
                 .getProperties()
                 .stream()
                 .collect(Collectors.toMap(MetadataNode::getName, Function.identity()));
+
+        ConfigValueMetadata config1 = (ConfigValueMetadata) propMap.get("config1");
+        assertEquals(String.class, config1.getType());
+        assertEquals("constructor with params", config1.getDescription());
 
         ConfigValueMetadata p1 = (ConfigValueMetadata) propMap.get("p1");
         assertEquals(Integer.TYPE, p1.getType());
@@ -264,6 +268,10 @@ public class ConfigMetadataCompilerTest {
 
     @BQConfig("Describes Config1")
     public static class Config1 {
+
+        @BQConfigProperty("constructor with params")
+        public Config1(String s){
+        }
 
         @BQConfigProperty
         public void setP1(int v) {
