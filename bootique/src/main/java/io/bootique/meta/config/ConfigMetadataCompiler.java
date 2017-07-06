@@ -126,8 +126,8 @@ public class ConfigMetadataCompiler {
             }
         }
 
-        for (Constructor c : descriptor.getTypeClass().getConstructors()) {
-            BQConfigProperty configProperty = (BQConfigProperty) c.getAnnotation(BQConfigProperty.class);
+        for (Constructor<?> c : descriptor.getTypeClass().getConstructors()) {
+            BQConfigProperty configProperty = c.getAnnotation(BQConfigProperty.class);
             if (configProperty != null) {
                 Type propType = propertyTypeFromConstructor(c);
                 builder.addProperty(compile(new Descriptor(descriptor.getTypeClass().getSimpleName().toLowerCase(), configProperty, propType)));
