@@ -90,14 +90,46 @@ $( document ).ready(function() {
 		if ($(this).prop('hash').split()[0] != '') {
 			e.preventDefault();
 			$('html, body').animate({
-				scrollTop: $($.attr(this, 'href')).offset().top - $('#top-nav').height() - 19   // + height of fixed header + padding from it
+				scrollTop: $($.attr(this, 'href')).offset().top - $('#top-nav').height() - 15   // + height of fixed header + padding from it
 			}, 300);
 		}
 	});
 
 	// 1.6 Pretty print
-	$('pre').addClass('prettyprint');
+		$('pre').addClass('prettyprint');
 
 	// 1.7 Tables 
-	$('table').addClass('pure-table');
+		$('table').addClass('pure-table pure-table-bordered');
+
+	// Docbook TOC -> add hash
+		if ($('.docbook').length) {
+			$('.docbook h1 > a, .docbook h2 > a, .docbook h3 > a, .docbook .container-fluid').each(function() {
+				$(this).attr('id', $(this).attr('name'));
+			});
+		}
+
+		// // refresh every [data-spy="scroll"] after DOM mods
+		// $('[data-spy="scroll"]').each(function() {
+		// 	var $spy = $(this).scrollspy('refresh')
+		// }) 
+	
+	// add scrollspy classes
+	if ($('.bs-docs-sidenav').length) {
+		$('.bs-docs-sidenav ul').addClass('nav');
+	}
+
+	// unwrapping unnecessary els + add title attr
+	if ($('.bs-docs-sidenav a').length) {
+
+		$('.bs-docs-sidenav a').each(function() {
+			// unwrap
+			var thisParent = $(this).parent();
+			if (thisParent.is('span')) {
+				$(this).unwrap();
+			};
+
+			// title
+			$(this).attr('title', $(this).text());
+		});
+	}
 });

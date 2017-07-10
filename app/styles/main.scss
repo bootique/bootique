@@ -1,6 +1,6 @@
 
 // PURECSS
-  @import 'bower_components/purecss-sass/vendor/assets/stylesheets/purecss/base';
+  @import 'bower_components/purecss-sass/vendor/assets/stylesheets/purecss/_base';
   @import 'bower_components/purecss-sass/vendor/assets/stylesheets/purecss/grids';
   @import 'bower_components/purecss-sass/vendor/assets/stylesheets/purecss/grids-responsive';
   // @import 'bower_components/purecss-sass/vendor/assets/stylesheets/purecss/buttons';
@@ -14,11 +14,11 @@
 
 // custom:scss
   @import 'pure-grid-breakpoints', 'pure-grid-offsets';
-  @import 'mixins', 'helper-classes', 'helpers/bs/media'; 
+  @import 'mixins', 'helper-classes', 'helpers/bs/media', 'helpers/embed'; 
   @import 'color-pallette','typography', 'docbook';
 
 // wiredep|bower:scss 
-// wiredep|endbower
+// wiredep|endbower 
  
 
 // ICONS FONTS: 
@@ -41,14 +41,17 @@
     }
 
     .fa-star:before {
-        content: "\f005";
+      content: "\f005";
     }
     .fa-twitter:before {
-        content: "\f099";
+      content: "\f099";
     }
     .fa-github:before {
-        content: "\f09b";
+      content: "\f09b";
     } 
+    .fa-code:before {
+      content: "\f121";
+    }
 
 
 // FONTS
@@ -159,6 +162,44 @@
         font-size: 120%;
     }
 
+    .btn {
+      display: inline-block;
+      text-decoration: none;
+      padding: 10px 15px;
+
+      &:hover {
+        text-decoration: none;
+      }
+
+      &.btn-lg {
+        padding: 18px 34px;
+        // height: 64px;
+
+        font-size: 18px;
+        
+        // FONTAWESOME ICONS
+        .fa {
+          margin-right: 13px;
+          font-size: 20px;
+          position: relative;
+          left: -2px;
+        }
+      }
+    }
+
+    $btn-white-bg: #f3f3f3;
+    .btn-white {
+      background: $btn-white-bg;
+      color: #606060;
+      box-shadow: 0 0px 3px rgba(0, 0, 0, 0.08), 0 2px 15px rgba(0, 0, 0, 0.15), inset 0 0 1px rgba(0, 0, 0, 0.1);
+
+      &:hover {
+        // color: lighten(#606060, 10%);
+        background: lighten($btn-white-bg, 1%);
+        box-shadow: 0 0px 1px rgba(0, 0, 0, 0.08), 0 3px 20px rgba(0, 0, 0, 0.17);
+      }
+    }
+
 
   // GRID
     .pure-g {
@@ -196,7 +237,7 @@
   // NAV
     
     #top-nav {
-      min-height: 5.7em;
+      // min-height: 5.7em;
       position: relative;
     }
 
@@ -206,9 +247,9 @@
       z-index: 5;
       transition: none;
 
-      .main & {
-        opacity: 0;
-      }
+      // .main & {
+      //   opacity: 0;
+      // }
 
       img {
         max-width: 100px;
@@ -643,12 +684,13 @@
     }
 
     // SLOGAN
-    .splash h2 {
+    .splash h2,
+    .slogan {
       color: #757575;
 
       // margin: 49px auto 115px; // 58px auto 68px;
-      margin: 3% auto 8%;
-      display: block;
+      margin: 0 auto 8%; 
+      // display: block;
 
       font-size: 45px;
       font-weight: 100;
@@ -661,13 +703,13 @@
         line-height: 1.6;
       }
       
-      @media (max-width: 768px) {
-        padding-left: 5%;
-        padding-right: 5%;
-      }
+      // @media (max-width: 768px) {
+      //   padding-left: 5%;
+      //   padding-right: 5%;
+      // }
 
       @media (min-width: 1240px) {
-        margin: 3% auto 6%;
+        margin: 0 auto 6%;
       }
 
       em {

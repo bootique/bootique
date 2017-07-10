@@ -5,6 +5,12 @@
 	@import "docbook/solarized-light";
 
 	.docbook {
+		// NAV PADDING
+		padding-top: 5.7em;
+
+		.toc {
+			display: none;
+		}
 		
 		// main layout
 		@media screen and (max-width: $screen-sm-max) {
@@ -73,14 +79,67 @@
 				margin-top: 15px;
 			}
 
+			h1, h2, h3, h4, h5, h6,
+			.h1, .h2, .h3, .h4, .h5, .h6 {
+				> a[name] {
+					display: block;
+					// debug
+					// background: rebeccapurple;
+					// width: 10px;
+					// height: 10px;
+				}
+			}
+
+		// part
+			.part {
+				// part title(page)
+				.titlepage {
+					
+					h1 {
+						font-size: 35px;
+					}
+
+					h2 {
+						font-size: 24px;
+					}
+				}
+			}
+
 		// chapters
 			.chapter {
 				padding-bottom: 14px; // FIXED HEADER ANCHOR LINKS OFFSET
 			}
 
+		// section
+			.section {
+				// section title(page)
+				.titlepage h2 {
+					// font-size: 20px;
+					font-size: 18px;
+					// text-transform: uppercase;
+					font-weight: normal;
+					margin-top: .9em;
+					color: $black;
+				}
+			}
+
+			.titlepage + .section .titlepage h2 {
+				margin-top: 0;
+			}
+
+
 
 		// lists
 			.media-list {
+
+				.media {
+					margin-top: 30px;
+					padding-bottom: 26px;
+
+					&:first-child {
+						margin-top: 30px;
+					}
+				}
 
 				.media:hover img {
 					filter: none;
@@ -135,6 +194,18 @@
 
 
 				// rwd
+				@media screen and (min-width: $screen-sm) {
+					.media-body {
+						padding-right: 30px;
+					}
+				}
+
+				@media screen and (min-width: $screen-md) {
+					.media-body {
+						padding-left: 30px;
+					}
+				}
+
 				@media screen and (max-width: $screen-xs-max) {
 					&.itemizedlist {
 						padding-left: 0;
@@ -203,7 +274,7 @@
 
 
 		// section
-			.section {
+			.section + .section {
 				margin-top: 20px;
 				margin-bottom: 40px;
 			}
@@ -220,6 +291,11 @@
 				th,
 				td {
 					border-color: #e4e4e4; 
+					font-size: 0.9em;
+				}
+
+				code {
+					color: #4e4e4e;
 				}
 			}
 

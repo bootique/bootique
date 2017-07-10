@@ -10,6 +10,10 @@ HELPER CLASSES
 			display: table;
 		}
 
+		.inline-block {
+			display: inline-block;
+		}
+
 
 	// PULL
 		.pull-left {
@@ -45,20 +49,27 @@ HELPER CLASSES
 			.valign-bottom {
 				vertical-align: bottom;
 			}
+
 		// VERTICAL RWD
-		@media screen and (max-width: 991px) {
-			.valign-wrapper-sm {
-				display: table;
-				width: 100%;
-				height: 100%;
+			@media screen and (max-width: 991px) {
+				.valign-wrapper-sm {
+					display: table;
+					width: 100%;
+					height: 100%;
+				}
+				.valign-sm {
+					display: table-cell;
+					width: 100%;
+					height: 100%;
+					vertical-align: middle;
+				}
 			}
-			.valign-sm {
-				display: table-cell;
-				width: 100%;
-				height: 100%;
-				vertical-align: middle;
+
+		// HORIZONTAL
+			.center-block {
+				margin: 0 auto;
+				display: block;
 			}
-		}
 
 	// SCROLL
 	// NO SCROLL FOR OVERALL !PAGE
@@ -70,7 +81,39 @@ HELPER CLASSES
 		    position: relative;
 		    height: 100%;
 		}
+	
+	// HEIGHT
+		.full-window-height {
+			height: 100vh;
 
+			&--nav {
+				min-height: 100vh;
+				padding-top: 5.7em;
+
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+
+				> div {
+					padding-top: 60px;  //6% // 8%        	// we cannot use percents https://bugzilla.mozilla.org/show_bug.cgi?id=958714
+					padding-bottom: 120px; //14% // 8%
+
+					 @media (min-width: 1240px) {
+					 	padding-top: 70px; //6%;
+					 	padding-bottom: 80px; //6%;
+					 }
+				}
+			}
+		}
+
+	// WIDTH
+		// MAX
+			.max-w-750 {
+				max-width: 750px;
+			}
+			.max-w-1050 {
+				max-width: 1050px;
+			}
 			
 
 	// MARGINS & PADDINGS
@@ -82,9 +125,20 @@ HELPER CLASSES
 		.no-mb {
 			margin-bottom: 0 !important;
 		}
+
+		// PERCENT
+			// TOP
+				.mt-6p {
+					margin-top: 6%;
+				}
 	
 
 // TEXT | FONT
+	// ALIGN
+		.text-center {
+			text-align: center;
+		}
+
 	// TEXT OVERFLOW
 		.text-overflow {
 			overflow: hidden;
@@ -244,3 +298,22 @@ HELPER CLASSES
 			}
 
 		}
+
+
+// SCROLLSPY
+	.scrollspy-offset {
+		position: fixed;
+		top: 0;
+		left: 350px;
+		z-index: 5;
+
+		width: 10px;
+		height: 100px;
+
+		background: red;
+	}
+
+
+	.scrollspy-1500-pusher {
+		height: 1500px;
+	}
