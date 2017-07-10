@@ -395,8 +395,16 @@ public class BQCoreModule implements Module {
             Set<DeclaredVariable> declaredVariables,
             BootLogger logger) {
 
-        return DefaultEnvironment.withSystemPropertiesAndVariables(logger)
-                .diProperties(diProperties)
+        DefaultEnvironment.Builder environment = DefaultEnvironment.builder(logger);
+
+        if (diProperties.containsKey(DefaultEnvironment.DEFAULT_PROPERTY.EXCLUDE_VARIABLES.name())) {
+            environment.excludeSystemVariables();
+        }
+        if (diProperties.containsKey(DefaultEnvironment.DEFAULT_PROPERTY.EXCLUDE_PROPERTIES.name())) {
+            environment.excludeSystemProperties();
+        }
+
+        return environment.diProperties(diProperties)
                 .diVariables(diVars)
                 .declaredVariables(declaredVariables)
                 .build();

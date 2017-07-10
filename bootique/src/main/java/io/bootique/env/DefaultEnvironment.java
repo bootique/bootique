@@ -11,18 +11,33 @@ import java.util.Map;
  */
 public class DefaultEnvironment implements Environment {
 
-    /**
-     * If present, enables boot sequence tracing to STDERR.
-     */
-    public static final String TRACE_PROPERTY = "bq.trace";
+    public enum DEFAULT_PROPERTY {
+        /**
+         * If present, enables boot sequence tracing to STDERR.
+         */
+        TRACE_PROPERTY("bq.trace"),
+
+        EXCLUDE_VARIABLES("bq.core.exclude.system.variables"),
+        EXCLUDE_PROPERTIES("bq.core.exclude.system.properties");
+
+        private String value;
+
+        DEFAULT_PROPERTY(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
 
     private Map<String, String> properties;
 
     @Deprecated
     private Map<String, String> variables;
 
-    public static Builder withSystemPropertiesAndVariables(BootLogger logger) {
-        return new Builder(logger).includeSystemProperties().includeSystemVariables();
+    public static Builder builder(BootLogger logger) {
+        return new Builder(logger);
     }
 
     protected DefaultEnvironment() {
@@ -68,8 +83,8 @@ public class DefaultEnvironment implements Environment {
         private Map<String, String> diProperties;
         private Map<String, String> diVariables;
         private Collection<DeclaredVariable> declaredVariables;
-        private boolean includeSystemProperties;
-        private boolean includeSystemVariables;
+        private boolean includeSystemProperties = true;
+        private boolean includeSystemVariables = true;
         private BootLogger logger;
 
         private Builder(BootLogger logger) {
@@ -86,13 +101,13 @@ public class DefaultEnvironment implements Environment {
             return env;
         }
 
-        public Builder includeSystemProperties() {
-            includeSystemProperties = true;
+        public Builder excludeSystemProperties() {
+            includeSystemProperties = false;
             return this;
         }
 
-        public Builder includeSystemVariables() {
-            includeSystemVariables = true;
+        public Builder excludeSystemVariables() {
+            includeSystemVariables = false;
             return this;
         }
 

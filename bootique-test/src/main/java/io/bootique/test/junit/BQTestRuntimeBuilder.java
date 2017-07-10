@@ -5,6 +5,7 @@ import io.bootique.BQCoreModule;
 import io.bootique.BQModuleOverrideBuilder;
 import io.bootique.BQModuleProvider;
 import io.bootique.Bootique;
+import io.bootique.env.DefaultEnvironment;
 import io.bootique.log.BootLogger;
 
 import java.util.Collection;
@@ -23,7 +24,11 @@ public abstract class BQTestRuntimeBuilder<T extends BQTestRuntimeBuilder<T>> {
     protected Map<String, String> properties;
 
     protected BQTestRuntimeBuilder(String[] args) {
-        this.properties = new HashMap<>();
+        //make test stack independent having excluded System variables and properties
+        this.properties = new HashMap<String, String>() {{
+            put(DefaultEnvironment.DEFAULT_PROPERTY.EXCLUDE_VARIABLES.name(), DefaultEnvironment.DEFAULT_PROPERTY.EXCLUDE_VARIABLES.getValue());
+            put(DefaultEnvironment.DEFAULT_PROPERTY.EXCLUDE_PROPERTIES.name(), DefaultEnvironment.DEFAULT_PROPERTY.EXCLUDE_PROPERTIES.getValue());
+        }};
         this.bootique = Bootique.app(args).module(createPropertiesProvider());
     }
 
