@@ -1,13 +1,13 @@
 ## 0.23
 
 * #25  Map known exceptions to CommandOutcomes
+* #127 Allow @BQConfigProperty to be used on constructors 
 * #140 Catch Guice CreationException
 * #141 Refactor startup sequence
 * #142 Streamline Test API - hide BQTestRuntime wrapper
 * #148 Exceptions inside CommandOutcomes are not reported by Bootique
 * #157 Can't access grandparent service in a two-level override
 * #158 Allow access to DI contents by Guice Key
-* #127 Allow @BQConfigProperty to be used on constructors 
 
 ## 0.22
 
