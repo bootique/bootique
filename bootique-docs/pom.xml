@@ -79,7 +79,7 @@
 					<xincludeSupported>true</xincludeSupported>
 					<highlightSource>true</highlightSource>
 					<targetDirectory>${basedir}/target/site</targetDirectory>
-					<includes>getting-started/index.xml,bootique-docs/index.xml</includes>
+					<includes>bootique-docs/index.xml</includes>
 				</configuration>
 				<executions>
 					<execution>
@@ -88,12 +88,6 @@
 							<htmlCustomization>${project.build.outputDirectory}/xsl/html.xsl</htmlCustomization>
 							<chunkedOutput>false</chunkedOutput>
 							<postProcess>
-								<copy todir="${basedir}/target/site/getting-started/css">
-									<fileset dir="${basedir}/src/docbkx/css" />
-								</copy>
-								<copy todir="${basedir}/target/site/getting-started/img">
-									<fileset dir="${basedir}/src/docbkx/img" />
-								</copy>
 								<copy todir="${basedir}/target/site/bootique-docs/css">
 									<fileset dir="${basedir}/src/docbkx/css" />
 								</copy>
