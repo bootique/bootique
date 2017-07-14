@@ -48,9 +48,9 @@ public class BQTestFactoryIT {
 
     @Test
     public void testConfigEnvExcludes_System() {
-        System.setProperty("BQ_A", "bq_a");
-        System.setProperty("BQ_C_M_K", "bq_c_m_k");
-        System.setProperty("BQ_C_M_L", "bq_c_m_l");
+        System.setProperty("bq.a", "bq_a");
+        System.setProperty("bq.c.m.k", "bq_c_m_k");
+        System.setProperty("bq.c.m.l", "bq_c_m_l");
 
         BQRuntime runtime = testFactory.app("--config=src/test/resources/configEnvironment.yml").createRuntime();
 
