@@ -455,7 +455,7 @@ public class Bootique {
     }
 
     protected BootLogger createBootLogger() {
-        return new DefaultBootLogger(System.getProperty(DefaultEnvironment.DEFAULT_PROPERTY.TRACE_PROPERTY.getValue()) != null);
+        return new DefaultBootLogger(System.getProperty(DefaultEnvironment.TRACE_PROPERTY) != null);
     }
 
     protected ShutdownManager createShutdownManager() {

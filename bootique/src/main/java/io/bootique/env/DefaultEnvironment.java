@@ -11,25 +11,10 @@ import java.util.Map;
  */
 public class DefaultEnvironment implements Environment {
 
-    public enum DEFAULT_PROPERTY {
-        /**
-         * If present, enables boot sequence tracing to STDERR.
-         */
-        TRACE_PROPERTY("bq.trace"),
-
-        EXCLUDE_VARIABLES("bq.core.exclude.system.variables"),
-        EXCLUDE_PROPERTIES("bq.core.exclude.system.properties");
-
-        private String value;
-
-        DEFAULT_PROPERTY(String value) {
-            this.value = value;
-        }
-
-        public String getValue() {
-            return value;
-        }
-    }
+    /**
+     * If present, enables boot sequence tracing to STDERR.
+     */
+    public static final String TRACE_PROPERTY = "bq.trace";
 
     private Map<String, String> properties;
 
@@ -83,8 +68,8 @@ public class DefaultEnvironment implements Environment {
         private Map<String, String> diProperties;
         private Map<String, String> diVariables;
         private Collection<DeclaredVariable> declaredVariables;
-        private boolean includeSystemProperties = true;
-        private boolean includeSystemVariables = true;
+        private boolean excludeSystemProperties;
+        private boolean excludeSystemVariables;
         private BootLogger logger;
 
         private Builder(BootLogger logger) {
@@ -102,12 +87,12 @@ public class DefaultEnvironment implements Environment {
         }
 
         public Builder excludeSystemProperties() {
-            includeSystemProperties = false;
+            excludeSystemProperties = true;
             return this;
         }
 
         public Builder excludeSystemVariables() {
-            includeSystemVariables = false;
+            excludeSystemVariables = true;
             return this;
         }
 
@@ -140,7 +125,7 @@ public class DefaultEnvironment implements Environment {
                 properties.putAll(this.diProperties);
             }
 
-            if (includeSystemProperties) {
+            if (!excludeSystemProperties) {
                 // override DI props from system...
                 System.getProperties().forEach((k, v) -> properties.put((String) k, (String) v));
             }
@@ -171,7 +156,7 @@ public class DefaultEnvironment implements Environment {
             diVariables.keySet().forEach(this::warnOfDeprecatedVar);
             allVars.putAll(this.diVariables);
 
-            if (includeSystemVariables) {
+            if (!excludeSystemVariables) {
                 Map<String, String> systemVars = System.getenv();
                 systemVars.keySet().forEach(this::warnOfDeprecatedVar);
                 allVars.putAll(systemVars);

@@ -5,7 +5,6 @@ import io.bootique.BQCoreModule;
 import io.bootique.BQModuleOverrideBuilder;
 import io.bootique.BQModuleProvider;
 import io.bootique.Bootique;
-import io.bootique.env.DefaultEnvironment;
 import io.bootique.log.BootLogger;
 
 import java.util.Collection;
@@ -21,13 +20,22 @@ import java.util.function.Consumer;
 public abstract class BQTestRuntimeBuilder<T extends BQTestRuntimeBuilder<T>> {
 
     protected Bootique bootique;
-    protected Map<String, String> properties;
+    protected Map<String, String> properties=new HashMap<>();
+
+    /**
+     * Properties are used to make test stack independent from a shell environment.
+     * It allows us be sure that all the vars are controlled within the test and there are no outside influences.
+     *
+     * The properties take part on {@link io.bootique.env.Environment} provision in {@link BQCoreModule}.
+     */
+    private static final String EXCLUDE_SYSTEM_VARIABLES = "bq.core.exclude.system.variables";
+    private static final String EXCLUDE_SYSTEM_PROPERTIES = "bq.core.exclude.system.properties";
 
     protected BQTestRuntimeBuilder(String[] args) {
-        //make test stack independent having excluded System variables and properties
+        //exclude system variables and properties by setting the properties
         this.properties = new HashMap<String, String>() {{
-            put(DefaultEnvironment.DEFAULT_PROPERTY.EXCLUDE_VARIABLES.name(), DefaultEnvironment.DEFAULT_PROPERTY.EXCLUDE_VARIABLES.getValue());
-            put(DefaultEnvironment.DEFAULT_PROPERTY.EXCLUDE_PROPERTIES.name(), DefaultEnvironment.DEFAULT_PROPERTY.EXCLUDE_PROPERTIES.getValue());
+            put(EXCLUDE_SYSTEM_PROPERTIES, EXCLUDE_SYSTEM_PROPERTIES);
+            put(EXCLUDE_SYSTEM_VARIABLES, EXCLUDE_SYSTEM_VARIABLES);
         }};
         this.bootique = Bootique.app(args).module(createPropertiesProvider());
     }
