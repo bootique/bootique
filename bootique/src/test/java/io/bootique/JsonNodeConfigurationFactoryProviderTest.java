@@ -69,7 +69,7 @@ public class JsonNodeConfigurationFactoryProviderTest {
 		when(mockJackson.newObjectMapper()).thenReturn(new ObjectMapper());
 
 		ConfigurationFactory factory = new JsonNodeConfigurationFactoryProvider(mockSource, mockEnvironment, mockJackson,
-				new DefaultBootLogger(true)).get();
+				new DefaultBootLogger(true), null, null).get();
 
 		assertNotNull(factory);
 		assertTrue(factory instanceof JsonNodeConfigurationFactory);
