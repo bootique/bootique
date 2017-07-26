@@ -14,6 +14,8 @@ public class OptionMetadata implements MetadataNode {
     private String shortName;
     private OptionValueCardinality valueCardinality;
     private String valueName;
+    private String configPath;
+    private String defaultValue;
 
     public static Builder builder(String name) {
         return new Builder().name(name);
@@ -49,11 +51,19 @@ public class OptionMetadata implements MetadataNode {
         return valueName;
     }
 
+    public String getConfigPath() {
+        return configPath;
+    }
+
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
     public static class Builder {
 
         private OptionMetadata option;
 
-        private Builder() {
+        protected Builder() {
             this.option = new OptionMetadata();
             this.option.valueCardinality = OptionValueCardinality.NONE;
         }
@@ -95,6 +105,16 @@ public class OptionMetadata implements MetadataNode {
         public Builder valueOptional(String valueName) {
             this.option.valueCardinality = OptionValueCardinality.OPTIONAL;
             this.option.valueName = valueName;
+            return this;
+        }
+
+        public Builder configPath(String configPath) {
+            this.option.configPath = configPath;
+            return this;
+        }
+
+        public Builder defaultValue(String defaultValue) {
+            this.option.defaultValue = defaultValue;
             return this;
         }
 

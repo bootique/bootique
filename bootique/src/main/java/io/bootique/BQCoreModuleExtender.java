@@ -169,6 +169,49 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
         return this;
     }
 
+    /**
+     * Alias the CLI option value to a config path.
+     *
+     * @param configPath a dot-separated "path" that navigates through the configuration tree to the property that
+     *                   should be bound from an option. E.g. "jdbc.myds.password".
+     * @param name       alias of an option
+     * @return this extender instance
+     * @since 0.24
+     */
+    public BQCoreModuleExtender addOption(String configPath, String name) {
+        contributeOptions().addBinding().toInstance(
+                OptionMetadata.builder(name)
+                        .configPath(configPath)
+                        .valueRequired()
+                        .build());
+        return this;
+    }
+
+    /**
+     * Alias the CLI option value to a config path.
+     *
+     * @param configPath   a dot-separated "path" that navigates through the configuration tree to the property that
+     *                     should be bound from an option. E.g. "jdbc.myds.password".
+     * @param defaultValue default option value
+     * @param name         alias of an option
+     * @return this extender instance
+     * @since 0.24
+     */
+    public BQCoreModuleExtender addOption(String configPath, String defaultValue, String name) {
+        contributeOptions().addBinding().toInstance(
+                OptionMetadata.builder(name)
+                        .configPath(configPath)
+                        .defaultValue(defaultValue)
+                        .valueOptional()
+                        .build());
+        return this;
+    }
+
+    public BQCoreModuleExtender addConfigFileOption(String filePath, String name) {
+        //TDB
+        return this;
+    }
+
     public BQCoreModuleExtender addCommand(Command command) {
         contributeCommands().addBinding().toInstance(command);
         return this;

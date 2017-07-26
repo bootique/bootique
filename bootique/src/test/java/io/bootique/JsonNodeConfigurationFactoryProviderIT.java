@@ -1,9 +1,14 @@
 package io.bootique;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
+import com.google.inject.util.Types;
+import io.bootique.cli.Cli;
 import io.bootique.config.ConfigurationSource;
 import io.bootique.env.Environment;
 import io.bootique.jackson.JacksonService;
+import io.bootique.meta.application.OptionMetadata;
 import io.bootique.resource.ResourceFactory;
 import io.bootique.unit.BQInternalTestFactory;
 import io.bootique.unit.BQInternalWebServerTestFactory;
@@ -13,6 +18,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.Collections;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
@@ -35,9 +41,11 @@ public class JsonNodeConfigurationFactoryProviderIT {
 
 		BQRuntime runtime = testFactory.app().createRuntime();
 
-		JsonNodeConfigurationFactoryProvider provider = new JsonNodeConfigurationFactoryProvider(
-				runtime.getInstance(ConfigurationSource.class), runtime.getInstance(Environment.class),
-				runtime.getInstance(JacksonService.class), runtime.getBootLogger());
+        JsonNodeConfigurationFactoryProvider provider = new JsonNodeConfigurationFactoryProvider(
+                runtime.getInstance(ConfigurationSource.class), runtime.getInstance(Environment.class),
+                runtime.getInstance(JacksonService.class), runtime.getBootLogger(),
+                runtime.getInstance(Key.get((TypeLiteral<Set<OptionMetadata>>) TypeLiteral.get(Types.setOf(OptionMetadata.class)))),
+                runtime.getInstance(Cli.class));
 
 		JsonNode config = provider.loadConfiguration(Collections.emptyMap(), Collections.emptyMap());
 		assertEquals("{}", config.toString());
@@ -50,7 +58,9 @@ public class JsonNodeConfigurationFactoryProviderIT {
 
 		JsonNodeConfigurationFactoryProvider provider = new JsonNodeConfigurationFactoryProvider(
 				runtime.getInstance(ConfigurationSource.class), runtime.getInstance(Environment.class),
-				runtime.getInstance(JacksonService.class), runtime.getBootLogger());
+				runtime.getInstance(JacksonService.class), runtime.getBootLogger(),
+				runtime.getInstance(Key.get((TypeLiteral<Set<OptionMetadata>>) TypeLiteral.get(Types.setOf(OptionMetadata.class)))),
+				runtime.getInstance(Cli.class));
 
 		JsonNode config = provider.loadConfiguration(Collections.emptyMap(), Collections.emptyMap());
 		assertEquals("{\"a\":\"b\"}", config.toString());
@@ -63,7 +73,9 @@ public class JsonNodeConfigurationFactoryProviderIT {
 
 		JsonNodeConfigurationFactoryProvider provider = new JsonNodeConfigurationFactoryProvider(
 				runtime.getInstance(ConfigurationSource.class), runtime.getInstance(Environment.class),
-				runtime.getInstance(JacksonService.class), runtime.getBootLogger());
+				runtime.getInstance(JacksonService.class), runtime.getBootLogger(),
+                runtime.getInstance(Key.get((TypeLiteral<Set<OptionMetadata>>) TypeLiteral.get(Types.setOf(OptionMetadata.class)))),
+                runtime.getInstance(Cli.class));
 
 		JsonNode config = provider.loadConfiguration(Collections.emptyMap(), Collections.emptyMap());
 		assertEquals("{\"x\":1}", config.toString());
@@ -77,7 +89,9 @@ public class JsonNodeConfigurationFactoryProviderIT {
 
 		JsonNodeConfigurationFactoryProvider provider = new JsonNodeConfigurationFactoryProvider(
 				runtime.getInstance(ConfigurationSource.class), runtime.getInstance(Environment.class),
-				runtime.getInstance(JacksonService.class), runtime.getBootLogger());
+				runtime.getInstance(JacksonService.class), runtime.getBootLogger(),
+                runtime.getInstance(Key.get((TypeLiteral<Set<OptionMetadata>>) TypeLiteral.get(Types.setOf(OptionMetadata.class)))),
+                runtime.getInstance(Cli.class));
 
 		JsonNode config = provider.loadConfiguration(Collections.emptyMap(), Collections.emptyMap());
 		assertEquals("{\"x\":1,\"a\":\"b\"}", config.toString());
