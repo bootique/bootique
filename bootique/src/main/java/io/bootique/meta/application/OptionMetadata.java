@@ -15,6 +15,7 @@ public class OptionMetadata implements MetadataNode {
     private OptionValueCardinality valueCardinality;
     private String valueName;
     private String configPath;
+    private String configFilePath;
     private String defaultValue;
 
     public static Builder builder(String name) {
@@ -53,6 +54,10 @@ public class OptionMetadata implements MetadataNode {
 
     public String getConfigPath() {
         return configPath;
+    }
+
+    public String getConfigFilePath() {
+        return configFilePath;
     }
 
     public String getDefaultValue() {
@@ -115,6 +120,11 @@ public class OptionMetadata implements MetadataNode {
 
         public Builder defaultValue(String defaultValue) {
             this.option.defaultValue = defaultValue;
+            return this;
+        }
+
+        public Builder configFilePath(String configFilePath) {
+            this.option.configFilePath = configFilePath;
             return this;
         }
 

@@ -218,6 +218,18 @@ public class Bootique_CliOptionsIT {
         System.clearProperty("bq.c.m.l");
     }
 
+    @Test
+    public void testConfigFileOption_OverrideConfig() {
+        BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--file-opt")
+                .module(binder -> BQCoreModule.extend(binder)
+                        .addConfigFileOption("classpath:io/bootique/config/configTest4.yml", "file-opt"))
+                .createRuntime();
+        Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
+
+        Assert.assertEquals("x", bean1.c.m.l);
+    }
+
+
     private void assertEquals(Collection<String> result, String... expected) {
         assertArrayEquals(expected, result.toArray());
     }

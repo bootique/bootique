@@ -207,8 +207,12 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
         return this;
     }
 
-    public BQCoreModuleExtender addConfigFileOption(String filePath, String name) {
-        //TDB
+    public BQCoreModuleExtender addConfigFileOption(String configFilePath, String name) {
+        contributeOptions().addBinding().toInstance(
+                OptionMetadata.builder(name)
+                        .configFilePath(configFilePath)
+                        .valueOptional()
+                        .build());
         return this;
     }
 
