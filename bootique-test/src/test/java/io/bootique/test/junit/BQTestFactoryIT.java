@@ -59,6 +59,10 @@ public class BQTestFactoryIT {
         assertEquals("e", b1.a);
         assertEquals("q", b1.c.m.k);
         assertEquals("n", b1.c.m.l);
+
+        System.clearProperty("bq.a");
+        System.clearProperty("bq.c.m.k");
+        System.clearProperty("bq.c.m.l");
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
