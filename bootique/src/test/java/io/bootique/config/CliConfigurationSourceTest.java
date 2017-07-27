@@ -85,7 +85,7 @@ public class CliConfigurationSourceTest {
 	@Test
 	public void testGet_File() {
 		Cli cli = createCli("src/test/resources/io/bootique/config/test1.yml");
-		String config = new CliConfigurationSource(cli, mockBootLogger, null).get().map(configReader).collect(joining(","));
+		String config = new CliConfigurationSource(cli, mockBootLogger).get().map(configReader).collect(joining(","));
 		assertEquals("a: b", config);
 	}
 
@@ -93,7 +93,7 @@ public class CliConfigurationSourceTest {
 	public void testGet_FileUrl() {
 		String url = fileUrl("src/test/resources/io/bootique/config/test2.yml");
 		Cli cli = createCli(url);
-		String config = new CliConfigurationSource(cli, mockBootLogger, null).get().map(configReader).collect(joining(","));
+		String config = new CliConfigurationSource(cli, mockBootLogger).get().map(configReader).collect(joining(","));
 		assertEquals("c: d", config);
 	}
 
@@ -101,7 +101,7 @@ public class CliConfigurationSourceTest {
 	public void testGet_MultipleFiles1() {
 		Cli cli = createCli("src/test/resources/io/bootique/config/test2.yml",
 				"src/test/resources/io/bootique/config/test1.yml");
-		String config = new CliConfigurationSource(cli, mockBootLogger, null).get().map(configReader).collect(joining(","));
+		String config = new CliConfigurationSource(cli, mockBootLogger).get().map(configReader).collect(joining(","));
 		assertEquals("c: d,a: b", config);
 	}
 
@@ -111,7 +111,7 @@ public class CliConfigurationSourceTest {
 		// change file order compared to testGet_MultipleFiles1
 		Cli cli = createCli("src/test/resources/io/bootique/config/test1.yml",
 				"src/test/resources/io/bootique/config/test2.yml");
-		String config = new CliConfigurationSource(cli, mockBootLogger, null).get().map(configReader).collect(joining(","));
+		String config = new CliConfigurationSource(cli, mockBootLogger).get().map(configReader).collect(joining(","));
 		assertEquals("a: b,c: d", config);
 	}
 
@@ -119,7 +119,7 @@ public class CliConfigurationSourceTest {
 	public void testGet_JarUrl() {
 		String url = jarEntryUrl("src/test/resources/io/bootique/config/test3.jar", "com/foo/test3.yml");
 		Cli cli = createCli(url);
-		String config = new CliConfigurationSource(cli, mockBootLogger, null).get().map(configReader).collect(joining(","));
+		String config = new CliConfigurationSource(cli, mockBootLogger).get().map(configReader).collect(joining(","));
 		assertEquals("e: f", config);
 	}
 
@@ -127,7 +127,7 @@ public class CliConfigurationSourceTest {
 	public void testGet_ClasspathUrl() {
 		String url = "classpath:io/bootique/config/test2.yml";
 		Cli cli = createCli(url);
-		String config = new CliConfigurationSource(cli, mockBootLogger, null).get().map(configReader).collect(joining(","));
+		String config = new CliConfigurationSource(cli, mockBootLogger).get().map(configReader).collect(joining(","));
 		assertEquals("c: d", config);
 	}
 

@@ -148,6 +148,32 @@ public class Bootique_CliOptionsIT {
         Assert.assertEquals("x", bean1.c.m.l);
     }
 
+    @Test
+    public void testOptionAbsentInYAML() {
+        BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--opt-1=x")
+                .module(binder -> BQCoreModule.extend(binder)
+                        .addOption("c.m.f", "opt-1"))
+                .createRuntime();
+        Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
+
+        Assert.assertEquals("x", bean1.c.m.f);
+    }
+
+    @Test
+    public void testConfigOverrideOrder_PropsVarsOptions() {
+        System.setProperty("bq.c.m.l", "prop_c_m_l");
+
+        BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--opt-1=Option")
+                .module(binder -> BQCoreModule.extend(binder).addOption("c.m.l", "opt-1")
+                        .setVar("BQ_C_M_L", "var_c_m_l"))
+                .createRuntime();
+
+        Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
+        Assert.assertEquals("Option", bean1.c.m.l);
+
+        System.clearProperty("bq.c.m.l");
+    }
+
     @Test(expected = ProvisionException.class)
     public void testOptionsWithOverlappingPathOnCLI_NotAllowed() {
         BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--opt-2", "--opt-3")
@@ -171,7 +197,8 @@ public class Bootique_CliOptionsIT {
         Assert.assertEquals(2, bean1.c.m.k);
     }
 
-    @Test
+    @Test(expected = ProvisionException.class)
+    @Ignore
     public void testOptionsNamesDuplicatePathDif_OverrideAll() {
         BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--opt-1")
                 .module(binder -> BQCoreModule.extend(binder).addOption("c.m.k", "0", "opt-1")
@@ -204,21 +231,6 @@ public class Bootique_CliOptionsIT {
     }
 
     @Test
-    public void testConfigOverrideOrder_PropsVarsOptions() {
-        System.setProperty("bq.c.m.l", "prop_c_m_l");
-
-        BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--opt-1=Option")
-                .module(binder -> BQCoreModule.extend(binder).addOption("c.m.l", "opt-1")
-                        .setVar("BQ_C_M_L", "var_c_m_l"))
-                .createRuntime();
-
-        Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
-        Assert.assertEquals("Option", bean1.c.m.l);
-
-        System.clearProperty("bq.c.m.l");
-    }
-
-    @Test
     public void testConfigFileOption_OverrideConfig() {
         BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--file-opt")
                 .module(binder -> BQCoreModule.extend(binder)
@@ -229,6 +241,17 @@ public class Bootique_CliOptionsIT {
         Assert.assertEquals("x", bean1.c.m.l);
     }
 
+    @Test
+    public void testMultipleConfigFileOption_OverrideInCLIOrder() {
+        BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--file-opt-2", "--file-opt-1")
+                .module(binder -> BQCoreModule.extend(binder)
+                        .addConfigFileOption("classpath:io/bootique/config/configTest4Opt1.yml", "file-opt-1")
+                        .addConfigFileOption("classpath:io/bootique/config/configTest4opt2.yml", "file-opt-2"))
+                .createRuntime();
+        Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
+
+        Assert.assertEquals(3, bean1.c.m.k);
+    }
 
     private void assertEquals(Collection<String> result, String... expected) {
         assertArrayEquals(expected, result.toArray());

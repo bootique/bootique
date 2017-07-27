@@ -4,8 +4,10 @@ import io.bootique.cli.Cli;
 import io.bootique.log.BootLogger;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -47,4 +49,9 @@ public class JoptCli implements Cli {
 	public List<String> standaloneArguments() {
 		return (List<String>) optionSet.nonOptionArguments();
 	}
+
+    @Override
+    public List<OptionSpec<?>> detectedOptions() {
+        return optionSet != null ? optionSet.specs() : new ArrayList<>();
+    }
 }

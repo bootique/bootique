@@ -272,8 +272,8 @@ public class BQCoreModule implements Module {
 
     @Provides
     @Singleton
-    ConfigurationSource provideConfigurationSource(Cli cli, BootLogger bootLogger, Set<OptionMetadata> optionMetadataSet) {
-        return new CliConfigurationSource(cli, bootLogger, optionMetadataSet);
+    ConfigurationSource provideConfigurationSource(Cli cli, BootLogger bootLogger) {
+        return new CliConfigurationSource(cli, bootLogger);
     }
 
     @Provides

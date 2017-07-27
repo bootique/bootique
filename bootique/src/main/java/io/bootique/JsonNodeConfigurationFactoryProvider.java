@@ -8,6 +8,7 @@ import com.google.inject.Provider;
 import io.bootique.cli.Cli;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.config.ConfigurationSource;
+import io.bootique.config.jackson.InPlaceFileOverrider;
 import io.bootique.config.jackson.InPlaceLeftHandMerger;
 import io.bootique.config.jackson.InPlaceMapOverrider;
 import io.bootique.config.jackson.JsonNodeConfigurationBuilder;
@@ -20,10 +21,14 @@ import io.bootique.env.Environment;
 import io.bootique.jackson.JacksonService;
 import io.bootique.log.BootLogger;
 import io.bootique.meta.application.OptionMetadata;
+import io.bootique.resource.ResourceFactory;
+import joptsimple.OptionSpec;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -75,6 +80,7 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
 		}
 
         if (optionMetadataSet != null && !optionMetadataSet.isEmpty()) {
+            //options tied to config paths
             overrider = overrider.andThen(new InPlaceMapOverrider(optionMetadataSet.stream()
                     .filter(o -> o.getConfigPath() != null && cli.hasOption(o.getName()))
                     .collect(Collectors.toMap(o -> o.getConfigPath(), o -> {
@@ -84,7 +90,22 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
                         }
                         return o.getDefaultValue();
 
-                    })), false, '.'));
+                    })), true, '.'));
+
+            //options tied to a config file
+            List<URL> sources = new ArrayList<>();
+            for (OptionSpec<?> cliOpt : cli.detectedOptions()) {
+                List<URL> collect = optionMetadataSet.stream()
+                        .filter(o -> o.getConfigFilePath() != null
+                                && cliOpt.options().contains(o.getName()))
+                        .map(o -> new ResourceFactory(o.getConfigFilePath()).getUrl())
+                        .collect(Collectors.toList());
+
+                sources.addAll(collect);
+            }
+
+            overrider = overrider.andThen(new InPlaceFileOverrider(sources,
+                    parser, singleConfigMerger));
         }
 
         return JsonNodeConfigurationBuilder.builder().parser(parser).merger(singleConfigMerger)

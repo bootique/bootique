@@ -207,6 +207,14 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
         return this;
     }
 
+    /**
+     * Alias the CLI option value to a YAML file with config paths.
+     *
+     * @param configFilePath path on file with config
+     * @param name           alias of an option
+     * @return this extender instance
+     * @since 0.24
+     */
     public BQCoreModuleExtender addConfigFileOption(String configFilePath, String name) {
         contributeOptions().addBinding().toInstance(
                 OptionMetadata.builder(name)
