@@ -246,7 +246,7 @@ public class Bootique_CliOptionsIT {
         BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--file-opt-2", "--file-opt-1")
                 .module(binder -> BQCoreModule.extend(binder)
                         .addConfigFileOption("classpath:io/bootique/config/configTest4Opt1.yml", "file-opt-1")
-                        .addConfigFileOption("classpath:io/bootique/config/configTest4opt2.yml", "file-opt-2"))
+                        .addConfigFileOption("classpath:io/bootique/config/configTest4Opt2.yml", "file-opt-2"))
                 .createRuntime();
         Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
 
