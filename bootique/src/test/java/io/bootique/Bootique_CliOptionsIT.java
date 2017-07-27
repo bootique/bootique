@@ -198,16 +198,13 @@ public class Bootique_CliOptionsIT {
     }
 
     @Test(expected = ProvisionException.class)
-    @Ignore
-    public void testOptionsNamesDuplicatePathDif_OverrideAll() {
+    public void testOptionsNamesDuplicate() {
         BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--opt-1")
                 .module(binder -> BQCoreModule.extend(binder).addOption("c.m.k", "0", "opt-1")
                         .addOption("c.m.l", "test", "opt-1"))
                 .createRuntime();
 
-        Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
-        Assert.assertEquals(0, bean1.c.m.k);
-        Assert.assertEquals("test", bean1.c.m.l);
+        runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
     }
 
     @Test(expected = ProvisionException.class)
@@ -251,6 +248,7 @@ public class Bootique_CliOptionsIT {
         Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
 
         Assert.assertEquals(3, bean1.c.m.k);
+        Assert.assertEquals("f", bean1.c.m.f);
     }
 
     private void assertEquals(Collection<String> result, String... expected) {
