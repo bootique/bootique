@@ -8,6 +8,7 @@ import io.bootique.config.CliConfigurationSource;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.meta.application.CommandMetadata;
 import io.bootique.meta.application.OptionMetadata;
+import io.bootique.run.Runner;
 import io.bootique.unit.BQInternalTestFactory;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -141,15 +142,16 @@ public class Bootique_CliOptionsIT {
     public void testOption_OverrideConfig() {
         BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--opt-1=x")
                 .module(binder -> BQCoreModule.extend(binder).addOption("c.m.l", "opt-1")
-                        .addOption("c.m.k", "opt-2"))
+                        .addOption("c.m.k", "2", "opt-2"))
                 .createRuntime();
         Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
 
         Assert.assertEquals("x", bean1.c.m.l);
+        Assert.assertEquals(1, bean1.c.m.k);
     }
 
     @Test
-    public void testOptionAbsentInYAML() {
+    public void testOptionPathAbsentInYAML() {
         BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--opt-1=x")
                 .module(binder -> BQCoreModule.extend(binder)
                         .addOption("c.m.f", "opt-1"))
@@ -160,18 +162,36 @@ public class Bootique_CliOptionsIT {
     }
 
     @Test
-    public void testConfigOverrideOrder_PropsVarsOptions() {
-        System.setProperty("bq.c.m.l", "prop_c_m_l");
-
-        BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--opt-1=Option")
-                .module(binder -> BQCoreModule.extend(binder).addOption("c.m.l", "opt-1")
-                        .setVar("BQ_C_M_L", "var_c_m_l"))
+    public void testOptionsCommandAndModuleOverlapping() {
+        BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--cmd-1", "--opt-1")
+                .module(binder -> BQCoreModule.extend(binder)
+                        .addOption("c.m.k", "2", "opt-1")
+                        .addCommand(new TestOptionCommand1()))
                 .createRuntime();
 
         Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
-        Assert.assertEquals("Option", bean1.c.m.l);
+        Runner runner = runtime.getInstance(Runner.class);
 
-        System.clearProperty("bq.c.m.l");
+        runner.run();
+
+        Assert.assertEquals(2, bean1.c.m.k);
+    }
+
+    @Test
+    public void testConfigOverrideOrder_PropsVarsOptionsFileOptions() {
+        System.setProperty("bq.c.m.f", "prop_c_m_f");
+
+        BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--file-opt-1", "--opt-1=Option")
+                .module(binder -> BQCoreModule.extend(binder)
+                        .addOption("c.m.f", "opt-1")
+                        .addConfigFileOption("classpath:io/bootique/config/configTest4Opt1.yml", "file-opt-1")
+                        .setVar("BQ_C_M_F", "var_c_m_f"))
+                .createRuntime();
+
+        Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
+        Assert.assertEquals("f", bean1.c.m.f);
+
+        System.clearProperty("bq.c.m.f");
     }
 
     @Test(expected = ProvisionException.class)
@@ -208,17 +228,6 @@ public class Bootique_CliOptionsIT {
     }
 
     @Test(expected = ProvisionException.class)
-    public void testOptionsNamesDuplicatePathTheSame_NotAllowed() {
-        BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--opt-1")
-                .module(binder -> BQCoreModule.extend(binder).addOption("c.m.k", "0", "opt-1")
-                        .addOption("c.m.k", "0", "opt-1"))
-                .createRuntime();
-
-        Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
-        Assert.assertEquals(0, bean1.c.m.k);
-    }
-
-    @Test(expected = ProvisionException.class)
     public void testOptionWithNotMappedConfigPath() {
         BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--opt-1=x")
                 .module(binder -> BQCoreModule.extend(binder).addOption("c.m.k.x", "opt-1"))
@@ -228,7 +237,7 @@ public class Bootique_CliOptionsIT {
     }
 
     @Test
-    public void testConfigFileOption_OverrideConfig() {
+    public void testOptionConfigFile_OverrideConfig() {
         BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--file-opt")
                 .module(binder -> BQCoreModule.extend(binder)
                         .addConfigFileOption("classpath:io/bootique/config/configTest4.yml", "file-opt"))
@@ -239,11 +248,12 @@ public class Bootique_CliOptionsIT {
     }
 
     @Test
-    public void testMultipleConfigFileOption_OverrideInCLIOrder() {
+    public void testMultipleOptionsConfigFiles_OverrideInCLIOrder() {
         BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--file-opt-2", "--file-opt-1")
                 .module(binder -> BQCoreModule.extend(binder)
                         .addConfigFileOption("classpath:io/bootique/config/configTest4Opt1.yml", "file-opt-1")
-                        .addConfigFileOption("classpath:io/bootique/config/configTest4Opt2.yml", "file-opt-2"))
+                        .addConfigFileOption("classpath:io/bootique/config/configTest4Opt2.yml", "file-opt-2")
+                        .addOption("c.m.f", "opt-1"))
                 .createRuntime();
         Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
 
@@ -297,6 +307,21 @@ public class Bootique_CliOptionsIT {
 
         public XccCommand() {
             super(CommandMetadata.builder(XccCommand.class).shortName('B'));
+        }
+
+        @Override
+        public CommandOutcome run(Cli cli) {
+            return CommandOutcome.succeeded();
+        }
+    }
+
+    static final class TestOptionCommand1 extends CommandWithMetadata {
+
+        public TestOptionCommand1() {
+            super(CommandMetadata.builder(TestOptionCommand1.class)
+                    .name("cmd-1")
+                    .addOption(OptionMetadata.builder("opt-1")
+                            .configPath("c.m.f").defaultValue("3")));
         }
 
         @Override
