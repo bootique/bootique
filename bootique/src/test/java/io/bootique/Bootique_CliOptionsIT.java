@@ -195,7 +195,7 @@ public class Bootique_CliOptionsIT {
     }
 
     @Test
-    public void testOptionsWithOverlappingPathOneOnCLI_OverrideConfig() {
+    public void testOptionsWithOverlappingPath_OverrideConfig() {
         BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--opt-2", "--opt-3")
                 .module(binder -> BQCoreModule.extend(binder).addOption("c.m.k", "opt-1")
                         .addOption("c.m.k", "2", "opt-2")
@@ -203,7 +203,7 @@ public class Bootique_CliOptionsIT {
                 .createRuntime();
         Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
 
-        Assert.assertEquals(2, bean1.c.m.k);
+        Assert.assertEquals(3, bean1.c.m.k);
     }
 
     @Test(expected = ProvisionException.class)
