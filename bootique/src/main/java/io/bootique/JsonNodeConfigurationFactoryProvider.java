@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BinaryOperator;
@@ -81,16 +82,20 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
 
         if (optionMetadataSet != null && !optionMetadataSet.isEmpty()) {
             //options tied to config paths
-            overrider = overrider.andThen(new InPlaceMapOverrider(optionMetadataSet.stream()
-                    .filter(o -> o.getConfigPath() != null && cli.hasOption(o.getName()))
-                    .collect(Collectors.toMap(o -> o.getConfigPath(), o -> {
+            HashMap<String, String> options = new HashMap<>();
+            for (OptionSpec<?> cliOpt : cli.detectedOptions()) {
+                options.putAll(optionMetadataSet.stream()
+                        .filter(o -> o.getConfigPath() != null && cliOpt.options().contains(o.getName()))
+                        .collect(Collectors.toMap(o -> o.getConfigPath(), o -> {
 
-                        if (cli.optionString(o.getName()) != null) {
-                            return cli.optionString(o.getName());
-                        }
-                        return o.getDefaultValue();
+                            if (cli.optionString(o.getName()) != null) {
+                                return cli.optionString(o.getName());
+                            }
+                            return o.getDefaultValue();
 
-                    })), true, '.'));
+                        })));
+            }
+            overrider = overrider.andThen(new InPlaceMapOverrider(options, true, '.'));
 
             //options tied to a config file
             List<URL> sources = new ArrayList<>();

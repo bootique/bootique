@@ -194,20 +194,9 @@ public class Bootique_CliOptionsIT {
         System.clearProperty("bq.c.m.f");
     }
 
-    @Test(expected = ProvisionException.class)
-    public void testOptionsWithOverlappingPathOnCLI_NotAllowed() {
-        BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--opt-2", "--opt-3")
-                .module(binder -> BQCoreModule.extend(binder).addOption("c.m.k", "opt-1")
-                        .addOption("c.m.k", "2", "opt-2")
-                        .addOption("c.m.k", "3", "opt-3"))
-                .createRuntime();
-
-        runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
-    }
-
     @Test
     public void testOptionsWithOverlappingPathOneOnCLI_OverrideConfig() {
-        BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--opt-2")
+        BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--opt-2", "--opt-3")
                 .module(binder -> BQCoreModule.extend(binder).addOption("c.m.k", "opt-1")
                         .addOption("c.m.k", "2", "opt-2")
                         .addOption("c.m.k", "3", "opt-3"))
