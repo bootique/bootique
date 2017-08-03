@@ -542,26 +542,81 @@ public CommandOutcome run(Cli cli) {
     </chapter>
     <chapter>
         <title>Options</title>
-        <para>In addition to commands, the app can define "options". Options are not associated with
-            any runnable java code, and simply pass command-line values to commands and services.
-            E.g. the standard "<code>--config</code>" option is used by
+        <section>
+            <title>Simple command-line options</title>
+            <para>In addition to commands, the app can define "options". Options are not associated with
+                any runnable java code, and simply pass command-line values to commands and services.
+                E.g. the standard "<code>--config</code>" option is used by
                 <code>CliConfigurationSource</code> service to locate configuration file.
-            Unrecognized options cause application startup errors. To be recognized, an option needs
-            to be "contributed" to Bootique similar to
-            commands:<programlisting language="java">CliOption option = CliOption
-	.builder("email", "An admin email address")
-	.valueRequired("email_address").build();
+                Unrecognized options cause application startup errors. To be recognized, an option needs
+                to be "contributed" to Bootique similar to
+                commands:<programlisting language="java">CliOption option = CliOption
+    .builder("email", "An admin email address")
+    .valueRequired("email_address").build();
 
 BQCoreModule.extend(binder).addOption(option);</programlisting>To
-            read a value of the option, a service should inject <code>io.bootique.cli.Cli</code>
-            object (commands also get this object as a parameter to "run")
-            :<programlisting language="java">@Inject
+                read a value of the option, a service should inject <code>io.bootique.cli.Cli</code>
+                object (commands also get this object as a parameter to "run")
+                :<programlisting language="java">@Inject
 private Cli cli;
 
 public void doSomething() {
-	Collection&lt;String> emails = cli.optionStrings("email");
-	// do something with option values....
+    Collection&lt;String> emails = cli.optionStrings("email");
+// do something with option values....
 }</programlisting></para>
+        </section>
+        <section>
+            <title>Configuration command-line options</title>
+            <para>
+                Typically Bootique application is launched with YAML configuration.
+                Due to structural equivalence, you can use properties and env vars as alternative (or an addition)
+                to YAML or combine both approaches.
+                Sometimes providing of YAML may not be practical, for example:<itemizedlist>
+                <listitem>
+                    <para>An app is started in different modes</para>
+                </listitem>
+                <listitem>
+                    <para>A job-containing app is run with different parameter sets</para>
+                </listitem>
+            </itemizedlist>
+                To cover such cases, specific configuration options on command line can
+                be used.
+                <para>Option value sets a config property:
+                    <programlisting language="java">BQCoreModule.extend(binder).addOption("jobs.myjob.param", "my-opt");
+                    </programlisting>
+                </para>
+                <para>Option presence sets a property to a fixed value:
+                    <programlisting language="java">BQCoreModule.extend(binder).addOption("jobs.myjob.param", "1", "my-opt");
+                    </programlisting>
+                </para>
+
+                <para>Option presence loads a bundled YAML, meaning the order of options is significant:
+                    <programlisting language="java">BQCoreModule.extend(binder).addConfigFileOption("classpath:xyz.yml", "my-opt");
+                    </programlisting>
+                </para>
+                This kind of CLI option alias the option value to a config path which navigates through the
+                configuration tree to the property that should be bound
+                by an option.
+                In other words: CLI option set up configuration property without regard to its presence in YAML
+                or the option path like <code>jobs.myjob.param</code> overrides YAML:<programlisting>
+jobs:
+  myjob:
+    param: x
+            </programlisting>
+                To sum it up, let’s numerate major points on usage of configuration approaches:<itemizedlist>
+                <listitem>
+                    <para>Environment variables, properties and CLI options are applied exactly in this order
+                        from left to right.</para>
+                </listitem>
+                <listitem>
+                    <para>Command's options don't intersect with configuration options.</para>
+                </listitem>
+                <listitem>
+                    <para>Multiple "--config" merged then overriders (vars, props, etc.) are applied.</para>
+                </listitem>
+            </itemizedlist>
+            </para>
+        </section>
     </chapter>
     <chapter>
         <title xml:id="logging">Logging</title>
