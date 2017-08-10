@@ -35,12 +35,12 @@ For the impatient, here is how to get started with Bootique:
 <dependencyManagement>
 	<dependencies>
 		<dependency>
-            <groupId>io.bootique.bom</groupId>
-            <artifactId>bootique-bom</artifactId>
-            <version>0.22</version>
-            <type>pom</type>
-            <scope>import</scope>
-        </dependency> 
+			<groupId>io.bootique.bom</groupId>
+			<artifactId>bootique-bom</artifactId>
+			<version>0.22</version>
+			<type>pom</type>
+			<scope>import</scope>
+		</dependency> 
 	</dependencies>
 </dependencyManagement>
 ```
