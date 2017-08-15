@@ -3,6 +3,9 @@
 Here you can find guidelines for performing a release. The important thing is that Bootique consists of a number of modules dependent between themselves. 
 Therefore in the process of release it’s necessary to stick to the order of modules described in the **Release dependency groups**.
 
+Another major point is differentiation of releases: **train** and **hot-fix**. The term train is used to refer to a release of all [Bootique](https://github.com/bootique)
+modules, hot-fix - a release of a module on demand of a highly required fix. 
+
 ## Prerequisites 
 
 1. Generate a GPG key to sign commits and tags. More info [Generating a new GPG key](https://help.github.com/articles/generating-a-new-gpg-key/), 
@@ -30,7 +33,14 @@ Sample *settings.xml*:
     </servers>
 </settings>
 ```
-**NOTE:** The following steps *prepare sources* and *release maven artifact* are performed cyclically till the last module on the list is released.
+
+## Train release
+
+* Prepare sources
+* Release Maven Artifact
+* Maven Central Synchronization
+
+**NOTE:** The steps *prepare sources* and *release maven artifact* are performed cyclically till the last module on the list is released.
 
 ## Prepare sources
 
@@ -96,4 +106,22 @@ bootique-kotlin         | bootique-jetty, bootique-logback                  |
 bootique-bom            | all                                               |    
 
 
+## Hot-fix release
 
+First of all, be cautious with transient dependencies - release of a module requires release of all its dependent modules.
+It means that if a module is going to be released as "hot-fixed" then its dependent modules must be released too with the same version.
+As the last step must be a release of *bootique-bom* containing new versions of released modules.
+Secondarily, hot fixes are expected to be followed one after another, so that you won’t fall into code mess between releases.
+
+1. Create a new branch at a specific tag with
+```bash
+git checkout -b [branchname] [tagname]
+```
+E.g. master is 0.25-SNAPSHOT, then create a new branch at a tag for version 0.24.
+2. Change branch version to 0.24.1-SNAPSHOT.
+3. Fix issues.
+4. Perform a release of the branch (and branches for dependent modules).
+5. Publish artifact into [Maven Central](https://search.maven.org).
+6. Merge the branch into master.
+
+ 
