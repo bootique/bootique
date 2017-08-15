@@ -118,6 +118,7 @@ Secondarily, hot fixes are expected to be followed one after another, so that yo
 git checkout -b [branchname] [tagname]
 ```
 E.g. master is 0.25-SNAPSHOT, then create a new branch at a tag for version 0.24.
+
 2. Change branch version to 0.24.1-SNAPSHOT.
 3. Fix issues.
 4. Perform a release of the branch (and branches for dependent modules).
