@@ -404,10 +404,10 @@ public class BQCoreModule implements Module {
 
         DefaultEnvironment.Builder environment = DefaultEnvironment.builder(logger);
 
-        if (diProperties.containsKey(EXCLUDE_SYSTEM_PROPERTIES)) {
+        if (Boolean.valueOf(diProperties.get(EXCLUDE_SYSTEM_VARIABLES))) {
             environment.excludeSystemProperties();
         }
-        if (diProperties.containsKey(EXCLUDE_SYSTEM_VARIABLES)) {
+        if (Boolean.valueOf(diProperties.containsKey(EXCLUDE_SYSTEM_VARIABLES))) {
             environment.excludeSystemVariables();
         }
 
