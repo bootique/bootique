@@ -54,15 +54,12 @@ import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 /**
  * The main {@link Module} of Bootique DI runtime. Declares a minimal set of
@@ -370,13 +367,6 @@ public class BQCoreModule implements Module {
                                                    Set<OptionMetadata> options,
                                                    Set<DeclaredVariable> declaredVariables,
                                                    ModulesMetadata modulesMetadata) {
-        //escape options duplications
-        List<String> optionNames = options.stream()
-                .map(o -> o.getName())
-                .collect(Collectors.toList());
-        if (optionNames.size() != new HashSet<>(optionNames).size()) {
-            throw new RuntimeException(String.format("Options' names are duplicated: %s", optionNames));
-        }
 
         ApplicationMetadata.Builder builder = ApplicationMetadata
                 .builder()

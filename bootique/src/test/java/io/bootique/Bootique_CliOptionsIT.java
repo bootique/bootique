@@ -207,16 +207,6 @@ public class Bootique_CliOptionsIT {
     }
 
     @Test(expected = ProvisionException.class)
-    public void testOptionsNamesDuplicate() {
-        BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--opt-1")
-                .module(binder -> BQCoreModule.extend(binder).addOption("c.m.k", "0", "opt-1")
-                        .addOption("c.m.l", "test", "opt-1"))
-                .createRuntime();
-
-        runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
-    }
-
-    @Test(expected = ProvisionException.class)
     public void testOptionWithNotMappedConfigPath() {
         BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--opt-1=x")
                 .module(binder -> BQCoreModule.extend(binder).addOption("c.m.k.x", "opt-1"))
