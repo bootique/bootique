@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.inject.ProvisionException;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.unit.BQInternalTestFactory;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -40,6 +41,7 @@ public class Bootique_VarsIT {
     }
 
     @Test
+    @Ignore
     public void testVarCamelCase_AppliedInRandomTheOrder() {
         BQRuntime runtime = testFactory.app("--config=src/test/resources/io/bootique/config/configEnvironment.yml")
                 .var("BQ_C_m_F", "camel")
