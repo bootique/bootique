@@ -387,9 +387,10 @@ public class BQCoreModule implements Module {
     @Singleton
     Environment provideEnvironment(@EnvironmentProperties Map<String, String> diProperties,
                                    @EnvironmentVariables Map<String, String> diVars,
-                                   Set<DeclaredVariable> declaredVariables) {
+                                   Set<DeclaredVariable> declaredVariables,
+                                   BootLogger logger) {
 
-        return DefaultEnvironment.withSystemPropertiesAndVariables()
+        return DefaultEnvironment.withSystemPropertiesAndVariables(logger)
                 .properties(diProperties)
                 .variables(diVars)
                 .declaredVariables(declaredVariables)
