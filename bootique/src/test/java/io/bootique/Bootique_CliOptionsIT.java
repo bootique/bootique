@@ -1,12 +1,12 @@
 package io.bootique;
 
 import com.google.inject.ProvisionException;
-import io.bootique.meta.application.CommandMetadata;
-import io.bootique.meta.application.OptionMetadata;
 import io.bootique.cli.Cli;
 import io.bootique.command.CommandOutcome;
 import io.bootique.command.CommandWithMetadata;
 import io.bootique.config.CliConfigurationSource;
+import io.bootique.meta.application.CommandMetadata;
+import io.bootique.meta.application.OptionMetadata;
 import io.bootique.unit.BQInternalTestFactory;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -15,9 +15,7 @@ import org.junit.Test;
 
 import java.util.Collection;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class Bootique_CliOptionsIT {
 
@@ -73,6 +71,16 @@ public class Bootique_CliOptionsIT {
                 .module(b -> BQCoreModule.extend(b)
                         .addOption(OptionMetadata.builder("opt1").build())
                         .addOption(OptionMetadata.builder("opt1").build()))
+                .createRuntime()
+                .run();
+    }
+
+    @Test(expected = ProvisionException.class)
+    public void testNameConflict_TwoCommands() {
+        runtimeFactory.app()
+                .module(b -> BQCoreModule.extend(b)
+                        .addCommand(Xd1Command.class)
+                        .addCommand(Xd2Command.class))
                 .createRuntime()
                 .run();
     }
@@ -192,6 +200,42 @@ public class Bootique_CliOptionsIT {
 
         public XccCommand() {
             super(CommandMetadata.builder(XccCommand.class).shortName('B'));
+        }
+
+        @Override
+        public CommandOutcome run(Cli cli) {
+            return CommandOutcome.succeeded();
+        }
+    }
+
+    static final class Xd1Command extends CommandWithMetadata {
+
+        public Xd1Command() {
+            super(CommandMetadata.builder("xd"));
+        }
+
+        @Override
+        public CommandOutcome run(Cli cli) {
+            return CommandOutcome.succeeded();
+        }
+    }
+
+    static final class Xd2Command extends CommandWithMetadata {
+
+        public Xd2Command() {
+            super(CommandMetadata.builder("xd"));
+        }
+
+        @Override
+        public CommandOutcome run(Cli cli) {
+            return CommandOutcome.succeeded();
+        }
+    }
+
+    static final class XeCommand extends CommandWithMetadata {
+
+        public XeCommand() {
+            super(CommandMetadata.builder("xe").addOption(OptionMetadata.builder("opt1").build()));
         }
 
         @Override

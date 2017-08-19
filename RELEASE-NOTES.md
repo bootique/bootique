@@ -1,3 +1,6 @@
+## 0.24
+
+
 ## 0.23
 
 * #25  Map known exceptions to CommandOutcomes

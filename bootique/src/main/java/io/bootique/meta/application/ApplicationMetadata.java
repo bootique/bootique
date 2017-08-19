@@ -5,6 +5,8 @@ import io.bootique.meta.config.ConfigValueMetadata;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Metadata object representing current application and its command-line interface.
@@ -74,7 +76,19 @@ public class ApplicationMetadata implements MetadataNode {
         }
 
         public ApplicationMetadata build() {
+            checkNameDuplicates(application.options);
             return application;
+        }
+
+        private void checkNameDuplicates(Collection<OptionMetadata> options) {
+            if (options.size() > 1) {
+                Set<String> distinctNames = new HashSet<>();
+                options.forEach(om -> {
+                    if (!distinctNames.add(om.getName())) {
+                        throw new RuntimeException("Duplicate option declaration for '" + om.getName() + "'");
+                    }
+                });
+            }
         }
 
         public Builder name(String name) {
