@@ -19,10 +19,10 @@ public class CliConfigurationSource implements ConfigurationSource {
 	private List<String> locations;
 	private BootLogger bootLogger;
 
-	public CliConfigurationSource(Cli cli, BootLogger bootLogger) {
-		this.locations = cli.optionStrings(CONFIG_OPTION);
-		this.bootLogger = bootLogger;
-	}
+    public CliConfigurationSource(Cli cli, BootLogger bootLogger) {
+        this.locations = cli.optionStrings(CONFIG_OPTION);
+        this.bootLogger = bootLogger;
+    }
 
 	@Override
 	public Stream<URL> get() {
