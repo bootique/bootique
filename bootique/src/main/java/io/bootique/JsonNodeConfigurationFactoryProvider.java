@@ -41,43 +41,48 @@ import java.util.stream.Collectors;
  */
 public class JsonNodeConfigurationFactoryProvider implements Provider<ConfigurationFactory> {
 
-	private ConfigurationSource configurationSource;
-	private Environment environment;
-	private JacksonService jacksonService;
-	private BootLogger bootLogger;
+    private ConfigurationSource configurationSource;
+    private Environment environment;
+    private JacksonService jacksonService;
+    private BootLogger bootLogger;
     private Set<OptionMetadata> optionMetadataSet;
     private Cli cli;
 
 
     @Inject
-    public JsonNodeConfigurationFactoryProvider(ConfigurationSource configurationSource, Environment environment,
-                                                JacksonService jacksonService, BootLogger bootLogger, Set<OptionMetadata> optionMetadataSet, Cli cli) {
+    public JsonNodeConfigurationFactoryProvider(
+            ConfigurationSource configurationSource,
+            Environment environment,
+            JacksonService jacksonService,
+            BootLogger bootLogger,
+            Set<OptionMetadata> optionMetadataSet,
+            Cli cli) {
 
-		this.configurationSource = configurationSource;
-		this.environment = environment;
-		this.jacksonService = jacksonService;
-		this.bootLogger = bootLogger;
+        this.configurationSource = configurationSource;
+        this.environment = environment;
+        this.jacksonService = jacksonService;
+        this.bootLogger = bootLogger;
         this.optionMetadataSet = optionMetadataSet;
         this.cli = cli;
-	}
+    }
 
-	protected JsonNode loadConfiguration(Map<String, String> properties, Map<String, String> vars) {
+    protected JsonNode loadConfiguration(Map<String, String> properties, Map<String, String> vars) {
 
-		// hopefully sharing the mapper between parsers is safe... Does it
-		// change the state during parse?
-		ObjectMapper textToJsonMapper = jacksonService.newObjectMapper();
-		Map<ParserType, Function<InputStream, Optional<JsonNode>>> parsers = new EnumMap<>(ParserType.class);
-		parsers.put(ParserType.YAML, new JsonNodeYamlParser(textToJsonMapper));
-		parsers.put(ParserType.JSON, new JsonNodeJsonParser(textToJsonMapper));
+        // hopefully sharing the mapper between parsers is safe... Does it
+        // change the state during parse?
+        ObjectMapper textToJsonMapper = jacksonService.newObjectMapper();
+        Map<ParserType, Function<InputStream, Optional<JsonNode>>> parsers = new EnumMap<>(ParserType.class);
+        parsers.put(ParserType.YAML, new JsonNodeYamlParser(textToJsonMapper));
+        parsers.put(ParserType.JSON, new JsonNodeJsonParser(textToJsonMapper));
 
-		Function<URL, Optional<JsonNode>> parser = new MultiFormatJsonNodeParser(parsers, bootLogger);
+        Function<URL, Optional<JsonNode>> parser = new MultiFormatJsonNodeParser(parsers, bootLogger);
 
-		BinaryOperator<JsonNode> singleConfigMerger = new InPlaceLeftHandMerger(bootLogger);
-		Function<JsonNode, JsonNode> overrider = new InPlaceMapOverrider(properties, true, '.');
+        BinaryOperator<JsonNode> singleConfigMerger = new InPlaceLeftHandMerger(bootLogger);
+        Function<JsonNode, JsonNode> overrider = new InPlaceMapOverrider(properties, true, '.');
 
-		if (!vars.isEmpty()) {
-			overrider = overrider.andThen(new InPlaceMapOverrider(vars, false, '_'));
-		}
+        if (!vars.isEmpty()) {
+            overrider = overrider.andThen(new InPlaceMapOverrider(vars, false, '_'));
+        }
 
         if (optionMetadataSet != null && !optionMetadataSet.isEmpty()) {
             //options tied to config paths
@@ -116,21 +121,21 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
                 .resources(configurationSource).overrider(overrider).build();
     }
 
-	@Override
-	public ConfigurationFactory get() {
+    @Override
+    public ConfigurationFactory get() {
 
-		Map<String, String> vars = environment.frameworkVariables();
-		Map<String, String> properties = environment.frameworkProperties();
+        Map<String, String> vars = environment.frameworkVariables();
+        Map<String, String> properties = environment.frameworkProperties();
 
-		JsonNode rootNode = loadConfiguration(properties, vars);
+        JsonNode rootNode = loadConfiguration(properties, vars);
 
-		ObjectMapper jsonToObjectMapper = jacksonService.newObjectMapper();
-		if (!vars.isEmpty()) {
+        ObjectMapper jsonToObjectMapper = jacksonService.newObjectMapper();
+        if (!vars.isEmpty()) {
 
-			// switching to slower CI strategy for mapping properties...
-			jsonToObjectMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
-		}
+            // switching to slower CI strategy for mapping properties...
+            jsonToObjectMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
+        }
 
-		return new JsonNodeConfigurationFactory(rootNode, jsonToObjectMapper);
-	}
+        return new JsonNodeConfigurationFactory(rootNode, jsonToObjectMapper);
+    }
 }
