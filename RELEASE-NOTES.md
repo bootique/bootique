@@ -1,6 +1,7 @@
 ## 0.24
 
 * #111 Config CLI options
+* #173 CLI Options duplicate names check
 
 ## 0.23
 
