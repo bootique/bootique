@@ -1,5 +1,6 @@
 ## 0.24
 
+* #111 Config CLI options
 
 ## 0.23
 
