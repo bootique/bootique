@@ -159,9 +159,12 @@ public class Bootique_CliOptionsIT {
     @Test
     public void testOption_OverrideConfig() {
         BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--opt-1=x")
-                .module(binder -> BQCoreModule.extend(binder).addOption("c.m.l", "opt-1")
+                .module(binder -> BQCoreModule
+                        .extend(binder)
+                        .addOption("c.m.l", "opt-1")
                         .addOption("c.m.k", "2", "opt-2"))
                 .createRuntime();
+
         Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
 
         Assert.assertEquals("x", bean1.c.m.l);
@@ -171,7 +174,8 @@ public class Bootique_CliOptionsIT {
     @Test
     public void testOptionPathAbsentInYAML() {
         BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--opt-1=x")
-                .module(binder -> BQCoreModule.extend(binder)
+                .module(binder -> BQCoreModule
+                        .extend(binder)
                         .addOption("c.m.f", "opt-1"))
                 .createRuntime();
         Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
@@ -199,17 +203,20 @@ public class Bootique_CliOptionsIT {
     public void testConfigOverrideOrder_PropsVarsOptionsFileOptions() {
         System.setProperty("bq.c.m.f", "prop_c_m_f");
 
-        BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--file-opt-1", "--opt-1=Option")
-                .module(binder -> BQCoreModule.extend(binder)
-                        .addOption("c.m.f", "opt-1")
-                        .addConfigResourceOption("classpath:io/bootique/config/configTest4Opt1.yml", "file-opt-1")
-                        .setVar("BQ_C_M_F", "var_c_m_f"))
-                .createRuntime();
+        try {
+            BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--file-opt-1", "--opt-1=Option")
+                    .module(binder -> BQCoreModule.extend(binder)
+                            .addOption("c.m.f", "opt-1")
+                            .addConfigResourceOption("classpath:io/bootique/config/configTest4Opt1.yml", "file-opt-1")
+                            .setVar("BQ_C_M_F", "var_c_m_f"))
+                    .createRuntime();
 
-        Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
-        Assert.assertEquals("f", bean1.c.m.f);
-
-        System.clearProperty("bq.c.m.f");
+            Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
+            Assert.assertEquals("f", bean1.c.m.f);
+        }
+        finally {
+            System.clearProperty("bq.c.m.f");
+        }
     }
 
     @Test

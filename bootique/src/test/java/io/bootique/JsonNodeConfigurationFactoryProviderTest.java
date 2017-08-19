@@ -1,11 +1,13 @@
 package io.bootique;
 
-import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.bootique.config.ConfigurationFactory;
+import io.bootique.config.ConfigurationSource;
+import io.bootique.config.jackson.JsonNodeConfigurationFactory;
+import io.bootique.env.Environment;
+import io.bootique.jackson.JacksonService;
+import io.bootique.log.DefaultBootLogger;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,16 +17,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.bootique.JsonNodeConfigurationFactoryProvider;
-import org.junit.Test;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.bootique.config.ConfigurationFactory;
-import io.bootique.config.ConfigurationSource;
-import io.bootique.config.jackson.JsonNodeConfigurationFactory;
-import io.bootique.env.Environment;
-import io.bootique.jackson.JacksonService;
-import io.bootique.log.DefaultBootLogger;
+import static java.util.Arrays.asList;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class JsonNodeConfigurationFactoryProviderTest {
 
@@ -69,7 +65,7 @@ public class JsonNodeConfigurationFactoryProviderTest {
 		when(mockJackson.newObjectMapper()).thenReturn(new ObjectMapper());
 
 		ConfigurationFactory factory = new JsonNodeConfigurationFactoryProvider(mockSource, mockEnvironment, mockJackson,
-				new DefaultBootLogger(true), null, null).get();
+				new DefaultBootLogger(true), Collections.emptySet(), null).get();
 
 		assertNotNull(factory);
 		assertTrue(factory instanceof JsonNodeConfigurationFactory);

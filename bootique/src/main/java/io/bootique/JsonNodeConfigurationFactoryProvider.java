@@ -34,7 +34,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * @since 0.17
@@ -84,52 +83,73 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
             overrider = overrider.andThen(new InPlaceMapOverrider(vars, false, '_'));
         }
 
-        if (optionMetadataSet != null && !optionMetadataSet.isEmpty()) {
+        overrider = andCliOptionOverrider(overrider, parser, singleConfigMerger);
 
-            List<OptionSpec<?>> detectedOptions = cli.detectedOptions();
-            if (!detectedOptions.isEmpty()) {
+        return JsonNodeConfigurationBuilder.builder()
+                .parser(parser)
+                .merger(singleConfigMerger)
+                .resources(configurationSource)
+                .overrider(overrider)
+                .build();
+    }
 
-                // options tied to config paths
-                HashMap<String, String> options = new HashMap<>();
+    private Function<JsonNode, JsonNode> andCliOptionOverrider(
+            Function<JsonNode, JsonNode> overrider,
+            Function<URL, Optional<JsonNode>> parser,
+            BinaryOperator<JsonNode> singleConfigMerger) {
 
-                // options tied to a config resources
-                List<URL> sources = new ArrayList<>();
+        if (optionMetadataSet.isEmpty()) {
+            return overrider;
+        }
 
-                for (OptionSpec<?> cliOpt : detectedOptions) {
+        List<OptionSpec<?>> detectedOptions = cli.detectedOptions();
+        if (detectedOptions.isEmpty()) {
+            return overrider;
+        }
 
-                    List<String> detectedOptionStrings = cliOpt.options();
+        // options tied to config property paths
+        HashMap<String, String> options = new HashMap<>(5);
 
-                    options.putAll(optionMetadataSet.stream()
-                            .filter(o -> o.getConfigPath() != null && cliOpt.options().contains(o.getName()))
-                            .collect(Collectors.toMap(o -> o.getConfigPath(), o -> {
+        // options tied to config resources
+        List<URL> sources = new ArrayList<>(5);
 
-                                if (cli.optionString(o.getName()) != null) {
-                                    return cli.optionString(o.getName());
-                                }
-                                return o.getDefaultValue();
+        for (OptionSpec<?> cliOpt : detectedOptions) {
 
-                            })));
+            List<String> optionNames = cliOpt.options();
 
-                    List<URL> collect = optionMetadataSet.stream()
-                            .filter(o -> o.getConfigResource() != null && cliOpt.options().contains(o.getName()))
-                            .map(o -> o.getConfigResource().getUrl())
-                            .collect(Collectors.toList());
+            // TODO: allow lookup of option metadata by name to avoid linear scans...
+            // Though we are dealing with small collection, so shouldn't be too horrible.
 
-                    sources.addAll(collect);
+            for (OptionMetadata omd : optionMetadataSet) {
+
+                if (!optionNames.contains(omd.getName())) {
+                    continue;
                 }
 
-                if (!options.isEmpty()) {
-                    overrider = overrider.andThen(new InPlaceMapOverrider(options, true, '.'));
+                if (omd.getConfigPath() != null) {
+                    String cliValue = cli.optionString(omd.getName());
+                    if (cliValue == null) {
+                        cliValue = omd.getDefaultValue();
+                    }
+
+                    options.put(omd.getConfigPath(), cliValue);
                 }
 
-                if (!sources.isEmpty()) {
-                    overrider = overrider.andThen(new InPlaceFileOverrider(sources, parser, singleConfigMerger));
+                if (omd.getConfigResource() != null) {
+                    sources.add(omd.getConfigResource().getUrl());
                 }
             }
         }
 
-        return JsonNodeConfigurationBuilder.builder().parser(parser).merger(singleConfigMerger)
-                .resources(configurationSource).overrider(overrider).build();
+        if (!options.isEmpty()) {
+            overrider = overrider.andThen(new InPlaceMapOverrider(options, true, '.'));
+        }
+
+        if (!sources.isEmpty()) {
+            overrider = overrider.andThen(new InPlaceFileOverrider(sources, parser, singleConfigMerger));
+        }
+
+        return overrider;
     }
 
     @Override
