@@ -1,31 +1,24 @@
 package io.bootique.jopt;
 
 import io.bootique.cli.Cli;
-import io.bootique.log.BootLogger;
-import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
 /**
- * {@link Cli} implementation on top of {@link JOptionPane} library.
+ * {@link Cli} implementation on top of jopt-simple library.
  */
 public class JoptCli implements Cli {
 
-	private OptionParser parser;
 	private OptionSet optionSet;
-	private BootLogger bootLogger;
 	private String commandName;
 
-	public JoptCli(BootLogger bootLogger, OptionParser parser, OptionSet parsed, String commandName) {
-		this.parser = parser;
+	public JoptCli(OptionSet parsed, String commandName) {
 		this.optionSet = parsed;
-		this.bootLogger = bootLogger;
 		this.commandName = commandName;
 	}
 

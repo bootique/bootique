@@ -1,13 +1,12 @@
 package io.bootique.jopt;
 
-import io.bootique.meta.application.ApplicationMetadata;
-import io.bootique.meta.application.CommandMetadata;
-import io.bootique.meta.application.OptionMetadata;
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandManager;
 import io.bootique.command.DefaultCommandManager;
-import io.bootique.log.BootLogger;
+import io.bootique.meta.application.ApplicationMetadata;
+import io.bootique.meta.application.CommandMetadata;
+import io.bootique.meta.application.OptionMetadata;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,20 +15,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class JoptCliProviderTest {
 
-    private BootLogger mockBootLogger;
     private Map<String, Command> commands;
 
     @Before
     public void before() {
-        this.mockBootLogger = mock(BootLogger.class);
         this.commands = new HashMap<>();
     }
 
@@ -120,6 +115,6 @@ public class JoptCliProviderTest {
         ApplicationMetadata.Builder appBuilder = ApplicationMetadata.builder();
         commands.values().forEach(c -> appBuilder.addCommand(c.getMetadata()));
 
-        return new JoptCliProvider(mockBootLogger, () -> commandManager, appBuilder.build(), argsArray).get();
+        return new JoptCliProvider(() -> commandManager, appBuilder.build(), argsArray).get();
     }
 }
