@@ -7,7 +7,6 @@ import io.bootique.annotation.Args;
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandManager;
-import io.bootique.log.BootLogger;
 import io.bootique.meta.application.ApplicationMetadata;
 import io.bootique.meta.application.OptionMetadata;
 import joptsimple.OptionException;
@@ -26,14 +25,12 @@ import static java.util.stream.Collectors.joining;
 public class JoptCliProvider implements Provider<Cli> {
 
     private String[] args;
-    private BootLogger bootLogger;
     private ApplicationMetadata application;
     private Provider<CommandManager> commandManagerProvider;
 
 
     @Inject
-    public JoptCliProvider(BootLogger bootLogger,
-                           Provider<CommandManager> commandManagerProvider,
+    public JoptCliProvider(Provider<CommandManager> commandManagerProvider,
                            ApplicationMetadata application,
                            @Args String[] args) {
 
@@ -45,7 +42,6 @@ public class JoptCliProvider implements Provider<Cli> {
         this.commandManagerProvider = commandManagerProvider;
         this.application = application;
         this.args = args;
-        this.bootLogger = bootLogger;
     }
 
     @Override
@@ -60,7 +56,7 @@ public class JoptCliProvider implements Provider<Cli> {
 
         String commandName = commandName(parsed);
 
-        return new JoptCli(bootLogger, parser, parsed, commandName);
+        return new JoptCli(parsed, commandName);
     }
 
     protected OptionParser createParser() {
