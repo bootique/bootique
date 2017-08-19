@@ -202,7 +202,7 @@ public class Bootique_CliOptionsIT {
         BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--file-opt-1", "--opt-1=Option")
                 .module(binder -> BQCoreModule.extend(binder)
                         .addOption("c.m.f", "opt-1")
-                        .addConfigFileOption("classpath:io/bootique/config/configTest4Opt1.yml", "file-opt-1")
+                        .addConfigResourceOption("classpath:io/bootique/config/configTest4Opt1.yml", "file-opt-1")
                         .setVar("BQ_C_M_F", "var_c_m_f"))
                 .createRuntime();
 
@@ -237,7 +237,7 @@ public class Bootique_CliOptionsIT {
     public void testOptionConfigFile_OverrideConfig() {
         BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--file-opt")
                 .module(binder -> BQCoreModule.extend(binder)
-                        .addConfigFileOption("classpath:io/bootique/config/configTest4.yml", "file-opt"))
+                        .addConfigResourceOption("classpath:io/bootique/config/configTest4.yml", "file-opt"))
                 .createRuntime();
         Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
 
@@ -248,8 +248,8 @@ public class Bootique_CliOptionsIT {
     public void testMultipleOptionsConfigFiles_OverrideInCLIOrder() {
         BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--file-opt-2", "--file-opt-1")
                 .module(binder -> BQCoreModule.extend(binder)
-                        .addConfigFileOption("classpath:io/bootique/config/configTest4Opt1.yml", "file-opt-1")
-                        .addConfigFileOption("classpath:io/bootique/config/configTest4Opt2.yml", "file-opt-2")
+                        .addConfigResourceOption("classpath:io/bootique/config/configTest4Opt1.yml", "file-opt-1")
+                        .addConfigResourceOption("classpath:io/bootique/config/configTest4Opt2.yml", "file-opt-2")
                         .addOption("c.m.f", "opt-1"))
                 .createRuntime();
         Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");

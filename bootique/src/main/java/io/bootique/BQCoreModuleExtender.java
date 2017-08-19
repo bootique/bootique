@@ -170,10 +170,11 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     }
 
     /**
-     * Alias the CLI option value to a config path.
+     * Associates the CLI option with a config path. The option runtime value is assigned to the configuration property
+     * denoted by the path.
      *
-     * @param configPath a dot-separated "path" that navigates through the configuration tree to the property that
-     *                   should be bound from an option. E.g. "jdbc.myds.password".
+     * @param configPath a dot-separated "path" that navigates configuration tree to the desired property. E.g.
+     *                   "jdbc.myds.password".
      * @param name       alias of an option
      * @return this extender instance
      * @since 0.24
@@ -188,10 +189,12 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     }
 
     /**
-     * Alias the CLI option value to a config path.
+     * Associates the CLI option with a config path. The option runtime value is assigned to the configuration property
+     * denoted by the path. Default value provided here will be used if the option is present, but no value is specified
+     * on the command line.
      *
-     * @param configPath   a dot-separated "path" that navigates through the configuration tree to the property that
-     *                     should be bound from an option. E.g. "jdbc.myds.password".
+     * @param configPath   a dot-separated "path" that navigates configuration tree to the desired property. E.g.
+     *                     "jdbc.myds.password".
      * @param defaultValue default option value
      * @param name         alias of an option
      * @return this extender instance
@@ -208,17 +211,19 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     }
 
     /**
-     * Alias the CLI option value to a YAML file with config paths.
+     * Associates the CLI option value with a config resource. This way a single option can be used to enable a complex
+     * configuration.
      *
-     * @param configFilePath path on file with config
-     * @param name           alias of an option
+     * @param configResourceId a resource path compatible with {@link io.bootique.resource.ResourceFactory} denoting
+     *                         a configuration source. E.g. "a/b/my.yml", or "classpath:com/foo/another.yml".
+     * @param name             alias of an option
      * @return this extender instance
      * @since 0.24
      */
-    public BQCoreModuleExtender addConfigFileOption(String configFilePath, String name) {
+    public BQCoreModuleExtender addConfigResourceOption(String configResourceId, String name) {
         contributeOptions().addBinding().toInstance(
                 OptionMetadata.builder(name)
-                        .configFilePath(configFilePath)
+                        .configResource(configResourceId)
                         .valueOptional()
                         .build());
         return this;

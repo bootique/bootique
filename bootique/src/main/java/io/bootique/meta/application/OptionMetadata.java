@@ -1,6 +1,9 @@
 package io.bootique.meta.application;
 
 import io.bootique.meta.MetadataNode;
+import io.bootique.resource.ResourceFactory;
+
+import java.util.Objects;
 
 /**
  * A descriptor of a command-line option.
@@ -15,7 +18,7 @@ public class OptionMetadata implements MetadataNode {
     private OptionValueCardinality valueCardinality;
     private String valueName;
     private String configPath;
-    private String configFilePath;
+    private ResourceFactory configResource;
     private String defaultValue;
 
     public static Builder builder(String name) {
@@ -52,14 +55,34 @@ public class OptionMetadata implements MetadataNode {
         return valueName;
     }
 
+    /**
+     * Returns an optional configuration path associated with this option.
+     *
+     * @return null or a dot-separated "path" that navigates configuration tree to the property associated with this
+     * option. E.g. "jdbc.myds.password".
+     * @since 0.24
+     */
     public String getConfigPath() {
         return configPath;
     }
 
-    public String getConfigFilePath() {
-        return configFilePath;
+    /**
+     * Returns an optional resource associated with this option.
+     *
+     * @return an optional resource associated with this option.
+     * @since 0.24
+     */
+    public ResourceFactory getConfigResource() {
+        return configResource;
     }
 
+    /**
+     * Returns the default value for this option. I.e. the value that will be used if the option is provided on
+     * command line without an explicit value.
+     *
+     * @return the default value for this option.
+     * @since 0.24
+     */
     public String getDefaultValue() {
         return defaultValue;
     }
@@ -113,18 +136,43 @@ public class OptionMetadata implements MetadataNode {
             return this;
         }
 
+        /**
+         * Sets the configuration property path that should be associated to this option value.
+         *
+         * @param configPath a dot-separated "path" that navigates configuration tree to the desired property. E.g.
+         *                   "jdbc.myds.password".
+         * @return this builder instance
+         * @since 0.24
+         */
         public Builder configPath(String configPath) {
-            this.option.configPath = configPath;
+            this.option.configPath = Objects.requireNonNull(configPath);
+            this.option.configResource = null;
             return this;
         }
 
+        /**
+         * Sets the default value for this option.
+         *
+         * @param defaultValue a default value for the option.
+         * @return this builder instance
+         * @since 0.24
+         */
         public Builder defaultValue(String defaultValue) {
             this.option.defaultValue = defaultValue;
             return this;
         }
 
-        public Builder configFilePath(String configFilePath) {
-            this.option.configFilePath = configFilePath;
+        /**
+         * Sets the config resource associated with this option.
+         *
+         * @param configResourceId a resource path compatible with {@link io.bootique.resource.ResourceFactory} denoting
+         *                         a configuration source. E.g. "a/b/my.yml", or "classpath:com/foo/another.yml".
+         * @return this builder instance
+         * @since 0.24
+         */
+        public Builder configResource(String configResourceId) {
+            this.option.configResource = new ResourceFactory(configResourceId);
+            this.option.configPath = null;
             return this;
         }
 

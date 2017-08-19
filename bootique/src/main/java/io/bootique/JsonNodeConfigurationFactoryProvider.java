@@ -21,16 +21,15 @@ import io.bootique.env.Environment;
 import io.bootique.jackson.JacksonService;
 import io.bootique.log.BootLogger;
 import io.bootique.meta.application.OptionMetadata;
-import io.bootique.resource.ResourceFactory;
 import joptsimple.OptionSpec;
 
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BinaryOperator;
@@ -84,6 +83,7 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
             //options tied to config paths
             HashMap<String, String> options = new HashMap<>();
             for (OptionSpec<?> cliOpt : cli.detectedOptions()) {
+
                 options.putAll(optionMetadataSet.stream()
                         .filter(o -> o.getConfigPath() != null && cliOpt.options().contains(o.getName()))
                         .collect(Collectors.toMap(o -> o.getConfigPath(), o -> {
@@ -101,9 +101,8 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
             List<URL> sources = new ArrayList<>();
             for (OptionSpec<?> cliOpt : cli.detectedOptions()) {
                 List<URL> collect = optionMetadataSet.stream()
-                        .filter(o -> o.getConfigFilePath() != null
-                                && cliOpt.options().contains(o.getName()))
-                        .map(o -> new ResourceFactory(o.getConfigFilePath()).getUrl())
+                        .filter(o -> o.getConfigResource() != null && cliOpt.options().contains(o.getName()))
+                        .map(o -> o.getConfigResource().getUrl())
                         .collect(Collectors.toList());
 
                 sources.addAll(collect);
