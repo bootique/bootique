@@ -13,7 +13,7 @@ import java.time.Duration;
  * should be a {@link Duration}.
  * 
  * @since 0.11
- * @since 0.23 unused as shutdown management initialization is moved to {@link io.bootique.Bootique} class.
+ * @deprecated  0.23 unused as shutdown management initialization is moved to {@link io.bootique.Bootique} class.
  */
 @Target({ ElementType.PARAMETER, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
