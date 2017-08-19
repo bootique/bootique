@@ -67,6 +67,16 @@ public class Bootique_CliOptionsIT {
         assertFalse(runtime.getInstance(Cli.class).hasOption("o2"));
     }
 
+    @Test(expected = ProvisionException.class)
+    public void testNameConflict_TwoOptions() {
+        runtimeFactory.app()
+                .module(b -> BQCoreModule.extend(b)
+                        .addOption(OptionMetadata.builder("opt1").build())
+                        .addOption(OptionMetadata.builder("opt1").build()))
+                .createRuntime()
+                .run();
+    }
+
     // TODO: ignoring this test for now. There is a bug in JOpt 5.0.3...
     // JOpt should detect conflicting options and throw an exception. Instead JOpts triggers second option.
     @Test(expected = ProvisionException.class)
