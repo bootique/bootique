@@ -543,13 +543,13 @@ public CommandOutcome run(Cli cli) {
     <chapter>
         <title>Options</title>
         <section>
-            <title>Simple command-line options</title>
-            <para>In addition to commands, the app can define "options". Options are not associated with
-                any runnable java code, and simply pass command-line values to commands and services.
-                E.g. the standard "<code>--config</code>" option is used by
-                <code>CliConfigurationSource</code> service to locate configuration file.
-                Unrecognized options cause application startup errors. To be recognized, an option needs
-                to be "contributed" to Bootique similar to
+            <title>Simple Options</title>
+            <para>In addition to commands, the app can define "options". Options are not associated
+                with any runnable java code, and simply pass command-line values to commands and
+                services. E.g. the standard "<code>--config</code>" option is used by
+                    <code>CliConfigurationSource</code> service to locate configuration file.
+                Unrecognized options cause application startup errors. To be recognized, options
+                need to be "contributed" to Bootique similar to
                 commands:<programlisting language="java">CliOption option = CliOption
     .builder("email", "An admin email address")
     .valueRequired("email_address").build();
@@ -562,60 +562,28 @@ private Cli cli;
 
 public void doSomething() {
     Collection&lt;String> emails = cli.optionStrings("email");
-// do something with option values....
+    // do something with option values....
 }</programlisting></para>
         </section>
         <section>
-            <title>Configuration command-line options</title>
-            <para>
-                Typically Bootique application is launched with YAML configuration.
-                Due to structural equivalence, you can use properties and env vars as alternative (or an addition)
-                to YAML or combine both approaches.
-                Sometimes providing of YAML may not be practical, for example:<itemizedlist>
-                <listitem>
-                    <para>An app is started in different modes</para>
-                </listitem>
-                <listitem>
-                    <para>A job-containing app is run with different parameter sets</para>
-                </listitem>
-            </itemizedlist>
-                To cover such cases, specific configuration options on command line can
-                be used.
-                <para>Option value sets a config property:
-                    <programlisting language="java">BQCoreModule.extend(binder).addOption("jobs.myjob.param", "my-opt");
-                    </programlisting>
-                </para>
-                <para>Option presence sets a property to a fixed value:
-                    <programlisting language="java">BQCoreModule.extend(binder).addOption("jobs.myjob.param", "1", "my-opt");
-                    </programlisting>
-                </para>
-
-                <para>Option presence loads a bundled YAML, meaning the order of options is significant:
-                    <programlisting language="java">BQCoreModule.extend(binder).addConfigFileOption("classpath:xyz.yml", "my-opt");
-                    </programlisting>
-                </para>
-                This kind of CLI option alias the option value to a config path which navigates through the
-                configuration tree to the property that should be bound
-                by an option.
-                In other words: CLI option set up configuration property without regard to its presence in YAML
-                or the option path like <code>jobs.myjob.param</code> overrides YAML:<programlisting>
-jobs:
-  myjob:
-    param: x
-            </programlisting>
-                To sum it up, let’s numerate major points on usage of configuration approaches:<itemizedlist>
-                <listitem>
-                    <para>Environment variables, properties and CLI options are applied exactly in this order
-                        from left to right.</para>
-                </listitem>
-                <listitem>
-                    <para>Command's options don't intersect with configuration options.</para>
-                </listitem>
-                <listitem>
-                    <para>Multiple "--config" merged then overriders (vars, props, etc.) are applied.</para>
-                </listitem>
-            </itemizedlist>
+            <title>Configuration Options</title>
+            <para>While you can process your own options as described above, options often are just
+                aliases to enable certain pieces of configuration. Bootique supports three flavors
+                of associating options with configuration. Let's demonstrate them here.</para>
+            <para>1. Option value sets a config property:
+                <programlisting language="java">// Starting the app with "--my-opt=x" will set "jobs.myjob.param" value to "x"
+BQCoreModule.extend(binder).addOption("jobs.myjob.param", "my-opt");               </programlisting>
             </para>
+                <para>2. Option presence sets a property to a predefined value:
+                <programlisting language="java">// Starting the app with "--my-opt" will set "jobs.myjob.param" value to "y"
+BQCoreModule.extend(binder).addOption("jobs.myjob.param", "y", "my-opt");                </programlisting>
+            </para>
+                <para>3. Option presence loads a config resource, such as a YAML
+                file:<programlisting language="java">// Starting the app with "--my-opt" is equivalent to starting with "--config=classpath:xyz.yml"
+BQCoreModule.extend(binder).addConfigFileOption("classpath:xyz.yml", "my-opt");                 </programlisting></para> <para>The order of config-bound options on the command line is significant, just as the order of
+                    "<code>--config</code>" parameters. Bootique merges configuration associated
+                with options from left to right, overriding any preceding configuration if there is
+                an overlap.</para>
         </section>
     </chapter>
     <chapter>
