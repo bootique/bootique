@@ -7,7 +7,7 @@ import io.bootique.command.CommandOutcome;
  * bad YAML format, etc. Usually only its "outcome" property is of any interest (i.e. <i>what</i> happened). Its stack
  * trace (i.e. the place <i>where</i> it happened) is rarely important.
  *
- * @since 2.3
+ * @since 0.23
  */
 public class BootiqueException extends RuntimeException {
 
