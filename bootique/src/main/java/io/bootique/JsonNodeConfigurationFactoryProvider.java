@@ -85,36 +85,47 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
         }
 
         if (optionMetadataSet != null && !optionMetadataSet.isEmpty()) {
-            //options tied to config paths
-            HashMap<String, String> options = new HashMap<>();
-            for (OptionSpec<?> cliOpt : cli.detectedOptions()) {
 
-                options.putAll(optionMetadataSet.stream()
-                        .filter(o -> o.getConfigPath() != null && cliOpt.options().contains(o.getName()))
-                        .collect(Collectors.toMap(o -> o.getConfigPath(), o -> {
+            List<OptionSpec<?>> detectedOptions = cli.detectedOptions();
+            if (!detectedOptions.isEmpty()) {
 
-                            if (cli.optionString(o.getName()) != null) {
-                                return cli.optionString(o.getName());
-                            }
-                            return o.getDefaultValue();
+                // options tied to config paths
+                HashMap<String, String> options = new HashMap<>();
 
-                        })));
+                // options tied to a config resources
+                List<URL> sources = new ArrayList<>();
+
+                for (OptionSpec<?> cliOpt : detectedOptions) {
+
+                    List<String> detectedOptionStrings = cliOpt.options();
+
+                    options.putAll(optionMetadataSet.stream()
+                            .filter(o -> o.getConfigPath() != null && cliOpt.options().contains(o.getName()))
+                            .collect(Collectors.toMap(o -> o.getConfigPath(), o -> {
+
+                                if (cli.optionString(o.getName()) != null) {
+                                    return cli.optionString(o.getName());
+                                }
+                                return o.getDefaultValue();
+
+                            })));
+
+                    List<URL> collect = optionMetadataSet.stream()
+                            .filter(o -> o.getConfigResource() != null && cliOpt.options().contains(o.getName()))
+                            .map(o -> o.getConfigResource().getUrl())
+                            .collect(Collectors.toList());
+
+                    sources.addAll(collect);
+                }
+
+                if (!options.isEmpty()) {
+                    overrider = overrider.andThen(new InPlaceMapOverrider(options, true, '.'));
+                }
+
+                if (!sources.isEmpty()) {
+                    overrider = overrider.andThen(new InPlaceFileOverrider(sources, parser, singleConfigMerger));
+                }
             }
-            overrider = overrider.andThen(new InPlaceMapOverrider(options, true, '.'));
-
-            //options tied to a config file
-            List<URL> sources = new ArrayList<>();
-            for (OptionSpec<?> cliOpt : cli.detectedOptions()) {
-                List<URL> collect = optionMetadataSet.stream()
-                        .filter(o -> o.getConfigResource() != null && cliOpt.options().contains(o.getName()))
-                        .map(o -> o.getConfigResource().getUrl())
-                        .collect(Collectors.toList());
-
-                sources.addAll(collect);
-            }
-
-            overrider = overrider.andThen(new InPlaceFileOverrider(sources,
-                    parser, singleConfigMerger));
         }
 
         return JsonNodeConfigurationBuilder.builder().parser(parser).merger(singleConfigMerger)
