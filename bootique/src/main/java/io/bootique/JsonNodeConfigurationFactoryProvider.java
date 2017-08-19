@@ -5,8 +5,10 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import io.bootique.cli.Cli;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.config.ConfigurationSource;
+import io.bootique.config.jackson.InPlaceFileOverrider;
 import io.bootique.config.jackson.InPlaceLeftHandMerger;
 import io.bootique.config.jackson.InPlaceMapOverrider;
 import io.bootique.config.jackson.JsonNodeConfigurationBuilder;
@@ -18,12 +20,18 @@ import io.bootique.config.jackson.MultiFormatJsonNodeParser.ParserType;
 import io.bootique.env.Environment;
 import io.bootique.jackson.JacksonService;
 import io.bootique.log.BootLogger;
+import io.bootique.meta.application.OptionMetadata;
+import joptsimple.OptionSpec;
 
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
@@ -32,58 +40,133 @@ import java.util.function.Function;
  */
 public class JsonNodeConfigurationFactoryProvider implements Provider<ConfigurationFactory> {
 
-	private ConfigurationSource configurationSource;
-	private Environment environment;
-	private JacksonService jacksonService;
-	private BootLogger bootLogger;
+    private ConfigurationSource configurationSource;
+    private Environment environment;
+    private JacksonService jacksonService;
+    private BootLogger bootLogger;
+    private Set<OptionMetadata> optionMetadataSet;
+    private Cli cli;
 
-	@Inject
-	public JsonNodeConfigurationFactoryProvider(ConfigurationSource configurationSource, Environment environment,
-			JacksonService jacksonService, BootLogger bootLogger) {
 
-		this.configurationSource = configurationSource;
-		this.environment = environment;
-		this.jacksonService = jacksonService;
-		this.bootLogger = bootLogger;
-	}
+    @Inject
+    public JsonNodeConfigurationFactoryProvider(
+            ConfigurationSource configurationSource,
+            Environment environment,
+            JacksonService jacksonService,
+            BootLogger bootLogger,
+            Set<OptionMetadata> optionMetadataSet,
+            Cli cli) {
 
-	protected JsonNode loadConfiguration(Map<String, String> properties, Map<String, String> vars) {
+        this.configurationSource = configurationSource;
+        this.environment = environment;
+        this.jacksonService = jacksonService;
+        this.bootLogger = bootLogger;
+        this.optionMetadataSet = optionMetadataSet;
+        this.cli = cli;
+    }
 
-		// hopefully sharing the mapper between parsers is safe... Does it
-		// change the state during parse?
-		ObjectMapper textToJsonMapper = jacksonService.newObjectMapper();
-		Map<ParserType, Function<InputStream, Optional<JsonNode>>> parsers = new EnumMap<>(ParserType.class);
-		parsers.put(ParserType.YAML, new JsonNodeYamlParser(textToJsonMapper));
-		parsers.put(ParserType.JSON, new JsonNodeJsonParser(textToJsonMapper));
+    protected JsonNode loadConfiguration(Map<String, String> properties, Map<String, String> vars) {
 
-		Function<URL, Optional<JsonNode>> parser = new MultiFormatJsonNodeParser(parsers, bootLogger);
+        // hopefully sharing the mapper between parsers is safe... Does it
+        // change the state during parse?
+        ObjectMapper textToJsonMapper = jacksonService.newObjectMapper();
+        Map<ParserType, Function<InputStream, Optional<JsonNode>>> parsers = new EnumMap<>(ParserType.class);
+        parsers.put(ParserType.YAML, new JsonNodeYamlParser(textToJsonMapper));
+        parsers.put(ParserType.JSON, new JsonNodeJsonParser(textToJsonMapper));
 
-		BinaryOperator<JsonNode> singleConfigMerger = new InPlaceLeftHandMerger(bootLogger);
-		Function<JsonNode, JsonNode> overrider = new InPlaceMapOverrider(properties, true, '.');
+        Function<URL, Optional<JsonNode>> parser = new MultiFormatJsonNodeParser(parsers, bootLogger);
 
-		if (!vars.isEmpty()) {
-			overrider = overrider.andThen(new InPlaceMapOverrider(vars, false, '_'));
-		}
+        BinaryOperator<JsonNode> singleConfigMerger = new InPlaceLeftHandMerger(bootLogger);
+        Function<JsonNode, JsonNode> overrider = new InPlaceMapOverrider(properties, true, '.');
 
-		return JsonNodeConfigurationBuilder.builder().parser(parser).merger(singleConfigMerger)
-				.resources(configurationSource).overrider(overrider).build();
-	}
+        if (!vars.isEmpty()) {
+            overrider = overrider.andThen(new InPlaceMapOverrider(vars, false, '_'));
+        }
 
-	@Override
-	public ConfigurationFactory get() {
+        overrider = andCliOptionOverrider(overrider, parser, singleConfigMerger);
 
-		Map<String, String> vars = environment.frameworkVariables();
-		Map<String, String> properties = environment.frameworkProperties();
+        return JsonNodeConfigurationBuilder.builder()
+                .parser(parser)
+                .merger(singleConfigMerger)
+                .resources(configurationSource)
+                .overrider(overrider)
+                .build();
+    }
 
-		JsonNode rootNode = loadConfiguration(properties, vars);
+    private Function<JsonNode, JsonNode> andCliOptionOverrider(
+            Function<JsonNode, JsonNode> overrider,
+            Function<URL, Optional<JsonNode>> parser,
+            BinaryOperator<JsonNode> singleConfigMerger) {
 
-		ObjectMapper jsonToObjectMapper = jacksonService.newObjectMapper();
-		if (!vars.isEmpty()) {
+        if (optionMetadataSet.isEmpty()) {
+            return overrider;
+        }
 
-			// switching to slower CI strategy for mapping properties...
-			jsonToObjectMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
-		}
+        List<OptionSpec<?>> detectedOptions = cli.detectedOptions();
+        if (detectedOptions.isEmpty()) {
+            return overrider;
+        }
 
-		return new JsonNodeConfigurationFactory(rootNode, jsonToObjectMapper);
-	}
+        // options tied to config property paths
+        HashMap<String, String> options = new HashMap<>(5);
+
+        // options tied to config resources
+        List<URL> sources = new ArrayList<>(5);
+
+        for (OptionSpec<?> cliOpt : detectedOptions) {
+
+            List<String> optionNames = cliOpt.options();
+
+            // TODO: allow lookup of option metadata by name to avoid linear scans...
+            // Though we are dealing with small collection, so shouldn't be too horrible.
+
+            for (OptionMetadata omd : optionMetadataSet) {
+
+                if (!optionNames.contains(omd.getName())) {
+                    continue;
+                }
+
+                if (omd.getConfigPath() != null) {
+                    String cliValue = cli.optionString(omd.getName());
+                    if (cliValue == null) {
+                        cliValue = omd.getDefaultValue();
+                    }
+
+                    options.put(omd.getConfigPath(), cliValue);
+                }
+
+                if (omd.getConfigResource() != null) {
+                    sources.add(omd.getConfigResource().getUrl());
+                }
+            }
+        }
+
+        if (!options.isEmpty()) {
+            overrider = overrider.andThen(new InPlaceMapOverrider(options, true, '.'));
+        }
+
+        if (!sources.isEmpty()) {
+            overrider = overrider.andThen(new InPlaceFileOverrider(sources, parser, singleConfigMerger));
+        }
+
+        return overrider;
+    }
+
+    @Override
+    public ConfigurationFactory get() {
+
+        Map<String, String> vars = environment.frameworkVariables();
+        Map<String, String> properties = environment.frameworkProperties();
+
+        JsonNode rootNode = loadConfiguration(properties, vars);
+
+        ObjectMapper jsonToObjectMapper = jacksonService.newObjectMapper();
+        if (!vars.isEmpty()) {
+
+            // switching to slower CI strategy for mapping properties...
+            jsonToObjectMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
+        }
+
+        return new JsonNodeConfigurationFactory(rootNode, jsonToObjectMapper);
+    }
 }
