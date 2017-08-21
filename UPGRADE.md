@@ -1,5 +1,9 @@
 # UPGRADE INSTRUCTIONS
 
+## 0.24
+
+* [bootique-jdbc #39](https://github.com/bootique/bootique-jdbc/issues/39): If you had unit tests that are using `Table.insertFromCsv(..)` and the `.csv` files contain timestamps, replace the space between date and time portions with "T" symbol. The new format is proper ISO-8601. 
+
 ## 0.23
 
 * [bootique #141](https://github.com/bootique/bootique/issues/141): If you've ever implemented your own "main" method 
