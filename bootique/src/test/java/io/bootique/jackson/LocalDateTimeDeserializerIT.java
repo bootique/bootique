@@ -18,14 +18,6 @@ import static org.junit.Assert.assertTrue;
 public class LocalDateTimeDeserializerIT extends DeserializerIT {
 
     @Test
-    public void testDeserializationAsTimestamp04Milliseconds01() throws Exception {
-        Bean1 bean1 = readValue(Bean1.class, mapper, "a: \"x\"\n" +
-                "c:\n" +
-                "  localDateTime: [2005,11,5,22,31,5,829837]");
-        assertEquals(LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 829837), bean1.c.localDateTime);
-    }
-
-    @Test
     public void testDeserializationAsString01() throws Exception {
         LocalDateTime time = LocalDateTime.of(1986, Month.JANUARY, 17, 15, 43);
         Bean1 bean1 = readValue(Bean1.class, mapper, "a: \"x\"\n" +
@@ -59,6 +51,14 @@ public class LocalDateTimeDeserializerIT extends DeserializerIT {
                 "c:\n" +
                 "  instant: " + instant.toString());
         assertEquals(instant, bean1.c.instant);
+    }
+
+    @Test
+    public void testDeserializationAsTimestamp04Milliseconds01() throws Exception {
+        Bean1 bean1 = readValue(Bean1.class, mapper, "a: \"x\"\n" +
+                "c:\n" +
+                "  localDateTime: [2005,11,5,22,31,5,829837]");
+        assertEquals(LocalDateTime.of(2005, Month.NOVEMBER, 5, 22, 31, 5, 829837), bean1.c.localDateTime);
     }
 
     @Test

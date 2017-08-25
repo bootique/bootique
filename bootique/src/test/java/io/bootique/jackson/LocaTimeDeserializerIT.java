@@ -10,6 +10,24 @@ import static org.junit.Assert.assertTrue;
 public class LocaTimeDeserializerIT extends DeserializerIT {
 
     @Test
+    public void testDeserialization01() throws Exception {
+        LocalTime time = LocalTime.of(9, 22, 0, 57);
+        Bean1 bean1 = readValue(Bean1.class, mapper, "a: \"x\"\n" +
+                "c:\n" +
+                "  localTime: " + time.toString());
+        assertEquals(time, bean1.c.localTime);
+    }
+
+    @Test
+    public void testDeserialization02() throws Exception {
+        LocalTime time = LocalTime.of(22, 31, 5, 829837);
+        Bean1 bean1 = readValue(Bean1.class, mapper, "a: \"x\"\n" +
+                "c:\n" +
+                "  localTime: " + time.toString());
+        assertEquals(time, bean1.c.localTime);
+    }
+
+    @Test
     public void testDeserializationAsTimestamp03Nanoseconds() throws Exception {
         Bean1 bean1 = readValue(Bean1.class, mapper, "a: \"x\"\n" +
                 "c:\n" +
