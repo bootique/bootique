@@ -89,11 +89,14 @@ public class ModuleMetadata implements MetadataNode {
     public Optional<ConfigMetadataNode> findConfig(String configPath) {
 
         String[] split = splitFirstComponent(configPath);
-        return configs
-                .stream()
-                .filter(c -> c.getName().equals(split[0]))
-                .map(c -> findConfig(c, split[1]))
-                .findFirst().orElse(Optional.empty());
+
+        for (ConfigMetadataNode c : configs) {
+            if (c.getName().equals(split[0])) {
+                return findConfig(c, split[1]);
+            }
+        }
+
+        return Optional.empty();
     }
 
     protected Optional<ConfigMetadataNode> findConfig(ConfigMetadataNode root, String configPath) {
