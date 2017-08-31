@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-import static java.util.stream.Collectors.joining;
-
 /**
  * A helper for printing text to a fixed-width console that handles text folding and offsets.
  *
@@ -124,7 +122,7 @@ public class ConsoleAppender {
         List<String> folded = new ArrayList<>();
         StringBuilder line = new StringBuilder();
 
-        String joined = phrases.stream().collect(joining());
+        String joined = String.join("", phrases);
 
         SPACE.splitAsStream(joined).forEach(word -> {
 

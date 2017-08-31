@@ -6,8 +6,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.util.stream.Collectors.toMap;
-
 /**
  * An {@link Environment} implementation that reads properties and variables from the Map passed in constructor.
  */
@@ -41,11 +39,13 @@ public class DefaultEnvironment implements Environment {
     }
 
     @Override
+    @Deprecated
     public String getVariable(String name) {
         return variables.get(name);
     }
 
     @Override
+    @Deprecated
     public Map<String, String> variables(String prefix) {
         return filterByPrefix(variables, prefix, "_");
     }
@@ -54,8 +54,14 @@ public class DefaultEnvironment implements Environment {
         String lPrefix = prefix.endsWith(separator) ? prefix : prefix + separator;
         int len = lPrefix.length();
 
-        return unfiltered.entrySet().stream().filter(e -> e.getKey().startsWith(lPrefix))
-                .collect(toMap(e -> e.getKey().substring(len), e -> e.getValue()));
+        Map<String, String> filtered = new HashMap<>();
+        for(Map.Entry<String, String> e : unfiltered.entrySet()) {
+            if(e.getKey().startsWith(lPrefix)) {
+                filtered.put(e.getKey().substring(len), e.getValue());
+            }
+        }
+
+        return filtered;
     }
 
     public static class Builder {

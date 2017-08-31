@@ -66,15 +66,14 @@ class RuntimeModuleMerger {
     private void calcOverrideGraph(Map<Class<? extends Module>, RuntimeModule> modules) {
 
         for (RuntimeModule rm : modules.values()) {
-            rm.getBqModule()
-                    .getOverrides()
-                    .stream()
-                    .map(t -> modules.get(t))
-                    .filter(rmn -> rmn != null)
-                    .forEach(o -> {
-                        o.setOverriddenBy(rm);
-                        rm.setOverridesOthers(true);
-                    });
+
+            for(Class<? extends Module> override : rm.getBqModule().getOverrides()) {
+                RuntimeModule rmn = modules.get(override);
+                if(rmn != null) {
+                    rmn.setOverriddenBy(rm);
+                    rm.setOverridesOthers(true);
+                }
+            }
         }
     }
 
