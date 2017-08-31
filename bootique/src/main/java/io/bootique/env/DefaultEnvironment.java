@@ -1,8 +1,12 @@
 package io.bootique.env;
 
+import io.bootique.log.BootLogger;
+
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -19,8 +23,8 @@ public class DefaultEnvironment implements Environment {
     private Map<String, String> properties;
     private Map<String, String> variables;
 
-    public static Builder withSystemPropertiesAndVariables() {
-        return new Builder().includeSystemProperties().includeSystemVariables();
+    public static Builder withSystemPropertiesAndVariables(BootLogger logger) {
+        return new Builder(logger).includeSystemProperties().includeSystemVariables();
     }
 
     protected DefaultEnvironment() {
@@ -60,8 +64,10 @@ public class DefaultEnvironment implements Environment {
         private Collection<DeclaredVariable> declaredVariables;
         private boolean includeSystemProperties;
         private boolean includeSystemVariables;
+        private BootLogger logger;
 
-        private Builder() {
+        private Builder(BootLogger logger) {
+            this.logger = logger;
         }
 
         public DefaultEnvironment build() {
@@ -116,6 +122,9 @@ public class DefaultEnvironment implements Environment {
 
         protected Map<String, String> buildVariables() {
 
+            //warn if there are some variables overriding app configuration
+            warnAboutNotDeclaredVars();
+
             Map<String, String> vars = new HashMap<>();
             vars.putAll(canonicalizeVariableNames(this.variables));
 
@@ -155,6 +164,46 @@ public class DefaultEnvironment implements Environment {
             });
 
             return canonical;
+        }
+
+        /**
+         * Checks and prints warning if there are some undeclared vars.
+         * This is the first step to remove BQ_* prefixed variables.
+         * <p>
+         * Currently BQ_* variables declared via {@link io.bootique.BQCoreModuleExtender#setVar(String, String)}
+         * {@link io.bootique.BQCoreModuleExtender#setVars(Map)} are overridden with real BQ_* shell vars.
+         * It can lead to some side effects whose cause is hard to be found (e.g. wrong values or extra vars in a env).
+         * <p>
+         * New approach: BQ_* shell variables and variables contributed in BQ are checked against vars declared via
+         * {@link io.bootique.BQCoreModuleExtender#declareVar(String, String)} or
+         * {@link io.bootique.BQCoreModuleExtender#declareVar(String)}.
+         * So that user should explicitly control what vars must be used as a part of app configuration.
+         * <p>
+         */
+        private void warnAboutNotDeclaredVars() {
+            StringBuilder warn = new StringBuilder();
+
+            //print BQ_* shell vars
+            List<String> envVars = System.getenv().keySet().stream()
+                    .filter(var -> var.startsWith(FRAMEWORK_VARIABLES_PREFIX))
+                    .collect(Collectors.toList());
+            if (!envVars.isEmpty()) {
+                warn.append("WARNING: App JSON/YAML configuration will be overridden by ");
+                warn.append(String.format("not app-controlled shell vars:\n%s\n", envVars));
+            }
+
+            //print BQ vars
+            List<String> bqVars = variables.entrySet().stream()
+                    .filter(var -> var.getKey().startsWith(FRAMEWORK_VARIABLES_PREFIX))
+                    .map(var -> var.getKey())
+                    .collect(Collectors.toList());
+
+            if (!bqVars.isEmpty()) {
+                warn.append(warn.length() == 0 ? "WARNING: App JSON/YAML configuration will be overridden by " : "And ");
+                warn.append(String.format("BQ_* vars contributed into BQ:\n %s ", bqVars));
+            }
+
+            logger.stdout(warn.toString());
         }
     }
 }
