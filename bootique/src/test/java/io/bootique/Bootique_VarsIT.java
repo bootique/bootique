@@ -11,6 +11,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class Bootique_VarsIT {
 
@@ -56,7 +57,7 @@ public class Bootique_VarsIT {
     }
 
     @Test
-    public void testDeclaredVar_CaseSensitivity() {
+    public void testDeclaredVar_ConfigPathCaseSensitivity() {
         BQRuntime runtime = testFactory.app()
                 .declareVar("m.propCamelCase", "MY_VAR")
                 .var("MY_VAR", "myValue")
@@ -65,6 +66,17 @@ public class Bootique_VarsIT {
         Bean4 b4 = runtime.getInstance(ConfigurationFactory.class).config(Bean4.class, "");
         assertNotNull("Map did not resolve", b4.m);
         assertEquals("Unexpected map contents: " + b4.m, "myValue", b4.m.get("propCamelCase"));
+    }
+
+    @Test
+    public void testDeclaredVar_NameCaseSensitivity() {
+        BQRuntime runtime = testFactory.app()
+                .declareVar("m.propCamelCase", "MY_VAR")
+                .var("my_var", "myValue")
+                .createRuntime();
+
+        Bean4 b4 = runtime.getInstance(ConfigurationFactory.class).config(Bean4.class, "");
+        assertNull(b4.m);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

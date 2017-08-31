@@ -3,6 +3,7 @@
 * #111 Config CLI options
 * #173 CLI Options duplicate names check
 * #175 Deprecating BQ_* vars
+* #180 Case-sensitive property resolution for declared vars
 
 ## 0.23
 
