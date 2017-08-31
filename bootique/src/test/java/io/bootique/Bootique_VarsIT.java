@@ -125,6 +125,43 @@ public class Bootique_VarsIT {
         assertFalse(help.contains("X_INVALID_VAR"));
     }
 
+    @Test
+    @Ignore
+    public void testDeclaredVar_InHelpWithMap() {
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ByteArrayOutputStream err = new ByteArrayOutputStream();
+        BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(err));
+
+        BQModuleProvider configurableProvider = new BQModuleProvider() {
+            @Override
+            public Module module() {
+                return b -> {
+                };
+            }
+
+            @Override
+            public Map<String, Type> configs() {
+                return Collections.singletonMap("x", Bean4.class);
+            }
+        };
+
+        BQRuntime runtime = testFactory.app()
+                .module(configurableProvider)
+                .declareVar("x.m.prop", "X_VALID_VAR")
+                .declareVar("x.m.prop.x", "X_INVALID_VAR")
+                .bootLogger(logger)
+                .createRuntime();
+
+        Cli cli = runtime.getInstance(Cli.class);
+        runtime.getInstance(HelpCommand.class).run(cli);
+
+        String help = new String(out.toByteArray());
+        assertTrue("No ENVIRONMENT section:\n" + help, help.contains("ENVIRONMENT"));
+        assertTrue(help.contains("X_VALID_VAR"));
+        assertFalse(help.contains("X_INVALID_VAR"));
+    }
+
     @JsonIgnoreProperties(ignoreUnknown = true)
     static class Bean1 {
         private String a;
@@ -165,9 +202,11 @@ public class Bootique_VarsIT {
         }
     }
 
+    @BQConfig
     static class Bean4 {
         private Map<String, String> m;
 
+        @BQConfigProperty
         public void setM(Map<String, String> m) {
             this.m = m;
         }
