@@ -2,7 +2,7 @@
 
 ## 0.24
 
-* [bootique #180](https://github.com/bootique/bootique/issues/180): The ability to declare a BQ_* var was removed. 
+* [bootique #180](https://github.com/bootique/bootique/issues/180): The ability to expliictly declare a BQ_* var was removed. 
 In other words this API is not longer available: 
                   
   ```java
