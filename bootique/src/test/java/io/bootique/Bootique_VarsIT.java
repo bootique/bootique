@@ -44,7 +44,7 @@ public class Bootique_VarsIT {
 
     @Test
     @Ignore
-    public void testVarCamelCase_AppliedInRandomTheOrder() {
+    public void testVarCamelCase_AppliedInRandomOrder() {
         BQRuntime runtime = testFactory.app("--config=src/test/resources/io/bootique/config/configEnvironment.yml")
                 .var("BQ_C_m_F", "camel")
                 .var("BQ_C_M_F", "myValue")
