@@ -4,9 +4,7 @@ import io.bootique.log.BootLogger;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -122,17 +120,23 @@ public class DefaultEnvironment implements Environment {
 
         protected Map<String, String> buildVariables() {
 
-            //warn if there are some variables overriding app configuration
-            warnAboutNotDeclaredVars();
 
-            Map<String, String> vars = new HashMap<>();
-            vars.putAll(canonicalizeVariableNames(this.variables));
+            Map<String, String> systemVars = System.getenv();
+
+            // check for BQ_* shell vars
+            systemVars.keySet().forEach(this::warnOfDeprecatedVar);
+
+            // check for BQ_* DI vars
+            variables.keySet().forEach(this::warnOfDeprecatedVar);
+
+            Map<String, String> allVars = new HashMap<>();
+            allVars.putAll(canonicalizeVariableNames(this.variables));
 
             if (includeSystemVariables) {
-                vars.putAll(canonicalizeVariableNames(System.getenv()));
+                allVars.putAll(canonicalizeVariableNames(systemVars));
             }
 
-            return vars;
+            return allVars;
         }
 
         protected Map<String, String> canonicalizeVariableNames(Map<String, String> vars) {
@@ -166,44 +170,15 @@ public class DefaultEnvironment implements Environment {
             return canonical;
         }
 
-        /**
-         * Checks and prints warning if there are some undeclared vars.
-         * This is the first step to remove BQ_* prefixed variables.
-         * <p>
-         * Currently BQ_* variables declared via {@link io.bootique.BQCoreModuleExtender#setVar(String, String)}
-         * {@link io.bootique.BQCoreModuleExtender#setVars(Map)} are overridden with real BQ_* shell vars.
-         * It can lead to some side effects whose cause is hard to be found (e.g. wrong values or extra vars in a env).
-         * <p>
-         * New approach: BQ_* shell variables and variables contributed in BQ are checked against vars declared via
-         * {@link io.bootique.BQCoreModuleExtender#declareVar(String, String)} or
-         * {@link io.bootique.BQCoreModuleExtender#declareVar(String)}.
-         * So that user should explicitly control what vars must be used as a part of app configuration.
-         * <p>
-         */
-        private void warnAboutNotDeclaredVars() {
-            StringBuilder warn = new StringBuilder();
+        //  Will go away when we stop supporting BQ_ vars completely.
+        @Deprecated
+        private void warnOfDeprecatedVar(String var) {
 
-            //print BQ_* shell vars
-            List<String> envVars = System.getenv().keySet().stream()
-                    .filter(var -> var.startsWith(FRAMEWORK_VARIABLES_PREFIX))
-                    .collect(Collectors.toList());
-            if (!envVars.isEmpty()) {
-                warn.append("WARNING: App JSON/YAML configuration will be overridden by ");
-                warn.append(String.format("not app-controlled shell vars:\n%s\n", envVars));
+            if (var.startsWith(FRAMEWORK_VARIABLES_PREFIX)) {
+                logger.stderr(("WARN: The use of BQ_* variables is deprecated. Consider declaring '"
+                        + var
+                        + "' explicitly using an app-specific name."));
             }
-
-            //print BQ vars
-            List<String> bqVars = variables.entrySet().stream()
-                    .filter(var -> var.getKey().startsWith(FRAMEWORK_VARIABLES_PREFIX))
-                    .map(var -> var.getKey())
-                    .collect(Collectors.toList());
-
-            if (!bqVars.isEmpty()) {
-                warn.append(warn.length() == 0 ? "WARNING: App JSON/YAML configuration will be overridden by " : "And ");
-                warn.append(String.format("BQ_* vars contributed into BQ:\n %s ", bqVars));
-            }
-
-            logger.stdout(warn.toString());
         }
     }
 }
