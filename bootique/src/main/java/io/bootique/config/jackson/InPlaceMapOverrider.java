@@ -1,13 +1,12 @@
 package io.bootique.config.jackson;
 
-import java.util.Map;
-import java.util.function.Function;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import java.util.Map;
+import java.util.function.Function;
+
 /**
- * 
  * Overrides JsonNode object values from a map of properties.
  * 
  * @since 0.17

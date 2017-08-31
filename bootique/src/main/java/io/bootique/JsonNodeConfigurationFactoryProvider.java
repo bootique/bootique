@@ -8,7 +8,7 @@ import com.google.inject.Provider;
 import io.bootique.cli.Cli;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.config.ConfigurationSource;
-import io.bootique.config.jackson.InPlaceFileOverrider;
+import io.bootique.config.jackson.InPlaceResourceOverrider;
 import io.bootique.config.jackson.InPlaceLeftHandMerger;
 import io.bootique.config.jackson.InPlaceMapOverrider;
 import io.bootique.config.jackson.JsonNodeConfigurationBuilder;
@@ -146,7 +146,7 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
         }
 
         if (!sources.isEmpty()) {
-            overrider = overrider.andThen(new InPlaceFileOverrider(sources, parser, singleConfigMerger));
+            overrider = overrider.andThen(new InPlaceResourceOverrider(sources, parser, singleConfigMerger));
         }
 
         return overrider;

@@ -11,15 +11,17 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
 /**
+ * Overrides JsonNode object values from one or more configuration resources.
+ *
  * @since 0.24
  */
-public class InPlaceFileOverrider implements Function<JsonNode, JsonNode> {
+public class InPlaceResourceOverrider implements Function<JsonNode, JsonNode> {
 
     private List<URL> sources;
     private Function<URL, Optional<JsonNode>> parser;
     private BinaryOperator<JsonNode> merger;
 
-    public InPlaceFileOverrider(List<URL> sources, Function<URL, Optional<JsonNode>> parser, BinaryOperator<JsonNode> merger) {
+    public InPlaceResourceOverrider(List<URL> sources, Function<URL, Optional<JsonNode>> parser, BinaryOperator<JsonNode> merger) {
         this.sources = sources;
         this.parser = parser;
         this.merger = merger;
