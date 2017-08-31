@@ -58,7 +58,7 @@ public class DefaultEnvironment implements Environment {
 
     public static class Builder {
         private Map<String, String> properties;
-        private Map<String, String> variables;
+        private Map<String, String> diVariables;
         private Collection<DeclaredVariable> declaredVariables;
         private boolean includeSystemProperties;
         private boolean includeSystemVariables;
@@ -93,8 +93,8 @@ public class DefaultEnvironment implements Environment {
             return this;
         }
 
-        public Builder variables(Map<String, String> variables) {
-            this.variables = variables;
+        public Builder diVariables(Map<String, String> diVariables) {
+            this.diVariables = diVariables;
             return this;
         }
 
@@ -120,19 +120,16 @@ public class DefaultEnvironment implements Environment {
 
         protected Map<String, String> buildVariables() {
 
-
-            Map<String, String> systemVars = System.getenv();
-
-            // check for BQ_* shell vars
-            systemVars.keySet().forEach(this::warnOfDeprecatedVar);
-
-            // check for BQ_* DI vars
-            variables.keySet().forEach(this::warnOfDeprecatedVar);
-
             Map<String, String> allVars = new HashMap<>();
-            allVars.putAll(canonicalizeVariableNames(this.variables));
+
+            diVariables.keySet().forEach(this::warnOfDeprecatedVar);
+            allVars.putAll(canonicalizeVariableNames(this.diVariables));
 
             if (includeSystemVariables) {
+                Map<String, String> systemVars = System.getenv();
+
+                // check for BQ_* shell vars
+                systemVars.keySet().forEach(this::warnOfDeprecatedVar);
                 allVars.putAll(canonicalizeVariableNames(systemVars));
             }
 

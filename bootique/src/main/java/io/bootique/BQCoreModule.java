@@ -392,7 +392,7 @@ public class BQCoreModule implements Module {
 
         return DefaultEnvironment.withSystemPropertiesAndVariables(logger)
                 .properties(diProperties)
-                .variables(diVars)
+                .diVariables(diVars)
                 .declaredVariables(declaredVariables)
                 .build();
     }
