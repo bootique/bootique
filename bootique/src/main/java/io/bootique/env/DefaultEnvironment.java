@@ -126,7 +126,7 @@ public class DefaultEnvironment implements Environment {
 
             declaredVariables.forEach(dv -> mergeValue(dv, properties, diVariables));
 
-            if(includeSystemVariables) {
+            if (includeSystemVariables) {
                 Map<String, String> systemVars = System.getenv();
                 declaredVariables.forEach(dv -> mergeValue(dv, properties, systemVars));
             }
@@ -136,8 +136,9 @@ public class DefaultEnvironment implements Environment {
 
         private void mergeValue(DeclaredVariable dv, Map<String, String> properties, Map<String, String> vars) {
             String value = vars.get(dv.getName());
-            if(value != null) {
-                properties.put(dv.getConfigPath(), value);
+            if (value != null) {
+                String canonicalProperty = Environment.FRAMEWORK_PROPERTIES_PREFIX + "." + dv.getConfigPath();
+                properties.put(canonicalProperty, value);
             }
         }
 

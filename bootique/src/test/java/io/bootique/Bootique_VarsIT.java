@@ -1,17 +1,26 @@
 package io.bootique;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.google.inject.Module;
+import io.bootique.annotation.BQConfig;
+import io.bootique.annotation.BQConfigProperty;
+import io.bootique.cli.Cli;
 import io.bootique.config.ConfigurationFactory;
+import io.bootique.help.HelpCommand;
+import io.bootique.log.BootLogger;
+import io.bootique.log.DefaultBootLogger;
 import io.bootique.unit.BQInternalTestFactory;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 public class Bootique_VarsIT {
 
@@ -45,6 +54,7 @@ public class Bootique_VarsIT {
 
     @Test
     @Ignore
+    // TODO: is this even relevant, considering that BQ_ vars are deprecated and will go away soon?
     public void testVarCamelCase_AppliedInRandomOrder() {
         BQRuntime runtime = testFactory.app("--config=src/test/resources/io/bootique/config/configEnvironment.yml")
                 .var("BQ_C_m_F", "camel")
@@ -77,6 +87,42 @@ public class Bootique_VarsIT {
 
         Bean4 b4 = runtime.getInstance(ConfigurationFactory.class).config(Bean4.class, "");
         assertNull(b4.m);
+    }
+
+    @Test
+    public void testDeclaredVar_InHelp() {
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ByteArrayOutputStream err = new ByteArrayOutputStream();
+        BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(err));
+
+        BQModuleProvider configurableProvider = new BQModuleProvider() {
+            @Override
+            public Module module() {
+                return b -> {
+                };
+            }
+
+            @Override
+            public Map<String, Type> configs() {
+                return Collections.singletonMap("x", Bean5.class);
+            }
+        };
+
+        BQRuntime runtime = testFactory.app()
+                .module(configurableProvider)
+                .declareVar("x.m", "X_VALID_VAR")
+                .declareVar("x.y.prop", "X_INVALID_VAR")
+                .bootLogger(logger)
+                .createRuntime();
+
+        Cli cli = runtime.getInstance(Cli.class);
+        runtime.getInstance(HelpCommand.class).run(cli);
+
+        String help = new String(out.toByteArray());
+        assertTrue("No ENVIRONMENT section:\n" + help, help.contains("ENVIRONMENT"));
+        assertTrue(help.contains("X_VALID_VAR"));
+        assertFalse(help.contains("X_INVALID_VAR"));
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -123,6 +169,16 @@ public class Bootique_VarsIT {
         private Map<String, String> m;
 
         public void setM(Map<String, String> m) {
+            this.m = m;
+        }
+    }
+
+    @BQConfig
+    static class Bean5 {
+        private String m;
+
+        @BQConfigProperty
+        public void setM(String m) {
             this.m = m;
         }
     }

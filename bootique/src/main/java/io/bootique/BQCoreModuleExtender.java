@@ -11,7 +11,6 @@ import io.bootique.annotation.EnvironmentVariables;
 import io.bootique.annotation.LogLevels;
 import io.bootique.command.Command;
 import io.bootique.env.DeclaredVariable;
-import io.bootique.env.Environment;
 import io.bootique.meta.application.OptionMetadata;
 
 import java.util.Map;
@@ -123,7 +122,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @return this extender instance.
      */
     public BQCoreModuleExtender declareVar(String configPath, String name) {
-        DeclaredVariable var = new DeclaredVariable(Environment.FRAMEWORK_PROPERTIES_PREFIX + "." + configPath, name);
+        DeclaredVariable var = new DeclaredVariable(configPath, name);
         contributeVariableDeclarations().addBinding().toInstance(var);
         return this;
     }

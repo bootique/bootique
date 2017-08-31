@@ -7,6 +7,7 @@ import io.bootique.BQModuleOverrideBuilder;
 import io.bootique.BQModuleProvider;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
+import io.bootique.log.BootLogger;
 import org.junit.rules.ExternalResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -163,6 +164,11 @@ public class BQInternalTestFactory extends ExternalResource {
 
         public T module(BQModuleProvider moduleProvider) {
             bootique.module(moduleProvider);
+            return (T) this;
+        }
+
+        public T bootLogger(BootLogger bootLogger) {
+            bootique.bootLogger(bootLogger);
             return (T) this;
         }
 
