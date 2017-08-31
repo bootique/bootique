@@ -57,7 +57,7 @@ public class DefaultEnvironment implements Environment {
     }
 
     public static class Builder {
-        private Map<String, String> properties;
+        private Map<String, String> diProperties;
         private Map<String, String> diVariables;
         private Collection<DeclaredVariable> declaredVariables;
         private boolean includeSystemProperties;
@@ -88,8 +88,8 @@ public class DefaultEnvironment implements Environment {
             return this;
         }
 
-        public Builder properties(Map<String, String> properties) {
-            this.properties = properties;
+        public Builder diProperties(Map<String, String> diProperties) {
+            this.diProperties = diProperties;
             return this;
         }
 
@@ -106,8 +106,8 @@ public class DefaultEnvironment implements Environment {
         protected Map<String, String> buildProperties() {
 
             Map<String, String> properties = new HashMap<>();
-            if (this.properties != null) {
-                properties.putAll(this.properties);
+            if (this.diProperties != null) {
+                properties.putAll(this.diProperties);
             }
 
             if (includeSystemProperties) {

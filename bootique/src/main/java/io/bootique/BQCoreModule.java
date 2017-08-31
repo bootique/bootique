@@ -391,7 +391,7 @@ public class BQCoreModule implements Module {
                                    BootLogger logger) {
 
         return DefaultEnvironment.withSystemPropertiesAndVariables(logger)
-                .properties(diProperties)
+                .diProperties(diProperties)
                 .diVariables(diVars)
                 .declaredVariables(declaredVariables)
                 .build();
