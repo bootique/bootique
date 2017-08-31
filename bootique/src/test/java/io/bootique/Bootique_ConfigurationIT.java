@@ -147,9 +147,9 @@ public class Bootique_ConfigurationIT {
     @Test
     public void testConfigEnvOverrides_Alias() {
         BQRuntime runtime = runtimeFactory.app("--config=src/test/resources/io/bootique/test3.yml")
-                .varAlias("a", "V1")
-                .varAlias("c.m.f", "V2")
-                .varAlias("c.m.k", "V3")
+                .declareVar("a", "V1")
+                .declareVar("c.m.f", "V2")
+                .declareVar("c.m.k", "V3")
                 .var("V1", "K")
                 .var("V2", "K1")
                 .var("V3", "4")

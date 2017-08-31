@@ -121,7 +121,7 @@ public class BQInternalTestFactory extends ExternalResource {
             return (T) this;
         }
 
-        public T varAlias(String path, String var) {
+        public T declareVar(String path, String var) {
             declaredVars.put(path, var);
             return (T) this;
         }

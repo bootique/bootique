@@ -1,14 +1,16 @@
 package io.bootique;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.google.inject.ProvisionException;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.unit.BQInternalTestFactory;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.util.Map;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class Bootique_VarsIT {
 
@@ -31,7 +33,7 @@ public class Bootique_VarsIT {
         BQRuntime runtime = testFactory.app("--config=src/test/resources/io/bootique/config/configEnvironment.yml")
                 .var("BQ_C_M_F", "f")
                 .var("MY_VAR", "myValue")
-                .varAlias("c.m.l", "MY_VAR")
+                .declareVar("c.m.l", "MY_VAR")
                 .createRuntime();
 
         Bean1 b1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
@@ -53,16 +55,16 @@ public class Bootique_VarsIT {
         assertEquals("camel", b1.c.m.f);
     }
 
-    @Test(expected = ProvisionException.class)
-    public void testDeclaredVar_CanonicalizeVarNameConflict() {
-        BQRuntime runtime = testFactory.app("--config=src/test/resources/io/bootique/config/configEnvironment.yml")
-                .var("BQ_C_M_F", "var1")
-                .var("MY_VAR", "myVar")
-                //canonical name is BQ_C_M_F (c.m.f -> BQ_C_M_F)
-                .varAlias("c.m.f", "MY_VAR")
+    @Test
+    public void testDeclaredVar_CaseSensitivity() {
+        BQRuntime runtime = testFactory.app()
+                .declareVar("m.propCamelCase", "MY_VAR")
+                .var("MY_VAR", "myValue")
                 .createRuntime();
 
-        runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
+        Bean4 b4 = runtime.getInstance(ConfigurationFactory.class).config(Bean4.class, "");
+        assertNotNull("Map did not resolve", b4.m);
+        assertEquals("Unexpected map contents: " + b4.m, "myValue", b4.m.get("propCamelCase"));
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -102,6 +104,14 @@ public class Bootique_VarsIT {
 
         public void setL(String l) {
             this.l = l;
+        }
+    }
+
+    static class Bean4 {
+        private Map<String, String> m;
+
+        public void setM(Map<String, String> m) {
+            this.m = m;
         }
     }
 

@@ -19,6 +19,8 @@ public class DefaultEnvironment implements Environment {
     public static final String TRACE_PROPERTY = "bq.trace";
 
     private Map<String, String> properties;
+
+    @Deprecated
     private Map<String, String> variables;
 
     public static Builder withSystemPropertiesAndVariables(BootLogger logger) {
@@ -106,6 +108,13 @@ public class DefaultEnvironment implements Environment {
         protected Map<String, String> buildProperties() {
 
             Map<String, String> properties = new HashMap<>();
+
+            // order of config overrides
+            // 1. DI properties
+            // 2. System properties
+            // 3. DI declared vars
+            // 4. System declared vars
+
             if (this.diProperties != null) {
                 properties.putAll(this.diProperties);
             }
@@ -115,56 +124,38 @@ public class DefaultEnvironment implements Environment {
                 System.getProperties().forEach((k, v) -> properties.put((String) k, (String) v));
             }
 
+            declaredVariables.forEach(dv -> mergeValue(dv, properties, diVariables));
+
+            if(includeSystemVariables) {
+                Map<String, String> systemVars = System.getenv();
+                declaredVariables.forEach(dv -> mergeValue(dv, properties, systemVars));
+            }
+
             return properties;
         }
 
+        private void mergeValue(DeclaredVariable dv, Map<String, String> properties, Map<String, String> vars) {
+            String value = vars.get(dv.getName());
+            if(value != null) {
+                properties.put(dv.getConfigPath(), value);
+            }
+        }
+
+        @Deprecated
         protected Map<String, String> buildVariables() {
 
             Map<String, String> allVars = new HashMap<>();
 
             diVariables.keySet().forEach(this::warnOfDeprecatedVar);
-            allVars.putAll(canonicalizeVariableNames(this.diVariables));
+            allVars.putAll(this.diVariables);
 
             if (includeSystemVariables) {
                 Map<String, String> systemVars = System.getenv();
-
-                // check for BQ_* shell vars
                 systemVars.keySet().forEach(this::warnOfDeprecatedVar);
-                allVars.putAll(canonicalizeVariableNames(systemVars));
+                allVars.putAll(systemVars);
             }
 
             return allVars;
-        }
-
-        protected Map<String, String> canonicalizeVariableNames(Map<String, String> vars) {
-
-            if (declaredVariables == null || declaredVariables.isEmpty() || vars.isEmpty()) {
-                return vars;
-            }
-
-            Map<String, String> canonical = new HashMap<>(vars);
-
-            declaredVariables.forEach(dv -> {
-                if (!dv.isCanonical()) {
-
-                    String val = vars.get(dv.getName());
-                    if (val != null) {
-                        String existingVal = canonical.putIfAbsent(dv.getCanonicalName(), val);
-
-                        // sanity check
-                        if (existingVal != null && !existingVal.equals(val)) {
-                            String message = String.format("Conflict canonicalizing var name. Public (%s) and " +
-                                            "canonical (%s) names are bound to different values.",
-                                    dv.getName(),
-                                    dv.getCanonicalName());
-
-                            throw new RuntimeException(message);
-                        }
-                    }
-                }
-            });
-
-            return canonical;
         }
 
         //  Will go away when we stop supporting BQ_ vars completely.
