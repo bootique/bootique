@@ -114,23 +114,6 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     }
 
     /**
-     * Declares a configuration variable for the given config path. The variable will be included in the help
-     * "ENVIRONMENT" section. The name of the variable will be derived from the config path.  E.g.
-     * "jdbc.myds.password" becomes "BQ_JDBC_MYDS_PASSWORD".
-     *
-     * @param configPath a dot-separated "path" that navigates through the configuration tree to the property that
-     *                   should be bound form a variable. E.g. "jdbc.myds.password".
-     * @return this extender instance.
-     * @deprecated since 0.24 as BQ_ variables are deprecated. Use {@link #declareVar(String, String)} instead to bind
-     * the variable name to the property path.
-     */
-    @Deprecated
-    public BQCoreModuleExtender declareVar(String configPath) {
-        new DeclaredVariableBinder(contributeVariableDeclarations(), configPath).withCanonicalName();
-        return this;
-    }
-
-    /**
      * Declares a configuration variable for the given config path and given name.
      *
      * @param configPath a dot-separated "path" that navigates through the configuration tree to the property that
@@ -139,7 +122,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @return this extender instance.
      */
     public BQCoreModuleExtender declareVar(String configPath, String name) {
-        new DeclaredVariableBinder(contributeVariableDeclarations(), configPath).withName(name);
+        contributeVariableDeclarations().addBinding().toInstance(new DeclaredVariable(configPath, name));
         return this;
     }
 
