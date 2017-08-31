@@ -2,6 +2,7 @@
 
 * #111 Config CLI options
 * #173 CLI Options duplicate names check
+* #175 Deprecating BQ_* vars
 
 ## 0.23
 
