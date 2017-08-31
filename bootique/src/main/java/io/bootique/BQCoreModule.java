@@ -290,9 +290,10 @@ public class BQCoreModule implements Module {
 
     @Provides
     @Singleton
-    CommandManager provideCommandManager(Set<Command> commands,
-                                         HelpCommand helpCommand,
-                                         Injector injector) {
+    CommandManager provideCommandManager(
+            Set<Command> commands,
+            HelpCommand helpCommand,
+            Injector injector) {
 
         // help command is bound, but default is optional, so check via injector...
         Optional<Command> defaultCommand = defaultCommand(injector);
@@ -362,11 +363,12 @@ public class BQCoreModule implements Module {
 
     @Provides
     @Singleton
-    ApplicationMetadata provideApplicationMetadata(ApplicationDescription descriptionHolder,
-                                                   CommandManager commandManager,
-                                                   Set<OptionMetadata> options,
-                                                   Set<DeclaredVariable> declaredVars,
-                                                   ModulesMetadata modulesMetadata) {
+    ApplicationMetadata provideApplicationMetadata(
+            ApplicationDescription descriptionHolder,
+            CommandManager commandManager,
+            Set<OptionMetadata> options,
+            Set<DeclaredVariable> declaredVars,
+            ModulesMetadata modulesMetadata) {
 
         ApplicationMetadata.Builder builder = ApplicationMetadata
                 .builder()
@@ -387,10 +389,11 @@ public class BQCoreModule implements Module {
 
     @Provides
     @Singleton
-    Environment provideEnvironment(@EnvironmentProperties Map<String, String> diProperties,
-                                   @EnvironmentVariables Map<String, String> diVars,
-                                   Set<DeclaredVariable> declaredVariables,
-                                   BootLogger logger) {
+    Environment provideEnvironment(
+            @EnvironmentProperties Map<String, String> diProperties,
+            @EnvironmentVariables Map<String, String> diVars,
+            Set<DeclaredVariable> declaredVariables,
+            BootLogger logger) {
 
         return DefaultEnvironment.withSystemPropertiesAndVariables(logger)
                 .diProperties(diProperties)
