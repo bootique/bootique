@@ -11,7 +11,7 @@
 	<artifactId>bootique-test</artifactId>
 	<packaging>jar</packaging>
 
-	<name>bootique-test: a unit/integration test framework on top of Bootique</name>
+	<name>bootique-test: unit/integration test framework for Bootique apps</name>
 	<description>
 		Provides a test framework on top of Bootique.
 	</description>

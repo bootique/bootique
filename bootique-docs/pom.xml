@@ -11,7 +11,7 @@
 	<artifactId>bootique-docs</artifactId>
 	<packaging>pom</packaging>
 
-	<name>bootique-docs: bootique documentation</name>
+	<name>bootique-docs: Bootique documentation</name>
 	<description>
 		Documentation for Bootique and its common extensions.
 	</description>

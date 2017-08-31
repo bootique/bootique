@@ -11,7 +11,7 @@
 	<artifactId>bootique</artifactId>
 	<packaging>jar</packaging>
 
-	<name>bootique: a minimally opinionated app launcher and integration framework</name>
+	<name>bootique: core of Bootique launcher and integration framework</name>
 	<description>
 		Bootique is a simple DI-based framework for launching command-line Java applications
 		of any kind. Be it webservices, webapps, jobs, etc. 
