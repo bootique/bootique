@@ -2,6 +2,17 @@
 
 ## 0.24
 
+* [bootique #180](https://github.com/bootique/bootique/issues/180): The ability to declare a BQ_* var was removed. 
+In other words this API is not longer available: 
+                  
+  ```java
+  // this used to declare a variable BQ_PROP_XYZ
+  BQCoreModule.extend(binder).declareVar("prop.xyz")
+  ``` 
+  You have two choices for upgrading your code: either (1) simply remove this line of code (`BQ_PROP_XYZ` will keep working, 
+  just won't show in help), or (2 - better) assign this variable an app-specific name. E.g. 
+  `BQCoreModule.extend(binder).declareVar("prop.xyz", "MY_VAR")`.
+
 * [bootique-jdbc #39](https://github.com/bootique/bootique-jdbc/issues/39): If you had unit tests that are using `Table.insertFromCsv(..)` and the `.csv` files contain timestamps, replace the space between date and time portions with "T" symbol. The new format is proper ISO-8601. 
 
 ## 0.23
