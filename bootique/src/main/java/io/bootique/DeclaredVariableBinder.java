@@ -31,7 +31,10 @@ class DeclaredVariableBinder {
     /**
      * Declares the variable with a "canonical" Bootique name calculated from this binder's config path. E.g.
      * "jdbc.myds.password" becomes "BQ_JDBC_MYDS_PASSWORD".
+     *
+     * @deprecated since 0.24 as BQ_ variables are deprecated.
      */
+    @Deprecated
     public void withCanonicalName() {
         String canonical = getCanonicalVariableName();
         withNames(canonical, canonical);
@@ -41,6 +44,7 @@ class DeclaredVariableBinder {
         binder.addBinding().toInstance(new DeclaredVariable(configPath, name, canonicalName));
     }
 
+    @Deprecated
     protected String getCanonicalVariableName() {
 
         StringBuilder varName = new StringBuilder(Environment.FRAMEWORK_VARIABLES_PREFIX);

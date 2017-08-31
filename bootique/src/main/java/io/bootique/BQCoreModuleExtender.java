@@ -121,7 +121,8 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @param configPath a dot-separated "path" that navigates through the configuration tree to the property that
      *                   should be bound form a variable. E.g. "jdbc.myds.password".
      * @return this extender instance.
-     * @deprecated since 0.24
+     * @deprecated since 0.24 as BQ_ variables are deprecated. Use {@link #declareVar(String, String)} instead to bind
+     * the variable name to the property path.
      */
     @Deprecated
     public BQCoreModuleExtender declareVar(String configPath) {
