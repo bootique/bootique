@@ -46,7 +46,9 @@ public interface Environment {
      * @param name environment variable name.
      * @return a value of the environment variable with a given name.
      * @since 0.17
+     * @deprecated since 0.24 BQ_ variables are deprecated and we may no longer need to track variables inside the stack.
      */
+    @Deprecated
     String getVariable(String name);
 
     /**
@@ -56,7 +58,9 @@ public interface Environment {
      * @param prefix a prefix to qualify variables with.
      * @return a map of environment variables that start with a prefix.
      * @since 0.17
+     * @deprecated since 0.24 BQ_ variables are deprecated and we may no longer need to track variables inside the stack.
      */
+    @Deprecated
     Map<String, String> variables(String prefix);
 
     /**
