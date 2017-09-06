@@ -1,6 +1,7 @@
 ## 0.24
 
 * #111 Config CLI options
+* #155 Unit tests inherit shell env vars, ignoring test configuration 
 * #173 CLI Options duplicate names check
 * #175 Deprecating BQ_* vars
 * #180 Case-sensitive property resolution for declared vars
