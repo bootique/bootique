@@ -132,7 +132,7 @@ public class DefaultEnvironment implements Environment {
 
             declaredVariables.forEach(dv -> mergeValue(dv, properties, diVariables));
 
-            if (includeSystemVariables) {
+            if (!excludeSystemVariables) {
                 Map<String, String> systemVars = System.getenv();
                 declaredVariables.forEach(dv -> mergeValue(dv, properties, systemVars));
             }
