@@ -20,10 +20,23 @@ import java.util.function.Consumer;
 public abstract class BQTestRuntimeBuilder<T extends BQTestRuntimeBuilder<T>> {
 
     protected Bootique bootique;
-    protected Map<String, String> properties;
+    protected Map<String, String> properties = new HashMap<>();
+
+    /**
+     * Properties are used to make test stack independent from a shell environment.
+     * It allows us be sure that all the vars are controlled within the test and there are no outside influences.
+     * <p>
+     * The properties take part on {@link io.bootique.env.Environment} provision in {@link BQCoreModule}.
+     */
+    private static final String EXCLUDE_SYSTEM_VARIABLES = "bq.core.exclude.system.variables";
+    private static final String EXCLUDE_SYSTEM_PROPERTIES = "bq.core.exclude.system.properties";
 
     protected BQTestRuntimeBuilder(String[] args) {
-        this.properties = new HashMap<>();
+        //exclude system variables and properties by setting the properties
+        this.properties = new HashMap<String, String>() {{
+            put(EXCLUDE_SYSTEM_PROPERTIES, Boolean.toString(true));
+            put(EXCLUDE_SYSTEM_VARIABLES, Boolean.toString(true));
+        }};
         this.bootique = Bootique.app(args).module(createPropertiesProvider());
     }
 

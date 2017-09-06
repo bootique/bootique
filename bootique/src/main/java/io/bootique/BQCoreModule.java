@@ -77,6 +77,13 @@ public class BQCoreModule implements Module {
     private BootLogger bootLogger;
     private Supplier<Collection<BQModule>> modulesSource;
 
+    /**
+     * Properties are used to exclude system env vars and properties.
+     * It's a duplicate of constants in io.bootique.test.junit.BQTestRuntimeBuilder
+     */
+    private static final String EXCLUDE_SYSTEM_VARIABLES = "bq.core.exclude.system.variables";
+    private static final String EXCLUDE_SYSTEM_PROPERTIES = "bq.core.exclude.system.properties";
+
     private BQCoreModule() {
     }
 
@@ -395,8 +402,16 @@ public class BQCoreModule implements Module {
             Set<DeclaredVariable> declaredVariables,
             BootLogger logger) {
 
-        return DefaultEnvironment.withSystemPropertiesAndVariables(logger)
-                .diProperties(diProperties)
+        DefaultEnvironment.Builder environment = DefaultEnvironment.builder(logger);
+
+        if (Boolean.valueOf(diProperties.get(EXCLUDE_SYSTEM_PROPERTIES))) {
+            environment.excludeSystemProperties();
+        }
+        if (Boolean.valueOf(diProperties.containsKey(EXCLUDE_SYSTEM_VARIABLES))) {
+            environment.excludeSystemVariables();
+        }
+
+        return environment.diProperties(diProperties)
                 .diVariables(diVars)
                 .declaredVariables(declaredVariables)
                 .build();

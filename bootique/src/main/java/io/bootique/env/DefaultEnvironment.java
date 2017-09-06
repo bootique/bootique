@@ -21,8 +21,8 @@ public class DefaultEnvironment implements Environment {
     @Deprecated
     private Map<String, String> variables;
 
-    public static Builder withSystemPropertiesAndVariables(BootLogger logger) {
-        return new Builder(logger).includeSystemProperties().includeSystemVariables();
+    public static Builder builder(BootLogger logger) {
+        return new Builder(logger);
     }
 
     protected DefaultEnvironment() {
@@ -68,8 +68,8 @@ public class DefaultEnvironment implements Environment {
         private Map<String, String> diProperties;
         private Map<String, String> diVariables;
         private Collection<DeclaredVariable> declaredVariables;
-        private boolean includeSystemProperties;
-        private boolean includeSystemVariables;
+        private boolean excludeSystemProperties;
+        private boolean excludeSystemVariables;
         private BootLogger logger;
 
         private Builder(BootLogger logger) {
@@ -86,13 +86,13 @@ public class DefaultEnvironment implements Environment {
             return env;
         }
 
-        public Builder includeSystemProperties() {
-            includeSystemProperties = true;
+        public Builder excludeSystemProperties() {
+            excludeSystemProperties = true;
             return this;
         }
 
-        public Builder includeSystemVariables() {
-            includeSystemVariables = true;
+        public Builder excludeSystemVariables() {
+            excludeSystemVariables = true;
             return this;
         }
 
@@ -125,14 +125,14 @@ public class DefaultEnvironment implements Environment {
                 properties.putAll(this.diProperties);
             }
 
-            if (includeSystemProperties) {
+            if (!excludeSystemProperties) {
                 // override DI props from system...
                 System.getProperties().forEach((k, v) -> properties.put((String) k, (String) v));
             }
 
             declaredVariables.forEach(dv -> mergeValue(dv, properties, diVariables));
 
-            if (includeSystemVariables) {
+            if (!excludeSystemVariables) {
                 Map<String, String> systemVars = System.getenv();
                 declaredVariables.forEach(dv -> mergeValue(dv, properties, systemVars));
             }
@@ -156,7 +156,7 @@ public class DefaultEnvironment implements Environment {
             diVariables.keySet().forEach(this::warnOfDeprecatedVar);
             allVars.putAll(this.diVariables);
 
-            if (includeSystemVariables) {
+            if (!excludeSystemVariables) {
                 Map<String, String> systemVars = System.getenv();
                 systemVars.keySet().forEach(this::warnOfDeprecatedVar);
                 allVars.putAll(systemVars);
