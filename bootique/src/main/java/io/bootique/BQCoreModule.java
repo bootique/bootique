@@ -81,8 +81,8 @@ public class BQCoreModule implements Module {
      * Properties are used to exclude system env vars and properties.
      * It's a duplicate of constants in io.bootique.test.junit.BQTestRuntimeBuilder
      */
-    private static final String EXCLUDE_SYSTEM_VARIABLES = "bq.core.exclude.system.variables";
-    private static final String EXCLUDE_SYSTEM_PROPERTIES = "bq.core.exclude.system.properties";
+    private static final String EXCLUDE_SYSTEM_VARIABLES = "bq.core.excludeSystemVariables";
+    private static final String EXCLUDE_SYSTEM_PROPERTIES = "bq.core.excludeSystemProperties";
 
     private BQCoreModule() {
     }

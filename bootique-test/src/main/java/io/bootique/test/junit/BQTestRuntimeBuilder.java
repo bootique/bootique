@@ -28,8 +28,8 @@ public abstract class BQTestRuntimeBuilder<T extends BQTestRuntimeBuilder<T>> {
      * <p>
      * The properties take part on {@link io.bootique.env.Environment} provision in {@link BQCoreModule}.
      */
-    private static final String EXCLUDE_SYSTEM_VARIABLES = "bq.core.exclude.system.variables";
-    private static final String EXCLUDE_SYSTEM_PROPERTIES = "bq.core.exclude.system.properties";
+    private static final String EXCLUDE_SYSTEM_VARIABLES = "bq.core.excludeSystemVariables";
+    private static final String EXCLUDE_SYSTEM_PROPERTIES = "bq.core.excludeSystemProperties";
 
     protected BQTestRuntimeBuilder(String[] args) {
         //exclude system variables and properties by setting the properties
