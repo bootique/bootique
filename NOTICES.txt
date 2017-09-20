@@ -1,0 +1,8 @@
+Bootique
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+* This software includes Datatype module developed by FasterXML, LLC
+to make Jackson recognize Java 8 Date & Time API data types (JSR-310).
+(https://github.com/FasterXML/jackson-modules-java8/tree/master/datetime)
