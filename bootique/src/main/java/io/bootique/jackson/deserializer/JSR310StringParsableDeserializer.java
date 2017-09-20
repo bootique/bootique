@@ -1,19 +1,3 @@
-/*
- * Copyright 2013 FasterXML.com
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain
- * a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the license for the specific language governing permissions and
- * limitations under the license.
- */
-
 package io.bootique.jackson.deserializer;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -30,8 +14,6 @@ import java.util.function.Function;
 /**
  * Deserializer for all Java 8 temporal {@link java.time} types that cannot be represented with numbers and that have
  * parse functions that can take {@link String}s.
- *
- * @author Nick Williams
  */
 final class JSR310StringParsableDeserializer<T> extends JSR310DeserializerBase<T> {
     private static final long serialVersionUID = 1L;

@@ -1,19 +1,3 @@
-/*
- * Copyright 2013 FasterXML.com
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain
- * a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the license for the specific language governing permissions and
- * limitations under the license.
- */
-
 package io.bootique.jackson.deserializer;
 
 import com.fasterxml.jackson.databind.BeanDescription;
@@ -25,7 +9,20 @@ import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
-import java.time.*;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.MonthDay;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
+import java.time.Period;
+import java.time.Year;
+import java.time.YearMonth;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 /**
  * Class that registers capability of serializing {@code java.time} objects with the Jackson core.
@@ -57,9 +54,6 @@ import java.time.*;
  * <li>{@link LocalDate}, {@link LocalTime}, {@link LocalDateTime}, and {@link OffsetTime}, which cannot portably be converted to timestamps
  * and are instead represented as arrays when WRITE_DATES_AS_TIMESTAMPS is enabled.</li>
  * </ul>
- *
- * @author Nick Williams
- * @author Zoltan Kiss
  */
 @SuppressWarnings("javadoc")
 public final class BQTimeModule extends SimpleModule {

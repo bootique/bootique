@@ -1,6 +1,5 @@
 package io.bootique.jackson;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.SubtypeResolver;
 import io.bootique.jackson.deserializer.BQTimeModule;
@@ -38,7 +37,6 @@ public class DefaultJacksonService implements JacksonService {
         ObjectMapper mapper = new ObjectMapper();
 
         mapper.registerModule(new BQTimeModule());
-        mapper.enable(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS);
 
         // reusing cached resolver; factory ensures it is immutable...
         mapper.setSubtypeResolver(subtypeResolver);

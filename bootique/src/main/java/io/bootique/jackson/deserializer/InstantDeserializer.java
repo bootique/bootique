@@ -1,19 +1,3 @@
-/*
- * Copyright 2013 FasterXML.com
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain
- * a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the license for the specific language governing permissions and
- * limitations under the license.
- */
-
 package io.bootique.jackson.deserializer;
 
 import com.fasterxml.jackson.core.JsonParser;
@@ -37,8 +21,6 @@ import java.util.function.Function;
 
 /**
  * Deserializer for Java 8 temporal {@link Instant}s, {@link OffsetDateTime}, and {@link ZonedDateTime}s.
- *
- * @author Nick Williams
  */
 class InstantDeserializer<T extends Temporal>
         extends JSR310DateTimeDeserializerBase<T> {
@@ -121,14 +103,10 @@ class InstantDeserializer<T extends Temporal>
 
             case JsonTokenId.ID_NUMBER_INT: {
                 long timestamp = parser.getLongValue();
-                if (context.isEnabled(DeserializationFeature.READ_DATE_TIMESTAMPS_AS_NANOSECONDS)) {
-                    return this.fromNanoseconds.apply(new FromDecimalArguments(
-                            timestamp, 0, this.getZone(context)
-                    ));
-                }
-                return this.fromMilliseconds.apply(new FromIntegerArguments(
-                        timestamp, this.getZone(context)
+                return this.fromNanoseconds.apply(new FromDecimalArguments(
+                        timestamp, 0, this.getZone(context)
                 ));
+
             }
 
             case JsonTokenId.ID_STRING: {
