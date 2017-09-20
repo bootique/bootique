@@ -3,7 +3,6 @@ package io.bootique.jackson.deserializer;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonTokenId;
 import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
 import java.io.IOException;
@@ -118,9 +117,6 @@ class InstantDeserializer<T extends Temporal>
                 try {
                     TemporalAccessor acc = _formatter.parse(string);
                     value = parsedToValue.apply(acc);
-                    if (context.isEnabled(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)) {
-                        return adjust.apply(value, this.getZone(context));
-                    }
                 } catch (DateTimeException e) {
                     throw _peelDTE(e);
                 }

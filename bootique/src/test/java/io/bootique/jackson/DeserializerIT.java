@@ -18,8 +18,13 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
 import java.time.MonthDay;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
+import java.time.Period;
 import java.time.Year;
 import java.time.YearMonth;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -71,6 +76,11 @@ public class DeserializerIT {
         protected YearMonth yearMonth;
         protected MonthDay monthDay;
         protected Instant instant;
+        protected Period period;
+        protected OffsetTime offsetTime;
+        protected OffsetDateTime offsetDateTime;
+        protected ZonedDateTime zonedDateTime;
+        protected ZoneOffset zoneOffset;
 
         public LocalDate getLocalDate() {
             return localDate;
@@ -143,5 +153,46 @@ public class DeserializerIT {
         public void setInstant(Instant instant) {
             this.instant = instant;
         }
+
+        public Period getPeriod() {
+            return period;
+        }
+
+        public void setPeriod(Period period) {
+            this.period = period;
+        }
+
+        public OffsetTime getOffsetTime() {
+            return offsetTime;
+        }
+
+        public void setOffsetTime(OffsetTime offsetTime) {
+            this.offsetTime = offsetTime;
+        }
+
+        public OffsetDateTime getOffsetDateTime() {
+            return offsetDateTime;
+        }
+
+        public void setOffsetDateTime(OffsetDateTime offsetDateTime) {
+            this.offsetDateTime = offsetDateTime;
+        }
+
+        public ZonedDateTime getZonedDateTime() {
+            return zonedDateTime;
+        }
+
+        public void setZonedDateTime(ZonedDateTime zonedDateTime) {
+            this.zonedDateTime = zonedDateTime;
+        }
+
+        public ZoneOffset getZoneOffset() {
+            return zoneOffset;
+        }
+
+        public void setZoneOffset(ZoneOffset zoneOffset) {
+            this.zoneOffset = zoneOffset;
+        }
+
     }
 }
