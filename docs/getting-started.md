@@ -48,7 +48,11 @@ import io.bootique.Bootique;
 public class Application {
 
     public static void main(String[] args) {
-        Bootique.app(args).autoLoadModules().run();
+        Bootique
+            .app(args)
+            .autoLoadModules()
+            .exec()
+            .exit();
     }
 }
 ```
@@ -56,7 +60,7 @@ There's only one line of meaningful code inside the `main()` method, but this is
 
 ```
 NAME
-      com.foo.App
+      com.foo.Application
 
 OPTIONS
       -c yaml_location, --config=yaml_location
@@ -107,7 +111,12 @@ public class Application {
         Module module = binder -> 
                   JerseyModule.extend(binder).addResource(HelloResource.class);
 
-        Bootique.app(args).module(module).autoLoadModules().run();
+        Bootique
+            .app(args)
+            .module(module)
+            .autoLoadModules()
+            .exec()
+            .exit();
     }
 }
 ```

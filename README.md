@@ -33,30 +33,30 @@ For the impatient, here is how to get started with Bootique:
 * Declare the official module collection:
 ```xml
 <dependencyManagement>
-	<dependencies>
-		<dependency>
-			<groupId>io.bootique.bom</groupId>
-			<artifactId>bootique-bom</artifactId>
-			<version>0.23</version>
-			<type>pom</type>
-			<scope>import</scope>
-		</dependency> 
-	</dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>io.bootique.bom</groupId>
+            <artifactId>bootique-bom</artifactId>
+            <version>0.23</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency> 
+    </dependencies>
 </dependencyManagement>
 ```
 * Include the modules that you need:
 ```xml
 <dependencies>
-	<dependency>
-		<groupId>io.bootique.jersey</groupId>
-		<artifactId>bootique-jersey</artifactId>
-		<scope>compile</scope>
-	</dependency>
-	<dependency>
-		<groupId>io.bootique.logback</groupId>
-		<artifactId>bootique-logback</artifactId>
-		<scope>compile</scope>
-	</dependency>
+    <dependency>
+        <groupId>io.bootique.jersey</groupId>
+        <artifactId>bootique-jersey</artifactId>
+        <scope>compile</scope>
+    </dependency>
+    <dependency>
+        <groupId>io.bootique.logback</groupId>
+        <artifactId>bootique-logback</artifactId>
+        <scope>compile</scope>
+    </dependency>
 </dependencies>
 ```
 * Write your app:
@@ -66,9 +66,13 @@ package com.foo;
 import io.bootique.Bootique;
 
 public class Application {
-	public static void main(String[] args) {
-		Bootique.app(args).autoLoadModules().run();
-	}
+    public static void main(String[] args) {
+        Bootique
+            .app(args)
+            .autoLoadModules()
+            .exec()
+            .exit();
+    }
 }
 ```
 It has ```main()``` method, so you can run it! 
