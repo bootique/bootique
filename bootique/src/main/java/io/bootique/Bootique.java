@@ -22,6 +22,7 @@ import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.function.Supplier;
 
+import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.joining;
 
 /**
@@ -41,7 +42,7 @@ import static java.util.stream.Collectors.joining;
  */
 public class Bootique {
 
-    protected Collection<BQModuleProvider> providers;
+    private Collection<BQModuleProvider> providers;
     private String[] args;
     private boolean autoLoadModules;
     private BootLogger bootLogger;
@@ -55,32 +56,12 @@ public class Bootique {
         this.shutdownManager = createShutdownManager();
     }
 
-    protected static Module createModule(Class<? extends Module> moduleType) {
+    static Module createModule(Class<? extends Module> moduleType) {
         try {
             return moduleType.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
             throw new RuntimeException("Error instantiating Module of type: " + moduleType.getName(), e);
         }
-    }
-
-    static String[] mergeArrays(String[] a1, String[] a2) {
-        if (a1.length == 0) {
-            return a2;
-        }
-
-        if (a2.length == 0) {
-            return a1;
-        }
-
-        String[] merged = new String[a1.length + a2.length];
-        System.arraycopy(a1, 0, merged, 0, a1.length);
-        System.arraycopy(a2, 0, merged, a1.length, a2.length);
-
-        return merged;
-    }
-
-    static String[] toArray(Collection<String> collection) {
-        return collection.toArray(new String[collection.size()]);
     }
 
     /**
@@ -123,7 +104,7 @@ public class Bootique {
             args = Collections.emptyList();
         }
 
-        return app(toArray(Objects.requireNonNull(args)));
+        return app(BootiqueUtils.toArray(Objects.requireNonNull(args)));
     }
 
     /**
@@ -159,7 +140,7 @@ public class Bootique {
      */
     public Bootique args(String... args) {
         if (args != null) {
-            this.args = Bootique.mergeArrays(this.args, args);
+            this.args = BootiqueUtils.mergeArrays(this.args, args);
         }
         return this;
     }
@@ -173,7 +154,7 @@ public class Bootique {
      */
     public Bootique args(Collection<String> args) {
         if (args != null) {
-            this.args = Bootique.mergeArrays(this.args, Bootique.toArray(args));
+            this.args = BootiqueUtils.mergeArrays(this.args, BootiqueUtils.toArray(args));
         }
         return this;
     }
@@ -366,11 +347,9 @@ public class Bootique {
         // unwrap standard Guice exceptions...
         catch (CreationException ce) {
             o = processExceptions(ce.getCause(), ce);
-        }
-        catch (ProvisionException pe) {
+        } catch (ProvisionException pe) {
             o = processExceptions(pe.getCause(), pe);
-        }
-        catch (Throwable th) {
+        } catch (Throwable th) {
             o = processExceptions(th, th);
         }
 
@@ -386,7 +365,7 @@ public class Bootique {
         return o;
     }
 
-    protected Thread createJVMShutdownHook() {
+    private Thread createJVMShutdownHook() {
 
         // resolve all services needed for shutdown eagerly and outside shutdown thread to ensure that shutdown hook
         // will not fail due to misconfiguration, etc.
@@ -410,7 +389,7 @@ public class Bootique {
         });
     }
 
-    protected CommandOutcome processExceptions(Throwable th, Throwable parentTh) {
+    private CommandOutcome processExceptions(Throwable th, Throwable parentTh) {
 
 
         if (th instanceof BootiqueException) {
@@ -426,8 +405,8 @@ public class Bootique {
         return CommandOutcome.failed(1, message, parentTh);
     }
 
-    protected String getArgsAsString() {
-        return Arrays.asList(args).stream().collect(joining(" "));
+    private String getArgsAsString() {
+        return Arrays.stream(args).collect(joining(" "));
     }
 
     /**
@@ -454,15 +433,15 @@ public class Bootique {
         return new BQRuntime(injector);
     }
 
-    protected BootLogger createBootLogger() {
+    private BootLogger createBootLogger() {
         return new DefaultBootLogger(System.getProperty(DefaultEnvironment.TRACE_PROPERTY) != null);
     }
 
-    protected ShutdownManager createShutdownManager() {
+    private ShutdownManager createShutdownManager() {
         return new DefaultShutdownManager(Duration.ofMillis(10000L));
     }
 
-    protected Injector createInjector() {
+    Injector createInjector() {
 
         DeferredModulesSource modulesSource = new DeferredModulesSource();
 
@@ -472,7 +451,8 @@ public class Bootique {
         // is safe to do, as it won't be used until the Injector is created by the method caller.
         bqModules.add(coreModuleProvider(modulesSource).moduleBuilder().build());
 
-        builderProviders().forEach(p -> bqModules.add(p.moduleBuilder().build()));
+        BootiqueUtils.moduleProviderDependencies(builderProviders(), emptySet())
+            .forEach(p -> bqModules.add(p.moduleBuilder().build()));
 
         if (autoLoadModules) {
             autoLoadedProviders().forEach(p -> bqModules.add(p.moduleBuilder().build()));
@@ -486,11 +466,11 @@ public class Bootique {
         return Guice.createInjector(modules);
     }
 
-    protected Collection<BQModuleProvider> builderProviders() {
+    private Collection<BQModuleProvider> builderProviders() {
         return providers;
     }
 
-    protected BQModuleProvider coreModuleProvider(Supplier<Collection<BQModule>> moduleSource) {
+    private BQModuleProvider coreModuleProvider(Supplier<Collection<BQModule>> moduleSource) {
         return new BQModuleProvider() {
 
             @Override
@@ -515,7 +495,7 @@ public class Bootique {
         };
     }
 
-    protected Collection<BQModuleProvider> autoLoadedProviders() {
+    Collection<BQModuleProvider> autoLoadedProviders() {
         Collection<BQModuleProvider> modules = new ArrayList<>();
         ServiceLoader.load(BQModuleProvider.class).forEach(p -> modules.add(p));
         return modules;
