@@ -19,7 +19,6 @@
 		<module>bootique</module>
 		<module>bootique-test</module>
 		<module>bootique-test-badspi-it</module>
-		<module>bootique-docs</module>
 	</modules>
 
 	<scm>
