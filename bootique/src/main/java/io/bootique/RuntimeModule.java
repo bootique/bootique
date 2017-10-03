@@ -2,6 +2,10 @@ package io.bootique;
 
 import com.google.inject.Module;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 class RuntimeModule {
 
     private BQModule bqModule;
@@ -25,20 +29,24 @@ class RuntimeModule {
     }
 
     void checkCycles() {
-        if(overriddenBy != null) {
-            overriddenBy.checkCycles(this);
+        if (overriddenBy != null) {
+            overriddenBy.checkCycles(this, new ArrayList<>());
         }
     }
 
-    private void checkCycles(RuntimeModule root) {
+    private void checkCycles(RuntimeModule root, List<RuntimeModule> trace) {
+        trace.add(this);
+
         if (root == this) {
-            // TODO: show all modules participating in the detected cycle...
+            // Add next level, to make error message more clear.
+            trace.add(this.overriddenBy);
             throw new BootiqueException(1,
-                    "Circular override dependency between DI modules. Culprit: " + getModuleName());
+                "Circular override dependency between DI modules. Culprit: " +
+                    trace.stream().map(rm -> rm.bqModule.getName()).collect(Collectors.joining(" -> ")));
         }
 
-        if(overriddenBy != null) {
-            overriddenBy.checkCycles(root);
+        if (overriddenBy != null) {
+            overriddenBy.checkCycles(root, trace);
         }
     }
 
@@ -65,17 +73,17 @@ class RuntimeModule {
     void setOverriddenBy(RuntimeModule module) {
 
         // no more than one override is allowed
-       if(this.overriddenBy != null) {
-           String message = String.format(
-                   "Module %s provided by %s is overridden twice by %s and %s",
-                   getModuleName(),
-                   getProviderName(),
-                   this.overriddenBy.getModuleName(),
-                   module.getModuleName());
+        if (this.overriddenBy != null) {
+            String message = String.format(
+                    "Module %s provided by %s is overridden twice by %s and %s",
+                    getModuleName(),
+                    getProviderName(),
+                    this.overriddenBy.getModuleName(),
+                    module.getModuleName());
 
-           throw new BootiqueException(1, message);
-       }
+            throw new BootiqueException(1, message);
+        }
 
-       this.overriddenBy = module;
+        this.overriddenBy = module;
     }
 }

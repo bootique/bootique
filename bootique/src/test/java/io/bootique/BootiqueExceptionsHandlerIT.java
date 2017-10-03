@@ -119,7 +119,13 @@ public class BootiqueExceptionsHandlerIT {
 
         assertEquals(1, out.getExitCode());
         assertNull(out.getException());
-        assertEquals("Circular override dependency between DI modules. Culprit: ModuleWithOverride1", out.getMessage());
+
+        final String outMessage = out.getMessage();
+
+        assertTrue(
+            "Circular override dependency between DI modules. Culprit: ModuleWithOverride2 -> ModuleWithOverride1 -> ModuleWithOverride2".equals(outMessage) ||
+                "Circular override dependency between DI modules. Culprit: ModuleWithOverride1 -> ModuleWithOverride2 -> ModuleWithOverride1".equals(outMessage)
+        );
     }
 
     @Test
