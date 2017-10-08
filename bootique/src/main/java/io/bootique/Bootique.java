@@ -63,26 +63,6 @@ public class Bootique {
         }
     }
 
-    static String[] mergeArrays(String[] a1, String[] a2) {
-        if (a1.length == 0) {
-            return a2;
-        }
-
-        if (a2.length == 0) {
-            return a1;
-        }
-
-        String[] merged = new String[a1.length + a2.length];
-        System.arraycopy(a1, 0, merged, 0, a1.length);
-        System.arraycopy(a2, 0, merged, a1.length, a2.length);
-
-        return merged;
-    }
-
-    static String[] toArray(Collection<String> collection) {
-        return collection.toArray(new String[collection.size()]);
-    }
-
     /**
      * A generic main method that auto-loads available modules and runs Bootique stack. Useful for apps that don't
      * care to customize their "main()".
@@ -123,7 +103,7 @@ public class Bootique {
             args = Collections.emptyList();
         }
 
-        return app(toArray(Objects.requireNonNull(args)));
+        return app(BootiqueUtils.toArray(Objects.requireNonNull(args)));
     }
 
     /**
@@ -159,7 +139,7 @@ public class Bootique {
      */
     public Bootique args(String... args) {
         if (args != null) {
-            this.args = Bootique.mergeArrays(this.args, args);
+            this.args = BootiqueUtils.mergeArrays(this.args, args);
         }
         return this;
     }
@@ -173,7 +153,7 @@ public class Bootique {
      */
     public Bootique args(Collection<String> args) {
         if (args != null) {
-            this.args = Bootique.mergeArrays(this.args, Bootique.toArray(args));
+            this.args = BootiqueUtils.mergeArrays(this.args, BootiqueUtils.toArray(args));
         }
         return this;
     }
