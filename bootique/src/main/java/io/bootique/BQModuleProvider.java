@@ -72,4 +72,14 @@ public interface BQModuleProvider {
     default String name() {
         return getClass().getSimpleName();
     }
+
+    /**
+     * Each module can define dependencies on other modules through this method.
+     *
+     * @return list of bootique module providers on which current module depends.
+     * @since 0.24
+     */
+    default Collection<BQModuleProvider> dependencies() {
+        return Collections.emptyList();
+    }
 }

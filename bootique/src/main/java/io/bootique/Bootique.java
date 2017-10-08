@@ -22,6 +22,7 @@ import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.function.Supplier;
 
+import static java.util.Collections.emptySet;
 import static java.util.stream.Collectors.joining;
 
 /**
@@ -450,7 +451,8 @@ public class Bootique {
         // is safe to do, as it won't be used until the Injector is created by the method caller.
         bqModules.add(coreModuleProvider(modulesSource).moduleBuilder().build());
 
-        builderProviders().forEach(p -> bqModules.add(p.moduleBuilder().build()));
+        BootiqueUtils.moduleProviderDependencies(builderProviders(), emptySet())
+            .forEach(p -> bqModules.add(p.moduleBuilder().build()));
 
         if (autoLoadModules) {
             autoLoadedProviders().forEach(p -> bqModules.add(p.moduleBuilder().build()));
