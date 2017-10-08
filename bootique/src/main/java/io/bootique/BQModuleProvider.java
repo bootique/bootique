@@ -74,9 +74,11 @@ public interface BQModuleProvider {
     }
 
     /**
-     * Each module can define dependencies on other modules through this method.
+     * Returns a collection of providers of modules on which this provider's module depends. Concrete providers can
+     * optionally define dependencies on other modules through this method. This allows to load app modules with
+     * dependencies without relying on auto-loading.
      *
-     * @return list of bootique module providers on which current module depends.
+     * @return collection of bootique module providers on which the current module depends.
      * @since 0.24
      */
     default Collection<BQModuleProvider> dependencies() {

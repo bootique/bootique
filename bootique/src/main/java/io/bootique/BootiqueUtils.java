@@ -15,23 +15,25 @@ final class BootiqueUtils {
         throw new AssertionError("Should not be called.");
     }
 
-    static Collection<BQModuleProvider> moduleProviderDependencies(
-        final Collection<BQModuleProvider> rootSet,
-        final Set<BQModuleProvider> processed
-    ) {
-        final Set<BQModuleProvider> result = new HashSet<>(processed);
+    static Collection<BQModuleProvider> moduleProviderDependencies(Collection<BQModuleProvider> rootSet) {
+        return moduleProviderDependencies(rootSet, new HashSet<>());
+    }
+
+    private static Collection<BQModuleProvider> moduleProviderDependencies(
+            Collection<BQModuleProvider> rootSet,
+            Set<BQModuleProvider> processed) {
 
         for (BQModuleProvider moduleProvider : rootSet) {
-            if (!result.contains(moduleProvider)) {
-                result.add(moduleProvider);
+            if (!processed.contains(moduleProvider)) {
+                processed.add(moduleProvider);
 
                 if (!moduleProvider.dependencies().isEmpty()) {
-                    result.addAll(moduleProviderDependencies(moduleProvider.dependencies(), result));
+                    processed.addAll(moduleProviderDependencies(moduleProvider.dependencies(), processed));
                 }
             }
         }
 
-        return result;
+        return processed;
     }
 
     static String[] mergeArrays(String[] a1, String[] a2) {

@@ -5,6 +5,7 @@
 * #173 CLI Options duplicate names check
 * #175 Deprecating BQ_* vars
 * #180 Case-sensitive property resolution for declared vars
+* #183 Module aggregation / define module dependencies
 * #185 Show full dependency override graph
 
 ## 0.23
