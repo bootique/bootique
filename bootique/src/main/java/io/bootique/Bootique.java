@@ -405,7 +405,7 @@ public class Bootique {
     }
 
     private String getArgsAsString() {
-        return Arrays.asList(args).stream().collect(joining(" "));
+        return Arrays.stream(args).collect(joining(" "));
     }
 
     /**
