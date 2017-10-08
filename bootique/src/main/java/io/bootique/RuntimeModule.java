@@ -41,7 +41,7 @@ class RuntimeModule {
             // Add next level, to make error message more clear.
             trace.add(this.overriddenBy);
             throw new BootiqueException(1,
-                "Circular override dependency between DI modules. Culprit: " +
+                "Circular override dependency between DI modules: " +
                     trace.stream().map(rm -> rm.bqModule.getName()).collect(Collectors.joining(" -> ")));
         }
 

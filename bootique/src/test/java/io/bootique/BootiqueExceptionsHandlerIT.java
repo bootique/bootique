@@ -123,8 +123,8 @@ public class BootiqueExceptionsHandlerIT {
         final String outMessage = out.getMessage();
 
         assertTrue(
-            "Circular override dependency between DI modules. Culprit: ModuleWithOverride2 -> ModuleWithOverride1 -> ModuleWithOverride2".equals(outMessage) ||
-                "Circular override dependency between DI modules. Culprit: ModuleWithOverride1 -> ModuleWithOverride2 -> ModuleWithOverride1".equals(outMessage)
+            "Circular override dependency between DI modules: ModuleWithOverride2 -> ModuleWithOverride1 -> ModuleWithOverride2".equals(outMessage) ||
+                "Circular override dependency between DI modules: ModuleWithOverride1 -> ModuleWithOverride2 -> ModuleWithOverride1".equals(outMessage)
         );
     }
 
