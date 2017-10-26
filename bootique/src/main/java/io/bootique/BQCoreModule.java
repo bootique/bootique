@@ -299,6 +299,7 @@ public class BQCoreModule implements Module {
     @Singleton
     CommandManager provideCommandManager(
             Set<Command> commands,
+            Map<String, CommandOverride> commandOverrides,
             HelpCommand helpCommand,
             Injector injector) {
 
@@ -326,6 +327,14 @@ public class BQCoreModule implements Module {
                     throw new BootiqueException(1, message);
                 }
             }
+        });
+
+        commandOverrides.forEach((commandName, commandOverride) -> {
+            Command originalCommand = commandMap.get(commandName);
+            if (originalCommand == null) {
+                throw new BootiqueException(1, "Attempted to override an unknown command: " + commandName);
+            }
+            commandMap.put(commandName, commandOverride.override(originalCommand));
         });
 
         return new DefaultCommandManager(commandMap, defaultCommand, Optional.of(helpCommand));

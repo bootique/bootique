@@ -2,6 +2,7 @@ package io.bootique;
 
 import com.google.inject.Binder;
 import com.google.inject.Key;
+import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.multibindings.MapBinder;
 import com.google.inject.multibindings.Multibinder;
@@ -10,10 +11,12 @@ import io.bootique.annotation.EnvironmentProperties;
 import io.bootique.annotation.EnvironmentVariables;
 import io.bootique.annotation.LogLevels;
 import io.bootique.command.Command;
+import io.bootique.command.CommandExecutor;
 import io.bootique.env.DeclaredVariable;
 import io.bootique.meta.application.OptionMetadata;
 
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 import java.util.logging.Level;
 
 import static java.util.Arrays.asList;
@@ -32,6 +35,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     private Multibinder<DeclaredVariable> declaredVariables;
     private Multibinder<OptionMetadata> options;
     private Multibinder<Command> commands;
+    private MapBinder<String, CommandOverride> commandOverrides;
 
     protected BQCoreModuleExtender(Binder binder) {
         super(binder);
@@ -227,6 +231,12 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
         return this;
     }
 
+    public BQCoreModuleExtender addCommandOverride(String commandName, CommandOverride.Builder commandOverride) {
+        Provider<ExecutorService> executorProvider = binder.getProvider(Key.get(ExecutorService.class, CommandExecutor.class));
+        contributeCommandOverrides().addBinding(commandName).toInstance(commandOverride.build(executorProvider));
+        return this;
+    }
+
     protected MapBinder<String, Level> contributeLogLevels() {
         return logLevels != null ? logLevels : (logLevels = newMap(String.class, Level.class, LogLevels.class));
     }
@@ -244,6 +254,10 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     protected Multibinder<Command> contributeCommands() {
         // no synchronization. we don't care if it is created twice. It will still work with Guice.
         return commands != null ? commands : (commands = newSet(Command.class));
+    }
+
+    protected MapBinder<String, CommandOverride> contributeCommandOverrides() {
+        return commandOverrides != null ? commandOverrides : (commandOverrides = newMap(String.class, CommandOverride.class));
     }
 
     protected MapBinder<String, String> contributeProperties() {
