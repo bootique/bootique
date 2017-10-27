@@ -1,8 +1,10 @@
 package io.bootique;
 
 import com.google.inject.Provider;
+import io.bootique.cli.CliFactory;
 import io.bootique.command.Command;
 import io.bootique.command.CommandInvocation;
+import io.bootique.command.CommandManager;
 import io.bootique.command.OverridenCommand;
 
 import java.util.ArrayList;
@@ -17,20 +19,26 @@ public class CommandOverride {
         return new Builder();
     }
 
+    private final Provider<CliFactory> cliFactoryProvider;
+    private final Provider<CommandManager> commandManagerProvider;
     private final Provider<ExecutorService> executorProvider;
     private final Collection<CommandInvocation> before;
     private final Collection<CommandInvocation> parallel;
 
-    private CommandOverride(Provider<ExecutorService> executorProvider,
+    private CommandOverride(Provider<CliFactory> cliFactoryProvider,
+                            Provider<CommandManager> commandManagerProvider,
+                            Provider<ExecutorService> executorProvider,
                             Collection<CommandInvocation> before,
                             Collection<CommandInvocation> parallel) {
+        this.cliFactoryProvider = cliFactoryProvider;
+        this.commandManagerProvider = commandManagerProvider;
         this.executorProvider = executorProvider;
         this.before = before;
         this.parallel = parallel;
     }
 
     public Command override(Command command) {
-        return new OverridenCommand(command, executorProvider, before, parallel);
+        return new OverridenCommand(command, cliFactoryProvider, commandManagerProvider, executorProvider, before, parallel);
     }
 
     public static class Builder {
@@ -77,8 +85,12 @@ public class CommandOverride {
             return parallel;
         }
 
-        protected CommandOverride build(Provider<ExecutorService> executorProvider) {
+        protected CommandOverride build(Provider<CliFactory> cliFactoryProvider,
+                                        Provider<CommandManager> commandManagerProvider,
+                                        Provider<ExecutorService> executorProvider) {
             return new CommandOverride(
+                    cliFactoryProvider,
+                    commandManagerProvider,
                     executorProvider,
                     mapBuilders(before),
                     mapBuilders(parallel));

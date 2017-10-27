@@ -26,7 +26,7 @@ public class CommandInvocation {
         return command;
     }
 
-    public boolean terminateOnErrors() {
+    public boolean shouldTerminateOnErrors() {
         return terminateOnErrors;
     }
 

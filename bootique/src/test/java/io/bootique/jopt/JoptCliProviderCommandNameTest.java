@@ -1,6 +1,7 @@
 package io.bootique.jopt;
 
 import io.bootique.cli.Cli;
+import io.bootique.cli.CliFactory;
 import io.bootique.command.Command;
 import io.bootique.command.CommandManager;
 import io.bootique.command.DefaultCommandManager;
@@ -84,7 +85,8 @@ public class JoptCliProviderCommandNameTest {
         ApplicationMetadata.Builder appBuilder = ApplicationMetadata.builder();
         commands.values().forEach(c -> appBuilder.addCommand(c.getMetadata()));
 
-        return new JoptCliProvider(() -> commandManager, appBuilder.build(), argsArray).get();
+        CliFactory cliFactory = new JoptCliFactory(() -> commandManager, appBuilder.build());
+        return new JoptCliProvider(cliFactory, argsArray).get();
     }
 
 }

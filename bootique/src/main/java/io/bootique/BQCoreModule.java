@@ -15,6 +15,7 @@ import io.bootique.annotation.DefaultCommand;
 import io.bootique.annotation.EnvironmentProperties;
 import io.bootique.annotation.EnvironmentVariables;
 import io.bootique.cli.Cli;
+import io.bootique.cli.CliFactory;
 import io.bootique.command.Command;
 import io.bootique.command.CommandManager;
 import io.bootique.command.DefaultCommandManager;
@@ -34,6 +35,7 @@ import io.bootique.help.config.DefaultConfigHelpGenerator;
 import io.bootique.help.config.HelpConfigCommand;
 import io.bootique.jackson.DefaultJacksonService;
 import io.bootique.jackson.JacksonService;
+import io.bootique.jopt.JoptCliFactory;
 import io.bootique.jopt.JoptCliProvider;
 import io.bootique.log.BootLogger;
 import io.bootique.meta.application.ApplicationMetadata;
@@ -293,6 +295,12 @@ public class BQCoreModule implements Module {
     @Singleton
     HelpConfigCommand provideHelpConfigCommand(BootLogger bootLogger, Provider<ConfigHelpGenerator> helpGeneratorProvider) {
         return new HelpConfigCommand(bootLogger, helpGeneratorProvider);
+    }
+
+    @Provides
+    @Singleton
+    CliFactory provideCliFactory(Provider<CommandManager> commandManagerProvider, ApplicationMetadata applicationMetadata) {
+        return new JoptCliFactory(commandManagerProvider, applicationMetadata);
     }
 
     @Provides

@@ -10,8 +10,10 @@ import io.bootique.annotation.DefaultCommand;
 import io.bootique.annotation.EnvironmentProperties;
 import io.bootique.annotation.EnvironmentVariables;
 import io.bootique.annotation.LogLevels;
+import io.bootique.cli.CliFactory;
 import io.bootique.command.Command;
 import io.bootique.command.CommandExecutor;
+import io.bootique.command.CommandManager;
 import io.bootique.env.DeclaredVariable;
 import io.bootique.meta.application.OptionMetadata;
 
@@ -49,6 +51,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
         contributeLogLevels();
         contributeOptions();
         contributeCommands();
+        contributeCommandOverrides();
 
         return this;
     }
@@ -232,8 +235,13 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     }
 
     public BQCoreModuleExtender addCommandOverride(String commandName, CommandOverride.Builder commandOverride) {
+        Provider<CliFactory> cliFactoryProvider = binder.getProvider(CliFactory.class);
+        Provider<CommandManager> commandManagerProvider = binder.getProvider(CommandManager.class);
         Provider<ExecutorService> executorProvider = binder.getProvider(Key.get(ExecutorService.class, CommandExecutor.class));
-        contributeCommandOverrides().addBinding(commandName).toInstance(commandOverride.build(executorProvider));
+
+        contributeCommandOverrides().addBinding(commandName).toInstance(
+                commandOverride.build(cliFactoryProvider, commandManagerProvider, executorProvider));
+
         return this;
     }
 
