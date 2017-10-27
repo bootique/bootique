@@ -54,7 +54,7 @@ public class OverridenCommand extends CommandWithMetadata {
                 .filter(outcome -> !outcome.isSuccess()).collect(Collectors.toList());
 
         if (failures.size() > 0) {
-            // TODO: combine all results into a single message
+            // TODO: combine all results into a single message? or need a different type of CommandOutcome (e.g. MultiCommandOutcome)?
             return CommandOutcome.failed(1, "Some of the commands failed");
         }
 

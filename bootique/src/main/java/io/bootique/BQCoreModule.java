@@ -17,6 +17,7 @@ import io.bootique.annotation.EnvironmentVariables;
 import io.bootique.cli.Cli;
 import io.bootique.cli.CliFactory;
 import io.bootique.command.Command;
+import io.bootique.command.CommandExecutor;
 import io.bootique.command.CommandManager;
 import io.bootique.command.DefaultCommandManager;
 import io.bootique.config.CliConfigurationSource;
@@ -60,6 +61,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
@@ -301,6 +304,13 @@ public class BQCoreModule implements Module {
     @Singleton
     CliFactory provideCliFactory(Provider<CommandManager> commandManagerProvider, ApplicationMetadata applicationMetadata) {
         return new JoptCliFactory(commandManagerProvider, applicationMetadata);
+    }
+
+    @Provides
+    @Singleton
+    @CommandExecutor
+    ExecutorService provideCommandExecutor() {
+        return Executors.newCachedThreadPool();
     }
 
     @Provides
