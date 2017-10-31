@@ -41,26 +41,22 @@ public class Bootique_CommandOverrideIT {
     @Test
     public void testOverride_ParallelCommand_ByName() {
         testOverride_ParallelCommand_ByName_WithExtraArgs(false);
-        assertTrue(successfulCommand.isExecuted());
     }
 
     @Test
     public void testOverride_ParallelCommand_ByName_WithArgs() {
         testOverride_ParallelCommand_ByName_WithExtraArgs(false, "--" + SuccessfulCommand.FLAG_OPTION);
-        assertTrue(successfulCommand.isExecuted());
         assertTrue(successfulCommand.hasFlagOption());
     }
 
     @Test
     public void testOverride_ParallelCommand_ByType() {
         testOverride_ParallelCommand_ByName_WithExtraArgs(true);
-        assertTrue(successfulCommand.isExecuted());
     }
 
     @Test
     public void testOverride_ParallelCommand_ByType_WithArgs() {
         testOverride_ParallelCommand_ByName_WithExtraArgs(true, "--" + SuccessfulCommand.FLAG_OPTION);
-        assertTrue(successfulCommand.isExecuted());
         assertTrue(successfulCommand.hasFlagOption());
     }
 
@@ -82,6 +78,13 @@ public class Bootique_CommandOverrideIT {
         }
 
         testOverride_ParallelCommand(decorator);
+        // wait for the parallel commands to finish
+        // (also see io.bootique.command.DecoratedCommand#run for more details)
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         assertTrue(successfulCommand.isExecuted());
     }
 
@@ -97,26 +100,22 @@ public class Bootique_CommandOverrideIT {
     @Test
     public void testOverride_FailureBeforeOriginal_ByName() {
         testOverride_FailureBeforeOriginal_ByName_WithExtraArgs(false);
-        assertTrue(failingCommand.isExecuted());
     }
 
     @Test
     public void testOverride_FailureBeforeOriginal_ByName_WithArgs() {
         testOverride_FailureBeforeOriginal_ByName_WithExtraArgs(false, "--" + FailingCommand.FLAG_OPTION);
-        assertTrue(failingCommand.isExecuted());
         assertTrue(failingCommand.hasFlagOption());
     }
 
     @Test
     public void testOverride_FailureBeforeOriginal_ByType() {
         testOverride_FailureBeforeOriginal_ByName_WithExtraArgs(true);
-        assertTrue(failingCommand.isExecuted());
     }
 
     @Test
     public void testOverride_FailureBeforeOriginal_ByType_WithArgs() {
         testOverride_FailureBeforeOriginal_ByName_WithExtraArgs(true, "--" + FailingCommand.FLAG_OPTION);
-        assertTrue(failingCommand.isExecuted());
         assertTrue(failingCommand.hasFlagOption());
     }
 
