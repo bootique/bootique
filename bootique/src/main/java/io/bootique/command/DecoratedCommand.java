@@ -6,6 +6,9 @@ import io.bootique.cli.Cli;
 import io.bootique.cli.CliFactory;
 
 import java.util.Collection;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -15,6 +18,7 @@ import java.util.stream.Collectors;
 public class DecoratedCommand extends CommandWithMetadata {
 
     private final Command originalCommand;
+    private final Map<Class<? extends Command>, Command> commands;
     private final Provider<CliFactory> cliFactoryProvider;
     private final Provider<CommandManager> commandManagerProvider;
     private final Provider<ExecutorService> executorProvider;
@@ -22,6 +26,7 @@ public class DecoratedCommand extends CommandWithMetadata {
     private final Collection<CommandInvocation> parallel;
 
     public DecoratedCommand(Command originalCommand,
+                            Map<Class<? extends Command>, Command> commands,
                             Provider<CliFactory> cliFactoryProvider,
                             Provider<CommandManager> commandManagerProvider,
                             Provider<ExecutorService> executorProvider,
@@ -29,6 +34,7 @@ public class DecoratedCommand extends CommandWithMetadata {
                             Collection<CommandInvocation> parallel) {
         super(originalCommand.getMetadata());
         this.originalCommand = originalCommand;
+        this.commands = commands;
         this.cliFactoryProvider = cliFactoryProvider;
         this.commandManagerProvider = commandManagerProvider;
         this.executorProvider = executorProvider;
@@ -73,7 +79,15 @@ public class DecoratedCommand extends CommandWithMetadata {
     }
 
     private Supplier<CommandOutcome> toOutcomeSupplier(CommandInvocation invocation) {
-        Cli cli = getCliFactory().createCli(invocation.getCommand().split("\\s+"));
+        Optional<Command> commandOptional = invocation.getCommandType()
+                .map(commandType -> Objects.requireNonNull(commands.get(commandType), "Unknown command type: " + commandType.getName()));
+
+        Cli cli;
+        if (commandOptional.isPresent()) {
+            cli = getCliFactory().createCli(commandOptional.get(), invocation.getArgs());
+        } else {
+            cli = getCliFactory().createCli(invocation.getArgs());
+        }
 
         String commandName = cli.commandName();
         Command command = getCommandManager().getCommands().get(commandName);

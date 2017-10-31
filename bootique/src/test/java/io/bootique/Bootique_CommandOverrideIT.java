@@ -16,48 +16,73 @@ import static org.junit.Assert.assertTrue;
 
 public class Bootique_CommandOverrideIT {
 
-    private static final String DEFAULT_COMMAND = "a";
-
     private ExecutableOnceCommand originalCommand;
+    private SuccessfulCommand successfulCommand;
+    private FailingCommand failingCommand;
     private Bootique bootique;
 
     @Before
     public void before() {
+        String DEFAULT_COMMAND = "a";
+
         originalCommand = new ExecutableOnceCommand(DEFAULT_COMMAND, CommandOutcome.succeeded());
-        bootique = Bootique.app("-" + DEFAULT_COMMAND).module(b -> BQCoreModule.extend(b).addCommand(originalCommand));
+        successfulCommand = successfulCommand("s");
+        failingCommand = failingCommand("f");
+        bootique = Bootique.app("-" + DEFAULT_COMMAND)
+                .module(b -> {
+                    BQCoreModule.extend(b).addCommand(originalCommand);
+                    BQCoreModule.extend(b).addCommand(successfulCommand);
+                    BQCoreModule.extend(b).addCommand(failingCommand);
+                });
     }
 
     @Test
-    public void testOverride_ParallelCommand() {
-        String executableCommandName = "b";
-        SuccessfulCommand executableCommand = successfulCommand(executableCommandName);
+    public void testOverride_ParallelCommand_ByName() {
+        String parallelCommandName = successfulCommand.getMetadata().getName();
+        CommandDecorator decorator = CommandDecorator.builder().alsoRun(new String[]{"-" + parallelCommandName}).build();
+        testOverride_ParallelCommand(decorator);
+        assertTrue(successfulCommand.isExecuted());
+    }
 
+    @Test
+    public void testOverride_ParallelCommand_ByType() {
+        CommandDecorator decorator = CommandDecorator.builder().alsoRun(successfulCommand.getClass()).build();
+        testOverride_ParallelCommand(decorator);
+        assertTrue(successfulCommand.isExecuted());
+    }
+
+    private void testOverride_ParallelCommand(CommandDecorator decorator) {
         bootique.module(binder -> BQCoreModule.extend(binder)
-                .addCommand(executableCommand));
-        bootique.module(binder -> BQCoreModule.extend(binder)
-                .addCommandDecorator(originalCommand.getClass(), CommandDecorator.builder().alsoRun("-" + executableCommandName).build()));
+                .addCommandDecorator(originalCommand.getClass(), decorator));
 
         CommandOutcome outcome = bootique.exec();
         assertTrue(outcome.isSuccess());
         assertTrue(originalCommand.isExecuted());
-        assertTrue(executableCommand.isExecuted());
     }
 
     @Test
-    public void testOverride_FailureBeforeOriginal() {
-        String failingCommandName = "b";
-        FailingCommand failingCommand = failingCommand(failingCommandName);
+    public void testOverride_FailureBeforeOriginal_ByName() {
+        String failingCommandName = failingCommand.getMetadata().getName();
+        CommandDecorator decorator = CommandDecorator.builder().beforeRun(new String[]{"-" + failingCommandName}).build();
+        testOverride_FailureBeforeOriginal(decorator);
+        assertTrue(failingCommand.isExecuted());
+    }
 
+    @Test
+    public void testOverride_FailureBeforeOriginal_ByType() {
+        CommandDecorator decorator = CommandDecorator.builder().beforeRun(failingCommand.getClass()).build();
+        testOverride_FailureBeforeOriginal(decorator);
+        assertTrue(failingCommand.isExecuted());
+    }
+
+    private void testOverride_FailureBeforeOriginal(CommandDecorator decorator) {
         bootique.module(binder -> BQCoreModule.extend(binder)
-                .addCommand(failingCommand));
-        bootique.module(binder -> BQCoreModule.extend(binder)
-                .addCommandDecorator(originalCommand.getClass(), CommandDecorator.builder().beforeRun("-" + failingCommandName).build()));
+                .addCommandDecorator(originalCommand.getClass(), decorator));
 
         CommandOutcome outcome = bootique.exec();
         assertFalse(outcome.isSuccess());
         assertNull(outcome.getException());
         assertFalse(originalCommand.isExecuted());
-        assertTrue(failingCommand.isExecuted());
         // TODO: modify the check after io.bootique.command.OverridenCommand#run() is updated
         assertEquals("Some of the commands failed", outcome.getMessage());
     }

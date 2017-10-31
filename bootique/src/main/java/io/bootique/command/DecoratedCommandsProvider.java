@@ -52,6 +52,7 @@ public class DecoratedCommandsProvider implements Provider<Set<Command>> {
 
             decoratedCommands.add(new DecoratedCommand(
                     originalCommand,
+                    commandMap,
                     cliFactoryProvider,
                     commandManagerProvider,
                     executorProvider,

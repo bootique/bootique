@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.joining;
@@ -47,6 +48,15 @@ public class JoptCliFactory implements CliFactory {
 
     @Override
     public Cli createCli(String[] args) {
+        return createCli(this::commandName, args);
+    }
+
+    @Override
+    public Cli createCli(Command command, String[] args) {
+        return createCli((OptionSet parsed) -> command.getMetadata().getName(), args);
+    }
+
+    private Cli createCli(Function<OptionSet, String> commandNameSupplier, String[] args) {
         OptionParser parser = getParser();
         OptionSet parsed;
         try {
@@ -55,7 +65,7 @@ public class JoptCliFactory implements CliFactory {
             throw new BootiqueException(1, e.getMessage(), e);
         }
 
-        String commandName = commandName(parsed);
+        String commandName = commandNameSupplier.apply(parsed);
 
         return new JoptCli(parsed, commandName);
     }

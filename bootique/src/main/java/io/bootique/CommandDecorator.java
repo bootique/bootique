@@ -1,5 +1,6 @@
 package io.bootique;
 
+import io.bootique.command.Command;
 import io.bootique.command.CommandInvocation;
 
 import java.util.ArrayList;
@@ -38,27 +39,35 @@ public class CommandDecorator {
         private Builder() {
         }
 
-        public Builder beforeRun(String command) {
-            getBefore().add(CommandInvocation.forCommand(command).terminateOnErrors());
+        public Builder beforeRun(String[] args) {
+            getBefore().add(CommandInvocation.forArgs(args).terminateOnErrors());
             return this;
         }
 
-        /**
-        public Builder beforeRun(CommandInvocation invocation) {
-            ...
-        }
-        */
-
-        public Builder alsoRun(String command) {
-            getParallel().add(CommandInvocation.forCommand(command));
+        public Builder beforeRun(Class<? extends Command> commandType) {
+            getBefore().add(CommandInvocation.forCommandType(commandType).terminateOnErrors());
             return this;
         }
 
-        /**
-        public Builder alsoRun(CommandInvocation invocation) {
-            ...
+        public Builder beforeRun(Class<? extends Command> commandType, String[] args) {
+            getBefore().add(CommandInvocation.forCommandType(commandType).arguments(args).terminateOnErrors());
+            return this;
         }
-        */
+
+        public Builder alsoRun(String[] args) {
+            getParallel().add(CommandInvocation.forArgs(args));
+            return this;
+        }
+
+        public Builder alsoRun(Class<? extends Command> commandType) {
+            getParallel().add(CommandInvocation.forCommandType(commandType));
+            return this;
+        }
+
+        public Builder alsoRun(Class<? extends Command> commandType, String[] args) {
+            getParallel().add(CommandInvocation.forCommandType(commandType).arguments(args));
+            return this;
+        }
 
         private Collection<CommandInvocation.Builder> getBefore() {
             if (before == null) {
