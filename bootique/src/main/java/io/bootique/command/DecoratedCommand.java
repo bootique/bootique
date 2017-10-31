@@ -106,7 +106,7 @@ public class DecoratedCommand extends CommandWithMetadata {
             } /*catch (InterruptedException e) {
                 throw new BootiqueException(1, "Interrupted", e);
             }*/ catch (Exception e) {
-                return CommandOutcome.failed(1, e);
+                outcome = CommandOutcome.failed(1, e);
             }
 
             // always return success, unless explicitly required to fail on errors
