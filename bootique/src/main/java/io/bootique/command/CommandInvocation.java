@@ -3,12 +3,28 @@ package io.bootique.command;
 import java.util.Objects;
 import java.util.Optional;
 
+/**
+ * Contains a "recipe" for invoking a command.
+ *
+ * @since 0.25
+ */
 public class CommandInvocation {
 
+    /**
+     * Start building an invocation with a list of arguments.
+     *
+     * @param args Command line arguments
+     * @since 0.25
+     */
     public static Builder forArgs(String[] args) {
         return new Builder().arguments(args);
     }
 
+    /**
+     * Start building an invocation of an explicit command.
+     *
+     * @since 0.25
+     */
     public static Builder forCommandType(Class<? extends Command> commandType) {
         return new Builder(commandType);
     }
@@ -25,18 +41,36 @@ public class CommandInvocation {
         this.terminateOnErrors = terminateOnErrors;
     }
 
+    /**
+     * Returns a command type, or an {@link Optional#empty()},
+     * if this invocation is based on command line arguments.
+     *
+     * @return Command type, if present
+     * @since 0.25
+     */
     public Optional<Class<? extends Command>> getCommandType() {
         return commandType;
     }
 
+    /**
+     * @return Command line arguments (may be empty)
+     * @since 0.25
+     */
     public String[] getArgs() {
         return args;
     }
 
+    /**
+     * @return true, if Bootique program should terminate, when this invocation fails
+     * @since 0.25
+     */
     public boolean shouldTerminateOnErrors() {
         return terminateOnErrors;
     }
 
+    /**
+     * @since 0.25
+     */
     public static class Builder {
         private static final String[] NO_ARGS = new String[0];
 
@@ -53,16 +87,29 @@ public class CommandInvocation {
             this.args = NO_ARGS;
         }
 
+        /**
+         * Set command line arguments for this invocation
+         *
+         * @since 0.25
+         */
         public Builder arguments(String[] args) {
             this.args = Objects.requireNonNull(args, "Missing arguments");
             return this;
         }
 
+        /**
+         * Indicate, that Bootique program should terminate, when this invocation fails.
+         *
+         * @since 0.25
+         */
         public Builder terminateOnErrors() {
             this.terminateOnErrors = true;
             return this;
         }
 
+        /**
+         * @since 0.25
+         */
         public CommandInvocation build() {
             return new CommandInvocation(commandType, args, terminateOnErrors);
         }

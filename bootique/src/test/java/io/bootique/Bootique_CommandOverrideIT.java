@@ -71,7 +71,11 @@ public class Bootique_CommandOverrideIT {
         CommandDecorator decorator;
 
         if (byType) {
-            decorator = CommandDecorator.builder().alsoRun(successfulCommand.getClass(), extraArgs).build();
+            if (extraArgs.length == 0) {
+                decorator = CommandDecorator.builder().alsoRun(successfulCommand.getClass()).build();
+            } else {
+                decorator = CommandDecorator.builder().alsoRun(successfulCommand.getClass(), extraArgs).build();
+            }
         } else {
             args = concat(args, extraArgs);
             decorator = CommandDecorator.builder().alsoRun(args).build();
@@ -123,7 +127,11 @@ public class Bootique_CommandOverrideIT {
         CommandDecorator decorator;
 
         if (byType) {
-            decorator = CommandDecorator.builder().beforeRun(failingCommand.getClass(), extraArgs).build();
+            if (extraArgs.length == 0) {
+                decorator = CommandDecorator.builder().beforeRun(failingCommand.getClass()).build();
+            } else {
+                decorator = CommandDecorator.builder().beforeRun(failingCommand.getClass(), extraArgs).build();
+            }
         } else {
             args = concat(args, extraArgs);
             decorator = CommandDecorator.builder().beforeRun(args).build();

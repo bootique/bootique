@@ -52,8 +52,8 @@ public class JoptCliFactory implements CliFactory {
     }
 
     @Override
-    public Cli createCli(Command command, String[] args) {
-        return createCli((OptionSet parsed) -> command.getMetadata().getName(), args);
+    public Cli createCli(Command defaultCommand, String[] args) {
+        return createCli((OptionSet parsed) -> defaultCommand.getMetadata().getName(), args);
     }
 
     private Cli createCli(Function<OptionSet, String> commandNameSupplier, String[] args) {

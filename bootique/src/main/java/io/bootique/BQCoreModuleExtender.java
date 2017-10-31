@@ -230,6 +230,14 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
         return this;
     }
 
+    /**
+     * Decorate a given command.
+     *
+     * @param commandType "Raw" command type
+     * @param commandDecorator Decorator
+     * @return this extender instance
+     * @since 0.25
+     */
     public BQCoreModuleExtender addCommandDecorator(Class<? extends Command> commandType, CommandDecorator commandDecorator) {
         contributeCommandDecorators().addBinding(commandType).toInstance(commandDecorator);
         return this;
