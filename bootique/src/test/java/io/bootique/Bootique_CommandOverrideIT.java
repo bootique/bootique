@@ -1,12 +1,14 @@
 package io.bootique;
 
 import io.bootique.cli.Cli;
-import io.bootique.command.Command;
 import io.bootique.command.CommandOutcome;
+import io.bootique.command.CommandWithMetadata;
 import io.bootique.meta.application.CommandMetadata;
+import io.bootique.meta.application.OptionMetadata;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.Assert.assertEquals;
@@ -38,8 +40,19 @@ public class Bootique_CommandOverrideIT {
 
     @Test
     public void testOverride_ParallelCommand_ByName() {
+        testOverride_ParallelCommand_ByName_WithExtraArgs();
+    }
+
+    @Test
+    public void testOverride_ParallelCommand_ByName_WithArgs() {
+        testOverride_ParallelCommand_ByName_WithExtraArgs("--" + SuccessfulCommand.FLAG_OPTION);
+        assertTrue(successfulCommand.hasFlagOption());
+    }
+
+    private void testOverride_ParallelCommand_ByName_WithExtraArgs(String... extraArgs) {
         String parallelCommandName = successfulCommand.getMetadata().getName();
-        CommandDecorator decorator = CommandDecorator.builder().alsoRun(new String[]{"-" + parallelCommandName}).build();
+        String[] args = concat(new String[]{"-" + parallelCommandName}, extraArgs);
+        CommandDecorator decorator = CommandDecorator.builder().alsoRun(args).build();
         testOverride_ParallelCommand(decorator);
         assertTrue(successfulCommand.isExecuted());
     }
@@ -62,10 +75,31 @@ public class Bootique_CommandOverrideIT {
 
     @Test
     public void testOverride_FailureBeforeOriginal_ByName() {
+        testOverride_FailureBeforeOriginal_ByName_WithExtraArgs();
+    }
+
+    @Test
+    public void testOverride_FailureBeforeOriginal_ByName_WithArgs() {
+        testOverride_FailureBeforeOriginal_ByName_WithExtraArgs("--" + FailingCommand.FLAG_OPTION);
+        assertTrue(failingCommand.hasFlagOption());
+    }
+
+    private void testOverride_FailureBeforeOriginal_ByName_WithExtraArgs(String... extraArgs) {
         String failingCommandName = failingCommand.getMetadata().getName();
-        CommandDecorator decorator = CommandDecorator.builder().beforeRun(new String[]{"-" + failingCommandName}).build();
+        String[] args = concat(new String[]{"-" + failingCommandName}, extraArgs);
+        CommandDecorator decorator = CommandDecorator.builder().beforeRun(args).build();
         testOverride_FailureBeforeOriginal(decorator);
         assertTrue(failingCommand.isExecuted());
+    }
+
+    private String[] concat(String[] arr1, String[] arr2) {
+        if (arr2.length > 0) {
+            String[] _args = new String[arr1.length + arr2.length];
+            System.arraycopy(arr1, 0, _args, 0, arr1.length);
+            System.arraycopy(arr2, 0, _args, arr1.length, arr2.length);
+            arr1 = _args;
+        }
+        return arr1;
     }
 
     @Test
@@ -96,26 +130,48 @@ public class Bootique_CommandOverrideIT {
     }
 
     private static class SuccessfulCommand extends ExecutableOnceCommand {
+        public static final String FLAG_OPTION = "sflag";
+
         SuccessfulCommand(String commandName) {
-            super(commandName, CommandOutcome.succeeded());
+            super(commandName, FLAG_OPTION, CommandOutcome.succeeded());
         }
     }
 
     private static class FailingCommand extends ExecutableOnceCommand {
+        public static final String FLAG_OPTION = "fflag";
+
         FailingCommand(String commandName) {
-            super(commandName, CommandOutcome.failed(1, commandName));
+            super(commandName, FLAG_OPTION, CommandOutcome.failed(1, commandName));
         }
     }
 
-    private static class ExecutableOnceCommand implements Command {
-        private final String commandName;
+    private static class ExecutableOnceCommand extends CommandWithMetadata {
+
+        private final Optional<String> flagOption;
         private final CommandOutcome outcome;
         private final AtomicBoolean executed;
+        private final AtomicBoolean hasFlagOption;
 
-        ExecutableOnceCommand(String commandName, CommandOutcome outcome) {
-            this.commandName = commandName;
+        public ExecutableOnceCommand(String commandName, CommandOutcome outcome) {
+            this(commandName, Optional.empty(), outcome);
+        }
+
+        public ExecutableOnceCommand(String commandName, String flagOption, CommandOutcome outcome) {
+            this(commandName, Optional.of(flagOption), outcome);
+        }
+
+        private ExecutableOnceCommand(String commandName, Optional<String> flagOption, CommandOutcome outcome) {
+            super(buildMetadata(commandName, flagOption));
+            this.flagOption = flagOption;
             this.outcome = outcome;
             this.executed = new AtomicBoolean();
+            this.hasFlagOption = new AtomicBoolean();
+        }
+
+        private static CommandMetadata buildMetadata(String commandName, Optional<String> flagOption) {
+            CommandMetadata.Builder builder = CommandMetadata.builder(commandName);
+            flagOption.ifPresent(o -> builder.addOption(OptionMetadata.builder(o)));
+            return builder.build();
         }
 
         @Override
@@ -123,16 +179,16 @@ public class Bootique_CommandOverrideIT {
             if (!executed.compareAndSet(false, true)) {
                 throw new IllegalStateException("Already executed");
             }
+            flagOption.ifPresent(o -> hasFlagOption.set(cli.hasOption(o)));
             return outcome;
-        }
-
-        @Override
-        public CommandMetadata getMetadata() {
-            return CommandMetadata.builder(commandName).build();
         }
 
         public boolean isExecuted() {
             return executed.get();
+        }
+
+        public boolean hasFlagOption() {
+            return hasFlagOption.get();
         }
     }
 }
