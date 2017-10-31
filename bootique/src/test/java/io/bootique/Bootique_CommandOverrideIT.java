@@ -40,26 +40,43 @@ public class Bootique_CommandOverrideIT {
 
     @Test
     public void testOverride_ParallelCommand_ByName() {
-        testOverride_ParallelCommand_ByName_WithExtraArgs();
-    }
-
-    @Test
-    public void testOverride_ParallelCommand_ByName_WithArgs() {
-        testOverride_ParallelCommand_ByName_WithExtraArgs("--" + SuccessfulCommand.FLAG_OPTION);
-        assertTrue(successfulCommand.hasFlagOption());
-    }
-
-    private void testOverride_ParallelCommand_ByName_WithExtraArgs(String... extraArgs) {
-        String parallelCommandName = successfulCommand.getMetadata().getName();
-        String[] args = concat(new String[]{"-" + parallelCommandName}, extraArgs);
-        CommandDecorator decorator = CommandDecorator.builder().alsoRun(args).build();
-        testOverride_ParallelCommand(decorator);
+        testOverride_ParallelCommand_ByName_WithExtraArgs(false);
         assertTrue(successfulCommand.isExecuted());
     }
 
     @Test
+    public void testOverride_ParallelCommand_ByName_WithArgs() {
+        testOverride_ParallelCommand_ByName_WithExtraArgs(false, "--" + SuccessfulCommand.FLAG_OPTION);
+        assertTrue(successfulCommand.isExecuted());
+        assertTrue(successfulCommand.hasFlagOption());
+    }
+
+    @Test
     public void testOverride_ParallelCommand_ByType() {
-        CommandDecorator decorator = CommandDecorator.builder().alsoRun(successfulCommand.getClass()).build();
+        testOverride_ParallelCommand_ByName_WithExtraArgs(true);
+        assertTrue(successfulCommand.isExecuted());
+    }
+
+    @Test
+    public void testOverride_ParallelCommand_ByType_WithArgs() {
+        testOverride_ParallelCommand_ByName_WithExtraArgs(true, "--" + SuccessfulCommand.FLAG_OPTION);
+        assertTrue(successfulCommand.isExecuted());
+        assertTrue(successfulCommand.hasFlagOption());
+    }
+
+    private void testOverride_ParallelCommand_ByName_WithExtraArgs(boolean byType, String... extraArgs) {
+        String parallelCommandName = successfulCommand.getMetadata().getName();
+
+        String[] args = new String[]{"-" + parallelCommandName};
+        CommandDecorator decorator;
+
+        if (byType) {
+            decorator = CommandDecorator.builder().alsoRun(successfulCommand.getClass(), extraArgs).build();
+        } else {
+            args = concat(args, extraArgs);
+            decorator = CommandDecorator.builder().alsoRun(args).build();
+        }
+
         testOverride_ParallelCommand(decorator);
         assertTrue(successfulCommand.isExecuted());
     }
@@ -75,19 +92,43 @@ public class Bootique_CommandOverrideIT {
 
     @Test
     public void testOverride_FailureBeforeOriginal_ByName() {
-        testOverride_FailureBeforeOriginal_ByName_WithExtraArgs();
+        testOverride_FailureBeforeOriginal_ByName_WithExtraArgs(false);
+        assertTrue(failingCommand.isExecuted());
     }
 
     @Test
     public void testOverride_FailureBeforeOriginal_ByName_WithArgs() {
-        testOverride_FailureBeforeOriginal_ByName_WithExtraArgs("--" + FailingCommand.FLAG_OPTION);
+        testOverride_FailureBeforeOriginal_ByName_WithExtraArgs(false, "--" + FailingCommand.FLAG_OPTION);
+        assertTrue(failingCommand.isExecuted());
         assertTrue(failingCommand.hasFlagOption());
     }
 
-    private void testOverride_FailureBeforeOriginal_ByName_WithExtraArgs(String... extraArgs) {
+    @Test
+    public void testOverride_FailureBeforeOriginal_ByType() {
+        testOverride_FailureBeforeOriginal_ByName_WithExtraArgs(true);
+        assertTrue(failingCommand.isExecuted());
+    }
+
+    @Test
+    public void testOverride_FailureBeforeOriginal_ByType_WithArgs() {
+        testOverride_FailureBeforeOriginal_ByName_WithExtraArgs(true, "--" + FailingCommand.FLAG_OPTION);
+        assertTrue(failingCommand.isExecuted());
+        assertTrue(failingCommand.hasFlagOption());
+    }
+
+    private void testOverride_FailureBeforeOriginal_ByName_WithExtraArgs(boolean byType, String... extraArgs) {
         String failingCommandName = failingCommand.getMetadata().getName();
-        String[] args = concat(new String[]{"-" + failingCommandName}, extraArgs);
-        CommandDecorator decorator = CommandDecorator.builder().beforeRun(args).build();
+
+        String[] args = new String[]{"-" + failingCommandName};
+        CommandDecorator decorator;
+
+        if (byType) {
+            decorator = CommandDecorator.builder().beforeRun(failingCommand.getClass(), extraArgs).build();
+        } else {
+            args = concat(args, extraArgs);
+            decorator = CommandDecorator.builder().beforeRun(args).build();
+        }
+
         testOverride_FailureBeforeOriginal(decorator);
         assertTrue(failingCommand.isExecuted());
     }
@@ -100,13 +141,6 @@ public class Bootique_CommandOverrideIT {
             arr1 = _args;
         }
         return arr1;
-    }
-
-    @Test
-    public void testOverride_FailureBeforeOriginal_ByType() {
-        CommandDecorator decorator = CommandDecorator.builder().beforeRun(failingCommand.getClass()).build();
-        testOverride_FailureBeforeOriginal(decorator);
-        assertTrue(failingCommand.isExecuted());
     }
 
     private void testOverride_FailureBeforeOriginal(CommandDecorator decorator) {
