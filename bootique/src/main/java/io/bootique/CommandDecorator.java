@@ -1,16 +1,10 @@
 package io.bootique;
 
-import com.google.inject.Provider;
-import io.bootique.cli.CliFactory;
-import io.bootique.command.Command;
 import io.bootique.command.CommandInvocation;
-import io.bootique.command.CommandManager;
-import io.bootique.command.DecoratedCommand;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 public class CommandDecorator {
@@ -19,26 +13,21 @@ public class CommandDecorator {
         return new Builder();
     }
 
-    private final Provider<CliFactory> cliFactoryProvider;
-    private final Provider<CommandManager> commandManagerProvider;
-    private final Provider<ExecutorService> executorProvider;
     private final Collection<CommandInvocation> before;
     private final Collection<CommandInvocation> parallel;
 
-    private CommandDecorator(Provider<CliFactory> cliFactoryProvider,
-                             Provider<CommandManager> commandManagerProvider,
-                             Provider<ExecutorService> executorProvider,
-                             Collection<CommandInvocation> before,
+    private CommandDecorator(Collection<CommandInvocation> before,
                              Collection<CommandInvocation> parallel) {
-        this.cliFactoryProvider = cliFactoryProvider;
-        this.commandManagerProvider = commandManagerProvider;
-        this.executorProvider = executorProvider;
         this.before = before;
         this.parallel = parallel;
     }
 
-    public Command decorate(Command command) {
-        return new DecoratedCommand(command, cliFactoryProvider, commandManagerProvider, executorProvider, before, parallel);
+    public Collection<CommandInvocation> getBefore() {
+        return before;
+    }
+
+    public Collection<CommandInvocation> getParallel() {
+        return parallel;
     }
 
     public static class Builder {
@@ -85,15 +74,8 @@ public class CommandDecorator {
             return parallel;
         }
 
-        protected CommandDecorator build(Provider<CliFactory> cliFactoryProvider,
-                                         Provider<CommandManager> commandManagerProvider,
-                                         Provider<ExecutorService> executorProvider) {
-            return new CommandDecorator(
-                    cliFactoryProvider,
-                    commandManagerProvider,
-                    executorProvider,
-                    mapBuilders(before),
-                    mapBuilders(parallel));
+        protected CommandDecorator build() {
+            return new CommandDecorator(mapBuilders(before), mapBuilders(parallel));
         }
 
         private Collection<CommandInvocation> mapBuilders(Collection<CommandInvocation.Builder> builders) {

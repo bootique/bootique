@@ -10,8 +10,7 @@ import com.google.inject.Singleton;
 import com.google.inject.multibindings.Multibinder;
 import io.bootique.BQCoreModule;
 import io.bootique.BQModuleProvider;
-import io.bootique.BootiqueException;
-import io.bootique.CommandDecorator;
+import io.bootique.annotation.DecoratedCommands;
 import io.bootique.annotation.DefaultCommand;
 import io.bootique.help.HelpCommand;
 import io.bootique.log.BootLogger;
@@ -60,7 +59,7 @@ public class Commands implements Module {
 	@Singleton
 	CommandManager createManager(Set<Command> moduleCommands,
 								 @ExtraCommands Set<Command> extraCommands,
-								 Map<String, CommandDecorator> commandDecorators,
+								 @DecoratedCommands Set<Command> decoratedCommands,
                                  HelpCommand helpCommand,
 								 Injector injector,
 								 BootLogger bootLogger) {
@@ -91,12 +90,11 @@ public class Commands implements Module {
 		Binding<Command> binding = injector.getExistingBinding(Key.get(Command.class, DefaultCommand.class));
 		Command defaultCommand = binding != null ? binding.getProvider().get() : null;
 
-		commandDecorators.forEach((commandName, commandDecorator) -> {
-            Command originalCommand = map.get(commandName);
-            if (originalCommand == null) {
-                throw new BootiqueException(1, "Attempted to decorate an unknown command: " + commandName);
-            }
-            map.put(commandName, commandDecorator.decorate(originalCommand));
+		// override standard commands with their decorated versions
+        decoratedCommands.forEach(decoratedCommand -> {
+            String name = decoratedCommand.getMetadata().getName();
+            // TODO: add logging?
+            map.put(name, decoratedCommand);
         });
 
 		return new DefaultCommandManager(map, Optional.ofNullable(defaultCommand), Optional.of(helpCommand));

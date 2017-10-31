@@ -8,9 +8,11 @@ import com.google.inject.Module;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
 import com.google.inject.multibindings.Multibinder;
 import io.bootique.annotation.Args;
+import io.bootique.annotation.DecoratedCommands;
 import io.bootique.annotation.DefaultCommand;
 import io.bootique.annotation.EnvironmentProperties;
 import io.bootique.annotation.EnvironmentVariables;
@@ -19,6 +21,7 @@ import io.bootique.cli.CliFactory;
 import io.bootique.command.Command;
 import io.bootique.command.CommandExecutor;
 import io.bootique.command.CommandManager;
+import io.bootique.command.DecoratedCommandsProvider;
 import io.bootique.command.DefaultCommandManager;
 import io.bootique.config.CliConfigurationSource;
 import io.bootique.config.ConfigurationFactory;
@@ -251,6 +254,10 @@ public class BQCoreModule implements Module {
         // we can't bind Provider with @Provides, so declaring it here...
         binder.bind(Cli.class).toProvider(JoptCliProvider.class).in(Singleton.class);
 
+        // bind the provider of decorated commands
+        binder.bind(Key.get(new TypeLiteral<Set<Command>>(){}, DecoratedCommands.class))
+                .toProvider(DecoratedCommandsProvider.class).in(Singleton.class);
+
         // while "help" is a special command, we still store it in the common list of commands,
         // so that "--help" is exposed as an explicit option
         BQCoreModule.extend(binder).addCommand(HelpCommand.class);
@@ -317,7 +324,7 @@ public class BQCoreModule implements Module {
     @Singleton
     CommandManager provideCommandManager(
             Set<Command> commands,
-            Map<String, CommandDecorator> commandDecorators,
+            @DecoratedCommands Set<Command> decoratedCommands,
             HelpCommand helpCommand,
             Injector injector) {
 
@@ -347,12 +354,11 @@ public class BQCoreModule implements Module {
             }
         });
 
-        commandDecorators.forEach((commandName, commandDecorator) -> {
-            Command originalCommand = commandMap.get(commandName);
-            if (originalCommand == null) {
-                throw new BootiqueException(1, "Attempted to decorate an unknown command: " + commandName);
-            }
-            commandMap.put(commandName, commandDecorator.decorate(originalCommand));
+        // override standard commands with their decorated versions
+        decoratedCommands.forEach(decoratedCommand -> {
+            String name = decoratedCommand.getMetadata().getName();
+            // TODO: add logging?
+            commandMap.put(name, decoratedCommand);
         });
 
         return new DefaultCommandManager(commandMap, defaultCommand, Optional.of(helpCommand));

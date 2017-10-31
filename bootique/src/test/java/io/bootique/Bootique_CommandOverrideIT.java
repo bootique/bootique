@@ -30,12 +30,12 @@ public class Bootique_CommandOverrideIT {
     @Test
     public void testOverride_ParallelCommand() {
         String executableCommandName = "b";
-        ExecutableOnceCommand executableCommand = successfulCommand(executableCommandName);
+        SuccessfulCommand executableCommand = successfulCommand(executableCommandName);
 
         bootique.module(binder -> BQCoreModule.extend(binder)
                 .addCommand(executableCommand));
         bootique.module(binder -> BQCoreModule.extend(binder)
-                .addCommandDecorator(DEFAULT_COMMAND, CommandDecorator.builder().alsoRun("-" + executableCommandName)));
+                .addCommandDecorator(originalCommand.getClass(), CommandDecorator.builder().alsoRun("-" + executableCommandName).build()));
 
         CommandOutcome outcome = bootique.exec();
         assertTrue(outcome.isSuccess());
@@ -46,12 +46,12 @@ public class Bootique_CommandOverrideIT {
     @Test
     public void testOverride_FailureBeforeOriginal() {
         String failingCommandName = "b";
-        ExecutableOnceCommand failingCommand = failingCommand(failingCommandName);
+        FailingCommand failingCommand = failingCommand(failingCommandName);
 
         bootique.module(binder -> BQCoreModule.extend(binder)
                 .addCommand(failingCommand));
         bootique.module(binder -> BQCoreModule.extend(binder)
-                .addCommandDecorator(DEFAULT_COMMAND, CommandDecorator.builder().beforeRun("-" + failingCommandName)));
+                .addCommandDecorator(originalCommand.getClass(), CommandDecorator.builder().beforeRun("-" + failingCommandName).build()));
 
         CommandOutcome outcome = bootique.exec();
         assertFalse(outcome.isSuccess());
@@ -62,13 +62,24 @@ public class Bootique_CommandOverrideIT {
         assertEquals("Some of the commands failed", outcome.getMessage());
     }
 
-    private static ExecutableOnceCommand successfulCommand(String commandName) {
-        return new ExecutableOnceCommand(commandName, CommandOutcome.succeeded());
+    private static SuccessfulCommand successfulCommand(String commandName) {
+        return new SuccessfulCommand(commandName);
     }
 
-    private static ExecutableOnceCommand failingCommand(String commandName) {
-        CommandOutcome outcome = CommandOutcome.failed(1, commandName);
-        return new ExecutableOnceCommand(commandName, outcome);
+    private static FailingCommand failingCommand(String commandName) {
+        return new FailingCommand(commandName);
+    }
+
+    private static class SuccessfulCommand extends ExecutableOnceCommand {
+        SuccessfulCommand(String commandName) {
+            super(commandName, CommandOutcome.succeeded());
+        }
+    }
+
+    private static class FailingCommand extends ExecutableOnceCommand {
+        FailingCommand(String commandName) {
+            super(commandName, CommandOutcome.failed(1, commandName));
+        }
     }
 
     private static class ExecutableOnceCommand implements Command {
