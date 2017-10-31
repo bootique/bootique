@@ -11,7 +11,7 @@ import com.google.inject.multibindings.Multibinder;
 import io.bootique.BQCoreModule;
 import io.bootique.BQModuleProvider;
 import io.bootique.BootiqueException;
-import io.bootique.CommandOverride;
+import io.bootique.CommandDecorator;
 import io.bootique.annotation.DefaultCommand;
 import io.bootique.help.HelpCommand;
 import io.bootique.log.BootLogger;
@@ -60,7 +60,7 @@ public class Commands implements Module {
 	@Singleton
 	CommandManager createManager(Set<Command> moduleCommands,
 								 @ExtraCommands Set<Command> extraCommands,
-								 Map<String, CommandOverride> commandOverrides,
+								 Map<String, CommandDecorator> commandDecorators,
                                  HelpCommand helpCommand,
 								 Injector injector,
 								 BootLogger bootLogger) {
@@ -91,12 +91,12 @@ public class Commands implements Module {
 		Binding<Command> binding = injector.getExistingBinding(Key.get(Command.class, DefaultCommand.class));
 		Command defaultCommand = binding != null ? binding.getProvider().get() : null;
 
-		commandOverrides.forEach((commandName, commandOverride) -> {
+		commandDecorators.forEach((commandName, commandDecorator) -> {
             Command originalCommand = map.get(commandName);
             if (originalCommand == null) {
-                throw new BootiqueException(1, "Attempted to override an unknown command: " + commandName);
+                throw new BootiqueException(1, "Attempted to decorate an unknown command: " + commandName);
             }
-            map.put(commandName, commandOverride.override(originalCommand));
+            map.put(commandName, commandDecorator.decorate(originalCommand));
         });
 
 		return new DefaultCommandManager(map, Optional.ofNullable(defaultCommand), Optional.of(helpCommand));

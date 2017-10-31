@@ -37,7 +37,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     private Multibinder<DeclaredVariable> declaredVariables;
     private Multibinder<OptionMetadata> options;
     private Multibinder<Command> commands;
-    private MapBinder<String, CommandOverride> commandOverrides;
+    private MapBinder<String, CommandDecorator> commandDecorators;
 
     protected BQCoreModuleExtender(Binder binder) {
         super(binder);
@@ -51,7 +51,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
         contributeLogLevels();
         contributeOptions();
         contributeCommands();
-        contributeCommandOverrides();
+        contributeCommandDecorators();
 
         return this;
     }
@@ -234,13 +234,13 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
         return this;
     }
 
-    public BQCoreModuleExtender addCommandOverride(String commandName, CommandOverride.Builder commandOverride) {
+    public BQCoreModuleExtender addCommandDecorator(String commandName, CommandDecorator.Builder commandDecorator) {
         Provider<CliFactory> cliFactoryProvider = binder.getProvider(CliFactory.class);
         Provider<CommandManager> commandManagerProvider = binder.getProvider(CommandManager.class);
         Provider<ExecutorService> executorProvider = binder.getProvider(Key.get(ExecutorService.class, CommandExecutor.class));
 
-        contributeCommandOverrides().addBinding(commandName).toInstance(
-                commandOverride.build(cliFactoryProvider, commandManagerProvider, executorProvider));
+        contributeCommandDecorators().addBinding(commandName).toInstance(
+                commandDecorator.build(cliFactoryProvider, commandManagerProvider, executorProvider));
 
         return this;
     }
@@ -264,8 +264,8 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
         return commands != null ? commands : (commands = newSet(Command.class));
     }
 
-    protected MapBinder<String, CommandOverride> contributeCommandOverrides() {
-        return commandOverrides != null ? commandOverrides : (commandOverrides = newMap(String.class, CommandOverride.class));
+    protected MapBinder<String, CommandDecorator> contributeCommandDecorators() {
+        return commandDecorators != null ? commandDecorators : (commandDecorators = newMap(String.class, CommandDecorator.class));
     }
 
     protected MapBinder<String, String> contributeProperties() {

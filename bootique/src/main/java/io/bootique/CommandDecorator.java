@@ -5,7 +5,7 @@ import io.bootique.cli.CliFactory;
 import io.bootique.command.Command;
 import io.bootique.command.CommandInvocation;
 import io.bootique.command.CommandManager;
-import io.bootique.command.OverridenCommand;
+import io.bootique.command.DecoratedCommand;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,9 +13,9 @@ import java.util.Collections;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
-public class CommandOverride {
+public class CommandDecorator {
 
-    public static CommandOverride.Builder builder() {
+    public static CommandDecorator.Builder builder() {
         return new Builder();
     }
 
@@ -25,11 +25,11 @@ public class CommandOverride {
     private final Collection<CommandInvocation> before;
     private final Collection<CommandInvocation> parallel;
 
-    private CommandOverride(Provider<CliFactory> cliFactoryProvider,
-                            Provider<CommandManager> commandManagerProvider,
-                            Provider<ExecutorService> executorProvider,
-                            Collection<CommandInvocation> before,
-                            Collection<CommandInvocation> parallel) {
+    private CommandDecorator(Provider<CliFactory> cliFactoryProvider,
+                             Provider<CommandManager> commandManagerProvider,
+                             Provider<ExecutorService> executorProvider,
+                             Collection<CommandInvocation> before,
+                             Collection<CommandInvocation> parallel) {
         this.cliFactoryProvider = cliFactoryProvider;
         this.commandManagerProvider = commandManagerProvider;
         this.executorProvider = executorProvider;
@@ -37,8 +37,8 @@ public class CommandOverride {
         this.parallel = parallel;
     }
 
-    public Command override(Command command) {
-        return new OverridenCommand(command, cliFactoryProvider, commandManagerProvider, executorProvider, before, parallel);
+    public Command decorate(Command command) {
+        return new DecoratedCommand(command, cliFactoryProvider, commandManagerProvider, executorProvider, before, parallel);
     }
 
     public static class Builder {
@@ -85,10 +85,10 @@ public class CommandOverride {
             return parallel;
         }
 
-        protected CommandOverride build(Provider<CliFactory> cliFactoryProvider,
-                                        Provider<CommandManager> commandManagerProvider,
-                                        Provider<ExecutorService> executorProvider) {
-            return new CommandOverride(
+        protected CommandDecorator build(Provider<CliFactory> cliFactoryProvider,
+                                         Provider<CommandManager> commandManagerProvider,
+                                         Provider<ExecutorService> executorProvider) {
+            return new CommandDecorator(
                     cliFactoryProvider,
                     commandManagerProvider,
                     executorProvider,

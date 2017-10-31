@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public class OverridenCommand extends CommandWithMetadata {
+public class DecoratedCommand extends CommandWithMetadata {
 
     private final Command originalCommand;
     private final Provider<CliFactory> cliFactoryProvider;
@@ -21,7 +21,7 @@ public class OverridenCommand extends CommandWithMetadata {
     private final Collection<CommandInvocation> before;
     private final Collection<CommandInvocation> parallel;
 
-    public OverridenCommand(Command originalCommand,
+    public DecoratedCommand(Command originalCommand,
                             Provider<CliFactory> cliFactoryProvider,
                             Provider<CommandManager> commandManagerProvider,
                             Provider<ExecutorService> executorProvider,

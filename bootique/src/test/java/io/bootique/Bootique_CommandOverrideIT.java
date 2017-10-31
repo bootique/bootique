@@ -35,7 +35,7 @@ public class Bootique_CommandOverrideIT {
         bootique.module(binder -> BQCoreModule.extend(binder)
                 .addCommand(executableCommand));
         bootique.module(binder -> BQCoreModule.extend(binder)
-                .addCommandOverride(DEFAULT_COMMAND, CommandOverride.builder().alsoRun("-" + executableCommandName)));
+                .addCommandDecorator(DEFAULT_COMMAND, CommandDecorator.builder().alsoRun("-" + executableCommandName)));
 
         CommandOutcome outcome = bootique.exec();
         assertTrue(outcome.isSuccess());
@@ -51,7 +51,7 @@ public class Bootique_CommandOverrideIT {
         bootique.module(binder -> BQCoreModule.extend(binder)
                 .addCommand(failingCommand));
         bootique.module(binder -> BQCoreModule.extend(binder)
-                .addCommandOverride(DEFAULT_COMMAND, CommandOverride.builder().beforeRun("-" + failingCommandName)));
+                .addCommandDecorator(DEFAULT_COMMAND, CommandDecorator.builder().beforeRun("-" + failingCommandName)));
 
         CommandOutcome outcome = bootique.exec();
         assertFalse(outcome.isSuccess());
