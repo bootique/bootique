@@ -35,7 +35,7 @@ public class JsonNodeConfigurationFactory implements ConfigurationFactory {
 		JsonNode child = findChild(prefix);
 
 		try {
-			return mapper.readValue(new TreeTraversingParser(child), type);
+			return mapper.readValue(new TreeTraversingParser(child, mapper), type);
 		}
 		// TODO: implement better exception handling. See ConfigurationFactory
 		// in Dropwizard for inspiration
@@ -52,7 +52,7 @@ public class JsonNodeConfigurationFactory implements ConfigurationFactory {
 		JavaType jacksonType = typeFactory.constructType(type.getType());
 
 		try {
-			return mapper.readValue(new TreeTraversingParser(child), jacksonType);
+			return mapper.readValue(new TreeTraversingParser(child, mapper), jacksonType);
 		}
 		// TODO: implement better exception handling. See ConfigurationFactory
 		// in Dropwizard for inspiration
