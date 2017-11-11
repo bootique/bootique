@@ -1,3 +1,7 @@
+## 0.25
+
+* #193 JsonNodeConfigurationFactory - proper parser initialization
+
 ## 0.24
 
 * #111 Config CLI options
