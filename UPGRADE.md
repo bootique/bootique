@@ -1,5 +1,35 @@
 # UPGRADE INSTRUCTIONS
 
+## 0.25
+
+* [bootique-jdbc #48](https://github.com/bootique/bootique-jdbc/issues/48):
+
+Due to `bootique-jdbc` module becoming "abstract", if you have a JDBC app, on startup you will see an error like this:
+
+```
+No concrete 'bootique-jdbc' implementations found. You will need to add one 
+(such as 'bootique-jdbc-tomcat', etc.) as an application dependency.
+``` 
+To fix the problem, you will need to do exactly as suggested, i.e. add the following dependency to your `pom.xml`:
+```xml
+<dependency>
+    <groupId>io.bootique.jdbc</groupId>
+    <artifactId>bootique-jdbc-tomcat</artifactId>
+    <scope>compile</scope>
+</dependency>
+```
+The original `bootique-jdbc` is now a transitive dependency of the new `bootique-jdbc-tomcat`, so you may remove 
+explicit `bootique-jdbc` import (or leave it, as no harm is being done by keeping it around). If you are using 
+`bootique-jdbc-instrumented` (i.e. JDBC with metrics), import a different dependency:
+
+```xml
+<dependency>
+    <groupId>io.bootique.jdbc</groupId>
+    <artifactId>bootique-jdbc-instrumented-tomcat</artifactId>
+    <scope>compile</scope>
+</dependency>
+```
+
 ## 0.24
 
 * [bootique #180](https://github.com/bootique/bootique/issues/180): The ability to expliictly declare a BQ_* var was removed. 
