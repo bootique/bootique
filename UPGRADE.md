@@ -2,9 +2,8 @@
 
 ## 0.25
 
-* [bootique-jdbc #48](https://github.com/bootique/bootique-jdbc/issues/48):
-
-Due to `bootique-jdbc` module becoming "abstract", if you have a JDBC app, on startup you will see an error like this:
+* [bootique-jdbc #48](https://github.com/bootique/bootique-jdbc/issues/48): Due to `bootique-jdbc` module becoming 
+"abstract", if you have a JDBC app, on startup you will see an error like this:
 
 ```
 No concrete 'bootique-jdbc' implementations found. You will need to add one 
