@@ -4,7 +4,7 @@
 
 * [bootique-jdbc #48](https://github.com/bootique/bootique-jdbc/issues/48): This affects all users of `bootique-jdbc`,
 including indirect users, such as those relying on `bootique-cayenne`, `bootique-linkrest`, `bootique-linkmove`, 
-`bootique-jooq`, etc. Due to `bootique-jdbc` module becoming "abstract", if you have a JDBC app, on startup you will 
+`bootique-jooq`, `bootique-liquibase`, etc. Due to `bootique-jdbc` module becoming "abstract", if you have a JDBC app, on startup you will 
 see an error like this:
 
 ```
