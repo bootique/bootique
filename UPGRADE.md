@@ -31,8 +31,9 @@ explicit `bootique-jdbc` import (or leave it, as no harm is being done by keepin
 </dependency>
 ```
 
-* [bootique-metrics #20](https://github.com/bootique/bootique-metrics/issues/20): If you used healthcheck API directly 
-in your code and are getting compilation errors now, you will need to add an extra dependency:
+* [bootique-metrics #20](https://github.com/bootique/bootique-metrics/issues/20): Healthcheck module was separated
+from the metric module. If you used healthcheck API in your code and are getting compilation errors now, you will need 
+to add an extra dependency:
 
 ```xml
 <dependency>
@@ -41,7 +42,7 @@ in your code and are getting compilation errors now, you will need to add an ext
 	<scope>compile</scope>
 </dependency>
 ```
-If you called `MetricsModule.extend(binder)`, replace it with `HealthCheckModule.extend(binder)`
+Additionally if you called `MetricsModule.extend(binder)`, replace it with `HealthCheckModule.extend(binder)`.
 
 ## 0.24
 
