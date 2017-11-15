@@ -31,6 +31,18 @@ explicit `bootique-jdbc` import (or leave it, as no harm is being done by keepin
 </dependency>
 ```
 
+* [bootique-metrics #20](https://github.com/bootique/bootique-metrics/issues/20): If you used healthcheck API directly 
+in your code and are getting compilation errors now, you will need to add an extra dependency:
+
+```xml
+<dependency>
+	<groupId>io.bootique.metrics</groupId>
+	<artifactId>bootique-metrics-healthchecks</artifactId>
+	<scope>compile</scope>
+</dependency>
+```
+If you called `MetricsModule.extend(binder)`, replace it with `HealthCheckModule.extend(binder)`
+
 ## 0.24
 
 * [bootique #180](https://github.com/bootique/bootique/issues/180): The ability to expliictly declare a BQ_* var was removed. 
