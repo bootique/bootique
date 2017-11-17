@@ -1,6 +1,5 @@
 package io.bootique.command;
 
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -93,7 +92,7 @@ public class CommandInvocation {
          * @since 0.25
          */
         public Builder arguments(String[] args) {
-            this.args = Objects.requireNonNull(args, "Missing arguments");
+            this.args = args != null ? args : NO_ARGS;
             return this;
         }
 

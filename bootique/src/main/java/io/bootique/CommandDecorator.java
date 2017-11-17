@@ -13,20 +13,19 @@ import java.util.Collection;
  */
 public class CommandDecorator {
 
+    private final Collection<CommandInvocation> before;
+    private final Collection<CommandInvocation> parallel;
+
+    private CommandDecorator(Collection<CommandInvocation> before, Collection<CommandInvocation> parallel) {
+        this.before = before;
+        this.parallel = parallel;
+    }
+
     /**
      * @since 0.25
      */
     public static CommandDecorator.Builder builder() {
         return new Builder();
-    }
-
-    private final Collection<CommandInvocation> before;
-    private final Collection<CommandInvocation> parallel;
-
-    private CommandDecorator(Collection<CommandInvocation> before,
-                             Collection<CommandInvocation> parallel) {
-        this.before = before;
-        this.parallel = parallel;
     }
 
     /**
@@ -62,13 +61,13 @@ public class CommandDecorator {
          * Add a hook to run before the original command.
          * The original command will not be run, if the hook fails.
          * Actual hook type (command) is deduced from the list of arguments.
-         *
+         * <p>
          * When the hook is run, it will receive all of the provided arguments in its' own {@link io.bootique.cli.Cli} instance.
          *
          * @param args Command line arguments
          * @since 0.25
          */
-        public Builder beforeRun(String[] args) {
+        public Builder beforeRun(String... args) {
             getBefore().add(CommandInvocation.forArgs(args).terminateOnErrors().build());
             return this;
         }
@@ -76,27 +75,13 @@ public class CommandDecorator {
         /**
          * Add a hook to run before the original command.
          * The original command will not be run, if the hook fails.
-         *
-         * When the hook is run, it will not receive any arguments.
-         *
-         * @param commandType Command to run without arguments
-         * @since 0.25
-         */
-        public Builder beforeRun(Class<? extends Command> commandType) {
-            getBefore().add(CommandInvocation.forCommandType(commandType).terminateOnErrors().build());
-            return this;
-        }
-
-        /**
-         * Add a hook to run before the original command.
-         * The original command will not be run, if the hook fails.
-         *
+         * <p>
          * When the hook is run, it will receive all of the provided arguments in its' own {@link io.bootique.cli.Cli} instance.
          *
          * @param commandType Command to run with its' own arguments
          * @since 0.25
          */
-        public Builder beforeRun(Class<? extends Command> commandType, String[] args) {
+        public Builder beforeRun(Class<? extends Command> commandType, String... args) {
             getBefore().add(CommandInvocation.forCommandType(commandType).arguments(args).terminateOnErrors().build());
             return this;
         }
@@ -109,33 +94,20 @@ public class CommandDecorator {
          * @param args Command line arguments
          * @since 0.25
          */
-        public Builder alsoRun(String[] args) {
+        public Builder alsoRun(String... args) {
             getParallel().add(CommandInvocation.forArgs(args).build());
             return this;
         }
 
         /**
          * Add a hook to run in parallel with the original command.
-         *
-         * When the hook is run, it will not receive any arguments.
-         *
-         * @param commandType Command to run without arguments
-         * @since 0.25
-         */
-        public Builder alsoRun(Class<? extends Command> commandType) {
-            getParallel().add(CommandInvocation.forCommandType(commandType).build());
-            return this;
-        }
-
-        /**
-         * Add a hook to run in parallel with the original command.
-         *
+         * <p>
          * When the hook is run, it will receive all of the provided arguments in its' own {@link io.bootique.cli.Cli} instance.
          *
          * @param commandType Command to run with its' own arguments
          * @since 0.25
          */
-        public Builder alsoRun(Class<? extends Command> commandType, String[] args) {
+        public Builder alsoRun(Class<? extends Command> commandType, String... args) {
             getParallel().add(CommandInvocation.forCommandType(commandType).arguments(args).build());
             return this;
         }

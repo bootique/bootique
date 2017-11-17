@@ -1,7 +1,6 @@
 package io.bootique.jopt;
 
 import io.bootique.cli.Cli;
-import io.bootique.cli.CliFactory;
 import io.bootique.command.Command;
 import io.bootique.command.CommandManager;
 import io.bootique.command.DefaultCommandManager;
