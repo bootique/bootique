@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 /**
  * A binding annotation for the executor service, that should be used for running simultaneous commands.
  *
- * @see io.bootique.BQCoreModuleExtender#addCommandDecorator(Class, CommandDecorator)
+ * @see io.bootique.BQCoreModuleExtender#decorateCommand(Class, CommandDecorator)
  * @since 0.25
  */
 @Target({ ElementType.PARAMETER, ElementType.FIELD, ElementType.METHOD })

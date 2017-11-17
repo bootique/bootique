@@ -11,7 +11,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -29,26 +29,26 @@ public class Bootique_CommandDecorationIT {
 
     @Before
     public void before() {
-        this.mainCommand = new ExecutableOnceCommand("a", CommandOutcome.succeeded());
-        this.successfulCommand = new SuccessfulCommand("s");
-        this.failingCommand = new FailingCommand("f");
+        this.mainCommand = new ExecutableOnceCommand("a");
+        this.successfulCommand = new SuccessfulCommand();
+        this.failingCommand = new FailingCommand();
     }
 
-    private CommandOutcome runWithDecorator(CommandDecorator decorator) {
+    private CommandOutcome decorateAndRun(CommandDecorator decorator) {
         return testFactory
                 .app("--a")
                 .module(b -> BQCoreModule.extend(b)
                         .addCommand(mainCommand)
                         .addCommand(successfulCommand)
                         .addCommand(failingCommand)
-                        .addCommandDecorator(mainCommand.getClass(), decorator))
+                        .decorateCommand(mainCommand.getClass(), decorator))
                 .createRuntime()
                 .run();
     }
 
-    private CommandOutcome runWithParallelDecorator(CommandDecorator decorator) {
+    private CommandOutcome decorateRunAndWait(CommandDecorator decorator) {
 
-        CommandOutcome outcome = runWithDecorator(decorator);
+        CommandOutcome outcome = decorateAndRun(decorator);
 
         // wait for the parallel commands to finish
         try {
@@ -68,7 +68,7 @@ public class Bootique_CommandDecorationIT {
                 .alsoRun("--s")
                 .build();
 
-        assertTrue(runWithParallelDecorator(decorator).isSuccess());
+        assertTrue(decorateRunAndWait(decorator).isSuccess());
         assertTrue(mainCommand.isExecuted());
         assertTrue(successfulCommand.isExecuted());
         assertFalse(successfulCommand.hasFlagOption());
@@ -82,7 +82,7 @@ public class Bootique_CommandDecorationIT {
                 .alsoRun("--s", "--sflag")
                 .build();
 
-        assertTrue(runWithParallelDecorator(decorator).isSuccess());
+        assertTrue(decorateRunAndWait(decorator).isSuccess());
         assertTrue(mainCommand.isExecuted());
         assertTrue(successfulCommand.isExecuted());
         assertTrue(successfulCommand.hasFlagOption());
@@ -96,7 +96,7 @@ public class Bootique_CommandDecorationIT {
                 .alsoRun(SuccessfulCommand.class)
                 .build();
 
-        assertTrue(runWithParallelDecorator(decorator).isSuccess());
+        assertTrue(decorateRunAndWait(decorator).isSuccess());
         assertTrue(mainCommand.isExecuted());
         assertTrue(successfulCommand.isExecuted());
         assertFalse(successfulCommand.hasFlagOption());
@@ -110,35 +110,35 @@ public class Bootique_CommandDecorationIT {
                 .alsoRun(SuccessfulCommand.class, "--sflag")
                 .build();
 
-        runWithParallelDecorator(decorator);
+        decorateRunAndWait(decorator);
         assertTrue(mainCommand.isExecuted());
         assertTrue(successfulCommand.isExecuted());
         assertTrue(successfulCommand.hasFlagOption());
     }
 
     @Test
-    public void testRunBefore_Failure_ByName() {
+    public void testBeforeRun_Failure_ByName() {
 
         CommandDecorator decorator = CommandDecorator
                 .builder()
                 .beforeRun("--f")
                 .build();
 
-        CommandOutcome outcome = runWithDecorator(decorator);
+        CommandOutcome outcome = decorateAndRun(decorator);
 
         failingCommand.assertFailure(outcome);
         assertFalse(mainCommand.isExecuted());
     }
 
     @Test
-    public void testRunBefore_Failure_ByName_WithArgs() {
+    public void testBeforeRun_Failure_ByName_WithArgs() {
 
         CommandDecorator decorator = CommandDecorator
                 .builder()
                 .beforeRun("--f", "--fflag")
                 .build();
 
-        CommandOutcome outcome = runWithDecorator(decorator);
+        CommandOutcome outcome = decorateAndRun(decorator);
 
         failingCommand.assertFailure(outcome);
         assertTrue(failingCommand.hasFlagOption());
@@ -146,26 +146,26 @@ public class Bootique_CommandDecorationIT {
     }
 
     @Test
-    public void testRunBefore_Failure_ByType() {
+    public void testBeforeRun_Failure_ByType() {
         CommandDecorator decorator = CommandDecorator
                 .builder()
                 .beforeRun(FailingCommand.class)
                 .build();
 
-        CommandOutcome outcome = runWithDecorator(decorator);
+        CommandOutcome outcome = decorateAndRun(decorator);
 
         failingCommand.assertFailure(outcome);
         assertFalse(mainCommand.isExecuted());
     }
 
     @Test
-    public void testRunBefore_Failure_ByType_WithArgs() {
+    public void testBeforeRun_Failure_ByType_WithArgs() {
         CommandDecorator decorator = CommandDecorator
                 .builder()
                 .beforeRun(FailingCommand.class, "--fflag")
                 .build();
 
-        CommandOutcome outcome = runWithDecorator(decorator);
+        CommandOutcome outcome = decorateAndRun(decorator);
 
         failingCommand.assertFailure(outcome);
         assertTrue(failingCommand.hasFlagOption());
@@ -173,15 +173,26 @@ public class Bootique_CommandDecorationIT {
     }
 
     private static class SuccessfulCommand extends ExecutableOnceCommand {
-        SuccessfulCommand(String commandName) {
-            super(commandName, "sflag", CommandOutcome.succeeded());
+
+        private static final String NAME = "s";
+        private static final String FLAG_OPT = "sflag";
+
+        SuccessfulCommand() {
+            super(NAME, FLAG_OPT);
+        }
+
+        public boolean hasFlagOption() {
+            return cliRef.get().hasOption(FLAG_OPT);
         }
     }
 
     private static class FailingCommand extends ExecutableOnceCommand {
 
-        FailingCommand(String commandName) {
-            super(commandName, "fflag", CommandOutcome.failed(1, commandName));
+        private static final String NAME = "f";
+        private static final String FLAG_OPT = "fflag";
+
+        FailingCommand() {
+            super(NAME, FLAG_OPT);
         }
 
         void assertFailure(CommandOutcome outcome) {
@@ -190,29 +201,33 @@ public class Bootique_CommandDecorationIT {
             assertNull(outcome.getException());
             assertEquals("Some of the commands failed", outcome.getMessage());
         }
+
+        public boolean hasFlagOption() {
+            return cliRef.get().hasOption(FLAG_OPT);
+        }
+
+        @Override
+        public CommandOutcome run(Cli cli) {
+            super.run(cli);
+            return CommandOutcome.failed(1, NAME);
+        }
     }
 
     private static class ExecutableOnceCommand extends CommandWithMetadata {
 
-        private final Optional<String> flagOption;
-        private final CommandOutcome outcome;
-        private final AtomicBoolean executed;
-        private final AtomicBoolean hasFlagOption;
+        protected final AtomicReference<Cli> cliRef;
 
-        public ExecutableOnceCommand(String commandName, CommandOutcome outcome) {
-            this(commandName, Optional.empty(), outcome);
+        public ExecutableOnceCommand(String commandName) {
+            this(commandName, Optional.empty());
         }
 
-        public ExecutableOnceCommand(String commandName, String flagOption, CommandOutcome outcome) {
-            this(commandName, Optional.of(flagOption), outcome);
+        public ExecutableOnceCommand(String commandName, String flagOption) {
+            this(commandName, Optional.of(flagOption));
         }
 
-        private ExecutableOnceCommand(String commandName, Optional<String> flagOption, CommandOutcome outcome) {
+        private ExecutableOnceCommand(String commandName, Optional<String> flagOption) {
             super(buildMetadata(commandName, flagOption));
-            this.flagOption = flagOption;
-            this.outcome = outcome;
-            this.executed = new AtomicBoolean();
-            this.hasFlagOption = new AtomicBoolean();
+            this.cliRef = new AtomicReference<>();
         }
 
         private static CommandMetadata buildMetadata(String commandName, Optional<String> flagOption) {
@@ -223,19 +238,15 @@ public class Bootique_CommandDecorationIT {
 
         @Override
         public CommandOutcome run(Cli cli) {
-            if (!executed.compareAndSet(false, true)) {
+            if (!cliRef.compareAndSet(null, cli)) {
                 throw new IllegalStateException("Already executed");
             }
-            flagOption.ifPresent(o -> hasFlagOption.set(cli.hasOption(o)));
-            return outcome;
+
+            return CommandOutcome.succeeded();
         }
 
         public boolean isExecuted() {
-            return executed.get();
-        }
-
-        public boolean hasFlagOption() {
-            return hasFlagOption.get();
+            return cliRef.get() != null;
         }
     }
 }

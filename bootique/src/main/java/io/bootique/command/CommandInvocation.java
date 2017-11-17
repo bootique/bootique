@@ -95,7 +95,7 @@ public class CommandInvocation {
             this.terminateOnErrors = true;
             return this;
         }
-        
+
         public CommandInvocation build() {
             return new CommandInvocation(commandType, args, terminateOnErrors);
         }

@@ -231,14 +231,15 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     }
 
     /**
-     * Decorate a given command.
+     * Decorates a given command. When that command is invoked, other commands defined in the decorator will be invoked
+     * as well.
      *
-     * @param commandType "Raw" command type
-     * @param commandDecorator Decorator
+     * @param commandType      "Raw" command type
+     * @param commandDecorator command decorator.
      * @return this extender instance
      * @since 0.25
      */
-    public BQCoreModuleExtender addCommandDecorator(Class<? extends Command> commandType, CommandDecorator commandDecorator) {
+    public BQCoreModuleExtender decorateCommand(Class<? extends Command> commandType, CommandDecorator commandDecorator) {
         contributeCommandDecorators().addBinding(commandType).toInstance(commandDecorator);
         return this;
     }
@@ -264,7 +265,9 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
 
     protected MapBinder<Class<? extends Command>, CommandDecorator> contributeCommandDecorators() {
         if (commandDecorators == null) {
-            commandDecorators = newMap(new TypeLiteral<Class<? extends Command>>(){}, new TypeLiteral<CommandDecorator>(){});
+            commandDecorators = newMap(new TypeLiteral<Class<? extends Command>>() {
+            }, new TypeLiteral<CommandDecorator>() {
+            });
         }
         return commandDecorators;
     }
