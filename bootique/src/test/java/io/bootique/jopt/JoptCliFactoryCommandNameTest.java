@@ -20,7 +20,7 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class JoptCliProviderCommandNameTest {
+public class JoptCliFactoryCommandNameTest {
 
     private Map<String, Command> commands;
 
@@ -84,7 +84,7 @@ public class JoptCliProviderCommandNameTest {
         ApplicationMetadata.Builder appBuilder = ApplicationMetadata.builder();
         commands.values().forEach(c -> appBuilder.addCommand(c.getMetadata()));
 
-        return new JoptCliProvider(() -> commandManager, appBuilder.build(), argsArray).get();
+        return new JoptCliFactory(() -> commandManager, appBuilder.build()).createCli(argsArray);
     }
 
 }

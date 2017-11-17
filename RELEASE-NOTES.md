@@ -1,6 +1,7 @@
 ## 0.25
 
 * #193 JsonNodeConfigurationFactory - proper parser initialization
+* #194 Refactor JoptCliProvider to CliFactory and generic Cli provider
 
 ## 0.24
 

@@ -15,11 +15,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class JoptCliProviderTest {
+public class JoptCliFactoryTest {
 
     private Map<String, Command> commands;
 
@@ -115,6 +117,6 @@ public class JoptCliProviderTest {
         ApplicationMetadata.Builder appBuilder = ApplicationMetadata.builder();
         commands.values().forEach(c -> appBuilder.addCommand(c.getMetadata()));
 
-        return new JoptCliProvider(() -> commandManager, appBuilder.build(), argsArray).get();
+        return new JoptCliFactory(() -> commandManager, appBuilder.build()).createCli(argsArray);
     }
 }

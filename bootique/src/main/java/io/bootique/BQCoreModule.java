@@ -15,6 +15,7 @@ import io.bootique.annotation.DefaultCommand;
 import io.bootique.annotation.EnvironmentProperties;
 import io.bootique.annotation.EnvironmentVariables;
 import io.bootique.cli.Cli;
+import io.bootique.cli.CliFactory;
 import io.bootique.command.Command;
 import io.bootique.command.CommandManager;
 import io.bootique.command.DefaultCommandManager;
@@ -34,7 +35,7 @@ import io.bootique.help.config.DefaultConfigHelpGenerator;
 import io.bootique.help.config.HelpConfigCommand;
 import io.bootique.jackson.DefaultJacksonService;
 import io.bootique.jackson.JacksonService;
-import io.bootique.jopt.JoptCliProvider;
+import io.bootique.jopt.JoptCliFactory;
 import io.bootique.log.BootLogger;
 import io.bootique.meta.application.ApplicationMetadata;
 import io.bootique.meta.application.OptionMetadata;
@@ -71,18 +72,16 @@ public class BQCoreModule implements Module {
     // TODO: duplicate of FormattedAppender.MIN_LINE_WIDTH
     private static final int TTY_MIN_COLUMNS = 40;
     private static final int TTY_DEFAULT_COLUMNS = 80;
-
-    private String[] args;
-    private ShutdownManager shutdownManager;
-    private BootLogger bootLogger;
-    private Supplier<Collection<BQModule>> modulesSource;
-
     /**
      * Properties are used to exclude system env vars and properties.
      * It's a duplicate of constants in io.bootique.test.junit.BQTestRuntimeBuilder
      */
     private static final String EXCLUDE_SYSTEM_VARIABLES = "bq.core.excludeSystemVariables";
     private static final String EXCLUDE_SYSTEM_PROPERTIES = "bq.core.excludeSystemProperties";
+    private String[] args;
+    private ShutdownManager shutdownManager;
+    private BootLogger bootLogger;
+    private Supplier<Collection<BQModule>> modulesSource;
 
     private BQCoreModule() {
     }
@@ -243,9 +242,6 @@ public class BQCoreModule implements Module {
         // class...
         binder.bind(ConfigurationFactory.class).toProvider(JsonNodeConfigurationFactoryProvider.class).in(Singleton.class);
 
-        // we can't bind Provider with @Provides, so declaring it here...
-        binder.bind(Cli.class).toProvider(JoptCliProvider.class).in(Singleton.class);
-
         // while "help" is a special command, we still store it in the common list of commands,
         // so that "--help" is exposed as an explicit option
         BQCoreModule.extend(binder).addCommand(HelpCommand.class);
@@ -293,6 +289,20 @@ public class BQCoreModule implements Module {
     @Singleton
     HelpConfigCommand provideHelpConfigCommand(BootLogger bootLogger, Provider<ConfigHelpGenerator> helpGeneratorProvider) {
         return new HelpConfigCommand(bootLogger, helpGeneratorProvider);
+    }
+
+    @Provides
+    @Singleton
+    CliFactory provideCliFactory(
+            Provider<CommandManager> commandManagerProvider,
+            ApplicationMetadata applicationMetadata) {
+        return new JoptCliFactory(commandManagerProvider, applicationMetadata);
+    }
+
+    @Provides
+    @Singleton
+    Cli provideCli(CliFactory cliFactory, @Args String[] args) {
+        return cliFactory.createCli(args);
     }
 
     @Provides

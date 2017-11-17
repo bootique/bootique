@@ -1,10 +1,9 @@
 package io.bootique.jopt;
 
-import com.google.inject.Inject;
 import com.google.inject.Provider;
 import io.bootique.BootiqueException;
-import io.bootique.annotation.Args;
 import io.bootique.cli.Cli;
+import io.bootique.cli.CliFactory;
 import io.bootique.command.Command;
 import io.bootique.command.CommandManager;
 import io.bootique.meta.application.ApplicationMetadata;
@@ -18,21 +17,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.joining;
 
-public class JoptCliProvider implements Provider<Cli> {
+/**
+ * @since 0.25
+ */
+public class JoptCliFactory implements CliFactory {
 
-    private String[] args;
-    private ApplicationMetadata application;
     private Provider<CommandManager> commandManagerProvider;
+    private ApplicationMetadata application;
 
-
-    @Inject
-    public JoptCliProvider(Provider<CommandManager> commandManagerProvider,
-                           ApplicationMetadata application,
-                           @Args String[] args) {
+    public JoptCliFactory(Provider<CommandManager> commandManagerProvider, ApplicationMetadata application) {
 
         // injecting CommandManager via provider for an obscure reason - it is injected here and also in
         // ApplicationMetadata provider (and this class depends on ApplicationMetadata). So when there's an error
@@ -41,11 +38,10 @@ public class JoptCliProvider implements Provider<Cli> {
 
         this.commandManagerProvider = commandManagerProvider;
         this.application = application;
-        this.args = args;
     }
 
     @Override
-    public Cli get() {
+    public Cli createCli(String[] args) {
         OptionParser parser = createParser();
         OptionSet parsed;
         try {
@@ -101,7 +97,7 @@ public class JoptCliProvider implements Provider<Cli> {
     protected String commandName(OptionSet optionSet) {
 
         Map<String, Command> matches = new HashMap<>(3);
-        commandManagerProvider.get().getCommands().forEach((name, c) -> {
+        getCommandManager().getCommands().forEach((name, c) -> {
             if (optionSet.has(name) && !optionSet.hasArgument(name)) {
                 matches.put(name, c);
             }
@@ -114,9 +110,13 @@ public class JoptCliProvider implements Provider<Cli> {
             case 1:
                 return matches.keySet().iterator().next();
             default:
-                String opts = matches.keySet().stream().collect(joining(", "));
+                String opts = matches.keySet().stream().collect(Collectors.joining(", "));
                 String message = String.format("CLI options match multiple commands: %s.", opts);
                 throw new BootiqueException(1, message);
         }
+    }
+
+    private CommandManager getCommandManager() {
+        return commandManagerProvider.get();
     }
 }
