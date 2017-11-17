@@ -3,11 +3,23 @@ package io.bootique.command;
 import java.util.Optional;
 
 /**
- * Contains a "recipe" for invoking a command.
+ * Contains a "recipe" for invoking a command with preset arguments.
  *
  * @since 0.25
  */
 public class CommandInvocation {
+
+    private final Optional<Class<? extends Command>> commandType;
+    private final String[] args;
+    private final boolean terminateOnErrors;
+
+    private CommandInvocation(Class<? extends Command> commandType,
+                              String[] args,
+                              boolean terminateOnErrors) {
+        this.commandType = Optional.ofNullable(commandType);
+        this.args = args;
+        this.terminateOnErrors = terminateOnErrors;
+    }
 
     /**
      * Start building an invocation with a list of arguments.
@@ -23,18 +35,6 @@ public class CommandInvocation {
      */
     public static Builder forCommandType(Class<? extends Command> commandType) {
         return new Builder(commandType);
-    }
-
-    private final Optional<Class<? extends Command>> commandType;
-    private final String[] args;
-    private final boolean terminateOnErrors;
-
-    private CommandInvocation(Class<? extends Command> commandType,
-                              String[] args,
-                              boolean terminateOnErrors) {
-        this.commandType = Optional.ofNullable(commandType);
-        this.args = args;
-        this.terminateOnErrors = terminateOnErrors;
     }
 
     /**
