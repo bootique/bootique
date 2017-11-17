@@ -20,6 +20,24 @@ public interface CommandManager {
     Map<String, Command> getCommands();
 
     /**
+     * Returns a command matching type out of all available commands including the default. Throws an exception if
+     * the command type is not registered in the Bootique stack.
+     *
+     * @return a command matching the specified type.
+     * @since 0.25
+     */
+    Command lookupByType(Class<? extends Command> commandType);
+
+    /**
+     * Returns a command by type out of all available commands including the default. Throws an exception if the command
+     * type is not registered in the Bootique stack.
+     *
+     * @return a command matching the specified type.
+     * @since 0.25
+     */
+    Command lookupByName(String commandName);
+
+    /**
      * Returns optional default command.
      *
      * @return optional default command for this runtime.
