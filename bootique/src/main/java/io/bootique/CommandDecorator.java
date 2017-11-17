@@ -29,18 +29,17 @@ public class CommandDecorator {
         return builder().beforeRun(commandType, args).build();
     }
 
-    public static CommandDecorator beforeRun(String... args) {
-        return builder().beforeRun(args).build();
+    public static CommandDecorator beforeRun(String fullCommandName, String... commandArgs) {
+        return builder().beforeRun(fullCommandName, commandArgs).build();
     }
 
     public static CommandDecorator alsoRun(Class<? extends Command> commandType, String... args) {
         return builder().alsoRun(commandType, args).build();
     }
 
-    public static CommandDecorator alsoRun(String... args) {
-        return builder().alsoRun(args).build();
+    public static CommandDecorator alsoRun(String fullCommandName, String... commandArgs) {
+        return builder().alsoRun(fullCommandName, commandArgs).build();
     }
-
 
     /**
      * @return Collection of hooks to run before the original command
@@ -74,11 +73,17 @@ public class CommandDecorator {
          * arguments. The decorated command will not be run, if the "before" command fails.  When the "before" command is
          * run, it will receive all of the arguments passed to this method as {@link io.bootique.cli.Cli} instance.
          *
-         * @param args arguments to pass to the "before" command, including the command name.
+         * @param fullCommandName a full un-abbreviated command name for the "also" command. The command must be known
+         *                        to Bootique.
+         * @param commandArgs     arguments to pass to the "before" command, including the command name.
          * @return this builder instance
          */
-        public Builder beforeRun(String... args) {
-            decorator.before.add(CommandInvocation.forArgs(args).terminateOnErrors().build());
+        public Builder beforeRun(String fullCommandName, String... commandArgs) {
+            decorator.before.add(CommandInvocation
+                    .forName(fullCommandName)
+                    .arguments(commandArgs)
+                    .terminateOnErrors()
+                    .build());
             return this;
         }
 
@@ -92,7 +97,7 @@ public class CommandDecorator {
          * @return this builder instance
          */
         public Builder beforeRun(Class<? extends Command> commandType, String... args) {
-            decorator.before.add(CommandInvocation.forCommandType(commandType).arguments(args).terminateOnErrors().build());
+            decorator.before.add(CommandInvocation.forType(commandType).arguments(args).terminateOnErrors().build());
             return this;
         }
 
@@ -101,11 +106,16 @@ public class CommandDecorator {
          * from the passed CLI arguments. When the "also" command is run, it will receive all of the arguments passed to
          * this method as {@link io.bootique.cli.Cli} instance.
          *
-         * @param args arguments to pass to the "before" command, including the command name.
+         * @param fullCommandName a full un-abbreviated command name for the "also" command. The command must be known
+         *                        to Bootique.
+         * @param commandArgs     arguments to pass to the "before" command, including the command name.
          * @return this builder instance
          */
-        public Builder alsoRun(String... args) {
-            decorator.parallel.add(CommandInvocation.forArgs(args).build());
+        public Builder alsoRun(String fullCommandName, String... commandArgs) {
+            decorator.parallel.add(CommandInvocation
+                    .forName(fullCommandName)
+                    .arguments(commandArgs)
+                    .build());
             return this;
         }
 
@@ -119,7 +129,7 @@ public class CommandDecorator {
          * @return this builder instance.
          */
         public Builder alsoRun(Class<? extends Command> commandType, String... args) {
-            decorator.parallel.add(CommandInvocation.forCommandType(commandType).arguments(args).build());
+            decorator.parallel.add(CommandInvocation.forType(commandType).arguments(args).build());
             return this;
         }
 

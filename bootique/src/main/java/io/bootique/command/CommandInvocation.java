@@ -1,55 +1,42 @@
 package io.bootique.command;
 
-import java.util.Optional;
+import io.bootique.cli.Cli;
+
+import java.util.Objects;
 
 /**
  * Contains a "recipe" for invoking a command with preset arguments.
  *
  * @since 0.25
  */
-public class CommandInvocation {
+public abstract class CommandInvocation {
 
-    private final Optional<Class<? extends Command>> commandType;
     private final String[] args;
     private final boolean terminateOnErrors;
 
-    private CommandInvocation(Class<? extends Command> commandType,
-                              String[] args,
-                              boolean terminateOnErrors) {
-        this.commandType = Optional.ofNullable(commandType);
+    protected CommandInvocation(String[] args, boolean terminateOnErrors) {
         this.args = args;
         this.terminateOnErrors = terminateOnErrors;
     }
 
     /**
-     * Start building an invocation with a list of arguments.
+     * Starts building an invocation with a named command.
      *
-     * @param args Command line arguments
+     * @param fullCommandName full name of the command.
      */
-    public static Builder forArgs(String[] args) {
-        return new Builder().arguments(args);
+    public static Builder forName(String fullCommandName) {
+        return new Builder(fullCommandName);
     }
 
     /**
-     * Start building an invocation of an explicit command.
+     * Starts building an invocation with a command of a known type.
      */
-    public static Builder forCommandType(Class<? extends Command> commandType) {
+    public static Builder forType(Class<? extends Command> commandType) {
         return new Builder(commandType);
     }
 
-    /**
-     * Returns a command type, or an {@link Optional#empty()},
-     * if this invocation is based on command line arguments.
-     *
-     * @return Command type, if present
-     */
-    public Optional<Class<? extends Command>> getCommandType() {
-        return commandType;
-    }
+    public abstract String getCommandName(CommandManager manager);
 
-    /**
-     * @return Command line arguments (may be empty)
-     */
     public String[] getArgs() {
         return args;
     }
@@ -61,23 +48,53 @@ public class CommandInvocation {
         return terminateOnErrors;
     }
 
+    static class ByNameInvocation extends CommandInvocation {
+        private String commandName;
+
+        ByNameInvocation(String[] args, boolean terminateOnErrors, String commandName) {
+            super(args, terminateOnErrors);
+            this.commandName = commandName;
+        }
+
+        @Override
+        public String getCommandName(CommandManager manager) {
+            return commandName;
+        }
+    }
+
+    static class ByTypeInvocation extends CommandInvocation {
+        private Class<? extends Command> commandType;
+
+        ByTypeInvocation(String[] args, boolean terminateOnErrors, Class<? extends Command> commandType) {
+            super(args, terminateOnErrors);
+            this.commandType = commandType;
+        }
+
+        @Override
+        public String getCommandName(CommandManager manager) {
+            return null;
+        }
+    }
+
     /**
      * @since 0.25
      */
     public static class Builder {
+
         private static final String[] NO_ARGS = new String[0];
 
         private Class<? extends Command> commandType;
-        private String[] args;
+        private String commandName;
+
+        private String[] args = NO_ARGS;
         private boolean terminateOnErrors;
 
-        private Builder() {
-            this(null);
+        protected Builder(String commandName) {
+            this.commandName = Objects.requireNonNull(commandName);
         }
 
-        private Builder(Class<? extends Command> commandType) {
-            this.commandType = commandType;
-            this.args = NO_ARGS;
+        protected Builder(Class<? extends Command> commandType) {
+            this.commandType = Objects.requireNonNull(commandType);
         }
 
         /**
