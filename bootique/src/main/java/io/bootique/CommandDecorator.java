@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Stores a "recipe" for decorating some command.
+ * Stores a "recipe" for decorating some command with extra serial and parallel commands.
  *
  * @since 0.25
  */
@@ -16,21 +16,17 @@ public class CommandDecorator {
     private final Collection<CommandInvocation> before;
     private final Collection<CommandInvocation> parallel;
 
-    private CommandDecorator(Collection<CommandInvocation> before, Collection<CommandInvocation> parallel) {
-        this.before = before;
-        this.parallel = parallel;
+    private CommandDecorator() {
+        this.before = new ArrayList<>(3);
+        this.parallel = new ArrayList<>(3);
     }
 
-    /**
-     * @since 0.25
-     */
     public static CommandDecorator.Builder builder() {
         return new Builder();
     }
 
     /**
      * @return Collection of hooks to run before the original command
-     * @since 0.25
      */
     public Collection<CommandInvocation> getBefore() {
         return before;
@@ -38,7 +34,6 @@ public class CommandDecorator {
 
     /**
      * @return Collection of hooks to run in parallel with the original command
-     * @since 0.25
      */
     public Collection<CommandInvocation> getParallel() {
         return parallel;
@@ -51,51 +46,49 @@ public class CommandDecorator {
      */
     public static class Builder {
 
-        private Collection<CommandInvocation> before;
-        private Collection<CommandInvocation> parallel;
+        private CommandDecorator decorator;
 
         private Builder() {
+            this.decorator = new CommandDecorator();
         }
 
         /**
-         * Add a hook to run before the original command.
-         * The original command will not be run, if the hook fails.
-         * Actual hook type (command) is deduced from the list of arguments.
-         * <p>
-         * When the hook is run, it will receive all of the provided arguments in its' own {@link io.bootique.cli.Cli} instance.
+         * Define a command to run before the decorated command. The command to run in deduced from the passed CLI
+         * arguments. The decorated command will not be run, if the "before" command fails.  When the "before" command is
+         * run, it will receive all of the arguments passed to this method as {@link io.bootique.cli.Cli} instance.
          *
-         * @param args Command line arguments
-         * @since 0.25
+         * @param args arguments to pass to the "before" command, including the command name.
+         * @return this builder instance
          */
         public Builder beforeRun(String... args) {
-            getBefore().add(CommandInvocation.forArgs(args).terminateOnErrors().build());
+            decorator.before.add(CommandInvocation.forArgs(args).terminateOnErrors().build());
             return this;
         }
 
         /**
-         * Add a hook to run before the original command.
-         * The original command will not be run, if the hook fails.
-         * <p>
-         * When the hook is run, it will receive all of the provided arguments in its' own {@link io.bootique.cli.Cli} instance.
+         * Define a command to run before the decorated command. The decorated command will not be run, if "before"
+         * command fails.  When the "before" command is run, it will receive all of the arguments passed to
+         * this method as {@link io.bootique.cli.Cli} instance.
          *
-         * @param commandType Command to run with its' own arguments
-         * @since 0.25
+         * @param commandType "before" command type. Must be a command known to Bootique.
+         * @param args        arguments to pass to the "before" command.
+         * @return this builder instance
          */
         public Builder beforeRun(Class<? extends Command> commandType, String... args) {
-            getBefore().add(CommandInvocation.forCommandType(commandType).arguments(args).terminateOnErrors().build());
+            decorator.before.add(CommandInvocation.forCommandType(commandType).arguments(args).terminateOnErrors().build());
             return this;
         }
 
         /**
-         * Add a hook to run in parallel with the original command.
-         * Actual hook type (command) is deduced from the list of arguments.
-         * When the hook is run, it will receive all of the provided arguments in its' own {@link io.bootique.cli.Cli} instance.
+         * Define an "also" command to run in parallel with the decorated command. The "also" Command class is deduced
+         * from the passed CLI arguments. When the "also" command is run, it will receive all of the arguments passed to
+         * this method as {@link io.bootique.cli.Cli} instance.
          *
-         * @param args Command line arguments
-         * @since 0.25
+         * @param args arguments to pass to the "before" command, including the command name.
+         * @return this builder instance
          */
         public Builder alsoRun(String... args) {
-            getParallel().add(CommandInvocation.forArgs(args).build());
+            decorator.parallel.add(CommandInvocation.forArgs(args).build());
             return this;
         }
 
@@ -104,33 +97,17 @@ public class CommandDecorator {
          * <p>
          * When the hook is run, it will receive all of the provided arguments in its' own {@link io.bootique.cli.Cli} instance.
          *
-         * @param commandType Command to run with its' own arguments
-         * @since 0.25
+         * @param commandType "also" command type. Must be a command known to Bootique.
+         * @param args        arguments to pass to the "also" command.
+         * @return this builder instance.
          */
         public Builder alsoRun(Class<? extends Command> commandType, String... args) {
-            getParallel().add(CommandInvocation.forCommandType(commandType).arguments(args).build());
+            decorator.parallel.add(CommandInvocation.forCommandType(commandType).arguments(args).build());
             return this;
         }
 
-        private Collection<CommandInvocation> getBefore() {
-            if (before == null) {
-                before = new ArrayList<>();
-            }
-            return before;
-        }
-
-        private Collection<CommandInvocation> getParallel() {
-            if (parallel == null) {
-                parallel = new ArrayList<>();
-            }
-            return parallel;
-        }
-
-        /**
-         * @since 0.25
-         */
         public CommandDecorator build() {
-            return new CommandDecorator(getBefore(), getParallel());
+            return decorator;
         }
     }
 }
