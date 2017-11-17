@@ -21,13 +21,16 @@ import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 
+
 /**
  * @since 0.25
  */
 public class JoptCliFactory implements CliFactory {
 
+    private final Object optionParserLock;
     private Provider<CommandManager> commandManagerProvider;
     private ApplicationMetadata application;
+    private volatile OptionParser optionParser;
 
     public JoptCliFactory(Provider<CommandManager> commandManagerProvider, ApplicationMetadata application) {
 
@@ -38,21 +41,41 @@ public class JoptCliFactory implements CliFactory {
 
         this.commandManagerProvider = commandManagerProvider;
         this.application = application;
+
+        this.optionParserLock = new Object();
     }
 
     @Override
     public Cli createCli(String[] args) {
-        OptionParser parser = createParser();
-        OptionSet parsed;
+        OptionSet parsed = parse(args);
+        String commandName = commandName(parsed);
+        return new JoptCli(parsed, commandName);
+    }
+
+    @Override
+    public Cli createCli(Command defaultCommand, String[] args) {
+        OptionSet parsed = parse(args);
+        String commandName = defaultCommand.getMetadata().getName();
+        return new JoptCli(parsed, commandName);
+    }
+
+    private OptionSet parse(String[] args) {
         try {
-            parsed = parser.parse(args);
+            return getParser().parse(args);
         } catch (OptionException e) {
             throw new BootiqueException(1, e.getMessage(), e);
         }
+    }
 
-        String commandName = commandName(parsed);
-
-        return new JoptCli(parsed, commandName);
+    private OptionParser getParser() {
+        if (optionParser == null) {
+            synchronized (optionParserLock) {
+                if (optionParser == null) {
+                    optionParser = createParser();
+                }
+            }
+        }
+        return optionParser;
     }
 
     protected OptionParser createParser() {
