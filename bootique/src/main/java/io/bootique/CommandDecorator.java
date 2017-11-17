@@ -25,6 +25,23 @@ public class CommandDecorator {
         return new Builder();
     }
 
+    public static CommandDecorator beforeRun(Class<? extends Command> commandType, String... args) {
+        return builder().beforeRun(commandType, args).build();
+    }
+
+    public static CommandDecorator beforeRun(String... args) {
+        return builder().beforeRun(args).build();
+    }
+
+    public static CommandDecorator alsoRun(Class<? extends Command> commandType, String... args) {
+        return builder().alsoRun(commandType, args).build();
+    }
+
+    public static CommandDecorator alsoRun(String... args) {
+        return builder().alsoRun(args).build();
+    }
+
+
     /**
      * @return Collection of hooks to run before the original command
      */
