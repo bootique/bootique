@@ -1,7 +1,5 @@
 package io.bootique.command;
 
-import io.bootique.cli.Cli;
-
 import java.util.Objects;
 
 /**
@@ -51,13 +49,14 @@ public abstract class CommandInvocation {
     static class ByNameInvocation extends CommandInvocation {
         private String commandName;
 
-        ByNameInvocation(String[] args, boolean terminateOnErrors, String commandName) {
+        ByNameInvocation(String commandName, String[] args, boolean terminateOnErrors) {
             super(args, terminateOnErrors);
             this.commandName = commandName;
         }
 
         @Override
         public String getCommandName(CommandManager manager) {
+            // TODO: should we pass this through CommandManager to ensure the name is valid?
             return commandName;
         }
     }
@@ -65,14 +64,14 @@ public abstract class CommandInvocation {
     static class ByTypeInvocation extends CommandInvocation {
         private Class<? extends Command> commandType;
 
-        ByTypeInvocation(String[] args, boolean terminateOnErrors, Class<? extends Command> commandType) {
+        ByTypeInvocation(Class<? extends Command> commandType, String[] args, boolean terminateOnErrors) {
             super(args, terminateOnErrors);
             this.commandType = commandType;
         }
 
         @Override
         public String getCommandName(CommandManager manager) {
-            return null;
+            return manager.lookupByType(commandType).getMetadata().getName();
         }
     }
 
@@ -114,7 +113,9 @@ public abstract class CommandInvocation {
         }
 
         public CommandInvocation build() {
-            return new CommandInvocation(commandType, args, terminateOnErrors);
+            return commandType != null
+                    ? new ByTypeInvocation(commandType, args, terminateOnErrors)
+                    : new ByNameInvocation(commandName, args, terminateOnErrors);
         }
     }
 }

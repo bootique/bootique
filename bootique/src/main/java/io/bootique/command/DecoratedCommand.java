@@ -7,8 +7,6 @@ import io.bootique.cli.CliFactory;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -46,17 +44,17 @@ public class DecoratedCommand extends CommandWithMetadata {
     public CommandOutcome run(Cli cli) {
 
         Collection<CommandOutcome> failures = run(before).stream().map(future -> {
-                    try {
-                        return future.get();
-                    } catch (InterruptedException e) {
-                        // when interrupted, throw error rather than return CommandOutcome#failed()
-                        // see comment in toOutcomeSupplier() method for details
-                        throw new BootiqueException(1, "Interrupted", e);
-                    } catch (ExecutionException e) {
-                        // we don't expect futures to ever throw errors
-                        throw new BootiqueException(1, "Unexpected error", e);
-                    }
-                })
+            try {
+                return future.get();
+            } catch (InterruptedException e) {
+                // when interrupted, throw error rather than return CommandOutcome#failed()
+                // see comment in toOutcomeSupplier() method for details
+                throw new BootiqueException(1, "Interrupted", e);
+            } catch (ExecutionException e) {
+                // we don't expect futures to ever throw errors
+                throw new BootiqueException(1, "Unexpected error", e);
+            }
+        })
                 .filter(outcome -> !outcome.isSuccess()).collect(Collectors.toList());
 
         if (failures.size() > 0) {
@@ -79,21 +77,11 @@ public class DecoratedCommand extends CommandWithMetadata {
     }
 
     private Supplier<CommandOutcome> toOutcomeSupplier(CommandInvocation invocation) {
-        Optional<Command> commandOptional = invocation.getCommandType()
-                .map(commandType -> Objects.requireNonNull(commands.get(commandType), "Unknown command type: " + commandType.getName()));
 
-        Cli cli;
-        if (commandOptional.isPresent()) {
-            cli = getCliFactory().createCli(commandOptional.get(), invocation.getArgs());
-        } else {
-            cli = getCliFactory().createCli(invocation.getArgs());
-        }
-
-        String commandName = cli.commandName();
-        Command command = getCommandManager().getCommands().get(commandName);
-        if (command == null) {
-            throw new BootiqueException(1, "Unknown command: " + commandName);
-        }
+        CommandManager commandManager = getCommandManager();
+        String commandName = invocation.getCommandName(commandManager);
+        Cli cli = getCliFactory().createCli(commandName, invocation.getArgs());
+        Command command = getCommandManager().lookupByName(commandName);
 
         return () -> {
             CommandOutcome outcome;

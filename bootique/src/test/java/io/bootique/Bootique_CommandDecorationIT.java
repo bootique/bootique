@@ -63,7 +63,7 @@ public class Bootique_CommandDecorationIT {
     @Test
     public void testAlsoRun_ByName() {
 
-        CommandDecorator decorator = CommandDecorator.alsoRun("--s");
+        CommandDecorator decorator = CommandDecorator.alsoRun("s");
 
         assertTrue(decorateRunAndWait(decorator).isSuccess());
         assertTrue(mainCommand.isExecuted());
@@ -74,7 +74,7 @@ public class Bootique_CommandDecorationIT {
     @Test
     public void testAlsoRun_ByName_WithArgs() {
 
-        CommandDecorator decorator = CommandDecorator.alsoRun("--s", "--sflag");
+        CommandDecorator decorator = CommandDecorator.alsoRun("s", "--sflag");
 
         assertTrue(decorateRunAndWait(decorator).isSuccess());
         assertTrue(mainCommand.isExecuted());
@@ -107,7 +107,7 @@ public class Bootique_CommandDecorationIT {
     @Test
     public void testBeforeRun_Failure_ByName() {
 
-        CommandDecorator decorator = CommandDecorator.beforeRun("--f");
+        CommandDecorator decorator = CommandDecorator.beforeRun("f");
 
         CommandOutcome outcome = decorateAndRun(decorator);
 
@@ -118,7 +118,7 @@ public class Bootique_CommandDecorationIT {
     @Test
     public void testBeforeRun_Failure_ByName_WithArgs() {
 
-        CommandDecorator decorator = CommandDecorator.beforeRun("--f", "--fflag");
+        CommandDecorator decorator = CommandDecorator.beforeRun("f", "--fflag");
 
         CommandOutcome outcome = decorateAndRun(decorator);
 
