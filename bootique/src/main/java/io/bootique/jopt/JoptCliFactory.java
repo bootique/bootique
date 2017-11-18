@@ -4,6 +4,7 @@ import com.google.inject.Provider;
 import io.bootique.BootiqueException;
 import io.bootique.cli.Cli;
 import io.bootique.cli.CliFactory;
+import io.bootique.cli.NoArgsCli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandManager;
 import io.bootique.meta.application.ApplicationMetadata;
@@ -47,6 +48,10 @@ public class JoptCliFactory implements CliFactory {
 
     @Override
     public Cli createCli(String[] args) {
+        if (args.length == 0) {
+            return NoArgsCli.getInstance();
+        }
+
         OptionSet parsed = parse(args);
         String commandName = commandName(parsed);
         return new JoptCli(parsed, commandName);
