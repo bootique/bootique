@@ -8,12 +8,12 @@ import java.util.Objects;
  *
  * @since 0.25
  */
-public abstract class CommandWithArgs {
+public abstract class CommandRefWithArgs {
 
     private final String[] args;
     private final boolean terminateOnErrors;
 
-    protected CommandWithArgs(String[] args, boolean terminateOnErrors) {
+    protected CommandRefWithArgs(String[] args, boolean terminateOnErrors) {
         this.args = args;
         this.terminateOnErrors = terminateOnErrors;
     }
@@ -47,10 +47,10 @@ public abstract class CommandWithArgs {
         return terminateOnErrors;
     }
 
-    static class NamedCommandWithArgs extends CommandWithArgs {
+    static class RefByNameWithArgs extends CommandRefWithArgs {
         private String commandName;
 
-        NamedCommandWithArgs(String commandName, String[] args, boolean terminateOnErrors) {
+        RefByNameWithArgs(String commandName, String[] args, boolean terminateOnErrors) {
             super(args, terminateOnErrors);
             this.commandName = commandName;
         }
@@ -62,10 +62,10 @@ public abstract class CommandWithArgs {
         }
     }
 
-    static class TypeCommandWithArgs extends CommandWithArgs {
+    static class RefByTypeWithArgs extends CommandRefWithArgs {
         private Class<? extends Command> commandType;
 
-        TypeCommandWithArgs(Class<? extends Command> commandType, String[] args, boolean terminateOnErrors) {
+        RefByTypeWithArgs(Class<? extends Command> commandType, String[] args, boolean terminateOnErrors) {
             super(args, terminateOnErrors);
             this.commandType = commandType;
         }
@@ -113,10 +113,10 @@ public abstract class CommandWithArgs {
             return this;
         }
 
-        public CommandWithArgs build() {
+        public CommandRefWithArgs build() {
             return commandType != null
-                    ? new TypeCommandWithArgs(commandType, args, terminateOnErrors)
-                    : new NamedCommandWithArgs(commandName, args, terminateOnErrors);
+                    ? new RefByTypeWithArgs(commandType, args, terminateOnErrors)
+                    : new RefByNameWithArgs(commandName, args, terminateOnErrors);
         }
     }
 }

@@ -21,16 +21,17 @@ import java.util.concurrent.Future;
 class MultiCommand extends CommandWithMetadata {
 
     private final Command mainCommand;
+    private final CommandDecorator extraCommands;
     private final Provider<CliFactory> cliFactoryProvider;
     private final Provider<CommandManager> commandManagerProvider;
     private final Provider<ExecutorService> executorProvider;
-    private final CommandDecorator extraCommands;
 
-    public MultiCommand(Command mainCommand,
-                        CommandDecorator extraCommands,
-                        Provider<CliFactory> cliFactoryProvider,
-                        Provider<CommandManager> commandManagerProvider,
-                        Provider<ExecutorService> executorProvider) {
+    public MultiCommand(
+            Command mainCommand,
+            CommandDecorator extraCommands,
+            Provider<CliFactory> cliFactoryProvider,
+            Provider<CommandManager> commandManagerProvider,
+            Provider<ExecutorService> executorProvider) {
 
         super(mainCommand.getMetadata());
         this.mainCommand = mainCommand;
@@ -45,7 +46,7 @@ class MultiCommand extends CommandWithMetadata {
 
         Collection<CommandOutcome> failures = new ArrayList<>(3);
 
-        invokeInParallel(extraCommands.getBefore()).forEach(i -> {
+        parallelInvoke(extraCommands.getBefore()).forEach(i -> {
             CommandOutcome outcome = waitForOutcome(i);
             if (!outcome.isSuccess()) {
                 failures.add(outcome);
@@ -57,7 +58,7 @@ class MultiCommand extends CommandWithMetadata {
             return CommandOutcome.failed(1, "Some of the commands failed");
         }
 
-        invokeInParallel(extraCommands.getParallel()); // not waiting for the outcome?
+        parallelInvoke(extraCommands.getParallel()); // not waiting for the outcome?
 
         return mainCommand.run(cli);
     }
@@ -75,20 +76,20 @@ class MultiCommand extends CommandWithMetadata {
         }
     }
 
-    private Collection<Future<CommandOutcome>> invokeInParallel(Collection<CommandWithArgs> cmdWithArgs) {
+    private Collection<Future<CommandOutcome>> parallelInvoke(Collection<CommandRefWithArgs> cmdRefs) {
         ExecutorService executor = getExecutor();
 
-        List<Future<CommandOutcome>> outcomes = new ArrayList<>(cmdWithArgs.size());
-        cmdWithArgs.forEach(cwa -> outcomes.add(executor.submit(toInvocation(cwa))));
+        List<Future<CommandOutcome>> outcomes = new ArrayList<>(cmdRefs.size());
+        cmdRefs.forEach(ref -> outcomes.add(executor.submit(toInvocation(ref))));
 
         return outcomes;
     }
 
-    private Callable<CommandOutcome> toInvocation(CommandWithArgs cmdWithArgs) {
+    private Callable<CommandOutcome> toInvocation(CommandRefWithArgs cmdRef) {
 
         CommandManager commandManager = getCommandManager();
-        String commandName = cmdWithArgs.getName(commandManager);
-        Cli cli = getCliFactory().createCli(cmdWithArgs.getArgs());
+        String commandName = cmdRef.getName(commandManager);
+        Cli cli = getCliFactory().createCli(cmdRef.getArgs());
         Command command = commandManager.lookupByName(commandName);
 
         return () -> {
@@ -106,7 +107,7 @@ class MultiCommand extends CommandWithMetadata {
             }
 
             // always return success, unless explicitly required to fail on errors
-            return cmdWithArgs.shouldTerminateOnErrors() ? outcome : CommandOutcome.succeeded();
+            return cmdRef.shouldTerminateOnErrors() ? outcome : CommandOutcome.succeeded();
         };
     }
 

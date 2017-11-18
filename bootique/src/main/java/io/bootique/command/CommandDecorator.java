@@ -10,8 +10,8 @@ import java.util.Collection;
  */
 public class CommandDecorator {
 
-    private final Collection<CommandWithArgs> before;
-    private final Collection<CommandWithArgs> parallel;
+    private final Collection<CommandRefWithArgs> before;
+    private final Collection<CommandRefWithArgs> parallel;
 
     private CommandDecorator() {
         this.before = new ArrayList<>(3);
@@ -41,14 +41,14 @@ public class CommandDecorator {
     /**
      * @return Collection of hooks to run before the original command
      */
-    public Collection<CommandWithArgs> getBefore() {
+    public Collection<CommandRefWithArgs> getBefore() {
         return before;
     }
 
     /**
      * @return Collection of hooks to run in parallel with the original command
      */
-    public Collection<CommandWithArgs> getParallel() {
+    public Collection<CommandRefWithArgs> getParallel() {
         return parallel;
     }
 
@@ -76,7 +76,7 @@ public class CommandDecorator {
          * @return this builder instance
          */
         public Builder beforeRun(String fullCommandName, String... commandArgs) {
-            decorator.before.add(CommandWithArgs
+            decorator.before.add(CommandRefWithArgs
                     .forName(fullCommandName)
                     .arguments(commandArgs)
                     .terminateOnErrors()
@@ -94,7 +94,7 @@ public class CommandDecorator {
          * @return this builder instance
          */
         public Builder beforeRun(Class<? extends Command> commandType, String... args) {
-            decorator.before.add(CommandWithArgs.forType(commandType).arguments(args).terminateOnErrors().build());
+            decorator.before.add(CommandRefWithArgs.forType(commandType).arguments(args).terminateOnErrors().build());
             return this;
         }
 
@@ -109,7 +109,7 @@ public class CommandDecorator {
          * @return this builder instance
          */
         public Builder alsoRun(String fullCommandName, String... commandArgs) {
-            decorator.parallel.add(CommandWithArgs
+            decorator.parallel.add(CommandRefWithArgs
                     .forName(fullCommandName)
                     .arguments(commandArgs)
                     .build());
@@ -126,7 +126,7 @@ public class CommandDecorator {
          * @return this builder instance.
          */
         public Builder alsoRun(Class<? extends Command> commandType, String... args) {
-            decorator.parallel.add(CommandWithArgs.forType(commandType).arguments(args).build());
+            decorator.parallel.add(CommandRefWithArgs.forType(commandType).arguments(args).build());
             return this;
         }
 
