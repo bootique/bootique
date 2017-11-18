@@ -1,5 +1,6 @@
 ## 0.25
 
+* #131 Complex command invocation structures
 * #193 JsonNodeConfigurationFactory - proper parser initialization
 * #194 Refactor JoptCliProvider to CliFactory and generic Cli provider
 * #195 CommandManager: allow lookup of commands by name and by type
