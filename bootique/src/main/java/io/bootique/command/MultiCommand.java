@@ -44,11 +44,12 @@ class MultiCommand extends CommandWithMetadata {
     @Override
     public CommandOutcome run(Cli cli) {
 
-        Collection<CommandOutcome> beforeFailures = runBlockingAndGetFailures(extraCommands.getBefore());
-
-        if (beforeFailures.size() > 0) {
-            // TODO: combine all results into a single message? or need a different type of CommandOutcome (e.g. MultiCommandOutcome)?
-            return CommandOutcome.failed(1, "Some of the commands failed");
+        Collection<CommandOutcome> beforeResults = runBlocking(extraCommands.getBefore());
+        for (CommandOutcome outcome : beforeResults) {
+            if (!outcome.isSuccess()) {
+                // TODO: combine all results into a single message? or need a different type of CommandOutcome (e.g. MultiCommandOutcome)?
+                return CommandOutcome.failed(1, "Some of the commands failed");
+            }
         }
 
         // not waiting for the outcome at least until we start supporting background non-terminating commands
@@ -57,33 +58,31 @@ class MultiCommand extends CommandWithMetadata {
         return mainCommand.run(cli);
     }
 
-    private Collection<CommandOutcome> runBlockingAndGetFailures(Collection<CommandRefWithArgs> cmdRefs) {
+    private Collection<CommandOutcome> runBlocking(Collection<CommandRefWithArgs> cmdRefs) {
 
         switch (cmdRefs.size()) {
             case 0:
                 return Collections.emptyList();
             case 1:
-                return doRunBlockingAndGetFailures(cmdRefs.iterator().next());
+                return doRunBlocking(cmdRefs.iterator().next());
             default:
-                return doRunBlockingAndGetFailures(cmdRefs);
+                return doRunBlocking(cmdRefs);
         }
     }
 
-    private Collection<CommandOutcome> doRunBlockingAndGetFailures(CommandRefWithArgs cmdRef) {
+    private Collection<CommandOutcome> doRunBlocking(CommandRefWithArgs cmdRef) {
         // a single command - we can bypass the thread pool...
-        CommandOutcome outcome = run(cmdRef);
-        return outcome.isSuccess() ? Collections.emptyList() : Collections.singletonList(outcome);
+        return Collections.singletonList(run(cmdRef));
     }
 
-    private Collection<CommandOutcome> doRunBlockingAndGetFailures(Collection<CommandRefWithArgs> cmdRefs) {
+    private Collection<CommandOutcome> doRunBlocking(Collection<CommandRefWithArgs> cmdRefs) {
 
-        Collection<CommandOutcome> failures = new ArrayList<>(3);
+        Collection<CommandOutcome> outcomes = new ArrayList<>(3);
 
         runNonBlocking(cmdRefs).forEach(future -> {
-            CommandOutcome outcome;
 
             try {
-                outcome = future.get();
+                outcomes.add(future.get());
             } catch (InterruptedException e) {
                 // when interrupted, throw error rather than return CommandOutcome#failed()
                 // see comment in toOutcomeSupplier() method for details
@@ -92,19 +91,15 @@ class MultiCommand extends CommandWithMetadata {
                 // we don't expect futures to ever throw errors
                 throw new BootiqueException(1, "Unexpected error", e);
             }
-
-            if (!outcome.isSuccess()) {
-                failures.add(outcome);
-            }
         });
 
-        return failures;
+        return outcomes;
     }
 
     private Collection<Future<CommandOutcome>> runNonBlocking(Collection<CommandRefWithArgs> cmdRefs) {
 
         // exit early, avoid pool creation if we don't need it
-        if(cmdRefs.isEmpty()) {
+        if (cmdRefs.isEmpty()) {
             return Collections.emptyList();
         }
 
