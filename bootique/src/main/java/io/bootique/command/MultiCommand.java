@@ -5,12 +5,13 @@ import io.bootique.BootiqueException;
 import io.bootique.cli.Cli;
 import io.bootique.cli.CliFactory;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 /**
  * A composite command made of the main command and auxiliary commands run before the main command or in parallel with it.
@@ -42,44 +43,55 @@ class MultiCommand extends CommandWithMetadata {
     @Override
     public CommandOutcome run(Cli cli) {
 
-        Collection<CommandOutcome> failures = run(extraCommands.getBefore()).stream().map(future -> {
-            try {
-                return future.get();
-            } catch (InterruptedException e) {
-                // when interrupted, throw error rather than return CommandOutcome#failed()
-                // see comment in toOutcomeSupplier() method for details
-                throw new BootiqueException(1, "Interrupted", e);
-            } catch (ExecutionException e) {
-                // we don't expect futures to ever throw errors
-                throw new BootiqueException(1, "Unexpected error", e);
+        Collection<CommandOutcome> failures = new ArrayList<>(3);
+
+        invokeInParallel(extraCommands.getBefore()).forEach(i -> {
+            CommandOutcome outcome = waitForOutcome(i);
+            if (!outcome.isSuccess()) {
+                failures.add(outcome);
             }
-        })
-                .filter(outcome -> !outcome.isSuccess()).collect(Collectors.toList());
+        });
 
         if (failures.size() > 0) {
             // TODO: combine all results into a single message? or need a different type of CommandOutcome (e.g. MultiCommandOutcome)?
             return CommandOutcome.failed(1, "Some of the commands failed");
         }
 
-        run(extraCommands.getParallel()); // not waiting for the outcome?
+        invokeInParallel(extraCommands.getParallel()); // not waiting for the outcome?
 
         return mainCommand.run(cli);
     }
 
-    private Collection<CompletableFuture<CommandOutcome>> run(Collection<CommandWithArgs> invocations) {
-        ExecutorService executor = getExecutor();
-
-        return invocations.stream()
-                .map(this::toOutcomeSupplier)
-                .map(outcomeSupplier -> CompletableFuture.supplyAsync(outcomeSupplier, executor))
-                .collect(Collectors.toList());
+    private CommandOutcome waitForOutcome(CompletableFuture<CommandOutcome> invocation) {
+        try {
+            return invocation.get();
+        } catch (InterruptedException e) {
+            // when interrupted, throw error rather than return CommandOutcome#failed()
+            // see comment in toOutcomeSupplier() method for details
+            throw new BootiqueException(1, "Interrupted", e);
+        } catch (ExecutionException e) {
+            // we don't expect futures to ever throw errors
+            throw new BootiqueException(1, "Unexpected error", e);
+        }
     }
 
-    private Supplier<CommandOutcome> toOutcomeSupplier(CommandWithArgs invocation) {
+    private Collection<CompletableFuture<CommandOutcome>> invokeInParallel(Collection<CommandWithArgs> cmdWithArgs) {
+        ExecutorService executor = getExecutor();
+        List<CompletableFuture<CommandOutcome>> outcomes = new ArrayList<>(cmdWithArgs.size());
+
+        cmdWithArgs.forEach(cwa -> {
+            Supplier<CommandOutcome> invocation = toInvocation(cwa);
+            outcomes.add(CompletableFuture.supplyAsync(invocation, executor));
+        });
+
+        return outcomes;
+    }
+
+    private Supplier<CommandOutcome> toInvocation(CommandWithArgs cmdWithArgs) {
 
         CommandManager commandManager = getCommandManager();
-        String commandName = invocation.getName(commandManager);
-        Cli cli = getCliFactory().createCli(commandName, invocation.getArgs());
+        String commandName = cmdWithArgs.getName(commandManager);
+        Cli cli = getCliFactory().createCli(commandName, cmdWithArgs.getArgs());
         Command command = commandManager.lookupByName(commandName);
 
         return () -> {
@@ -97,7 +109,7 @@ class MultiCommand extends CommandWithMetadata {
             }
 
             // always return success, unless explicitly required to fail on errors
-            return invocation.shouldTerminateOnErrors() ? outcome : CommandOutcome.succeeded();
+            return cmdWithArgs.shouldTerminateOnErrors() ? outcome : CommandOutcome.succeeded();
         };
     }
 
