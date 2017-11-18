@@ -35,7 +35,7 @@ public class ExecutionPlanBuilder {
      * Optionally decorates provided command to execute additional auxiliary commands if those are configured for
      * this type of command.
      *
-     * @param mainCommand the primary command whose decoration was requested.
+     * @param mainCommand the primary command whose execution plan was requested.
      * @return either main command or a decorated main command.
      */
     public Command prepareForExecution(Command mainCommand) {
