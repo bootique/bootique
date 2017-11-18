@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -45,7 +44,7 @@ class MultiCommand extends CommandWithMetadata {
     @Override
     public CommandOutcome run(Cli cli) {
 
-        Collection<CommandOutcome> beforeFailures = invokeBefore();
+        Collection<CommandOutcome> beforeFailures = runBlockingAndGetFailures(extraCommands.getBefore());
 
         if (beforeFailures.size() > 0) {
             // TODO: combine all results into a single message? or need a different type of CommandOutcome (e.g. MultiCommandOutcome)?
@@ -53,21 +52,47 @@ class MultiCommand extends CommandWithMetadata {
         }
 
         // not waiting for the outcome at least until we start supporting background non-terminating commands
-        parallelInvoke(extraCommands.getParallel());
+        runNonBlocking(extraCommands.getParallel());
 
         return mainCommand.run(cli);
     }
 
-    private Collection<CommandOutcome> invokeBefore() {
+    private Collection<CommandOutcome> runBlockingAndGetFailures(Collection<CommandRefWithArgs> cmdRefs) {
 
-        if (extraCommands.getBefore().isEmpty()) {
-            return Collections.emptyList();
+        switch (cmdRefs.size()) {
+            case 0:
+                return Collections.emptyList();
+            case 1:
+                return doRunBlockingAndGetFailures(cmdRefs.iterator().next());
+            default:
+                return doRunBlockingAndGetFailures(cmdRefs);
         }
+    }
+
+    private Collection<CommandOutcome> doRunBlockingAndGetFailures(CommandRefWithArgs cmdRef) {
+        // a single command - we can bypass the thread pool...
+        CommandOutcome outcome = run(cmdRef);
+        return outcome.isSuccess() ? Collections.emptyList() : Collections.singletonList(outcome);
+    }
+
+    private Collection<CommandOutcome> doRunBlockingAndGetFailures(Collection<CommandRefWithArgs> cmdRefs) {
 
         Collection<CommandOutcome> failures = new ArrayList<>(3);
 
-        parallelInvoke(extraCommands.getBefore()).forEach(i -> {
-            CommandOutcome outcome = waitForOutcome(i);
+        runNonBlocking(cmdRefs).forEach(future -> {
+            CommandOutcome outcome;
+
+            try {
+                outcome = future.get();
+            } catch (InterruptedException e) {
+                // when interrupted, throw error rather than return CommandOutcome#failed()
+                // see comment in toOutcomeSupplier() method for details
+                throw new BootiqueException(1, "Interrupted", e);
+            } catch (ExecutionException e) {
+                // we don't expect futures to ever throw errors
+                throw new BootiqueException(1, "Unexpected error", e);
+            }
+
             if (!outcome.isSuccess()) {
                 failures.add(outcome);
             }
@@ -76,51 +101,42 @@ class MultiCommand extends CommandWithMetadata {
         return failures;
     }
 
-    private CommandOutcome waitForOutcome(Future<CommandOutcome> invocation) {
-        try {
-            return invocation.get();
-        } catch (InterruptedException e) {
-            // when interrupted, throw error rather than return CommandOutcome#failed()
-            // see comment in toOutcomeSupplier() method for details
-            throw new BootiqueException(1, "Interrupted", e);
-        } catch (ExecutionException e) {
-            // we don't expect futures to ever throw errors
-            throw new BootiqueException(1, "Unexpected error", e);
-        }
-    }
+    private Collection<Future<CommandOutcome>> runNonBlocking(Collection<CommandRefWithArgs> cmdRefs) {
 
-    private Collection<Future<CommandOutcome>> parallelInvoke(Collection<CommandRefWithArgs> cmdRefs) {
+        // exit early, avoid pool creation if we don't need it
+        if(cmdRefs.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         ExecutorService executor = getExecutor();
 
-        List<Future<CommandOutcome>> outcomes = new ArrayList<>(cmdRefs.size());
-        cmdRefs.forEach(ref -> outcomes.add(executor.submit(toInvocation(ref))));
+        List<Future<CommandOutcome>> futureOutcomes = new ArrayList<>(cmdRefs.size());
+        cmdRefs.forEach(ref -> futureOutcomes.add(executor.submit(() -> run(ref))));
 
-        return outcomes;
+        return futureOutcomes;
     }
 
-    private Callable<CommandOutcome> toInvocation(CommandRefWithArgs cmdRef) {
+    private CommandOutcome run(CommandRefWithArgs cmdRef) {
 
         CommandManager commandManager = getCommandManager();
         Cli cli = getCliFactory().createCli(cmdRef.getArgs());
         Command command = cmdRef.resolve(commandManager);
 
-        return () -> {
-            CommandOutcome outcome;
+        CommandOutcome outcome;
 
-            // TODO: we need to distinguish between interrupts and other errors and re-throw interrupts
-            // (and require commands to re-throw InterruptedException instead of wrapping it in a CommandOutcome#failed()),
-            // because otherwise an interrupt will not be guaranteed to terminate the chain of commands
-            try {
-                outcome = command.run(cli);
-            } /*catch (InterruptedException e) {
+        // TODO: we need to distinguish between interrupts and other errors and re-throw interrupts
+        // (and require commands to re-throw InterruptedException instead of wrapping it in a CommandOutcome#failed()),
+        // because otherwise an interrupt will not be guaranteed to terminate the chain of commands
+        try {
+            outcome = command.run(cli);
+        } /*catch (InterruptedException e) {
                 throw new BootiqueException(1, "Interrupted", e);
             }*/ catch (Exception e) {
-                outcome = CommandOutcome.failed(1, e);
-            }
+            outcome = CommandOutcome.failed(1, e);
+        }
 
-            // always return success, unless explicitly required to fail on errors
-            return cmdRef.shouldTerminateOnErrors() ? outcome : CommandOutcome.succeeded();
-        };
+        // always return success, unless explicitly required to fail on errors
+        return cmdRef.shouldTerminateOnErrors() ? outcome : CommandOutcome.succeeded();
     }
 
     private CliFactory getCliFactory() {
