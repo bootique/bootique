@@ -8,10 +8,10 @@ import io.bootique.cli.CliFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.function.Supplier;
+import java.util.concurrent.Future;
 
 /**
  * A composite command made of the main command and auxiliary commands run before the main command or in parallel with it.
@@ -62,7 +62,7 @@ class MultiCommand extends CommandWithMetadata {
         return mainCommand.run(cli);
     }
 
-    private CommandOutcome waitForOutcome(CompletableFuture<CommandOutcome> invocation) {
+    private CommandOutcome waitForOutcome(Future<CommandOutcome> invocation) {
         try {
             return invocation.get();
         } catch (InterruptedException e) {
@@ -75,19 +75,16 @@ class MultiCommand extends CommandWithMetadata {
         }
     }
 
-    private Collection<CompletableFuture<CommandOutcome>> invokeInParallel(Collection<CommandWithArgs> cmdWithArgs) {
+    private Collection<Future<CommandOutcome>> invokeInParallel(Collection<CommandWithArgs> cmdWithArgs) {
         ExecutorService executor = getExecutor();
-        List<CompletableFuture<CommandOutcome>> outcomes = new ArrayList<>(cmdWithArgs.size());
 
-        cmdWithArgs.forEach(cwa -> {
-            Supplier<CommandOutcome> invocation = toInvocation(cwa);
-            outcomes.add(CompletableFuture.supplyAsync(invocation, executor));
-        });
+        List<Future<CommandOutcome>> outcomes = new ArrayList<>(cmdWithArgs.size());
+        cmdWithArgs.forEach(cwa -> outcomes.add(executor.submit(toInvocation(cwa))));
 
         return outcomes;
     }
 
-    private Supplier<CommandOutcome> toInvocation(CommandWithArgs cmdWithArgs) {
+    private Callable<CommandOutcome> toInvocation(CommandWithArgs cmdWithArgs) {
 
         CommandManager commandManager = getCommandManager();
         String commandName = cmdWithArgs.getName(commandManager);
