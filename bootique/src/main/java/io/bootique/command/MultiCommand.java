@@ -13,38 +13,36 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
- * A composite command made of main command and auxiliray commands run prior to the main command or in parallel with it.
+ * A composite command made of the main command and auxiliary commands run before the main command or in parallel with it.
  *
  * @since 0.25
  */
-public class MultiCommand extends CommandWithMetadata {
+class MultiCommand extends CommandWithMetadata {
 
-    private final Command originalCommand;
+    private final Command mainCommand;
     private final Provider<CliFactory> cliFactoryProvider;
     private final Provider<CommandManager> commandManagerProvider;
     private final Provider<ExecutorService> executorProvider;
-    private final Collection<CommandInvocation> before;
-    private final Collection<CommandInvocation> parallel;
+    private final CommandDecorator extraCommands;
 
-    public MultiCommand(Command originalCommand,
+    public MultiCommand(Command mainCommand,
+                        CommandDecorator extraCommands,
                         Provider<CliFactory> cliFactoryProvider,
                         Provider<CommandManager> commandManagerProvider,
-                        Provider<ExecutorService> executorProvider,
-                        Collection<CommandInvocation> before,
-                        Collection<CommandInvocation> parallel) {
-        super(originalCommand.getMetadata());
-        this.originalCommand = originalCommand;
+                        Provider<ExecutorService> executorProvider) {
+
+        super(mainCommand.getMetadata());
+        this.mainCommand = mainCommand;
         this.cliFactoryProvider = cliFactoryProvider;
         this.commandManagerProvider = commandManagerProvider;
         this.executorProvider = executorProvider;
-        this.before = before;
-        this.parallel = parallel;
+        this.extraCommands = extraCommands;
     }
 
     @Override
     public CommandOutcome run(Cli cli) {
 
-        Collection<CommandOutcome> failures = run(before).stream().map(future -> {
+        Collection<CommandOutcome> failures = run(extraCommands.getBefore()).stream().map(future -> {
             try {
                 return future.get();
             } catch (InterruptedException e) {
@@ -63,12 +61,12 @@ public class MultiCommand extends CommandWithMetadata {
             return CommandOutcome.failed(1, "Some of the commands failed");
         }
 
-        run(parallel); // not waiting for the outcome?
+        run(extraCommands.getParallel()); // not waiting for the outcome?
 
-        return originalCommand.run(cli);
+        return mainCommand.run(cli);
     }
 
-    private Collection<CompletableFuture<CommandOutcome>> run(Collection<CommandInvocation> invocations) {
+    private Collection<CompletableFuture<CommandOutcome>> run(Collection<CommandWithArgs> invocations) {
         ExecutorService executor = getExecutor();
 
         return invocations.stream()
@@ -77,12 +75,12 @@ public class MultiCommand extends CommandWithMetadata {
                 .collect(Collectors.toList());
     }
 
-    private Supplier<CommandOutcome> toOutcomeSupplier(CommandInvocation invocation) {
+    private Supplier<CommandOutcome> toOutcomeSupplier(CommandWithArgs invocation) {
 
         CommandManager commandManager = getCommandManager();
-        String commandName = invocation.getCommandName(commandManager);
+        String commandName = invocation.getName(commandManager);
         Cli cli = getCliFactory().createCli(commandName, invocation.getArgs());
-        Command command = getCommandManager().lookupByName(commandName);
+        Command command = commandManager.lookupByName(commandName);
 
         return () -> {
             CommandOutcome outcome;

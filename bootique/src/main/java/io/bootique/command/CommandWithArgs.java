@@ -3,16 +3,17 @@ package io.bootique.command;
 import java.util.Objects;
 
 /**
- * Contains a "recipe" for invoking a command with preset arguments.
+ * Stores a reference to a command and a set of invocation arguments. Used to capture auxiliary commands to be run with
+ * the main command.
  *
  * @since 0.25
  */
-public abstract class CommandInvocation {
+public abstract class CommandWithArgs {
 
     private final String[] args;
     private final boolean terminateOnErrors;
 
-    protected CommandInvocation(String[] args, boolean terminateOnErrors) {
+    protected CommandWithArgs(String[] args, boolean terminateOnErrors) {
         this.args = args;
         this.terminateOnErrors = terminateOnErrors;
     }
@@ -33,7 +34,7 @@ public abstract class CommandInvocation {
         return new Builder(commandType);
     }
 
-    public abstract String getCommandName(CommandManager manager);
+    public abstract String getName(CommandManager manager);
 
     public String[] getArgs() {
         return args;
@@ -46,31 +47,31 @@ public abstract class CommandInvocation {
         return terminateOnErrors;
     }
 
-    static class ByNameInvocation extends CommandInvocation {
+    static class NamedCommandWithArgs extends CommandWithArgs {
         private String commandName;
 
-        ByNameInvocation(String commandName, String[] args, boolean terminateOnErrors) {
+        NamedCommandWithArgs(String commandName, String[] args, boolean terminateOnErrors) {
             super(args, terminateOnErrors);
             this.commandName = commandName;
         }
 
         @Override
-        public String getCommandName(CommandManager manager) {
+        public String getName(CommandManager manager) {
             // TODO: should we pass this through CommandManager to ensure the name is valid?
             return commandName;
         }
     }
 
-    static class ByTypeInvocation extends CommandInvocation {
+    static class TypeCommandWithArgs extends CommandWithArgs {
         private Class<? extends Command> commandType;
 
-        ByTypeInvocation(Class<? extends Command> commandType, String[] args, boolean terminateOnErrors) {
+        TypeCommandWithArgs(Class<? extends Command> commandType, String[] args, boolean terminateOnErrors) {
             super(args, terminateOnErrors);
             this.commandType = commandType;
         }
 
         @Override
-        public String getCommandName(CommandManager manager) {
+        public String getName(CommandManager manager) {
             return manager.lookupByType(commandType).getMetadata().getName();
         }
     }
@@ -112,10 +113,10 @@ public abstract class CommandInvocation {
             return this;
         }
 
-        public CommandInvocation build() {
+        public CommandWithArgs build() {
             return commandType != null
-                    ? new ByTypeInvocation(commandType, args, terminateOnErrors)
-                    : new ByNameInvocation(commandName, args, terminateOnErrors);
+                    ? new TypeCommandWithArgs(commandType, args, terminateOnErrors)
+                    : new NamedCommandWithArgs(commandName, args, terminateOnErrors);
         }
     }
 }

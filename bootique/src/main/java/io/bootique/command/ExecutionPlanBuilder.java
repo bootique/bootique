@@ -1,7 +1,6 @@
 package io.bootique.command;
 
 import com.google.inject.Provider;
-import io.bootique.CommandDecorator;
 import io.bootique.cli.CliFactory;
 
 import java.util.Map;
@@ -18,18 +17,18 @@ public class ExecutionPlanBuilder {
     private Provider<CliFactory> cliFactoryProvider;
     private Provider<CommandManager> commandManagerProvider;
     private Provider<ExecutorService> executorProvider;
-    private Map<Class<? extends Command>, CommandDecorator> commandDecorators;
+    private Map<Class<? extends Command>, CommandDecorator> decorators;
 
     public ExecutionPlanBuilder(
             Provider<CliFactory> cliFactoryProvider,
             Provider<CommandManager> commandManagerProvider,
             Provider<ExecutorService> executorProvider,
-            Map<Class<? extends Command>, CommandDecorator> commandDecorators) {
+            Map<Class<? extends Command>, CommandDecorator> decorators) {
 
+        this.decorators = decorators;
         this.cliFactoryProvider = cliFactoryProvider;
         this.commandManagerProvider = commandManagerProvider;
         this.executorProvider = executorProvider;
-        this.commandDecorators = commandDecorators;
     }
 
     /**
@@ -41,22 +40,21 @@ public class ExecutionPlanBuilder {
      */
     public Command prepareForExecution(Command mainCommand) {
 
-        if (commandDecorators.isEmpty()) {
+        if (decorators.isEmpty()) {
             return mainCommand;
         }
 
-        CommandDecorator decorator = commandDecorators.get(mainCommand.getClass());
+        CommandDecorator decorator = decorators.get(mainCommand.getClass());
         if (decorator == null) {
             return mainCommand;
         }
 
         return new MultiCommand(
                 mainCommand,
+                decorator,
                 cliFactoryProvider,
                 commandManagerProvider,
-                executorProvider,
-                decorator.getBefore(),
-                decorator.getParallel());
+                executorProvider);
     }
 
 }

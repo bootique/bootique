@@ -1,7 +1,4 @@
-package io.bootique;
-
-import io.bootique.command.Command;
-import io.bootique.command.CommandInvocation;
+package io.bootique.command;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,8 +10,8 @@ import java.util.Collection;
  */
 public class CommandDecorator {
 
-    private final Collection<CommandInvocation> before;
-    private final Collection<CommandInvocation> parallel;
+    private final Collection<CommandWithArgs> before;
+    private final Collection<CommandWithArgs> parallel;
 
     private CommandDecorator() {
         this.before = new ArrayList<>(3);
@@ -44,14 +41,14 @@ public class CommandDecorator {
     /**
      * @return Collection of hooks to run before the original command
      */
-    public Collection<CommandInvocation> getBefore() {
+    public Collection<CommandWithArgs> getBefore() {
         return before;
     }
 
     /**
      * @return Collection of hooks to run in parallel with the original command
      */
-    public Collection<CommandInvocation> getParallel() {
+    public Collection<CommandWithArgs> getParallel() {
         return parallel;
     }
 
@@ -79,7 +76,7 @@ public class CommandDecorator {
          * @return this builder instance
          */
         public Builder beforeRun(String fullCommandName, String... commandArgs) {
-            decorator.before.add(CommandInvocation
+            decorator.before.add(CommandWithArgs
                     .forName(fullCommandName)
                     .arguments(commandArgs)
                     .terminateOnErrors()
@@ -97,7 +94,7 @@ public class CommandDecorator {
          * @return this builder instance
          */
         public Builder beforeRun(Class<? extends Command> commandType, String... args) {
-            decorator.before.add(CommandInvocation.forType(commandType).arguments(args).terminateOnErrors().build());
+            decorator.before.add(CommandWithArgs.forType(commandType).arguments(args).terminateOnErrors().build());
             return this;
         }
 
@@ -112,7 +109,7 @@ public class CommandDecorator {
          * @return this builder instance
          */
         public Builder alsoRun(String fullCommandName, String... commandArgs) {
-            decorator.parallel.add(CommandInvocation
+            decorator.parallel.add(CommandWithArgs
                     .forName(fullCommandName)
                     .arguments(commandArgs)
                     .build());
@@ -129,7 +126,7 @@ public class CommandDecorator {
          * @return this builder instance.
          */
         public Builder alsoRun(Class<? extends Command> commandType, String... args) {
-            decorator.parallel.add(CommandInvocation.forType(commandType).arguments(args).build());
+            decorator.parallel.add(CommandWithArgs.forType(commandType).arguments(args).build());
             return this;
         }
 

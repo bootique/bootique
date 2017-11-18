@@ -17,6 +17,7 @@ import io.bootique.annotation.EnvironmentVariables;
 import io.bootique.cli.Cli;
 import io.bootique.cli.CliFactory;
 import io.bootique.command.Command;
+import io.bootique.command.CommandDecorator;
 import io.bootique.command.CommandManager;
 import io.bootique.command.DefaultCommandManager;
 import io.bootique.command.ExecutionPlanBuilder;
@@ -314,7 +315,7 @@ public class BQCoreModule implements Module {
             Provider<CliFactory> cliFactoryProvider,
             Provider<CommandManager> commandManagerProvider,
             Map<Class<? extends Command>, CommandDecorator> commandDecorators) {
-        
+
         Provider<ExecutorService> executorProvider = () -> Executors.newCachedThreadPool();
         return new ExecutionPlanBuilder(cliFactoryProvider, commandManagerProvider, executorProvider, commandDecorators);
     }

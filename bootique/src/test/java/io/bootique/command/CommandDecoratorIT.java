@@ -1,6 +1,8 @@
-package io.bootique;
+package io.bootique.command;
 
+import io.bootique.BQCoreModule;
 import io.bootique.cli.Cli;
+import io.bootique.command.CommandDecorator;
 import io.bootique.command.CommandOutcome;
 import io.bootique.command.CommandWithMetadata;
 import io.bootique.meta.application.CommandMetadata;
@@ -18,7 +20,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-public class Bootique_CommandDecorationIT {
+public class CommandDecoratorIT {
 
     @Rule
     public BQInternalTestFactory testFactory = new BQInternalTestFactory();
