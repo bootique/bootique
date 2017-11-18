@@ -2,9 +2,6 @@ package io.bootique.command;
 
 import io.bootique.BQCoreModule;
 import io.bootique.cli.Cli;
-import io.bootique.command.CommandDecorator;
-import io.bootique.command.CommandOutcome;
-import io.bootique.command.CommandWithMetadata;
 import io.bootique.meta.application.CommandMetadata;
 import io.bootique.meta.application.OptionMetadata;
 import io.bootique.unit.BQInternalTestFactory;

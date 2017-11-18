@@ -88,7 +88,7 @@ class MultiCommand extends CommandWithMetadata {
 
         CommandManager commandManager = getCommandManager();
         String commandName = cmdWithArgs.getName(commandManager);
-        Cli cli = getCliFactory().createCli(commandName, cmdWithArgs.getArgs());
+        Cli cli = getCliFactory().createCli(cmdWithArgs.getArgs());
         Command command = commandManager.lookupByName(commandName);
 
         return () -> {

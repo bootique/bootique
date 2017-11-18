@@ -30,6 +30,7 @@ public class JoptCliFactory implements CliFactory {
     private final Object optionParserLock;
     private Provider<CommandManager> commandManagerProvider;
     private ApplicationMetadata application;
+
     private volatile OptionParser optionParser;
 
     public JoptCliFactory(Provider<CommandManager> commandManagerProvider, ApplicationMetadata application) {
@@ -41,7 +42,6 @@ public class JoptCliFactory implements CliFactory {
 
         this.commandManagerProvider = commandManagerProvider;
         this.application = application;
-
         this.optionParserLock = new Object();
     }
 
@@ -50,12 +50,6 @@ public class JoptCliFactory implements CliFactory {
         OptionSet parsed = parse(args);
         String commandName = commandName(parsed);
         return new JoptCli(parsed, commandName);
-    }
-
-    @Override
-    public Cli createCli(String command, String[] args) {
-        OptionSet parsed = parse(args);
-        return new JoptCli(parsed, command);
     }
 
     private OptionSet parse(String[] args) {
