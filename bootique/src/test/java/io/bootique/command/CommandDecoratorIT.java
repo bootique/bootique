@@ -16,6 +16,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class CommandDecoratorIT {
 
@@ -60,7 +64,20 @@ public class CommandDecoratorIT {
     }
 
     @Test
-    public void testAlsoRun_ByName() {
+    public void testAlsoRun_Instance() {
+
+        Command cmd = mock(Command.class);
+        when(cmd.run(any())).thenReturn(CommandOutcome.succeeded());
+
+        CommandDecorator decorator = CommandDecorator.alsoRun(cmd);
+
+        assertTrue(decorateRunAndWait(decorator).isSuccess());
+        assertTrue(mainCommand.isExecuted());
+        verify(cmd).run(any(Cli.class));
+    }
+
+    @Test
+    public void testAlsoRun_NameRef() {
 
         CommandDecorator decorator = CommandDecorator.alsoRun("s");
 
@@ -71,7 +88,7 @@ public class CommandDecoratorIT {
     }
 
     @Test
-    public void testAlsoRun_ByName_WithArgs() {
+    public void testAlsoRun_NameRef_WithArgs() {
 
         CommandDecorator decorator = CommandDecorator.alsoRun("s", "--sflag");
 
@@ -82,7 +99,7 @@ public class CommandDecoratorIT {
     }
 
     @Test
-    public void testAlsoRun_ByType() {
+    public void testAlsoRun_TypeRef() {
 
         CommandDecorator decorator = CommandDecorator.alsoRun(SuccessfulCommand.class);
 
@@ -93,7 +110,7 @@ public class CommandDecoratorIT {
     }
 
     @Test
-    public void testAlsoRun_ByType_WithArgs() {
+    public void testAlsoRun_TypeRef_WithArgs() {
 
         CommandDecorator decorator = CommandDecorator.alsoRun(SuccessfulCommand.class, "--sflag");
 
@@ -104,10 +121,21 @@ public class CommandDecoratorIT {
     }
 
     @Test
-    public void testBeforeRun_Failure_ByName() {
+    public void testBeforeRun_Instance() {
+
+        Command cmd = mock(Command.class);
+        when(cmd.run(any())).thenReturn(CommandOutcome.succeeded());
+
+        CommandDecorator decorator = CommandDecorator.beforeRun(cmd);
+        assertTrue(decorateAndRun(decorator).isSuccess());
+        assertTrue(mainCommand.isExecuted());
+        verify(cmd).run(any(Cli.class));
+    }
+
+    @Test
+    public void testBeforeRun_Failure_NameRef() {
 
         CommandDecorator decorator = CommandDecorator.beforeRun("f");
-
         CommandOutcome outcome = decorateAndRun(decorator);
 
         failingCommand.assertFailure(outcome);
@@ -115,7 +143,7 @@ public class CommandDecoratorIT {
     }
 
     @Test
-    public void testBeforeRun_Failure_ByName_WithArgs() {
+    public void testBeforeRun_Failure_NameRef_WithArgs() {
 
         CommandDecorator decorator = CommandDecorator.beforeRun("f", "--fflag");
 
@@ -127,7 +155,7 @@ public class CommandDecoratorIT {
     }
 
     @Test
-    public void testBeforeRun_Failure_ByType() {
+    public void testBeforeRun_Failure_TypeRef() {
         CommandDecorator decorator = CommandDecorator.beforeRun(FailingCommand.class);
 
         CommandOutcome outcome = decorateAndRun(decorator);
@@ -137,7 +165,7 @@ public class CommandDecoratorIT {
     }
 
     @Test
-    public void testBeforeRun_Failure_ByType_WithArgs() {
+    public void testBeforeRun_Failure_TypeRef_WithArgs() {
         CommandDecorator decorator = CommandDecorator.beforeRun(FailingCommand.class, "--fflag");
 
         CommandOutcome outcome = decorateAndRun(decorator);
@@ -145,6 +173,35 @@ public class CommandDecoratorIT {
         failingCommand.assertFailure(outcome);
         assertTrue(failingCommand.hasFlagOption());
         assertFalse(mainCommand.isExecuted());
+    }
+
+    @Test
+    public void testBeforeAndAlsoRun() {
+
+        Command c1 = mock(Command.class);
+        when(c1.run(any())).thenReturn(CommandOutcome.succeeded());
+
+        Command c2 = mock(Command.class);
+        when(c2.run(any())).thenReturn(CommandOutcome.succeeded());
+
+        Command c3 = mock(Command.class);
+        when(c3.run(any())).thenReturn(CommandOutcome.succeeded());
+
+        Command c4 = mock(Command.class);
+        when(c4.run(any())).thenReturn(CommandOutcome.succeeded());
+
+        CommandDecorator decorator = CommandDecorator
+                .builder()
+                .beforeRun(c1).beforeRun(c2)
+                .alsoRun(c3).alsoRun(c4)
+                .build();
+
+        assertTrue(decorateRunAndWait(decorator).isSuccess());
+        assertTrue(mainCommand.isExecuted());
+        verify(c1).run(any(Cli.class));
+        verify(c2).run(any(Cli.class));
+        verify(c3).run(any(Cli.class));
+        verify(c4).run(any(Cli.class));
     }
 
     private static class SuccessfulCommand extends ExecutableOnceCommand {

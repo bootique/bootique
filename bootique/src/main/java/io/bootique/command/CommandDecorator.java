@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Stores a "recipe" for decorating some command with extra serial and parallel commands.
+ * A "recipe" for decorating some unspecified command with extra serial and parallel commands.
  *
  * @since 0.25
  */
@@ -22,12 +22,20 @@ public class CommandDecorator {
         return new Builder();
     }
 
+    public static CommandDecorator beforeRun(Command command) {
+        return builder().beforeRun(command).build();
+    }
+
     public static CommandDecorator beforeRun(Class<? extends Command> commandType, String... args) {
         return builder().beforeRun(commandType, args).build();
     }
 
     public static CommandDecorator beforeRun(String fullCommandName, String... commandArgs) {
         return builder().beforeRun(fullCommandName, commandArgs).build();
+    }
+
+    public static CommandDecorator alsoRun(Command command) {
+        return builder().alsoRun(command).build();
     }
 
     public static CommandDecorator alsoRun(Class<? extends Command> commandType, String... args) {
@@ -77,7 +85,7 @@ public class CommandDecorator {
          */
         public Builder beforeRun(String fullCommandName, String... commandArgs) {
             decorator.before.add(CommandRefWithArgs
-                    .forName(fullCommandName)
+                    .nameRef(fullCommandName)
                     .arguments(commandArgs)
                     .terminateOnErrors()
                     .build());
@@ -94,7 +102,12 @@ public class CommandDecorator {
          * @return this builder instance
          */
         public Builder beforeRun(Class<? extends Command> commandType, String... args) {
-            decorator.before.add(CommandRefWithArgs.forType(commandType).arguments(args).terminateOnErrors().build());
+            decorator.before.add(CommandRefWithArgs.typeRef(commandType).arguments(args).terminateOnErrors().build());
+            return this;
+        }
+
+        public Builder beforeRun(Command command) {
+            decorator.before.add(CommandRefWithArgs.commandRef(command).terminateOnErrors().build());
             return this;
         }
 
@@ -110,7 +123,7 @@ public class CommandDecorator {
          */
         public Builder alsoRun(String fullCommandName, String... commandArgs) {
             decorator.parallel.add(CommandRefWithArgs
-                    .forName(fullCommandName)
+                    .nameRef(fullCommandName)
                     .arguments(commandArgs)
                     .build());
             return this;
@@ -126,7 +139,12 @@ public class CommandDecorator {
          * @return this builder instance.
          */
         public Builder alsoRun(Class<? extends Command> commandType, String... args) {
-            decorator.parallel.add(CommandRefWithArgs.forType(commandType).arguments(args).build());
+            decorator.parallel.add(CommandRefWithArgs.typeRef(commandType).arguments(args).build());
+            return this;
+        }
+
+        public Builder alsoRun(Command command) {
+            decorator.parallel.add(CommandRefWithArgs.commandRef(command).build());
             return this;
         }
 

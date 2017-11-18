@@ -7,6 +7,7 @@ import io.bootique.cli.CliFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -44,6 +45,25 @@ class MultiCommand extends CommandWithMetadata {
     @Override
     public CommandOutcome run(Cli cli) {
 
+        Collection<CommandOutcome> beforeFailures = invokeBefore();
+
+        if (beforeFailures.size() > 0) {
+            // TODO: combine all results into a single message? or need a different type of CommandOutcome (e.g. MultiCommandOutcome)?
+            return CommandOutcome.failed(1, "Some of the commands failed");
+        }
+
+        // not waiting for the outcome at least until we start supporting background non-terminating commands
+        parallelInvoke(extraCommands.getParallel());
+
+        return mainCommand.run(cli);
+    }
+
+    private Collection<CommandOutcome> invokeBefore() {
+
+        if (extraCommands.getBefore().isEmpty()) {
+            return Collections.emptyList();
+        }
+
         Collection<CommandOutcome> failures = new ArrayList<>(3);
 
         parallelInvoke(extraCommands.getBefore()).forEach(i -> {
@@ -53,14 +73,7 @@ class MultiCommand extends CommandWithMetadata {
             }
         });
 
-        if (failures.size() > 0) {
-            // TODO: combine all results into a single message? or need a different type of CommandOutcome (e.g. MultiCommandOutcome)?
-            return CommandOutcome.failed(1, "Some of the commands failed");
-        }
-
-        parallelInvoke(extraCommands.getParallel()); // not waiting for the outcome?
-
-        return mainCommand.run(cli);
+        return failures;
     }
 
     private CommandOutcome waitForOutcome(Future<CommandOutcome> invocation) {
@@ -88,9 +101,8 @@ class MultiCommand extends CommandWithMetadata {
     private Callable<CommandOutcome> toInvocation(CommandRefWithArgs cmdRef) {
 
         CommandManager commandManager = getCommandManager();
-        String commandName = cmdRef.getName(commandManager);
         Cli cli = getCliFactory().createCli(cmdRef.getArgs());
-        Command command = commandManager.lookupByName(commandName);
+        Command command = cmdRef.resolve(commandManager);
 
         return () -> {
             CommandOutcome outcome;

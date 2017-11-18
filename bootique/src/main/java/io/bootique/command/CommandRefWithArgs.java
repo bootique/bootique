@@ -23,18 +23,25 @@ public abstract class CommandRefWithArgs {
      *
      * @param fullCommandName full name of the command.
      */
-    public static Builder forName(String fullCommandName) {
-        return new Builder(fullCommandName);
+    public static ArgsBuilder nameRef(String fullCommandName) {
+        return new ArgsBuilder(fullCommandName);
     }
 
     /**
      * Starts building an invocation with a command of a known type.
      */
-    public static Builder forType(Class<? extends Command> commandType) {
-        return new Builder(commandType);
+    public static ArgsBuilder typeRef(Class<? extends Command> commandType) {
+        return new ArgsBuilder(commandType);
     }
 
-    public abstract String getName(CommandManager manager);
+    /**
+     * Starts building an invocation with a command of a known type.
+     */
+    public static NoArgsBuilder commandRef(Command command) {
+        return new NoArgsBuilder(command);
+    }
+
+    public abstract Command resolve(CommandManager manager);
 
     public String[] getArgs() {
         return args;
@@ -56,9 +63,8 @@ public abstract class CommandRefWithArgs {
         }
 
         @Override
-        public String getName(CommandManager manager) {
-            // TODO: should we pass this through CommandManager to ensure the name is valid?
-            return commandName;
+        public Command resolve(CommandManager manager) {
+            return manager.lookupByName(commandName);
         }
     }
 
@@ -71,36 +77,79 @@ public abstract class CommandRefWithArgs {
         }
 
         @Override
-        public String getName(CommandManager manager) {
-            return manager.lookupByType(commandType).getMetadata().getName();
+        public Command resolve(CommandManager manager) {
+            return manager.lookupByType(commandType);
+        }
+    }
+
+    static class RefByInstanceWithArgs extends CommandRefWithArgs {
+        private Command command;
+
+        RefByInstanceWithArgs(Command command, boolean terminateOnErrors) {
+            super(ArgsBuilder.NO_ARGS, terminateOnErrors);
+            this.command = command;
+        }
+
+        @Override
+        public Command resolve(CommandManager manager) {
+            return command;
+        }
+    }
+
+    /**
+     * A builder of {@link CommandRefWithArgs} bound to a specific command. In this case the command doesn't have to be
+     * registered in Bootique, and hence we can't parse the arguments. So any parameters need to be captured within the
+     * command itself.
+     *
+     * @since 0.25
+     */
+    public static class NoArgsBuilder<T extends NoArgsBuilder<T>> {
+
+        private Command command;
+        private boolean terminateOnErrors;
+
+        protected NoArgsBuilder(Command command) {
+            this.command = Objects.requireNonNull(command);
+        }
+
+        /**
+         * Indicate, that Bootique program should terminate, when this invocation fails.
+         */
+        public NoArgsBuilder<T> terminateOnErrors() {
+            this.terminateOnErrors = true;
+            return this;
+        }
+
+        public CommandRefWithArgs build() {
+            return new RefByInstanceWithArgs(command, terminateOnErrors);
         }
     }
 
     /**
      * @since 0.25
      */
-    public static class Builder {
+    public static class ArgsBuilder {
 
         private static final String[] NO_ARGS = new String[0];
 
-        private Class<? extends Command> commandType;
         private String commandName;
+        private Class<? extends Command> commandType;
 
         private String[] args = NO_ARGS;
         private boolean terminateOnErrors;
 
-        protected Builder(String commandName) {
+        protected ArgsBuilder(String commandName) {
             this.commandName = Objects.requireNonNull(commandName);
         }
 
-        protected Builder(Class<? extends Command> commandType) {
+        protected ArgsBuilder(Class<? extends Command> commandType) {
             this.commandType = Objects.requireNonNull(commandType);
         }
 
         /**
          * Set command line arguments for this invocation
          */
-        public Builder arguments(String[] args) {
+        public ArgsBuilder arguments(String[] args) {
             this.args = args != null ? args : NO_ARGS;
             return this;
         }
@@ -108,14 +157,14 @@ public abstract class CommandRefWithArgs {
         /**
          * Indicate, that Bootique program should terminate, when this invocation fails.
          */
-        public Builder terminateOnErrors() {
+        public ArgsBuilder terminateOnErrors() {
             this.terminateOnErrors = true;
             return this;
         }
 
         public CommandRefWithArgs build() {
-            return commandType != null
-                    ? new RefByTypeWithArgs(commandType, args, terminateOnErrors)
+            return (commandType != null) ?
+                    new RefByTypeWithArgs(commandType, args, terminateOnErrors)
                     : new RefByNameWithArgs(commandName, args, terminateOnErrors);
         }
     }
