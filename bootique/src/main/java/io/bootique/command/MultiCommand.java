@@ -6,33 +6,34 @@ import io.bootique.cli.Cli;
 import io.bootique.cli.CliFactory;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public class DecoratedCommand extends CommandWithMetadata {
+/**
+ * A composite command made of main command and auxiliray commands run prior to the main command or in parallel with it.
+ *
+ * @since 0.25
+ */
+public class MultiCommand extends CommandWithMetadata {
 
     private final Command originalCommand;
-    private final Map<Class<? extends Command>, Command> commands;
     private final Provider<CliFactory> cliFactoryProvider;
     private final Provider<CommandManager> commandManagerProvider;
     private final Provider<ExecutorService> executorProvider;
     private final Collection<CommandInvocation> before;
     private final Collection<CommandInvocation> parallel;
 
-    public DecoratedCommand(Command originalCommand,
-                            Map<Class<? extends Command>, Command> commands,
-                            Provider<CliFactory> cliFactoryProvider,
-                            Provider<CommandManager> commandManagerProvider,
-                            Provider<ExecutorService> executorProvider,
-                            Collection<CommandInvocation> before,
-                            Collection<CommandInvocation> parallel) {
+    public MultiCommand(Command originalCommand,
+                        Provider<CliFactory> cliFactoryProvider,
+                        Provider<CommandManager> commandManagerProvider,
+                        Provider<ExecutorService> executorProvider,
+                        Collection<CommandInvocation> before,
+                        Collection<CommandInvocation> parallel) {
         super(originalCommand.getMetadata());
         this.originalCommand = originalCommand;
-        this.commands = commands;
         this.cliFactoryProvider = cliFactoryProvider;
         this.commandManagerProvider = commandManagerProvider;
         this.executorProvider = executorProvider;

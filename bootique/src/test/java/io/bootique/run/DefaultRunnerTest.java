@@ -1,5 +1,6 @@
 package io.bootique.run;
 
+import io.bootique.command.ExecutionPlanBuilder;
 import io.bootique.meta.application.CommandMetadata;
 import io.bootique.meta.application.OptionMetadata;
 import io.bootique.cli.Cli;
@@ -173,6 +174,9 @@ public class DefaultRunnerTest {
         Map<String, Command> commandMap = new HashMap<>();
         asList(commands).forEach(c -> commandMap.put(c.getMetadata().getName(), c));
         CommandManager commandManager = new DefaultCommandManager(commandMap, defaultCommand, helpCommand);
-        return new DefaultRunner(mockCli, commandManager).run();
+        ExecutionPlanBuilder executionPlanBuilder = mock(ExecutionPlanBuilder.class);
+        when(executionPlanBuilder.prepareForExecution(any(Command.class))).thenAnswer(i -> i.getArguments()[0]);
+
+        return new DefaultRunner(mockCli, commandManager, executionPlanBuilder).run();
     }
 }

@@ -4,8 +4,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * A service interface that provides the rest of Bootique with access to
- * available commands.
+ * A service interface that provides the rest of Bootique with access to available commands.
  *
  * @since 0.12
  */
