@@ -8,7 +8,7 @@ import java.util.concurrent.ExecutorService;
 
 /**
  * Optionally decorates commands with the code to execute additional auxiliary commands if those are configured for
- * a give  type of command.
+ * a given type of command.
  *
  * @since 0.25
  */
