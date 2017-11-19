@@ -10,16 +10,14 @@ import com.google.inject.Singleton;
 import com.google.inject.multibindings.Multibinder;
 import io.bootique.BQCoreModule;
 import io.bootique.BQModuleProvider;
-import io.bootique.BootiqueException;
 import io.bootique.annotation.DefaultCommand;
 import io.bootique.help.HelpCommand;
 import io.bootique.log.BootLogger;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -48,9 +46,10 @@ public class Commands implements Module {
     }
 
     // copy/paste from BQCoreModule
-    private static Command defaultCommand(Injector injector) {
+    private static Optional<Command> defaultCommand(Injector injector) {
+        // default is optional, so check via injector whether it is bound...
         Binding<Command> binding = injector.getExistingBinding(Key.get(Command.class, DefaultCommand.class));
-        return binding != null ? binding.getProvider().get() : null;
+        return binding != null ? Optional.of(binding.getProvider().get()) : Optional.empty();
     }
 
     @Override
@@ -68,69 +67,12 @@ public class Commands implements Module {
                                  Injector injector,
                                  BootLogger bootLogger) {
 
-
-        Command defaultCommand = defaultCommand(injector);
-
-        // merge two sets, checking for dupe names within the set, but allowing
-        // extras to override module commands...
-
-        Map<String, ManagedCommand> map =
-                toDistinctCommands(moduleCommands, helpCommand, defaultCommand, noModuleCommands);
-
-        // override with logging
-        toDistinctCommands(extraCommands, helpCommand, defaultCommand, false).forEach((name, command) -> {
-            ManagedCommand existingCommand = map.put(name, command);
-            if (existingCommand != null && existingCommand.getCommand() != command.getCommand()) {
-                String i1 = existingCommand.getCommand().getClass().getName();
-                String i2 = command.getCommand().getClass().getName();
-                bootLogger.trace(() -> String.format("Overriding command '%s' (old command: %s, new command: %s)",
-                        name, i1, i2));
-            }
-        });
-
-        return new DefaultCommandManager(map);
-    }
-
-    private Map<String, ManagedCommand> toDistinctCommands(
-            Set<Command> commands,
-            Command helpCommand,
-            Command defaultCommand,
-            boolean privateCommand) {
-
-        Map<String, ManagedCommand> commandMap = new HashMap<>();
-
-        commands.forEach(c -> {
-
-            String name = c.getMetadata().getName();
-
-            ManagedCommand.Builder commandBuilder = ManagedCommand.builder(c);
-
-            if (helpCommand == c) {
-                commandBuilder.helpCommand();
-            }
-
-            if (defaultCommand != null && defaultCommand == c) {
-                commandBuilder.defaultCommand();
-            }
-
-            if (privateCommand) {
-                commandBuilder.privateCommand();
-            }
-
-            ManagedCommand existing = commandMap.put(name, commandBuilder.build());
-
-            // complain on dupes
-            if (existing != null && existing.getCommand() != c) {
-                String c1 = existing.getCommand().getClass().getName();
-                String c2 = c.getClass().getName();
-
-                String message = String.format("More than one DI command named '%s'. Conflicting types: %s, %s.",
-                        name, c1, c2);
-                throw new BootiqueException(1, message);
-            }
-        });
-
-        return commandMap;
+        return new CommandManagerWithOverridesBuilder(moduleCommands, bootLogger)
+                .defaultCommand(defaultCommand(injector))
+                .helpCommand(helpCommand)
+                .hideBaseCommands(noModuleCommands)
+                .overrideWith(extraCommands)
+                .build();
     }
 
     public static class Builder {

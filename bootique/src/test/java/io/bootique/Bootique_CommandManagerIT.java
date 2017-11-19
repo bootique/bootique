@@ -15,7 +15,6 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -56,7 +55,7 @@ public class Bootique_CommandManagerIT {
     }
 
     @Test
-    public void testDefaultFromModuleCommand() {
+    public void testDefaultCommandWithMetadata() {
 
         Command defaultCommand = new Command() {
             @Override
@@ -66,6 +65,7 @@ public class Bootique_CommandManagerIT {
 
             @Override
             public CommandMetadata getMetadata() {
+                // note how this name intentionally matches one of the existing commands
                 return CommandMetadata.builder("m0command").build();
             }
         };
@@ -80,14 +80,15 @@ public class Bootique_CommandManagerIT {
         CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
         // the main assertion we care about...
-        assertEquals("command matching default name must be suppressed", 3, commandManager.getCommands().size());
+        assertSame("Default command did not override another command with same name",
+                defaultCommand,
+                commandManager.lookupByName("m0command").getCommand());
 
         // sanity check
-        assertFalse(commandManager.getCommands().values().contains(M0.mockCommand));
-        assertTrue(commandManager.getCommands().values().contains(M1.mockCommand));
-        assertTrue(commandManager.getCommands().values().contains(runtime.getInstance(HelpCommand.class)));
+        assertEquals(4, commandManager.getAllCommands().size());
+        assertSame(M1.mockCommand, commandManager.lookupByName("m1command").getCommand());
+        assertSame(runtime.getInstance(HelpCommand.class), commandManager.lookupByName("help").getCommand());
         assertSame(defaultCommand, commandManager.getDefaultCommand().get());
-        assertSame(runtime.getInstance(HelpCommand.class), commandManager.getHelpCommand().get());
     }
 
 

@@ -20,9 +20,8 @@ import io.bootique.command.Command;
 import io.bootique.command.CommandDecorator;
 import io.bootique.command.CommandDispatchThreadFactory;
 import io.bootique.command.CommandManager;
-import io.bootique.command.DefaultCommandManager;
+import io.bootique.command.CommandManagerBuilder;
 import io.bootique.command.ExecutionPlanBuilder;
-import io.bootique.command.ManagedCommand;
 import io.bootique.config.CliConfigurationSource;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.config.ConfigurationSource;
@@ -58,9 +57,9 @@ import io.bootique.terminal.Terminal;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -221,18 +220,19 @@ public class BQCoreModule implements Module {
         extend(binder).setDefaultCommand(command);
     }
 
-    private static Command defaultCommand(Injector injector) {
+    private static Optional<Command> defaultCommand(Injector injector) {
+        // default is optional, so check via injector whether it is bound...
         Binding<Command> binding = injector.getExistingBinding(Key.get(Command.class, DefaultCommand.class));
-        return binding != null ? binding.getProvider().get() : null;
+        return binding != null ? Optional.of(binding.getProvider().get()) : Optional.empty();
     }
 
     @Override
     public void configure(Binder binder) {
 
-        // trigger extension points creation and add default contributions
         BQCoreModule.extend(binder)
                 .initAllExtensions()
-                .addOption(createConfigOption());
+                .addOption(createConfigOption())
+                .addCommand(HelpConfigCommand.class);
 
         // bind instances
         binder.bind(BootLogger.class).toInstance(Objects.requireNonNull(bootLogger));
@@ -246,11 +246,6 @@ public class BQCoreModule implements Module {
         // too much code to create config factory.. extracting it in a provider
         // class...
         binder.bind(ConfigurationFactory.class).toProvider(JsonNodeConfigurationFactoryProvider.class).in(Singleton.class);
-
-        // while "help" is a special command, we still store it in the common list of commands,
-        // so that "--help" is exposed as an explicit option
-        BQCoreModule.extend(binder).addCommand(HelpCommand.class);
-        BQCoreModule.extend(binder).addCommand(HelpConfigCommand.class);
     }
 
     OptionMetadata createConfigOption() {
@@ -329,40 +324,10 @@ public class BQCoreModule implements Module {
             HelpCommand helpCommand,
             Injector injector) {
 
-
-        // default is optional, so check via injector whether it exists
-        Command defaultCommand = defaultCommand(injector);
-
-        Map<String, ManagedCommand> commandMap = new HashMap<>();
-
-        commands.forEach(c -> {
-
-            String name = c.getMetadata().getName();
-
-            ManagedCommand.Builder commandBuilder = ManagedCommand.builder(c);
-
-            if (helpCommand == c) {
-                commandBuilder.helpCommand();
-            }
-
-            if (defaultCommand != null && defaultCommand == c) {
-                commandBuilder.defaultCommand();
-            }
-
-            ManagedCommand existing = commandMap.put(name, commandBuilder.build());
-
-            // complain on dupes
-            if (existing != null && existing.getCommand() != c) {
-                String c1 = existing.getCommand().getClass().getName();
-                String c2 = c.getClass().getName();
-
-                String message = String.format("More than one DI command named '%s'. Conflicting types: %s, %s.",
-                        name, c1, c2);
-                throw new BootiqueException(1, message);
-            }
-        });
-
-        return new DefaultCommandManager(commandMap);
+        return new CommandManagerBuilder(commands)
+                .defaultCommand(defaultCommand(injector))
+                .helpCommand(helpCommand)
+                .build();
     }
 
     @Provides
