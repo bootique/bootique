@@ -60,7 +60,12 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @return this extender instance.
      */
     public BQCoreModuleExtender setDefaultCommand(Class<? extends Command> commandType) {
-        binder.bind(Key.get(Command.class, DefaultCommand.class)).to(commandType).in(Singleton.class);
+        Key<Command> defaultKey = Key.get(Command.class, DefaultCommand.class);
+
+        // default is bound as an individual command, as well as a part of the command collection
+        binder.bind(defaultKey).to(commandType).in(Singleton.class);
+        contributeCommands().addBinding().to(defaultKey);
+
         return this;
     }
 
@@ -71,10 +76,14 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @return this extender instance.
      */
     public BQCoreModuleExtender setDefaultCommand(Command command) {
+        Key<Command> defaultKey = Key.get(Command.class, DefaultCommand.class);
+
+        // default is bound as an individual command, as well as a part of the command collection
         binder.bind(Key.get(Command.class, DefaultCommand.class)).toInstance(command);
+        contributeCommands().addBinding().to(defaultKey);
+
         return this;
     }
-
 
     /**
      * Binds an optional application description used in help messages, etc.

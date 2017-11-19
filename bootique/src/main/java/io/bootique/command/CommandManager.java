@@ -1,5 +1,6 @@
 package io.bootique.command;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -11,30 +12,59 @@ import java.util.Optional;
 public interface CommandManager {
 
     /**
-     * Returns all available commands excluding default.
+     * Returns all public commands excluding the default.
      *
-     * @return all available commands excluding default.
-     * @since 0.20
+     * @return all public commands excluding default.
+     * @since 0.25
+     * @deprecated since 0.25 use {@link #getAllCommands()} and filter the result accordingly.
      */
-    Map<String, Command> getCommands();
+    @Deprecated
+    default Map<String, Command> getCommands() {
+
+        Map<String, ManagedCommand> allCommands = getAllCommands();
+        Map<String, Command> publicNonDefault = new HashMap<>((int) (allCommands.size() / 0.75));
+
+        allCommands.forEach((n, mc) -> {
+            if (mc.isPublic() && !mc.isDefault()) {
+                publicNonDefault.put(n, mc.getCommand());
+            }
+        });
+
+        return publicNonDefault;
+    }
 
     /**
-     * Returns a command matching type out of all available commands including the default. Throws an exception if
-     * the command type is not registered in the Bootique stack.
+     * Returns a map of {@link ManagedCommand} instances by command name, including all known commands: public, private,
+     * default, help.
      *
-     * @return a command matching the specified type.
+     * @return a map of {@link ManagedCommand} instances by command name.
      * @since 0.25
      */
-    Command lookupByType(Class<? extends Command> commandType);
+    Map<String, ManagedCommand> getAllCommands();
 
     /**
-     * Returns a command by type out of all available commands including the default. Throws an exception if the command
-     * type is not registered in the Bootique stack.
+     * Returns a command matching the type. Throws an exception if the command type is not registered in the Bootique stack.
      *
-     * @return a command matching the specified type.
+     * @return a {@link ManagedCommand} matching the specified type.
      * @since 0.25
      */
-    Command lookupByName(String commandName);
+    ManagedCommand lookupByType(Class<? extends Command> commandType);
+
+    /**
+     * Returns a command matching the name. Throws an exception if the command type is not registered in the Bootique stack.
+     *
+     * @return a {@link ManagedCommand} matching the specified type.
+     * @since 0.25
+     */
+    default ManagedCommand lookupByName(String commandName) {
+        ManagedCommand match = getAllCommands().get(commandName);
+
+        if (match == null) {
+            throw new IllegalArgumentException("Unknown command name: " + commandName);
+        }
+
+        return match;
+    }
 
     /**
      * Returns optional default command.
@@ -42,7 +72,15 @@ public interface CommandManager {
      * @return optional default command for this runtime.
      * @since 0.20
      */
-    Optional<Command> getDefaultCommand();
+    default Optional<Command> getDefaultCommand() {
+        for (ManagedCommand mc : getAllCommands().values()) {
+            if (mc.isDefault()) {
+                return Optional.of(mc.getCommand());
+            }
+        }
+
+        return Optional.empty();
+    }
 
     /**
      * Returns optional help command.
@@ -50,5 +88,13 @@ public interface CommandManager {
      * @return optional help command for this runtime.
      * @since 0.20
      */
-    Optional<Command> getHelpCommand();
+    default Optional<Command> getHelpCommand() {
+        for (ManagedCommand mc : getAllCommands().values()) {
+            if (mc.isHelp()) {
+                return Optional.of(mc.getCommand());
+            }
+        }
+
+        return Optional.empty();
+    }
 }

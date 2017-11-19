@@ -2,83 +2,51 @@ package io.bootique.command;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * @since 0.12
  */
 public class DefaultCommandManager implements CommandManager {
 
-    private final Map<String, Command> commands;
-    private final Optional<Command> defaultCommand;
-    private final Optional<Command> helpCommand;
+    private final Map<String, ManagedCommand> commands;
+    private volatile Map<Class, ManagedCommand> commandsByType;
 
-    private volatile Map<Class, Command> allCommandsByType;
-
-    public DefaultCommandManager(Map<String, Command> commands,
-                                 Optional<Command> defaultCommand,
-                                 Optional<Command> helpCommand) {
-
+    public DefaultCommandManager(Map<String, ManagedCommand> commands) {
         this.commands = commands;
-        this.defaultCommand = defaultCommand;
-        this.helpCommand = helpCommand;
     }
 
     @Override
-    public Optional<Command> getHelpCommand() {
-        return helpCommand;
-    }
-
-    @Override
-    public Optional<Command> getDefaultCommand() {
-        return defaultCommand;
-    }
-
-    @Override
-    public Map<String, Command> getCommands() {
+    public Map<String, ManagedCommand> getAllCommands() {
         return commands;
     }
 
     @Override
-    public Command lookupByType(Class<? extends Command> commandType) {
+    public ManagedCommand lookupByType(Class<? extends Command> commandType) {
 
-        Command match = allCommandsByType().get(commandType);
+        ManagedCommand match = commandsByType().get(commandType);
         if (match == null) {
             throw new IllegalArgumentException("Unknown command type: " + commandType.getName());
         }
         return match;
     }
 
-    @Override
-    public Command lookupByName(String commandName) {
-        Command match = commands.get(commandName);
-
-        return match != null ? match : defaultCommand
-                .filter(c -> c.getMetadata().getName().equals(commandName))
-                .orElseThrow(() -> new IllegalArgumentException("Unknown command name: " + commandName));
-    }
-
-    private Map<Class, Command> allCommandsByType() {
+    private Map<Class, ManagedCommand> commandsByType() {
         // lookup by class is an edge case used by command decorators and such, so create index on demand
 
-        if (allCommandsByType == null) {
+        if (commandsByType == null) {
             synchronized (this) {
-                if (allCommandsByType == null) {
-                    allCommandsByType = createAllCommandsByType();
+                if (commandsByType == null) {
+                    commandsByType = createCommandsByType();
                 }
             }
         }
 
-        return allCommandsByType;
+        return commandsByType;
     }
 
-    private Map<Class, Command> createAllCommandsByType() {
-
-        Map<Class, Command> map = new HashMap<>();
-
-        defaultCommand.ifPresent(c -> map.put(c.getClass(), c));
-        commands.values().forEach(c -> map.put(c.getClass(), c));
-
+    private Map<Class, ManagedCommand> createCommandsByType() {
+        Map<Class, ManagedCommand> map = new HashMap<>((int) (commands.size() / 0.75));
+        commands.values().forEach(mc -> map.put(mc.getCommand().getClass(), mc));
         return map;
     }
 }

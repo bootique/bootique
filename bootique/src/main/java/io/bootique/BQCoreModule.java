@@ -22,6 +22,7 @@ import io.bootique.command.CommandDispatchThreadFactory;
 import io.bootique.command.CommandManager;
 import io.bootique.command.DefaultCommandManager;
 import io.bootique.command.ExecutionPlanBuilder;
+import io.bootique.command.ManagedCommand;
 import io.bootique.config.CliConfigurationSource;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.config.ConfigurationSource;
@@ -60,7 +61,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -221,9 +221,9 @@ public class BQCoreModule implements Module {
         extend(binder).setDefaultCommand(command);
     }
 
-    private static Optional<Command> defaultCommand(Injector injector) {
+    private static Command defaultCommand(Injector injector) {
         Binding<Command> binding = injector.getExistingBinding(Key.get(Command.class, DefaultCommand.class));
-        return binding != null ? Optional.of(binding.getProvider().get()) : Optional.empty();
+        return binding != null ? binding.getProvider().get() : null;
     }
 
     @Override
@@ -329,33 +329,40 @@ public class BQCoreModule implements Module {
             HelpCommand helpCommand,
             Injector injector) {
 
-        // help command is bound, but default is optional, so check via injector...
-        Optional<Command> defaultCommand = defaultCommand(injector);
 
-        Map<String, Command> commandMap = new HashMap<>();
+        // default is optional, so check via injector whether it exists
+        Command defaultCommand = defaultCommand(injector);
+
+        Map<String, ManagedCommand> commandMap = new HashMap<>();
 
         commands.forEach(c -> {
 
             String name = c.getMetadata().getName();
 
-            // if command's name matches default command, exclude it from command map (it is implicit)
-            if (!defaultCommand.isPresent() || !defaultCommand.get().getMetadata().getName().equals(name)) {
+            ManagedCommand.Builder commandBuilder = ManagedCommand.builder(c);
 
-                Command existing = commandMap.put(name, c);
+            if (helpCommand == c) {
+                commandBuilder.helpCommand();
+            }
 
-                // complain on dupes
-                if (existing != null && existing != c) {
-                    String c1 = existing.getClass().getName();
-                    String c2 = c.getClass().getName();
+            if (defaultCommand != null && defaultCommand == c) {
+                commandBuilder.defaultCommand();
+            }
 
-                    String message = String.format("More than one DI command named '%s'. Conflicting types: %s, %s.",
-                            name, c1, c2);
-                    throw new BootiqueException(1, message);
-                }
+            ManagedCommand existing = commandMap.put(name, commandBuilder.build());
+
+            // complain on dupes
+            if (existing != null && existing.getCommand() != c) {
+                String c1 = existing.getCommand().getClass().getName();
+                String c2 = c.getClass().getName();
+
+                String message = String.format("More than one DI command named '%s'. Conflicting types: %s, %s.",
+                        name, c1, c2);
+                throw new BootiqueException(1, message);
             }
         });
 
-        return new DefaultCommandManager(commandMap, defaultCommand, Optional.of(helpCommand));
+        return new DefaultCommandManager(commandMap);
     }
 
     @Provides
@@ -409,7 +416,11 @@ public class BQCoreModule implements Module {
                 .description(descriptionHolder.getDescription())
                 .addOptions(options);
 
-        commandManager.getCommands().values().forEach(c -> builder.addCommand(c.getMetadata()));
+        commandManager.getAllCommands().values().forEach(mc -> {
+            if (mc.isPublic() && !mc.isDefault()) {
+                builder.addCommand(mc.getCommand().getMetadata());
+            }
+        });
 
         // merge default command options with top-level app options
         commandManager.getDefaultCommand().ifPresent(c -> builder.addOptions(c.getMetadata().getOptions()));

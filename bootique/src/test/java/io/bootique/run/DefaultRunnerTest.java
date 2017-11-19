@@ -1,6 +1,7 @@
 package io.bootique.run;
 
 import io.bootique.command.ExecutionPlanBuilder;
+import io.bootique.command.ManagedCommand;
 import io.bootique.meta.application.CommandMetadata;
 import io.bootique.meta.application.OptionMetadata;
 import io.bootique.cli.Cli;
@@ -171,9 +172,20 @@ public class DefaultRunnerTest {
 
     private CommandOutcome run(Optional<Command> defaultCommand, Optional<Command> helpCommand, Command... commands) {
 
-        Map<String, Command> commandMap = new HashMap<>();
-        asList(commands).forEach(c -> commandMap.put(c.getMetadata().getName(), c));
-        CommandManager commandManager = new DefaultCommandManager(commandMap, defaultCommand, helpCommand);
+        Map<String, ManagedCommand> commandMap = new HashMap<>();
+        asList(commands).forEach(c -> commandMap.put(c.getMetadata().getName(), ManagedCommand.forCommand(c)));
+
+        defaultCommand.ifPresent(dc -> {
+            ManagedCommand mc = ManagedCommand.builder(dc).defaultCommand().build();
+            commandMap.put(dc.getMetadata().getName(), mc);
+        });
+
+        helpCommand.ifPresent(hc -> {
+            ManagedCommand mc = ManagedCommand.builder(hc).helpCommand().build();
+            commandMap.put(hc.getMetadata().getName(), mc);
+        });
+
+        CommandManager commandManager = new DefaultCommandManager(commandMap);
         ExecutionPlanBuilder executionPlanBuilder = mock(ExecutionPlanBuilder.class);
         when(executionPlanBuilder.prepareForExecution(any(Command.class))).thenAnswer(i -> i.getArguments()[0]);
 

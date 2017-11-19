@@ -2,12 +2,12 @@ package io.bootique;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
-import io.bootique.meta.application.CommandMetadata;
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandManager;
 import io.bootique.command.CommandOutcome;
 import io.bootique.help.HelpCommand;
+import io.bootique.meta.application.CommandMetadata;
 import io.bootique.unit.BQInternalTestFactory;
 import org.junit.Rule;
 import org.junit.Test;
@@ -29,9 +29,11 @@ public class Bootique_CommandManagerIT {
         BQRuntime runtime = runtimeFactory.app().modules(M0.class, M1.class).createRuntime();
 
         CommandManager commandManager = runtime.getInstance(CommandManager.class);
-        assertEquals("help, helpconfig and module commands must be present", 4, commandManager.getCommands().size());
-        assertTrue(commandManager.getCommands().values().contains(M0.mockCommand));
-        assertTrue(commandManager.getCommands().values().contains(M1.mockCommand));
+        assertEquals("help, helpconfig and module commands must be present", 4, commandManager.getAllCommands().size());
+
+        assertSame(M0.mockCommand, commandManager.lookupByName("m0command").getCommand());
+        assertSame(M1.mockCommand, commandManager.lookupByName("m1command").getCommand());
+
         assertFalse(commandManager.getDefaultCommand().isPresent());
         assertSame(runtime.getInstance(HelpCommand.class), commandManager.getHelpCommand().get());
     }
@@ -45,9 +47,10 @@ public class Bootique_CommandManagerIT {
         BQRuntime runtime = runtimeFactory.app().modules(M0.class, M1.class).module(defaultCommandModule).createRuntime();
 
         CommandManager commandManager = runtime.getInstance(CommandManager.class);
-        assertEquals("help and module commands must be present", 4, commandManager.getCommands().size());
-        assertTrue(commandManager.getCommands().values().contains(M0.mockCommand));
-        assertTrue(commandManager.getCommands().values().contains(M1.mockCommand));
+
+        assertEquals(5, commandManager.getAllCommands().size());
+        assertSame(M0.mockCommand, commandManager.lookupByName("m0command").getCommand());
+        assertSame(M1.mockCommand, commandManager.lookupByName("m1command").getCommand());
         assertSame(defaultCommand, commandManager.getDefaultCommand().get());
         assertSame(runtime.getInstance(HelpCommand.class), commandManager.getHelpCommand().get());
     }

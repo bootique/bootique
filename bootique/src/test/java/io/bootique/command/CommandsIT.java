@@ -9,101 +9,121 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.util.HashSet;
 import java.util.Map;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class CommandsIT {
 
-	@Rule
-	public BQInternalTestFactory testFactory = new BQInternalTestFactory();
+    @Rule
+    public BQInternalTestFactory testFactory = new BQInternalTestFactory();
 
-	private String[] args;
+    private String[] args;
 
-	@Before
-	public void before() {
-		args = new String[] { "a", "b", "c" };
-	}
+    private static void assertCommandKeys(Map<String, ManagedCommand> commands, String... expectedCommands) {
+        assertEquals(commands.size(), expectedCommands.length);
+        assertEquals(new HashSet<>(asList(expectedCommands)), commands.keySet());
+    }
 
-	@Test
-	public void testModuleCommands() {
-		BQModuleProvider provider = Commands.builder().build();
-		BQRuntime runtime = testFactory.app(args).module(provider).createRuntime();
-		CommandManager commandManager = runtime.getInstance(CommandManager.class);
+    @Before
+    public void before() {
+        args = new String[]{"a", "b", "c"};
+    }
 
-		Map<String, Command> commands = commandManager.getCommands();
-		assertEquals(2, commands.size());
+    @Test
+    public void testModuleCommands() {
+        BQModuleProvider provider = Commands.builder().build();
+        BQRuntime runtime = testFactory.app(args).module(provider).createRuntime();
+        CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
-		assertTrue(commands.containsKey("help"));
-		assertTrue(commands.containsKey("help-config"));
-	}
+        Map<String, ManagedCommand> commands = commandManager.getAllCommands();
+        assertCommandKeys(commands, "help", "help-config");
 
-	@Test
-	public void testNoModuleCommands() {
-		BQModuleProvider provider = Commands.builder().noModuleCommands().build();
-		BQRuntime runtime = testFactory.app(args).module(provider).createRuntime();
-		CommandManager commandManager = runtime.getInstance(CommandManager.class);
-		assertTrue(commandManager.getCommands().isEmpty());
-	}
+        assertTrue(commands.get("help").isPublic());
+        assertFalse(commands.get("help").isDefault());
+        assertTrue(commands.get("help").isHelp());
 
-	@Test
-	public void testModule_ExtraCommandAsType() {
-		BQModuleProvider provider = Commands.builder(C1.class).build();
-		BQRuntime runtime = testFactory.app(args).module(provider).createRuntime();
-		CommandManager commandManager = runtime.getInstance(CommandManager.class);
+        assertTrue(commands.get("help-config").isPublic());
+        assertFalse(commands.get("help-config").isDefault());
+    }
 
-		Map<String, Command> commands = commandManager.getCommands();
-		assertEquals(3, commands.size());
+    @Test
+    public void testNoModuleCommands() {
+        BQModuleProvider provider = Commands.builder().noModuleCommands().build();
+        BQRuntime runtime = testFactory.app(args).module(provider).createRuntime();
+        CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
-		assertTrue(commands.containsKey("c1"));
-		assertTrue(commands.containsKey("help"));
-		assertTrue(commands.containsKey("help-config"));
-	}
+        Map<String, ManagedCommand> commands = commandManager.getAllCommands();
+        assertCommandKeys(commands, "help", "help-config");
 
-	@Test
-	public void testModule_ExtraCommandAsInstance() {
-		BQModuleProvider provider = Commands.builder().add(new C1()).build();
-		BQRuntime runtime = testFactory.app(args).module(provider).createRuntime();
-		CommandManager commandManager = runtime.getInstance(CommandManager.class);
+        assertFalse(commands.get("help").isPublic());
+        assertFalse(commands.get("help").isDefault());
+        assertTrue(commands.get("help").isHelp());
 
-		Map<String, Command> commands = commandManager.getCommands();
-		assertEquals(3, commands.size());
+        assertFalse(commands.get("help-config").isPublic());
+        assertFalse(commands.get("help-config").isDefault());
+    }
 
-		assertTrue(commands.containsKey("c1"));
-		assertTrue(commands.containsKey("help"));
-		assertTrue(commands.containsKey("help-config"));
-	}
+    @Test
+    public void testModule_ExtraCommandAsType() {
+        BQModuleProvider provider = Commands.builder(C1.class).build();
+        BQRuntime runtime = testFactory.app(args).module(provider).createRuntime();
+        CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
-	@Test
-	public void testModule_ExtraCommandOverride() {
-		BQModuleProvider provider = Commands.builder().add(C2_Help.class).build();
-		BQRuntime runtime = testFactory.app(args).module(provider).createRuntime();
-		CommandManager commandManager = runtime.getInstance(CommandManager.class);
+        Map<String, ManagedCommand> commands = commandManager.getAllCommands();
+        assertCommandKeys(commands, "c1", "help", "help-config");
 
-		Map<String, Command> commands = commandManager.getCommands();
-		assertEquals(2, commands.size());
+        assertTrue(commands.get("help").isPublic());
+        assertFalse(commands.get("help").isDefault());
+        assertTrue(commands.get("help").isHelp());
 
-		assertTrue(commands.containsKey("help"));
-		assertTrue(commands.containsKey("help-config"));
-	}
+        assertTrue(commands.get("help-config").isPublic());
+        assertFalse(commands.get("help-config").isDefault());
 
-	static class C1 implements Command {
-		@Override
-		public CommandOutcome run(Cli cli) {
-			return CommandOutcome.succeeded();
-		}
-	}
+        assertTrue(commands.containsKey("c1"));
+        assertFalse(commands.get("c1").isDefault());
+    }
 
-	static class C2_Help implements Command {
-		@Override
-		public CommandOutcome run(Cli cli) {
-			return CommandOutcome.succeeded();
-		}
+    @Test
+    public void testModule_ExtraCommandAsInstance() {
+        BQModuleProvider provider = Commands.builder().add(new C1()).build();
+        BQRuntime runtime = testFactory.app(args).module(provider).createRuntime();
+        CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
-		@Override
-		public CommandMetadata getMetadata() {
-			return CommandMetadata.builder("help").build();
-		}
-	}
+        Map<String, ManagedCommand> commands = commandManager.getAllCommands();
+        assertCommandKeys(commands, "c1", "help", "help-config");
+    }
+
+    @Test
+    public void testModule_ExtraCommandOverride() {
+        BQModuleProvider provider = Commands.builder().add(C2_Help.class).build();
+        BQRuntime runtime = testFactory.app(args).module(provider).createRuntime();
+        CommandManager commandManager = runtime.getInstance(CommandManager.class);
+
+        Map<String, ManagedCommand> commands = commandManager.getAllCommands();
+        assertCommandKeys(commands, "help", "help-config");
+    }
+
+    static class C1 implements Command {
+        @Override
+        public CommandOutcome run(Cli cli) {
+            return CommandOutcome.succeeded();
+        }
+    }
+
+    static class C2_Help implements Command {
+        @Override
+        public CommandOutcome run(Cli cli) {
+            return CommandOutcome.succeeded();
+        }
+
+        @Override
+        public CommandMetadata getMetadata() {
+            return CommandMetadata.builder("help").build();
+        }
+    }
 }

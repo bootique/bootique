@@ -64,7 +64,7 @@ public abstract class CommandRefWithArgs {
 
         @Override
         public Command resolve(CommandManager manager) {
-            return manager.lookupByName(commandName);
+            return manager.lookupByName(commandName).getCommand();
         }
     }
 
@@ -78,7 +78,7 @@ public abstract class CommandRefWithArgs {
 
         @Override
         public Command resolve(CommandManager manager) {
-            return manager.lookupByType(commandType);
+            return manager.lookupByType(commandType).getCommand();
         }
     }
 

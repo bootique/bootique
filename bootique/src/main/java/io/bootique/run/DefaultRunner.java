@@ -5,6 +5,7 @@ import io.bootique.command.Command;
 import io.bootique.command.CommandManager;
 import io.bootique.command.CommandOutcome;
 import io.bootique.command.ExecutionPlanBuilder;
+import io.bootique.command.ManagedCommand;
 
 public class DefaultRunner implements Runner {
 
@@ -33,12 +34,12 @@ public class DefaultRunner implements Runner {
 
     private Command bareCommand() {
         if (cli.commandName() != null) {
-            Command explicitCommand = commandManager.getCommands().get(cli.commandName());
-            if (explicitCommand == null) {
+            ManagedCommand explicitCommand = commandManager.getAllCommands().get(cli.commandName());
+            if (explicitCommand == null || !explicitCommand.isPublic() || explicitCommand.isDefault()) {
                 throw new IllegalStateException("Not a valid command: " + cli.commandName());
             }
 
-            return explicitCommand;
+            return explicitCommand.getCommand();
         }
 
         // command not found in CLI .. go through defaults

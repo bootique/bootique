@@ -4,6 +4,7 @@ import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandManager;
 import io.bootique.command.DefaultCommandManager;
+import io.bootique.command.ManagedCommand;
 import io.bootique.meta.application.ApplicationMetadata;
 import io.bootique.meta.application.CommandMetadata;
 import io.bootique.meta.application.OptionMetadata;
@@ -13,7 +14,6 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 
 public class JoptCliFactoryCommandNameTest {
 
-    private Map<String, Command> commands;
+    private Map<String, ManagedCommand> commands;
 
     @Before
     public void before() {
@@ -71,18 +71,19 @@ public class JoptCliFactoryCommandNameTest {
         CommandMetadata md = builder.build();
 
         when(mock.getMetadata()).thenReturn(md);
-        commands.put(mock.getMetadata().getName(), mock);
+
+        ManagedCommand managedCommand  = ManagedCommand.builder(mock).build();
+
+        commands.put(mock.getMetadata().getName(), managedCommand);
     }
 
     private Cli createCli(String args) {
         String[] argsArray = args.split(" ");
 
-        Optional<Command> mockDefaultCommand = Optional.of(mock(Command.class));
-        Optional<Command> mockHelpCommand = Optional.of(mock(Command.class));
-        CommandManager commandManager = new DefaultCommandManager(commands, mockDefaultCommand, mockHelpCommand);
+        CommandManager commandManager = new DefaultCommandManager(commands);
 
         ApplicationMetadata.Builder appBuilder = ApplicationMetadata.builder();
-        commands.values().forEach(c -> appBuilder.addCommand(c.getMetadata()));
+        commands.values().forEach(c -> appBuilder.addCommand(c.getCommand().getMetadata()));
 
         return new JoptCliFactory(() -> commandManager, appBuilder.build()).createCli(argsArray);
     }

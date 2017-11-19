@@ -5,7 +5,6 @@ import io.bootique.BootiqueException;
 import io.bootique.cli.Cli;
 import io.bootique.cli.CliFactory;
 import io.bootique.cli.NoArgsCli;
-import io.bootique.command.Command;
 import io.bootique.command.CommandManager;
 import io.bootique.meta.application.ApplicationMetadata;
 import io.bootique.meta.application.OptionMetadata;
@@ -14,10 +13,10 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpecBuilder;
 
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
@@ -117,10 +116,10 @@ public class JoptCliFactory implements CliFactory {
     // using option-bound command strategy...
     protected String commandName(OptionSet optionSet) {
 
-        Map<String, Command> matches = new HashMap<>(3);
-        getCommandManager().getCommands().forEach((name, c) -> {
-            if (optionSet.has(name) && !optionSet.hasArgument(name)) {
-                matches.put(name, c);
+        Set<String> matches = new HashSet<>(3);
+        getCommandManager().getAllCommands().forEach((name, mc) -> {
+            if (mc.isPublic() && !mc.isDefault() && optionSet.has(name) && !optionSet.hasArgument(name)) {
+                matches.add(name);
             }
         });
 
@@ -129,9 +128,9 @@ public class JoptCliFactory implements CliFactory {
                 // default command should be invoked
                 return null;
             case 1:
-                return matches.keySet().iterator().next();
+                return matches.iterator().next();
             default:
-                String opts = matches.keySet().stream().collect(Collectors.joining(", "));
+                String opts = matches.stream().collect(Collectors.joining(", "));
                 String message = String.format("CLI options match multiple commands: %s.", opts);
                 throw new BootiqueException(1, message);
         }

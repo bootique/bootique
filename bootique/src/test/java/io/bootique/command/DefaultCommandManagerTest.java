@@ -6,7 +6,6 @@ import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.junit.Assert.assertSame;
 
@@ -19,23 +18,24 @@ public class DefaultCommandManagerTest {
     @Test
     public void testLookupByType() {
 
-        Map<String, Command> map = new HashMap<>();
-        map.put("x", c1);
-        map.put("y", c2);
+        Map<String, ManagedCommand> map = new HashMap<>();
+        map.put("x", ManagedCommand.forCommand(c1));
+        map.put("y", ManagedCommand.forCommand(c2));
+        map.put("z", ManagedCommand.builder(c3).defaultCommand().build());
 
-        DefaultCommandManager cm = new DefaultCommandManager(map, Optional.of(c3), Optional.of(c1));
-        assertSame(c1, cm.lookupByType(C1.class));
-        assertSame(c2, cm.lookupByType(C2.class));
-        assertSame("No default command included in lookup", c3, cm.lookupByType(C3.class));
+        DefaultCommandManager cm = new DefaultCommandManager(map);
+        assertSame(c1, cm.lookupByType(C1.class).getCommand());
+        assertSame(c2, cm.lookupByType(C2.class).getCommand());
+        assertSame("No default command included in lookup", c3, cm.lookupByType(C3.class).getCommand());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testLookupByType_Missing() {
 
-        Map<String, Command> map = new HashMap<>();
-        map.put("x", c1);
+        Map<String, ManagedCommand> map = new HashMap<>();
+        map.put("x", ManagedCommand.builder(c1).build());
 
-        DefaultCommandManager cm = new DefaultCommandManager(map, Optional.empty(), Optional.empty());
+        DefaultCommandManager cm = new DefaultCommandManager(map);
         cm.lookupByType(C2.class);
     }
 
@@ -43,23 +43,24 @@ public class DefaultCommandManagerTest {
     @Test
     public void testLookupByName() {
 
-        Map<String, Command> map = new HashMap<>();
-        map.put("c1", c1);
-        map.put("c2", c2);
+        Map<String, ManagedCommand> map = new HashMap<>();
+        map.put("c1", ManagedCommand.forCommand(c1));
+        map.put("c2", ManagedCommand.forCommand(c2));
+        map.put("c3", ManagedCommand.builder(c3).defaultCommand().build());
 
-        DefaultCommandManager cm = new DefaultCommandManager(map, Optional.of(c3), Optional.of(c1));
-        assertSame(c1, cm.lookupByName("c1"));
-        assertSame(c2, cm.lookupByName("c2"));
-        assertSame("No default command included in lookup", c3, cm.lookupByName("c3"));
+        DefaultCommandManager cm = new DefaultCommandManager(map);
+        assertSame(c1, cm.lookupByName("c1").getCommand());
+        assertSame(c2, cm.lookupByName("c2").getCommand());
+        assertSame("No default command included in lookup", c3, cm.lookupByName("c3").getCommand());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testLookupByName_Missing() {
 
-        Map<String, Command> map = new HashMap<>();
-        map.put("c1", c1);
+        Map<String, ManagedCommand> map = new HashMap<>();
+        map.put("c1", ManagedCommand.forCommand(c1));
 
-        DefaultCommandManager cm = new DefaultCommandManager(map, Optional.empty(), Optional.empty());
+        DefaultCommandManager cm = new DefaultCommandManager(map);
         cm.lookupByName("c2");
     }
 
