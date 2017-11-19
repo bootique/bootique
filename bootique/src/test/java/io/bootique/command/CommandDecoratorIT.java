@@ -1,5 +1,6 @@
 package io.bootique.command;
 
+import com.google.inject.Module;
 import io.bootique.BQCoreModule;
 import io.bootique.cli.Cli;
 import io.bootique.meta.application.CommandMetadata;
@@ -37,41 +38,14 @@ public class CommandDecoratorIT {
         this.failingCommand = new FailingCommand();
     }
 
-    private CommandOutcome decorateAndRun(CommandDecorator decorator) {
-        return testFactory
-                .app("--a")
-                .module(b -> BQCoreModule.extend(b)
-                        .addCommand(mainCommand)
-                        .addCommand(successfulCommand)
-                        .addCommand(failingCommand)
-                        .decorateCommand(mainCommand.getClass(), decorator))
-                .createRuntime()
-                .run();
-    }
-
-    private CommandOutcome decorateRunAndWait(CommandDecorator decorator) {
-
-        CommandOutcome outcome = decorateAndRun(decorator);
-
-        // wait for the parallel commands to finish
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
-        return outcome;
-    }
-
     @Test
     public void testAlsoRun_Instance() {
 
         Command cmd = mock(Command.class);
         when(cmd.run(any())).thenReturn(CommandOutcome.succeeded());
 
-        CommandDecorator decorator = CommandDecorator.alsoRun(cmd);
+        new AppRunner(CommandDecorator.alsoRun(cmd)).runAndWaitExpectingSuccess();
 
-        assertTrue(decorateRunAndWait(decorator).isSuccess());
         assertTrue(mainCommand.isExecuted());
         verify(cmd).run(any(Cli.class));
     }
@@ -81,8 +55,7 @@ public class CommandDecoratorIT {
 
         CommandDecorator decorator = CommandDecorator.alsoRun("s");
 
-        assertTrue(decorateRunAndWait(decorator).isSuccess());
-        assertTrue(mainCommand.isExecuted());
+        new AppRunner(decorator).runAndWaitExpectingSuccess();
         assertTrue(successfulCommand.isExecuted());
         assertFalse(successfulCommand.hasFlagOption());
     }
@@ -92,8 +65,7 @@ public class CommandDecoratorIT {
 
         CommandDecorator decorator = CommandDecorator.alsoRun("s", "--sflag");
 
-        assertTrue(decorateRunAndWait(decorator).isSuccess());
-        assertTrue(mainCommand.isExecuted());
+        new AppRunner(decorator).runAndWaitExpectingSuccess();
         assertTrue(successfulCommand.isExecuted());
         assertTrue(successfulCommand.hasFlagOption());
     }
@@ -103,8 +75,7 @@ public class CommandDecoratorIT {
 
         CommandDecorator decorator = CommandDecorator.alsoRun(SuccessfulCommand.class);
 
-        assertTrue(decorateRunAndWait(decorator).isSuccess());
-        assertTrue(mainCommand.isExecuted());
+        new AppRunner(decorator).runAndWaitExpectingSuccess();
         assertTrue(successfulCommand.isExecuted());
         assertFalse(successfulCommand.hasFlagOption());
     }
@@ -114,8 +85,7 @@ public class CommandDecoratorIT {
 
         CommandDecorator decorator = CommandDecorator.alsoRun(SuccessfulCommand.class, "--sflag");
 
-        decorateRunAndWait(decorator);
-        assertTrue(mainCommand.isExecuted());
+        new AppRunner(decorator).runAndWaitExpectingSuccess();
         assertTrue(successfulCommand.isExecuted());
         assertTrue(successfulCommand.hasFlagOption());
     }
@@ -127,8 +97,8 @@ public class CommandDecoratorIT {
         when(cmd.run(any())).thenReturn(CommandOutcome.succeeded());
 
         CommandDecorator decorator = CommandDecorator.beforeRun(cmd);
-        assertTrue(decorateAndRun(decorator).isSuccess());
-        assertTrue(mainCommand.isExecuted());
+
+        new AppRunner(decorator).runExpectingSuccess();
         verify(cmd).run(any(Cli.class));
     }
 
@@ -136,10 +106,8 @@ public class CommandDecoratorIT {
     public void testBeforeRun_Failure_NameRef() {
 
         CommandDecorator decorator = CommandDecorator.beforeRun("f");
-        CommandOutcome outcome = decorateAndRun(decorator);
 
-        failingCommand.assertFailure(outcome);
-        assertFalse(mainCommand.isExecuted());
+        new AppRunner(decorator).runExpectingFailure();
     }
 
     @Test
@@ -147,32 +115,23 @@ public class CommandDecoratorIT {
 
         CommandDecorator decorator = CommandDecorator.beforeRun("f", "--fflag");
 
-        CommandOutcome outcome = decorateAndRun(decorator);
-
-        failingCommand.assertFailure(outcome);
+        new AppRunner(decorator).runExpectingFailure();
         assertTrue(failingCommand.hasFlagOption());
-        assertFalse(mainCommand.isExecuted());
     }
 
     @Test
     public void testBeforeRun_Failure_TypeRef() {
         CommandDecorator decorator = CommandDecorator.beforeRun(FailingCommand.class);
 
-        CommandOutcome outcome = decorateAndRun(decorator);
-
-        failingCommand.assertFailure(outcome);
-        assertFalse(mainCommand.isExecuted());
+        new AppRunner(decorator).runExpectingFailure();
     }
 
     @Test
     public void testBeforeRun_Failure_TypeRef_WithArgs() {
         CommandDecorator decorator = CommandDecorator.beforeRun(FailingCommand.class, "--fflag");
+        new AppRunner(decorator).runExpectingFailure();
 
-        CommandOutcome outcome = decorateAndRun(decorator);
-
-        failingCommand.assertFailure(outcome);
         assertTrue(failingCommand.hasFlagOption());
-        assertFalse(mainCommand.isExecuted());
     }
 
     @Test
@@ -196,7 +155,7 @@ public class CommandDecoratorIT {
                 .alsoRun(c3).alsoRun(c4)
                 .build();
 
-        assertTrue(decorateRunAndWait(decorator).isSuccess());
+        new AppRunner(decorator).runAndWaitExpectingSuccess();
         assertTrue(mainCommand.isExecuted());
         verify(c1).run(any(Cli.class));
         verify(c2).run(any(Cli.class));
@@ -280,5 +239,70 @@ public class CommandDecoratorIT {
         public boolean isExecuted() {
             return cliRef.get() != null;
         }
+    }
+
+    private class AppRunner {
+        private CommandDecorator decorator;
+        private Module module;
+
+        public AppRunner(CommandDecorator decorator) {
+            this.decorator = decorator;
+        }
+
+        public AppRunner module(Module module) {
+            this.module = module;
+            return this;
+        }
+
+        public void runExpectingSuccess() {
+            assertTrue(decorateAndRun().isSuccess());
+            assertTrue(mainCommand.isExecuted());
+        }
+
+        public void runAndWaitExpectingSuccess() {
+            assertTrue(decorateRunAndWait().isSuccess());
+            assertTrue(mainCommand.isExecuted());
+        }
+
+        public void runExpectingFailure() {
+            assertFalse(decorateAndRun().isSuccess());
+            assertFalse(mainCommand.isExecuted());
+        }
+
+        public void runAndWaitExpectingFailure() {
+            assertFalse(decorateRunAndWait().isSuccess());
+            assertFalse(mainCommand.isExecuted());
+        }
+
+        private CommandOutcome decorateAndRun() {
+            BQInternalTestFactory.Builder builder = testFactory
+                    .app("--a")
+                    .module(b -> BQCoreModule.extend(b)
+                            .addCommand(mainCommand)
+                            .addCommand(successfulCommand)
+                            .addCommand(failingCommand)
+                            .decorateCommand(mainCommand.getClass(), decorator));
+
+            if (module != null) {
+                builder.module(module);
+            }
+
+            return builder.createRuntime().run();
+        }
+
+        private CommandOutcome decorateRunAndWait() {
+
+            CommandOutcome outcome = decorateAndRun();
+
+            // wait for the parallel commands to finish
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
+            return outcome;
+        }
+
     }
 }
