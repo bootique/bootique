@@ -1,7 +1,7 @@
 package io.bootique.command;
 
-import com.google.inject.Module;
 import io.bootique.BQCoreModule;
+import io.bootique.BQModuleProvider;
 import io.bootique.cli.Cli;
 import io.bootique.meta.application.CommandMetadata;
 import io.bootique.meta.application.OptionMetadata;
@@ -27,13 +27,13 @@ public class CommandDecoratorIT {
     @Rule
     public BQInternalTestFactory testFactory = new BQInternalTestFactory();
 
-    private ExecutableOnceCommand mainCommand;
+    private MainCommand mainCommand;
     private SuccessfulCommand successfulCommand;
     private FailingCommand failingCommand;
 
     @Before
     public void before() {
-        this.mainCommand = new ExecutableOnceCommand("a");
+        this.mainCommand = new MainCommand();
         this.successfulCommand = new SuccessfulCommand();
         this.failingCommand = new FailingCommand();
     }
@@ -163,6 +163,15 @@ public class CommandDecoratorIT {
         verify(c4).run(any(Cli.class));
     }
 
+    private static class MainCommand extends ExecutableOnceCommand {
+
+        private static final String NAME = "a";
+
+        MainCommand() {
+            super(NAME);
+        }
+    }
+
     private static class SuccessfulCommand extends ExecutableOnceCommand {
 
         private static final String NAME = "s";
@@ -204,7 +213,7 @@ public class CommandDecoratorIT {
         }
     }
 
-    private static class ExecutableOnceCommand extends CommandWithMetadata {
+    static abstract class ExecutableOnceCommand extends CommandWithMetadata {
 
         protected final AtomicReference<Cli> cliRef;
 
@@ -243,39 +252,39 @@ public class CommandDecoratorIT {
 
     private class AppRunner {
         private CommandDecorator decorator;
-        private Module module;
+        private BQModuleProvider moduleProvider;
 
         public AppRunner(CommandDecorator decorator) {
             this.decorator = decorator;
         }
 
-        public AppRunner module(Module module) {
-            this.module = module;
+        public AppRunner module(BQModuleProvider moduleProvider) {
+            this.moduleProvider = moduleProvider;
             return this;
         }
 
         public void runExpectingSuccess() {
-            CommandOutcome outcome = decorateAndRun();
+            CommandOutcome outcome = run();
             assertTrue(outcome.getMessage(), outcome.isSuccess());
             assertTrue(mainCommand.isExecuted());
         }
 
         public void runAndWaitExpectingSuccess() {
-            assertTrue(decorateRunAndWait().isSuccess());
+            assertTrue(runAndWait().isSuccess());
             assertTrue(mainCommand.isExecuted());
         }
 
         public void runExpectingFailure() {
-            assertFalse(decorateAndRun().isSuccess());
+            assertFalse(run().isSuccess());
             assertFalse(mainCommand.isExecuted());
         }
 
         public void runAndWaitExpectingFailure() {
-            assertFalse(decorateRunAndWait().isSuccess());
+            assertFalse(runAndWait().isSuccess());
             assertFalse(mainCommand.isExecuted());
         }
 
-        private CommandOutcome decorateAndRun() {
+        private CommandOutcome run() {
             BQInternalTestFactory.Builder builder = testFactory
                     .app("--a")
                     .module(b -> BQCoreModule.extend(b)
@@ -284,16 +293,16 @@ public class CommandDecoratorIT {
                             .addCommand(failingCommand)
                             .decorateCommand(mainCommand.getClass(), decorator));
 
-            if (module != null) {
-                builder.module(module);
+            if (moduleProvider != null) {
+                builder.module(moduleProvider);
             }
 
             return builder.createRuntime().run();
         }
 
-        private CommandOutcome decorateRunAndWait() {
+        private CommandOutcome runAndWait() {
 
-            CommandOutcome outcome = decorateAndRun();
+            CommandOutcome outcome = run();
 
             // wait for the parallel commands to finish
             try {
@@ -304,6 +313,5 @@ public class CommandDecoratorIT {
 
             return outcome;
         }
-
     }
 }
