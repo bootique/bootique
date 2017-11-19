@@ -2,10 +2,11 @@ package io.bootique.command;
 
 import io.bootique.BQModuleProvider;
 import io.bootique.BQRuntime;
-import io.bootique.Bootique;
-import io.bootique.meta.application.CommandMetadata;
 import io.bootique.cli.Cli;
+import io.bootique.meta.application.CommandMetadata;
+import io.bootique.unit.BQInternalTestFactory;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.Map;
@@ -14,6 +15,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class CommandsIT {
+
+	@Rule
+	public BQInternalTestFactory testFactory = new BQInternalTestFactory();
 
 	private String[] args;
 
@@ -25,7 +29,7 @@ public class CommandsIT {
 	@Test
 	public void testModuleCommands() {
 		BQModuleProvider provider = Commands.builder().build();
-		BQRuntime runtime = Bootique.app(args).module(provider).createRuntime();
+		BQRuntime runtime = testFactory.app(args).module(provider).createRuntime();
 		CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
 		Map<String, Command> commands = commandManager.getCommands();
@@ -38,7 +42,7 @@ public class CommandsIT {
 	@Test
 	public void testNoModuleCommands() {
 		BQModuleProvider provider = Commands.builder().noModuleCommands().build();
-		BQRuntime runtime = Bootique.app(args).module(provider).createRuntime();
+		BQRuntime runtime = testFactory.app(args).module(provider).createRuntime();
 		CommandManager commandManager = runtime.getInstance(CommandManager.class);
 		assertTrue(commandManager.getCommands().isEmpty());
 	}
@@ -46,7 +50,7 @@ public class CommandsIT {
 	@Test
 	public void testModule_ExtraCommandAsType() {
 		BQModuleProvider provider = Commands.builder(C1.class).build();
-		BQRuntime runtime = Bootique.app(args).module(provider).createRuntime();
+		BQRuntime runtime = testFactory.app(args).module(provider).createRuntime();
 		CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
 		Map<String, Command> commands = commandManager.getCommands();
@@ -60,7 +64,7 @@ public class CommandsIT {
 	@Test
 	public void testModule_ExtraCommandAsInstance() {
 		BQModuleProvider provider = Commands.builder().add(new C1()).build();
-		BQRuntime runtime = Bootique.app(args).module(provider).createRuntime();
+		BQRuntime runtime = testFactory.app(args).module(provider).createRuntime();
 		CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
 		Map<String, Command> commands = commandManager.getCommands();
@@ -74,7 +78,7 @@ public class CommandsIT {
 	@Test
 	public void testModule_ExtraCommandOverride() {
 		BQModuleProvider provider = Commands.builder().add(C2_Help.class).build();
-		BQRuntime runtime = Bootique.app(args).module(provider).createRuntime();
+		BQRuntime runtime = testFactory.app(args).module(provider).createRuntime();
 		CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
 		Map<String, Command> commands = commandManager.getCommands();
