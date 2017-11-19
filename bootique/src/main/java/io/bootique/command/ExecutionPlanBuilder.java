@@ -2,6 +2,7 @@ package io.bootique.command;
 
 import com.google.inject.Provider;
 import io.bootique.cli.CliFactory;
+import io.bootique.log.BootLogger;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -14,6 +15,7 @@ import java.util.concurrent.ExecutorService;
  */
 public class ExecutionPlanBuilder {
 
+    private BootLogger logger;
     private Provider<CliFactory> cliFactoryProvider;
     private Provider<CommandManager> commandManagerProvider;
     private Provider<ExecutorService> executorProvider;
@@ -23,8 +25,10 @@ public class ExecutionPlanBuilder {
             Provider<CliFactory> cliFactoryProvider,
             Provider<CommandManager> commandManagerProvider,
             Provider<ExecutorService> executorProvider,
-            Map<Class<? extends Command>, CommandDecorator> decorators) {
+            Map<Class<? extends Command>, CommandDecorator> decorators,
+            BootLogger logger) {
 
+        this.logger = logger;
         this.decorators = decorators;
         this.cliFactoryProvider = cliFactoryProvider;
         this.commandManagerProvider = commandManagerProvider;
@@ -54,7 +58,8 @@ public class ExecutionPlanBuilder {
                 decorator,
                 cliFactoryProvider,
                 commandManagerProvider,
-                executorProvider);
+                executorProvider,
+                logger);
     }
 
 }

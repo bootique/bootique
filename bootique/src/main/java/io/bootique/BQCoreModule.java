@@ -315,10 +315,11 @@ public class BQCoreModule implements Module {
     ExecutionPlanBuilder provideExecutionPlanBuilder(
             Provider<CliFactory> cliFactoryProvider,
             Provider<CommandManager> commandManagerProvider,
-            Map<Class<? extends Command>, CommandDecorator> commandDecorators) {
+            Map<Class<? extends Command>, CommandDecorator> commandDecorators,
+            BootLogger logger) {
 
         Provider<ExecutorService> executorProvider = () -> Executors.newCachedThreadPool(new CommandDispatchThreadFactory());
-        return new ExecutionPlanBuilder(cliFactoryProvider, commandManagerProvider, executorProvider, commandDecorators);
+        return new ExecutionPlanBuilder(cliFactoryProvider, commandManagerProvider, executorProvider, commandDecorators, logger);
     }
 
     @Provides

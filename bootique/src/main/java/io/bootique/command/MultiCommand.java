@@ -4,6 +4,7 @@ import com.google.inject.Provider;
 import io.bootique.BootiqueException;
 import io.bootique.cli.Cli;
 import io.bootique.cli.CliFactory;
+import io.bootique.log.BootLogger;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.function.Consumer;
 
 /**
  * A composite command made of the main command and auxiliary commands run before the main command or in parallel with it.
@@ -25,15 +27,19 @@ class MultiCommand extends CommandWithMetadata {
     private final Provider<CliFactory> cliFactoryProvider;
     private final Provider<CommandManager> commandManagerProvider;
     private final Provider<ExecutorService> executorProvider;
+    private BootLogger logger;
 
     public MultiCommand(
             Command mainCommand,
             CommandDecorator extraCommands,
             Provider<CliFactory> cliFactoryProvider,
             Provider<CommandManager> commandManagerProvider,
-            Provider<ExecutorService> executorProvider) {
+            Provider<ExecutorService> executorProvider,
+            BootLogger logger) {
 
         super(mainCommand.getMetadata());
+
+        this.logger = logger;
         this.mainCommand = mainCommand;
         this.cliFactoryProvider = cliFactoryProvider;
         this.commandManagerProvider = commandManagerProvider;
@@ -52,8 +58,8 @@ class MultiCommand extends CommandWithMetadata {
             }
         }
 
-        // not waiting for the outcome at least until we start supporting background non-terminating commands
-        runNonBlocking(extraCommands.getParallel());
+        // since we are not waiting for outcome, we must log when commands finish (especially on failures)
+        runNonBlocking(extraCommands.getParallel(), this::logOutcome);
 
         return mainCommand.run(cli);
     }
@@ -64,22 +70,22 @@ class MultiCommand extends CommandWithMetadata {
             case 0:
                 return Collections.emptyList();
             case 1:
-                return doRunBlocking(cmdRefs.iterator().next());
+                return runBlockingSingle(cmdRefs.iterator().next());
             default:
-                return doRunBlocking(cmdRefs);
+                return runBlockingMultiple(cmdRefs);
         }
     }
 
-    private Collection<CommandOutcome> doRunBlocking(CommandRefWithArgs cmdRef) {
+    private Collection<CommandOutcome> runBlockingSingle(CommandRefWithArgs cmdRef) {
         // a single command - we can bypass the thread pool...
-        return Collections.singletonList(run(cmdRef));
+        return Collections.singletonList(run(cmdRef, this::noLogOutcome));
     }
 
-    private Collection<CommandOutcome> doRunBlocking(Collection<CommandRefWithArgs> cmdRefs) {
+    private Collection<CommandOutcome> runBlockingMultiple(Collection<CommandRefWithArgs> cmdRefs) {
 
-        Collection<CommandOutcome> outcomes = new ArrayList<>(3);
+        Collection<CommandOutcome> outcomes = new ArrayList<>(cmdRefs.size());
 
-        runNonBlocking(cmdRefs).forEach(future -> {
+        runNonBlocking(cmdRefs, this::noLogOutcome).forEach(future -> {
 
             try {
                 outcomes.add(future.get());
@@ -96,7 +102,9 @@ class MultiCommand extends CommandWithMetadata {
         return outcomes;
     }
 
-    private Collection<Future<CommandOutcome>> runNonBlocking(Collection<CommandRefWithArgs> cmdRefs) {
+    private Collection<Future<CommandOutcome>> runNonBlocking(
+            Collection<CommandRefWithArgs> cmdRefs,
+            Consumer<CommandOutcome> outcomeListener) {
 
         // exit early, avoid pool creation if we don't need it
         if (cmdRefs.isEmpty()) {
@@ -106,32 +114,56 @@ class MultiCommand extends CommandWithMetadata {
         ExecutorService executor = getExecutor();
 
         List<Future<CommandOutcome>> futureOutcomes = new ArrayList<>(cmdRefs.size());
-        cmdRefs.forEach(ref -> futureOutcomes.add(executor.submit(() -> run(ref))));
+        cmdRefs.forEach(ref -> futureOutcomes.add(executor.submit(() -> run(ref, outcomeListener))));
 
         return futureOutcomes;
     }
 
-    private CommandOutcome run(CommandRefWithArgs cmdRef) {
-
-        CommandManager commandManager = getCommandManager();
-        Cli cli = getCliFactory().createCli(cmdRef.getArgs());
-        Command command = cmdRef.resolve(commandManager);
+    private CommandOutcome run(CommandRefWithArgs cmdRef, Consumer<CommandOutcome> outcomeListener) {
 
         CommandOutcome outcome;
+        CommandManager commandManager = getCommandManager();
 
+        // wrap both command resolving and execution in try/catch... Both can have errors...
+        try {
+            Cli cli = getCliFactory().createCli(cmdRef.getArgs());
+            Command command = cmdRef.resolve(commandManager);
+            outcome = command.run(cli);
+        }
         // TODO: we need to distinguish between interrupts and other errors and re-throw interrupts
         // (and require commands to re-throw InterruptedException instead of wrapping it in a CommandOutcome#failed()),
         // because otherwise an interrupt will not be guaranteed to terminate the chain of commands
-        try {
-            outcome = command.run(cli);
-        } /*catch (InterruptedException e) {
-                throw new BootiqueException(1, "Interrupted", e);
-            }*/ catch (Exception e) {
+        //catch (InterruptedException e) {
+        //       throw new BootiqueException(1, "Interrupted", e);
+        // }
+        catch (Exception e) {
             outcome = CommandOutcome.failed(1, e);
         }
 
+        // log the real outcome
+        outcomeListener.accept(outcome);
+
         // always return success, unless explicitly required to fail on errors
         return cmdRef.shouldTerminateOnErrors() ? outcome : CommandOutcome.succeeded();
+    }
+
+    private void noLogOutcome(CommandOutcome outcome) {
+        // do nothing ..  this is an outcome logger when no logging should occur.
+    }
+
+    private void logOutcome(CommandOutcome outcome) {
+
+        // TODO: track outcomes by command name to provide better failure diagnostics
+
+        if (outcome.isSuccess()) {
+            logger.trace(() -> "Command succeeded");
+        } else {
+            if (outcome.getMessage() != null) {
+                logger.stderr(String.format("Error running command: %s", outcome.getMessage()), outcome.getException());
+            } else {
+                logger.stderr(String.format("Error running command"), outcome.getException());
+            }
+        }
     }
 
     private CliFactory getCliFactory() {

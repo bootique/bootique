@@ -255,7 +255,8 @@ public class CommandDecoratorIT {
         }
 
         public void runExpectingSuccess() {
-            assertTrue(decorateAndRun().isSuccess());
+            CommandOutcome outcome = decorateAndRun();
+            assertTrue(outcome.getMessage(), outcome.isSuccess());
             assertTrue(mainCommand.isExecuted());
         }
 
