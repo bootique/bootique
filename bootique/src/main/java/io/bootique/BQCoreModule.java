@@ -312,9 +312,15 @@ public class BQCoreModule implements Module {
             Provider<CliFactory> cliFactoryProvider,
             Provider<CommandManager> commandManagerProvider,
             Set<CommandRefWithDecorator> commandDecorators,
-            BootLogger logger) {
+            BootLogger logger,
+            ShutdownManager shutdownManager) {
 
-        Provider<ExecutorService> executorProvider = () -> Executors.newCachedThreadPool(new CommandDispatchThreadFactory());
+        Provider<ExecutorService> executorProvider = () -> {
+            ExecutorService service = Executors.newCachedThreadPool(new CommandDispatchThreadFactory());
+            shutdownManager.addShutdownHook(() -> service.shutdownNow());
+            return service;
+        };
+
         Map<Class<? extends Command>, CommandDecorator> merged = ExecutionPlanBuilder.mergeDecorators(commandDecorators);
         return new ExecutionPlanBuilder(cliFactoryProvider, commandManagerProvider, executorProvider, merged, logger);
     }

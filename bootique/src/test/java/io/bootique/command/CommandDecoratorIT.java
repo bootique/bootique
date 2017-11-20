@@ -10,9 +10,12 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Stream;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -25,12 +28,19 @@ public class CommandDecoratorIT {
     @Rule
     public BQInternalTestFactory testFactory = new BQInternalTestFactory();
 
+    private ThreadTester threadTester;
     private MainCommand mainCommand;
     private SuccessfulCommand successfulCommand;
     private FailingCommand failingCommand;
 
     @Before
     public void before() {
+
+        this.threadTester = new ThreadTester();
+
+        // test for previous tests side effects - the previous test must be cleanly shutdown...
+        threadTester.assertPoolSize(0);
+
         this.mainCommand = new MainCommand();
         this.successfulCommand = new SuccessfulCommand();
         this.failingCommand = new FailingCommand();
@@ -263,6 +273,30 @@ public class CommandDecoratorIT {
         }
     }
 
+    private static class ThreadTester {
+
+        public void assertPoolSize(int expected) {
+            long matched = allThreads().filter(this::isPoolThread).count();
+            assertEquals(expected, matched);
+        }
+
+        private boolean isPoolThread(Thread t) {
+            // the name comes from HeartbeatFactory
+            return t.getName().startsWith("bootique-command-");
+        }
+
+        private Stream<Thread> allThreads() {
+            ThreadGroup tg = Thread.currentThread().getThreadGroup();
+            while (tg.getParent() != null) {
+                tg = tg.getParent();
+            }
+
+            Thread[] active = new Thread[tg.activeCount()];
+            tg.enumerate(active);
+            return Arrays.stream(active);
+        }
+    }
+
     private class AppRunner {
         private CommandDecorator decorator;
         private BQModuleProvider moduleProvider;
@@ -322,4 +356,5 @@ public class CommandDecoratorIT {
             return outcome;
         }
     }
+
 }
