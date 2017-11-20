@@ -382,7 +382,7 @@ public class BQCoreModule implements Module {
                 .addOptions(options);
 
         commandManager.getAllCommands().values().forEach(mc -> {
-            if (mc.isPublic() && !mc.isDefault()) {
+            if (!mc.isHidden() && !mc.isDefault()) {
                 builder.addCommand(mc.getCommand().getMetadata());
             }
         });

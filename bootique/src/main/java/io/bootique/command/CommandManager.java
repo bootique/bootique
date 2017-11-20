@@ -25,7 +25,7 @@ public interface CommandManager {
         Map<String, Command> publicNonDefault = new HashMap<>((int) (allCommands.size() / 0.75));
 
         allCommands.forEach((n, mc) -> {
-            if (mc.isPublic() && !mc.isDefault()) {
+            if (!mc.isHidden() && !mc.isDefault()) {
                 publicNonDefault.put(n, mc.getCommand());
             }
         });
@@ -93,7 +93,7 @@ public interface CommandManager {
     default Optional<Command> getPublicDefaultCommand() {
 
         for (ManagedCommand mc : getAllCommands().values()) {
-            if (mc.isDefault() && mc.isPublic()) {
+            if (mc.isDefault() && !mc.isHidden()) {
                 return Optional.of(mc.getCommand());
             }
         }
@@ -127,7 +127,7 @@ public interface CommandManager {
      */
     default Optional<Command> getPublicHelpCommand() {
         for (ManagedCommand mc : getAllCommands().values()) {
-            if (mc.isHelp() && mc.isPublic()) {
+            if (mc.isHelp() && !mc.isHidden()) {
                 return Optional.of(mc.getCommand());
             }
         }

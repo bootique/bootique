@@ -21,7 +21,7 @@ public class DefaultCommandManagerTest {
         Map<String, ManagedCommand> map = new HashMap<>();
         map.put("x", ManagedCommand.forCommand(c1));
         map.put("y", ManagedCommand.forCommand(c2));
-        map.put("z", ManagedCommand.builder(c3).defaultCommand().build());
+        map.put("z", ManagedCommand.builder(c3).asDefault().build());
 
         DefaultCommandManager cm = new DefaultCommandManager(map);
         assertSame(c1, cm.lookupByType(C1.class).getCommand());
@@ -46,7 +46,7 @@ public class DefaultCommandManagerTest {
         Map<String, ManagedCommand> map = new HashMap<>();
         map.put("c1", ManagedCommand.forCommand(c1));
         map.put("c2", ManagedCommand.forCommand(c2));
-        map.put("c3", ManagedCommand.builder(c3).defaultCommand().build());
+        map.put("c3", ManagedCommand.builder(c3).asDefault().build());
 
         DefaultCommandManager cm = new DefaultCommandManager(map);
         assertSame(c1, cm.lookupByName("c1").getCommand());

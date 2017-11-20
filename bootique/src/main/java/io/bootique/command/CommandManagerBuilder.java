@@ -48,13 +48,13 @@ public class CommandManagerBuilder<T extends CommandManagerBuilder<T>> {
     }
 
     protected void loadHelpCommand(Map<String, ManagedCommand> commandMap) {
-        addCommandNoOverride(commandMap, ManagedCommand.builder(helpCommand).helpCommand().build());
+        addCommandNoOverride(commandMap, ManagedCommand.builder(helpCommand).asHelp().build());
     }
 
     protected void loadDefaultCommand(Map<String, ManagedCommand> commandMap) {
         // as default command can serve as an ad-hoc alias for another command, it is allowed to override other
         // commands with the same name with no complaints
-        defaultCommand.ifPresent(c -> addCommand(commandMap, ManagedCommand.builder(c).defaultCommand().build()));
+        defaultCommand.ifPresent(c -> addCommand(commandMap, ManagedCommand.builder(c).asDefault().build()));
     }
 
     protected ManagedCommand addCommand(Map<String, ManagedCommand> commandMap, ManagedCommand managedCommand) {

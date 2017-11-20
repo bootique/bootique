@@ -43,11 +43,11 @@ public class CommandsIT {
         Map<String, ManagedCommand> commands = commandManager.getAllCommands();
         assertCommandKeys(commands, "help", "help-config");
 
-        assertTrue(commands.get("help").isPublic());
+        assertFalse(commands.get("help").isHidden());
         assertFalse(commands.get("help").isDefault());
         assertTrue(commands.get("help").isHelp());
 
-        assertTrue(commands.get("help-config").isPublic());
+        assertFalse(commands.get("help-config").isHidden());
         assertFalse(commands.get("help-config").isDefault());
     }
 
@@ -60,11 +60,11 @@ public class CommandsIT {
         Map<String, ManagedCommand> commands = commandManager.getAllCommands();
         assertCommandKeys(commands, "help", "help-config");
 
-        assertFalse(commands.get("help").isPublic());
+        assertTrue(commands.get("help").isHidden());
         assertFalse(commands.get("help").isDefault());
         assertTrue(commands.get("help").isHelp());
 
-        assertFalse(commands.get("help-config").isPublic());
+        assertTrue(commands.get("help-config").isHidden());
         assertFalse(commands.get("help-config").isDefault());
     }
 
@@ -77,11 +77,11 @@ public class CommandsIT {
         Map<String, ManagedCommand> commands = commandManager.getAllCommands();
         assertCommandKeys(commands, "c1", "help", "help-config");
 
-        assertTrue(commands.get("help").isPublic());
+        assertFalse(commands.get("help").isHidden());
         assertFalse(commands.get("help").isDefault());
         assertTrue(commands.get("help").isHelp());
 
-        assertTrue(commands.get("help-config").isPublic());
+        assertFalse(commands.get("help-config").isHidden());
         assertFalse(commands.get("help-config").isDefault());
 
         assertTrue(commands.containsKey("c1"));

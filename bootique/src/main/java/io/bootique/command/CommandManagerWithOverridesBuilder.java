@@ -50,11 +50,11 @@ public class CommandManagerWithOverridesBuilder extends CommandManagerBuilder<Co
 
                     // preserve existing flags...
                     if (existing.isHelp()) {
-                        builder.helpCommand();
+                        builder.asHelp();
                     }
 
                     if (existing.isDefault()) {
-                        builder.defaultCommand();
+                        builder.asDefault();
                     }
 
                     // log override
@@ -73,8 +73,8 @@ public class CommandManagerWithOverridesBuilder extends CommandManagerBuilder<Co
     protected void loadHelpCommand(Map<String, ManagedCommand> commandMap) {
         if (hideBaseCommands) {
             ManagedCommand mc = ManagedCommand.builder(helpCommand)
-                    .privateCommand()
-                    .helpCommand()
+                    .asHidden()
+                    .asHelp()
                     .build();
             addCommandNoOverride(commandMap, mc);
         } else {
@@ -97,7 +97,7 @@ public class CommandManagerWithOverridesBuilder extends CommandManagerBuilder<Co
 
     protected void loadBaseCommandsAsPrivate(Map<String, ManagedCommand> commandMap) {
         commands.forEach(c -> {
-            ManagedCommand mc = ManagedCommand.builder(c).privateCommand().build();
+            ManagedCommand mc = ManagedCommand.builder(c).asHidden().build();
             addCommandNoOverride(commandMap, mc);
         });
     }

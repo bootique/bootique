@@ -176,12 +176,12 @@ public class DefaultRunnerTest {
         asList(commands).forEach(c -> commandMap.put(c.getMetadata().getName(), ManagedCommand.forCommand(c)));
 
         defaultCommand.ifPresent(dc -> {
-            ManagedCommand mc = ManagedCommand.builder(dc).defaultCommand().build();
+            ManagedCommand mc = ManagedCommand.builder(dc).asDefault().build();
             commandMap.put(dc.getMetadata().getName(), mc);
         });
 
         helpCommand.ifPresent(hc -> {
-            ManagedCommand mc = ManagedCommand.builder(hc).helpCommand().build();
+            ManagedCommand mc = ManagedCommand.builder(hc).asHelp().build();
             commandMap.put(hc.getMetadata().getName(), mc);
         });
 

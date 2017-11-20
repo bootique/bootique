@@ -9,7 +9,7 @@ import java.util.Objects;
  */
 public class ManagedCommand {
 
-    private boolean _public;
+    private boolean hidden;
     private boolean _default;
     private boolean help;
 
@@ -30,8 +30,8 @@ public class ManagedCommand {
         return command;
     }
 
-    public boolean isPublic() {
-        return _public;
+    public boolean isHidden() {
+        return hidden;
     }
 
     public boolean isDefault() {
@@ -49,22 +49,19 @@ public class ManagedCommand {
         public Builder(Command command) {
             managedCommand = new ManagedCommand();
             managedCommand.command = Objects.requireNonNull(command);
-            managedCommand._public = true;
-            managedCommand._default = false;
-            managedCommand.help = false;
         }
 
-        public Builder defaultCommand() {
+        public Builder asDefault() {
             managedCommand._default = true;
             return this;
         }
 
-        public Builder privateCommand() {
-            managedCommand._public = false;
+        public Builder asHidden() {
+            managedCommand.hidden = true;
             return this;
         }
 
-        public Builder helpCommand() {
+        public Builder asHelp() {
             managedCommand.help = true;
             return this;
         }
