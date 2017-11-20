@@ -278,7 +278,7 @@ public class CommandDecoratorIT {
         public void assertPoolSize(int expected) {
             long matched = allThreads().filter(this::isPoolThread).count();
 
-            if (expected > matched) {
+            if (expected < matched) {
                 // let shutdown finish...
                 try {
                     Thread.sleep(80);
@@ -288,7 +288,7 @@ public class CommandDecoratorIT {
             }
 
             matched = allThreads().filter(this::isPoolThread).count();
-            
+
             assertEquals(expected, matched);
         }
 
