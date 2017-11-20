@@ -48,14 +48,6 @@ public class BQTestFactory extends ExternalResource {
     }
 
     /**
-     * @return a new instance of builder for the test runtime stack.
-     * @deprecated since 0.20 in favor of {@link #app(String...)}.
-     */
-    public Builder newRuntime() {
-        return app();
-    }
-
-    /**
      * @param args a String vararg emulating shell arguments passed to a real app.
      * @return a new instance of builder for the test runtime stack.
      * @since 0.20

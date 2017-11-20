@@ -10,8 +10,6 @@ import io.bootique.log.BootLogger;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-import java.util.function.Consumer;
 
 /**
  * @since 0.20
@@ -182,17 +180,6 @@ public abstract class BQTestRuntimeBuilder<T extends BQTestRuntimeBuilder<T>> {
 
     public T property(String key, String value) {
         properties.put(key, value);
-        return (T) this;
-    }
-
-    /**
-     * @param configurator a callback function that configures Bootique stack.
-     * @return this builder instance.
-     * @deprecated since 0.20 use builder methods directly instead of configurator function to add modules, etc.
-     */
-    @Deprecated
-    public T configurator(Consumer<Bootique> configurator) {
-        Objects.requireNonNull(configurator).accept(bootique);
         return (T) this;
     }
 }
