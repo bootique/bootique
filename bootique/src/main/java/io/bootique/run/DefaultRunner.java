@@ -44,8 +44,8 @@ public class DefaultRunner implements Runner {
 
         // command not found in CLI .. go through defaults
 
-        return commandManager.getDefaultCommand() // 1. runtime default command
-                .orElse(commandManager.getHelpCommand() // 2. help command
+        return commandManager.getPublicDefaultCommand() // 1. runtime default command
+                .orElse(commandManager.getPublicHelpCommand() // 2. help command
                         .orElse(cli -> CommandOutcome.succeeded())); // 3. placeholder noop command
     }
 

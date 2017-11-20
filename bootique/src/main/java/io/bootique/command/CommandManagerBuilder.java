@@ -61,9 +61,6 @@ public class CommandManagerBuilder<T extends CommandManagerBuilder<T>> {
 
         Command command = managedCommand.getCommand();
         String name = command.getMetadata().getName();
-
-        // ignore overriding other commands...
-        // TODO: log.trace override?
         return commandMap.put(name, managedCommand);
     }
 

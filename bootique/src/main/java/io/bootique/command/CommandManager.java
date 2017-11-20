@@ -71,10 +71,47 @@ public interface CommandManager {
      *
      * @return optional default command for this runtime.
      * @since 0.20
+     * @deprecated since 0.25 in favor of {@link #getPublicDefaultCommand()}.
      */
+    @Deprecated
     default Optional<Command> getDefaultCommand() {
         for (ManagedCommand mc : getAllCommands().values()) {
             if (mc.isDefault()) {
+                return Optional.of(mc.getCommand());
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    /**
+     * Returns optional public default command.
+     *
+     * @return optional public default command for this runtime.
+     * @since 0.25
+     */
+    default Optional<Command> getPublicDefaultCommand() {
+
+        for (ManagedCommand mc : getAllCommands().values()) {
+            if (mc.isDefault() && mc.isPublic()) {
+                return Optional.of(mc.getCommand());
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    /**
+     * Returns optional help command.
+     *
+     * @return optional help command for this runtime.
+     * @since 0.20
+     * @deprecated since 0.25 in favor of {@link #getPublicHelpCommand()}.
+     */
+    @Deprecated
+    default Optional<Command> getHelpCommand() {
+        for (ManagedCommand mc : getAllCommands().values()) {
+            if (mc.isHelp()) {
                 return Optional.of(mc.getCommand());
             }
         }
@@ -88,9 +125,9 @@ public interface CommandManager {
      * @return optional help command for this runtime.
      * @since 0.20
      */
-    default Optional<Command> getHelpCommand() {
+    default Optional<Command> getPublicHelpCommand() {
         for (ManagedCommand mc : getAllCommands().values()) {
-            if (mc.isHelp()) {
+            if (mc.isHelp() && mc.isPublic()) {
                 return Optional.of(mc.getCommand());
             }
         }

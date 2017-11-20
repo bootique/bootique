@@ -23,7 +23,7 @@ public class CommandManagerWithOverridesBuilder extends CommandManagerBuilder<Co
         this.commandOverrides = commands;
         return this;
     }
-    
+
     public CommandManagerWithOverridesBuilder hideBaseCommands(boolean flag) {
         this.hideBaseCommands = flag;
         return this;
@@ -40,13 +40,31 @@ public class CommandManagerWithOverridesBuilder extends CommandManagerBuilder<Co
 
         if (commandOverrides != null) {
             commandOverrides.forEach(co -> {
-                ManagedCommand existing = addCommand(commandMap, ManagedCommand.forCommand(co));
-                if (existing != null && existing.getCommand() != co) {
+
+                ManagedCommand.Builder builder = ManagedCommand.builder(co);
+
+                // check existing command prior to overriding... preserve existing "help" and "default" flags
+                ManagedCommand existing = commandMap.get(co.getMetadata().getName());
+
+                if (existing != null) {
+
+                    // preserve existing flags...
+                    if (existing.isHelp()) {
+                        builder.helpCommand();
+                    }
+
+                    if (existing.isDefault()) {
+                        builder.defaultCommand();
+                    }
+
+                    // log override
                     String i1 = existing.getCommand().getClass().getName();
                     String i2 = co.getClass().getName();
                     bootLogger.trace(() -> String.format("Overriding command '%s' (old command: %s, new command: %s)",
                             co.getMetadata().getName(), i1, i2));
                 }
+
+                addCommand(commandMap, builder.build());
             });
         }
     }

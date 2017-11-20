@@ -388,7 +388,7 @@ public class BQCoreModule implements Module {
         });
 
         // merge default command options with top-level app options
-        commandManager.getDefaultCommand().ifPresent(c -> builder.addOptions(c.getMetadata().getOptions()));
+        commandManager.getPublicDefaultCommand().ifPresent(c -> builder.addOptions(c.getMetadata().getOptions()));
 
         declaredVars.forEach(dv -> DeclaredVariableMetaCompiler
                 .compileIfValid(dv, modulesMetadata)

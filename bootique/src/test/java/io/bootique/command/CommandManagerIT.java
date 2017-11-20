@@ -32,8 +32,8 @@ public class CommandManagerIT {
         assertSame(M0.mockCommand, commandManager.lookupByName("m0command").getCommand());
         assertSame(M1.mockCommand, commandManager.lookupByName("m1command").getCommand());
 
-        assertFalse(commandManager.getDefaultCommand().isPresent());
-        assertSame(runtime.getInstance(HelpCommand.class), commandManager.getHelpCommand().get());
+        assertFalse(commandManager.getPublicDefaultCommand().isPresent());
+        assertSame(runtime.getInstance(HelpCommand.class), commandManager.getPublicHelpCommand().get());
     }
 
     @Test
@@ -49,8 +49,8 @@ public class CommandManagerIT {
         assertEquals(5, commandManager.getAllCommands().size());
         assertSame(M0.mockCommand, commandManager.lookupByName("m0command").getCommand());
         assertSame(M1.mockCommand, commandManager.lookupByName("m1command").getCommand());
-        assertSame(defaultCommand, commandManager.getDefaultCommand().get());
-        assertSame(runtime.getInstance(HelpCommand.class), commandManager.getHelpCommand().get());
+        assertSame(defaultCommand, commandManager.getPublicDefaultCommand().get());
+        assertSame(runtime.getInstance(HelpCommand.class), commandManager.getPublicHelpCommand().get());
     }
 
     @Test
@@ -87,7 +87,7 @@ public class CommandManagerIT {
         assertEquals(4, commandManager.getAllCommands().size());
         assertSame(M1.mockCommand, commandManager.lookupByName("m1command").getCommand());
         assertSame(runtime.getInstance(HelpCommand.class), commandManager.lookupByName("help").getCommand());
-        assertSame(defaultCommand, commandManager.getDefaultCommand().get());
+        assertSame(defaultCommand, commandManager.getPublicDefaultCommand().get());
     }
 
 
