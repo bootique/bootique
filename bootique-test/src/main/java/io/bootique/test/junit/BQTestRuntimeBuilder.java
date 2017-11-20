@@ -18,7 +18,7 @@ import java.util.Map;
 public abstract class BQTestRuntimeBuilder<T extends BQTestRuntimeBuilder<T>> {
 
     protected Bootique bootique;
-    protected Map<String, String> properties = new HashMap<>();
+    protected Map<String, String> properties;
 
     /**
      * Properties are used to make test stack independent from a shell environment.
