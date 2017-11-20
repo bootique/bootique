@@ -1,11 +1,10 @@
-package io.bootique;
+package io.bootique.command;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
+import io.bootique.BQCoreModule;
+import io.bootique.BQRuntime;
 import io.bootique.cli.Cli;
-import io.bootique.command.Command;
-import io.bootique.command.CommandManager;
-import io.bootique.command.CommandOutcome;
 import io.bootique.help.HelpCommand;
 import io.bootique.meta.application.CommandMetadata;
 import io.bootique.unit.BQInternalTestFactory;
@@ -18,7 +17,7 @@ import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class Bootique_CommandManagerIT {
+public class CommandManagerIT {
 
     @Rule
     public BQInternalTestFactory runtimeFactory = new BQInternalTestFactory();
@@ -92,7 +91,7 @@ public class Bootique_CommandManagerIT {
     }
 
 
-    static class M0 implements Module {
+    public static class M0 implements Module {
 
         static final Command mockCommand;
 
@@ -107,7 +106,7 @@ public class Bootique_CommandManagerIT {
         }
     }
 
-    static class M1 implements Module {
+    public static class M1 implements Module {
 
         static final Command mockCommand;
 
