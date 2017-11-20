@@ -13,9 +13,7 @@ import org.junit.Test;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -195,13 +193,6 @@ public class CommandDecoratorIT {
             super(NAME, FLAG_OPT);
         }
 
-        void assertFailure(CommandOutcome outcome) {
-            assertTrue(isExecuted());
-            assertFalse(outcome.isSuccess());
-            assertNull(outcome.getException());
-            assertEquals("Some of the commands failed", outcome.getMessage());
-        }
-
         public boolean hasFlagOption() {
             return cliRef.get().hasOption(FLAG_OPT);
         }
@@ -276,11 +267,6 @@ public class CommandDecoratorIT {
 
         public void runExpectingFailure() {
             assertFalse(run().isSuccess());
-            assertFalse(mainCommand.isExecuted());
-        }
-
-        public void runAndWaitExpectingFailure() {
-            assertFalse(runAndWait().isSuccess());
             assertFalse(mainCommand.isExecuted());
         }
 
