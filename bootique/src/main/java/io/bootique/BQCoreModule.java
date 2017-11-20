@@ -21,6 +21,7 @@ import io.bootique.command.CommandDecorator;
 import io.bootique.command.CommandDispatchThreadFactory;
 import io.bootique.command.CommandManager;
 import io.bootique.command.CommandManagerBuilder;
+import io.bootique.command.CommandRefWithDecorator;
 import io.bootique.command.ExecutionPlanBuilder;
 import io.bootique.config.CliConfigurationSource;
 import io.bootique.config.ConfigurationFactory;
@@ -310,11 +311,12 @@ public class BQCoreModule implements Module {
     ExecutionPlanBuilder provideExecutionPlanBuilder(
             Provider<CliFactory> cliFactoryProvider,
             Provider<CommandManager> commandManagerProvider,
-            Map<Class<? extends Command>, CommandDecorator> commandDecorators,
+            Set<CommandRefWithDecorator> commandDecorators,
             BootLogger logger) {
 
         Provider<ExecutorService> executorProvider = () -> Executors.newCachedThreadPool(new CommandDispatchThreadFactory());
-        return new ExecutionPlanBuilder(cliFactoryProvider, commandManagerProvider, executorProvider, commandDecorators, logger);
+        Map<Class<? extends Command>, CommandDecorator> merged = ExecutionPlanBuilder.mergeDecorators(commandDecorators);
+        return new ExecutionPlanBuilder(cliFactoryProvider, commandManagerProvider, executorProvider, merged, logger);
     }
 
     @Provides

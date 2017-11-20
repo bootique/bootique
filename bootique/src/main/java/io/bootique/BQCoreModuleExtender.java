@@ -3,7 +3,6 @@ package io.bootique;
 import com.google.inject.Binder;
 import com.google.inject.Key;
 import com.google.inject.Singleton;
-import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.MapBinder;
 import com.google.inject.multibindings.Multibinder;
 import io.bootique.annotation.DefaultCommand;
@@ -12,6 +11,7 @@ import io.bootique.annotation.EnvironmentVariables;
 import io.bootique.annotation.LogLevels;
 import io.bootique.command.Command;
 import io.bootique.command.CommandDecorator;
+import io.bootique.command.CommandRefWithDecorator;
 import io.bootique.env.DeclaredVariable;
 import io.bootique.meta.application.OptionMetadata;
 
@@ -34,7 +34,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     private Multibinder<DeclaredVariable> declaredVariables;
     private Multibinder<OptionMetadata> options;
     private Multibinder<Command> commands;
-    private MapBinder<Class<? extends Command>, CommandDecorator> commandDecorators;
+    private Multibinder<CommandRefWithDecorator> commandDecorators;
 
     protected BQCoreModuleExtender(Binder binder) {
         super(binder);
@@ -240,7 +240,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @since 0.25
      */
     public BQCoreModuleExtender decorateCommand(Class<? extends Command> commandType, CommandDecorator commandDecorator) {
-        contributeCommandDecorators().addBinding(commandType).toInstance(commandDecorator);
+        contributeCommandDecorators().addBinding().toInstance(new CommandRefWithDecorator(commandType, commandDecorator));
         return this;
     }
 
@@ -263,13 +263,8 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
         return commands != null ? commands : (commands = newSet(Command.class));
     }
 
-    protected MapBinder<Class<? extends Command>, CommandDecorator> contributeCommandDecorators() {
-        if (commandDecorators == null) {
-            commandDecorators = newMap(new TypeLiteral<Class<? extends Command>>() {
-            }, new TypeLiteral<CommandDecorator>() {
-            });
-        }
-        return commandDecorators;
+    protected Multibinder<CommandRefWithDecorator> contributeCommandDecorators() {
+        return commandDecorators != null ? commandDecorators : (commandDecorators = newSet(CommandRefWithDecorator.class));
     }
 
     protected MapBinder<String, String> contributeProperties() {

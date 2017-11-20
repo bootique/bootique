@@ -92,6 +92,12 @@ public class CommandDecorator {
             return this;
         }
 
+        public Builder copyFrom(CommandDecorator decorator) {
+            decorator.getBefore().forEach(this.decorator.before::add);
+            decorator.getParallel().forEach(this.decorator.parallel::add);
+            return this;
+        }
+
         /**
          * Define a command to run before the decorated command. The decorated command will not be run, if "before"
          * command fails.  When the "before" command is run, it will receive all of the arguments passed to

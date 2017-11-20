@@ -161,6 +161,28 @@ public class CommandDecoratorIT {
         verify(c4).run(any(Cli.class));
     }
 
+    @Test
+    public void testMultipleDecoratorsForTheSameCommand() {
+
+        Command c1 = mock(Command.class);
+        when(c1.run(any())).thenReturn(CommandOutcome.succeeded());
+
+        Command c2 = mock(Command.class);
+        when(c2.run(any())).thenReturn(CommandOutcome.succeeded());
+
+        testFactory.app("--a")
+                .module(b -> BQCoreModule.extend(b)
+                        .addCommand(mainCommand)
+                        .decorateCommand(mainCommand.getClass(), CommandDecorator.beforeRun(c1))
+                        .decorateCommand(mainCommand.getClass(), CommandDecorator.beforeRun(c2)))
+                .createRuntime()
+                .run();
+
+        verify(c1).run(any(Cli.class));
+        verify(c2).run(any(Cli.class));
+        assertTrue(mainCommand.isExecuted());
+    }
+
     private static class MainCommand extends ExecutableOnceCommand {
 
         private static final String NAME = "a";

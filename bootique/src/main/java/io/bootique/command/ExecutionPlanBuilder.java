@@ -4,7 +4,10 @@ import com.google.inject.Provider;
 import io.bootique.cli.CliFactory;
 import io.bootique.log.BootLogger;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
 /**
@@ -33,6 +36,27 @@ public class ExecutionPlanBuilder {
         this.cliFactoryProvider = cliFactoryProvider;
         this.commandManagerProvider = commandManagerProvider;
         this.executorProvider = executorProvider;
+    }
+
+    public static Map<Class<? extends Command>, CommandDecorator> mergeDecorators(
+            Set<CommandRefWithDecorator> decoratorSet) {
+
+
+        if (decoratorSet.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        Map<Class<? extends Command>, CommandDecorator.Builder> mergedMutable
+                = new HashMap<>((int) (decoratorSet.size() / 0.75));
+
+        decoratorSet.forEach(ref -> {
+            mergedMutable.computeIfAbsent(ref.getCommandType(), c -> CommandDecorator.builder())
+                    .copyFrom(ref.getDecorator());
+        });
+
+        Map<Class<? extends Command>, CommandDecorator> merged = new HashMap<>();
+        mergedMutable.forEach((k, v) -> merged.put(k, v.build()));
+        return merged;
     }
 
     /**
