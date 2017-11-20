@@ -15,6 +15,7 @@ public class CommandMetadata implements MetadataNode {
     private String name;
     private String description;
     private String shortName;
+    private boolean hidden;
     private Collection<OptionMetadata> options;
 
     public CommandMetadata() {
@@ -64,6 +65,18 @@ public class CommandMetadata implements MetadataNode {
      */
     public String getShortName() {
         return (shortName != null) ? shortName : name.substring(0, 1);
+    }
+
+    /**
+     * Returns whether the command should be hidden by default. Ultimately {@link io.bootique.command.CommandManager}
+     * defines whether any given command is public or hidden. This property defines the default policy for the given
+     * command.
+     *
+     * @return whether the command should be hidden by default.
+     * @since 0.25
+     */
+    public boolean isHidden() {
+        return hidden;
     }
 
     public static class Builder {
@@ -118,6 +131,15 @@ public class CommandMetadata implements MetadataNode {
 
         public Builder addOption(OptionMetadata.Builder optionBuilder) {
             return addOption(optionBuilder.build());
+        }
+
+        /**
+         * @return this builder instance.
+         * @since 0.25
+         */
+        public Builder hidden() {
+            this.command.hidden = true;
+            return this;
         }
 
         private String validateName(String name) {

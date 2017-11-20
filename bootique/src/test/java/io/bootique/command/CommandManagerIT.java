@@ -14,6 +14,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -51,6 +52,34 @@ public class CommandManagerIT {
         assertSame(M1.mockCommand, commandManager.lookupByName("m1command").getCommand());
         assertSame(defaultCommand, commandManager.getPublicDefaultCommand().get());
         assertSame(runtime.getInstance(HelpCommand.class), commandManager.getPublicHelpCommand().get());
+    }
+
+    @Test
+    public void testHiddenCommands() {
+
+        Command hiddenCommand = new Command() {
+            @Override
+            public CommandOutcome run(Cli cli) {
+                return CommandOutcome.succeeded();
+            }
+
+            @Override
+            public CommandMetadata getMetadata() {
+                return CommandMetadata.builder("xyz").hidden().build();
+            }
+        };
+
+        BQRuntime runtime = runtimeFactory.app()
+                .module(binder -> BQCoreModule.extend(binder).addCommand(hiddenCommand))
+                .createRuntime();
+
+        CommandManager commandManager = runtime.getInstance(CommandManager.class);
+
+        assertEquals(3, commandManager.getAllCommands().size());
+
+        ManagedCommand hiddenManaged = commandManager.getAllCommands().get("xyz");
+        assertSame(hiddenCommand, hiddenManaged.getCommand());
+        assertTrue(hiddenManaged.isHidden());
     }
 
     @Test
