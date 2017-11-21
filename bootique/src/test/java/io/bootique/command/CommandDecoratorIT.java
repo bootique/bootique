@@ -18,6 +18,7 @@ import java.util.stream.Stream;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -36,14 +37,19 @@ public class CommandDecoratorIT {
     @Before
     public void before() {
 
-        this.threadTester = new ThreadTester();
+        try {
+            this.threadTester = new ThreadTester();
 
-        // test for previous tests side effects - the previous test must be cleanly shutdown...
-        threadTester.assertPoolSize(0);
+            // test for previous tests side effects - the previous test must be cleanly shutdown...
+            threadTester.assertPoolSize(0);
 
-        this.mainCommand = new MainCommand();
-        this.successfulCommand = new SuccessfulCommand();
-        this.failingCommand = new FailingCommand();
+            this.mainCommand = new MainCommand();
+            this.successfulCommand = new SuccessfulCommand();
+            this.failingCommand = new FailingCommand();
+        } catch (Throwable th) {
+            th.printStackTrace();
+            fail("error in before");
+        }
     }
 
     @Test
