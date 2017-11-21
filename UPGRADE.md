@@ -31,6 +31,12 @@ explicit `bootique-jdbc` import (or leave it, as no harm is being done by keepin
 </dependency>
 ```
 
+* [bootique-jdbc #63](https://github.com/bootique/bootique-jdbc/issues/63): DataSource connection health checks were 
+renamed to uniquely identify their origin and purpose. E.g. a health check that may have previously been called 
+`mydb` after the DataSource name, will now be called `bq.jdbc.mydb.canConnect`. If any of your code or the monitoring
+system depended on the certain name format, you will need to update it accordingly.
+
+
 * [bootique-metrics #20](https://github.com/bootique/bootique-metrics/issues/20): Healthcheck module was separated
 from the metric module. If you used healthcheck API in your code and are getting compilation errors now, you will need 
 to add an extra dependency:
