@@ -18,7 +18,6 @@ import java.util.stream.Stream;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -29,7 +28,7 @@ public class CommandDecoratorIT {
     @Rule
     public BQInternalTestFactory testFactory = new BQInternalTestFactory();
 
-    private ThreadTester threadTester;
+    private ThreadTester threadTester = new ThreadTester();
     private MainCommand mainCommand;
     private SuccessfulCommand successfulCommand;
     private FailingCommand failingCommand;
@@ -37,22 +36,12 @@ public class CommandDecoratorIT {
     @Before
     public void before() {
 
-        // TODO: try/catch was added on 11/21/2017 to debug travis failures, e.g.
-        // https://travis-ci.org/bootique/bootique/builds/305270271
-        // remove it if the "catch" block doesn't report any failures
-        try {
-            this.threadTester = new ThreadTester();
+        // test for previous tests side effects - the previous test must be cleanly shutdown...
+        this.threadTester.assertPoolSize(0);
 
-            // test for previous tests side effects - the previous test must be cleanly shutdown...
-            threadTester.assertPoolSize(0);
-
-            this.mainCommand = new MainCommand();
-            this.successfulCommand = new SuccessfulCommand();
-            this.failingCommand = new FailingCommand();
-        } catch (Throwable th) {
-            th.printStackTrace();
-            fail("error in before");
-        }
+        this.mainCommand = new MainCommand();
+        this.successfulCommand = new SuccessfulCommand();
+        this.failingCommand = new FailingCommand();
     }
 
     @Test
