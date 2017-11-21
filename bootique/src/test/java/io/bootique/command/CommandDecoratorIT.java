@@ -37,6 +37,9 @@ public class CommandDecoratorIT {
     @Before
     public void before() {
 
+        // TODO: try/catch was added on 11/21/2017 to debug travis failures, e.g.
+        // https://travis-ci.org/bootique/bootique/builds/305270271
+        // remove it if the "catch" block doesn't report any failures
         try {
             this.threadTester = new ThreadTester();
 
