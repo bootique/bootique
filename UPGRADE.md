@@ -26,7 +26,7 @@ explicit `bootique-jdbc` import (or leave it, as no harm is being done by keepin
 ```xml
 <dependency>
     <groupId>io.bootique.jdbc</groupId>
-    <artifactId>bootique-jdbc-instrumented-tomcat</artifactId>
+    <artifactId>bootique-jdbc-tomcat-instrumented</artifactId>
     <scope>compile</scope>
 </dependency>
 ```
