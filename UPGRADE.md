@@ -37,7 +37,7 @@ renamed to uniquely identify their origin and purpose. E.g. a health check that 
 system depended on the certain name format, you will need to update it accordingly.
 
 
-* [bootique-metrics #20](https://github.com/bootique/bootique-metrics/issues/20): Healthcheck module was separated
+* [bootique-metrics #20](https://github.com/bootique/bootique-metrics/issues/20): Health check module was separated
 from the metric module. If you used healthcheck API in your code and are getting compilation errors now, you will need 
 to add an extra dependency:
 
@@ -49,6 +49,18 @@ to add an extra dependency:
 </dependency>
 ```
 Additionally if you called `MetricsModule.extend(binder)`, replace it with `HealthCheckModule.extend(binder)`.
+
+* [bootique-jetty #69](https://github.com/bootique/bootique-jetty/issues/69): There was a slight change in health check 
+servlet output format. In case of errors the format now includes specific status (CRITICAL, WARNING, UNKNOWN). E.g.:
+
+```yaml
+// old format
+! h3: ERROR - I am not healthy
+
+// new format
+! h3: WARNING - I am not healthy
+! h3: CRITICAL - I am not healthy
+```
 
 ## 0.24
 
