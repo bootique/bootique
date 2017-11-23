@@ -62,6 +62,20 @@ servlet output format. In case of errors the format now includes specific status
 ! h3: CRITICAL - I am not healthy
 ```
 
+* [bootique-jetty #70](https://github.com/bootique/bootique-jetty/issues/70): With introduction of explicit per-connector 
+`acceptorThreads` and `connectorThreads` configuration properties, the defaults used by the server for acceptors and 
+selectors have changed from 0.5 acceptor and 1 selector thread(s) per CPU core to  0.125 acceptor and 0.5 selector
+thread(s) per CPU core. In the unlikely event that you need the old values back, you can configure them using the
+new properties. E.g.:
+
+```yaml
+jetty:
+  connectors:
+    - acceptorThreads: 4
+      selectorThreads: 8
+```
+
+
 ## 0.24
 
 * [bootique #180](https://github.com/bootique/bootique/issues/180): The ability to expliictly declare a BQ_* var was removed. 
