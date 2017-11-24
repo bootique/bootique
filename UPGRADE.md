@@ -75,10 +75,18 @@ jetty:
       selectorThreads: 8
 ```
 
+* [bootique-jetty #71](https://github.com/bootique/bootique-jetty/issues/71): We decided to clarify the meaning of the
+Jetty thread pool metrics. The old "utilization" metric was not very useful as it compared used threads against the 
+current thread pool size. But since the pool can grow/shrink at any moment, it didn't tell anything about the state of the
+app. So its meaning is now replaced to be the same as the old "utilization-max" (i.e. a ratio of used threads to the 
+max possible threads in the pool). "utilization-max" was deprecated. 
+
+If you used "utilization" metric for anything in your monitoring system, etc., make sure to adjust for the new 
+meaning.
 
 ## 0.24
 
-* [bootique #180](https://github.com/bootique/bootique/issues/180): The ability to expliictly declare a BQ_* var was removed. 
+* [bootique #180](https://github.com/bootique/bootique/issues/180): The ability to explicitly declare a BQ_* var was removed. 
 In other words this API is not longer available: 
                   
   ```java
