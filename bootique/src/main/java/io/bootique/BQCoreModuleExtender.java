@@ -5,6 +5,7 @@ import com.google.inject.Key;
 import com.google.inject.Singleton;
 import com.google.inject.multibindings.MapBinder;
 import com.google.inject.multibindings.Multibinder;
+import io.bootique.annotation.DIConfigs;
 import io.bootique.annotation.DefaultCommand;
 import io.bootique.annotation.EnvironmentProperties;
 import io.bootique.annotation.EnvironmentVariables;
@@ -28,6 +29,7 @@ import static java.util.Arrays.asList;
  */
 public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
 
+    private Multibinder<String> configs;
     private MapBinder<String, String> properties;
     private MapBinder<String, String> variables;
     private MapBinder<String, Level> logLevels;
@@ -42,6 +44,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
 
     @Override
     public BQCoreModuleExtender initAllExtensions() {
+        contributeConfigs();
         contributeProperties();
         contributeVariables();
         contributeVariableDeclarations();
@@ -139,12 +142,13 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * Registers a URL of a configuration resource to be loaded by the app unconditionally and prior to any explicitly
      * specified configs. Can be called multiple times for multiple resources.
      *
-     * @param configResourceId
+     * @param configResourceId a resource path compatible with {@link io.bootique.resource.ResourceFactory} denoting
+     *                         a configuration source. E.g. "a/b/my.yml", or "classpath:com/foo/another.yml".
      * @return this extender instance.
      * @since 0.25
      */
     public BQCoreModuleExtender addConfig(String configResourceId) {
-        // TODO:
+        contributeConfigs().addBinding().toInstance(configResourceId);
         return this;
     }
 
@@ -286,5 +290,9 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
 
     protected MapBinder<String, String> contributeVariables() {
         return variables != null ? variables : (variables = newMap(String.class, String.class, EnvironmentVariables.class));
+    }
+
+    protected Multibinder<String> contributeConfigs() {
+        return configs != null ? configs : (configs = newSet(String.class, DIConfigs.class));
     }
 }

@@ -11,6 +11,7 @@ import com.google.inject.Singleton;
 import com.google.inject.multibindings.MapBinder;
 import com.google.inject.multibindings.Multibinder;
 import io.bootique.annotation.Args;
+import io.bootique.annotation.DIConfigs;
 import io.bootique.annotation.DefaultCommand;
 import io.bootique.annotation.EnvironmentProperties;
 import io.bootique.annotation.EnvironmentVariables;
@@ -276,8 +277,12 @@ public class BQCoreModule implements Module {
 
     @Provides
     @Singleton
-    ConfigurationSource provideConfigurationSource(Cli cli, BootLogger bootLogger) {
-        return new CliConfigurationSource(cli, bootLogger);
+    ConfigurationSource provideConfigurationSource(Cli cli, @DIConfigs Set<String> diConfigs, BootLogger bootLogger) {
+        return CliConfigurationSource
+                .builder(bootLogger)
+                .diConfigs(diConfigs)
+                .cliConfigs(cli)
+                .build();
     }
 
     @Provides
