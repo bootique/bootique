@@ -38,6 +38,36 @@ public class Bootique_ConfigurationIT {
     }
 
     @Test
+    public void testDIConfig() {
+
+        BQRuntime runtime = runtimeFactory.app()
+                .module(b -> BQCoreModule.extend(b)
+                        .addConfig("classpath:io/bootique/diconfig1.yml")
+                        .addConfig("classpath:io/bootique/diconfig2.yml"))
+                .createRuntime();
+
+        Map<String, String> config = runtime.getInstance(ConfigurationFactory.class)
+                .config(new TypeRef<Map<String, String>>() {
+                }, "");
+        assertEquals("{a=1, b=2, c=3}", config.toString());
+    }
+
+    @Test
+    public void testDIConfig_VsCliOrder() {
+
+        BQRuntime runtime = runtimeFactory.app("-c", "classpath:io/bootique/cliconfig.yml")
+                .module(b -> BQCoreModule.extend(b)
+                        .addConfig("classpath:io/bootique/diconfig1.yml")
+                        .addConfig("classpath:io/bootique/diconfig2.yml"))
+                .createRuntime();
+
+        Map<String, String> config = runtime.getInstance(ConfigurationFactory.class)
+                .config(new TypeRef<Map<String, String>>() {
+                }, "");
+        assertEquals("{a=5, b=2, c=6}", config.toString());
+    }
+
+    @Test
     public void testConfigConfig() {
         BQRuntime runtime = runtimeFactory.app("--config=src/test/resources/io/bootique/test1.yml",
                 "--config=src/test/resources/io/bootique/test2.yml").createRuntime();

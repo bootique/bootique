@@ -136,6 +136,19 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     }
 
     /**
+     * Registers a URL of a configuration resource to be loaded by the app unconditionally and prior to any explicitly
+     * specified configs. Can be called multiple times for multiple resources.
+     *
+     * @param configResourceId
+     * @return this extender instance.
+     * @since 0.25
+     */
+    public BQCoreModuleExtender addConfig(String configResourceId) {
+        // TODO:
+        return this;
+    }
+
+    /**
      * Adds a new option to the list of Bootique CLI options.
      *
      * @param option a descriptor of the CLI option to be added to Bootique.
