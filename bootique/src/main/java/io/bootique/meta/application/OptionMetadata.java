@@ -18,8 +18,10 @@ public class OptionMetadata implements MetadataNode {
     private OptionValueCardinality valueCardinality;
     private String valueName;
     private String configPath;
-    private ResourceFactory configResource;
     private String defaultValue;
+
+    @Deprecated
+    private ResourceFactory configResource;
 
     public static Builder builder(String name) {
         return new Builder().name(name);
@@ -71,7 +73,11 @@ public class OptionMetadata implements MetadataNode {
      *
      * @return an optional resource associated with this option.
      * @since 0.24
+     * @deprecated since 0.25. The new way of adding an option associated with a config file is by separately declaring
+     * an option and then associating it with one or more configs via
+     * {@link io.bootique.BQCoreModuleExtender#addConfigOnOption(String, String)}.
      */
+    @Deprecated
     public ResourceFactory getConfigResource() {
         return configResource;
     }
@@ -169,6 +175,9 @@ public class OptionMetadata implements MetadataNode {
          *                         a configuration source. E.g. "a/b/my.yml", or "classpath:com/foo/another.yml".
          * @return this builder instance
          * @since 0.24
+         * @deprecated since 0.25. The new way of adding an option associated with a config file is by separately declaring
+         * an option and then associating it with one or more configs via
+         * {@link io.bootique.BQCoreModuleExtender#addConfigOnOption(String, String)}.
          */
         public Builder configResource(String configResourceId) {
             this.option.configResource = new ResourceFactory(configResourceId);

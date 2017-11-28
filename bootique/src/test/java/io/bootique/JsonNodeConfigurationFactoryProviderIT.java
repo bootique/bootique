@@ -45,6 +45,7 @@ public class JsonNodeConfigurationFactoryProviderIT {
                 runtime.getInstance(ConfigurationSource.class), runtime.getInstance(Environment.class),
                 runtime.getInstance(JacksonService.class), runtime.getBootLogger(),
                 runtime.getInstance(Key.get((TypeLiteral<Set<OptionMetadata>>) TypeLiteral.get(Types.setOf(OptionMetadata.class)))),
+				Collections.emptySet(),
                 runtime.getInstance(Cli.class));
 
 		JsonNode config = provider.loadConfiguration(Collections.emptyMap(), Collections.emptyMap());
@@ -60,6 +61,7 @@ public class JsonNodeConfigurationFactoryProviderIT {
 				runtime.getInstance(ConfigurationSource.class), runtime.getInstance(Environment.class),
 				runtime.getInstance(JacksonService.class), runtime.getBootLogger(),
 				runtime.getInstance(Key.get((TypeLiteral<Set<OptionMetadata>>) TypeLiteral.get(Types.setOf(OptionMetadata.class)))),
+				Collections.emptySet(),
 				runtime.getInstance(Cli.class));
 
 		JsonNode config = provider.loadConfiguration(Collections.emptyMap(), Collections.emptyMap());
@@ -75,6 +77,7 @@ public class JsonNodeConfigurationFactoryProviderIT {
 				runtime.getInstance(ConfigurationSource.class), runtime.getInstance(Environment.class),
 				runtime.getInstance(JacksonService.class), runtime.getBootLogger(),
                 runtime.getInstance(Key.get((TypeLiteral<Set<OptionMetadata>>) TypeLiteral.get(Types.setOf(OptionMetadata.class)))),
+				Collections.emptySet(),
                 runtime.getInstance(Cli.class));
 
 		JsonNode config = provider.loadConfiguration(Collections.emptyMap(), Collections.emptyMap());
@@ -91,6 +94,7 @@ public class JsonNodeConfigurationFactoryProviderIT {
 				runtime.getInstance(ConfigurationSource.class), runtime.getInstance(Environment.class),
 				runtime.getInstance(JacksonService.class), runtime.getBootLogger(),
                 runtime.getInstance(Key.get((TypeLiteral<Set<OptionMetadata>>) TypeLiteral.get(Types.setOf(OptionMetadata.class)))),
+				Collections.emptySet(),
                 runtime.getInstance(Cli.class));
 
 		JsonNode config = provider.loadConfiguration(Collections.emptyMap(), Collections.emptyMap());

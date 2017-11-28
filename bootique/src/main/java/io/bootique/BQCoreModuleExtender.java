@@ -13,6 +13,7 @@ import io.bootique.annotation.LogLevels;
 import io.bootique.command.Command;
 import io.bootique.command.CommandDecorator;
 import io.bootique.command.CommandRefDecorated;
+import io.bootique.config.OptionRefWithConfig;
 import io.bootique.env.DeclaredVariable;
 import io.bootique.meta.application.OptionMetadata;
 
@@ -37,6 +38,8 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     private Multibinder<OptionMetadata> options;
     private Multibinder<Command> commands;
     private Multibinder<CommandRefDecorated> commandDecorators;
+    private Multibinder<OptionRefWithConfig> optionDecorators;
+
 
     protected BQCoreModuleExtender(Binder binder) {
         super(binder);
@@ -52,6 +55,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
         contributeOptions();
         contributeCommands();
         contributeCommandDecorators();
+        contributeOptionDecorators();
 
         return this;
     }
@@ -153,6 +157,23 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     }
 
     /**
+     * Decorates a CLI option with a URL of a configuration resource to be conditionally loaded by the app when the
+     * that option is selected. The config is loaded prior to any configuration potentially loaded via the option.
+     * This method can be called multiple times for the same option, adding multiple config decorators.
+     *
+     * @param configResourceId a resource path compatible with {@link io.bootique.resource.ResourceFactory} denoting
+     *                         a configuration source. E.g. "a/b/my.yml", or "classpath:com/foo/another.yml".
+     * @return this extender instance.
+     * @since 0.25
+     */
+    public BQCoreModuleExtender addConfigOnOption(String decoratedOptionName, String configResourceId) {
+        // using Multibinder to support multiple decorators for the same option
+        contributeOptionDecorators().addBinding()
+                .toInstance(new OptionRefWithConfig(decoratedOptionName, configResourceId));
+        return this;
+    }
+
+    /**
      * Adds a new option to the list of Bootique CLI options.
      *
      * @param option a descriptor of the CLI option to be added to Bootique.
@@ -177,12 +198,12 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     }
 
     /**
-     * Associates the CLI option with a config path. The option runtime value is assigned to the configuration property
-     * denoted by the path.
+     * Declares a new CLI option, associating it with a config path. The option runtime value is assigned to the
+     * configuration property denoted by the path.
      *
      * @param configPath a dot-separated "path" that navigates configuration tree to the desired property. E.g.
      *                   "jdbc.myds.password".
-     * @param name       alias of an option
+     * @param name       the name of the new CLI option.
      * @return this extender instance
      * @since 0.24
      */
@@ -196,14 +217,14 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     }
 
     /**
-     * Associates the CLI option with a config path. The option runtime value is assigned to the configuration property
-     * denoted by the path. Default value provided here will be used if the option is present, but no value is specified
-     * on the command line.
+     * Declares a new CLI option, associating it with a config path. The option runtime value is assigned to the
+     * configuration property denoted by the path. Default value provided here will be used if the option is present,
+     * but no value is specified on the command line.
      *
      * @param configPath   a dot-separated "path" that navigates configuration tree to the desired property. E.g.
      *                     "jdbc.myds.password".
      * @param defaultValue default option value
-     * @param name         alias of an option
+     * @param name         the name of the new CLI option.
      * @return this extender instance
      * @since 0.24
      */
@@ -218,15 +239,18 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     }
 
     /**
-     * Associates the CLI option value with a config resource. This way a single option can be used to enable a complex
-     * configuration.
+     * Declares a new CLI option, associating its presence with a configuration resource. This way a single option
+     * can be used to enable a complex configuration.
      *
      * @param configResourceId a resource path compatible with {@link io.bootique.resource.ResourceFactory} denoting
      *                         a configuration source. E.g. "a/b/my.yml", or "classpath:com/foo/another.yml".
-     * @param name             alias of an option
+     * @param name             the name of the new CLI option.
      * @return this extender instance
      * @since 0.24
+     * @deprecated since 0.25. The new way of adding an option associated with a config file is by separately declaring
+     * an option and then associating it with one or more configs via {@link #addConfigOnOption(String, String)}.
      */
+    @Deprecated
     public BQCoreModuleExtender addConfigResourceOption(String configResourceId, String name) {
         contributeOptions().addBinding().toInstance(
                 OptionMetadata.builder(name)
@@ -282,6 +306,10 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
 
     protected Multibinder<CommandRefDecorated> contributeCommandDecorators() {
         return commandDecorators != null ? commandDecorators : (commandDecorators = newSet(CommandRefDecorated.class));
+    }
+
+    protected Multibinder<OptionRefWithConfig> contributeOptionDecorators() {
+        return optionDecorators != null ? optionDecorators : (optionDecorators = newSet(OptionRefWithConfig.class));
     }
 
     protected MapBinder<String, String> contributeProperties() {

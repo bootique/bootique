@@ -8,6 +8,7 @@ import com.google.inject.Provider;
 import io.bootique.cli.Cli;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.config.ConfigurationSource;
+import io.bootique.config.OptionRefWithConfig;
 import io.bootique.config.jackson.InPlaceResourceOverrider;
 import io.bootique.config.jackson.InPlaceLeftHandMerger;
 import io.bootique.config.jackson.InPlaceMapOverrider;
@@ -26,6 +27,7 @@ import joptsimple.OptionSpec;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +46,8 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
     private Environment environment;
     private JacksonService jacksonService;
     private BootLogger bootLogger;
-    private Set<OptionMetadata> optionMetadataSet;
+    private Set<OptionMetadata> optionMetadata;
+    private Set<OptionRefWithConfig> optionDecorators;
     private Cli cli;
 
     @Inject
@@ -53,14 +56,16 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
             Environment environment,
             JacksonService jacksonService,
             BootLogger bootLogger,
-            Set<OptionMetadata> optionMetadataSet,
+            Set<OptionMetadata> optionMetadata,
+            Set<OptionRefWithConfig> optionDecorators,
             Cli cli) {
 
         this.configurationSource = configurationSource;
         this.environment = environment;
         this.jacksonService = jacksonService;
         this.bootLogger = bootLogger;
-        this.optionMetadataSet = optionMetadataSet;
+        this.optionMetadata = optionMetadata;
+        this.optionDecorators = optionDecorators;
         this.cli = cli;
     }
 
@@ -97,7 +102,7 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
             Function<URL, Optional<JsonNode>> parser,
             BinaryOperator<JsonNode> singleConfigMerger) {
 
-        if (optionMetadataSet.isEmpty()) {
+        if (optionMetadata.isEmpty()) {
             return overrider;
         }
 
@@ -106,18 +111,26 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
             return overrider;
         }
 
+        List<URL> decoratorSources = optionDecorators.isEmpty() ? Collections.emptyList() : new ArrayList<>(5);
+
         // options tied to config property paths
         HashMap<String, String> options = new HashMap<>(5);
 
         // options tied to config resources
-        List<URL> sources = new ArrayList<>(5);
+        List<URL> optionSources = new ArrayList<>(5);
 
         for (OptionSpec<?> cliOpt : detectedOptions) {
 
             OptionMetadata omd = findMetadata(cliOpt);
 
-            if(omd == null) {
+            if (omd == null) {
                 continue;
+            }
+
+            for (OptionRefWithConfig decorator : optionDecorators) {
+                if (decorator.getOptionName().equals(omd.getName())) {
+                    decoratorSources.add(decorator.getConfigResource().getUrl());
+                }
             }
 
             if (omd.getConfigPath() != null) {
@@ -130,16 +143,22 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
             }
 
             if (omd.getConfigResource() != null) {
-                sources.add(omd.getConfigResource().getUrl());
+                optionSources.add(omd.getConfigResource().getUrl());
             }
+        }
+
+        // config decorators are loaded first, and then can be overridden from options...
+        if(!decoratorSources.isEmpty()) {
+            overrider = overrider.andThen(new InPlaceResourceOverrider(decoratorSources, parser, singleConfigMerger));
         }
 
         if (!options.isEmpty()) {
             overrider = overrider.andThen(new InPlaceMapOverrider(options, true, '.'));
         }
 
-        if (!sources.isEmpty()) {
-            overrider = overrider.andThen(new InPlaceResourceOverrider(sources, parser, singleConfigMerger));
+        // deprecated...
+        if (!optionSources.isEmpty()) {
+            overrider = overrider.andThen(new InPlaceResourceOverrider(optionSources, parser, singleConfigMerger));
         }
 
         return overrider;
@@ -152,7 +171,7 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
         // TODO: allow lookup of option metadata by name to avoid linear scans...
         // Though we are dealing with small collection, so shouldn't be too horrible.
 
-        for (OptionMetadata omd : optionMetadataSet) {
+        for (OptionMetadata omd : optionMetadata) {
             if (optionNames.contains(omd.getName())) {
                 return omd;
             }

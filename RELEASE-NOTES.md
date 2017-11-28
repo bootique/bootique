@@ -5,6 +5,7 @@
 * #194 Refactor JoptCliProvider to CliFactory and generic Cli provider
 * #195 CommandManager: allow lookup of commands by name and by type
 * #196 CommandManager: track command attributes and private commands
+* #198 DI config binding API to facilitate configuration reuse
 
 ## 0.24
 

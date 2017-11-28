@@ -1,12 +1,14 @@
 package io.bootique;
 
 import io.bootique.config.ConfigurationFactory;
+import io.bootique.meta.application.OptionMetadata;
 import io.bootique.type.TypeRef;
 import io.bootique.unit.BQInternalTestFactory;
 import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.Map;
+import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -61,10 +63,55 @@ public class Bootique_ConfigurationIT {
                         .addConfig("classpath:io/bootique/diconfig2.yml"))
                 .createRuntime();
 
-        Map<String, String> config = runtime.getInstance(ConfigurationFactory.class)
-                .config(new TypeRef<Map<String, String>>() {
+        Map<String, Integer> config = runtime.getInstance(ConfigurationFactory.class)
+                .config(new TypeRef<Map<String, Integer>>() {
                 }, "");
         assertEquals("{a=5, b=2, c=6}", config.toString());
+    }
+
+    @Test
+    public void testDIOnOptionConfig() {
+
+        Function<String, String> configReader =
+                arg -> {
+                    BQRuntime runtime = runtimeFactory.app(arg)
+                            .module(b -> BQCoreModule.extend(b)
+                                    .addConfigOnOption("opt", "classpath:io/bootique/diconfig1.yml")
+                                    .addConfigOnOption("opt", "classpath:io/bootique/diconfig2.yml")
+                                    .addOption(OptionMetadata.builder("opt").build()))
+                            .createRuntime();
+
+                    Map<String, Integer> config =
+                            runtime.getInstance(ConfigurationFactory.class)
+                                    .config(new TypeRef<Map<String, Integer>>() {
+                                    }, "");
+
+                    return config.toString();
+                };
+
+        assertEquals("{}", configReader.apply(""));
+        assertEquals("{a=1, b=2, c=3}", configReader.apply("--opt"));
+    }
+
+    @Test
+    public void testDIOnOptionConfig_OverrideWithOption() {
+
+        Function<String, String> configReader =
+                arg -> {
+                    BQRuntime runtime = runtimeFactory.app(arg)
+                            .module(b -> BQCoreModule.extend(b)
+                                    .addConfigOnOption("opt", "classpath:io/bootique/diconfig1.yml")
+                                    .addConfigOnOption("opt", "classpath:io/bootique/diconfig2.yml")
+                                    .addOption("a", "opt"))
+                            .createRuntime();
+
+                    return runtime.getInstance(ConfigurationFactory.class)
+                            .config(new TypeRef<Map<String, Integer>>() {
+                            }, "").toString();
+                };
+
+        assertEquals("{}", configReader.apply(""));
+        assertEquals("{a=8, b=2, c=3}", configReader.apply("--opt=8"));
     }
 
     @Test
