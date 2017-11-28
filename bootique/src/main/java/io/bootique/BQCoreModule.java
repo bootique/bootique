@@ -21,7 +21,7 @@ import io.bootique.command.CommandDecorator;
 import io.bootique.command.CommandDispatchThreadFactory;
 import io.bootique.command.CommandManager;
 import io.bootique.command.CommandManagerBuilder;
-import io.bootique.command.CommandRefWithDecorator;
+import io.bootique.command.CommandRefDecorated;
 import io.bootique.command.ExecutionPlanBuilder;
 import io.bootique.config.CliConfigurationSource;
 import io.bootique.config.ConfigurationFactory;
@@ -311,7 +311,7 @@ public class BQCoreModule implements Module {
     ExecutionPlanBuilder provideExecutionPlanBuilder(
             Provider<CliFactory> cliFactoryProvider,
             Provider<CommandManager> commandManagerProvider,
-            Set<CommandRefWithDecorator> commandDecorators,
+            Set<CommandRefDecorated> commandDecorators,
             BootLogger logger,
             ShutdownManager shutdownManager) {
 

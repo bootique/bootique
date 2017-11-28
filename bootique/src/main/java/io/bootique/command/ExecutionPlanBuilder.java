@@ -39,7 +39,7 @@ public class ExecutionPlanBuilder {
     }
 
     public static Map<Class<? extends Command>, CommandDecorator> mergeDecorators(
-            Set<CommandRefWithDecorator> decoratorSet) {
+            Set<CommandRefDecorated> decoratorSet) {
 
 
         if (decoratorSet.isEmpty()) {
