@@ -47,7 +47,6 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
     private Set<OptionMetadata> optionMetadataSet;
     private Cli cli;
 
-
     @Inject
     public JsonNodeConfigurationFactoryProvider(
             ConfigurationSource configurationSource,
@@ -115,29 +114,23 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
 
         for (OptionSpec<?> cliOpt : detectedOptions) {
 
-            List<String> optionNames = cliOpt.options();
+            OptionMetadata omd = findMetadata(cliOpt);
 
-            // TODO: allow lookup of option metadata by name to avoid linear scans...
-            // Though we are dealing with small collection, so shouldn't be too horrible.
+            if(omd == null) {
+                continue;
+            }
 
-            for (OptionMetadata omd : optionMetadataSet) {
-
-                if (!optionNames.contains(omd.getName())) {
-                    continue;
+            if (omd.getConfigPath() != null) {
+                String cliValue = cli.optionString(omd.getName());
+                if (cliValue == null) {
+                    cliValue = omd.getDefaultValue();
                 }
 
-                if (omd.getConfigPath() != null) {
-                    String cliValue = cli.optionString(omd.getName());
-                    if (cliValue == null) {
-                        cliValue = omd.getDefaultValue();
-                    }
+                options.put(omd.getConfigPath(), cliValue);
+            }
 
-                    options.put(omd.getConfigPath(), cliValue);
-                }
-
-                if (omd.getConfigResource() != null) {
-                    sources.add(omd.getConfigResource().getUrl());
-                }
+            if (omd.getConfigResource() != null) {
+                sources.add(omd.getConfigResource().getUrl());
             }
         }
 
@@ -150,6 +143,23 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
         }
 
         return overrider;
+    }
+
+    private OptionMetadata findMetadata(OptionSpec<?> option) {
+
+        List<String> optionNames = option.options();
+
+        // TODO: allow lookup of option metadata by name to avoid linear scans...
+        // Though we are dealing with small collection, so shouldn't be too horrible.
+
+        for (OptionMetadata omd : optionMetadataSet) {
+            if (optionNames.contains(omd.getName())) {
+                return omd;
+            }
+        }
+
+        // this was likely a command, not an option.
+        return null;
     }
 
     @Override
