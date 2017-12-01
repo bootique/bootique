@@ -78,6 +78,11 @@ public class BQRuntimeDaemon {
                     }
 
                     logger.stderr("Daemon runtime hasn't started yet...");
+
+                    // TODO: such a long check interval slows down the tests significantly. E.g. bootique-jetty
+                    // tests got a 2x acceleration boost once we switched to BQTestFactory. We should start with a
+                    // smaller interval for checks, and degrade the delay gradullay if the app fails to start after
+                    // a few attempts.
                     Thread.sleep(500);
                 }
 
