@@ -50,15 +50,17 @@ class MultiCommand extends CommandWithMetadata {
     @Override
     public CommandOutcome run(Cli cli) {
 
+        // run "before" commands
         Collection<CommandOutcome> beforeResults = runBlocking(extraCommands.getBefore());
         for (CommandOutcome outcome : beforeResults) {
             if (!outcome.isSuccess()) {
-                // TODO: combine all results into a single message? or need a different type of CommandOutcome (e.g. MultiCommandOutcome)?
-                return CommandOutcome.failed(1, "Some of the commands failed");
+                // for now returning the first failure...
+                // TODO: combine all failures into a single message?
+                return outcome;
             }
         }
 
-        // since we are not waiting for outcome, we must log when commands finish (especially on failures)
+        // run "also" commands... pass the logger to log failures
         runNonBlocking(extraCommands.getParallel(), this::logOutcome);
 
         return mainCommand.run(cli);
