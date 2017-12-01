@@ -57,4 +57,21 @@ public class CommandOutcome {
         System.exit(exitCode);
     }
 
+    @Override
+    public String toString() {
+
+        String message = this.message;
+
+        if (message == null && exception != null) {
+            message = exception.getMessage();
+        }
+
+        StringBuilder buffer = new StringBuilder().append("[").append(exitCode);
+        if (message != null) {
+            buffer.append(": ").append(message);
+        }
+
+        return buffer.append("]").toString();
+    }
+
 }
