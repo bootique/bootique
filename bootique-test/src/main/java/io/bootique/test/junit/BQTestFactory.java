@@ -1,6 +1,7 @@
 package io.bootique.test.junit;
 
 import io.bootique.BQRuntime;
+import io.bootique.command.CommandOutcome;
 import io.bootique.config.ConfigurationFactory;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -92,6 +93,17 @@ public class BQTestFactory extends ExternalResource {
             BQRuntime runtime = bootique.createRuntime();
             runtimes.add(runtime);
             return runtime;
+        }
+
+        /**
+         * A convenience shortcut for the tests that are interested in command outcome, not in the runtime state. This
+         * code is equivalent to <code>createRuntime().run()</code>.
+         *
+         * @return an outcome of the application command.
+         * @since 0.25
+         */
+        public CommandOutcome run() {
+            return createRuntime().run();
         }
     }
 }
