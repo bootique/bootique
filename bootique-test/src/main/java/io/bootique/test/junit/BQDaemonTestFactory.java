@@ -29,12 +29,13 @@ import java.util.function.Function;
  */
 public class BQDaemonTestFactory extends ExternalResource {
 
+    protected Map<BQRuntime, BQRuntimeDaemon> runtimes;
+    protected boolean autoLoadModules;
+
     static BQRuntimeDaemon getDaemon(Map<BQRuntime, BQRuntimeDaemon> runtimes, BQRuntime runtime) {
         return Objects
                 .requireNonNull(runtimes.get(runtime), "Runtime is not registered with the factory: " + runtime);
     }
-
-    protected Map<BQRuntime, BQRuntimeDaemon> runtimes;
 
     @Override
     protected void after() {
@@ -51,6 +52,18 @@ public class BQDaemonTestFactory extends ExternalResource {
         }
     }
 
+    /**
+     * Sets the default policy for this factory to auto-load modules for each app.
+     *
+     * @return this factory instance.
+     * @since 0.25
+     */
+    public BQDaemonTestFactory autoLoadModules() {
+        this.autoLoadModules = true;
+        return this;
+    }
+
+
     @Override
     protected void before() {
         this.runtimes = new HashMap<>();
@@ -63,7 +76,13 @@ public class BQDaemonTestFactory extends ExternalResource {
      * @since 0.20
      */
     public <T extends Builder<T>> Builder<T> app(String... args) {
-        return new Builder(runtimes, args);
+        Builder builder = new Builder(runtimes, args);
+
+        if (autoLoadModules) {
+            builder.autoLoadModules();
+        }
+
+        return builder;
     }
 
     /**

@@ -26,6 +26,7 @@ import java.util.Collection;
 public class BQTestFactory extends ExternalResource {
 
     private Collection<BQRuntime> runtimes;
+    private boolean autoLoadModules;
 
     @Override
     protected void after() {
@@ -48,12 +49,29 @@ public class BQTestFactory extends ExternalResource {
     }
 
     /**
+     * Sets the default policy for this factory to auto-load modules for each app.
+     *
+     * @return this factory instance.
+     * @since 0.25
+     */
+    public BQTestFactory autoLoadModules() {
+        this.autoLoadModules = true;
+        return this;
+    }
+
+    /**
      * @param args a String vararg emulating shell arguments passed to a real app.
      * @return a new instance of builder for the test runtime stack.
      * @since 0.20
      */
     public Builder app(String... args) {
-        return new Builder(runtimes, args);
+        Builder builder = new Builder(runtimes, args);
+
+        if (autoLoadModules) {
+            builder.autoLoadModules();
+        }
+
+        return builder;
     }
 
     public static class Builder extends BQTestRuntimeBuilder<Builder> {
