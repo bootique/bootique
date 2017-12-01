@@ -1,6 +1,7 @@
 package io.bootique.test.junit;
 
 import io.bootique.BQRuntime;
+import io.bootique.BootiqueException;
 import io.bootique.command.CommandOutcome;
 import io.bootique.log.BootLogger;
 import io.bootique.log.DefaultBootLogger;
@@ -25,7 +26,7 @@ public class BQRuntimeDaemon {
     private TimeUnit startupTimeoutTimeUnit;
     private ExecutorService executor;
     private Function<BQRuntime, Boolean> startupCheck;
-    private Optional<CommandOutcome> outcome;
+    private CommandOutcome outcome;
 
     public BQRuntimeDaemon(BQRuntime runtime, Function<BQRuntime, Boolean> startupCheck, long startupTimeout, TimeUnit startupTimeoutTimeUnit) {
 
@@ -35,7 +36,6 @@ public class BQRuntimeDaemon {
         this.runtime = runtime;
         this.startupCheck = startupCheck;
         this.executor = Executors.newCachedThreadPool();
-        this.outcome = Optional.empty();
         this.startupTimeout = startupTimeout;
         this.startupTimeoutTimeUnit = startupTimeoutTimeUnit;
     }
@@ -45,7 +45,7 @@ public class BQRuntimeDaemon {
      * @since 0.16
      */
     public Optional<CommandOutcome> getOutcome() {
-        return outcome;
+        return Optional.ofNullable(outcome);
     }
 
     public BQRuntime getRuntime() {
@@ -53,42 +53,54 @@ public class BQRuntimeDaemon {
     }
 
     public void start() {
-        this.executor.submit(() -> outcome = Optional.of(runtime.run()));
+        this.executor.submit(() -> outcome = runtime.run());
         checkStartupSucceeded(startupTimeout, startupTimeoutTimeUnit);
     }
 
     protected void checkStartupSucceeded(long timeout, TimeUnit unit) {
 
-        Future<Boolean> startupFuture = executor.submit(() -> {
+        Future<CommandOutcome> startupFuture = executor.submit(() -> {
 
             try {
-                while (!startupCheck.apply(runtime)) {
+                // Either the command has finished, or it is still running, but the custom check is successful.
+                // The later test may be used for blocking commands that start some background processing and
+                // wait till the end.
+                while (true) {
+
+                    if(outcome != null) {
+                        return outcome;
+                    }
+
+                    if(startupCheck.apply(runtime)) {
+                        // command is still running (perhaps waiting for a background task execution, or listening for
+                        // requests), but the stack is in the state that can be tested already.
+                        return CommandOutcome.succeeded();
+                    }
+
                     logger.stderr("Daemon runtime hasn't started yet...");
                     Thread.sleep(500);
                 }
 
-                return true;
             } catch (InterruptedException e) {
                 logger.stderr("Timed out waiting for server to start");
-                return false;
+                return CommandOutcome.failed(-1, e);
             } catch (Throwable th) {
                 logger.stderr("Server error", th);
-                return false;
+                return CommandOutcome.failed(-1, th);
             }
-
         });
 
-        boolean success;
+        CommandOutcome outcome;
         try {
-            success = startupFuture.get(timeout, unit);
+            outcome = startupFuture.get(timeout, unit);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             throw new RuntimeException(String.format("Daemon failed to start in %s ms", unit.toMillis(timeout)));
         }
 
-        if (success) {
+        if (outcome.isSuccess()) {
             logger.stderr("Daemon runtime started...");
         } else {
-            throw new RuntimeException("Daemon failed to start");
+            throw new BootiqueException(outcome.getExitCode(), "Daemon failed to start: " + outcome);
         }
     }
 

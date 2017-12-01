@@ -3,6 +3,7 @@ package io.bootique.test.junit;
 import com.google.inject.Inject;
 import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
+import io.bootique.BootiqueException;
 import io.bootique.cli.Cli;
 import io.bootique.command.CommandOutcome;
 import io.bootique.command.CommandWithMetadata;
@@ -12,7 +13,11 @@ import io.bootique.test.TestIO;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
 
 public class BQDaemonTestFactoryIT {
 
@@ -31,6 +36,23 @@ public class BQDaemonTestFactoryIT {
     }
 
     @Test
+    public void testStart_StartupFailure() {
+
+        CommandOutcome failed = CommandOutcome.failed(-1, "Intended failure");
+
+        try {
+            testFactory.app("")
+                    .module(b ->
+                            BQCoreModule.extend(b).setDefaultCommand(cli -> failed))
+                    .startupCheck(r -> false)
+                    .start();
+        } catch (BootiqueException e) {
+            assertEquals(-1, e.getOutcome().getExitCode());
+            assertEquals("Daemon failed to start: " + failed, e.getOutcome().getMessage());
+        }
+    }
+
+    @Test
     public void test_StartupAndWait() {
         BQRuntime r1 = testFactory.app("a1", "a2").startupAndWaitCheck().start();
         assertArrayEquals(new String[]{"a1", "a2"}, r1.getArgs());
@@ -41,7 +63,7 @@ public class BQDaemonTestFactoryIT {
     }
 
     @Test
-    public void testCreateRuntime_Streams_NoTrace() {
+    public void testStart_Streams_NoTrace() {
 
         TestIO io = TestIO.noTrace();
 
@@ -57,7 +79,7 @@ public class BQDaemonTestFactoryIT {
     }
 
     @Test
-    public void testCreateRuntime_Streams_Trace() {
+    public void testStart_Streams_Trace() {
 
         TestIO io = TestIO.trace();
 

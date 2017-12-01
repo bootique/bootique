@@ -127,8 +127,7 @@ public class BQDaemonTestFactory extends ExternalResource {
         }
 
         /**
-         * Adds a startup check that waits till the runtime finishes, within the
-         * startup timeout bounds.
+         * Adds a startup check that waits till the runtime finishes, within the startup timeout bounds.
          *
          * @return this builder
          * @since 0.16

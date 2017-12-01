@@ -6,6 +6,7 @@
 * #195 CommandManager: allow lookup of commands by name and by type
 * #196 CommandManager: track command attributes and private commands
 * #198 DI config binding API to facilitate configuration reuse
+* #199 Tests: swallowed BQDaemonTestFactory startup errors
 
 ## 0.24
 
