@@ -1,15 +1,35 @@
 package io.bootique.command;
 
+import io.bootique.cli.Cli;
+
 public class CommandOutcome {
 
-    // UNIX success exits code
+    // UNIX success exit code
     private static final int SUCCESS_EXIT_CODE = 0;
 
-    private static final CommandOutcome SUCCESS = new CommandOutcome(SUCCESS_EXIT_CODE, null, null);
+    private static final CommandOutcome SUCCESS = new CommandOutcome(SUCCESS_EXIT_CODE, false, null, null);
 
     private final String message;
     private final int exitCode;
     private final Throwable exception;
+    private final boolean forkedToBackground;
+
+    private CommandOutcome(int exitCode, boolean forkedToBackground, String message, Throwable exception) {
+        this.forkedToBackground = forkedToBackground;
+        this.message = message;
+        this.exitCode = exitCode;
+        this.exception = exception;
+    }
+
+    /**
+     * Returns a successful outcome with an indicator that that a process was left running on the background.
+     *
+     * @return a successful {@link CommandOutcome}.
+     * @since 0.25
+     */
+    public static CommandOutcome succeededAndForkedToBackground() {
+        return new CommandOutcome(SUCCESS_EXIT_CODE, true, null, null);
+    }
 
     public static CommandOutcome succeeded() {
         return SUCCESS;
@@ -28,13 +48,7 @@ public class CommandOutcome {
             throw new IllegalArgumentException("Success code '0' used for failure outcome.");
         }
 
-        return new CommandOutcome(exitCode, message, th);
-    }
-
-    private CommandOutcome(int exitCode, String message, Throwable exception) {
-        this.message = message;
-        this.exitCode = exitCode;
-        this.exception = exception;
+        return new CommandOutcome(exitCode, false, message, th);
     }
 
     public String getMessage() {
@@ -53,8 +67,28 @@ public class CommandOutcome {
         return exitCode == SUCCESS_EXIT_CODE;
     }
 
+    /**
+     * Returns whether one or more tasks started by this command were still executing on threads other than the
+     * command run thread as of {@link Command#run(Cli)} completion.
+     *
+     * @return whether one or more tasks started by this command were still executing on threads other than the
+     * command run thread as of {@link Command#run(Cli)} completion.
+     * @since 0.25
+     */
+    public boolean forkedToBackground() {
+        return forkedToBackground;
+    }
+
+    /**
+     * Exits the current OS process with the outcome exit code, unless {@link #forkedToBackground} is true.
+     */
     public void exit() {
-        System.exit(exitCode);
+
+        // don't force exit if there are remaining tasks...
+        // TODO: a new name for the 'exit' method to reflect this behavior
+        if (!forkedToBackground) {
+            System.exit(exitCode);
+        }
     }
 
     @Override

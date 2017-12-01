@@ -74,7 +74,7 @@ public class BQRuntimeDaemon {
                     if(startupCheck.apply(runtime)) {
                         // command is still running (perhaps waiting for a background task execution, or listening for
                         // requests), but the stack is in the state that can be tested already.
-                        return CommandOutcome.succeeded();
+                        return CommandOutcome.succeededAndForkedToBackground();
                     }
 
                     logger.stderr("Daemon runtime hasn't started yet...");

@@ -5,6 +5,7 @@
 * #194 Refactor JoptCliProvider to CliFactory and generic Cli provider
 * #195 CommandManager: allow lookup of commands by name and by type
 * #196 CommandManager: track command attributes and private commands
+* #197 Commands starting background processes should unblock invoker threads
 * #198 DI config binding API to facilitate configuration reuse
 * #199 Tests: swallowed BQDaemonTestFactory startup errors
 
