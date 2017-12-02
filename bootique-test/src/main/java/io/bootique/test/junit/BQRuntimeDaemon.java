@@ -57,38 +57,63 @@ public class BQRuntimeDaemon {
         checkStartupSucceeded(startupTimeout, startupTimeoutTimeUnit);
     }
 
+    private long startupCheckSleepInterval(long remainingTimeoutMs, int round) {
+
+        final long increment = 40;
+
+        if (remainingTimeoutMs <= increment) {
+            return increment;
+        }
+
+        // start with low wait time, and increase it a bit with every round, never to exceed the timeout
+        long sleepFor = increment + round * increment;
+        return sleepFor < remainingTimeoutMs  ? sleepFor : remainingTimeoutMs - increment;
+    }
+
+    private Optional<CommandOutcome> checkStartupOutcome() {
+        // Either the command has finished, or it is still running, but the custom check is successful.
+        // The later test may be used for blocking commands that start some background processing and
+        // wait till the end.
+
+        if (outcome != null) {
+            return Optional.of(outcome);
+        }
+
+        if (startupCheck.apply(runtime)) {
+            // command is still running (perhaps waiting for a background task execution, or listening for
+            // requests), but the stack is in the state that can be tested already.
+            return Optional.of(CommandOutcome.succeededAndForkedToBackground());
+        }
+
+        logger.stderr("Daemon runtime hasn't started yet...");
+        return Optional.empty();
+    }
+
     protected void checkStartupSucceeded(long timeout, TimeUnit unit) {
+
+        long startedWaitingMs = System.currentTimeMillis();
+        long timeoutMs = unit.toMillis(timeout);
 
         Future<CommandOutcome> startupFuture = executor.submit(() -> {
 
             try {
-                // Either the command has finished, or it is still running, but the custom check is successful.
-                // The later test may be used for blocking commands that start some background processing and
-                // wait till the end.
-                while (true) {
+                for (int i = 0; i < Integer.MAX_VALUE; i++) {
 
-                    if(outcome != null) {
-                        return outcome;
+                    Optional<CommandOutcome> optOutcome = checkStartupOutcome();
+                    if (optOutcome.isPresent()) {
+                        return optOutcome.get();
                     }
 
-                    if(startupCheck.apply(runtime)) {
-                        // command is still running (perhaps waiting for a background task execution, or listening for
-                        // requests), but the stack is in the state that can be tested already.
-                        return CommandOutcome.succeededAndForkedToBackground();
-                    }
-
-                    logger.stderr("Daemon runtime hasn't started yet...");
-
-                    // TODO: such a long check interval slows down the tests significantly. E.g. bootique-jetty
-                    // tests got a 2x acceleration boost once we switched to BQTestFactory. We should start with a
-                    // smaller interval for checks, and degrade the delay gradullay if the app fails to start after
-                    // a few attempts.
-                    Thread.sleep(500);
+                    long remainingTimeout = timeoutMs - (System.currentTimeMillis() - startedWaitingMs);
+                    Thread.sleep(startupCheckSleepInterval(remainingTimeout, i));
                 }
 
+                // should never end up here with any reasonable timeouts
+                return CommandOutcome.failed(-1, "Exceeded the number of attempts to check for successful startup");
+
             } catch (InterruptedException e) {
-                logger.stderr("Timed out waiting for server to start");
-                return CommandOutcome.failed(-1, e);
+                logger.stderr("Interrupted waiting for server to start.. one last check..");
+                return checkStartupOutcome().orElse(CommandOutcome.failed(-1, e));
             } catch (Throwable th) {
                 logger.stderr("Server error", th);
                 return CommandOutcome.failed(-1, th);

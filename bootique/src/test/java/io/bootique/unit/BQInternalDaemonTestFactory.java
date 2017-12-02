@@ -92,7 +92,7 @@ public class BQInternalDaemonTestFactory extends BQInternalTestFactory {
                 try {
                     while (!startupCheck.apply(runtime)) {
                         logger.stderr("Daemon runtime hasn't started yet...");
-                        Thread.sleep(500);
+                        Thread.sleep(100);
                     }
 
                     return true;

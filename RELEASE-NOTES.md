@@ -8,6 +8,7 @@
 * #197 Commands starting background processes should unblock invoker threads
 * #198 DI config binding API to facilitate configuration reuse
 * #199 Tests: swallowed BQDaemonTestFactory startup errors
+* #201 Speed up BQDaemonTestFactory
 
 ## 0.24
 
