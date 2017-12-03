@@ -322,9 +322,9 @@ public class Bootique {
     }
 
     /**
-     * Executes this Bootique application, returning the object that denotes the outcome.
+     * Executes this Bootique application, returning the outcome object.
      *
-     * @return an outcome of command execution.
+     * @return an outcome of the app command execution.
      * @since 0.23
      */
     public CommandOutcome exec() {
@@ -337,6 +337,16 @@ public class Bootique {
             Runtime.getRuntime().addShutdownHook(shutdownThread);
             try {
                 o = createRuntime().run();
+
+                // block exit if there are remaining tasks...
+                if (o.forkedToBackground()) {
+                    try {
+                        Thread.currentThread().join();
+                    } catch (InterruptedException e) {
+                        // interruption of a running daemon is a normal event, so return success
+                    }
+                }
+
             } finally {
                 // run shutdown explicitly...
                 shutdown(shutdownManager, bootLogger);
@@ -451,7 +461,7 @@ public class Bootique {
         bqModules.add(coreModuleProvider(modulesSource).moduleBuilder().build());
 
         BootiqueUtils.moduleProviderDependencies(builderProviders())
-            .forEach(p -> bqModules.add(p.moduleBuilder().build()));
+                .forEach(p -> bqModules.add(p.moduleBuilder().build()));
 
         if (autoLoadModules) {
             autoLoadedProviders().forEach(p -> bqModules.add(p.moduleBuilder().build()));

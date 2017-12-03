@@ -80,20 +80,9 @@ public class CommandOutcome {
     }
 
     /**
-     * Exits the current OS process with the outcome exit code. If {@link #forkedToBackground} is true, this method
-     * would not exit immediately and would block the thread until the app dies.
+     * Exits the current OS process with the outcome exit code.
      */
     public void exit() {
-
-        // block exit if there are remaining tasks...
-        if (forkedToBackground) {
-            try {
-                Thread.currentThread().join();
-            } catch (InterruptedException e) {
-                // interruption of a running daemon is a normal event, so return success
-            }
-        }
-
         System.exit(exitCode);
     }
 
