@@ -80,15 +80,21 @@ public class CommandOutcome {
     }
 
     /**
-     * Exits the current OS process with the outcome exit code, unless {@link #forkedToBackground} is true.
+     * Exits the current OS process with the outcome exit code. If {@link #forkedToBackground} is true, this method
+     * would not exit immediately and would block the thread until the app dies.
      */
     public void exit() {
 
         // don't force exit if there are remaining tasks...
-        // TODO: a new name for the 'exit' method to reflect this behavior
-        if (!forkedToBackground) {
-            System.exit(exitCode);
+        if (forkedToBackground) {
+            try {
+                Thread.currentThread().join();
+            } catch (InterruptedException ie) {
+                // interruption of a running Jetty daemon is a normal event, so unless we get shutdown errors, return success
+            }
         }
+
+        System.exit(exitCode);
     }
 
     @Override
