@@ -85,7 +85,7 @@ public class CommandOutcome {
      */
     public void exit() {
 
-        // block exit there are remaining tasks...
+        // block exit if there are remaining tasks...
         if (forkedToBackground) {
             try {
                 Thread.currentThread().join();
