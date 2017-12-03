@@ -89,8 +89,8 @@ public class CommandOutcome {
         if (forkedToBackground) {
             try {
                 Thread.currentThread().join();
-            } catch (InterruptedException ie) {
-                // interruption of a running Jetty daemon is a normal event, so unless we get shutdown errors, return success
+            } catch (InterruptedException e) {
+                // interruption of a running daemon is a normal event, so return success
             }
         }
 
