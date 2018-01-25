@@ -84,6 +84,13 @@ max possible threads in the pool). "utilization-max" was deprecated.
 If you used "utilization" metric for anything in your monitoring system, etc., make sure to adjust for the new 
 meaning.
 
+* [bootique-jersey-client #29](https://github.com/bootique/bootique-jersey-client/issues/29): `followRedirects` default value
+has changed from "false" to "true". If you implicitly relied on `jerseyclient.followRedirects` default to be "false", you will need to reconfigure your app to set it to false explicitly:
+```yaml
+jerseyclient:
+   followRedirects: false
+```
+
 ## 0.24
 
 * [bootique #180](https://github.com/bootique/bootique/issues/180): The ability to explicitly declare a BQ_* var was removed. 
