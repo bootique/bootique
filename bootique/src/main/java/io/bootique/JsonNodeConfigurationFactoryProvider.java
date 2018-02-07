@@ -9,9 +9,9 @@ import io.bootique.cli.Cli;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.config.ConfigurationSource;
 import io.bootique.config.OptionRefWithConfig;
-import io.bootique.config.jackson.InPlaceResourceOverrider;
 import io.bootique.config.jackson.InPlaceLeftHandMerger;
 import io.bootique.config.jackson.InPlaceMapOverrider;
+import io.bootique.config.jackson.InPlaceResourceOverrider;
 import io.bootique.config.jackson.JsonNodeConfigurationBuilder;
 import io.bootique.config.jackson.JsonNodeConfigurationFactory;
 import io.bootique.config.jackson.JsonNodeJsonParser;
@@ -26,8 +26,6 @@ import joptsimple.OptionSpec;
 
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
@@ -81,13 +79,16 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
         Function<URL, Optional<JsonNode>> parser = new MultiFormatJsonNodeParser(parsers, bootLogger);
 
         BinaryOperator<JsonNode> singleConfigMerger = new InPlaceLeftHandMerger(bootLogger);
-        Function<JsonNode, JsonNode> overrider = new InPlaceMapOverrider(properties, true, '.');
 
+        Function<JsonNode, JsonNode> overrider = (n) -> n;
+        overrider = andCliOptionOverrider(overrider, parser, singleConfigMerger);
+
+        if (!properties.isEmpty()) {
+            overrider = overrider.andThen(new InPlaceMapOverrider(properties, true, '.'));
+        }
         if (!vars.isEmpty()) {
             overrider = overrider.andThen(new InPlaceMapOverrider(vars, false, '_'));
         }
-
-        overrider = andCliOptionOverrider(overrider, parser, singleConfigMerger);
 
         return JsonNodeConfigurationBuilder.builder()
                 .parser(parser)
@@ -111,14 +112,6 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
             return overrider;
         }
 
-        List<URL> decoratorSources = optionDecorators.isEmpty() ? Collections.emptyList() : new ArrayList<>(5);
-
-        // options tied to config property paths
-        HashMap<String, String> options = new HashMap<>(5);
-
-        // options tied to config resources
-        List<URL> optionSources = new ArrayList<>(5);
-
         for (OptionSpec<?> cliOpt : detectedOptions) {
 
             OptionMetadata omd = findMetadata(cliOpt);
@@ -127,9 +120,11 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
                 continue;
             }
 
+            // config decorators are loaded first, and then can be overridden from options...
             for (OptionRefWithConfig decorator : optionDecorators) {
                 if (decorator.getOptionName().equals(omd.getName())) {
-                    decoratorSources.add(decorator.getConfigResource().getUrl());
+                    overrider = overrider.andThen(new InPlaceResourceOverrider(decorator.getConfigResource().getUrl(),
+                            parser, singleConfigMerger));
                 }
             }
 
@@ -139,26 +134,17 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
                     cliValue = omd.getDefaultValue();
                 }
 
-                options.put(omd.getConfigPath(), cliValue);
+                String finalCliValue = cliValue;
+                overrider = overrider.andThen(new InPlaceMapOverrider(new HashMap<String, String>() {{
+                    put(omd.getConfigPath(), finalCliValue);
+                }}, true, '.'));
             }
 
+            // deprecated...
             if (omd.getConfigResource() != null) {
-                optionSources.add(omd.getConfigResource().getUrl());
+                overrider = overrider.andThen(new InPlaceResourceOverrider(omd.getConfigResource().getUrl(),
+                        parser, singleConfigMerger));
             }
-        }
-
-        // config decorators are loaded first, and then can be overridden from options...
-        if(!decoratorSources.isEmpty()) {
-            overrider = overrider.andThen(new InPlaceResourceOverrider(decoratorSources, parser, singleConfigMerger));
-        }
-
-        if (!options.isEmpty()) {
-            overrider = overrider.andThen(new InPlaceMapOverrider(options, true, '.'));
-        }
-
-        // deprecated...
-        if (!optionSources.isEmpty()) {
-            overrider = overrider.andThen(new InPlaceResourceOverrider(optionSources, parser, singleConfigMerger));
         }
 
         return overrider;

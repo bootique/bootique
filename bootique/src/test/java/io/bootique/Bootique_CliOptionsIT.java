@@ -10,14 +10,16 @@ import io.bootique.meta.application.CommandMetadata;
 import io.bootique.meta.application.OptionMetadata;
 import io.bootique.run.Runner;
 import io.bootique.unit.BQInternalTestFactory;
-import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.Collection;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class Bootique_CliOptionsIT {
 
@@ -27,13 +29,13 @@ public class Bootique_CliOptionsIT {
     @Test
     public void testConfigOption() {
         BQRuntime runtime = runtimeFactory.app("--config=abc.yml").createRuntime();
-        assertEquals(runtime.getInstance(Cli.class).optionStrings(CliConfigurationSource.CONFIG_OPTION), "abc.yml");
+        assertCollectionsEquals(runtime.getInstance(Cli.class).optionStrings(CliConfigurationSource.CONFIG_OPTION), "abc.yml");
     }
 
     @Test
     public void testConfigOptions() {
         BQRuntime runtime = runtimeFactory.app("--config=abc.yml", "--config=xyz.yml").createRuntime();
-        assertEquals(runtime.getInstance(Cli.class).optionStrings(CliConfigurationSource.CONFIG_OPTION), "abc.yml",
+        assertCollectionsEquals(runtime.getInstance(Cli.class).optionStrings(CliConfigurationSource.CONFIG_OPTION), "abc.yml",
                 "xyz.yml");
     }
 
@@ -153,7 +155,7 @@ public class Bootique_CliOptionsIT {
         Cli cli = runtime.getInstance(Cli.class);
 
         assertTrue(cli.hasOption("s"));
-        Assert.assertEquals("x_y", String.join("_", cli.optionStrings("long")));
+        assertEquals("x_y", String.join("_", cli.optionStrings("long")));
     }
 
     @Test
@@ -167,8 +169,10 @@ public class Bootique_CliOptionsIT {
 
         Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
 
-        Assert.assertEquals("x", bean1.c.m.l);
-        Assert.assertEquals(1, bean1.c.m.k);
+
+        assertEquals("e", "e");
+        assertEquals("x", bean1.c.m.l);
+        assertEquals(1, bean1.c.m.k);
     }
 
     @Test
@@ -180,7 +184,7 @@ public class Bootique_CliOptionsIT {
                 .createRuntime();
         Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
 
-        Assert.assertEquals("x", bean1.c.m.f);
+        assertEquals("x", bean1.c.m.f);
     }
 
     @Test
@@ -196,27 +200,47 @@ public class Bootique_CliOptionsIT {
 
         runner.run();
 
-        Assert.assertEquals(2, bean1.c.m.k);
+        assertEquals(2, bean1.c.m.k);
     }
 
     @Test
-    public void testConfigOverrideOrder_PropsVarsOptionsFileOptions() {
+    public void testConfigOverrideOrder_OptionsOnCLIPropsVars() {
         System.setProperty("bq.c.m.f", "prop_c_m_f");
 
         try {
-            BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--file-opt-1", "--opt-1=Option")
+            BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--file-opt-1",
+                    "--opt-1=Option1", "--opt-2=Option2")
                     .module(binder -> BQCoreModule.extend(binder)
                             .addOption("c.m.f", "opt-1")
+                            .addOption("c.m.f", "opt-2")
                             .addConfigResourceOption("classpath:io/bootique/config/configTest4Opt1.yml", "file-opt-1")
                             .setVar("BQ_C_M_F", "var_c_m_f"))
                     .createRuntime();
 
             Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
-            Assert.assertEquals("f", bean1.c.m.f);
-        }
-        finally {
+            assertEquals("var_c_m_f", bean1.c.m.f);
+        } finally {
             System.clearProperty("bq.c.m.f");
         }
+    }
+
+    @Test
+    public void testOptionsOrder_OnCLI() {
+        BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--file-opt-1",
+                "--opt-2=y", "--opt-1=x")
+                .module(binder -> BQCoreModule.extend(binder)
+                        .addConfig("classpath:io/bootique/config/test4Copy.yml")
+                        .addOption("c.m.f", "opt-1")
+                        .addOption("c.m.f", "opt-2")
+                        .addConfigResourceOption("classpath:io/bootique/config/configTest4Opt1.yml", "file-opt-1")
+                        .addConfigOnOption("file-opt-1", "classpath:io/bootique/config/configTest4Decorate.yml"))
+                .createRuntime();
+
+        Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
+        assertEquals(4, bean1.c.m.k);
+        assertEquals("x", bean1.c.m.f);
+        assertEquals("copy", bean1.c.m.l);
+        assertEquals("e", bean1.a);
     }
 
     @Test
@@ -228,7 +252,7 @@ public class Bootique_CliOptionsIT {
                 .createRuntime();
         Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
 
-        Assert.assertEquals(3, bean1.c.m.k);
+        assertEquals(3, bean1.c.m.k);
     }
 
     @Test(expected = ProvisionException.class)
@@ -248,7 +272,7 @@ public class Bootique_CliOptionsIT {
                 .createRuntime();
         Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
 
-        Assert.assertEquals("x", bean1.c.m.l);
+        assertEquals("x", bean1.c.m.l);
     }
 
     @Test
@@ -261,11 +285,11 @@ public class Bootique_CliOptionsIT {
                 .createRuntime();
         Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
 
-        Assert.assertEquals(3, bean1.c.m.k);
-        Assert.assertEquals("f", bean1.c.m.f);
+        assertEquals(2, bean1.c.m.k);
+        assertEquals("f", bean1.c.m.f);
     }
 
-    private void assertEquals(Collection<String> result, String... expected) {
+    private void assertCollectionsEquals(Collection<String> result, String... expected) {
         assertArrayEquals(expected, result.toArray());
     }
 
