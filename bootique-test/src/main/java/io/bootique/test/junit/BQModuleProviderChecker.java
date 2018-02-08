@@ -1,10 +1,12 @@
 package io.bootique.test.junit;
 
+import com.google.inject.Module;
 import io.bootique.BQModuleProvider;
 import io.bootique.BQRuntime;
 import io.bootique.meta.module.ModuleMetadata;
 import io.bootique.meta.module.ModulesMetadata;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ServiceLoader;
@@ -13,6 +15,9 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.toList;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -41,6 +46,21 @@ public class BQModuleProviderChecker {
      */
     public static void testPresentInJar(Class<? extends BQModuleProvider> provider) {
         new BQModuleProviderChecker(provider).testPresentInJar();
+    }
+
+    public static void testModulesLoaded(BQRuntime bqRuntime, List<Class<? extends Module>> moduleList) {
+        final ModulesMetadata modulesMetadata = bqRuntime.getInstance(ModulesMetadata.class);
+
+        final List<String> actualModules = modulesMetadata
+                .getModules()
+                .stream()
+                .map(ModuleMetadata::getName)
+                .collect(toList());
+
+        // There are few issues:
+        // Since we use junit4 - there are no assertAll
+        // Using class names for checking module existing - weak
+        moduleList.forEach(module -> assertThat(actualModules, hasItem(module.getSimpleName())));
     }
 
     /**
