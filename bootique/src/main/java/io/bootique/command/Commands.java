@@ -9,6 +9,7 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.multibindings.Multibinder;
 import io.bootique.BQCoreModule;
+import io.bootique.BQModuleId;
 import io.bootique.BQModuleProvider;
 import io.bootique.annotation.DefaultCommand;
 import io.bootique.help.HelpCommand;
@@ -100,6 +101,11 @@ public class Commands implements Module {
                 @Override
                 public String name() {
                     return "Commands.Builder";
+                }
+
+                @Override
+                public BQModuleId id() {
+                    return BQModuleId.of(Commands.class);
                 }
             };
         }

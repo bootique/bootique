@@ -18,11 +18,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.ServiceLoader;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * A main launcher class of Bootique. To start a Bootique app, you may write your main method as follows:
@@ -186,7 +189,17 @@ public class Bootique {
      */
     public Bootique module(Class<? extends Module> moduleType) {
         Objects.requireNonNull(moduleType);
-        providers.add(() -> createModule(moduleType));
+        providers.add(new BQModuleProvider() {
+            @Override
+            public Module module() {
+                return createModule(moduleType);
+            }
+
+            @Override
+            public BQModuleId id() {
+                return new ClassBQModuleId(moduleType);
+            }
+        });
         return this;
     }
 
@@ -201,22 +214,32 @@ public class Bootique {
      */
     @SafeVarargs
     public final Bootique modules(Class<? extends Module>... moduleTypes) {
-        Arrays.asList(moduleTypes).forEach(m -> module(m));
+        Arrays.asList(moduleTypes).forEach(this::module);
         return this;
     }
 
-    public Bootique module(Module m) {
-        Objects.requireNonNull(m);
+    /**
+     * @param module custom Module instance to add to Bootique DI runtime.
+     * @return this Bootique instance
+     * @see #autoLoadModules()
+     * @since 0.8
+     */
+    public Bootique module(Module module) {
+        Objects.requireNonNull(module);
         providers.add(new BQModuleProvider() {
-
             @Override
             public Module module() {
-                return m;
+                return module;
             }
 
             @Override
             public String name() {
-                return "Bootique";
+                return "Auto Provider";
+            }
+
+            @Override
+            public BQModuleId id() {
+                return new InstanceBQModuleId(module);
             }
         });
         return this;
@@ -272,6 +295,11 @@ public class Bootique {
                     public Collection<Class<? extends Module>> overrides() {
                         return Arrays.asList(overriddenTypes);
                     }
+
+                    @Override
+                    public BQModuleId id() {
+                        return new ClassBQModuleId(moduleType);
+                    }
                 });
 
                 return Bootique.this;
@@ -289,6 +317,11 @@ public class Bootique {
                     @Override
                     public Collection<Class<? extends Module>> overrides() {
                         return Arrays.asList(overriddenTypes);
+                    }
+
+                    @Override
+                    public BQModuleId id() {
+                        return new InstanceBQModuleId(module);
                     }
                 });
 
@@ -441,12 +474,7 @@ public class Bootique {
         // is safe to do, as it won't be used until the Injector is created by the method caller.
         bqModules.add(coreModuleProvider(modulesSource).moduleBuilder().build());
 
-        BootiqueUtils.moduleProviderDependencies(builderProviders())
-                .forEach(p -> bqModules.add(p.moduleBuilder().build()));
-
-        if (autoLoadModules) {
-            autoLoadedProviders().forEach(p -> bqModules.add(p.moduleBuilder().build()));
-        }
+        moduleProviders().forEach(p -> bqModules.add(p.moduleBuilder().build()));
 
         // now that all modules are collected, finish 'moduleMetadata' initialization
         modulesSource.init(bqModules);
@@ -454,10 +482,6 @@ public class Bootique {
         // convert to Guice modules respecting overrides, etc.
         Collection<Module> modules = new RuntimeModuleMerger(bootLogger).toGuiceModules(bqModules);
         return Guice.createInjector(modules);
-    }
-
-    private Collection<BQModuleProvider> builderProviders() {
-        return providers;
     }
 
     private BQModuleProvider coreModuleProvider(Supplier<Collection<BQModule>> moduleSource) {
@@ -477,6 +501,11 @@ public class Bootique {
             }
 
             @Override
+            public BQModuleId id() {
+                return new ClassBQModuleId(BQCoreModule.class);
+            }
+
+            @Override
             public BQModule.Builder moduleBuilder() {
                 return BQModuleProvider.super
                         .moduleBuilder()
@@ -485,9 +514,38 @@ public class Bootique {
         };
     }
 
+    /**
+     * Module providers:
+     *
+     * 1. defined in Bootique builder;
+     * 2. loaded with auto-loading;
+     * 3. loaded as explicit dependencies in another module provider.
+     *
+     * @return collection of BQModuleProviders
+     */
+    private Collection<BQModuleProvider> moduleProviders() {
+        final List<BQModuleProvider> moduleProviders = new ArrayList<>(providers);
+
+        // Auto-load module providers, and check that auto-loaded
+        // providers not loaded already as part of Bootique builder.
+        if (autoLoadModules) {
+            final Set<Class<? extends BQModuleProvider>> builderProvidersClasses = providers
+                    .stream()
+                    .map(BQModuleProvider::getClass)
+                    .collect(toSet());
+
+            autoLoadedProviders()
+                    .stream()
+                    .filter(autoLoadedProvider -> !builderProvidersClasses.contains(autoLoadedProvider.getClass()))
+                    .forEach(moduleProviders::add);
+        }
+
+        return BootiqueUtils.moduleProviderDependencies(moduleProviders);
+    }
+
     Collection<BQModuleProvider> autoLoadedProviders() {
-        Collection<BQModuleProvider> modules = new ArrayList<>();
-        ServiceLoader.load(BQModuleProvider.class).forEach(p -> modules.add(p));
-        return modules;
+        Collection<BQModuleProvider> moduleProviders = new ArrayList<>();
+        ServiceLoader.load(BQModuleProvider.class).forEach(moduleProviders::add);
+        return moduleProviders;
     }
 }

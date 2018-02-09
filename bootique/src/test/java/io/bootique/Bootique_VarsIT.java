@@ -97,15 +97,22 @@ public class Bootique_VarsIT {
         BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(err));
 
         BQModuleProvider configurableProvider = new BQModuleProvider() {
+            private final Module module = b -> {
+            };
+
             @Override
             public Module module() {
-                return b -> {
-                };
+                return module;
             }
 
             @Override
             public Map<String, Type> configs() {
                 return Collections.singletonMap("x", Bean5.class);
+            }
+
+            @Override
+            public BQModuleId id() {
+                return BQModuleId.of(module);
             }
         };
 
@@ -134,10 +141,17 @@ public class Bootique_VarsIT {
         BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(err));
 
         BQModuleProvider configurableProvider = new BQModuleProvider() {
+            private final Module module = b -> {
+            };
+
             @Override
             public Module module() {
-                return b -> {
-                };
+                return module;
+            }
+
+            @Override
+            public BQModuleId id() {
+                return BQModuleId.of(module);
             }
 
             @Override

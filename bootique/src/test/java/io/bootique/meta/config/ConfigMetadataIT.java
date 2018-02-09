@@ -2,6 +2,7 @@ package io.bootique.meta.config;
 
 import com.google.inject.Module;
 import io.bootique.BQModule;
+import io.bootique.BQModuleId;
 import io.bootique.BQModuleProvider;
 import io.bootique.BQRuntime;
 import io.bootique.annotation.BQConfig;
@@ -36,6 +37,11 @@ public class ConfigMetadataIT {
             @Override
             public Map<String, Type> configs() {
                 return Collections.singletonMap("pf", TestConfig.class);
+            }
+
+            @Override
+            public BQModuleId id() {
+                return BQModuleId.of(Module.class);
             }
 
             @Override

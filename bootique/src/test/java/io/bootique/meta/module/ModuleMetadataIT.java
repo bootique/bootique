@@ -3,6 +3,7 @@ package io.bootique.meta.module;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import io.bootique.BQModule;
+import io.bootique.BQModuleId;
 import io.bootique.BQModuleProvider;
 import io.bootique.BQRuntime;
 import io.bootique.unit.BQInternalTestFactory;
@@ -47,10 +48,12 @@ public class ModuleMetadataIT {
     @Test
     public void testCustomNamedModule() {
         BQRuntime runtime = runtimeFactory.app().module(new BQModuleProvider() {
+            private final Module module = b -> {
+            };
+
             @Override
             public Module module() {
-                return b -> {
-                };
+                return module;
             }
 
             @Override
@@ -58,6 +61,11 @@ public class ModuleMetadataIT {
                 return BQModuleProvider.super
                         .moduleBuilder()
                         .name("mymodule");
+            }
+
+            @Override
+            public BQModuleId id() {
+                return BQModuleId.of(module);
             }
         }).createRuntime();
 
@@ -91,6 +99,11 @@ public class ModuleMetadataIT {
         @Override
         public Module module() {
             return new M1Module();
+        }
+
+        @Override
+        public BQModuleId id() {
+            return BQModuleId.of(M1Module.class);
         }
     }
 

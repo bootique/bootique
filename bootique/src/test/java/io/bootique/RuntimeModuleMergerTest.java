@@ -50,6 +50,7 @@ public class RuntimeModuleMergerTest {
 	private final BQModule createBQModule(Module m, Class<? extends Module>... overrides) {
 		BQModule bqModuleMock = mock(BQModule.class);
 		when(bqModuleMock.getModule()).thenReturn(m);
+		when(bqModuleMock.getModuleId()).thenReturn(BQModuleId.of(m.getClass()));
 		when(bqModuleMock.getOverrides()).thenReturn(Arrays.asList(overrides));
 		return bqModuleMock;
 	}
