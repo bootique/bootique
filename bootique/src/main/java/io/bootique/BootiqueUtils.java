@@ -27,8 +27,9 @@ final class BootiqueUtils {
             if (!processed.contains(moduleProvider)) {
                 processed.add(moduleProvider);
 
-                if (!moduleProvider.dependencies().isEmpty()) {
-                    processed.addAll(moduleProviderDependencies(moduleProvider.dependencies(), processed));
+                final Collection<BQModuleProvider> dependencies = moduleProvider.dependencies();
+                if (!dependencies.isEmpty()) {
+                    processed.addAll(moduleProviderDependencies(dependencies, processed));
                 }
             }
         }

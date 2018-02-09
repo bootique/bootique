@@ -7,9 +7,10 @@ import java.util.Collection;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -42,9 +43,7 @@ public class BootiqueUtilsTest {
         final Collection<BQModuleProvider> bqModuleProviders =
             BootiqueUtils.moduleProviderDependencies(singletonList(testModuleProvider1));
 
-        assertTrue(bqModuleProviders.contains(testModuleProvider1));
-        assertTrue(bqModuleProviders.contains(testModuleProvider2));
-        assertTrue(bqModuleProviders.contains(testModuleProvider3));
+        assertThat(bqModuleProviders, hasItems(testModuleProvider1, testModuleProvider2, testModuleProvider3));
         assertEquals(3, bqModuleProviders.size());
 
         verify(testModuleProvider1, new AtLeast(1)).dependencies();
@@ -66,9 +65,7 @@ public class BootiqueUtilsTest {
         final Collection<BQModuleProvider> bqModuleProviders =
             BootiqueUtils.moduleProviderDependencies(singletonList(testModuleProvider1));
 
-        assertTrue(bqModuleProviders.contains(testModuleProvider1));
-        assertTrue(bqModuleProviders.contains(testModuleProvider2));
-        assertTrue(bqModuleProviders.contains(testModuleProvider3));
+        assertThat(bqModuleProviders, hasItems(testModuleProvider1, testModuleProvider2, testModuleProvider3));
         assertEquals(3, bqModuleProviders.size());
 
         verify(testModuleProvider1, new AtLeast(1)).dependencies();
@@ -91,9 +88,7 @@ public class BootiqueUtilsTest {
         final Collection<BQModuleProvider> bqModuleProviders =
             BootiqueUtils.moduleProviderDependencies(singletonList(testModuleProvider1));
 
-        assertTrue(bqModuleProviders.contains(testModuleProvider1));
-        assertTrue(bqModuleProviders.contains(testModuleProvider2));
-        assertTrue(bqModuleProviders.contains(testModuleProvider3));
+        assertThat(bqModuleProviders, hasItems(testModuleProvider1, testModuleProvider2, testModuleProvider3));
         assertEquals(3, bqModuleProviders.size());
 
         verify(testModuleProvider1, new AtLeast(1)).dependencies();
