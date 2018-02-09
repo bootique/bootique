@@ -16,7 +16,7 @@ import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.toList;
-import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -57,10 +57,13 @@ public class BQModuleProviderChecker {
                 .map(ModuleMetadata::getName)
                 .collect(toList());
 
-        // There are few issues:
-        // Since we use junit4 - there are no assertAll
-        // Using class names for checking module existing - weak
-        moduleList.forEach(module -> assertThat(actualModules, hasItem(module.getSimpleName())));
+        final String[] expectedModules = moduleList
+                .stream()
+                .map(Class::getSimpleName)
+                .toArray(String[]::new);
+
+        // Using class names for checking module existing - weak.
+        assertThat(actualModules, hasItems(expectedModules));
     }
 
     /**
