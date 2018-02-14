@@ -23,7 +23,6 @@ jobs:
       if: branch != master OR type IN (pull_request)
       jdk: oraclejdk9
       script:
-        - echo "jdk9 build disabled" && exit 0
         - mvn clean verify
     - stage: build
       if: branch != master OR type IN (pull_request)
@@ -34,7 +33,6 @@ jobs:
       if: branch = master AND type IN (push)
       jdk: oraclejdk9
       script:
-        - echo "jdk9 build disabled" && exit 0
         - mvn clean verify
     - stage: build
       if: branch = master AND type IN (push)
