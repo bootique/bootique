@@ -2,13 +2,12 @@ language: java
 
 jdk:
   - oraclejdk8
-  - oraclejdk9
-
-script:
-  - mvn clean verify
 
 jobs:
   include:
+    - stage: test
+      script:
+        - mvn clean verify
     - stage: deploy
       if: branch = master AND type IN (push)
       jdk: oraclejdk8
