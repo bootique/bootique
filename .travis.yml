@@ -3,14 +3,16 @@ language: java
 jdk:
   - oraclejdk8
 
-branches:
-  only:
-    - master
-
 script:
-  - 'if [ "$TRAVIS_SECURE_ENV_VARS" = "true" ]; then mvn clean source:jar javadoc:javadoc deploy --settings travis_settings.xml; fi'
-  - 'if [ "$TRAVIS_SECURE_ENV_VARS" = "false" ]; then mvn clean verify; fi'
+  - mvn clean verify
 
+jobs:
+  include:
+    - stage: deploy
+      if: branch = master AND type IN (push)
+      jdk: oraclejdk8
+      script:
+        - mvn clean source:jar javadoc:javadoc deploy --settings travis_settings.xml
 
 # travis encrypt -r bootique/bootique "CI_DEPLOY_USERNAME='name'"
 # travis encrypt -r bootique/bootique "CI_DEPLOY_PASSWORD='password'"
