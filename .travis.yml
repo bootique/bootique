@@ -1,19 +1,44 @@
 language: java
 
-jdk:
-  - oraclejdk8
-
-stages:
-  - name: test
-  - name: deploy
-    if: branch = master AND type IN (push)
+#
+# Stage conditions
+#
+# current possible types: push, pull_request, api, cron
+# https://docs.travis-ci.com/user/conditional-builds-stages-jobs/#Left-hand-side
+#
+# 1. branch != master OR type IN (pull_request)
+# 2. branch = master AND type IN (push)
+#
+# ----------------------------------------------
+# |         | push | pull_request | api | cron |
+# ----------------------------------------------
+# |  master |  2   |       1      |     |      |
+# | !master |  1   |       1      |  1  |  1   |
+# ----------------------------------------------
+#
 
 jobs:
   include:
-    - stage: test
+    - stage: build
+      if: branch != master OR type IN (pull_request)
+      jdk: oraclejdk9
+      script:
+        - echo "jdk9 build disabled" && exit 0
+        - mvn clean verify
+    - stage: build
+      if: branch != master OR type IN (pull_request)
+      jdk: oraclejdk8
       script:
         - mvn clean verify
-    - stage: deploy
+    - stage: build
+      if: branch = master AND type IN (push)
+      jdk: oraclejdk9
+      script:
+        - echo "jdk9 build disabled" && exit 0
+        - mvn clean verify
+    - stage: build
+      if: branch = master AND type IN (push)
+      jdk: oraclejdk8
       script:
         - mvn clean source:jar javadoc:javadoc deploy --settings travis_settings.xml
 
