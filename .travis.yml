@@ -3,14 +3,17 @@ language: java
 jdk:
   - oraclejdk8
 
+stages:
+  - name: test
+  - name: deploy
+    if: branch = master AND type IN (push)
+
 jobs:
   include:
     - stage: test
       script:
         - mvn clean verify
     - stage: deploy
-      if: branch = master AND type IN (push)
-      jdk: oraclejdk8
       script:
         - mvn clean source:jar javadoc:javadoc deploy --settings travis_settings.xml
 
