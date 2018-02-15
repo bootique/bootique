@@ -1,6 +1,9 @@
 [![Build Status](https://travis-ci.org/bootique/bootique.svg)](https://travis-ci.org/bootique/bootique)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.bootique/bootique/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.bootique/bootique/)
 
+
+
+
 Bootique is a [minimally opinionated](https://medium.com/@andrus_a/bootique-a-minimally-opinionated-platform-for-modern-java-apps-644194c23872#.odwmsbnbh) 
 java launcher and integration technology. It is intended for building container-less runnable Java applications. 
 With Bootique you can create REST services, webapps, jobs, DB migration tasks, etc. and run them as if they were 
