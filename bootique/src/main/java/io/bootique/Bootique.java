@@ -5,6 +5,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.ProvisionException;
+import com.google.inject.spi.Message;
 import io.bootique.command.CommandOutcome;
 import io.bootique.env.DefaultEnvironment;
 import io.bootique.log.BootLogger;
@@ -356,7 +357,14 @@ public class Bootique {
         catch (CreationException ce) {
             o = processExceptions(ce.getCause(), ce);
         } catch (ProvisionException pe) {
-            o = processExceptions(pe.getCause(), pe);
+            // Actually we can provide multiple exceptions here
+            // since ProvisionException save all errors in error messages
+            final Throwable cause = pe.getErrorMessages()
+                    .stream()
+                    .findFirst()
+                    .map(Message::getCause)
+                    .orElse(null);
+            o = processExceptions(cause, pe);
         } catch (Throwable th) {
             o = processExceptions(th, th);
         }

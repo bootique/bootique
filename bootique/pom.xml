@@ -18,7 +18,7 @@
 	</description>
 
 	<properties>
-		<guice-version>4.0</guice-version>
+		<guice-version>4.1.0</guice-version>
 		<jackson-version>2.6.4</jackson-version>
 	</properties>
 
