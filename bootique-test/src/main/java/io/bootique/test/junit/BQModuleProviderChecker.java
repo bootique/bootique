@@ -21,8 +21,8 @@ import static org.junit.Assert.fail;
  * provider and related classes are wired properly, there are no typos in service descriptors, etc. Same usage:
  * <pre>
  * &#64;Test
- * public void testPresentInJar() {
- * 	   BQModuleProviderChecker.testPresentInJar(MyModuleProvider.class);
+ * public void testAutoLoadable() {
+ * 	   BQModuleProviderChecker.testAutoLoadable(MyModuleProvider.class);
  * }
  * </pre>
  *
@@ -40,9 +40,22 @@ public class BQModuleProviderChecker {
      * Verifies that the passed provider type is auto-loadable.
      *
      * @param provider provider type that we are testing.
+     * @deprecated since 0.25 since a better named {@link #testAutoLoadable(Class)}.
      */
+    @Deprecated
     public static void testPresentInJar(Class<? extends BQModuleProvider> provider) {
-        new BQModuleProviderChecker(provider).testPresentInJar();
+        testAutoLoadable(provider);
+    }
+
+
+    /**
+     * Verifies that the passed provider type is auto-loadable in a Bootique app.
+     *
+     * @param provider provider type being testing.
+     * @since 0.25
+     */
+    public static void testAutoLoadable(Class<? extends BQModuleProvider> provider) {
+        new BQModuleProviderChecker(provider).testAutoLoadable();
     }
 
     /**
@@ -65,7 +78,13 @@ public class BQModuleProviderChecker {
         return matchingProviders().findFirst().get();
     }
 
+    @Deprecated
     protected void testPresentInJar() {
+        testAutoLoadable();
+    }
+
+    protected void testAutoLoadable() {
+
         Long c = matchingProviders().collect(counting());
 
         switch (c.intValue()) {

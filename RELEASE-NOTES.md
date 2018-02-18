@@ -11,6 +11,7 @@
 * #199 Tests: swallowed BQDaemonTestFactory startup errors
 * #201 Speed up BQDaemonTestFactory
 * #211 BQRuntimeChecker - static helper for runtime assertions
+* #212 Rename "BQModuleProviderChecker.testPresentInJar" to "testAutoLoadable" 
 
 ## 0.24
 
