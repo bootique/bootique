@@ -17,6 +17,8 @@ public class OptionMetadata implements MetadataNode {
     private String shortName;
     private OptionValueCardinality valueCardinality;
     private String valueName;
+
+    // TODO: 'configResource' is deprecated... should configPath be deprecated too?
     private String configPath;
     private String defaultValue;
 
@@ -179,6 +181,7 @@ public class OptionMetadata implements MetadataNode {
          * an option and then associating it with one or more configs via
          * {@link io.bootique.BQCoreModuleExtender#addConfigOnOption(String, String)}.
          */
+        @Deprecated
         public Builder configResource(String configResourceId) {
             this.option.configResource = new ResourceFactory(configResourceId);
             this.option.configPath = null;

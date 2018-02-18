@@ -132,7 +132,6 @@ public class JsonNodeConfigurationFactoryProviderTest {
     public void testGet_SingleConfig_PropOverride_VarOverride_Nested() {
 
         Map<String, String> propOverrides = new HashMap<String, String>() {
-            private static final long serialVersionUID = 1L;
 
             {
                 put("b1.s", "SS");
@@ -141,7 +140,6 @@ public class JsonNodeConfigurationFactoryProviderTest {
         };
 
         Map<String, String> varOverrides = new HashMap<String, String>() {
-            private static final long serialVersionUID = 1L;
 
             {
                 put("B1_I", "58");

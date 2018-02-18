@@ -213,7 +213,8 @@ public class Bootique_CliOptionsIT {
                     .module(binder -> BQCoreModule.extend(binder)
                             .addOption("c.m.f", "opt-1")
                             .addOption("c.m.f", "opt-2")
-                            .addConfigResourceOption("classpath:io/bootique/config/configTest4Opt1.yml", "file-opt-1")
+                            .addOption(OptionMetadata.builder("file-opt-1").build())
+                            .addConfigOnOption("file-opt-1", "classpath:io/bootique/config/configTest4Opt1.yml")
                             .setVar("BQ_C_M_F", "var_c_m_f"))
                     .createRuntime();
 
@@ -232,7 +233,8 @@ public class Bootique_CliOptionsIT {
                         .addConfig("classpath:io/bootique/config/test4Copy.yml")
                         .addOption("c.m.f", "opt-1")
                         .addOption("c.m.f", "opt-2")
-                        .addConfigResourceOption("classpath:io/bootique/config/configTest4Opt1.yml", "file-opt-1")
+                        .addOption(OptionMetadata.builder("file-opt-1").build())
+                        .addConfigOnOption("file-opt-1", "classpath:io/bootique/config/configTest4Opt1.yml")
                         .addConfigOnOption("file-opt-1", "classpath:io/bootique/config/configTest4Decorate.yml"))
                 .createRuntime();
 
@@ -268,7 +270,8 @@ public class Bootique_CliOptionsIT {
     public void testOptionConfigFile_OverrideConfig() {
         BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--file-opt")
                 .module(binder -> BQCoreModule.extend(binder)
-                        .addConfigResourceOption("classpath:io/bootique/config/configTest4.yml", "file-opt"))
+                        .addOption(OptionMetadata.builder("file-opt").build())
+                        .addConfigOnOption("file-opt", "classpath:io/bootique/config/configTest4.yml"))
                 .createRuntime();
         Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
 
@@ -279,9 +282,11 @@ public class Bootique_CliOptionsIT {
     public void testMultipleOptionsConfigFiles_OverrideInCLIOrder() {
         BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--file-opt-2", "--file-opt-1")
                 .module(binder -> BQCoreModule.extend(binder)
-                        .addConfigResourceOption("classpath:io/bootique/config/configTest4Opt1.yml", "file-opt-1")
-                        .addConfigResourceOption("classpath:io/bootique/config/configTest4Opt2.yml", "file-opt-2")
-                        .addOption("c.m.f", "opt-1"))
+                        .addOption(OptionMetadata.builder("file-opt-1").build())
+                        .addOption(OptionMetadata.builder("file-opt-2").build())
+                        .addOption("c.m.f", "opt-1")
+                        .addConfigOnOption("file-opt-1", "classpath:io/bootique/config/configTest4Opt1.yml")
+                        .addConfigOnOption("file-opt-2", "classpath:io/bootique/config/configTest4Opt2.yml"))
                 .createRuntime();
         Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
 

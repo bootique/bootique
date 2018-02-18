@@ -37,7 +37,12 @@ public class CliConfigurationSource_WebConfigSourceIT {
 
 		String url = "http://localhost:12025/CliConfigurationSource_WebConfigSourceIT1.yml";
 		Cli cli = CliConfigurationSourceTest.createCli(url);
-		String config = new CliConfigurationSource(cli, mockBootLogger).get().map(configReader).collect(joining(";"));
+		String config = CliConfigurationSource.builder(mockBootLogger)
+				.cliConfigs(cli)
+				.build()
+				.get()
+				.map(configReader)
+				.collect(joining(";"));
 		assertEquals("g: h", config);
 	}
 }
