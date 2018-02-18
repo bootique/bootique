@@ -23,12 +23,11 @@ public class BQRuntimeCheckerTest {
         final BQRuntime runtime = testFactory.app().createRuntime();
         BQRuntimeChecker.testModulesLoaded(runtime, NonLoadedModule.class);
     }
-}
 
+    static class NonLoadedModule implements Module {
 
-class NonLoadedModule implements Module {
-
-    @Override
-    public void configure(Binder binder) {
+        @Override
+        public void configure(Binder binder) {
+        }
     }
 }

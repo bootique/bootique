@@ -6,6 +6,7 @@ import io.bootique.meta.module.ModuleMetadata;
 import io.bootique.meta.module.ModulesMetadata;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
@@ -24,6 +25,7 @@ public class BQRuntimeChecker {
      * @param runtime         a Bootique runtime whose contents we are testing.
      * @param expectedModules a vararg array of expected module types.
      */
+    @SafeVarargs
     public static void testModulesLoaded(BQRuntime runtime, Class<? extends Module>... expectedModules) {
 
         final ModulesMetadata modulesMetadata = runtime.getInstance(ModulesMetadata.class);
@@ -34,10 +36,9 @@ public class BQRuntimeChecker {
                 .map(ModuleMetadata::getName)
                 .collect(toList());
 
-        final String[] expectedModuleNames = new String[expectedModules.length];
-        for (int i = 0; i < expectedModules.length; i++) {
-            expectedModuleNames[i] = expectedModules[i].getSimpleName();
-        }
+        final String[] expectedModuleNames = Stream.of(expectedModules)
+                .map(Class::getSimpleName)
+                .toArray(String[]::new);
 
         // Using class names for checking module existing - weak.
         assertThat(actualModules, hasItems(expectedModuleNames));
