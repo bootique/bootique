@@ -27,13 +27,13 @@ import static java.util.stream.Collectors.joining;
  * A main launcher class of Bootique. To start a Bootique app, you may write your main method as follows:
  * <pre>
  * public static void main(String[] args) {
- * 	  Bootique.app(args).modules(...).exec().exit();
+ *     Bootique.app(args).modules(...).exec().exit();
  * }
  * </pre>
  * or
  * <pre>
  * public static void main(String[] args) {
- * 	  Bootique.app(args).autoLoadModules().exec().exit();
+ *     Bootique.app(args).autoLoadModules().exec().exit();
  * }
  * </pre>
  * or just use this class as the main app class.
