@@ -228,7 +228,7 @@ public class Bootique {
      * @return this instance of {@link Bootique}.
      */
     public Bootique modules(Module... modules) {
-        Arrays.asList(modules).forEach(m -> module(m));
+        Arrays.asList(modules).forEach(this::module);
         return this;
     }
 
