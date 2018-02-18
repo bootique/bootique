@@ -12,6 +12,7 @@ import io.bootique.log.DefaultBootLogger;
 import io.bootique.shutdown.DefaultShutdownManager;
 import io.bootique.shutdown.ShutdownManager;
 
+import java.lang.reflect.InvocationTargetException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,8 +57,9 @@ public class Bootique {
 
     static Module createModule(Class<? extends Module> moduleType) {
         try {
-            return moduleType.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+            return moduleType.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException |
+                NoSuchMethodException | InvocationTargetException e) {
             throw new RuntimeException("Error instantiating Module of type: " + moduleType.getName(), e);
         }
     }
