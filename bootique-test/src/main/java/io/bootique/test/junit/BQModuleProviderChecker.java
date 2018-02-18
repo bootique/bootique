@@ -42,12 +42,21 @@ public class BQModuleProviderChecker {
     }
 
     /**
+     * Verifies that the passed provider type is auto-loadable.
+     *
      * @param provider provider type that we are testing.
      */
     public static void testPresentInJar(Class<? extends BQModuleProvider> provider) {
         new BQModuleProviderChecker(provider).testPresentInJar();
     }
 
+    /**
+     * Verifies that runtime contains expected modules.
+     *
+     * @param bqRuntime
+     * @param moduleList
+     * @since 0.25
+     */
     public static void testModulesLoaded(BQRuntime bqRuntime, List<Class<? extends Module>> moduleList) {
         final ModulesMetadata modulesMetadata = bqRuntime.getInstance(ModulesMetadata.class);
 
@@ -67,7 +76,7 @@ public class BQModuleProviderChecker {
     }
 
     /**
-     * Checks that config metadata for the Module created by tested provider can be loaded without errors. Does not
+     * Checks that config metadata for the Module created by the tested provider can be loaded without errors. Does not
      * verify the actual metadata contents.
      *
      * @param provider provider type that we are testing.
