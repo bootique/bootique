@@ -113,7 +113,6 @@ public class Commands implements Module {
             return this;
         }
 
-        @SafeVarargs
         public final Builder add(Command... commands) {
             for (Command c : commands) {
                 this.commands.commands.add(c);
