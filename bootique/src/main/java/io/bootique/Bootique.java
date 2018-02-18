@@ -11,7 +11,6 @@ import io.bootique.log.BootLogger;
 import io.bootique.log.DefaultBootLogger;
 import io.bootique.shutdown.DefaultShutdownManager;
 import io.bootique.shutdown.ShutdownManager;
-import joptsimple.OptionException;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -416,26 +415,6 @@ public class Bootique {
 
     private String getArgsAsString() {
         return Arrays.stream(args).collect(joining(" "));
-    }
-
-    /**
-     * @param runtime runtime started by Bootique.
-     * @return the outcome of the command execution.
-     * @deprecated since 0.23. Previously this method existed to catch and process run exceptions, but it doesn't
-     * have wide enough scope for this, so exception processing was moved to {@link #exec()}.
-     */
-    @Deprecated
-    private CommandOutcome run(BQRuntime runtime) {
-        try {
-            return runtime.getRunner().run();
-        }
-        // handle startup Guice exceptions
-        catch (ProvisionException e) {
-
-            // TODO: a dependency on JOPT OptionException shouldn't be here
-            return (e.getCause() instanceof OptionException) ? CommandOutcome.failed(1, e.getCause().getMessage())
-                    : CommandOutcome.failed(1, e);
-        }
     }
 
     private BQRuntime createRuntime(Injector injector) {
