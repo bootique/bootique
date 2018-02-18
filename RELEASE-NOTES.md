@@ -10,6 +10,7 @@
 * #198 DI config binding API to facilitate configuration reuse
 * #199 Tests: swallowed BQDaemonTestFactory startup errors
 * #201 Speed up BQDaemonTestFactory
+* #211 BQRuntimeChecker - static helper for runtime assertions
 
 ## 0.24
 
