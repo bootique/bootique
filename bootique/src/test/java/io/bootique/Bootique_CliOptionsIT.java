@@ -170,7 +170,7 @@ public class Bootique_CliOptionsIT {
         Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
 
 
-        assertEquals("e", "e");
+        assertEquals("e", bean1.a);
         assertEquals("x", bean1.c.m.l);
         assertEquals(1, bean1.c.m.k);
     }

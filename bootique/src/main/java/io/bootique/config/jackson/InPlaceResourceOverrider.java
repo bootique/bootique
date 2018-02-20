@@ -26,11 +26,8 @@ public class InPlaceResourceOverrider implements Function<JsonNode, JsonNode> {
 
     @Override
     public JsonNode apply(JsonNode jsonNode) {
-        Optional<JsonNode> configNode = parser.apply(source);
-        if (configNode.isPresent()) {
-            return merger.apply(jsonNode, configNode.get());
-        } else {
-            return jsonNode;
-        }
+        return parser.apply(source)
+                .map(configNode -> merger.apply(jsonNode, configNode))
+                .orElse(jsonNode);
     }
 }

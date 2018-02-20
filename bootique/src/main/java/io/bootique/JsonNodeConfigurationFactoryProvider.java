@@ -35,6 +35,8 @@ import java.util.Set;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
+import static java.util.function.Function.*;
+
 /**
  * @since 0.17
  */
@@ -80,8 +82,7 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
 
         BinaryOperator<JsonNode> singleConfigMerger = new InPlaceLeftHandMerger(bootLogger);
 
-        Function<JsonNode, JsonNode> overrider = (n) -> n;
-        overrider = andCliOptionOverrider(overrider, parser, singleConfigMerger);
+        Function<JsonNode, JsonNode> overrider = andCliOptionOverrider(identity(), parser, singleConfigMerger);
 
         if (!properties.isEmpty()) {
             overrider = overrider.andThen(new InPlaceMapOverrider(properties, true, '.'));
