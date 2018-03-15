@@ -9,7 +9,7 @@
 
 	<groupId>io.bootique</groupId>
 	<artifactId>bootique-framework-parent</artifactId>
-	<version>0.26-SNAPSHOT</version>
+	<version>0.25-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>bootique-framework-parent</name>
