@@ -12,7 +12,7 @@
 * #201 Speed up BQDaemonTestFactory
 * #211 BQRuntimeChecker - static helper for runtime assertions
 * #212 Rename "BQModuleProviderChecker.testPresentInJar" to "testAutoLoadable" 
-* #188 Update Guice to 4.1.0
+* #188 Update Guice to 4.2.0
 
 ## 0.24
 
