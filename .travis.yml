@@ -38,7 +38,8 @@ jobs:
       if: branch = master AND type IN (push)
       jdk: oraclejdk8
       script:
-        - mvn clean source:jar javadoc:javadoc deploy --settings travis_settings.xml
+        - if [ -n "${CI_DEPLOY_USERNAME}" ]; then mvn clean source:jar javadoc:javadoc deploy --settings travis_settings.xml; fi
+        - if [ -z "${CI_DEPLOY_USERNAME}" ]; then mvn clean verify; fi
 
 # travis encrypt -r bootique/bootique "CI_DEPLOY_USERNAME='name'"
 # travis encrypt -r bootique/bootique "CI_DEPLOY_PASSWORD='password'"
