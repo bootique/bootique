@@ -9,7 +9,7 @@
 
 	<groupId>io.bootique</groupId>
 	<artifactId>bootique-framework-parent</artifactId>
-	<version>0.25-SNAPSHOT</version>
+	<version>0.25</version>
 	<packaging>pom</packaging>
 
 	<name>bootique-framework-parent</name>
@@ -24,7 +24,7 @@
 	<scm>
         <developerConnection>scm:git:ssh://git@github.com/bootique/bootique</developerConnection>
         <url>https://github.com/bootique/bootique</url>
-        <tag>HEAD</tag>
+        <tag>bootique-framework-parent-0.25</tag>
     </scm>
 
     <distributionManagement>
