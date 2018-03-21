@@ -13,7 +13,7 @@ The goal of this chapter is to write a simple REST app using Bootique. Let's sta
     <dependency>
       <groupId>io.bootique.bom</groupId>
       <artifactId>bootique-bom</artifactId>
-      <version>0.24</version>
+      <version>0.25</version>
       <type>pom</type>
       <scope>import</scope>
     </dependency>
