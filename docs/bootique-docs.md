@@ -214,19 +214,13 @@ Though generally this approach is sneered upon, as the authors of Bootique are s
 
 #### Configuration via Environment Variables
 
-Similarly to properties, Bootique allows to use _environment variables_ to specify/override configuration values. There are two approaches for matching variables and with configuration values - one based on the variable naming convention, and another - on explicit variable definitions. Let's start with the naming comvention. Bootique recognizes variables whose names start with `BQ_`, with the rest of the name interpreted as a property path separated with underscores. Variable names are case-insensitive. E.g.:
-
-```bash
-export BQ_MY_PROP1=valX
-export BQ_MY_PROP2=valY
-```
-
-While variables work similar to JVM properties, using them has advantages in certain situations:
+Bootique allows to use _environment variables_ to specify/override configuration values. While variables work similar to JVM properties, using them has advantages in certain situations:
 
 * They may be used to configure credentials, as unlike YAML they won't end up in version control, and unlike Java properties, they won't be visible in the process list.
 * They provide customized application environment without changing the launch script.
+* They are more user-friendly and appear in the app help.
 
-Very often using the naming convention for variable names is not practical. It looks "weird" (similar argument as we've made about "-D" above), it may be too long and unwieldy, and may potentially introduce conflicts due to its case-insensitive nature. Alternatively the app may explicitly map some variable names to configuration paths (notice that no "bq." prefix is necessary here to identify the configuration value):
+Do declare variables associated with configuration values, use the following API (notice that no "bq." prefix is necessary here to identify the configuration value):
 
 ```java
 class MyModule implements Module {
@@ -262,6 +256,8 @@ ENVIRONMENT
       P2
            Sets value of some other property.
 ```
+
+> Notice that previously used naming conventions to bind variables that start with `BQ_*` to config values are deprecated and support for them will be removed soon. Such approach was causing too much unexpected behavior in non-containerized environments. The alternative is explicitly declared variables described above.
 
 #### Polymorphic Configuration Objects
 
