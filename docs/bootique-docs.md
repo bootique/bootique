@@ -94,7 +94,7 @@ public class MyModuleProvider implements BQModuleProvider {
 }
 ```
 
-If in your Module you are planning to redefine any services from the upstream modules, specify those upstream modules in the `overrides()` collection.
+If in your Module you are planning to redefine any services from the upstream modules, specify those upstream modules in the `overrides()` collection. Though overrides are rarely needed, and in most cases can be replaced with service decomposition.
 
 ### Chapter 7. Configuration and Configurable Factories
 
@@ -120,9 +120,9 @@ jetty:
     port: 12009
 ```
 
-While this is not strictly required, as a rule the top-level keys in the file belong to configuration objects of individual modules. In the example above "log" subtree configures `bootique-logback` module, while "jetty" subtree configures `bootique-jetty-module`. For standard modules, refer to module-specific documentation on the structure of the supported configuration. Here we'll discuss how to build your own configuration-aware module.
+While this is not strictly required, as a rule the top-level keys in the file belong to configuration objects of individual modules. In the example above "log" subtree configures `bootique-logback` module, while "jetty" subtree configures `bootique-jetty`. For standard modules, refer to module-specific documentation on the structure of the supported configuration. Here we'll discuss how to build your own configuration-aware module.
 
-Bootique allows the Module to read its specific configuration subree as an object of the type defined in the Module. Very often such an object is written as a factory that contains a bunch of setters for the configuration properties, and a factory method to produce some service that a Module is interested in based on this configuration. Here is an example factory:
+Bootique allows each Module to read its specific configuration subree as an object of the type defined in the Module. Very often such an object is written as a factory that contains a bunch of setters for the configuration properties, and a factory method to produce some service that a Module is interested in based on this configuration. Here is an example factory:
 
 ```java
 public class MyFactory {
