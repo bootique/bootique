@@ -98,11 +98,11 @@ If in your Module you are planning to redefine any services from the upstream mo
 
 ### Chapter 7. Configuration and Configurable Factories
 
-Bootique Modules obtain their configuration in a form of "factory objects". We'll show some examples shortly. For now let's focus on the big picture, namely the fact that Bootique app configuration is multi-layered and roughly follows the sequence of "code - config files (contributed) - config files (CLI) - overrides". "Code" is the default values that are provided in constructors of factory objects. Config files overlay those defaults with their own values. Config files is where the bulk of configuration usually stored and can be either contributed in the code, or specified on the command line. Finally config values may be further overridden via Java properties and/or environment variables.
+Bootique Modules obtain their configuration in a form of "factory objects". We'll show some examples shortly. For now let's focus on the big picture, namely the fact that Bootique app configuration is multi-layered and roughly follows the sequence of "code - config files (contributed) - config files (CLI) - overrides". "Code" is the default values that are provided in constructors of factory objects. Config files overlay those defaults with their own values. Config files can be either contributed in the code, or specified on the command line. Files is where the bulk of configuration usually stored. Finally config values may be further overridden via Java properties and/or environment variables.
 
 #### Configuration via YAML Files
 
-Here is a simple example of a config file:
+Format of configuration file can be either JSON or YAML. For simplicity we'll focus on YAML format, but the two are interchnageable. Here is an example config file:
 
 ```yaml
 log:
@@ -114,13 +114,12 @@ log:
 
 jetty:
   context: /myapp
-  connector:
-    port: 12009
+  connectors:
+    - port: 12009
 ```
+While not strictly required, as a rule the top-level keys in the file belong to configuration objects of individual modules. In the example above "log" subtree configures `bootique-logback` module, while "jetty" subtree configures `bootique-jetty`. For standard modules refer to module-specific documentation on the structure of the supported configuration (or run your app `-H` flag to print supported config to the console). Here we'll discuss how to build your own configuration-aware module.
 
-While this is not strictly required, as a rule the top-level keys in the file belong to configuration objects of individual modules. In the example above "log" subtree configures `bootique-logback` module, while "jetty" subtree configures `bootique-jetty`. For standard modules, refer to module-specific documentation on the structure of the supported configuration. Here we'll discuss how to build your own configuration-aware module.
-
-Bootique allows each Module to read its specific configuration subree as an object of the type defined in the Module. Very often such an object is written as a factory that contains a bunch of setters for the configuration properties, and a factory method to produce some service that a Module is interested in based on this configuration. Here is an example factory:
+Bootique allows each Module to read its specific configuration subree as an object of the type defined in the Module. Very often such an object is written as a factory that contains a bunch of setters for configuration properties, and a factory method to produce some "service" that a Module is interested in. Here is an example factory:
 
 ```java
 public class MyFactory {
@@ -143,7 +142,7 @@ public class MyFactory {
 }
 ```
 
-The factory contains configuration property declarations, as well as public setters for these properties (you can create the getters if you want as well. While this is not strictly required, it may be useful. E.g. for unit tests). Now let's take a look at the Module class:
+The factory contains configuration property declarations, as well as public setters for these properties (You can create getters as well. It is not strictly required, but may be useful for unit tests, etc.). Now let's take a look at the Module class:
 
 ```java
 public class MyModule extends ConfigModule {
@@ -173,18 +172,17 @@ A few points to note here:
 * `@Provides` annotation is a Guice way of marking a Module method as a "provider" for a certain type of injectable service. All its parameters are themselves injectable objects.
 * `ConfigurationFactory` is the class used to bind a subtree of the app YAML configuration to a given Java object (in our case - MyFactory). The structure of MyFactory is very simple here, but it can be as complex as needed, containing nested objects, arrays, maps, etc. Internally Bootique uses [Jackson framework](http://wiki.fasterxml.com/JacksonHome) to bind YAML to a Java class, so all the features of Jackson can be used to craft configuration.
 
-#### YAML File Loading
+#### Configuration File Loading
 
-There are a few ways to pass a config file to a Bootique app that roughly fall in two categories - files contributed via DI and files passed on command line. Let's discuss them one by one: 
+There are a number of ways to pass a config file to a Bootique app, roghly falling in two categories - files contributed via DI and files passed on command line. Let's discuss them one by one: 
 
 * Contributing a config file via DI:
 
 ```java
-BQCoreModule.extend(binder)
-    .addConfig("classpath:com/foo/default.yml");
+BQCoreModule.extend(binder).addConfig("classpath:com/foo/default.yml");
 ```
 
-A primary motivation for this style is to load application default configuration, with YAML files often embedded in the app and read from the classpath (as suggested by the "classpath:.." URL in the example). More then one configuration can be contributed. E.g. individual modules might load their own defaults. Multiple contributed configs are combined in a single config tree by the runtime. The order in which contributed configs are combined is undefined, so make sure there are no conflicts between them. If there are, consider replacing multiple conflicting configs with a single config.
+A primary motivation for this style is to provide application default configuration, with YAML files often embedded in the app and read from the classpath (as suggested by the "classpath:.." URL in the example). More then one configuration can be contributed. E.g. individual modules might load their own defaults. Multiple configs are combined in a single config tree by the runtime. The order in which this combination happens is undefined, so make sure there are no conflicts between them. If there are, consider replacing multiple conflicting configs with a single config.
 
 * Conditionally contributing a config file via DI. It is possible to make DI configuration inclusion conditional on the presence of a certain command line option:
 
@@ -198,7 +196,7 @@ BQCoreModule.extend(binder)
       .addConfigOnOption(o.getName(), "classpath:a/b/qa.yml");
 ```
 
-* Specifiying a config file on command line. Each Bootique app support `--config` option that takes a configuration file as a parameter. To specify more than one file, use `--config` option multiple times. Configurations will be loaded and merged together in the order of their appearance on the command line. 
+* Specifiying a config file on command line. Each Bootique app support `--config` option that takes a configuration file as its parameter. To specify more than one file, use `--config` option multiple times. Configurations will be loaded and merged together in the order of their appearance on the command line. 
 
 * Specifying a single config value via a custom option:
 
