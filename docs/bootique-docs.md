@@ -647,11 +647,11 @@ public class Application {
 
 ### Chapter 13. Bootique and Testing
 
-Bootique is uniquely suitable to be used as a test framework. Within a single test it allows you to start and stop multiple embedded stacks with distinct set of modules and distinct YAML configurations, making it a powerful tool for _integration testing._ Bootique core module and some other modules provide companion test extensions that contain reusable test stacks.
+Bootique is uniquely suitable to be used as a test framework. Within a single test it allows you to start and stop multiple embedded Bootique runtimes, each with distinct set of modules and distinct YAML configurations, making it a powerful tool for _integration testing._ Bootique core module and some other modules provide companion test extensions that contain reusable test stacks.
 
 ### Chapter 14. Creating Test Stacks
 
-To use basic Bootique test framework, import the following module in the "test" scope:
+For module-specific "companion" test frameworks (e.g. `bootique-jdbc-test`), check documentation of those modules or GitHub. Here we'll demonstrate the core test framework. To use it, import the following module in the "test" scope:
 
 ```xml
 <dependency>
@@ -661,51 +661,26 @@ To use basic Bootique test framework, import the following module in the "test" 
 </dependency>
 ```
 
-For module-specific "companion" test frameworks (e.g. `bootique-jetty-test`), check documentation of those modules or GitHub.
-
-While there are a number of built-in and custom stacks that you can create, they usually fall into two broad categories - "foreground" - those that are running in the main test thread, and "background" - those that are running in an isolated thread pool (usually network services like Jetty). To create a foreground stack, use `BQTestFactory`, annotated with `@Rule` or `@ClassRule`:
+Then create a `BQTestFactory` in your test, annotated with either `@Rule` or `@ClassRule`:
 
 ```java
-public class ForegroundTest {
+public class MyTest {
 
     @Rule
     public BQTestFactory testFactory = new BQTestFactory();
 
-    @Test
-    public void testXyz() {
-        BQRuntime runtime = testFactory.app("--help").createRuntime();
-        // ...
-    }
 }
 ```
 
-As you see, the test class declares a factory, and test methods can create `BQRuntime` instances with different command-line arguments, including commands (`--help` in this example), configuration file (`"--config=some.yml"`), etc. So your test runtime will behave just like a real Java app and will allow to verify various scenarios.
+You can use the factory to create test runtimes. Each runtime is essentially an entire Bootique application represented as a single object. It can be used to inspect DI contents, execute commands (including those that start background processes, such as `--server` and `--schedule`), etc. You don't need to stop the runtime explicitly. `BQTestFactory` will take care of shutdown through JUnit lifecycle.
 
-If we need to start the app on background (e.g. we are starting a webserver), it needs to be started with `BQDaemonTestFactory` instead of `BQTestFactory`:
-
-```java
-public class BackgroundTest {
-
-    @Rule
-    public BQDaemonTestFactory testFactory = new BQDaemonTestFactory();
-    
-    @Test
-    public void testBackground() {
-        BQRuntime runtime = testFactory.app("--server").start();
-        // ... 
-    }
-}
-```
-
-You don't need to stop it explicitly. `BQDaemonTestFactory` will take care of it via JUnit lifecycle.
-
-The next thing you may want to do is to add various modules to the basic stack (either foreground or background). `testFactory.app()` returns a builder object that allows loading extra modules to add or override runtime services. This API is designed to mimic `Bootique` class, so that your tests look similar to actual applications:
+`testFactory.app()` returns a builder object that mimics the API of `Bootique` class, with a few test-related extension. E.g. it allows to load extra modules, etc. 
 
 ```java
 @Test
 public void testAbc() {
 
-    testFactory.app("--help")
+    BQRuntime runtime = testFactory.app("--help")
         // ensure all classpath modules are included
         .autoLoadModules()
         // add an adhoc module specific to the test
@@ -715,9 +690,23 @@ public void testAbc() {
 }
 ```
 
+If you don't care about the runtime, but rather want to run a command, you call `run()` at the end (which is an alias to `createRuntime().run()`):
+
+```java
+@Test
+public void testAbc() {
+
+    CommandOutcome result = testFactory.app("--server")
+        .autoLoadModules()
+        .run();
+    // ... 
+}
+```
+
+
 ### Chapter 15. Common Test Scenarios
 
-Now that we can start stacks on foreground or background, we can finally write some tests. Some things that can be tested include runtime services with real dependencies, standard output of full Bootique applications (i.e. the stuff that would be printed to console if this were a real app), network services using real network connections (e.g. your REST API's), and so on. Some examples are given below, outlining common techniques.
+Among the things that can be tested are runtime services with real dependencies, standard output of full Bootique applications (i.e. the stuff that would be printed to the console if this were a real app), network services using real network connections (e.g. your REST API's), and so on. Some examples are given below, outlining common techniques.
 
 #### Testing Services that are Part of Bootique Runtime
 
@@ -736,13 +725,13 @@ public void testService() {
 
 #### Testing Network Services
 
-If a test stack is started on the background, and if runs a web server (like `bootique-jetty-test`) or some other network service, it can be accessed via a URL. E.g.:
+If a test command starts a web server or some other network service, it can be accessed via a URL right after running the server. E.g.:
 
 ```java
 @Test
 public void testServer() {
 
-    BQRuntime runtime = testFactory.app("--server").start();
+    testFactory.app("--server").run();
 
     // using JAX-RS client API
     WebTarget base = ClientBuilder.newClient().target("http://localhost:8080/");
@@ -764,7 +753,6 @@ public void testCommand() {
     CommandOutcome outcome = testFactory
         .app("--help")
         .bootLogger(io.getBootLogger())
-        .createRuntime()
         .run();
 
     assertEquals(0, outcome.getExitCode());
@@ -779,8 +767,8 @@ When you are writing your own modules, you may want to check that they are confi
 
 ```java
 @Test
-public void testPresentInJar() {
-    BQModuleProviderChecker.testPresentInJar(MyModuleProvider.class);
+public void testAutoLoadable() {
+    BQModuleProviderChecker.testAutoLoadable(MyModuleProvider.class);
 }
 ```
 
