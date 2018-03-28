@@ -647,11 +647,11 @@ public class Application {
 
 ### Chapter 13. Bootique and Testing
 
-Bootique is uniquely suitable to be used as a test framework. Within a single test it allows you to start and stop multiple embedded Bootique runtimes, each with distinct set of modules and distinct YAML configurations, making it a powerful tool for _integration testing._ Bootique core module and some other modules provide companion test extensions that contain reusable test stacks.
+Bootique is uniquely suitable to be used as a test framework. Within a single test it allows you to start and stop multiple embedded Bootique runtimes, each with distinct set of modules and distinct YAML configurations, making it a powerful tool for _integration testing._ 
 
 ### Chapter 14. Creating Test Runtimes
 
-Here we'll demonstrate the core test framework. For module-specific "companion" test frameworks (e.g. `bootique-jdbc-test`), check documentation of those modules or GitHub. To use the core framework, import the following module in the "test" scope:
+Here we'll demonstrate the use of the core test framework. For module-specific test APIs (e.g. `bootique-jdbc-test`), check documentation of those modules or GitHub. To use the core framework, import the following module in the "test" scope:
 
 ```xml
 <dependency>
@@ -661,7 +661,7 @@ Here we'll demonstrate the core test framework. For module-specific "companion" 
 </dependency>
 ```
 
-Then create a `BQTestFactory` in each integration test, annotated with either `@Rule` (or `@ClassRule` if you are planning to create runtimes that span all tests in a give class) :
+Then create a `BQTestFactory` in each integration test, annotated with `@Rule` (or `@ClassRule` if you are planning to create a single runtime for all tests in a given class) :
 
 ```java
 public class MyTest {
@@ -671,9 +671,9 @@ public class MyTest {
 }
 ```
 
-You can use the factory to create test runtimes. Each runtime is essentially an entire Bootique application represented as a single object. It can be used to inspect DI contents, execute commands (including those that start background processes, such as `--server` and `--schedule`), etc. You don't need to stop the runtime explicitly. `BQTestFactory` will take care of shutdown through JUnit lifecycle.
+Now use the factory to create test runtimes. Each runtime object is essentially an entire Bootique application. It can be used to inspect DI contents, execute a command (including commands that start background processes, such as `--server` and `--schedule`), etc. You don't need to stop the runtime explicitly. `BQTestFactory` will take care of shutdown through JUnit lifecycle.
 
-`testFactory.app()` returns a builder object that mimics the API of `Bootique` class, with a few test-related extension. E.g. it allows to load extra modules, etc. 
+`testFactory.app()` returns a builder that mimics the API of `Bootique` class, with a few test-related extensions. E.g. it allows to load extra modules, etc. 
 
 ```java
 @Test
@@ -689,7 +689,7 @@ public void testAbc() {
 }
 ```
 
-If you don't care about the runtime, but rather want to run a command, you call `run()` at the end (which is an alias to `createRuntime().run()`):
+If you don't need the runtime instance, but rather want to run a command, you'd call `run()` instead of `createRuntime()` (`run()` is an alias for `createRuntime().run()`):
 
 ```java
 @Test
@@ -707,7 +707,7 @@ public void testAbc() {
 
 Among the things that can be tested are runtime services with real dependencies, standard output of full Bootique applications (i.e. the stuff that would be printed to the console if this were a real app), network services using real network connections (e.g. your REST API's), and so on. Some examples are given below, outlining common techniques.
 
-#### Testing Services that are Part of Bootique Runtime
+#### Testing Injectable Services
 
 Services can be obtained from test runtime, their methods called, and assertions made about the results of the call:
 
