@@ -425,7 +425,7 @@ Most often then not it makes sense to turn the application class into a Module t
 public class Application implements Module {
 
    public static void main(String[] args) {
-      Bootique.app(args).module(Application.class).autoLoadModules().run();
+      Bootique.app(args).module(Application.class).autoLoadModules().exec().exit();
    }
 
    public void configure(Binder binder) {
