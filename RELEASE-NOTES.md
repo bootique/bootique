@@ -1,4 +1,4 @@
-## 0.25
+## 0.25 
 
 * #131 Complex command invocation structures
 * #178 Config CLI options order
