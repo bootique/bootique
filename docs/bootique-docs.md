@@ -257,7 +257,7 @@ Bootique allows to use _environment variables_ to specify/override configuration
 * They provide customized application environment without changing the launch script and are ideal for containerized and other virtual environments.
 * They are more user-friendly and appear in the app help.
 
-Do declare variables associated with configuration values, use the following API (notice that no "bq." prefix is necessary here to identify the configuration value):
+To declare variables associated with configuration values, use the following API (notice that no "bq." prefix is necessary here to identify the configuration value):
 
 ```java
 class MyModule implements Module {
