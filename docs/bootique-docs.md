@@ -254,7 +254,7 @@ Though generally this approach is sneered upon, as the authors of Bootique are s
 Bootique allows to use _environment variables_ to specify/override configuration values. While variables work similar to JVM properties, using them has advantages in certain situations:
 
 * They may be used to configure credentials, as unlike YAML they won't end up in version control, and unlike Java properties, they won't be visible in the process list.
-* They provide customized application environment without changing the launch script.
+* They provide customized application environment without changing the launch script and are ideal for containerized and other virtual environments.
 * They are more user-friendly and appear in the app help.
 
 Do declare variables associated with configuration values, use the following API (notice that no "bq." prefix is necessary here to identify the configuration value):
