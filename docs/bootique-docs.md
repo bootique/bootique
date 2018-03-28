@@ -196,7 +196,7 @@ BQCoreModule.extend(binder)
       .addConfigOnOption(o.getName(), "classpath:a/b/qa.yml");
 ```
 
-* Specifiying a config file on command line. Each Bootique app support `--config` option that takes a configuration file as its parameter. To specify more than one file, use `--config` option multiple times. Configurations will be loaded and merged together in the order of their appearance on the command line. 
+* Specifiying a config file on command line. Each Bootique app supports `--config` option that takes a configuration file as its parameter. To specify more than one file, use `--config` option multiple times. Configurations will be loaded and merged together in the order of their appearance on the command line. 
 
 * Specifying a single config value via a custom option:
 
