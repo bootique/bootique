@@ -649,9 +649,9 @@ public class Application {
 
 Bootique is uniquely suitable to be used as a test framework. Within a single test it allows you to start and stop multiple embedded Bootique runtimes, each with distinct set of modules and distinct YAML configurations, making it a powerful tool for _integration testing._ Bootique core module and some other modules provide companion test extensions that contain reusable test stacks.
 
-### Chapter 14. Creating Test Stacks
+### Chapter 14. Creating Test Runtimes
 
-For module-specific "companion" test frameworks (e.g. `bootique-jdbc-test`), check documentation of those modules or GitHub. Here we'll demonstrate the core test framework. To use it, import the following module in the "test" scope:
+Here we'll demonstrate the core test framework. For module-specific "companion" test frameworks (e.g. `bootique-jdbc-test`), check documentation of those modules or GitHub. To use the core framework, import the following module in the "test" scope:
 
 ```xml
 <dependency>
@@ -661,7 +661,7 @@ For module-specific "companion" test frameworks (e.g. `bootique-jdbc-test`), che
 </dependency>
 ```
 
-Then create a `BQTestFactory` in your test, annotated with either `@Rule` or `@ClassRule`:
+Then create a `BQTestFactory` in each integration test, annotated with either `@Rule` (or `@ClassRule` if you are planning to create runtimes that span all tests in a give class) :
 
 ```java
 public class MyTest {
