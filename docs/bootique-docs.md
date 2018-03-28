@@ -668,7 +668,6 @@ public class MyTest {
 
     @Rule
     public BQTestFactory testFactory = new BQTestFactory();
-
 }
 ```
 
@@ -680,7 +679,7 @@ You can use the factory to create test runtimes. Each runtime is essentially an 
 @Test
 public void testAbc() {
 
-    BQRuntime runtime = testFactory.app("--help")
+    BQRuntime runtime = testFactory.app()
         // ensure all classpath modules are included
         .autoLoadModules()
         // add an adhoc module specific to the test
