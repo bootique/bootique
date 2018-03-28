@@ -174,7 +174,7 @@ A few points to note here:
 
 #### Configuration File Loading
 
-There are a number of ways to pass a config file to a Bootique app, roghly falling in two categories - files contributed via DI and files passed on command line. Let's discuss them one by one: 
+There are a number of ways to pass a config file to a Bootique app, roughly falling in two categories - files contributed via DI and files passed on command line. Let's discuss them one by one: 
 
 * Contributing a config file via DI:
 
