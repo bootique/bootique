@@ -539,6 +539,26 @@ public CommandOutcome run(Cli cli) {
 }
 ```
 
+#### Decorating Commands
+
+Each command typically does a single well-defined thing, such as starting a web server, executing a job, etc. But very often in addition to that main thing you need to do other things. E.g. when a web server is started, you might also want to run a few more commands:
+
+* Before starting the server, run a health check to verify that any external services the app might depend upon are alive.
+* Start a job scheduler in the background.
+* Start a monitoring "heartbeat" thread.
+
+To run all these "secondary" commands when the main command is invoked, Bootique provides command decorator API. First you create a decorator policy object that specifies one or more secondary commands and their invocation strategy (either *before* the main command, or *in parallel* with it). Second you "decorate" the main command with that policy:
+
+```java
+CommandDecorator extraCommands = CommandDecorator
+  .beforeRun(CustomHealthcheckCommand.class)
+  .alsoRun(ScheduleCommand.class)
+  .alsoRun(HeartbeatCommand.class);
+
+BQCoreModule.extend(binder).decorateCommand(ServerCommand.class, extraCommands);
+```
+Based on the specified policy Bootique figures out the sequence of execution and runs the main and the secondary commands.
+
 ### Chapter 11. Options
 
 #### Simple Options
