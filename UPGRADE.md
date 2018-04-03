@@ -19,7 +19,8 @@ your app launch environment (be it IDE or server/Docker/cloud) to see if you sti
 Switch to explicitly declared variables instead:
 
 ```java
-// FWIW, you can use your old BQ_ var name here if you feel like it. Just need to bind it explicitly.
+// FWIW, you can use your old BQ_ var name here if you feel like it.
+// Just need to bind it explicitly.
 BQCoreModule.extend(bidner).declareVar("a.b.c", "MY_VAR");
 ```
 
