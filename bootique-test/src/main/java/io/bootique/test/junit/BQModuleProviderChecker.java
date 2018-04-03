@@ -37,18 +37,6 @@ public class BQModuleProviderChecker {
     }
 
     /**
-     * Verifies that the passed provider type is auto-loadable.
-     *
-     * @param provider provider type that we are testing.
-     * @deprecated since 0.25 since a better named {@link #testAutoLoadable(Class)}.
-     */
-    @Deprecated
-    public static void testPresentInJar(Class<? extends BQModuleProvider> provider) {
-        testAutoLoadable(provider);
-    }
-
-
-    /**
      * Verifies that the passed provider type is auto-loadable in a Bootique app.
      *
      * @param provider provider type being testing.
@@ -77,12 +65,7 @@ public class BQModuleProviderChecker {
     protected BQModuleProvider matchingProvider() {
         return matchingProviders().findFirst().get();
     }
-
-    @Deprecated
-    protected void testPresentInJar() {
-        testAutoLoadable();
-    }
-
+    
     protected void testAutoLoadable() {
 
         Long c = matchingProviders().collect(counting());
