@@ -24,6 +24,12 @@ Switch to explicitly declared variables instead:
 BQCoreModule.extend(bidner).declareVar("a.b.c", "MY_VAR");
 ```
 
+* [bootique-jetty #75](https://github.com/bootique/bootique-jetty/issues/75): As a part of deprecated
+API removal `bootique-jetty-test` module was removed. It is enough to use
+`bootique-test` as described in the [0.25 blog](https://blog.bootique.io/the-state-of-bootique-early-2018-part-1-ed6806d9c99a)
+("Test API Improvements" section).
+
+
 ## 0.25
 
 * [bootique-jdbc #48](https://github.com/bootique/bootique-jdbc/issues/48): This affects all users of `bootique-jdbc`,
