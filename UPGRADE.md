@@ -29,6 +29,12 @@ API removal `bootique-jetty-test` module was removed. It is enough to use
 `bootique-test` as described in the [0.25 blog](https://blog.bootique.io/the-state-of-bootique-early-2018-part-1-ed6806d9c99a)
 ("Test API Improvements" section).
 
+* [bootique-undertow #13](https://github.com/bootique/bootique-undertow/issues/13): As a part of deprecated
+API removal `bootique-undertow-test` module was removed. It is enough to use
+`bootique-test` as described in the [0.25 blog](https://blog.bootique.io/the-state-of-bootique-early-2018-part-1-ed6806d9c99a)
+("Test API Improvements" section).
+
+
 
 ## 0.25
 
