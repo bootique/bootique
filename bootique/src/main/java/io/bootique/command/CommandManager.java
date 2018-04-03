@@ -1,6 +1,5 @@
 package io.bootique.command;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -10,28 +9,6 @@ import java.util.Optional;
  * @since 0.12
  */
 public interface CommandManager {
-
-    /**
-     * Returns all public commands excluding the default.
-     *
-     * @return all public commands excluding default.
-     * @since 0.25
-     * @deprecated since 0.25 use {@link #getAllCommands()} and filter the result accordingly.
-     */
-    @Deprecated
-    default Map<String, Command> getCommands() {
-
-        Map<String, ManagedCommand> allCommands = getAllCommands();
-        Map<String, Command> publicNonDefault = new HashMap<>((int) (allCommands.size() / 0.75));
-
-        allCommands.forEach((n, mc) -> {
-            if (!mc.isHidden() && !mc.isDefault()) {
-                publicNonDefault.put(n, mc.getCommand());
-            }
-        });
-
-        return publicNonDefault;
-    }
 
     /**
      * Returns a map of {@link ManagedCommand} instances by command name, including all known commands: public, private,
@@ -67,24 +44,6 @@ public interface CommandManager {
     }
 
     /**
-     * Returns optional default command.
-     *
-     * @return optional default command for this runtime.
-     * @since 0.20
-     * @deprecated since 0.25 in favor of {@link #getPublicDefaultCommand()}.
-     */
-    @Deprecated
-    default Optional<Command> getDefaultCommand() {
-        for (ManagedCommand mc : getAllCommands().values()) {
-            if (mc.isDefault()) {
-                return Optional.of(mc.getCommand());
-            }
-        }
-
-        return Optional.empty();
-    }
-
-    /**
      * Returns optional public default command.
      *
      * @return optional public default command for this runtime.
@@ -94,24 +53,6 @@ public interface CommandManager {
 
         for (ManagedCommand mc : getAllCommands().values()) {
             if (mc.isDefault() && !mc.isHidden()) {
-                return Optional.of(mc.getCommand());
-            }
-        }
-
-        return Optional.empty();
-    }
-
-    /**
-     * Returns optional help command.
-     *
-     * @return optional help command for this runtime.
-     * @since 0.20
-     * @deprecated since 0.25 in favor of {@link #getPublicHelpCommand()}.
-     */
-    @Deprecated
-    default Optional<Command> getHelpCommand() {
-        for (ManagedCommand mc : getAllCommands().values()) {
-            if (mc.isHelp()) {
                 return Optional.of(mc.getCommand());
             }
         }

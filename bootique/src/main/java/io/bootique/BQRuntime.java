@@ -9,10 +9,7 @@ import io.bootique.log.BootLogger;
 import io.bootique.run.Runner;
 import io.bootique.shutdown.ShutdownManager;
 
-import java.util.Arrays;
 import java.util.Objects;
-
-import static java.util.stream.Collectors.joining;
 
 /**
  * A wrapper around launcher DI container.
@@ -60,16 +57,6 @@ public class BQRuntime {
     }
 
     /**
-     * @return an instance of {@link Runner} DI singleton.
-     * @deprecated since 0.23. Just use 'getInstance(Runner.class)' or {@link #run()} if you simply need to execute the
-     * run sequence.
-     */
-    @Deprecated
-    public Runner getRunner() {
-        return getInstance(Runner.class);
-    }
-
-    /**
      * Locates internal {@link Runner} and calls its run method.
      *
      * @return outcome of the runner execution.
@@ -81,42 +68,6 @@ public class BQRuntime {
 
     public String[] getArgs() {
         return injector.getInstance(Key.get(String[].class, Args.class));
-    }
-
-    /**
-     * @return a String representation of CLI arguments array
-     * @deprecated since 0.23 this method is unused by Bootique.
-     */
-    @Deprecated
-    public String getArgsAsString() {
-        return Arrays.asList(getArgs()).stream().collect(joining(" "));
-    }
-
-    /**
-     * Registers a JVM shutdown hook that is delegated to {@link ShutdownManager}.
-     *
-     * @see Bootique#exec()
-     * @since 0.11
-     * @deprecated since 0.23 unused as {@link Bootique} class handles JVM-level shutdown events. BQRuntime should not
-     * get involved in that.
-     */
-    @Deprecated
-    public void addJVMShutdownHook() {
-
-        // resolve all Injector services needed for shutdown eagerly and outside
-        // shutdown thread to ensure that shutdown hook will not fail due to
-        // misconfiguration, etc.
-
-        ShutdownManager shutdownManager = injector.getInstance(ShutdownManager.class);
-        BootLogger logger = getBootLogger();
-
-        Runtime.getRuntime().addShutdownHook(new Thread("bootique-shutdown") {
-
-            @Override
-            public void run() {
-                shutdown(shutdownManager, logger);
-            }
-        });
     }
 
     /**

@@ -48,7 +48,7 @@ public class JsonNodeConfigurationFactoryProviderIT {
 				Collections.emptySet(),
                 runtime.getInstance(Cli.class));
 
-		JsonNode config = provider.loadConfiguration(Collections.emptyMap(), Collections.emptyMap());
+		JsonNode config = provider.loadConfiguration(Collections.emptyMap());
 		assertEquals("{}", config.toString());
 	}
 
@@ -64,7 +64,7 @@ public class JsonNodeConfigurationFactoryProviderIT {
 				Collections.emptySet(),
 				runtime.getInstance(Cli.class));
 
-		JsonNode config = provider.loadConfiguration(Collections.emptyMap(), Collections.emptyMap());
+		JsonNode config = provider.loadConfiguration(Collections.emptyMap());
 		assertEquals("{\"a\":\"b\"}", config.toString());
 	}
 
@@ -80,7 +80,7 @@ public class JsonNodeConfigurationFactoryProviderIT {
 				Collections.emptySet(),
                 runtime.getInstance(Cli.class));
 
-		JsonNode config = provider.loadConfiguration(Collections.emptyMap(), Collections.emptyMap());
+		JsonNode config = provider.loadConfiguration(Collections.emptyMap());
 		assertEquals("{\"x\":1}", config.toString());
 	}
 
@@ -97,7 +97,7 @@ public class JsonNodeConfigurationFactoryProviderIT {
 				Collections.emptySet(),
                 runtime.getInstance(Cli.class));
 
-		JsonNode config = provider.loadConfiguration(Collections.emptyMap(), Collections.emptyMap());
+		JsonNode config = provider.loadConfiguration(Collections.emptyMap());
 		assertEquals("{\"x\":1,\"a\":\"b\"}", config.toString());
 	}
 

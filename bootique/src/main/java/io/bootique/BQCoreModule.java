@@ -8,8 +8,6 @@ import com.google.inject.Module;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import com.google.inject.multibindings.MapBinder;
-import com.google.inject.multibindings.Multibinder;
 import io.bootique.annotation.Args;
 import io.bootique.annotation.DIConfigs;
 import io.bootique.annotation.DefaultCommand;
@@ -51,12 +49,10 @@ import io.bootique.meta.module.ModulesMetadataCompiler;
 import io.bootique.run.DefaultRunner;
 import io.bootique.run.Runner;
 import io.bootique.shutdown.ShutdownManager;
-import io.bootique.shutdown.ShutdownTimeout;
 import io.bootique.terminal.FixedWidthTerminal;
 import io.bootique.terminal.SttyTerminal;
 import io.bootique.terminal.Terminal;
 
-import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -66,7 +62,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;
-import java.util.logging.Level;
 
 /**
  * The main {@link Module} of Bootique DI runtime. Declares a minimal set of
@@ -114,114 +109,6 @@ public class BQCoreModule implements Module {
         return new BQCoreModuleExtender(binder);
     }
 
-    /**
-     * @param binder DI binder passed to the Module that invokes this method.
-     * @return {@link Multibinder} for Bootique commands.
-     * @since 0.12
-     * @deprecated since 0.22 use {@link #extend(Binder)} to get an extender object, and
-     * then call {@link BQCoreModuleExtender#addCommand(Class)}.
-     */
-    @Deprecated
-    public static Multibinder<Command> contributeCommands(Binder binder) {
-        return extend(binder).contributeCommands();
-    }
-
-    /**
-     * @param binder DI binder passed to the Module that invokes this method.
-     * @return {@link Multibinder} for Bootique options.
-     * @since 0.12
-     * @deprecated since 0.22 use {@link #extend(Binder)} to get an extender object, and
-     * then call {@link BQCoreModuleExtender#addOption(OptionMetadata)}.
-     */
-    @Deprecated
-    public static Multibinder<OptionMetadata> contributeOptions(Binder binder) {
-        return extend(binder).contributeOptions();
-    }
-
-    /**
-     * @param binder DI binder passed to the Module that invokes this method.
-     * @return {@link MapBinder} for Bootique properties.
-     * @see EnvironmentProperties
-     * @since 0.12
-     * @deprecated since 0.22 use {@link #extend(Binder)} to get an extender object, and
-     * then call {@link BQCoreModuleExtender#setProperty(String, String)}.
-     */
-    @Deprecated
-    public static MapBinder<String, String> contributeProperties(Binder binder) {
-        return extend(binder).contributeProperties();
-    }
-
-    /**
-     * @param binder DI binder passed to the Module that invokes this method.
-     * @return {@link MapBinder} for values emulating environment variables.
-     * @see EnvironmentVariables
-     * @since 0.17
-     * @deprecated since 0.22 use {@link #extend(Binder)} to get an extender object, and
-     * then call {@link BQCoreModuleExtender#setVar(String, String)}.
-     */
-    @Deprecated
-    public static MapBinder<String, String> contributeVariables(Binder binder) {
-        return extend(binder).contributeVariables();
-    }
-
-    /**
-     * Provides a way to set default log levels for specific loggers. These settings can be overridden via Bootique
-     * configuration of whatever logging module you might use, like bootique-logback. This feature may be handy to
-     * suppress chatty third-party loggers, but still allow users to turn them on via configuration.
-     *
-     * @param binder DI binder passed to the Module that invokes this method.
-     * @return {@link MapBinder} for Bootique properties.
-     * @since 0.19
-     * @deprecated since 0.22 use {@link #extend(Binder)} to get an extender object, and
-     * then call {@link BQCoreModuleExtender#setLogLevel(String, Level)}.
-     */
-    @Deprecated
-    public static MapBinder<String, Level> contributeLogLevels(Binder binder) {
-        return extend(binder).contributeLogLevels();
-    }
-
-    /**
-     * Binds an optional application description used in help messages, etc.
-     *
-     * @param description optional application description used in help messages, etc.
-     * @param binder      DI binder passed to the Module that invokes this method.
-     * @since 0.20
-     * @deprecated since 0.22 use {@link #extend(Binder)} to get an extender object, and
-     * then call {@link BQCoreModuleExtender#setApplicationDescription(String)}.
-     */
-    @Deprecated
-    public static void setApplicationDescription(Binder binder, String description) {
-        extend(binder).setApplicationDescription(description);
-    }
-
-    /**
-     * Initializes optional default command that will be executed if no explicit command is matched.
-     *
-     * @param binder      DI binder passed to the Module that invokes this method.
-     * @param commandType a class of the default command.
-     * @since 0.20
-     * @deprecated since 0.22 use {@link #extend(Binder)} to get an extender object, and
-     * then call {@link BQCoreModuleExtender#setDefaultCommand(Class)}.
-     */
-    @Deprecated
-    public static void setDefaultCommand(Binder binder, Class<? extends Command> commandType) {
-        extend(binder).setDefaultCommand(commandType);
-    }
-
-    /**
-     * Initializes optional default command that will be executed if no explicit command is matched.
-     *
-     * @param binder  DI binder passed to the Module that invokes this method.
-     * @param command an instance of the default command.
-     * @since 0.20
-     * @deprecated since 0.22 use {@link #extend(Binder)} to get an extender object, and
-     * then call {@link BQCoreModuleExtender#setDefaultCommand(Command)}.
-     */
-    @Deprecated
-    public static void setDefaultCommand(Binder binder, Command command) {
-        extend(binder).setDefaultCommand(command);
-    }
-
     private static Optional<Command> defaultCommand(Injector injector) {
         // default is optional, so check via injector whether it is bound...
         Binding<Command> binding = injector.getExistingBinding(Key.get(Command.class, DefaultCommand.class));
@@ -240,10 +127,6 @@ public class BQCoreModule implements Module {
         binder.bind(BootLogger.class).toInstance(Objects.requireNonNull(bootLogger));
         binder.bind(ShutdownManager.class).toInstance(Objects.requireNonNull(shutdownManager));
         binder.bind(String[].class).annotatedWith(Args.class).toInstance(Objects.requireNonNull(args));
-
-        // deprecated, kept for those users who may have injected this in their own code
-        binder.bind(Duration.class).annotatedWith(ShutdownTimeout.class)
-                .toInstance(Objects.requireNonNull(Duration.ofMillis(10000L)));
 
         // too much code to create config factory.. extracting it in a provider
         // class...
@@ -415,10 +298,9 @@ public class BQCoreModule implements Module {
     Environment provideEnvironment(
             @EnvironmentProperties Map<String, String> diProperties,
             @EnvironmentVariables Map<String, String> diVars,
-            Set<DeclaredVariable> declaredVariables,
-            BootLogger logger) {
+            Set<DeclaredVariable> declaredVariables) {
 
-        DefaultEnvironment.Builder environment = DefaultEnvironment.builder(logger);
+        DefaultEnvironment.Builder environment = DefaultEnvironment.builder();
 
         if (Boolean.valueOf(diProperties.get(EXCLUDE_SYSTEM_PROPERTIES))) {
             environment.excludeSystemProperties();

@@ -1,7 +1,6 @@
 package io.bootique;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -35,7 +34,7 @@ import java.util.Set;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
-import static java.util.function.Function.*;
+import static java.util.function.Function.identity;
 
 /**
  * @since 0.17
@@ -69,7 +68,7 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
         this.cli = cli;
     }
 
-    protected JsonNode loadConfiguration(Map<String, String> properties, Map<String, String> vars) {
+    protected JsonNode loadConfiguration(Map<String, String> properties) {
 
         // hopefully sharing the mapper between parsers is safe... Does it
         // change the state during parse?
@@ -86,9 +85,6 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
 
         if (!properties.isEmpty()) {
             overrider = overrider.andThen(new InPlaceMapOverrider(properties, true, '.'));
-        }
-        if (!vars.isEmpty()) {
-            overrider = overrider.andThen(new InPlaceMapOverrider(vars, false, '_'));
         }
 
         return JsonNodeConfigurationBuilder.builder()
@@ -140,12 +136,6 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
                     put(omd.getConfigPath(), finalCliValue);
                 }}, true, '.'));
             }
-
-            // deprecated...
-            if (omd.getConfigResource() != null) {
-                overrider = overrider.andThen(new InPlaceResourceOverrider(omd.getConfigResource().getUrl(),
-                        parser, singleConfigMerger));
-            }
         }
 
         return overrider;
@@ -171,18 +161,11 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
     @Override
     public ConfigurationFactory get() {
 
-        Map<String, String> vars = environment.frameworkVariables();
         Map<String, String> properties = environment.frameworkProperties();
 
-        JsonNode rootNode = loadConfiguration(properties, vars);
+        JsonNode rootNode = loadConfiguration(properties);
 
         ObjectMapper jsonToObjectMapper = jacksonService.newObjectMapper();
-        if (!vars.isEmpty()) {
-
-            // switching to slower CI strategy for mapping properties...
-            jsonToObjectMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
-        }
-
         return new JsonNodeConfigurationFactory(rootNode, jsonToObjectMapper);
     }
 }

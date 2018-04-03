@@ -1,7 +1,6 @@
 package io.bootique.meta.application;
 
 import io.bootique.meta.MetadataNode;
-import io.bootique.resource.ResourceFactory;
 
 import java.util.Objects;
 
@@ -18,12 +17,9 @@ public class OptionMetadata implements MetadataNode {
     private OptionValueCardinality valueCardinality;
     private String valueName;
 
-    // TODO: 'configResource' is deprecated... should configPath be deprecated too?
+    // TODO: 'configResource' was deprecated and remove... should configPath be deprecated too?
     private String configPath;
     private String defaultValue;
-
-    @Deprecated
-    private ResourceFactory configResource;
 
     public static Builder builder(String name) {
         return new Builder().name(name);
@@ -68,20 +64,6 @@ public class OptionMetadata implements MetadataNode {
      */
     public String getConfigPath() {
         return configPath;
-    }
-
-    /**
-     * Returns an optional resource associated with this option.
-     *
-     * @return an optional resource associated with this option.
-     * @since 0.24
-     * @deprecated since 0.25. The new way of adding an option associated with a config file is by separately declaring
-     * an option and then associating it with one or more configs via
-     * {@link io.bootique.BQCoreModuleExtender#addConfigOnOption(String, String)}.
-     */
-    @Deprecated
-    public ResourceFactory getConfigResource() {
-        return configResource;
     }
 
     /**
@@ -154,7 +136,6 @@ public class OptionMetadata implements MetadataNode {
          */
         public Builder configPath(String configPath) {
             this.option.configPath = Objects.requireNonNull(configPath);
-            this.option.configResource = null;
             return this;
         }
 
@@ -167,24 +148,6 @@ public class OptionMetadata implements MetadataNode {
          */
         public Builder defaultValue(String defaultValue) {
             this.option.defaultValue = defaultValue;
-            return this;
-        }
-
-        /**
-         * Sets the config resource associated with this option.
-         *
-         * @param configResourceId a resource path compatible with {@link io.bootique.resource.ResourceFactory} denoting
-         *                         a configuration source. E.g. "a/b/my.yml", or "classpath:com/foo/another.yml".
-         * @return this builder instance
-         * @since 0.24
-         * @deprecated since 0.25. The new way of adding an option associated with a config file is by separately declaring
-         * an option and then associating it with one or more configs via
-         * {@link io.bootique.BQCoreModuleExtender#addConfigOnOption(String, String)}.
-         */
-        @Deprecated
-        public Builder configResource(String configResourceId) {
-            this.option.configResource = new ResourceFactory(configResourceId);
-            this.option.configPath = null;
             return this;
         }
 

@@ -22,17 +22,6 @@ public class CliConfigurationSource implements ConfigurationSource {
     private List<String> locations;
     private BootLogger bootLogger;
 
-    /**
-     * @param cli
-     * @param bootLogger
-     * @deprecated since 0.25 in favor of builder API.
-     */
-    @Deprecated
-    public CliConfigurationSource(Cli cli, BootLogger bootLogger) {
-        this.locations = cli.optionStrings(CONFIG_OPTION);
-        this.bootLogger = bootLogger;
-    }
-
     protected CliConfigurationSource(List<String> locations, BootLogger bootLogger) {
         this.locations = locations;
         this.bootLogger = bootLogger;

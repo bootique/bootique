@@ -1,7 +1,5 @@
 package io.bootique.env;
 
-import io.bootique.log.BootLogger;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,11 +16,8 @@ public class DefaultEnvironment implements Environment {
 
     private Map<String, String> properties;
 
-    @Deprecated
-    private Map<String, String> variables;
-
-    public static Builder builder(BootLogger logger) {
-        return new Builder(logger);
+    public static Builder builder() {
+        return new Builder();
     }
 
     protected DefaultEnvironment() {
@@ -36,18 +31,6 @@ public class DefaultEnvironment implements Environment {
     @Override
     public Map<String, String> subproperties(String prefix) {
         return filterByPrefix(properties, prefix, ".");
-    }
-
-    @Override
-    @Deprecated
-    public String getVariable(String name) {
-        return variables.get(name);
-    }
-
-    @Override
-    @Deprecated
-    public Map<String, String> variables(String prefix) {
-        return filterByPrefix(variables, prefix, "_");
     }
 
     protected Map<String, String> filterByPrefix(Map<String, String> unfiltered, String prefix, String separator) {
@@ -70,19 +53,13 @@ public class DefaultEnvironment implements Environment {
         private Collection<DeclaredVariable> declaredVariables;
         private boolean excludeSystemProperties;
         private boolean excludeSystemVariables;
-        private BootLogger logger;
 
-        private Builder(BootLogger logger) {
-            this.logger = logger;
+        private Builder() {
         }
 
         public DefaultEnvironment build() {
-
             DefaultEnvironment env = new DefaultEnvironment();
-
             env.properties = buildProperties();
-            env.variables = buildVariables();
-
             return env;
         }
 
@@ -145,34 +122,6 @@ public class DefaultEnvironment implements Environment {
             if (value != null) {
                 String canonicalProperty = Environment.FRAMEWORK_PROPERTIES_PREFIX + "." + dv.getConfigPath();
                 properties.put(canonicalProperty, value);
-            }
-        }
-
-        @Deprecated
-        protected Map<String, String> buildVariables() {
-
-            Map<String, String> allVars = new HashMap<>();
-
-            diVariables.keySet().forEach(this::warnOfDeprecatedVar);
-            allVars.putAll(this.diVariables);
-
-            if (!excludeSystemVariables) {
-                Map<String, String> systemVars = System.getenv();
-                systemVars.keySet().forEach(this::warnOfDeprecatedVar);
-                allVars.putAll(systemVars);
-            }
-
-            return allVars;
-        }
-
-        //  Will go away when we stop supporting BQ_ vars completely.
-        @Deprecated
-        private void warnOfDeprecatedVar(String var) {
-
-            if (var.startsWith(FRAMEWORK_VARIABLES_PREFIX)) {
-                logger.stderr(("WARN: The use of BQ_* variables is deprecated. Consider declaring '"
-                        + var
-                        + "' explicitly using an app-specific name."));
             }
         }
     }

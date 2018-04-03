@@ -312,18 +312,6 @@ public class Bootique {
     }
 
     /**
-     * Executes Bootique application, exiting the JVM at the end.
-     * <p>
-     * If you don't want your app to shutdown after executing Bootique, call {@link #exec()} instead.
-     *
-     * @deprecated since 0.23 in favor of {@link #exec()} followed by {@link CommandOutcome#exit()}.
-     */
-    @Deprecated
-    public void run() {
-        exec().exit();
-    }
-
-    /**
      * Executes this Bootique application, returning the outcome object.
      *
      * @return an outcome of the app command execution.

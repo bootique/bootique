@@ -204,28 +204,6 @@ public class Bootique_CliOptionsIT {
     }
 
     @Test
-    public void testConfigOverrideOrder_OptionsOnCLIPropsVars() {
-        System.setProperty("bq.c.m.f", "prop_c_m_f");
-
-        try {
-            BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--file-opt-1",
-                    "--opt-1=Option1", "--opt-2=Option2")
-                    .module(binder -> BQCoreModule.extend(binder)
-                            .addOption("c.m.f", "opt-1")
-                            .addOption("c.m.f", "opt-2")
-                            .addOption(OptionMetadata.builder("file-opt-1").build())
-                            .addConfigOnOption("file-opt-1", "classpath:io/bootique/config/configTest4Opt1.yml")
-                            .setVar("BQ_C_M_F", "var_c_m_f"))
-                    .createRuntime();
-
-            Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
-            assertEquals("var_c_m_f", bean1.c.m.f);
-        } finally {
-            System.clearProperty("bq.c.m.f");
-        }
-    }
-
-    @Test
     public void testOptionsOrder_OnCLI() {
         BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--file-opt-1",
                 "--opt-2=y", "--opt-1=x")

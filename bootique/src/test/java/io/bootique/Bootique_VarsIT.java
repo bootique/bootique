@@ -28,20 +28,8 @@ public class Bootique_VarsIT {
     public BQInternalTestFactory testFactory = new BQInternalTestFactory();
 
     @Test
-    public void testVarSetValue() {
-        BQRuntime runtime = testFactory.app("--config=src/test/resources/io/bootique/config/configEnvironment.yml")
-                .var("BQ_C_M_F", "f")
-                .createRuntime();
-
-        Bean1 b1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
-
-        assertEquals("f", b1.c.m.f);
-    }
-
-    @Test
     public void testDeclaredVarSetValue() {
         BQRuntime runtime = testFactory.app("--config=src/test/resources/io/bootique/config/configEnvironment.yml")
-                .var("BQ_C_M_F", "f")
                 .var("MY_VAR", "myValue")
                 .declareVar("c.m.l", "MY_VAR")
                 .createRuntime();
@@ -49,21 +37,6 @@ public class Bootique_VarsIT {
         Bean1 b1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
 
         assertEquals("myValue", b1.c.m.l);
-        assertEquals("f", b1.c.m.f);
-    }
-
-    @Test
-    @Ignore
-    // TODO: is this even relevant, considering that BQ_ vars are deprecated and will go away soon?
-    public void testVarCamelCase_AppliedInRandomOrder() {
-        BQRuntime runtime = testFactory.app("--config=src/test/resources/io/bootique/config/configEnvironment.yml")
-                .var("BQ_C_m_F", "camel")
-                .var("BQ_C_M_F", "myValue")
-                .createRuntime();
-
-        Bean1 b1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
-
-        assertEquals("camel", b1.c.m.f);
     }
 
     @Test

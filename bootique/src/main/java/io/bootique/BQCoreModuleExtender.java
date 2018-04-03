@@ -238,28 +238,6 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
         return this;
     }
 
-    /**
-     * Declares a new CLI option, associating its presence with a configuration resource. This way a single option
-     * can be used to enable a complex configuration.
-     *
-     * @param configResourceId a resource path compatible with {@link io.bootique.resource.ResourceFactory} denoting
-     *                         a configuration source. E.g. "a/b/my.yml", or "classpath:com/foo/another.yml".
-     * @param name             the name of the new CLI option.
-     * @return this extender instance
-     * @since 0.24
-     * @deprecated since 0.25. The new way of adding an option associated with a config file is by separately declaring
-     * an option and then associating it with one or more configs via {@link #addConfigOnOption(String, String)}.
-     */
-    @Deprecated
-    public BQCoreModuleExtender addConfigResourceOption(String configResourceId, String name) {
-        contributeOptions().addBinding().toInstance(
-                OptionMetadata.builder(name)
-                        .configResource(configResourceId)
-                        .valueOptional()
-                        .build());
-        return this;
-    }
-
     public BQCoreModuleExtender addCommand(Command command) {
         contributeCommands().addBinding().toInstance(command);
         return this;

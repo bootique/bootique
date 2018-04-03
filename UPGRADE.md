@@ -9,6 +9,20 @@
 on Guava elsewhere, be aware of this change. Als (and this is very unfortunate) this upgrade
 increased the dependency footprint by ~500K.
 
+* [bootique #214](https://github.com/bootique/bootique/issues/214): All APIs previously deprecated are
+removed from Bootique core. Please recompile your code and fix any failures (refer to 0.25 JavaDocs for
+suggested API replacements).
+
+The most notable change though, that you will not notice just by recompiling, is that Bootique now
+completely ignores `BQ_` environment variables that used to set config properties. Please inspect
+your app launch environment (be it IDE or server/Docker/cloud) to see if you still rely on such variables.
+Switch to explicitly declared variables instead:
+
+```java
+// FWIW, you can use your old BQ_ var name here if you feel like it. Just need to bind it explicitly.
+BQCoreModule.extend(bidner).declareVar("a.b.c", "MY_VAR");
+```
+
 ## 0.25
 
 * [bootique-jdbc #48](https://github.com/bootique/bootique-jdbc/issues/48): This affects all users of `bootique-jdbc`,
