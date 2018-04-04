@@ -19,7 +19,7 @@
 
 	<properties>
 		<guice-version>4.2.0</guice-version>
-		<jackson-version>2.6.4</jackson-version>
+		<jackson-version>2.9.5</jackson-version>
 	</properties>
 
 	<dependencyManagement>

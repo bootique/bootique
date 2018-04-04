@@ -141,7 +141,6 @@ public class PolymorphicConfigurationChecker<T extends PolymorphicConfiguration>
     }
 
     protected boolean hasDefault(JsonTypeInfo typeInfo) {
-        // weak... esp. since None is deprecated in JsonTypeInfo
-        return !typeInfo.defaultImpl().getName().endsWith("JsonTypeInfo$None");
+        return !typeInfo.defaultImpl().equals(JsonTypeInfo.class);
     }
 }

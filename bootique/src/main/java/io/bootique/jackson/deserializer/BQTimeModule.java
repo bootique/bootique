@@ -1,11 +1,14 @@
 package io.bootique.jackson.deserializer;
 
+import com.fasterxml.jackson.core.json.PackageVersion;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.DeserializationConfig;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.deser.ValueInstantiator;
 import com.fasterxml.jackson.databind.deser.ValueInstantiators;
 import com.fasterxml.jackson.databind.deser.std.StdValueInstantiator;
 import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
+import com.fasterxml.jackson.databind.introspect.AnnotatedClassResolver;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
@@ -25,8 +28,8 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
 /**
- * Class that registers capability of serializing {@code java.time} objects with the Jackson core.
- * <p>
+ * An adaptation of {@code com.fasterxml.jackson.datatype.jsr310.JavaTimeModule} from Jackson. Registers capability of
+ * serializing {@code java.time} objects with the Jackson core.
  * <p>
  * Most {@code java.time} types are serialized as numbers (integers or decimals as appropriate) if the
  * {@link com.fasterxml.jackson.databind.SerializationFeature#WRITE_DATES_AS_TIMESTAMPS} feature is enabled, and otherwise are serialized in
@@ -60,7 +63,7 @@ public final class BQTimeModule extends SimpleModule {
     private static final long serialVersionUID = 1L;
 
     public BQTimeModule() {
-        super();
+        super(PackageVersion.VERSION);
 
         // First deserializers
 
@@ -81,7 +84,6 @@ public final class BQTimeModule extends SimpleModule {
         addDeserializer(YearMonth.class, YearMonthDeserializer.INSTANCE);
         addDeserializer(ZoneId.class, JSR310StringParsableDeserializer.ZONE_ID);
         addDeserializer(ZoneOffset.class, JSR310StringParsableDeserializer.ZONE_OFFSET);
-
     }
 
     @Override
@@ -91,7 +93,9 @@ public final class BQTimeModule extends SimpleModule {
             @Override
             public ValueInstantiator findValueInstantiator(DeserializationConfig config,
                                                            BeanDescription beanDesc, ValueInstantiator defaultInstantiator) {
-                Class<?> raw = beanDesc.getBeanClass();
+                JavaType type = beanDesc.getType();
+                Class<?> raw = type.getRawClass();
+
                 // 15-May-2015, tatu: In theory not safe, but in practice we do need to do "fuzzy" matching
                 // because we will (for now) be getting a subtype, but in future may want to downgrade
                 // to the common base type. Even more, serializer may purposefully force use of base type.
@@ -107,7 +111,8 @@ public final class BQTimeModule extends SimpleModule {
                         } else {
                             // we don't need Annotations, so constructing directly is fine here
                             // even if it's not generally recommended
-                            ac = AnnotatedClass.construct(ZoneId.class, null, null);
+                            ac = AnnotatedClassResolver.resolve(config,
+                                    config.constructType(ZoneId.class), config);
                         }
                         if (!inst.canCreateFromString()) {
                             AnnotatedMethod factory = _findFactory(ac, "of", String.class);
@@ -124,10 +129,9 @@ public final class BQTimeModule extends SimpleModule {
         });
     }
 
-    // For
     protected AnnotatedMethod _findFactory(AnnotatedClass cls, String name, Class<?>... argTypes) {
         final int argCount = argTypes.length;
-        for (AnnotatedMethod method : cls.getStaticMethods()) {
+        for (AnnotatedMethod method : cls.getFactoryMethods()) {
             if (!name.equals(method.getName())
                     || (method.getParameterCount() != argCount)) {
                 continue;
