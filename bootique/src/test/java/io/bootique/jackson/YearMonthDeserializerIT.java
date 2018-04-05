@@ -9,46 +9,34 @@ import java.time.Month;
 import java.time.YearMonth;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public class YearMonthDeserializerIT extends DeserializerTestBase {
 
     @Test
-    public void testDeserializationAsString01() throws Exception {
-        YearMonth yearMonth = YearMonth.of(1986, Month.JANUARY);
-        YearMonth value = deserialize(YearMonth.class, '"' + yearMonth.toString() + '"');
-
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", yearMonth, value);
+    public void testDeserialization_Value1() throws Exception {
+        YearMonth ym = deserialize(YearMonth.class, "\"1986-01\"");
+        assertEquals(YearMonth.of(1986, Month.JANUARY), ym);
     }
 
     @Test
-    public void testDeserializationAsString02() throws Exception {
-        YearMonth yearMonth = YearMonth.of(2013, Month.AUGUST);
-        YearMonth value = deserialize(YearMonth.class, '"' + yearMonth.toString() + '"');
-
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", yearMonth, value);
+    public void testDeserialization_Value2() throws Exception {
+        YearMonth ym = deserialize(YearMonth.class, "\"2013-08\"");
+        assertEquals(YearMonth.of(2013, Month.AUGUST), ym);
     }
 
     @Test
-    public void testDeserializationWithPattern01() throws Exception {
-        YearMonth yearMonth = YearMonth.of(2013, Month.AUGUST);
-        SimpleAggregate simpleAggregate = new SimpleAggregate(yearMonth);
-
-        SimpleAggregate value = deserialize(SimpleAggregate.class, "{\"yearMonth\":\"1308\"}");
-
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", simpleAggregate.yearMonth, value.yearMonth);
+    public void testDeserialization_Pattern() throws Exception {
+        YM_Pattern ym = deserialize(YM_Pattern.class, "yearMonth: \"1308\"");
+        assertEquals(YearMonth.of(2013, Month.AUGUST), ym.yearMonth);
     }
 
-    private static class SimpleAggregate {
+    private static class YM_Pattern {
         @JsonProperty("yearMonth")
         @JsonFormat(pattern = "yyMM")
         final YearMonth yearMonth;
 
         @JsonCreator
-        SimpleAggregate(@JsonProperty("yearMonth") YearMonth yearMonth) {
+        YM_Pattern(@JsonProperty("yearMonth") YearMonth yearMonth) {
             this.yearMonth = yearMonth;
         }
     }

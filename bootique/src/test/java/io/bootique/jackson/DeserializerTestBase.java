@@ -9,13 +9,8 @@ import io.bootique.config.TypesFactory;
 import io.bootique.log.DefaultBootLogger;
 
 import java.io.IOException;
-import java.time.Month;
-import java.time.MonthDay;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
-import java.time.Period;
-import java.time.Year;
-import java.time.YearMonth;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
@@ -60,56 +55,10 @@ public abstract class DeserializerTestBase {
 
     protected static class Bean2 {
 
-        protected Year year;
-        protected Month month;
-        protected YearMonth yearMonth;
-        protected MonthDay monthDay;
-        protected Period period;
         protected OffsetTime offsetTime;
         protected OffsetDateTime offsetDateTime;
         protected ZonedDateTime zonedDateTime;
         protected ZoneOffset zoneOffset;
-
-
-        public Year getYear() {
-            return year;
-        }
-
-        public void setYear(Year year) {
-            this.year = year;
-        }
-
-        public Month getMonth() {
-            return month;
-        }
-
-        public void setMonth(Month month) {
-            this.month = month;
-        }
-
-        public YearMonth getYearMonth() {
-            return yearMonth;
-        }
-
-        public void setYearMonth(YearMonth yearMonth) {
-            this.yearMonth = yearMonth;
-        }
-
-        public MonthDay getMonthDay() {
-            return monthDay;
-        }
-
-        public void setMonthDay(MonthDay monthDay) {
-            this.monthDay = monthDay;
-        }
-
-        public Period getPeriod() {
-            return period;
-        }
-
-        public void setPeriod(Period period) {
-            this.period = period;
-        }
 
         public OffsetTime getOffsetTime() {
             return offsetTime;
