@@ -5,51 +5,21 @@ import org.junit.Test;
 import java.time.LocalTime;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
-public class LocalTimeDeserializerIT extends DeserializerIT {
+public class LocalTimeDeserializerIT extends DeserializerTestBase {
 
     @Test
     public void testDeserialization() throws Exception {
-        LocalTime time = LocalTime.of(9, 22, 0, 57);
-        Bean1 bean1 = readValue(Bean1.class, mapper, "a: \"x\"\n" +
-                "c:\n" +
-                "  localTime: \"" + time + "\"");
-        assertEquals(time, bean1.c.localTime);
+        Bean o = deserialize(Bean.class, "localTime: \"09:22:00.000000057\"");
+        assertEquals(LocalTime.of(9, 22, 0, 57), o.localTime);
     }
 
-    @Test
-    public void testDeserializationAsTimestamp03Nanoseconds() throws Exception {
-        Bean1 bean1 = readValue(Bean1.class, mapper, "a: \"x\"\n" +
-                "c:\n" +
-                "  localTime: [9,22,0,57]");
-        assertEquals(LocalTime.of(9, 22, 0, 57), bean1.c.localTime);
-    }
+    static class Bean {
 
-    @Test
-    public void testDeserializationAsTimestamp04Nanoseconds() throws Exception {
-        Bean1 bean1 = readValue(Bean1.class, mapper, "a: \"x\"\n" +
-                "c:\n" +
-                "  localTime: [22,31,5,829837]");
-        assertEquals(LocalTime.of(22, 31, 5, 829837), bean1.c.localTime);
-    }
+        protected LocalTime localTime;
 
-    @Test
-    public void testDeserializationAsTimestamp01() throws Exception {
-        Bean1 bean1 = readValue(Bean1.class, mapper, "a: \"x\"\n" +
-                "c:\n" +
-                "  localTime: [15,43]");
-        assertTrue(bean1 instanceof Bean1);
-        assertEquals("x", bean1.a);
-        assertEquals(LocalTime.of(15, 43), bean1.c.localTime);
+        public void setLocalTime(LocalTime localTime) {
+            this.localTime = localTime;
+        }
     }
-
-    @Test
-    public void testDeserializationAsTimestamp02() throws Exception {
-        Bean1 bean1 = readValue(Bean1.class, mapper, "a: \"x\"\n" +
-                "c:\n" +
-                "  localTime: [9,22,57]");
-        assertEquals(LocalTime.of(9, 22, 57), bean1.c.localTime);
-    }
-
 }

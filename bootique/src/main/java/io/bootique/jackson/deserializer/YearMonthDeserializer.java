@@ -33,30 +33,7 @@ class YearMonthDeserializer extends JSR310DateTimeDeserializerBase<YearMonth> {
 
     @Override
     public YearMonth deserialize(JsonParser parser, DeserializationContext context) throws IOException {
-        if (parser.isExpectedStartArrayToken()) {
-            int year = parser.nextIntValue(-1);
-            if (year == -1) {
-                if (parser.hasToken(JsonToken.END_ARRAY)) {
-                    return null;
-                }
-                if (!parser.hasToken(JsonToken.VALUE_NUMBER_INT)) {
-                    _reportWrongToken(parser, context, JsonToken.VALUE_NUMBER_INT, "years");
-                }
-                year = parser.getIntValue();
-            }
-            int month = parser.nextIntValue(-1);
-            if (month == -1) {
-                if (!parser.hasToken(JsonToken.VALUE_NUMBER_INT)) {
-                    _reportWrongToken(parser, context, JsonToken.VALUE_NUMBER_INT, "months");
-                }
-                month = parser.getIntValue();
-            }
-            if (parser.nextToken() != JsonToken.END_ARRAY) {
-                throw context.wrongTokenException(parser, JsonToken.END_ARRAY,
-                        "Expected array to end.");
-            }
-            return YearMonth.of(year, month);
-        }
+
         if (parser.hasToken(JsonToken.VALUE_STRING)) {
             String string = parser.getText().trim();
             if (string.length() == 0) {

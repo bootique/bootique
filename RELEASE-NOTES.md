@@ -1,8 +1,9 @@
 ## 0.26
 
 * #188 Update Guice to 4.2.0
-* #189  Update Jackson to 2.9.5
+* #189 Update Jackson to 2.9.5
 * #214 Cleaning up APIs deprecated since <= 0.25
+* #215 Remove support for date/time values as arrays of components
 
 ## 0.25 
 

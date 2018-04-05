@@ -13,7 +13,6 @@ import java.time.DateTimeException;
  * Base class that indicates that all JSR310 datatypes are deserialized from scalar JSON types.
  */
 abstract class JSR310DeserializerBase<T> extends StdScalarDeserializer<T> {
-    private static final long serialVersionUID = 1L;
 
     protected JSR310DeserializerBase(Class<T> supportedType) {
         super(supportedType);

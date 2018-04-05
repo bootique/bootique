@@ -13,7 +13,6 @@ import java.time.format.DateTimeFormatter;
  * Deserializer for Java 8 temporal {@link LocalDate}s.
  */
 class LocalDateDeserializer extends JSR310DateTimeDeserializerBase<LocalDate> {
-    private static final long serialVersionUID = 1L;
 
     private static final DateTimeFormatter DEFAULT_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
 
@@ -49,24 +48,6 @@ class LocalDateDeserializer extends JSR310DateTimeDeserializerBase<LocalDate> {
             }
             return LocalDate.parse(string, format);
         }
-        if (parser.isExpectedStartArrayToken()) {
-            if (parser.nextToken() == JsonToken.END_ARRAY) {
-                return null;
-            }
-            int year = parser.getIntValue();
-
-            parser.nextToken();
-            int month = parser.getIntValue();
-
-            parser.nextToken();
-            int day = parser.getIntValue();
-
-            if (parser.nextToken() != JsonToken.END_ARRAY) {
-                throw context.wrongTokenException(parser, JsonToken.END_ARRAY, "Expected array to end.");
-            }
-            return LocalDate.of(year, month, day);
-        }
-
         throw context.wrongTokenException(parser, JsonToken.START_ARRAY, "Expected array or string.");
     }
 }

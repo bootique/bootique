@@ -15,8 +15,7 @@ import java.util.function.Function;
  * Deserializer for all Java 8 temporal {@link java.time} types that cannot be represented with numbers and that have
  * parse functions that can take {@link String}s.
  */
-final class JSR310StringParsableDeserializer<T> extends JSR310DeserializerBase<T> {
-    private static final long serialVersionUID = 1L;
+class JSR310StringParsableDeserializer<T> extends JSR310DeserializerBase<T> {
 
     public static final JSR310StringParsableDeserializer<MonthDay> MONTH_DAY =
             new JSR310StringParsableDeserializer<>(MonthDay.class, MonthDay::parse);

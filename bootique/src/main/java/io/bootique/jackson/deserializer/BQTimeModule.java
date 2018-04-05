@@ -60,7 +60,6 @@ import java.time.ZonedDateTime;
  */
 @SuppressWarnings("javadoc")
 public final class BQTimeModule extends SimpleModule {
-    private static final long serialVersionUID = 1L;
 
     public BQTimeModule() {
         super(PackageVersion.VERSION);

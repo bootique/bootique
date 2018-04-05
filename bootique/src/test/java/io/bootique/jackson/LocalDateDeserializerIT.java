@@ -8,24 +8,19 @@ import java.time.Month;
 
 import static org.junit.Assert.assertEquals;
 
-public class LocalDateDeserializerIT extends DeserializerIT {
+public class LocalDateDeserializerIT extends DeserializerTestBase {
     @Test
-    public void testDeserialization01() throws Throwable {
-
-        LocalDate date = LocalDate.of(1986, Month.JANUARY, 17);
-        Bean1 bean1 = readValue(Bean1.class, mapper, "a: \"x\"\n" +
-                "c:\n" +
-                "  localDate: " + date.toString());
-
-        assertEquals(date, bean1.c.localDate);
+    public void testDeserialization() throws Throwable {
+        Bean o = deserialize(Bean.class, "localDate: \"1986-01-17\"");
+        assertEquals(LocalDate.of(1986, Month.JANUARY, 17), o.localDate);
     }
 
-    @Test
-    public void testDeserialization02() throws Throwable {
-        Bean1 bean1 = readValue(Bean1.class, mapper, "a: \"x\"\n" +
-                "c:\n" +
-                "  localDate: [2000,01,01]");
-        assertEquals(LocalDate.of(2000, 1, 1), bean1.c.localDate);
-    }
+    static class Bean {
 
+        protected LocalDate localDate;
+
+        public void setLocalDate(LocalDate localDate) {
+            this.localDate = localDate;
+        }
+    }
 }

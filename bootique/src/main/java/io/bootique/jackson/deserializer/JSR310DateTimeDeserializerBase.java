@@ -11,10 +11,8 @@ import com.fasterxml.jackson.databind.introspect.Annotated;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-@SuppressWarnings("serial")
-abstract class JSR310DateTimeDeserializerBase<T>
-        extends JSR310DeserializerBase<T>
-        implements ContextualDeserializer {
+abstract class JSR310DateTimeDeserializerBase<T> extends JSR310DeserializerBase<T> implements ContextualDeserializer {
+
     protected final DateTimeFormatter _formatter;
 
     protected JSR310DateTimeDeserializerBase(Class<T> supportedType, DateTimeFormatter f) {
