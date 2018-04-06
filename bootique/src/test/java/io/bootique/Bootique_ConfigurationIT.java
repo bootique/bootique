@@ -15,33 +15,58 @@ import static org.junit.Assert.assertEquals;
 public class Bootique_ConfigurationIT {
 
     @Rule
-    public BQInternalTestFactory runtimeFactory = new BQInternalTestFactory();
+    public BQInternalTestFactory testFactory = new BQInternalTestFactory();
 
     @Test
     public void testEmptyConfig() {
-        BQRuntime runtime = runtimeFactory.app("--config=src/test/resources/io/bootique/empty.yml").createRuntime();
+        BQRuntime runtime = testFactory.app("--config=src/test/resources/io/bootique/empty.yml").createRuntime();
 
-        Map<String, String> config = runtime.getInstance(ConfigurationFactory.class)
-                .config(new TypeRef<Map<String, String>>() {
-                }, "");
+        Map<String, String> config = runtime
+                .getInstance(ConfigurationFactory.class)
+                .config(new TypeRef<Map<String, String>>() {}, "");
         assertEquals("{}", config.toString());
     }
 
     @Test
-    public void testConfigEmptyConfig() {
-        BQRuntime runtime = runtimeFactory.app("--config=src/test/resources/io/bootique/test1.yml",
-                "--config=src/test/resources/io/bootique/empty.yml").createRuntime();
+    public void testCombineConfigAndEmptyConfig() {
+        BQRuntime runtime = testFactory
+                .app("--config=classpath:io/bootique/test1.yml", "--config=classpath:io/bootique/empty.yml")
+                .createRuntime();
 
-        Map<String, String> config = runtime.getInstance(ConfigurationFactory.class)
-                .config(new TypeRef<Map<String, String>>() {
-                }, "");
+        Map<String, String> config = runtime.
+                getInstance(ConfigurationFactory.class)
+                .config(new TypeRef<Map<String, String>>() {}, "");
         assertEquals("{a=b}", config.toString());
+    }
+
+    @Test
+    public void testCombineConfigs() {
+        BQRuntime runtime = testFactory
+                .app("--config=classpath:io/bootique/test1.yml", "--config=classpath:io/bootique/test2.yml")
+                .createRuntime();
+
+        Map<String, String> config = runtime
+                .getInstance(ConfigurationFactory.class)
+                .config(new TypeRef<Map<String, String>>() {}, "");
+        assertEquals("{a=e, c=d}", config.toString());
+    }
+
+    @Test
+    public void testCombineConfigs_ReverseOrder() {
+        BQRuntime runtime = testFactory
+                .app("--config=classpath:io/bootique/test2.yml", "--config=classpath:io/bootique/test1.yml")
+                .createRuntime();
+
+        Map<String, String> config = runtime
+                .getInstance(ConfigurationFactory.class)
+                .config(new TypeRef<Map<String, String>>() {}, "");
+        assertEquals("{a=b, c=d}", config.toString());
     }
 
     @Test
     public void testDIConfig() {
 
-        BQRuntime runtime = runtimeFactory.app()
+        BQRuntime runtime = testFactory.app()
                 .module(b -> BQCoreModule.extend(b)
                         .addConfig("classpath:io/bootique/diconfig1.yml")
                         .addConfig("classpath:io/bootique/diconfig2.yml"))
@@ -56,7 +81,7 @@ public class Bootique_ConfigurationIT {
     @Test
     public void testDIConfig_VsCliOrder() {
 
-        BQRuntime runtime = runtimeFactory.app("-c", "classpath:io/bootique/cliconfig.yml")
+        BQRuntime runtime = testFactory.app("-c", "classpath:io/bootique/cliconfig.yml")
                 .module(b -> BQCoreModule.extend(b)
                         .addConfig("classpath:io/bootique/diconfig1.yml")
                         .addConfig("classpath:io/bootique/diconfig2.yml"))
@@ -73,7 +98,7 @@ public class Bootique_ConfigurationIT {
 
         Function<String, String> configReader =
                 arg -> {
-                    BQRuntime runtime = runtimeFactory.app(arg)
+                    BQRuntime runtime = testFactory.app(arg)
                             .module(b -> BQCoreModule.extend(b)
                                     .addConfigOnOption("opt", "classpath:io/bootique/diconfig1.yml")
                                     .addConfigOnOption("opt", "classpath:io/bootique/diconfig2.yml")
@@ -97,7 +122,7 @@ public class Bootique_ConfigurationIT {
 
         Function<String, String> configReader =
                 arg -> {
-                    BQRuntime runtime = runtimeFactory.app(arg)
+                    BQRuntime runtime = testFactory.app(arg)
                             .module(b -> BQCoreModule.extend(b)
                                     .addConfigOnOption("opt", "classpath:io/bootique/diconfig1.yml")
                                     .addConfigOnOption("opt", "classpath:io/bootique/diconfig2.yml")
@@ -114,30 +139,8 @@ public class Bootique_ConfigurationIT {
     }
 
     @Test
-    public void testConfigConfig() {
-        BQRuntime runtime = runtimeFactory.app("--config=src/test/resources/io/bootique/test1.yml",
-                "--config=src/test/resources/io/bootique/test2.yml").createRuntime();
-
-        Map<String, String> config = runtime.getInstance(ConfigurationFactory.class)
-                .config(new TypeRef<Map<String, String>>() {
-                }, "");
-        assertEquals("{a=e, c=d}", config.toString());
-    }
-
-    @Test
-    public void testConfigConfig_Reverse() {
-        BQRuntime runtime = runtimeFactory.app("--config=src/test/resources/io/bootique/test2.yml",
-                "--config=src/test/resources/io/bootique/test1.yml").createRuntime();
-
-        Map<String, String> config = runtime.getInstance(ConfigurationFactory.class)
-                .config(new TypeRef<Map<String, String>>() {
-                }, "");
-        assertEquals("{a=b, c=d}", config.toString());
-    }
-
-    @Test
     public void testConfigEnvOverrides_Alias() {
-        BQRuntime runtime = runtimeFactory.app("--config=src/test/resources/io/bootique/test3.yml")
+        BQRuntime runtime = testFactory.app("--config=src/test/resources/io/bootique/test3.yml")
                 .declareVar("a", "V1")
                 .declareVar("c.m.f", "V2")
                 .declareVar("c.m.k", "V3")
