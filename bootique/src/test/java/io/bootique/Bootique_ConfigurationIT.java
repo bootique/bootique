@@ -23,7 +23,8 @@ public class Bootique_ConfigurationIT {
 
         Map<String, String> config = runtime
                 .getInstance(ConfigurationFactory.class)
-                .config(new TypeRef<Map<String, String>>() {}, "");
+                .config(new TypeRef<Map<String, String>>() {
+                }, "");
         assertEquals("{}", config.toString());
     }
 
@@ -35,7 +36,8 @@ public class Bootique_ConfigurationIT {
 
         Map<String, String> config = runtime.
                 getInstance(ConfigurationFactory.class)
-                .config(new TypeRef<Map<String, String>>() {}, "");
+                .config(new TypeRef<Map<String, String>>() {
+                }, "");
         assertEquals("{a=b}", config.toString());
     }
 
@@ -47,7 +49,8 @@ public class Bootique_ConfigurationIT {
 
         Map<String, String> config = runtime
                 .getInstance(ConfigurationFactory.class)
-                .config(new TypeRef<Map<String, String>>() {}, "");
+                .config(new TypeRef<Map<String, String>>() {
+                }, "");
         assertEquals("{a=e, c=d}", config.toString());
     }
 
@@ -59,7 +62,8 @@ public class Bootique_ConfigurationIT {
 
         Map<String, String> config = runtime
                 .getInstance(ConfigurationFactory.class)
-                .config(new TypeRef<Map<String, String>>() {}, "");
+                .config(new TypeRef<Map<String, String>>() {
+                }, "");
         assertEquals("{a=b, c=d}", config.toString());
     }
 
