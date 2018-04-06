@@ -6,3 +6,14 @@ testOverrideNested:
   m:
     x: y
     z: 1
+
+testOverrideValueArray:
+  h:
+    - i
+    - j
+    - k
+
+testOverrideObjectArray:
+  d:
+    - e: 1
+    - e: 2
