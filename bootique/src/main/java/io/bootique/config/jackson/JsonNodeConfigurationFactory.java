@@ -71,6 +71,8 @@ public class JsonNodeConfigurationFactory implements ConfigurationFactory {
 		// and then overlay CS config (YAML) only then - CI config (vars)? This will require deep refactoring. Also
 		// we will need to know the type of the root JsonNode (String vs Object vs List, etc.)
 
+		// or we just make it case-sensitive like the rest of the config...
+
 		return new CiPathSegment(rootNode, path, '.').lastPathComponent().map(t -> t.getNode())
 				.orElse(new ObjectNode(null));
 	}

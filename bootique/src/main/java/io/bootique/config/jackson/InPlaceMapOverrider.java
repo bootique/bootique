@@ -14,12 +14,10 @@ import java.util.function.Function;
 public class InPlaceMapOverrider implements Function<JsonNode, JsonNode> {
 
 	private Map<String, String> properties;
-	private boolean caseSensitive;
 	private char pathSeparator;
 
-	public InPlaceMapOverrider(Map<String, String> properties, boolean caseSensitive, char pathSeparator) {
+	public InPlaceMapOverrider(Map<String, String> properties, char pathSeparator) {
 		this.properties = properties;
-		this.caseSensitive = caseSensitive;
 		this.pathSeparator = pathSeparator;
 	}
 
@@ -42,8 +40,6 @@ public class InPlaceMapOverrider implements Function<JsonNode, JsonNode> {
 	}
 
 	protected PathSegment lastPathComponent(JsonNode t, String path) {
-		PathSegment root = caseSensitive ? new PathSegment(t, path, pathSeparator)
-				: new CiPathSegment(t, path, pathSeparator);
-		return root.lastPathComponent().get();
+		return new PathSegment(t, path, pathSeparator).lastPathComponent().get();
 	}
 }
