@@ -161,6 +161,21 @@ public class Bootique_ConfigurationIT {
         assertEquals("K1", b1.c.m.f);
     }
 
+    @Test
+    public void testConfig_OverrideWithProperties() {
+        BQRuntime runtime = testFactory.app("--config=classpath:io/bootique/Bootique_ConfigurationIT_props.yml")
+                .property("bq.c", "D")
+                .property("bq.m.z", "2")
+                .createRuntime();
+
+        Bean4 b = runtime.getInstance(ConfigurationFactory.class).config(Bean4.class, "");
+
+        assertEquals("b", b.a);
+        assertEquals("D", b.c);
+        assertEquals("y", b.m.x);
+        assertEquals(2, b.m.z);
+    }
+
     static class Bean1 {
         private String a;
         private Bean2 c;
@@ -202,10 +217,33 @@ public class Bootique_ConfigurationIT {
     }
 
     static class Bean4 {
-        private Map<String, String> m;
+        private String a;
+        private String c;
+        private Bean4M m;
 
-        public void setM(Map<String, String> m) {
+        public void setA(String a) {
+            this.a = a;
+        }
+
+        public void setC(String c) {
+            this.c = c;
+        }
+
+        public void setM(Bean4M m) {
             this.m = m;
+        }
+    }
+
+    static class Bean4M {
+        private String x;
+        private int z;
+
+        public void setX(String x) {
+            this.x = x;
+        }
+
+        public void setZ(int z) {
+            this.z = z;
         }
     }
 }
