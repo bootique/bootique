@@ -21,6 +21,7 @@ public class BQModule {
             .build();
 
     private Module module;
+    private BQModuleId moduleId;
     private String name;
     private String description;
     private String providerName;
@@ -36,6 +37,10 @@ public class BQModule {
 
     public Module getModule() {
         return module;
+    }
+
+    public BQModuleId getModuleId() {
+        return moduleId;
     }
 
     public String getName() {
@@ -68,11 +73,16 @@ public class BQModule {
 
         public BQModule build() {
 
-            if(module.name == null) {
+            if (module.name == null) {
                 module.name = MODULE_NAME_BUILDER.toName(module.module.getClass());
             }
 
             return module;
+        }
+
+        public Builder id(BQModuleId moduleId) {
+            module.moduleId = moduleId;
+            return this;
         }
 
         public Builder name(String name) {

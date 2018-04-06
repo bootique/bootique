@@ -5,7 +5,7 @@ import com.google.inject.util.Modules;
 import io.bootique.log.BootLogger;
 
 import java.util.Collection;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
@@ -37,18 +37,13 @@ class RuntimeModuleMerger {
     }
 
     private Collection<RuntimeModule> collectUnique(Collection<BQModule> bqModules) {
-
-        // TODO: looking up modules by java type limits the use of lambdas as modules. E.g. we loaded test
-        // properties are dynamically created modules in a repeatedly called Lambda. This didn't work..
-        // So perhaps use provider name as a unique key?
-
-        Map<Class<? extends Module>, RuntimeModule> map = new LinkedHashMap<>();
+        Map<BQModuleId, RuntimeModule> runtimeModules = new HashMap<>();
 
         for (BQModule bqModule : bqModules) {
 
             RuntimeModule rm = new RuntimeModule(bqModule);
 
-            RuntimeModule existing = map.putIfAbsent(rm.getModuleType(), rm);
+            RuntimeModule existing = runtimeModules.putIfAbsent(rm.getBqModule().getModuleId(), rm);
             if (existing != null) {
                 bootLogger.trace(() -> String.format(
                         "Skipping module '%s' provided by '%s' (already provided by '%s')...",
@@ -58,18 +53,18 @@ class RuntimeModuleMerger {
             }
         }
 
-        calcOverrideGraph(map);
+        calcOverrideGraph(runtimeModules);
 
-        return map.values();
+        return runtimeModules.values();
     }
 
-    private void calcOverrideGraph(Map<Class<? extends Module>, RuntimeModule> modules) {
-
+    private void calcOverrideGraph(Map<BQModuleId, RuntimeModule> modules) {
         for (RuntimeModule rm : modules.values()) {
 
-            for(Class<? extends Module> override : rm.getBqModule().getOverrides()) {
-                RuntimeModule rmn = modules.get(override);
-                if(rmn != null) {
+            final BQModule bqModule = rm.getBqModule();
+            for (Class<? extends Module> override : bqModule.getOverrides()) {
+                RuntimeModule rmn = modules.get(BQModuleId.of(override));
+                if (rmn != null) {
                     rmn.setOverriddenBy(rm);
                     rm.setOverridesOthers(true);
                 }

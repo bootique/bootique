@@ -157,6 +157,11 @@ public class BootiqueIT {
             public Collection<Class<? extends Module>> overrides() {
                 return Collections.singleton(BQCoreModule.class);
             }
+
+            @Override
+            public BQModuleId id() {
+                return BQModuleId.of(M0.class);
+            }
         };
 
         Injector i = Bootique.app(args).module(provider).createInjector();
@@ -239,5 +244,41 @@ public class BootiqueIT {
         String getS2(@S1 String s1) {
             return "sub_sub_m2_s2_" + s1;
         }
+    }
+
+    @Test
+    public void testModuleSameClass() {
+        final BQRuntime runtime = Bootique.app()
+                .module(new GenericModule(binder -> binder.bind(IA.class).to(A.class)))
+                .module(new GenericModule(binder -> binder.bind(IB.class).to(B.class)))
+                .createRuntime();
+        runtime.getInstance(IA.class);
+        runtime.getInstance(IB.class);
+    }
+
+    static class GenericModule implements Module {
+
+        private final Module module;
+
+        GenericModule(Module module) {
+            this.module = module;
+        }
+
+        @Override
+        public void configure(Binder binder) {
+            module.configure(binder);
+        }
+    }
+
+    interface IA {
+    }
+
+    interface IB {
+    }
+
+    static class A implements IA {
+    }
+
+    static class B implements IB {
     }
 }

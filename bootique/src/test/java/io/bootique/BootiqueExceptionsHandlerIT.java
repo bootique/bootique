@@ -232,6 +232,11 @@ public class BootiqueExceptionsHandlerIT {
         public Collection<Class<? extends Module>> overrides() {
             return Collections.singleton(ModuleProviderWithOverride2.ModuleWithOverride2.class);
         }
+
+        @Override
+        public BQModuleId id() {
+            return BQModuleId.of(ModuleWithOverride1.class);
+        }
     }
 
     public static class ModuleProviderWithOverride2 implements BQModuleProvider {
@@ -252,33 +257,50 @@ public class BootiqueExceptionsHandlerIT {
         public Collection<Class<? extends Module>> overrides() {
             return Collections.singleton(ModuleProviderWithOverride1.ModuleWithOverride1.class);
         }
+
+        @Override
+        public BQModuleId id() {
+            return BQModuleId.of(ModuleWithOverride2.class);
+        }
     }
 
     public static class CoreOverrideProvider1 implements BQModuleProvider {
+        private final Module module = b -> {
+        };
 
         @Override
         public Module module() {
-            return b -> {
-            };
+            return module;
         }
 
         @Override
         public Collection<Class<? extends Module>> overrides() {
             return Collections.singleton(BQCoreModule.class);
+        }
+
+        @Override
+        public BQModuleId id() {
+            return BQModuleId.of(module);
         }
     }
 
     public static class CoreOverrideProvider2 implements BQModuleProvider {
+        private final Module module = b -> {
+        };
 
         @Override
         public Module module() {
-            return b -> {
-            };
+            return module;
         }
 
         @Override
         public Collection<Class<? extends Module>> overrides() {
             return Collections.singleton(BQCoreModule.class);
+        }
+
+        @Override
+        public BQModuleId id() {
+            return BQModuleId.of(module);
         }
     }
 }

@@ -3,6 +3,7 @@ package io.bootique.unit;
 import com.google.inject.Module;
 import io.bootique.BQCoreModule;
 import io.bootique.BQModule;
+import io.bootique.BQModuleId;
 import io.bootique.BQModuleOverrideBuilder;
 import io.bootique.BQModuleProvider;
 import io.bootique.BQRuntime;
@@ -68,10 +69,11 @@ public class BQInternalTestFactory extends ExternalResource {
 
         protected BQModuleProvider createPropertiesProvider() {
             return new BQModuleProvider() {
+                private final Module module = binder -> BQCoreModule.extend(binder).setProperties(properties);
 
                 @Override
                 public Module module() {
-                    return binder -> BQCoreModule.extend(binder).setProperties(properties);
+                    return module;
                 }
 
                 @Override
@@ -85,17 +87,21 @@ public class BQInternalTestFactory extends ExternalResource {
                 public String name() {
                     return "BQInternalTestFactory:Builder:properties:provider";
                 }
+
+                @Override
+                public BQModuleId id() {
+                    return BQModuleId.of(module);
+                }
             };
         }
 
         protected BQModuleProvider createVariablesProvider() {
             return new BQModuleProvider() {
+                private final Module module = binder -> BQCoreModule.extend(binder).setVars(variables).declareVars(declaredVars);
 
                 @Override
                 public Module module() {
-                    return binder -> {
-                        BQCoreModule.extend(binder).setVars(variables).declareVars(declaredVars);
-                    };
+                    return module;
                 }
 
                 @Override
@@ -108,6 +114,11 @@ public class BQInternalTestFactory extends ExternalResource {
                 @Override
                 public String name() {
                     return "BQInternalTestFactory:Builder:variables:provider";
+                }
+
+                @Override
+                public BQModuleId id() {
+                    return BQModuleId.of(module);
                 }
             };
         }

@@ -2,6 +2,7 @@ package io.bootique.test.junit;
 
 import com.google.inject.Module;
 import io.bootique.BQCoreModule;
+import io.bootique.BQModuleId;
 import io.bootique.BQModuleOverrideBuilder;
 import io.bootique.BQModuleProvider;
 import io.bootique.Bootique;
@@ -40,15 +41,21 @@ public abstract class BQTestRuntimeBuilder<T extends BQTestRuntimeBuilder<T>> {
 
     protected BQModuleProvider createPropertiesProvider() {
         return new BQModuleProvider() {
+            private final Module module = binder -> BQCoreModule.extend(binder).setProperties(properties);
 
             @Override
             public Module module() {
-                return binder -> BQCoreModule.extend(binder).setProperties(properties);
+                return module;
             }
 
             @Override
             public String name() {
                 return "BQTestRuntimeBuilder:properties";
+            }
+
+            @Override
+            public BQModuleId id() {
+                return BQModuleId.of(module);
             }
         };
     }

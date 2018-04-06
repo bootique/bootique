@@ -1,6 +1,7 @@
 package io.bootique.test.junit;
 
 import com.google.inject.Module;
+import io.bootique.BQModuleId;
 import io.bootique.BQModuleProvider;
 import org.junit.Assert;
 import org.junit.Test;
@@ -21,11 +22,17 @@ public class BQModuleProviderCheckerTest {
     }
 
     public static class P1 implements BQModuleProvider {
+        private final Module module = b -> {
+        };
 
         @Override
         public Module module() {
-            return b -> {
-            };
+            return module;
+        }
+
+        @Override
+        public BQModuleId id() {
+            return BQModuleId.of(module);
         }
     }
 }
