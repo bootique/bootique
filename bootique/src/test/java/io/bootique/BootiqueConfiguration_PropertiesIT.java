@@ -31,7 +31,7 @@ public class BootiqueConfiguration_PropertiesIT {
     }
 
     @Test
-    public void testConfig_OverrideWithProperties() {
+    public void testOverrideNested() {
         BQRuntime runtime = app()
                 .property("bq.testOverrideNested.m.z", "2")
                 .createRuntime();
@@ -58,14 +58,14 @@ public class BootiqueConfiguration_PropertiesIT {
     }
 
     static class TestOverrideNestedBean {
-        private Bean4M m;
+        private TestOverrideNestedBeanM m;
 
-        public void setM(Bean4M m) {
+        public void setM(TestOverrideNestedBeanM m) {
             this.m = m;
         }
     }
 
-    static class Bean4M {
+    static class TestOverrideNestedBeanM {
         private String x;
         private int z;
 
