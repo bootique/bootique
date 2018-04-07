@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class BootiqueConfiguration_PropertiesIT {
+public class Bootique_Configuration_PropertiesIT {
 
     @Rule
     public BQInternalTestFactory testFactory = new BQInternalTestFactory();
