@@ -58,4 +58,16 @@
 			</build>
 		</profile>
 	</profiles>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<!-- TODO: move this to bootique-modules-parent -->
+				<plugin>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>3.0.2</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
 </project>
