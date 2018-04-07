@@ -12,7 +12,6 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toSet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -31,9 +30,12 @@ public class PolymorphicConfigurationChecker<T extends PolymorphicConfiguration>
     private Class<? extends T> expectedDefault;
     private Set<Class<? extends T>> allExpectedTypes;
 
-    protected PolymorphicConfigurationChecker(Class<T> expectedRoot,
-                                              Class<? extends T> expectedDefault,
-                                              Class<? extends T>... otherConfigs) {
+    @SafeVarargs
+    protected PolymorphicConfigurationChecker(
+            Class<T> expectedRoot,
+            Class<? extends T> expectedDefault,
+            Class<? extends T>... otherConfigs) {
+
         this.expectedRoot = Objects.requireNonNull(expectedRoot);
         this.expectedDefault = expectedDefault;
 
@@ -45,20 +47,26 @@ public class PolymorphicConfigurationChecker<T extends PolymorphicConfiguration>
         }
 
         if (otherConfigs != null) {
-            allTypes.addAll(asList(otherConfigs));
+            for (Class<? extends T> c : otherConfigs) {
+                allTypes.add(c);
+            }
         }
 
         this.allExpectedTypes = allTypes;
     }
 
-    public static <T extends PolymorphicConfiguration> void test(Class<T> expectedRoot,
-                                                                 Class<? extends T> expectedDefault,
-                                                                 Class<? extends T>... otherConfigs) {
+    @SafeVarargs
+    public static <T extends PolymorphicConfiguration> void test(
+            Class<T> expectedRoot,
+            Class<? extends T> expectedDefault,
+            Class<? extends T>... otherConfigs) {
         new PolymorphicConfigurationChecker<>(expectedRoot, expectedDefault, otherConfigs).test();
     }
 
-    public static <T extends PolymorphicConfiguration> void testNoDefault(Class<T> expectedRoot,
-                                                                          Class<? extends T>... otherConfigs) {
+    @SafeVarargs
+    public static <T extends PolymorphicConfiguration> void testNoDefault(
+            Class<T> expectedRoot,
+            Class<? extends T>... otherConfigs) {
         new PolymorphicConfigurationChecker<>(expectedRoot, null, otherConfigs).test();
     }
 

@@ -115,7 +115,8 @@ public abstract class BQTestRuntimeBuilder<T extends BQTestRuntimeBuilder<T>> {
      * @return this instance of test runtime builder.
      * @see #autoLoadModules()
      */
-    public T modules(Class<? extends Module>... moduleTypes) {
+    @SafeVarargs
+    public final T modules(Class<? extends Module>... moduleTypes) {
         bootique.modules(moduleTypes);
         return (T) this;
     }

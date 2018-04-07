@@ -165,7 +165,7 @@ public class Bootique {
      * expose {@link BQModuleProvider} provider. Auto-loaded modules will be
      * used in default configuration. Factories within modules will of course be
      * configured dynamically from YAML.
-     * <p>
+     *
      * <i>Use with caution, you may load more modules than you expected. Make
      * sure only needed Bootique dependencies are included on class-path. If in
      * doubt, switch to explicit Module loading via
@@ -202,7 +202,11 @@ public class Bootique {
      */
     @SafeVarargs
     public final Bootique modules(Class<? extends Module>... moduleTypes) {
-        Arrays.asList(moduleTypes).forEach(m -> module(m));
+
+        for (Class<? extends Module> c : moduleTypes) {
+            module(c);
+        }
+
         return this;
     }
 
