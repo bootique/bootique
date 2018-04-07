@@ -1,6 +1,7 @@
 package io.bootique.config.jackson;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -56,5 +57,24 @@ public class InPlaceMapOverriderTest {
         overrider.apply(node);
 
         assertEquals(50, node.get("a").get("b").asInt());
+    }
+
+    @Test
+    public void testApply_ObjectArray() {
+
+        Map<String, String> props = Collections.singletonMap("a[1]", "50");
+        InPlaceMapOverrider overrider = new InPlaceMapOverrider(props);
+
+        JsonNode node = YamlReader.read("a:\n" +
+                "  - 1\n" +
+                "  - 5\n" +
+                "  - 10");
+        overrider.apply(node);
+
+        ArrayNode array = (ArrayNode) node.get("a");
+        assertEquals(3, array.size());
+        assertEquals(1, array.get(0).asInt());
+        assertEquals(50, array.get(1).asInt());
+        assertEquals(10, array.get(2).asInt());
     }
 }
