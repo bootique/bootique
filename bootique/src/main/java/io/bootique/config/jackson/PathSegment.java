@@ -1,13 +1,13 @@
 package io.bootique.config.jackson;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * A helper class to navigate {@link JsonNode} objects.
@@ -77,7 +77,7 @@ class PathSegment implements Iterable<PathSegment> {
 
 	void fillMissingNodes(String field, JsonNode child, JsonNodeFactory nodeFactory) {
 
-		if (node == null) {
+		if (node == null || node.isNull()) {
 			node = new ObjectNode(nodeFactory);
 			parent.fillMissingNodes(incomingPath, node, nodeFactory);
 		}
