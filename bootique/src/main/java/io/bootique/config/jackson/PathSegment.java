@@ -14,107 +14,133 @@ import java.util.stream.StreamSupport;
  */
 class PathSegment implements Iterable<PathSegment> {
 
-	private static final char DOT = '.';
+    static final char DOT = '.';
+    static final char ARRAY_INDEX_START = '[';
+    static final char ARRAY_INDEX_END = ']';
 
-	private String remainingPath;
-	private String incomingPath;
-	private JsonNode node;
-	private PathSegment parent;
+    protected String remainingPath;
+    private String incomingPath;
+    protected JsonNode node;
+    private PathSegment parent;
 
-	PathSegment(JsonNode node, String remainingPath) {
-		this(node, null, null, remainingPath);
-	}
+    PathSegment(JsonNode node, String remainingPath) {
+        this(node, null, null, remainingPath);
+    }
 
-	protected PathSegment(JsonNode node, PathSegment parent, String incomingPath, String remainingPath) {
-		this.node = node;
-		this.parent = parent;
-		this.incomingPath = incomingPath;
+    protected PathSegment(JsonNode node, PathSegment parent, String incomingPath, String remainingPath) {
+        this.node = node;
+        this.parent = parent;
+        this.incomingPath = incomingPath;
+        this.remainingPath = normalizeRemainingPath(remainingPath);
+    }
 
-		if (remainingPath != null && remainingPath.length() > 0
-				&& remainingPath.charAt(remainingPath.length() - 1) == DOT) {
-			remainingPath = remainingPath.substring(0, remainingPath.length() - 1);
-		}
-		this.remainingPath = remainingPath;
-	}
+    protected String normalizeRemainingPath(String remainingPath) {
+        // strip trailing dot... (why do we need this?)
+        return remainingPath != null && remainingPath.length() > 0 && remainingPath.charAt(remainingPath.length() - 1) == DOT
+                ? remainingPath.substring(0, remainingPath.length() - 1)
+                : remainingPath;
+    }
 
-	public Optional<PathSegment> lastPathComponent() {
-		return StreamSupport.stream(spliterator(), false).reduce((a, b) -> b);
-	}
+    public Optional<PathSegment> lastPathComponent() {
+        return StreamSupport.stream(spliterator(), false).reduce((a, b) -> b);
+    }
 
-	public JsonNode getNode() {
-		return node;
-	}
+    public JsonNode getNode() {
+        return node;
+    }
 
-	public JsonNode getParentNode() {
-		return parent.getNode();
-	}
+    public JsonNode getParentNode() {
+        return parent.getNode();
+    }
 
-	public String getIncomingPath() {
-		return incomingPath;
-	}
+    public String getIncomingPath() {
+        return incomingPath;
+    }
 
-	private PathSegment createNext() {
-		if (remainingPath == null || remainingPath.length() == 0) {
-			return null;
-		}
+    protected PathSegment createNext() {
+        if (remainingPath == null) {
+            return null;
+        }
 
-		int dot = remainingPath.indexOf(DOT);
-		String pre = dot > 0 ? remainingPath.substring(0, dot) : remainingPath;
-		String post = dot > 0 ? remainingPath.substring(dot + 1) : "";
+        int len = remainingPath.length();
+        if (len == 0) {
+            return null;
+        }
 
-		return createChild(pre, post);
-	}
+        // looking for either '.' or '['
+        // start at index 1, assuming at least one char is the property name
+        for (int i = 1; i < len; i++) {
+            char c = remainingPath.charAt(i);
+            if (c == DOT) {
+                // split ppp.ppp into "ppp" and "ppp"
+                return createChild(remainingPath.substring(0, i), remainingPath.substring(i + 1));
+            }
 
-	protected PathSegment createChild(String incomingPath, String remainingPath) {
-		JsonNode child = node != null ? node.get(incomingPath) : null;
-		return new PathSegment(child, this, incomingPath, remainingPath);
-	}
+            if (c == ARRAY_INDEX_START) {
+                // split ppp[nnn].ppp into "ppp" and "[nnn].ppp"
+                return createArrayChild(remainingPath.substring(0, i), remainingPath.substring(i));
+            }
+        }
 
-	void fillMissingParents() {
-		parent.fillMissingNodes(incomingPath, node, new JsonNodeFactory(true));
-	}
+        // no more separators...
+        return createChild(remainingPath, "");
+    }
 
-	void fillMissingNodes(String field, JsonNode child, JsonNodeFactory nodeFactory) {
+    protected PathSegment createChild(String childName, String remainingPath) {
+        JsonNode child = node != null ? node.get(childName) : null;
+        return new PathSegment(child, this, childName, remainingPath);
+    }
 
-		if (node == null || node.isNull()) {
-			node = new ObjectNode(nodeFactory);
-			parent.fillMissingNodes(incomingPath, node, nodeFactory);
-		}
+    protected PathSegment createArrayChild(String childName, String remainingPath) {
+        JsonNode child = node != null ? node.get(childName) : null;
+        return new ArrayIndexPathSegment(child, this, childName, remainingPath);
+    }
 
-		if (child != null) {
-			if (node instanceof ObjectNode) {
-				((ObjectNode) node).set(field, child);
-			} else {
-				throw new IllegalArgumentException(
-						"Node '" + incomingPath + "' is unexpected in the middle of the path");
-			}
-		}
-	}
+    void fillMissingParents() {
+        parent.fillMissingNodes(incomingPath, node, new JsonNodeFactory(true));
+    }
 
-	@Override
-	public Iterator<PathSegment> iterator() {
-		return new Iterator<PathSegment>() {
+    void fillMissingNodes(String field, JsonNode child, JsonNodeFactory nodeFactory) {
 
-			private PathSegment current = PathSegment.this;
-			private PathSegment next = current.createNext();
+        if (node == null || node.isNull()) {
+            node = new ObjectNode(nodeFactory);
+            parent.fillMissingNodes(incomingPath, node, nodeFactory);
+        }
 
-			@Override
-			public boolean hasNext() {
-				return current != null;
-			}
+        if (child != null) {
+            if (node instanceof ObjectNode) {
+                ((ObjectNode) node).set(field, child);
+            } else {
+                throw new IllegalArgumentException(
+                        "Node '" + incomingPath + "' is unexpected in the middle of the path");
+            }
+        }
+    }
 
-			@Override
-			public PathSegment next() {
+    @Override
+    public Iterator<PathSegment> iterator() {
+        return new Iterator<PathSegment>() {
 
-				if (!hasNext()) {
-					throw new NoSuchElementException("Past iterator end");
-				}
+            private PathSegment current = PathSegment.this;
+            private PathSegment next = current.createNext();
 
-				PathSegment r = current;
-				current = next;
-				next = current != null ? current.createNext() : null;
-				return r;
-			}
-		};
-	}
+            @Override
+            public boolean hasNext() {
+                return current != null;
+            }
+
+            @Override
+            public PathSegment next() {
+
+                if (!hasNext()) {
+                    throw new NoSuchElementException("Past iterator end");
+                }
+
+                PathSegment r = current;
+                current = next;
+                next = current != null ? current.createNext() : null;
+                return r;
+            }
+        };
+    }
 }
