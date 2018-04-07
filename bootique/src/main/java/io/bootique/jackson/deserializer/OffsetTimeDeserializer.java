@@ -50,7 +50,7 @@ class OffsetTimeDeserializer extends JSR310DateTimeDeserializerBase<OffsetTime> 
                 return null;
             }
             if (t != JsonToken.VALUE_NUMBER_INT) {
-                _reportWrongToken(parser, context, JsonToken.VALUE_NUMBER_INT, "hours");
+                reportWrongToken(parser, context, JsonToken.VALUE_NUMBER_INT, "hours");
             }
             hour = parser.getIntValue();
         }
@@ -61,7 +61,7 @@ class OffsetTimeDeserializer extends JSR310DateTimeDeserializerBase<OffsetTime> 
                 return null;
             }
             if (t != JsonToken.VALUE_NUMBER_INT) {
-                _reportWrongToken(parser, context, JsonToken.VALUE_NUMBER_INT, "minutes");
+                reportWrongToken(parser, context, JsonToken.VALUE_NUMBER_INT, "minutes");
             }
             minute = parser.getIntValue();
         }
@@ -78,7 +78,7 @@ class OffsetTimeDeserializer extends JSR310DateTimeDeserializerBase<OffsetTime> 
         if (parser.getCurrentToken() == JsonToken.VALUE_STRING) {
             OffsetTime t = OffsetTime.of(hour, minute, second, partialSecond, ZoneOffset.of(parser.getText()));
             if (parser.nextToken() != JsonToken.END_ARRAY) {
-                _reportWrongToken(parser, context, JsonToken.END_ARRAY, "timezone");
+                reportWrongToken(parser, context, JsonToken.END_ARRAY, "timezone");
             }
             return t;
         }
