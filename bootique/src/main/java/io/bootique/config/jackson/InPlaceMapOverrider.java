@@ -14,11 +14,9 @@ import java.util.function.Function;
 public class InPlaceMapOverrider implements Function<JsonNode, JsonNode> {
 
 	private Map<String, String> properties;
-	private char pathSeparator;
 
-	public InPlaceMapOverrider(Map<String, String> properties, char pathSeparator) {
+	public InPlaceMapOverrider(Map<String, String> properties) {
 		this.properties = properties;
-		this.pathSeparator = pathSeparator;
 	}
 
 	@Override
@@ -40,6 +38,6 @@ public class InPlaceMapOverrider implements Function<JsonNode, JsonNode> {
 	}
 
 	protected PathSegment lastPathComponent(JsonNode t, String path) {
-		return new PathSegment(t, path, pathSeparator).lastPathComponent().get();
+		return new PathSegment(t, path).lastPathComponent().get();
 	}
 }

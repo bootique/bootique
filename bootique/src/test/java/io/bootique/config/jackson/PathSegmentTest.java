@@ -14,7 +14,7 @@ public class PathSegmentTest {
 	@Test
 	public void testLastPathComponent_Root() {
 		JsonNode node = YamlReader.read("a: b\nc: d");
-		Optional<PathSegment> last = new PathSegment(node, "", '.').lastPathComponent();
+		Optional<PathSegment> last = new PathSegment(node, "").lastPathComponent();
 
 		assertNotNull(last);
 		assertNotNull(last.get());
@@ -25,7 +25,7 @@ public class PathSegmentTest {
 	@Test
 	public void testLastPathComponent() {
 		JsonNode node = YamlReader.read("a: b\nc: d");
-		Optional<PathSegment> last = new PathSegment(node, "a", '.').lastPathComponent();
+		Optional<PathSegment> last = new PathSegment(node, "a").lastPathComponent();
 
 		assertNotNull(last);
 		assertNotNull(last.get());
@@ -35,7 +35,7 @@ public class PathSegmentTest {
 	@Test
 	public void testLastPathComponent_Nested() {
 		JsonNode node = YamlReader.read("a: b\nc:\n  d: e");
-		Optional<PathSegment> last = new PathSegment(node, "c.d", '.').lastPathComponent();
+		Optional<PathSegment> last = new PathSegment(node, "c.d").lastPathComponent();
 
 		assertNotNull(last);
 		assertEquals("e", last.get().getNode().asText());

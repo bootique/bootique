@@ -84,7 +84,7 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
         Function<JsonNode, JsonNode> overrider = andCliOptionOverrider(identity(), parser, singleConfigMerger);
 
         if (!properties.isEmpty()) {
-            overrider = overrider.andThen(new InPlaceMapOverrider(properties, '.'));
+            overrider = overrider.andThen(new InPlaceMapOverrider(properties));
         }
 
         return JsonNodeConfigurationBuilder.builder()
@@ -134,7 +134,7 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
                 String finalCliValue = cliValue;
                 overrider = overrider.andThen(new InPlaceMapOverrider(new HashMap<String, String>() {{
                     put(omd.getConfigPath(), finalCliValue);
-                }}, '.'));
+                }}));
             }
         }
 

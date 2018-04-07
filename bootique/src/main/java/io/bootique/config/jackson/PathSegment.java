@@ -14,25 +14,24 @@ import java.util.stream.StreamSupport;
  */
 class PathSegment implements Iterable<PathSegment> {
 
+	private static final char DOT = '.';
+
 	private String remainingPath;
 	private String incomingPath;
 	private JsonNode node;
 	private PathSegment parent;
-	protected char pathSeparator;
 
-	PathSegment(JsonNode node, String remainingPath, char pathSeparator) {
-		this(node, null, null, remainingPath, pathSeparator);
+	PathSegment(JsonNode node, String remainingPath) {
+		this(node, null, null, remainingPath);
 	}
 
-	protected PathSegment(JsonNode node, PathSegment parent, String incomingPath, String remainingPath,
-			char pathSeparator) {
+	protected PathSegment(JsonNode node, PathSegment parent, String incomingPath, String remainingPath) {
 		this.node = node;
 		this.parent = parent;
 		this.incomingPath = incomingPath;
-		this.pathSeparator = pathSeparator;
 
 		if (remainingPath != null && remainingPath.length() > 0
-				&& remainingPath.charAt(remainingPath.length() - 1) == pathSeparator) {
+				&& remainingPath.charAt(remainingPath.length() - 1) == DOT) {
 			remainingPath = remainingPath.substring(0, remainingPath.length() - 1);
 		}
 		this.remainingPath = remainingPath;
@@ -59,7 +58,7 @@ class PathSegment implements Iterable<PathSegment> {
 			return null;
 		}
 
-		int dot = remainingPath.indexOf(pathSeparator);
+		int dot = remainingPath.indexOf(DOT);
 		String pre = dot > 0 ? remainingPath.substring(0, dot) : remainingPath;
 		String post = dot > 0 ? remainingPath.substring(dot + 1) : "";
 
@@ -68,7 +67,7 @@ class PathSegment implements Iterable<PathSegment> {
 
 	protected PathSegment createChild(String incomingPath, String remainingPath) {
 		JsonNode child = node != null ? node.get(incomingPath) : null;
-		return new PathSegment(child, this, incomingPath, remainingPath, pathSeparator);
+		return new PathSegment(child, this, incomingPath, remainingPath);
 	}
 
 	void fillMissingParents() {
