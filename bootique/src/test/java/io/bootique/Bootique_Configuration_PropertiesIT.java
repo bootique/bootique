@@ -83,7 +83,7 @@ public class Bootique_Configuration_PropertiesIT {
                 .config(TestOverrideObjectArrayBean.class, "testOverrideObjectArray");
 
         assertEquals(1, b.d.get(0).e);
-        assertEquals(20, b.d.get(1).e);
+        assertEquals(2, b.d.get(1).e);
         assertEquals(3, b.d.get(2).e);
     }
 

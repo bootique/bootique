@@ -73,7 +73,7 @@ public class JsonNodeConfigurationFactory implements ConfigurationFactory {
 
 		// or we just make it case-sensitive like the rest of the config...
 
-		return new CiPathSegment(rootNode, path).lastPathComponent().map(t -> t.getNode())
+		return new CiPropertySegment(rootNode, path).lastPathComponent().map(t -> t.getNode())
 				.orElse(new ObjectNode(null));
 	}
 

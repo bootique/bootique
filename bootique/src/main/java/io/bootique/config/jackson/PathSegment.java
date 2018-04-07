@@ -2,7 +2,6 @@ package io.bootique.config.jackson;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -12,33 +11,35 @@ import java.util.stream.StreamSupport;
 /**
  * A helper class to navigate {@link JsonNode} objects.
  */
-class PathSegment implements Iterable<PathSegment> {
+abstract class PathSegment implements Iterable<PathSegment> {
 
     static final char DOT = '.';
     static final char ARRAY_INDEX_START = '[';
     static final char ARRAY_INDEX_END = ']';
 
     protected String remainingPath;
-    private String incomingPath;
     protected JsonNode node;
-    private PathSegment parent;
-
-    PathSegment(JsonNode node, String remainingPath) {
-        this(node, null, null, remainingPath);
-    }
+    protected String incomingPath;
+    protected PathSegment parent;
 
     protected PathSegment(JsonNode node, PathSegment parent, String incomingPath, String remainingPath) {
         this.node = node;
         this.parent = parent;
         this.incomingPath = incomingPath;
-        this.remainingPath = normalizeRemainingPath(remainingPath);
+        this.remainingPath = remainingPath;
     }
 
-    protected String normalizeRemainingPath(String remainingPath) {
-        // strip trailing dot... (why do we need this?)
-        return remainingPath != null && remainingPath.length() > 0 && remainingPath.charAt(remainingPath.length() - 1) == DOT
-                ? remainingPath.substring(0, remainingPath.length() - 1)
-                : remainingPath;
+    static PathSegment create(JsonNode node, String path) {
+
+        if (path.length() == 0) {
+            return new ValueSegment(node, null, null);
+        }
+
+        if (path.charAt(0) == ARRAY_INDEX_START) {
+            return new IndexSegment(node, null, null, path);
+        }
+
+        return new PropertySegment(node, null, null, path);
     }
 
     public Optional<PathSegment> lastPathComponent() {
@@ -49,15 +50,15 @@ class PathSegment implements Iterable<PathSegment> {
         return node;
     }
 
-    public JsonNode getParentNode() {
-        return parent.getNode();
+    public PathSegment getParent() {
+        return parent;
     }
 
     public String getIncomingPath() {
         return incomingPath;
     }
 
-    protected PathSegment createNext() {
+    protected PathSegment parseNext() {
         if (remainingPath == null) {
             return null;
         }
@@ -67,62 +68,39 @@ class PathSegment implements Iterable<PathSegment> {
             return null;
         }
 
-        // looking for either '.' or '['
-        // start at index 1, assuming at least one char is the property name
-        for (int i = 1; i < len; i++) {
-            char c = remainingPath.charAt(i);
-            if (c == DOT) {
-                // split ppp.ppp into "ppp" and "ppp"
-                return createChild(remainingPath.substring(0, i), remainingPath.substring(i + 1));
-            }
-
-            if (c == ARRAY_INDEX_START) {
-                // split ppp[nnn].ppp into "ppp" and "[nnn].ppp"
-                return createArrayChild(remainingPath.substring(0, i), remainingPath.substring(i));
-            }
-        }
-
-        // no more separators...
-        return createChild(remainingPath, "");
+        return parseNextNotEmpty(remainingPath);
     }
 
-    protected PathSegment createChild(String childName, String remainingPath) {
-        JsonNode child = node != null ? node.get(childName) : null;
-        return new PathSegment(child, this, childName, remainingPath);
+    protected abstract PathSegment parseNextNotEmpty(String path);
+
+    abstract JsonNode readChild(String childName);
+
+    abstract void writeChild(String childName, String value);
+
+    protected PathSegment createValueChild(String childName) {
+        return new ValueSegment(readChild(childName), this, childName);
     }
 
-    protected PathSegment createArrayChild(String childName, String remainingPath) {
-        JsonNode child = node != null ? node.get(childName) : null;
-        return new ArrayIndexPathSegment(child, this, childName, remainingPath);
+    protected PathSegment createPropertyChild(String childName, String remainingPath) {
+        return new PropertySegment(readChild(childName), this, childName, remainingPath);
+    }
+
+    protected PathSegment createIndexedChild(String childName, String remainingPath) {
+        return new IndexSegment(readChild(childName), this, childName, remainingPath);
     }
 
     void fillMissingParents() {
         parent.fillMissingNodes(incomingPath, node, new JsonNodeFactory(true));
     }
 
-    void fillMissingNodes(String field, JsonNode child, JsonNodeFactory nodeFactory) {
-
-        if (node == null || node.isNull()) {
-            node = new ObjectNode(nodeFactory);
-            parent.fillMissingNodes(incomingPath, node, nodeFactory);
-        }
-
-        if (child != null) {
-            if (node instanceof ObjectNode) {
-                ((ObjectNode) node).set(field, child);
-            } else {
-                throw new IllegalArgumentException(
-                        "Node '" + incomingPath + "' is unexpected in the middle of the path");
-            }
-        }
-    }
+    protected abstract void fillMissingNodes(String field, JsonNode child, JsonNodeFactory nodeFactory);
 
     @Override
     public Iterator<PathSegment> iterator() {
         return new Iterator<PathSegment>() {
 
             private PathSegment current = PathSegment.this;
-            private PathSegment next = current.createNext();
+            private PathSegment next = current.parseNext();
 
             @Override
             public boolean hasNext() {
@@ -138,7 +116,7 @@ class PathSegment implements Iterable<PathSegment> {
 
                 PathSegment r = current;
                 current = next;
-                next = current != null ? current.createNext() : null;
+                next = current != null ? current.parseNext() : null;
                 return r;
             }
         };

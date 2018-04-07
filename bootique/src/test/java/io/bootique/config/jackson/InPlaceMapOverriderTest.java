@@ -77,4 +77,22 @@ public class InPlaceMapOverriderTest {
         assertEquals(50, array.get(1).asInt());
         assertEquals(10, array.get(2).asInt());
     }
+
+    @Test
+    public void testApply_ObjectArray_PastEnd() {
+
+        Map<String, String> props = Collections.singletonMap("a[2]", "50");
+        InPlaceMapOverrider overrider = new InPlaceMapOverrider(props);
+
+        JsonNode node = YamlReader.read("a:\n" +
+                "  - 1\n" +
+                "  - 5");
+        overrider.apply(node);
+
+        ArrayNode array = (ArrayNode) node.get("a");
+        assertEquals(3, array.size());
+        assertEquals(1, array.get(0).asInt());
+        assertEquals(5, array.get(1).asInt());
+        assertEquals(50, array.get(2).asInt());
+    }
 }
