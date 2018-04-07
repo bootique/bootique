@@ -35,7 +35,7 @@ public class InPlaceMapOverrider implements Function<JsonNode, JsonNode> {
         return t;
     }
 
-    protected PathSegment lastPathComponent(JsonNode t, String path) {
+    protected PathSegment<?> lastPathComponent(JsonNode t, String path) {
         return PathSegment.create(t, path).lastPathComponent().get();
     }
 }

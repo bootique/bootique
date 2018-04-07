@@ -7,12 +7,15 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 /**
  * A path segment with remaining path being an array index.
  */
-class IndexSegment extends PathSegment {
+class IndexPathSegment extends PathSegment<ArrayNode> {
 
-    protected IndexSegment(JsonNode node, PathSegment parent, String incomingPath, String remainingPath) {
+    // a symbolic index that allows to append values to array without knowing the length
+    private static final String PAST_END_INDEX = ".length";
+
+    protected IndexPathSegment(ArrayNode node, PathSegment parent, String incomingPath, String remainingPath) {
         super(node, parent, incomingPath, remainingPath);
 
-        if (remainingPath != null && remainingPath.length() < 3) {
+        if (remainingPath != null) {
 
             if (remainingPath.length() < 3) {
                 throw new IllegalArgumentException("The path must start with array index [NNN]. Instead got: " + remainingPath);
@@ -33,7 +36,7 @@ class IndexSegment extends PathSegment {
         for (int i = 1; i < len; i++) {
             char c = path.charAt(i);
 
-            if (c == IndexSegment.ARRAY_INDEX_END) {
+            if (c == IndexPathSegment.ARRAY_INDEX_END) {
 
                 // 1. [NNN]
                 if (i == len - 1) {
@@ -74,24 +77,22 @@ class IndexSegment extends PathSegment {
 
     @Override
     void writeChild(String childName, String value) {
-        ArrayNode arrayNode = toArrayNode();
-        JsonNode childNode = value == null ? arrayNode.nullNode() : arrayNode.textNode(value);
+        JsonNode childNode = value == null ? node.nullNode() : node.textNode(value);
         writeChild(childName, childNode);
     }
 
     private void writeChild(String childName, JsonNode childNode) {
-        ArrayNode arrayNode = toArrayNode();
         int index = toIndex(childName);
 
         // allow replacing elements at index
-        if (index < arrayNode.size()) {
-            arrayNode.set(index, childNode);
+        if (index < node.size()) {
+            node.set(index, childNode);
         }
         // allow appending elements to the end of the array...
-        else if (index == arrayNode.size()) {
-            arrayNode.add(childNode);
+        else if (index == node.size()) {
+            node.add(childNode);
         } else {
-            throw new ArrayIndexOutOfBoundsException("Array index out of bounds: " + index + ". Size: " + arrayNode.size());
+            throw new ArrayIndexOutOfBoundsException("Array index out of bounds: " + index + ". Size: " + node.size());
         }
     }
 
@@ -100,7 +101,15 @@ class IndexSegment extends PathSegment {
         if (indexWithParenthesis.length() < 3) {
             throw new IllegalArgumentException("Invalid array index. Must be in format [NNN]. Instead got " + indexWithParenthesis);
         }
+
         String indexString = indexWithParenthesis.substring(1, indexWithParenthesis.length() - 1);
+
+        // format: [.length] or [NNN]
+
+        if (PAST_END_INDEX.equals(indexString)) {
+            return node.size();
+        }
+
         int index;
         try {
             index = Integer.parseInt(indexString);
@@ -113,14 +122,5 @@ class IndexSegment extends PathSegment {
         }
 
         return index;
-    }
-
-    private ArrayNode toArrayNode() {
-        if (!(node instanceof ArrayNode)) {
-            throw new IllegalArgumentException(
-                    "Expected ARRAY node. Instead got " + node.getNodeType() + " at '" + incomingPath + "'");
-        }
-
-        return (ArrayNode) node;
     }
 }

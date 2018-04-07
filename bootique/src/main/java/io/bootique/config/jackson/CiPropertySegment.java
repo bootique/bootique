@@ -1,6 +1,8 @@
 package io.bootique.config.jackson;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -8,14 +10,23 @@ import java.util.Map.Entry;
 /**
  * A path segment for case-insensitive path.
  */
-class CiPropertySegment extends PropertySegment {
+class CiPropertySegment extends PropertyPathSegment {
 
-    protected CiPropertySegment(JsonNode node, PathSegment parent, String incomingPath, String remainingPath) {
-        super(node, parent, incomingPath, remainingPath);
+    static PathSegment<?> create(JsonNode node, String path) {
+
+        if (path.length() == 0) {
+            return new LastPathSegment(node, null, null);
+        }
+
+        if (path.charAt(0) == ARRAY_INDEX_START) {
+            return new IndexPathSegment(toArrayNode(node), null, null, path);
+        }
+
+        return new CiPropertySegment(toObjectNode(node), null, null, path);
     }
 
-    CiPropertySegment(JsonNode node, String remainingPath) {
-        super(node, null, null, remainingPath);
+    protected CiPropertySegment(ObjectNode node, PathSegment parent, String incomingPath, String remainingPath) {
+        super(node, parent, incomingPath, remainingPath);
     }
 
     @Override
@@ -25,13 +36,14 @@ class CiPropertySegment extends PropertySegment {
     }
 
     @Override
-    protected PathSegment createIndexedChild(String childName, String remainingPath) {
+    protected PathSegment<ArrayNode> createIndexedChild(String childName, String remainingPath) {
         throw new UnsupportedOperationException("Indexed CI children are unsupported");
     }
 
     @Override
-    protected PathSegment createPropertyChild(String childName, String remainingPath) {
-        return new CiPropertySegment(readChild(childName), this, childName, remainingPath);
+    protected PathSegment<ObjectNode> createPropertyChild(String childName, String remainingPath) {
+        ObjectNode on = toObjectNode(readChild(childName));
+        return new CiPropertySegment(on, this, childName, remainingPath);
     }
 
     private String getChildCiKey(JsonNode parent, String fieldName) {

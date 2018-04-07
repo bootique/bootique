@@ -4,9 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-class PropertySegment extends PathSegment {
+class PropertyPathSegment extends PathSegment<ObjectNode> {
 
-    PropertySegment(JsonNode node, PathSegment parent, String incomingPath, String remainingPath) {
+    PropertyPathSegment(ObjectNode node, PathSegment parent, String incomingPath, String remainingPath) {
         super(node, parent, incomingPath, remainingPath);
     }
 
@@ -17,14 +17,12 @@ class PropertySegment extends PathSegment {
 
     @Override
     void writeChild(String childName, String value) {
-        ObjectNode objectNode = toObjectNode();
-        JsonNode childNode = value == null ? objectNode.nullNode() : objectNode.textNode(value);
-        objectNode.set(childName, childNode);
+        JsonNode childNode = value == null ? node.nullNode() : node.textNode(value);
+        node.set(childName, childNode);
     }
 
     void writeChild(String childName, JsonNode childNode) {
-        ObjectNode objectNode = toObjectNode();
-        objectNode.set(childName, childNode);
+        node.set(childName, childNode);
     }
 
     @Override
@@ -62,14 +60,5 @@ class PropertySegment extends PathSegment {
         if (child != null) {
             writeChild(field, child);
         }
-    }
-
-    private ObjectNode toObjectNode() {
-        if (!(node instanceof ObjectNode)) {
-            throw new IllegalArgumentException(
-                    "Expected OBJECT node. Instead got " + node.getNodeType() + " at '" + incomingPath + "'");
-        }
-
-        return (ObjectNode) node;
     }
 }

@@ -3,9 +3,9 @@ package io.bootique.config.jackson;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
-public class ValueSegment extends PathSegment {
+class LastPathSegment extends PathSegment<JsonNode> {
 
-    ValueSegment(JsonNode node, PathSegment parent, String incomingPath) {
+    LastPathSegment(JsonNode node, PathSegment parent, String incomingPath) {
         super(node, parent, incomingPath, null);
     }
 

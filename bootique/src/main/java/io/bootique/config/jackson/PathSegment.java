@@ -1,7 +1,9 @@
 package io.bootique.config.jackson;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -11,38 +13,71 @@ import java.util.stream.StreamSupport;
 /**
  * A helper class to navigate {@link JsonNode} objects.
  */
-abstract class PathSegment implements Iterable<PathSegment> {
+abstract class PathSegment<T extends JsonNode> implements Iterable<PathSegment<?>> {
 
     static final char DOT = '.';
     static final char ARRAY_INDEX_START = '[';
     static final char ARRAY_INDEX_END = ']';
 
     protected String remainingPath;
-    protected JsonNode node;
+    protected T node;
     protected String incomingPath;
     protected PathSegment parent;
 
-    protected PathSegment(JsonNode node, PathSegment parent, String incomingPath, String remainingPath) {
+    protected PathSegment(T node, PathSegment parent, String incomingPath, String remainingPath) {
         this.node = node;
         this.parent = parent;
         this.incomingPath = incomingPath;
         this.remainingPath = remainingPath;
     }
 
-    static PathSegment create(JsonNode node, String path) {
+    static PathSegment<?> create(JsonNode node, String path) {
 
         if (path.length() == 0) {
-            return new ValueSegment(node, null, null);
+            return new LastPathSegment(node, null, null);
         }
 
         if (path.charAt(0) == ARRAY_INDEX_START) {
-            return new IndexSegment(node, null, null, path);
+            return new IndexPathSegment(toArrayNode(node), null, null, path);
         }
 
-        return new PropertySegment(node, null, null, path);
+        return new PropertyPathSegment(toObjectNode(node), null, null, path);
     }
 
-    public Optional<PathSegment> lastPathComponent() {
+    protected static ArrayNode toArrayNode(JsonNode node) {
+        if (node != null) {
+
+            if (node.isNull()) {
+                return null;
+            }
+
+            if (!(node instanceof ArrayNode)) {
+                throw new IllegalArgumentException(
+                        "Expected ARRAY node. Instead got " + node.getNodeType());
+            }
+        }
+
+        return (ArrayNode) node;
+    }
+
+    protected static ObjectNode toObjectNode(JsonNode node) {
+        if (node != null) {
+
+            if (node.isNull()) {
+                return null;
+            }
+
+            if (!(node instanceof ObjectNode)) {
+
+                throw new IllegalArgumentException(
+                        "Expected OBJECT node. Instead got " + node.getNodeType());
+            }
+        }
+
+        return (ObjectNode) node;
+    }
+
+    public Optional<PathSegment<?>> lastPathComponent() {
         return StreamSupport.stream(spliterator(), false).reduce((a, b) -> b);
     }
 
@@ -58,7 +93,7 @@ abstract class PathSegment implements Iterable<PathSegment> {
         return incomingPath;
     }
 
-    protected PathSegment parseNext() {
+    protected PathSegment<?> parseNext() {
         if (remainingPath == null) {
             return null;
         }
@@ -77,16 +112,19 @@ abstract class PathSegment implements Iterable<PathSegment> {
 
     abstract void writeChild(String childName, String value);
 
-    protected PathSegment createValueChild(String childName) {
-        return new ValueSegment(readChild(childName), this, childName);
+    protected PathSegment<JsonNode> createValueChild(String childName) {
+        JsonNode child = readChild(childName);
+        return new LastPathSegment(child, this, childName);
     }
 
-    protected PathSegment createPropertyChild(String childName, String remainingPath) {
-        return new PropertySegment(readChild(childName), this, childName, remainingPath);
+    protected PathSegment<ObjectNode> createPropertyChild(String childName, String remainingPath) {
+        ObjectNode on = toObjectNode(readChild(childName));
+        return new PropertyPathSegment(on, this, childName, remainingPath);
     }
 
-    protected PathSegment createIndexedChild(String childName, String remainingPath) {
-        return new IndexSegment(readChild(childName), this, childName, remainingPath);
+    protected PathSegment<ArrayNode> createIndexedChild(String childName, String remainingPath) {
+        ArrayNode an = toArrayNode(readChild(childName));
+        return new IndexPathSegment(an, this, childName, remainingPath);
     }
 
     void fillMissingParents() {
@@ -96,8 +134,8 @@ abstract class PathSegment implements Iterable<PathSegment> {
     protected abstract void fillMissingNodes(String field, JsonNode child, JsonNodeFactory nodeFactory);
 
     @Override
-    public Iterator<PathSegment> iterator() {
-        return new Iterator<PathSegment>() {
+    public Iterator<PathSegment<?>> iterator() {
+        return new Iterator<PathSegment<?>>() {
 
             private PathSegment current = PathSegment.this;
             private PathSegment next = current.parseNext();
