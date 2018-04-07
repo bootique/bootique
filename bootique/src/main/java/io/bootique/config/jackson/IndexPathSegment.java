@@ -2,7 +2,6 @@ package io.bootique.config.jackson;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
 /**
  * A path segment with remaining path being an array index.
@@ -58,16 +57,8 @@ class IndexPathSegment extends PathSegment<ArrayNode> {
     }
 
     @Override
-    protected void fillMissingNodes(String field, JsonNode child, JsonNodeFactory nodeFactory) {
-
-        if (node == null || node.isNull()) {
-            node = new ArrayNode(nodeFactory);
-            parent.fillMissingNodes(incomingPath, node, nodeFactory);
-        }
-
-        if (child != null) {
-            writeChild(field, child);
-        }
+    protected ArrayNode createMissingNode() {
+        return new ArrayNode(NODE_FACTORY);
     }
 
     @Override
@@ -76,12 +67,13 @@ class IndexPathSegment extends PathSegment<ArrayNode> {
     }
 
     @Override
-    void writeChild(String childName, String value) {
+    void writeChildValue(String childName, String value) {
         JsonNode childNode = value == null ? node.nullNode() : node.textNode(value);
         writeChild(childName, childNode);
     }
 
-    private void writeChild(String childName, JsonNode childNode) {
+    @Override
+    void writeChild(String childName, JsonNode childNode) {
         int index = toIndex(childName);
 
         // allow replacing elements at index

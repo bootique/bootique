@@ -29,7 +29,7 @@ public class InPlaceMapOverrider implements Function<JsonNode, JsonNode> {
                 throw new IllegalArgumentException("No parent node");
             }
 
-            target.getParent().writeChild(target.getIncomingPath(), e.getValue());
+            target.getParent().writeChildValue(target.getIncomingPath(), e.getValue());
         });
 
         return t;

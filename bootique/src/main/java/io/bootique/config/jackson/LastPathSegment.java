@@ -1,7 +1,6 @@
 package io.bootique.config.jackson;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
 class LastPathSegment extends PathSegment<JsonNode> {
 
@@ -15,8 +14,8 @@ class LastPathSegment extends PathSegment<JsonNode> {
     }
 
     @Override
-    protected void fillMissingNodes(String field, JsonNode child, JsonNodeFactory nodeFactory) {
-        throw new UnsupportedOperationException("This node is not supposed to have children");
+    protected JsonNode createMissingNode() {
+        throw new UnsupportedOperationException("This node does not support filling missing elements");
     }
 
     @Override
@@ -25,7 +24,12 @@ class LastPathSegment extends PathSegment<JsonNode> {
     }
 
     @Override
-    void writeChild(String childName, String value) {
+    void writeChildValue(String childName, String value) {
+        throw new UnsupportedOperationException("This node is not supposed to have children");
+    }
+
+    @Override
+    void writeChild(String childName, JsonNode childNode) {
         throw new UnsupportedOperationException("This node is not supposed to have children");
     }
 }

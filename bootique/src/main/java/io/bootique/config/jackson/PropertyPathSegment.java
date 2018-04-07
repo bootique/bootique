@@ -1,7 +1,6 @@
 package io.bootique.config.jackson;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 class PropertyPathSegment extends PathSegment<ObjectNode> {
@@ -15,14 +14,14 @@ class PropertyPathSegment extends PathSegment<ObjectNode> {
         return node != null ? node.get(childName) : null;
     }
 
-    @Override
-    void writeChild(String childName, String value) {
-        JsonNode childNode = value == null ? node.nullNode() : node.textNode(value);
+    void writeChild(String childName, JsonNode childNode) {
         node.set(childName, childNode);
     }
 
-    void writeChild(String childName, JsonNode childNode) {
-        node.set(childName, childNode);
+    @Override
+    void writeChildValue(String childName, String value) {
+        JsonNode childNode = value == null ? node.nullNode() : node.textNode(value);
+        writeChild(childName, childNode);
     }
 
     @Override
@@ -50,15 +49,7 @@ class PropertyPathSegment extends PathSegment<ObjectNode> {
     }
 
     @Override
-    protected void fillMissingNodes(String field, JsonNode child, JsonNodeFactory nodeFactory) {
-
-        if (node == null || node.isNull()) {
-            node = new ObjectNode(nodeFactory);
-            parent.fillMissingNodes(incomingPath, node, nodeFactory);
-        }
-
-        if (child != null) {
-            writeChild(field, child);
-        }
+    protected ObjectNode createMissingNode() {
+        return new ObjectNode(NODE_FACTORY);
     }
 }

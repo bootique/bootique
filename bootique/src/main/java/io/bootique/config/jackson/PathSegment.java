@@ -15,20 +15,22 @@ import java.util.stream.StreamSupport;
  */
 abstract class PathSegment<T extends JsonNode> implements Iterable<PathSegment<?>> {
 
+    protected static final JsonNodeFactory NODE_FACTORY = new JsonNodeFactory(true);
+
     static final char DOT = '.';
     static final char ARRAY_INDEX_START = '[';
     static final char ARRAY_INDEX_END = ']';
 
-    protected String remainingPath;
     protected T node;
     protected String incomingPath;
+    protected String path;
     protected PathSegment parent;
 
-    protected PathSegment(T node, PathSegment parent, String incomingPath, String remainingPath) {
+    protected PathSegment(T node, PathSegment parent, String incomingPath, String path) {
         this.node = node;
         this.parent = parent;
         this.incomingPath = incomingPath;
-        this.remainingPath = remainingPath;
+        this.path = path;
     }
 
     static PathSegment<?> create(JsonNode node, String path) {
@@ -77,40 +79,42 @@ abstract class PathSegment<T extends JsonNode> implements Iterable<PathSegment<?
         return (ObjectNode) node;
     }
 
-    public Optional<PathSegment<?>> lastPathComponent() {
+    Optional<PathSegment<?>> lastPathComponent() {
         return StreamSupport.stream(spliterator(), false).reduce((a, b) -> b);
     }
 
-    public JsonNode getNode() {
+    JsonNode getNode() {
         return node;
     }
 
-    public PathSegment getParent() {
+    PathSegment getParent() {
         return parent;
     }
 
-    public String getIncomingPath() {
+    String getIncomingPath() {
         return incomingPath;
     }
 
     protected PathSegment<?> parseNext() {
-        if (remainingPath == null) {
+        if (path == null) {
             return null;
         }
 
-        int len = remainingPath.length();
+        int len = path.length();
         if (len == 0) {
             return null;
         }
 
-        return parseNextNotEmpty(remainingPath);
+        return parseNextNotEmpty(path);
     }
 
     protected abstract PathSegment parseNextNotEmpty(String path);
 
     abstract JsonNode readChild(String childName);
 
-    abstract void writeChild(String childName, String value);
+    abstract void writeChild(String childName, JsonNode childNode);
+
+    abstract void writeChildValue(String childName, String value);
 
     protected PathSegment<JsonNode> createValueChild(String childName) {
         JsonNode child = readChild(childName);
@@ -128,10 +132,22 @@ abstract class PathSegment<T extends JsonNode> implements Iterable<PathSegment<?
     }
 
     void fillMissingParents() {
-        parent.fillMissingNodes(incomingPath, node, new JsonNodeFactory(true));
+        parent.fillMissingNodes(incomingPath, node);
     }
 
-    protected abstract void fillMissingNodes(String field, JsonNode child, JsonNodeFactory nodeFactory);
+    protected abstract T createMissingNode();
+
+    protected final void fillMissingNodes(String field, JsonNode child) {
+
+        if (node == null || node.isNull()) {
+            node = createMissingNode();
+            parent.fillMissingNodes(incomingPath, node);
+        }
+
+        if (child != null) {
+            writeChild(field, child);
+        }
+    }
 
     @Override
     public Iterator<PathSegment<?>> iterator() {
@@ -146,13 +162,13 @@ abstract class PathSegment<T extends JsonNode> implements Iterable<PathSegment<?
             }
 
             @Override
-            public PathSegment next() {
+            public PathSegment<?> next() {
 
                 if (!hasNext()) {
                     throw new NoSuchElementException("Past iterator end");
                 }
 
-                PathSegment r = current;
+                PathSegment<?> r = current;
                 current = next;
                 next = current != null ? current.parseNext() : null;
                 return r;
