@@ -15,7 +15,7 @@ public class Bootique_Configuration_PropertiesIT {
     public BQInternalTestFactory testFactory = new BQInternalTestFactory();
 
     private BQInternalTestFactory.Builder app() {
-        return testFactory.app("--config=classpath:io/bootique/Bootique_Configuration_Properties_IT.yml");
+        return testFactory.app("--config=classpath:io/bootique/Bootique_Configuration_PropertiesIT.yml");
     }
 
     @Test

@@ -8,6 +8,7 @@ import io.bootique.unit.BQInternalTestFactory;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -19,16 +20,35 @@ public class Bootique_Configuration_VarsIT {
     @Rule
     public BQInternalTestFactory testFactory = new BQInternalTestFactory();
 
+    private BQInternalTestFactory.Builder app() {
+        return testFactory.app("--config=classpath:io/bootique/Bootique_Configuration_VarsIT.yml");
+    }
+
     @Test
-    public void testDeclareVar_SetValue() {
-        BQRuntime runtime = testFactory.app("--config=src/test/resources/io/bootique/config/configEnvironment.yml")
+    public void testOverrideValue() {
+        BQRuntime runtime = app()
                 .var("MY_VAR", "myValue")
-                .declareVar("c.m.l", "MY_VAR")
+                .declareVar("testOverrideValue.c.m.l", "MY_VAR")
                 .createRuntime();
 
-        Bean1 b1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
+        Bean1 b1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "testOverrideValue");
 
         assertEquals("myValue", b1.c.m.l);
+    }
+
+    @Test
+    public void testOverrideValueArray() {
+        BQRuntime runtime = app()
+                .var("MY_VAR", "J")
+                .declareVar("testOverrideValueArray.h[1]", "MY_VAR")
+                .createRuntime();
+
+        TestOverrideValueArrayBean b = runtime.getInstance(ConfigurationFactory.class)
+                .config(TestOverrideValueArrayBean.class, "testOverrideValueArray");
+
+        assertEquals("i", b.h.get(0));
+        assertEquals("J", b.h.get(1));
+        assertEquals("k", b.h.get(2));
     }
 
     @Test
@@ -104,6 +124,12 @@ public class Bootique_Configuration_VarsIT {
         }
     }
 
+    static class TestOverrideValueArrayBean {
+        private List<String> h;
 
+        public void setH(List<String> h) {
+            this.h = h;
+        }
+    }
 
 }

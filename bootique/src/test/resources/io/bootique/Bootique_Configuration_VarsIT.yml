@@ -1,0 +1,11 @@
+testOverrideValue:
+  c:
+    m:
+      k: "q"
+      l: "n"
+
+testOverrideValueArray:
+  h:
+    - i
+    - j
+    - k
