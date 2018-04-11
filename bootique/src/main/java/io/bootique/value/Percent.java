@@ -7,7 +7,7 @@ import java.util.Objects;
  *
  * @since 0.26
  */
-public class Percent {
+public class Percent implements Comparable<Percent> {
 
     public static final Percent ZERO = new Percent(0.);
     public static final Percent HUNDRED = new Percent(100.);
@@ -81,5 +81,10 @@ public class Percent {
     @Override
     public int hashCode() {
         return Double.hashCode(percent);
+    }
+
+    @Override
+    public int compareTo(Percent o) {
+        return Double.compare(percent, o.percent);
     }
 }
