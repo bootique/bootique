@@ -34,7 +34,8 @@ API removal `bootique-undertow-test` module was removed. It is enough to use
 `bootique-test` as described in the [0.25 blog](https://blog.bootique.io/the-state-of-bootique-early-2018-part-1-ed6806d9c99a)
 ("Test API Improvements" section).
 
-* Jetty health thresholds structure has changed as shown in the following diff:
+* [bootique-jetty #77](https://github.com/bootique/bootique-jetty/issues/77): Jetty health thresholds structure has changed as
+shown in the following diff:
 
 ```yaml
 jetty:
@@ -45,8 +46,8 @@ jetty:
 +      warning: 2
 +      critical: 3
 +    poolUtilizationThresholds:
-+      warning: 0.6
-+      critical: 0.9
++      warning: 60%
++      critical: 90%
 ```
 
 ## 0.25
