@@ -18,13 +18,13 @@ public class PercentYamlDeserializerIT extends DeserializerTestBase {
     @Test
     public void testDeserialization_AsDouble() throws Exception {
         Percent p = deserialize(Percent.class, "5.0");
-        assertEquals(5., p.getPercent(), 0.00001);
+        assertEquals(500., p.getPercent(), 0.00001);
     }
 
     @Test
     public void testDeserialization_AsInt() throws Exception {
         Percent p = deserialize(Percent.class, "5");
-        assertEquals(5., p.getPercent(), 0.00001);
+        assertEquals(500., p.getPercent(), 0.00001);
     }
 
     @Test

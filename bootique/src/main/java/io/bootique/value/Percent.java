@@ -10,26 +10,38 @@ import java.util.Objects;
 public class Percent implements Comparable<Percent> {
 
     public static final Percent ZERO = new Percent(0.);
-    public static final Percent HUNDRED = new Percent(100.);
+    public static final Percent HUNDRED = new Percent(1.);
 
     private double percent;
 
     /**
-     * Creates a Percent instance from a String representation. E.g.
+     * Creates a Percent instance from a String representation. The String can be either a double, in which case it
+     * must represent a fraction of 1.0 (e.g. "0.5"), or a percent, in which case it must be followed by percentage sign
+     * (e.g. "50.1%").
      *
      * @param value a String value representing percentage. Optionally followed by the percent sign. E.g. "0.5%",
      *              "100%", "-7.9%".
      */
     public Percent(String value) {
-        this(parse(value));
+        this.percent = parse(value);
     }
 
+    /**
+     * Creates a percent instance from an int that represents a fraction of 1.0. I.e. 1 is "100%".
+     *
+     * @param value int representing a fraction of 1.0. I.e. 1 is "100%".
+     */
     public Percent(int value) {
-        this.percent = value;
+        this.percent = value * 100.;
     }
 
+    /**
+     * Creates a percent instance from an double that represents a fraction of 1.0. I.e. 0.5 is "50%".
+     *
+     * @param value double representing a fraction of 1.0. I.e. I.e. 0.5 is "50%".
+     */
     public Percent(double value) {
-        this.percent = value;
+        this.percent = value * 100.;
     }
 
     static double parse(String percent) {
