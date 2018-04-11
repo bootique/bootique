@@ -9,6 +9,9 @@ import java.util.Objects;
  */
 public class Percent {
 
+    public static final Percent ZERO = new Percent(0.);
+    public static final Percent HUNDRED = new Percent(100.);
+
     private double percent;
 
     /**
