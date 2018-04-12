@@ -1,5 +1,8 @@
 package io.bootique.value;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.Objects;
 
 /**
@@ -78,6 +81,16 @@ public class Percent implements Comparable<Percent> {
     @Override
     public String toString() {
         return percent + "%";
+    }
+
+    /**
+     * A {@link #toString()} variation that returns percent string rounded to the specified precision.
+     *
+     * @param precision precision for the returned String.
+     * @return  percent string rounded to the specified precision.
+     */
+    public String toString(int precision) {
+        return new BigDecimal(percent, new MathContext(precision, RoundingMode.HALF_UP)) + "%";
     }
 
     @Override

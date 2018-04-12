@@ -100,4 +100,14 @@ public class PercentTest {
     public void testParse_Large() {
         assertEquals(10001.0005, Percent.parse("10001.0005"), 0.000000001);
     }
+
+    @Test
+    public void testToString_Precision() {
+        assertEquals("0.000124%", new Percent("0.0001237%").toString(3));
+        assertEquals("1.01%", new Percent("1.0111111%").toString(3));
+        assertEquals("1.012%", new Percent("1.011811%").toString(4));
+        assertEquals("1.0110000%", new Percent("1.011%").toString(8));
+        assertEquals("100.1%", new Percent("100.09%").toString(4));
+
+    }
 }
