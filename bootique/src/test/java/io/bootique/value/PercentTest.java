@@ -47,10 +47,10 @@ public class PercentTest {
         Percent p2 = new Percent(2);
         Percent p4 = new Percent(1.000);
 
-        assertTrue(p1.compareTo(p1) == 0.);
-        assertTrue(p1.compareTo(p2) < 0.);
-        assertTrue(p2.compareTo(p1) > 0.);
-        assertTrue(p1.compareTo(p4) == 0.);
+        assertTrue(p1.compareTo(p1) == 0);
+        assertTrue(p1.compareTo(p2) < 0);
+        assertTrue(p2.compareTo(p1) > 0);
+        assertTrue(p1.compareTo(p4) == 0);
 
     }
 
@@ -108,6 +108,5 @@ public class PercentTest {
         assertEquals("1.012%", new Percent("1.011811%").toString(4));
         assertEquals("1.0110000%", new Percent("1.011%").toString(8));
         assertEquals("100.1%", new Percent("100.09%").toString(4));
-
     }
 }

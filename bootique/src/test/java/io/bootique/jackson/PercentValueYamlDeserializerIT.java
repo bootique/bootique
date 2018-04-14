@@ -7,7 +7,7 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
-public class PercentYamlDeserializerIT extends DeserializerTestBase {
+public class PercentValueYamlDeserializerIT extends DeserializerTestBase {
 
     @Test
     public void testDeserialization_AsPercent() throws Exception {
