@@ -49,6 +49,16 @@ public class Duration implements Comparable<Duration> {
         this.stringDuration = value;
     }
 
+    /**
+     * Creates a Duration instance from milliseconds.
+     *
+     * @param value duration in milliseconds.
+     */
+    public Duration(long value) {
+        this.duration = java.time.Duration.ofMillis(value);
+        this.stringDuration = value + "ms";
+    }
+
     static java.time.Duration parse(String value) {
         Objects.requireNonNull(value, "Null 'value' argument");
 
