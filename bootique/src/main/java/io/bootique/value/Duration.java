@@ -17,6 +17,8 @@ public class Duration implements Comparable<Duration> {
 
     private static final Map<String, TemporalUnit> UNIT_VOCABULARY;
 
+    public static final Duration ZERO = new Duration(java.time.Duration.ZERO.toMillis());
+
     static {
         UNIT_VOCABULARY = new HashMap<>();
         UNIT_VOCABULARY.put("ms", ChronoUnit.MILLIS);
