@@ -49,6 +49,9 @@ jetty:
 +      warning: 60%
 +      critical: 90%
 ```
+* [bootique-jdbc #182](https://github.com/bootique/bootique-jdbc/issues/82): `bootique-jdbc-instrumented` module was removed. 
+There are healthchecks specific to Tomcat and Hikari pools, so there's no need to have a generic set of healthchecks that interferes
+with them. You will need to remove references to `bootique-jdbc-instrumented` from your build scripts and replace them with `bootique-jdbc-tomcat-instrumented` (that actually contains healtchecks ported from the removed module) or `bootique-jdbc-hikaricp-instrumented` (that has its own set of health checks). 
 
 ## 0.25
 
