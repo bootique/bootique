@@ -34,8 +34,8 @@ API removal `bootique-undertow-test` module was removed. It is enough to use
 `bootique-test` as described in the [0.25 blog](https://blog.bootique.io/the-state-of-bootique-early-2018-part-1-ed6806d9c99a)
 ("Test API Improvements" section).
 
-* [bootique-jetty #77](https://github.com/bootique/bootique-jetty/issues/77): Jetty health thresholds structure has changed as
-shown in the following diff:
+* [bootique-jetty #77](https://github.com/bootique/bootique-jetty/issues/77): Jetty health checked thresholds structure has
+changed as shown in the following diff:
 
 ```yaml
 jetty:
@@ -49,9 +49,26 @@ jetty:
 +      warning: 60%
 +      critical: 90%
 ```
-* [bootique-jdbc #82](https://github.com/bootique/bootique-jdbc/issues/82): `bootique-jdbc-instrumented` module was removed. 
+* [bootique-jdbc #81](https://github.com/bootique/bootique-jdbc/issues/81): Hikari health check threashold structure has changed
+as shown in the following diff. Now you can specify warning and critical ranges and use human-readable durations:
+
+```yaml
+jdbc:
+  mydb:
+    health:
+-      connectivityCheckTimeout: 250
+-      expected99thPercentile: 10
++      connectivity:
++        critical: 250ms
++      connection99Percent:
++        warning: 10ms
++        critical: 500ms
+```
+
+* [bootique-jdbc #82](https://github.com/bootique/bootique-jdbc/issues/82): `bootique-jdbc-instrumented` module was removed.
 There are healthchecks specific to Tomcat and Hikari pools, so there's no need to have a generic set of healthchecks that interferes
-with them. You will need to remove references to `bootique-jdbc-instrumented` from your build scripts and replace them with `bootique-jdbc-tomcat-instrumented` (that actually contains healtchecks ported from the removed module) or `bootique-jdbc-hikaricp-instrumented` (that has its own set of health checks). 
+with them. You will need to remove references to `bootique-jdbc-instrumented` from your build scripts and replace them with `bootique-jdbc-tomcat-instrumented` (that actually contains healtchecks ported from the removed module) or `bootique-jdbc-hikaricp-instrumented` (that has its own set of health checks).
+
 
 ## 0.25
 
