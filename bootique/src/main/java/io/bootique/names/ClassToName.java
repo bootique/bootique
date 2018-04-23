@@ -1,5 +1,7 @@
 package io.bootique.names;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -9,11 +11,12 @@ import java.util.Objects;
  */
 public class ClassToName {
 
-    private String stripSuffix;
+    private List<String> stripSuffixes;
     private boolean convertToLowerCase;
     private String partsSeparator;
 
     private ClassToName() {
+        this.stripSuffixes = new ArrayList<>(2);
     }
 
     public static Builder builder() {
@@ -24,14 +27,25 @@ public class ClassToName {
 
         String name = type.getSimpleName();
 
-        name = applyStripSuffix(name);
+        name = applyStripSuffixes(name);
         name = applyPartsSeparator(name);
         name = applyCaseConversion(name);
 
         return name;
     }
 
-    protected String applyStripSuffix(String name) {
+    protected String applyStripSuffixes(String name) {
+        
+        // the order of suffixes matters... strip them in the same order they were added to the builder
+        for (String suffix : stripSuffixes) {
+            name = applyStripSuffix(name, suffix);
+        }
+
+        return name;
+    }
+
+    protected String applyStripSuffix(String name, String stripSuffix) {
+
         return stripSuffix != null && name.endsWith(stripSuffix)
                 ? name.substring(0, name.length() - stripSuffix.length())
                 : name;
@@ -85,7 +99,7 @@ public class ClassToName {
                 throw new IllegalArgumentException("Empty suffix");
             }
 
-            strategy.stripSuffix = suffix;
+            strategy.stripSuffixes.add(suffix);
             return this;
         }
 
