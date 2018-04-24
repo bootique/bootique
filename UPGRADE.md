@@ -69,6 +69,9 @@ jdbc:
 There are healthchecks specific to Tomcat and Hikari pools, so there's no need to have a generic set of healthchecks that interferes
 with them. You will need to remove references to `bootique-jdbc-instrumented` from your build scripts and replace them with `bootique-jdbc-tomcat-instrumented` (that actually contains healtchecks ported from the removed module) or `bootique-jdbc-hikaricp-instrumented` (that has its own set of health checks).
 
+* [bootique-metrics #30](https://github.com/bootique/bootique-metrics/issues/30): There was a massive renaming of module metrics to
+follow a single naming convention. Follow the link to [bootique-metrics #30](https://github.com/bootique/bootique-metrics/issues/30)
+to see the old vs new names across the modules.
 
 ## 0.25
 
