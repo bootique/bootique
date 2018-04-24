@@ -2,6 +2,7 @@
 
 * #188 Update Guice to 4.2.0
 * #189 Update Jackson to 2.9.5
+* #190 StackOverflowError on -H and recursive factories
 * #214 Cleaning up APIs deprecated since <= 0.25
 * #215 Remove support for date/time values as arrays of components
 * #216 Config: addressing array elements via property paths
