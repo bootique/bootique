@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class Bootique_ConfigurationIT {
 
@@ -25,7 +26,7 @@ public class Bootique_ConfigurationIT {
                 .getInstance(ConfigurationFactory.class)
                 .config(new TypeRef<Map<String, String>>() {
                 }, "");
-        assertEquals("{}", config.toString());
+        assertTrue(config.isEmpty());
     }
 
     @Test
@@ -38,7 +39,8 @@ public class Bootique_ConfigurationIT {
                 getInstance(ConfigurationFactory.class)
                 .config(new TypeRef<Map<String, String>>() {
                 }, "");
-        assertEquals("{a=b}", config.toString());
+        assertEquals(1, config.size());
+        assertEquals("b", config.get("a"));
     }
 
     @Test
@@ -51,7 +53,9 @@ public class Bootique_ConfigurationIT {
                 .getInstance(ConfigurationFactory.class)
                 .config(new TypeRef<Map<String, String>>() {
                 }, "");
-        assertEquals("{a=e, c=d}", config.toString());
+        assertEquals(2, config.size());
+        assertEquals("e", config.get("a"));
+        assertEquals("d", config.get("c"));
     }
 
     @Test
@@ -64,7 +68,9 @@ public class Bootique_ConfigurationIT {
                 .getInstance(ConfigurationFactory.class)
                 .config(new TypeRef<Map<String, String>>() {
                 }, "");
-        assertEquals("{a=b, c=d}", config.toString());
+        assertEquals(2, config.size());
+        assertEquals("b", config.get("a"));
+        assertEquals("d", config.get("c"));
     }
 
     @Test
@@ -79,7 +85,10 @@ public class Bootique_ConfigurationIT {
         Map<String, String> config = runtime.getInstance(ConfigurationFactory.class)
                 .config(new TypeRef<Map<String, String>>() {
                 }, "");
-        assertEquals("{a=1, b=2, c=3}", config.toString());
+        assertEquals(3, config.size());
+        assertEquals("1", config.get("a"));
+        assertEquals("2", config.get("b"));
+        assertEquals("3", config.get("c"));
     }
 
     @Test
@@ -94,13 +103,16 @@ public class Bootique_ConfigurationIT {
         Map<String, Integer> config = runtime.getInstance(ConfigurationFactory.class)
                 .config(new TypeRef<Map<String, Integer>>() {
                 }, "");
-        assertEquals("{a=5, b=2, c=6}", config.toString());
+        assertEquals(3, config.size());
+        assertEquals(Integer.valueOf(5), config.get("a"));
+        assertEquals(Integer.valueOf(2), config.get("b"));
+        assertEquals(Integer.valueOf(6), config.get("c"));
     }
 
     @Test
     public void testDIOnOptionConfig() {
 
-        Function<String, String> configReader =
+        Function<String, Map<String, Integer>> configReader =
                 arg -> {
                     BQRuntime runtime = testFactory.app(arg)
                             .module(b -> BQCoreModule.extend(b)
@@ -109,22 +121,25 @@ public class Bootique_ConfigurationIT {
                                     .addOption(OptionMetadata.builder("opt").build()))
                             .createRuntime();
 
-                    Map<String, Integer> config =
-                            runtime.getInstance(ConfigurationFactory.class)
-                                    .config(new TypeRef<Map<String, Integer>>() {
-                                    }, "");
-
-                    return config.toString();
+                    return runtime.getInstance(ConfigurationFactory.class)
+                            .config(new TypeRef<Map<String, Integer>>() {
+                            }, "");
                 };
 
-        assertEquals("{}", configReader.apply(""));
-        assertEquals("{a=1, b=2, c=3}", configReader.apply("--opt"));
+        assertTrue(configReader.apply("").isEmpty());
+
+        Map<String, Integer> config = configReader.apply("--opt");
+
+        assertEquals(3, config.size());
+        assertEquals(Integer.valueOf(1), config.get("a"));
+        assertEquals(Integer.valueOf(2), config.get("b"));
+        assertEquals(Integer.valueOf(3), config.get("c"));
     }
 
     @Test
     public void testDIOnOptionConfig_OverrideWithOption() {
 
-        Function<String, String> configReader =
+        Function<String, Map<String, Integer>> configReader =
                 arg -> {
                     BQRuntime runtime = testFactory.app(arg)
                             .module(b -> BQCoreModule.extend(b)
@@ -135,11 +150,16 @@ public class Bootique_ConfigurationIT {
 
                     return runtime.getInstance(ConfigurationFactory.class)
                             .config(new TypeRef<Map<String, Integer>>() {
-                            }, "").toString();
+                            }, "");
                 };
 
-        assertEquals("{}", configReader.apply(""));
-        assertEquals("{a=8, b=2, c=3}", configReader.apply("--opt=8"));
+        assertTrue(configReader.apply("").isEmpty());
+
+        Map<String, Integer> config = configReader.apply("--opt=8");
+        assertEquals(3, config.size());
+        assertEquals(Integer.valueOf(8), config.get("a"));
+        assertEquals(Integer.valueOf(2), config.get("b"));
+        assertEquals(Integer.valueOf(3), config.get("c"));
     }
 
     @Test

@@ -6,7 +6,6 @@ import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.Multibinder;
-import com.google.inject.util.Types;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,24 +19,15 @@ public class BootiqueTest {
 
     private Bootique bootique;
 
-    static <T> Set<T> setOf(Injector injector, Class<T> type) {
-        return injector.getInstance(Key.get(setOf(type)));
-    }
-
-    @SuppressWarnings("unchecked")
-    static <T> TypeLiteral<Set<T>> setOf(Class<T> type) {
-        return (TypeLiteral<Set<T>>) TypeLiteral.get(Types.setOf(type));
-    }
-
     @Before
     public void before() {
-        this.bootique = Bootique.app(new String[0]);
+        this.bootique = Bootique.app();
     }
 
     @Test
     public void testCreateInjector_Modules_Instances() {
         Injector i = bootique.modules(new TestModule1(), new TestModule2()).createInjector();
-        Set<String> strings = setOf(i, String.class);
+        Set<String> strings = i.getInstance(Key.get(new TypeLiteral<Set<String>>(){}));
 
         assertThat(strings, hasItems("tm1", "tm2"));
         assertEquals(2, strings.size());
@@ -46,7 +36,7 @@ public class BootiqueTest {
     @Test
     public void testCreateInjector_Modules_Types() {
         Injector i = bootique.modules(TestModule1.class, TestModule2.class).createInjector();
-        Set<String> strings = setOf(i, String.class);
+        Set<String> strings = i.getInstance(Key.get(new TypeLiteral<Set<String>>(){}));
 
         assertThat(strings, hasItems("tm1", "tm2"));
         assertEquals(2, strings.size());

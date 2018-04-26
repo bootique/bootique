@@ -3,7 +3,6 @@ package io.bootique;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
-import com.google.inject.util.Types;
 import io.bootique.cli.Cli;
 import io.bootique.config.ConfigurationSource;
 import io.bootique.env.Environment;
@@ -44,7 +43,7 @@ public class JsonNodeConfigurationFactoryProviderIT {
         JsonNodeConfigurationFactoryProvider provider = new JsonNodeConfigurationFactoryProvider(
                 runtime.getInstance(ConfigurationSource.class), runtime.getInstance(Environment.class),
                 runtime.getInstance(JacksonService.class), runtime.getBootLogger(),
-                runtime.getInstance(Key.get((TypeLiteral<Set<OptionMetadata>>) TypeLiteral.get(Types.setOf(OptionMetadata.class)))),
+                runtime.getInstance(Key.get(new TypeLiteral<Set<OptionMetadata>>(){})),
 				Collections.emptySet(),
                 runtime.getInstance(Cli.class));
 
@@ -60,7 +59,7 @@ public class JsonNodeConfigurationFactoryProviderIT {
 		JsonNodeConfigurationFactoryProvider provider = new JsonNodeConfigurationFactoryProvider(
 				runtime.getInstance(ConfigurationSource.class), runtime.getInstance(Environment.class),
 				runtime.getInstance(JacksonService.class), runtime.getBootLogger(),
-				runtime.getInstance(Key.get((TypeLiteral<Set<OptionMetadata>>) TypeLiteral.get(Types.setOf(OptionMetadata.class)))),
+				runtime.getInstance(Key.get(new TypeLiteral<Set<OptionMetadata>>(){})),
 				Collections.emptySet(),
 				runtime.getInstance(Cli.class));
 
@@ -76,7 +75,7 @@ public class JsonNodeConfigurationFactoryProviderIT {
 		JsonNodeConfigurationFactoryProvider provider = new JsonNodeConfigurationFactoryProvider(
 				runtime.getInstance(ConfigurationSource.class), runtime.getInstance(Environment.class),
 				runtime.getInstance(JacksonService.class), runtime.getBootLogger(),
-                runtime.getInstance(Key.get((TypeLiteral<Set<OptionMetadata>>) TypeLiteral.get(Types.setOf(OptionMetadata.class)))),
+                runtime.getInstance(Key.get(new TypeLiteral<Set<OptionMetadata>>(){})),
 				Collections.emptySet(),
                 runtime.getInstance(Cli.class));
 
@@ -93,7 +92,7 @@ public class JsonNodeConfigurationFactoryProviderIT {
 		JsonNodeConfigurationFactoryProvider provider = new JsonNodeConfigurationFactoryProvider(
 				runtime.getInstance(ConfigurationSource.class), runtime.getInstance(Environment.class),
 				runtime.getInstance(JacksonService.class), runtime.getBootLogger(),
-                runtime.getInstance(Key.get((TypeLiteral<Set<OptionMetadata>>) TypeLiteral.get(Types.setOf(OptionMetadata.class)))),
+                runtime.getInstance(Key.get(new TypeLiteral<Set<OptionMetadata>>(){})),
 				Collections.emptySet(),
                 runtime.getInstance(Cli.class));
 
