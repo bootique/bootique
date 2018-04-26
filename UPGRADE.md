@@ -71,7 +71,11 @@ with them. You will need to remove references to `bootique-jdbc-instrumented` fr
 
 * [bootique-metrics #30](https://github.com/bootique/bootique-metrics/issues/30): There was a massive renaming of module metrics to
 follow a single naming convention. Follow the link to [bootique-metrics #30](https://github.com/bootique/bootique-metrics/issues/30)
-to see the old vs new names across the modules.
+to see the old vs new names across all affected modules.
+
+* [bootique-metrics #31](https://github.com/bootique/bootique-metrics/issues/31): Similarly to metrics, health checks got similarly renamed to
+follow the same naming convention. Follow the link to [bootique-metrics #31](https://github.com/bootique/bootique-metrics/issues/31)
+to see the old vs new names across all affected modules.
 
 ## 0.25
 
