@@ -84,7 +84,7 @@ public class ConfigMetadataIT {
     }
 
     @Test
-    public void testRecurciveConfig() {
+    public void testRecursiveConfig() {
         BQRuntime runtime = runtimeFactory.app().module(new BQModuleProvider() {
             @Override
             public Module module() {
