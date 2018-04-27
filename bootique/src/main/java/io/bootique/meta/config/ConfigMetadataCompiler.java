@@ -89,48 +89,46 @@ public class ConfigMetadataCompiler {
         }
     }
 
-    protected ConfigMetadataNode compileObjectMetadata(Descriptor descriptor) {
+    protected ConfigMetadataNode compileObjectMetadata(final Descriptor descriptor) {
 
         // see if there's already a metadata object for this type... proxy it to avoid compile cycles...
-        ConfigMetadataNode seenNode = seen.get(descriptor.getType());
-        if (seenNode != null) {
-            return new ConfigMetadataNodeProxy(descriptor.getName(), descriptor.getDescription(), seenNode);
-        }
+        final ConfigMetadataNode seenNode = seen.get(descriptor.getType());
 
         // create an empty object ourselves, as we need to cache it before we descend down the stack to prevent
         // endless cycles during compilation... note that we are only caching inside 'compileObjectMetadata'...
         // That's the place to break the cycles..
-
-        ConfigObjectMetadata baseObject = new ConfigObjectMetadata();
+        final ConfigObjectMetadata baseObject = new ConfigObjectMetadata();
         seen.put(descriptor.getType(), baseObject);
-        ConfigObjectMetadata.Builder builder = ConfigObjectMetadata
+        final ConfigObjectMetadata.Builder builder = ConfigObjectMetadata
                 .builder(baseObject)
                 .name(descriptor.getName())
                 .type(descriptor.getType())
                 .abstractType(isAbstract(descriptor.getTypeClass()))
                 .typeLabel(extractTypeLabel(descriptor.getTypeClass()));
 
-        // note that root config object known to Bootique doesn't require BQConfig annotation (though it would help in
-        // determining description). Objects nested within the root config do. Otherwise they will be treated as
-        // "value" properties.
-        BQConfig typeAnnotation = descriptor.getTypeClass().getAnnotation(BQConfig.class);
-        if (typeAnnotation != null) {
-            builder.description(typeAnnotation.value());
-        }
-
-        for (Method m : descriptor.getTypeClass().getMethods()) {
-            BQConfigProperty configProperty = m.getAnnotation(BQConfigProperty.class);
-            if (configProperty != null) {
-                Type propType = propertyTypeFromSetter(m);
-                builder.addProperty(compile(new Descriptor(propertyNameFromSetter(m), configProperty, propType)));
+        if (seenNode == null) {
+            // note that root config object known to Bootique doesn't require BQConfig annotation (though it would help in
+            // determining description). Objects nested within the root config do. Otherwise they will be treated as
+            // "value" properties.
+            final BQConfig typeAnnotation = descriptor.getTypeClass().getAnnotation(BQConfig.class);
+            if (typeAnnotation != null) {
+                builder.description(typeAnnotation.value());
             }
-        }
 
-        for (Constructor<?> c : descriptor.getTypeClass().getConstructors()) {
-            BQConfigProperty configProperty = c.getAnnotation(BQConfigProperty.class);
-            if (configProperty != null) {
-                Type propType = propertyTypeFromConstructor(c);
-                builder.addProperty(compile(new Descriptor(descriptor.getTypeClass().getSimpleName().toLowerCase(), configProperty, propType)));
+            for (Method m : descriptor.getTypeClass().getMethods()) {
+                final BQConfigProperty configProperty = m.getAnnotation(BQConfigProperty.class);
+                if (configProperty != null) {
+                    final Type propType = propertyTypeFromSetter(m);
+                    builder.addProperty(compile(new Descriptor(propertyNameFromSetter(m), configProperty, propType)));
+                }
+            }
+
+            for (Constructor<?> c : descriptor.getTypeClass().getConstructors()) {
+                final BQConfigProperty configProperty = c.getAnnotation(BQConfigProperty.class);
+                if (configProperty != null) {
+                    final Type propType = propertyTypeFromConstructor(c);
+                    builder.addProperty(compile(new Descriptor(descriptor.getTypeClass().getSimpleName().toLowerCase(), configProperty, propType)));
+                }
             }
         }
 
