@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Utils methods which used inside {@link Bootique} class, but can be moved outside.
+ * Utils methods serving {@link Bootique} class.
  *
  * @since 0.24
  */
@@ -54,7 +54,7 @@ final class BootiqueUtils {
     }
 
     static String[] toArray(Collection<String> collection) {
-        return collection.toArray(new String[collection.size()]);
+        return collection.toArray(new String[0]);
     }
 }
 

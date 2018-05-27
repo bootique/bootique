@@ -26,7 +26,8 @@ import java.util.function.Supplier;
 import static java.util.stream.Collectors.joining;
 
 /**
- * A main launcher class of Bootique. To start a Bootique app, you may write your main method as follows:
+ * A main launcher class of Bootique. You may use this class as the main class to start the app. Or you may write your
+ * own main method as follows:
  * <pre>
  * public static void main(String[] args) {
  *     Bootique.app(args).modules(...).exec().exit();
@@ -38,7 +39,6 @@ import static java.util.stream.Collectors.joining;
  *     Bootique.app(args).autoLoadModules().exec().exit();
  * }
  * </pre>
- * or just use this class as the main app class.
  */
 public class Bootique {
 
@@ -80,8 +80,7 @@ public class Bootique {
      * Starts a builder of Bootique runtime.
      *
      * @param args command-line arguments.
-     * @return Bootique object that can be customized and then executed as an
-     * app via {@link #exec()} method.
+     * @return Bootique object that can be customized and then executed as an app via {@link #exec()} method.
      */
     public static Bootique app(String... args) {
         if (args == null) {
@@ -92,12 +91,10 @@ public class Bootique {
     }
 
     /**
-     * Starts a builder of Bootique runtime, initializing it with provided
-     * command-line arguments.
+     * Starts a builder of Bootique runtime, initializing it with provided command-line arguments.
      *
      * @param args command-line arguments.
-     * @return Bootique object that can be customized and then executed as an
-     * app via {@link #exec()} method.
+     * @return Bootique object that can be customized and then executed as an app via {@link #exec()} method.
      * @since 0.17
      */
     public static Bootique app(Collection<String> args) {
