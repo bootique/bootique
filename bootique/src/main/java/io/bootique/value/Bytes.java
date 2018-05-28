@@ -137,10 +137,6 @@ public class Bytes implements Comparable<Bytes> {
             return type;
         }
 
-        public long getValue() {
-            return bytes / type.getValue();
-        }
-
         @Override
         public int compareTo(BytesObject o) {
             long cmp = Long.compare(bytes, o.getBytes());
@@ -165,7 +161,7 @@ public class Bytes implements Comparable<Bytes> {
 
         @Override
         public String toString() {
-            return getValue() + " " + type.getName();
+            return bytes / type.getValue() + " " + type.getName();
         }
     }
 }
