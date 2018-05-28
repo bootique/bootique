@@ -39,12 +39,11 @@ public class Bytes implements Comparable<Bytes> {
      * Creates a Bytes instance from a String representation. The String has a numeric part, an optional space and
      * a unit part. E.g. "3b", "5 megabytes", "55 gb".
      *
-     * @param value a String value representing duration.
+     * @param value a String value representing bytes.
      */
     public Bytes(String value) {
         this.bytes = parse(value);
     }
-
 
     protected BytesObject parse(String value){
 
@@ -56,27 +55,27 @@ public class Bytes implements Comparable<Bytes> {
 
         Matcher matcher = TOKENIZER.matcher(value);
         if (!matcher.matches()) {
-            throw new IllegalArgumentException("Invalid Duration format: " + value);
+            throw new IllegalArgumentException("Invalid Unit format: " + value);
         }
 
         BytesUnit unit = parseUnit(matcher.group(2));
-        int amount = parseAmount(matcher.group(1));
+        long amount = parseAmount(matcher.group(1));
 
         return new BytesObject(unit, amount);
     }
 
-    private static int parseAmount(String amount) {
+    private static long parseAmount(String amount) {
         try {
-            return Integer.parseInt(amount);
+            return Long.parseLong(amount);
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Invalid time amount: " + amount);
+            throw new IllegalArgumentException("Invalid bytes amount: " + amount);
         }
     }
 
     private static BytesUnit parseUnit(String unitString) {
-        BytesUnit unit = UNIT_VOCABULARY.get(unitString);
+        BytesUnit unit = UNIT_VOCABULARY.get(unitString.toLowerCase());
         if (unit == null) {
-            throw new IllegalArgumentException("Invalid time unit: " + unitString);
+            throw new IllegalArgumentException("Invalid bytes unit: " + unitString);
         }
 
         return unit;
@@ -84,8 +83,8 @@ public class Bytes implements Comparable<Bytes> {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof BytesObject) {
-            return bytes.equals(((BytesObject) obj).getBytes());
+        if (obj instanceof Bytes) {
+            return bytes.equals(((Bytes) obj).getBytes());
         }
 
         return false;
@@ -110,8 +109,17 @@ public class Bytes implements Comparable<Bytes> {
         return bytes.toString();
     }
 
+    /**
+     * Returns value in chosen bytes unit
+     * @param bytesUnit - target unit
+     *
+     * @return value in chosen unit
+     */
+    public long valueOfUnit(BytesUnit bytesUnit) {
+        return bytes.getBytes() / bytesUnit.getValue();
+    }
 
-    private class BytesObject implements Comparable<BytesObject>{
+    private static class BytesObject implements Comparable<BytesObject>{
 
         private long bytes;
         private BytesUnit type;
@@ -142,11 +150,22 @@ public class Bytes implements Comparable<Bytes> {
             return (int) (bytes - o.getBytes());
         }
 
+        @Override
+        public int hashCode() {
+            return Objects.hash(bytes, BYTES.getValue());
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || Long.class != o.getClass()) return false;
+            Long that = (Long) o;
+            return bytes == that;
+        }
 
         @Override
         public String toString() {
             return getValue() + " " + type.getName();
         }
     }
-
 }

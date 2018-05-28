@@ -25,14 +25,4 @@ public enum BytesUnit {
         return name;
     }
 
-    /**
-     * Converts bytes to chosen bytes unit
-     * @param bytes - value in bytes
-     * @param bytesUnit - target unit
-     *
-     * @return value in chosen unit
-     */
-    public static long valueOfUnit(long bytes, BytesUnit bytesUnit) {
-        return bytes / bytesUnit.getValue();
-    }
 }

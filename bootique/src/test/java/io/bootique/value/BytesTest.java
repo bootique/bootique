@@ -58,32 +58,28 @@ public class BytesTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testParse_Empty() {
-        Duration.parse("");
+        new Bytes("");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testParse_Invalid1() {
-        Duration.parse("4 nosuchthing");
+        new Bytes("4 nosuchthing");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testParse_Invalid2() {
-        Duration.parse("not_a_number mb");
+        new Bytes("not_a_number sec");
     }
+
 
     @Test
     public void testCompareTo() {
-        Duration d1 = new Duration("1s");
-        Duration d2 = new Duration("2s");
-        Duration d3 = new Duration("1 sec");
-        Duration d4 = new Duration("1day");
         Bytes b1 = new Bytes("1b");
         Bytes b2 = new Bytes("2b");
         Bytes b3 = new Bytes("2 bytes");
         Bytes b4 = new Bytes("2kb");
         Bytes b5 = new Bytes("2mb");
         Bytes b6 = new Bytes("2gb");
-
 
         assertTrue(b1.compareTo(b1) == 0);
         assertTrue(b1.compareTo(b2) < 0);
@@ -97,37 +93,34 @@ public class BytesTest {
 
     @Test
     public void testEquals() {
-        Duration d1 = new Duration("1s");
-        Duration d2 = new Duration("2s");
-        Duration d3 = new Duration("1 sec");
-        Duration d4 = new Duration("1000ms");
+        Bytes b1 = new Bytes("5kb");
+        Bytes b2 = new Bytes("5368709120b");
+        Bytes b3 = new Bytes("5gb");
+        Bytes b4 = new Bytes("5120 b");
 
-        assertTrue(d1.equals(d1));
-        assertFalse(d1.equals(null));
-        assertFalse(d1.equals(d2));
-        assertTrue(d1.equals(d3));
-        assertTrue(d1.equals(d4));
-        assertTrue(d4.equals(d1));
+        assertTrue(b1.equals(b4));
+        assertFalse(b2.equals(null));
+        assertTrue(b2.equals(b3));
+        assertFalse(b1.equals(b2));
     }
 
     @Test
     public void testHashCode() {
-        Duration d1 = new Duration("1s");
-        Duration d2 = new Duration("2s");
-        Duration d3 = new Duration("1 sec");
-        Duration d4 = new Duration("1000ms");
+        Bytes b1 = new Bytes("5kb");
+        Bytes b2 = new Bytes("5368709120b");
+        Bytes b3 = new Bytes("5gb");
+        Bytes b4 = new Bytes("5120 b");
 
-        assertEquals(d1.hashCode(), d1.hashCode());
-        assertEquals(d1.hashCode(), d3.hashCode());
-        assertEquals(d1.hashCode(), d4.hashCode());
-        assertNotEquals(d1.hashCode(), d2.hashCode());
+        assertEquals(b1.hashCode(), b4.hashCode());
+        assertEquals(b2.hashCode(), b3.hashCode());
+        assertNotEquals(b1.hashCode(), b3.hashCode());
     }
 
     @Test
     public void testUnitConversion() {
-        assertEquals(5, BytesUnit.valueOfUnit(5368709120L, GB));
-        assertEquals(5, BytesUnit.valueOfUnit(5242880, MB));
-        assertEquals(5, BytesUnit.valueOfUnit(5120, KB));
+        assertEquals(5120, new Bytes("5kb").valueOfUnit(BYTES));
+        assertEquals(5, new Bytes("5kb").valueOfUnit(KB));
+        assertEquals(5, new Bytes("5mb").valueOfUnit(MB));
+        assertEquals(5, new Bytes("5120mb").valueOfUnit(GB));
     }
-
 }
