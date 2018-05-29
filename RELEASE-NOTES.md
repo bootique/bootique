@@ -1,5 +1,6 @@
 ## 0.26
 
+* #224 Bytes unit of measurement
 * #188 Update Guice to 4.2.0
 * #189 Update Jackson to 2.9.5
 * #190 StackOverflowError on -H and recursive factories
