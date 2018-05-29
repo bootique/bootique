@@ -1,6 +1,5 @@
 ## 0.26
 
-* #224 Bytes unit of measurement
 * #188 Update Guice to 4.2.0
 * #189 Update Jackson to 2.9.5
 * #190 StackOverflowError on -H and recursive factories
@@ -9,6 +8,7 @@
 * #215 Remove support for date/time values as arrays of components
 * #216 Config: addressing array elements via property paths
 * #218 Percent value object
+* #224 Bytes unit of measurement
 
 ## 0.25 
 
