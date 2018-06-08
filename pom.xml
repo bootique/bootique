@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>io.bootique.modules.parent</groupId>
 		<artifactId>bootique-modules-parent</artifactId>
-		<version>0.8</version>
+		<version>0.9</version>
 	</parent>
 
 	<groupId>io.bootique</groupId>
@@ -58,16 +58,4 @@
 			</build>
 		</profile>
 	</profiles>
-
-	<build>
-		<pluginManagement>
-			<plugins>
-				<!-- TODO: move this to bootique-modules-parent -->
-				<plugin>
-					<artifactId>maven-jar-plugin</artifactId>
-					<version>3.0.2</version>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-	</build>
 </project>
