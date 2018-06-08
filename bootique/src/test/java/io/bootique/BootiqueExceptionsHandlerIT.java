@@ -175,9 +175,10 @@ public class BootiqueExceptionsHandlerIT {
 
         assertEquals(1, out.getExitCode());
         assertNull(out.getException());
-        assertEquals("More than one DI command named 'xcommand'. Conflicting types: " +
-                        "io.bootique.BootiqueExceptionsHandlerIT$4, io.bootique.BootiqueExceptionsHandlerIT$3.",
-                out.getMessage());
+        String message = out.getMessage();
+        assertTrue(message.startsWith("More than one DI command named 'xcommand'. Conflicting types: "));
+        assertTrue(message.contains("io.bootique.BootiqueExceptionsHandlerIT$3"));
+        assertTrue(message.contains("io.bootique.BootiqueExceptionsHandlerIT$4"));
     }
 
     public static class ConfigDependent {
