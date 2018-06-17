@@ -25,7 +25,7 @@ import java.math.RoundingMode;
 import java.util.Objects;
 
 /**
- * Represents a percent value.
+ * Represents a percent value. Used as a value object to deserialize percentages in application configurations.
  *
  * @since 0.26
  */

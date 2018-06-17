@@ -7,8 +7,9 @@
 * #214 Cleaning up APIs deprecated since <= 0.25
 * #215 Remove support for date/time values as arrays of components
 * #216 Config: addressing array elements via property paths
-* #218 Percent value object
-* #224 Bytes unit of measurement
+* #219 Value object: Duration
+* #218 Value object: Percent
+* #224 Value object: Bytes
 
 ## 0.25 
 
