@@ -33,17 +33,15 @@ language: java
 #
 
 jobs:
-  allow_failures:
-    - jdk: oraclejdk10
   include:
     - stage: build
       if: branch != master OR type IN (pull_request)
-      jdk: oraclejdk10
+      jdk: openjdk11
       script:
         - mvn clean verify
     - stage: build
       if: branch != master OR type IN (pull_request)
-      jdk: oraclejdk9
+      jdk: oraclejdk10
       script:
         - mvn clean verify
     - stage: build
@@ -53,12 +51,12 @@ jobs:
         - mvn clean verify
     - stage: build
       if: branch = master AND type IN (push)
-      jdk: oraclejdk10
+      jdk: openjdk11
       script:
         - mvn clean verify
     - stage: build
       if: branch = master AND type IN (push)
-      jdk: oraclejdk9
+      jdk: oraclejdk10
       script:
         - mvn clean verify
     - stage: build
