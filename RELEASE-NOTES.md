@@ -10,6 +10,7 @@
 * #219 Value object: Duration
 * #218 Value object: Percent
 * #224 Value object: Bytes
+* #232 Upgrade bootique and core modules to bootique-modules-parent:0.11
 
 ## 0.25 
 
