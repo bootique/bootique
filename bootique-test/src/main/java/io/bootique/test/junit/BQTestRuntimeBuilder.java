@@ -50,10 +50,11 @@ public abstract class BQTestRuntimeBuilder<T extends BQTestRuntimeBuilder<T>> {
 
     protected BQTestRuntimeBuilder(String[] args) {
         //exclude system variables and properties by setting the properties
-        this.properties = new HashMap<String, String>() {{
-            put(EXCLUDE_SYSTEM_PROPERTIES, Boolean.toString(true));
-            put(EXCLUDE_SYSTEM_VARIABLES, Boolean.toString(true));
-        }};
+        final HashMap<String, String> properties = new HashMap<>();
+        properties.put(EXCLUDE_SYSTEM_PROPERTIES, "true");
+        properties.put(EXCLUDE_SYSTEM_VARIABLES, "true");
+
+        this.properties = properties;
         this.bootique = Bootique.app(args).module(createPropertiesProvider());
     }
 

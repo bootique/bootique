@@ -45,7 +45,6 @@ import joptsimple.OptionSpec;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -53,6 +52,7 @@ import java.util.Set;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 
+import static java.util.Collections.singletonMap;
 import static java.util.function.Function.identity;
 
 /**
@@ -151,9 +151,9 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
                 }
 
                 String finalCliValue = cliValue;
-                overrider = overrider.andThen(new InPlaceMapOverrider(new HashMap<String, String>() {{
-                    put(omd.getConfigPath(), finalCliValue);
-                }}));
+                overrider = overrider.andThen(new InPlaceMapOverrider(
+                        singletonMap(omd.getConfigPath(), finalCliValue)
+                ));
             }
         }
 
