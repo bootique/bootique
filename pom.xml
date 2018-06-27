@@ -23,7 +23,7 @@
 	<parent>
 		<groupId>io.bootique.modules.parent</groupId>
 		<artifactId>bootique-modules-parent</artifactId>
-		<version>0.12-SNAPSHOT</version>
+		<version>0.11</version>
 	</parent>
 
 	<groupId>io.bootique</groupId>
