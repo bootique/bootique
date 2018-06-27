@@ -40,16 +40,16 @@ public class FolderResourceFactory extends ResourceFactory {
             return normalizeResourceId(getUserDir());
         }
 
-        if (resourceId.startsWith(UrlResolver.CLASSPATH_URL_PREFIX)) {
+        if (resourceId.startsWith(ResourceFactory.CLASSPATH_URL_PREFIX)) {
 
-            String classpath = resourceId.substring(UrlResolver.CLASSPATH_URL_PREFIX.length());
+            String classpath = resourceId.substring(ResourceFactory.CLASSPATH_URL_PREFIX.length());
             if (classpath.length() == 0) {
-                return UrlResolver.CLASSPATH_URL_PREFIX;
+                return ResourceFactory.CLASSPATH_URL_PREFIX;
             }
 
             // classpath:/ is invalid
             if (classpath.equals("/")) {
-                return UrlResolver.CLASSPATH_URL_PREFIX;
+                return ResourceFactory.CLASSPATH_URL_PREFIX;
             }
         }
 
@@ -95,7 +95,7 @@ public class FolderResourceFactory extends ResourceFactory {
             subResourcePath = subResourcePath.substring(1);
         }
 
-        return UrlResolver.resolveUrl(this.resourceId + subResourcePath, false);
+        return resolveUrl(this.resourceId + subResourcePath);
     }
 
     @Override

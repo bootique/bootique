@@ -21,7 +21,7 @@ package io.bootique.config;
 
 import io.bootique.cli.Cli;
 import io.bootique.log.BootLogger;
-import io.bootique.resource.UrlResolver;
+import io.bootique.resource.ResourceFactory;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -57,7 +57,7 @@ public class CliConfigurationSource implements ConfigurationSource {
 
     protected URL toURL(String location) {
         bootLogger.trace(() -> "Reading configuration at " + location);
-        return UrlResolver.resolveUrl(location, true);
+        return new ResourceFactory(location).getUrl();
     }
 
     /**
