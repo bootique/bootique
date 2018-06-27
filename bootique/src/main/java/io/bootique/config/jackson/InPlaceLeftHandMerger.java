@@ -38,77 +38,77 @@ import java.util.function.BinaryOperator;
  */
 public class InPlaceLeftHandMerger implements BinaryOperator<JsonNode> {
 
-	private BootLogger bootLogger;
+    private BootLogger bootLogger;
 
-	public InPlaceLeftHandMerger(BootLogger bootLogger) {
-		this.bootLogger = bootLogger;
-	}
+    public InPlaceLeftHandMerger(BootLogger bootLogger) {
+        this.bootLogger = bootLogger;
+    }
 
-	@Override
-	public JsonNode apply(JsonNode target, JsonNode source) {
+    @Override
+    public JsonNode apply(JsonNode target, JsonNode source) {
 
-		if (target == null) {
-			return source;
-		}
+        if (target == null) {
+            return source;
+        }
 
-		if(source == null) {
-			return target;
-		}
+        if (source == null) {
+            return target;
+        }
 
-		if (source.getNodeType() != target.getNodeType()
-				&& (source.getNodeType() != JsonNodeType.NULL)
-				&& (target.getNodeType() != JsonNodeType.NULL)) {
-			throw new RuntimeException(
-					"Can't merge incompatible node types: " + target.getNodeType() + " vs. " + source.getNodeType());
-		}
+        if (source.getNodeType() != target.getNodeType()
+                && (source.getNodeType() != JsonNodeType.NULL)
+                && (target.getNodeType() != JsonNodeType.NULL)) {
+            throw new RuntimeException(
+                    "Can't merge incompatible node types: " + target.getNodeType() + " vs. " + source.getNodeType());
+        }
 
-		switch (source.getNodeType()) {
-		case ARRAY:
-			return mergeArrays(target, source);
-		case OBJECT:
-			return mergeObjects(target, source);
-		case BINARY:
-		case BOOLEAN:
-		case NULL:
-		case NUMBER:
-		case STRING:
-			return mergeScalars(target, source);
-		default:
-			bootLogger.stderr("Skipping merging of unsupported JSON node: " + source.getNodeType());
-		}
+        switch (source.getNodeType()) {
+            case ARRAY:
+                return mergeArrays(target, source);
+            case OBJECT:
+                return mergeObjects(target, source);
+            case BINARY:
+            case BOOLEAN:
+            case NULL:
+            case NUMBER:
+            case STRING:
+                return mergeScalars(target, source);
+            default:
+                bootLogger.stderr("Skipping merging of unsupported JSON node: " + source.getNodeType());
+        }
 
-		return target;
-	}
+        return target;
+    }
 
-	protected JsonNode mergeArrays(JsonNode target, JsonNode source) {
+    protected JsonNode mergeArrays(JsonNode target, JsonNode source) {
 
-		// TODO: here we implemented "replace" strategy... perhaps we need
-		// alternative "append" strategy?
+        // TODO: here we implemented "replace" strategy... perhaps we need
+        // alternative "append" strategy?
 
-		// side effect - source becomes mutable..
-		return source;
-	}
+        // side effect - source becomes mutable..
+        return source;
+    }
 
-	protected JsonNode mergeObjects(JsonNode target, JsonNode source) {
+    protected JsonNode mergeObjects(JsonNode target, JsonNode source) {
 
-		ObjectNode targetObject = (ObjectNode) target;
-		ObjectNode srcObject = (ObjectNode) source;
+        ObjectNode targetObject = (ObjectNode) target;
+        ObjectNode srcObject = (ObjectNode) source;
 
-		Iterator<String> fieldNames = srcObject.fieldNames();
-		while (fieldNames.hasNext()) {
+        Iterator<String> fieldNames = srcObject.fieldNames();
+        while (fieldNames.hasNext()) {
 
-			String fieldName = fieldNames.next();
-			JsonNode srcChild = srcObject.get(fieldName);
-			JsonNode targetChild = targetObject.get(fieldName);
+            String fieldName = fieldNames.next();
+            JsonNode srcChild = srcObject.get(fieldName);
+            JsonNode targetChild = targetObject.get(fieldName);
 
             targetObject.replace(fieldName, apply(targetChild, srcChild));
-		}
+        }
 
-		return target;
-	}
+        return target;
+    }
 
-	protected JsonNode mergeScalars(JsonNode target, JsonNode source) {
-		// side effect - source becomes mutable
+    protected JsonNode mergeScalars(JsonNode target, JsonNode source) {
+        // side effect - source becomes mutable
         return source;
-	}
+    }
 }
