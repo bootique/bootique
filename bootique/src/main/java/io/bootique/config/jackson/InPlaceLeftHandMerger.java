@@ -20,6 +20,7 @@
 package io.bootique.config.jackson;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.bootique.log.BootLogger;
 
@@ -32,7 +33,7 @@ import java.util.function.BinaryOperator;
  * of left and right documents may end up merged in the resulting object. This
  * assumes an app that cares about the merge result and throws away both source
  * and target after the merge.
- * 
+ *
  * @since 0.17
  */
 public class InPlaceLeftHandMerger implements BinaryOperator<JsonNode> {
@@ -54,7 +55,9 @@ public class InPlaceLeftHandMerger implements BinaryOperator<JsonNode> {
 			return target;
 		}
 
-		if (source.getNodeType() != target.getNodeType()) {
+		if (source.getNodeType() != target.getNodeType()
+				&& (source.getNodeType() != JsonNodeType.NULL)
+				&& (target.getNodeType() != JsonNodeType.NULL)) {
 			throw new RuntimeException(
 					"Can't merge incompatible node types: " + target.getNodeType() + " vs. " + source.getNodeType());
 		}
@@ -98,7 +101,7 @@ public class InPlaceLeftHandMerger implements BinaryOperator<JsonNode> {
 			JsonNode srcChild = srcObject.get(fieldName);
 			JsonNode targetChild = targetObject.get(fieldName);
 
-			targetObject.replace(fieldName, apply(targetChild, srcChild));
+            targetObject.replace(fieldName, apply(targetChild, srcChild));
 		}
 
 		return target;
@@ -106,6 +109,6 @@ public class InPlaceLeftHandMerger implements BinaryOperator<JsonNode> {
 
 	protected JsonNode mergeScalars(JsonNode target, JsonNode source) {
 		// side effect - source becomes mutable
-		return source;
+        return source;
 	}
 }

@@ -19,19 +19,17 @@
 
 package io.bootique.config.jackson;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-
-import java.io.IOException;
-
-import io.bootique.config.jackson.InPlaceLeftHandMerger;
-import org.junit.Test;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.bootique.log.DefaultBootLogger;
+import org.junit.Test;
+
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 public class InPlaceLeftHandMergerTest {
 
@@ -75,6 +73,16 @@ public class InPlaceLeftHandMergerTest {
 
 		JsonNode merged = merger.apply(target, source);
 		assertEquals("{\"a\":false,\"b\":\"string1\",\"c\":6,\"d\":\"unchanged\"}", merged.toString());
+	}
+
+	@Test
+	public void testApply_OverrideValues_Null() {
+
+		JsonNode target = parse("{\"a\":null,\"b\":\"not_null\",\"c\":null}");
+		JsonNode source = parse("{\"a\":\"not_null\",\"b\":null,\"c\":null}");
+
+		JsonNode merged = merger.apply(target, source);
+		assertEquals("{\"a\":\"not_null\",\"b\":null,\"c\":null}", merged.toString());
 	}
 
 	@Test
