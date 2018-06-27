@@ -132,5 +132,26 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>rat</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.rat</groupId>
+						<artifactId>apache-rat-plugin</artifactId>
+
+						<configuration>
+							<excludes>
+								<exclude>src/test/resources/io/bootique/config/CliConfigurationSource_WebConfigSourceIT1.yml</exclude>
+								<exclude>src/test/resources/io/bootique/config/resourcefactory.txt</exclude>
+								<exclude>src/test/resources/io/bootique/**/test*.yml</exclude>
+								<exclude>src/test/resources/io/bootique/test1.json</exclude>
+								<exclude>src/test/resources/io/bootique/empty.yml</exclude>
+							</excludes>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 </project>
