@@ -139,7 +139,6 @@
 					<plugin>
 						<groupId>org.apache.rat</groupId>
 						<artifactId>apache-rat-plugin</artifactId>
-
 						<configuration>
 							<excludes>
 								<exclude>src/test/resources/io/bootique/config/CliConfigurationSource_WebConfigSourceIT1.yml</exclude>
