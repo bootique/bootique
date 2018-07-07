@@ -29,6 +29,7 @@ import io.bootique.help.ConsoleAppender;
 import io.bootique.help.config.ConfigSectionMapGenerator;
 import io.bootique.meta.module.ModulesMetadata;
 import io.bootique.unit.BQInternalTestFactory;
+import io.bootique.value.Duration;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -36,6 +37,7 @@ import org.mockito.Mockito;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -140,7 +142,7 @@ public class ConfigMetadataIT {
         StringBuilder buffer = new StringBuilder();
         ConsoleAppender out = new ConsoleAppender(buffer, 300);
 
-        cm.accept(new ConfigSectionMapGenerator(TestRecursiveConfig.class, out));
+        cm.accept(new ConfigSectionMapGenerator(TestRecursiveConfig.class, out, Collections.EMPTY_MAP));
         String help = buffer.toString();
         assertNotNull(help);
 
@@ -161,6 +163,61 @@ public class ConfigMetadataIT {
                 "                  #\n" +
                 "                  # Resolved as 'io.bootique.meta.config.ConfigMetadataIT$TestRecursiveConfig'.\n" +
                 "                  #\n");
+    }
+
+
+    @Test
+    public void testValueObjectConfig() {
+        BQRuntime runtime = runtimeFactory.app().module(new BQModuleProvider() {
+            @Override
+            public Module module() {
+                return Mockito.mock(Module.class);
+            }
+
+            @Override
+            public Map<String, Type> configs() {
+                return Collections.singletonMap("pf", TestValueObjectConfig.class);
+            }
+
+            @Override
+            public BQModule.Builder moduleBuilder() {
+                return BQModuleProvider.super
+                        .moduleBuilder()
+                        .name("my");
+            }
+        }).createRuntime();
+
+        Collection<ConfigMetadataNode> configs = runtime
+                .getInstance(ModulesMetadata.class)
+                .getModules()
+                .stream()
+                .filter(mmd -> "my".equals(mmd.getName()))
+                .findFirst()
+                .get()
+                .getConfigs();
+
+        assertEquals(1, configs.size());
+
+        ConfigValueMetadata cm = (ConfigValueMetadata) configs.iterator().next();
+        assertTrue("pf".equals(cm.getName()));
+
+        StringBuilder buffer = new StringBuilder();
+        ConsoleAppender out = new ConsoleAppender(buffer, 300);
+
+        Map vo = new HashMap();
+        vo.put(Duration.class, "Test Duration");
+        cm.accept(new ConfigSectionMapGenerator(TestValueObjectConfig.class, out, vo));
+        String help = buffer.toString();
+        assertNotNull(help);
+
+        assertEquals(help, "<value>:\n" +
+                "      #\n" +
+                "      # Resolved as 'io.bootique.meta.config.ConfigMetadataIT$TestValueObjectConfig'.\n" +
+                "      #\n" +
+                "\n" +
+                "      # (p1 desc)\n" +
+                "      # Resolved as 'io.bootique.value.Duration'.\n" +
+                "      p1: <Test Duration>\n");
     }
 
     @BQConfig
@@ -190,4 +247,17 @@ public class ConfigMetadataIT {
         public void setP4(List<TestRecursiveConfig> v) {
         }
     }
+
+    @BQConfig
+    public static class TestValueObjectConfig {
+
+        private Duration p1;
+
+        @BQConfigProperty("(p1 desc)")
+        public void setP1(Duration p1) {
+            this.p1 = p1;
+        }
+
+    }
+
 }

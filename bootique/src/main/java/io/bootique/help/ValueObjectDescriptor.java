@@ -17,30 +17,20 @@
  * under the License.
  */
 
-package io.bootique.help.config;
-
-import io.bootique.help.ConsoleAppender;
-import io.bootique.meta.config.ConfigValueMetadata;
-
-import java.util.Map;
+package io.bootique.help;
 
 /**
- * @since 0.21
+ * @since 0.26
  */
-class ConfigSectionListGenerator extends ConfigSectionGenerator {
+public class ValueObjectDescriptor {
 
-    public ConfigSectionListGenerator(ConsoleAppender out, Map valueObjectsDescriptors) {
-        super(out, valueObjectsDescriptors);
-    }
+	public ValueObjectDescriptor(String description) {
+		this.description = description;
+	}
 
-    @Override
-    protected void printNode(ConfigValueMetadata metadata, boolean asValue) {
+	private String description;
 
-        if (asValue) {
-            String valueLabel = metadata.getType() != null ? sampleValue(metadata.getType()) : "?";
-            out.println("- ", valueLabel);
-        } else {
-            out.println("-");
-        }
-    }
+	public String getDescription() {
+		return description;
+	}
 }

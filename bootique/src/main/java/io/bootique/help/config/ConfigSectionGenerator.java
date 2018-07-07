@@ -20,6 +20,7 @@
 package io.bootique.help.config;
 
 import io.bootique.help.ConsoleAppender;
+import io.bootique.help.ValueObjectDescriptor;
 import io.bootique.meta.MetadataNode;
 import io.bootique.meta.config.ConfigListMetadata;
 import io.bootique.meta.config.ConfigMapMetadata;
@@ -44,10 +45,12 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
 
     static final int DEFAULT_OFFSET = DefaultConfigHelpGenerator.DEFAULT_OFFSET;
 
+    protected Map<Class, ValueObjectDescriptor> valueObjectsDescriptors;
     protected ConsoleAppender out;
 
-    public ConfigSectionGenerator(ConsoleAppender out) {
+    public ConfigSectionGenerator(ConsoleAppender out, Map<Class, ValueObjectDescriptor> valueObjectsDescriptors) {
         this.out = Objects.requireNonNull(out);
+        this.valueObjectsDescriptors = valueObjectsDescriptors;
     }
 
     @Override
@@ -96,7 +99,7 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
     public Object visitListMetadata(ConfigListMetadata metadata) {
         printNode(metadata, false);
 
-        ConfigSectionListGenerator childGenerator = new ConfigSectionListGenerator(out.withOffset(DEFAULT_OFFSET));
+        ConfigSectionListGenerator childGenerator = new ConfigSectionListGenerator(out.withOffset(DEFAULT_OFFSET), valueObjectsDescriptors);
         childGenerator.printListHeader(metadata);
         metadata.getElementType().accept(childGenerator);
 
@@ -109,7 +112,8 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
 
         ConfigSectionMapGenerator childGenerator = new ConfigSectionMapGenerator(
                 metadata.getKeysType(),
-                out.withOffset(DEFAULT_OFFSET));
+                out.withOffset(DEFAULT_OFFSET),
+                this.valueObjectsDescriptors);
 
         childGenerator.printMapHeader(metadata);
         metadata.getValuesType().accept(childGenerator);
@@ -187,7 +191,7 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
     protected void printObjectNoSubclasses(ConfigObjectMetadata metadata) {
 
         ConsoleAppender shifted = out.withOffset(DEFAULT_OFFSET);
-        ConfigSectionGenerator childGenerator = new ConfigSectionGenerator(shifted);
+        ConfigSectionGenerator childGenerator = new ConfigSectionGenerator(shifted, valueObjectsDescriptors);
         childGenerator.printObjectHeader(metadata);
 
         boolean willPrintProperties = !metadata.isAbstractType() && !metadata.getProperties().isEmpty();
@@ -216,7 +220,8 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
         if (asValue) {
             // value header goes on top of property name
             printValueHeader(metadata);
-            String valueLabel = metadata.getType() != null ? sampleValue(metadata.getType()) : "?";
+            Type type = metadata.getType();
+            String valueLabel = type != null ? sampleValue(type) : "?";
             out.println(metadata.getName(), ": ", valueLabel);
         } else {
             // headers for other types are printed below the property with the object contents
@@ -274,6 +279,10 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
                         out.append(">");
                         return out.toString();
                     }
+
+                    if (valueObjectsDescriptors != null && valueObjectsDescriptors.containsKey(type)) {
+                    	return new StringBuilder("<").append(valueObjectsDescriptors.get(type)).append(">").toString();
+					}
                 }
 
                 return "<value>";

@@ -21,6 +21,7 @@ package io.bootique.help.config;
 
 import io.bootique.help.ConsoleAppender;
 import io.bootique.help.HelpAppender;
+import io.bootique.help.ValueObjectDescriptor;
 import io.bootique.meta.MetadataNode;
 import io.bootique.meta.config.ConfigMetadataNode;
 import io.bootique.meta.module.ModuleMetadata;
@@ -28,7 +29,9 @@ import io.bootique.meta.module.ModulesMetadata;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -40,11 +43,18 @@ public class DefaultConfigHelpGenerator implements ConfigHelpGenerator {
     static final int DEFAULT_OFFSET = 6;
 
     private ModulesMetadata modulesMetadata;
+    private Map<Class, ValueObjectDescriptor> valueObjects;
     private int lineWidth;
 
-    public DefaultConfigHelpGenerator(ModulesMetadata modulesMetadata, int lineWidth) {
+    public DefaultConfigHelpGenerator(ModulesMetadata modulesMetadata, Map<Class, ValueObjectDescriptor> valueObjects, int lineWidth) {
         this.lineWidth = lineWidth;
+        this.valueObjects = valueObjects;
         this.modulesMetadata = modulesMetadata;
+    }
+
+    @Deprecated
+    public DefaultConfigHelpGenerator(ModulesMetadata modulesMetadata, int lineWidth) {
+        this(modulesMetadata, new HashMap<>(), lineWidth);
     }
 
     protected HelpAppender createAppender(Appendable out) {
@@ -98,7 +108,7 @@ public class DefaultConfigHelpGenerator implements ConfigHelpGenerator {
 
         // using the underlying appender for config section body. Unlike HelpAppender it allows
         // controlling any number of nested offsets
-        ConfigSectionGenerator generator = new ConfigSectionGenerator(out.getAppender().withOffset(DEFAULT_OFFSET));
+        ConfigSectionGenerator generator = new ConfigSectionGenerator(out.getAppender().withOffset(DEFAULT_OFFSET), valueObjects);
         ConfigMetadataNode last = configs.get(configs.size() - 1);
 
         configs.forEach(c -> {

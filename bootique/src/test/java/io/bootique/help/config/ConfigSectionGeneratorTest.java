@@ -32,6 +32,7 @@ import org.junit.Test;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +56,7 @@ public class ConfigSectionGeneratorTest {
 
         StringBuilder buffer = new StringBuilder();
         ConsoleAppender out = new ConsoleAppender(buffer, lineWidth);
-        node.accept(new ConfigSectionGenerator(out));
+        node.accept(new ConfigSectionGenerator(out, Collections.EMPTY_MAP));
         String help = buffer.toString();
         assertNotNull(help);
         assertEquals(expected.toString(), help);
@@ -490,7 +491,7 @@ public class ConfigSectionGeneratorTest {
 
     @Test
     public void testTypeLabel() throws NoSuchFieldException {
-        ConfigSectionGenerator generator = new ConfigSectionGenerator(mock(ConsoleAppender.class));
+        ConfigSectionGenerator generator = new ConfigSectionGenerator(mock(ConsoleAppender.class), new HashMap<>());
         assertEquals("int", generator.typeLabel(Integer.class));
         assertEquals("int", generator.typeLabel(Integer.TYPE));
         assertEquals("boolean", generator.typeLabel(Boolean.class));
@@ -509,7 +510,7 @@ public class ConfigSectionGeneratorTest {
 
     @Test
     public void testSampleValue() throws NoSuchFieldException {
-        ConfigSectionGenerator generator = new ConfigSectionGenerator(mock(ConsoleAppender.class));
+        ConfigSectionGenerator generator = new ConfigSectionGenerator(mock(ConsoleAppender.class), new HashMap<>());
         assertEquals("<int>", generator.sampleValue(Integer.class));
         assertEquals("<int>", generator.sampleValue(Integer.TYPE));
         assertEquals("<true|false>", generator.sampleValue(Boolean.class));

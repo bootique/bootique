@@ -52,6 +52,7 @@ import io.bootique.env.Environment;
 import io.bootique.help.DefaultHelpGenerator;
 import io.bootique.help.HelpCommand;
 import io.bootique.help.HelpGenerator;
+import io.bootique.help.ValueObjectDescriptor;
 import io.bootique.help.config.ConfigHelpGenerator;
 import io.bootique.help.config.DefaultConfigHelpGenerator;
 import io.bootique.help.config.HelpConfigCommand;
@@ -71,9 +72,13 @@ import io.bootique.shutdown.ShutdownManager;
 import io.bootique.terminal.FixedWidthTerminal;
 import io.bootique.terminal.SttyTerminal;
 import io.bootique.terminal.Terminal;
+import io.bootique.value.Bytes;
+import io.bootique.value.Duration;
+import io.bootique.value.Percent;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -139,6 +144,7 @@ public class BQCoreModule implements Module {
 
         BQCoreModule.extend(binder)
                 .initAllExtensions()
+                .addValueObjectsDescriptors(createValueObjectsDdescriptorsMap())
                 .addOption(createConfigOption())
                 .addCommand(HelpConfigCommand.class);
 
@@ -259,14 +265,14 @@ public class BQCoreModule implements Module {
 
     @Provides
     @Singleton
-    ConfigHelpGenerator provideConfigHelpGenerator(ModulesMetadata modulesMetadata, Terminal terminal) {
+    ConfigHelpGenerator provideConfigHelpGenerator(ModulesMetadata modulesMetadata, Map<Class, ValueObjectDescriptor> valueObjects, Terminal terminal) {
 
         int maxColumns = terminal.getColumns();
         if (maxColumns < TTY_MIN_COLUMNS) {
             maxColumns = TTY_DEFAULT_COLUMNS;
         }
 
-        return new DefaultConfigHelpGenerator(modulesMetadata, maxColumns);
+        return new DefaultConfigHelpGenerator(modulesMetadata, valueObjects, maxColumns);
     }
 
     @Provides
@@ -342,6 +348,15 @@ public class BQCoreModule implements Module {
         boolean isUnix = "/".equals(System.getProperty("file.separator"));
         return isUnix ? new SttyTerminal(bootLogger) : new FixedWidthTerminal(TTY_DEFAULT_COLUMNS);
     }
+
+    private Map createValueObjectsDdescriptorsMap() {
+    	Map<Class, ValueObjectDescriptor> descriptors = new HashMap<>();
+		descriptors.put(Bytes.class, new ValueObjectDescriptor("bytes expression, e.g. 5b, 23mb, 12gigabytes"));
+		descriptors.put(Duration.class, new ValueObjectDescriptor("duration expression, e.g. 5ms, 2s, 1hr"));
+		descriptors.put(Percent.class, new ValueObjectDescriptor("percent expression, e.g. 15%, 75%"));
+
+    	return descriptors;
+	}
 
     public static class Builder {
         private BQCoreModule module;

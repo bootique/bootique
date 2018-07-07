@@ -34,6 +34,7 @@ import io.bootique.command.CommandDecorator;
 import io.bootique.command.CommandRefDecorated;
 import io.bootique.config.OptionRefWithConfig;
 import io.bootique.env.DeclaredVariable;
+import io.bootique.help.ValueObjectDescriptor;
 import io.bootique.meta.application.OptionMetadata;
 
 import java.util.Map;
@@ -58,7 +59,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     private Multibinder<Command> commands;
     private Multibinder<CommandRefDecorated> commandDecorators;
     private Multibinder<OptionRefWithConfig> optionDecorators;
-
+    private MapBinder<Class, ValueObjectDescriptor> valueObjectsDescriptors;
 
     protected BQCoreModuleExtender(Binder binder) {
         super(binder);
@@ -75,6 +76,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
         contributeCommands();
         contributeCommandDecorators();
         contributeOptionDecorators();
+        contributeValueObjectsDescriptors();
 
         return this;
     }
@@ -280,6 +282,36 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     public BQCoreModuleExtender decorateCommand(Class<? extends Command> commandType, CommandDecorator commandDecorator) {
         contributeCommandDecorators().addBinding().toInstance(new CommandRefDecorated(commandType, commandDecorator));
         return this;
+    }
+
+    /**
+     * Binds descriptors with string description to value objects.
+     *
+     * @param descriptors - collection of value objects with descriptors.
+     * @return this extender instance
+     * @since 0.26
+     */
+    public BQCoreModuleExtender addValueObjectsDescriptors(Map<Class<?>, ValueObjectDescriptor> descriptors) {
+        MapBinder<Class, ValueObjectDescriptor> binder = contributeValueObjectsDescriptors();
+        descriptors.entrySet().forEach(e -> binder.addBinding(e.getKey()).toInstance(e.getValue()));
+        return this;
+    }
+
+    /**
+     * Binds descriptors with string description to value objects.
+     *
+     * @param object - the value object
+     * @param descriptor - descriptor for value object.
+     * @return this extender instance
+     * @since 0.26
+     */
+    public BQCoreModuleExtender addValueObjectDescriptor(Class<?> object, ValueObjectDescriptor descriptor) {
+         contributeValueObjectsDescriptors().addBinding(object).toInstance(descriptor);
+         return this;
+    }
+
+    protected MapBinder<Class, ValueObjectDescriptor> contributeValueObjectsDescriptors() {
+        return valueObjectsDescriptors != null ? valueObjectsDescriptors : (valueObjectsDescriptors = newMap(Class.class, ValueObjectDescriptor.class));
     }
 
     protected MapBinder<String, Level> contributeLogLevels() {
