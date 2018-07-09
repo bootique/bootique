@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Collections.emptyMap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
@@ -56,7 +57,7 @@ public class ConfigSectionGeneratorTest {
 
         StringBuilder buffer = new StringBuilder();
         ConsoleAppender out = new ConsoleAppender(buffer, lineWidth);
-        node.accept(new ConfigSectionGenerator(out, Collections.EMPTY_MAP));
+        node.accept(new ConfigSectionGenerator(out, emptyMap()));
         String help = buffer.toString();
         assertNotNull(help);
         assertEquals(expected.toString(), help);
@@ -491,7 +492,7 @@ public class ConfigSectionGeneratorTest {
 
     @Test
     public void testTypeLabel() throws NoSuchFieldException {
-        ConfigSectionGenerator generator = new ConfigSectionGenerator(mock(ConsoleAppender.class), new HashMap<>());
+        ConfigSectionGenerator generator = new ConfigSectionGenerator(mock(ConsoleAppender.class), emptyMap());
         assertEquals("int", generator.typeLabel(Integer.class));
         assertEquals("int", generator.typeLabel(Integer.TYPE));
         assertEquals("boolean", generator.typeLabel(Boolean.class));
@@ -510,7 +511,7 @@ public class ConfigSectionGeneratorTest {
 
     @Test
     public void testSampleValue() throws NoSuchFieldException {
-        ConfigSectionGenerator generator = new ConfigSectionGenerator(mock(ConsoleAppender.class), new HashMap<>());
+        ConfigSectionGenerator generator = new ConfigSectionGenerator(mock(ConsoleAppender.class), emptyMap());
         assertEquals("<int>", generator.sampleValue(Integer.class));
         assertEquals("<int>", generator.sampleValue(Integer.TYPE));
         assertEquals("<true|false>", generator.sampleValue(Boolean.class));

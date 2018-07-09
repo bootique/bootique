@@ -142,7 +142,7 @@ public class ConfigMetadataIT {
         StringBuilder buffer = new StringBuilder();
         ConsoleAppender out = new ConsoleAppender(buffer, 300);
 
-        cm.accept(new ConfigSectionMapGenerator(TestRecursiveConfig.class, out, Collections.EMPTY_MAP));
+        cm.accept(new ConfigSectionMapGenerator(TestRecursiveConfig.class, out, Collections.emptyMap()));
         String help = buffer.toString();
         assertNotNull(help);
 

@@ -20,6 +20,7 @@
 package io.bootique.help.config;
 
 import io.bootique.help.ConsoleAppender;
+import io.bootique.help.ValueObjectDescriptor;
 import io.bootique.meta.config.ConfigValueMetadata;
 
 import java.util.Map;
@@ -29,7 +30,7 @@ import java.util.Map;
  */
 class ConfigSectionListGenerator extends ConfigSectionGenerator {
 
-    public ConfigSectionListGenerator(ConsoleAppender out, Map valueObjectsDescriptors) {
+    public ConfigSectionListGenerator(ConsoleAppender out, Map<Class<?>, ValueObjectDescriptor> valueObjectsDescriptors) {
         super(out, valueObjectsDescriptors);
     }
 

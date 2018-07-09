@@ -28,8 +28,8 @@ import io.bootique.meta.module.ModuleMetadata;
 import io.bootique.meta.module.ModulesMetadata;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -43,18 +43,21 @@ public class DefaultConfigHelpGenerator implements ConfigHelpGenerator {
     static final int DEFAULT_OFFSET = 6;
 
     private ModulesMetadata modulesMetadata;
-    private Map<Class, ValueObjectDescriptor> valueObjects;
+    private Map<Class<?>, ValueObjectDescriptor> valueObjectDescriptors;
     private int lineWidth;
 
-    public DefaultConfigHelpGenerator(ModulesMetadata modulesMetadata, Map<Class, ValueObjectDescriptor> valueObjects, int lineWidth) {
+    public DefaultConfigHelpGenerator(ModulesMetadata modulesMetadata, Map<Class<?>, ValueObjectDescriptor> valueObjectDescriptors, int lineWidth) {
         this.lineWidth = lineWidth;
-        this.valueObjects = valueObjects;
+        this.valueObjectDescriptors = valueObjectDescriptors;
         this.modulesMetadata = modulesMetadata;
     }
 
-    @Deprecated
+	/**
+	 * @deprecated since 0.26 use {@link #DefaultConfigHelpGenerator(ModulesMetadata, Map, int)} constructor
+	 */
+	@Deprecated
     public DefaultConfigHelpGenerator(ModulesMetadata modulesMetadata, int lineWidth) {
-        this(modulesMetadata, new HashMap<>(), lineWidth);
+        this(modulesMetadata, Collections.emptyMap(), lineWidth);
     }
 
     protected HelpAppender createAppender(Appendable out) {
@@ -108,7 +111,7 @@ public class DefaultConfigHelpGenerator implements ConfigHelpGenerator {
 
         // using the underlying appender for config section body. Unlike HelpAppender it allows
         // controlling any number of nested offsets
-        ConfigSectionGenerator generator = new ConfigSectionGenerator(out.getAppender().withOffset(DEFAULT_OFFSET), valueObjects);
+        ConfigSectionGenerator generator = new ConfigSectionGenerator(out.getAppender().withOffset(DEFAULT_OFFSET), valueObjectDescriptors);
         ConfigMetadataNode last = configs.get(configs.size() - 1);
 
         configs.forEach(c -> {

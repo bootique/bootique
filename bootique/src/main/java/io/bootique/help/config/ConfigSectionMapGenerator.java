@@ -22,7 +22,7 @@ package io.bootique.help.config;
 import io.bootique.help.ConsoleAppender;
 import io.bootique.meta.config.ConfigValueMetadata;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
@@ -30,9 +30,12 @@ public class ConfigSectionMapGenerator extends ConfigSectionGenerator {
 
     private Class<?> keysType;
 
+	/**
+	 * @deprecated since 0.26 use {@link #ConfigSectionMapGenerator(Class, ConsoleAppender, Map)} constructor
+	 */
     @Deprecated
     public ConfigSectionMapGenerator(Class<?> keysType, ConsoleAppender out) {
-        this(keysType, out, new HashMap<>());
+        this(keysType, out, Collections.emptyMap());
     }
 
 	public ConfigSectionMapGenerator(Class<?> keysType, ConsoleAppender out, Map valueObjects) {

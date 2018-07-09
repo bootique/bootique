@@ -45,10 +45,10 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
 
     static final int DEFAULT_OFFSET = DefaultConfigHelpGenerator.DEFAULT_OFFSET;
 
-    protected Map<Class, ValueObjectDescriptor> valueObjectsDescriptors;
+    protected Map<Class<?>, ValueObjectDescriptor> valueObjectsDescriptors;
     protected ConsoleAppender out;
 
-    public ConfigSectionGenerator(ConsoleAppender out, Map<Class, ValueObjectDescriptor> valueObjectsDescriptors) {
+    public ConfigSectionGenerator(ConsoleAppender out, Map<Class<?>, ValueObjectDescriptor> valueObjectsDescriptors) {
         this.out = Objects.requireNonNull(out);
         this.valueObjectsDescriptors = valueObjectsDescriptors;
     }
@@ -220,8 +220,7 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
         if (asValue) {
             // value header goes on top of property name
             printValueHeader(metadata);
-            Type type = metadata.getType();
-            String valueLabel = type != null ? sampleValue(type) : "?";
+            String valueLabel = metadata.getType() != null ? sampleValue(metadata.getType()) : "?";
             out.println(metadata.getName(), ": ", valueLabel);
         } else {
             // headers for other types are printed below the property with the object contents

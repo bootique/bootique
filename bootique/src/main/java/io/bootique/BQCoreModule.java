@@ -144,7 +144,7 @@ public class BQCoreModule implements Module {
 
         BQCoreModule.extend(binder)
                 .initAllExtensions()
-                .addValueObjectsDescriptors(createValueObjectsDdescriptorsMap())
+                .addValueObjectsDescriptors(createValueObjectsDescriptorsMap())
                 .addOption(createConfigOption())
                 .addCommand(HelpConfigCommand.class);
 
@@ -265,7 +265,7 @@ public class BQCoreModule implements Module {
 
     @Provides
     @Singleton
-    ConfigHelpGenerator provideConfigHelpGenerator(ModulesMetadata modulesMetadata, Map<Class, ValueObjectDescriptor> valueObjects, Terminal terminal) {
+    ConfigHelpGenerator provideConfigHelpGenerator(ModulesMetadata modulesMetadata, Map<Class<?>, ValueObjectDescriptor> valueObjects, Terminal terminal) {
 
         int maxColumns = terminal.getColumns();
         if (maxColumns < TTY_MIN_COLUMNS) {
@@ -349,8 +349,8 @@ public class BQCoreModule implements Module {
         return isUnix ? new SttyTerminal(bootLogger) : new FixedWidthTerminal(TTY_DEFAULT_COLUMNS);
     }
 
-    private Map createValueObjectsDdescriptorsMap() {
-    	Map<Class, ValueObjectDescriptor> descriptors = new HashMap<>();
+    private Map<Class<?>, ValueObjectDescriptor> createValueObjectsDescriptorsMap() {
+    	Map<Class<?>, ValueObjectDescriptor> descriptors = new HashMap<>();
 		descriptors.put(Bytes.class, new ValueObjectDescriptor("bytes expression, e.g. 5b, 23mb, 12gigabytes"));
 		descriptors.put(Duration.class, new ValueObjectDescriptor("duration expression, e.g. 5ms, 2s, 1hr"));
 		descriptors.put(Percent.class, new ValueObjectDescriptor("percent expression, e.g. 15%, 75%"));
