@@ -279,8 +279,8 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
                         return out.toString();
                     }
 
-                    if (valueObjectsDescriptors != null && valueObjectsDescriptors.containsKey(type)) {
-                    	return new StringBuilder("<").append(valueObjectsDescriptors.get(type)).append(">").toString();
+                    if (valueObjectsDescriptors != null && valueObjectsDescriptors.get(type) != null) {
+                    	return new StringBuilder("<").append(valueObjectsDescriptors.get(type).getDescription()).append(">").toString();
 					}
                 }
 

@@ -26,6 +26,7 @@ import io.bootique.BQRuntime;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.help.ConsoleAppender;
+import io.bootique.help.ValueObjectDescriptor;
 import io.bootique.help.config.ConfigSectionMapGenerator;
 import io.bootique.meta.module.ModulesMetadata;
 import io.bootique.unit.BQInternalTestFactory;
@@ -204,9 +205,9 @@ public class ConfigMetadataIT {
         StringBuilder buffer = new StringBuilder();
         ConsoleAppender out = new ConsoleAppender(buffer, 300);
 
-        Map vo = new HashMap();
-        vo.put(Duration.class, "Test Duration");
-        cm.accept(new ConfigSectionMapGenerator(TestValueObjectConfig.class, out, vo));
+        Map valueObjectDescriptors = new HashMap<Class<?>, ValueObjectDescriptor>();
+        valueObjectDescriptors.put(Duration.class, new ValueObjectDescriptor("Test Duration"));
+        cm.accept(new ConfigSectionMapGenerator(TestValueObjectConfig.class, out, valueObjectDescriptors));
         String help = buffer.toString();
         assertNotNull(help);
 

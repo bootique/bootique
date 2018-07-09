@@ -20,6 +20,7 @@
 package io.bootique.help.config;
 
 import io.bootique.help.ConsoleAppender;
+import io.bootique.help.ValueObjectDescriptor;
 import io.bootique.meta.config.ConfigValueMetadata;
 
 import java.util.Collections;
@@ -38,8 +39,8 @@ public class ConfigSectionMapGenerator extends ConfigSectionGenerator {
         this(keysType, out, Collections.emptyMap());
     }
 
-	public ConfigSectionMapGenerator(Class<?> keysType, ConsoleAppender out, Map valueObjects) {
-		super(out, valueObjects);
+	public ConfigSectionMapGenerator(Class<?> keysType, ConsoleAppender out, Map<Class<?>, ValueObjectDescriptor> valueObjectsDescriptors) {
+		super(out, valueObjectsDescriptors);
 		this.keysType = Objects.requireNonNull(keysType);
 	}
 
