@@ -20,7 +20,6 @@
 package io.bootique;
 
 import com.google.inject.ProvisionException;
-import com.sun.org.apache.xpath.internal.compiler.OpMap;
 import io.bootique.cli.Cli;
 import io.bootique.command.CommandOutcome;
 import io.bootique.command.CommandWithMetadata;
@@ -178,7 +177,7 @@ public class Bootique_CliOptionsIT {
 
     @Test
     public void testOption_OverrideConfig() {
-        BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--opt-1")
+        BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--opt-1=x")
                 .module(binder -> BQCoreModule
                         .extend(binder)
                         .addOptions(OptionMetadata.builder("opt-1").valueOptional().build(),
