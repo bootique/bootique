@@ -21,8 +21,6 @@ package io.bootique.meta.application;
 
 import io.bootique.meta.MetadataNode;
 
-import java.util.Objects;
-
 /**
  * A descriptor of a command-line option.
  *
@@ -35,10 +33,6 @@ public class OptionMetadata implements MetadataNode {
     private String shortName;
     private OptionValueCardinality valueCardinality;
     private String valueName;
-
-    // TODO: 'configResource' was deprecated and remove... should configPath be deprecated too?
-    private String configPath;
-    private String defaultValue;
 
     public static Builder builder(String name) {
         return new Builder().name(name);
@@ -72,28 +66,6 @@ public class OptionMetadata implements MetadataNode {
 
     public String getValueName() {
         return valueName;
-    }
-
-    /**
-     * Returns an optional configuration path associated with this option.
-     *
-     * @return null or a dot-separated "path" that navigates configuration tree to the property associated with this
-     * option. E.g. "jdbc.myds.password".
-     * @since 0.24
-     */
-    public String getConfigPath() {
-        return configPath;
-    }
-
-    /**
-     * Returns the default value for this option. I.e. the value that will be used if the option is provided on
-     * command line without an explicit value.
-     *
-     * @return the default value for this option.
-     * @since 0.24
-     */
-    public String getDefaultValue() {
-        return defaultValue;
     }
 
     public static class Builder {
@@ -142,31 +114,6 @@ public class OptionMetadata implements MetadataNode {
         public Builder valueOptional(String valueName) {
             this.option.valueCardinality = OptionValueCardinality.OPTIONAL;
             this.option.valueName = valueName;
-            return this;
-        }
-
-        /**
-         * Sets the configuration property path that should be associated to this option value.
-         *
-         * @param configPath a dot-separated "path" that navigates configuration tree to the desired property. E.g.
-         *                   "jdbc.myds.password".
-         * @return this builder instance
-         * @since 0.24
-         */
-        public Builder configPath(String configPath) {
-            this.option.configPath = Objects.requireNonNull(configPath);
-            return this;
-        }
-
-        /**
-         * Sets the default value for this option.
-         *
-         * @param defaultValue a default value for the option.
-         * @return this builder instance
-         * @since 0.24
-         */
-        public Builder defaultValue(String defaultValue) {
-            this.option.defaultValue = defaultValue;
             return this;
         }
 

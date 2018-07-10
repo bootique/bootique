@@ -27,6 +27,7 @@ import io.bootique.cli.Cli;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.config.ConfigurationSource;
 import io.bootique.config.OptionRefWithConfig;
+import io.bootique.config.OptionRefWithConfigPath;
 import io.bootique.config.jackson.InPlaceLeftHandMerger;
 import io.bootique.config.jackson.InPlaceMapOverrider;
 import io.bootique.config.jackson.InPlaceResourceOverrider;
@@ -66,6 +67,7 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
     private BootLogger bootLogger;
     private Set<OptionMetadata> optionMetadata;
     private Set<OptionRefWithConfig> optionDecorators;
+    private Set<OptionRefWithConfigPath> optionPathDecorators;
     private Cli cli;
 
     @Inject
@@ -76,6 +78,7 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
             BootLogger bootLogger,
             Set<OptionMetadata> optionMetadata,
             Set<OptionRefWithConfig> optionDecorators,
+            Set<OptionRefWithConfigPath> optionPathDecorators,
             Cli cli) {
 
         this.configurationSource = configurationSource;
@@ -84,6 +87,7 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
         this.bootLogger = bootLogger;
         this.optionMetadata = optionMetadata;
         this.optionDecorators = optionDecorators;
+        this.optionPathDecorators = optionPathDecorators;
         this.cli = cli;
     }
 
@@ -144,16 +148,19 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
                 }
             }
 
-            if (omd.getConfigPath() != null) {
-                String cliValue = cli.optionString(omd.getName());
-                if (cliValue == null) {
-                    cliValue = omd.getDefaultValue();
-                }
+            for (OptionRefWithConfigPath pathDecorator : optionPathDecorators) {
+                if (pathDecorator.getOptionName().equals(omd.getName())) {
 
-                String finalCliValue = cliValue;
-                overrider = overrider.andThen(new InPlaceMapOverrider(
-                        singletonMap(omd.getConfigPath(), finalCliValue)
-                ));
+                    String cliValue = cli.optionString(omd.getName());
+                    if (cliValue == null) {
+                        cliValue = pathDecorator.getDefaultValue();
+                    }
+
+                    String finalCliValue = cliValue;
+                    overrider = overrider.andThen(new InPlaceMapOverrider(
+                            singletonMap(pathDecorator.getConfigPath(), finalCliValue)
+                    ));
+                }
             }
         }
 

@@ -33,6 +33,7 @@ import io.bootique.command.Command;
 import io.bootique.command.CommandDecorator;
 import io.bootique.command.CommandRefDecorated;
 import io.bootique.config.OptionRefWithConfig;
+import io.bootique.config.OptionRefWithConfigPath;
 import io.bootique.env.DeclaredVariable;
 import io.bootique.meta.application.OptionMetadata;
 
@@ -58,7 +59,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     private Multibinder<Command> commands;
     private Multibinder<CommandRefDecorated> commandDecorators;
     private Multibinder<OptionRefWithConfig> optionDecorators;
-
+    private Multibinder<OptionRefWithConfigPath> optionPathDecorators;
 
     protected BQCoreModuleExtender(Binder binder) {
         super(binder);
@@ -75,6 +76,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
         contributeCommands();
         contributeCommandDecorators();
         contributeOptionDecorators();
+        contributeOptionPathDecorators();
 
         return this;
     }
@@ -193,6 +195,39 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     }
 
     /**
+     * Decorates a CLI option with a config path. The option runtime value is assigned to the
+     * configuration property denoted by the path. Default value provided here will be used if the option is present,
+     * but no value is specified on the command line.
+     *
+     * @param configPath          a dot-separated "path" that navigates configuration tree to the desired property. E.g.
+     *                            "jdbc.myds.password".
+     * @param defaultValue        default option value.
+     * @param decoratedOptionName the name of the CLI option to be decorated.
+     * @return this extender instance
+     * @since 0.27
+     */
+    public BQCoreModuleExtender addConfigPathOnOption(String decoratedOptionName, String configPath, String defaultValue) {
+        contributeOptionPathDecorators().addBinding()
+                .toInstance(new OptionRefWithConfigPath(decoratedOptionName, configPath, defaultValue));
+        return this;
+    }
+
+    /**
+     * Decorates a CLI option with a config path. The option runtime value is assigned to the
+     * configuration property denoted by the path.
+     *
+     * @param configPath          a dot-separated "path" that navigates configuration tree to the desired property. E.g.
+     *                            "jdbc.myds.password".
+     * @param decoratedOptionName the name of the CLI option to be decorated.
+     * @return this extender instance
+     * @since 0.27
+     */
+    public BQCoreModuleExtender addConfigPathOnOption(String decoratedOptionName, String configPath) {
+        this.addConfigPathOnOption(decoratedOptionName, configPath, null);
+        return this;
+    }
+
+    /**
      * Adds a new option to the list of Bootique CLI options.
      *
      * @param option a descriptor of the CLI option to be added to Bootique.
@@ -213,47 +248,6 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
         if (options != null) {
             asList(options).forEach(this::addOption);
         }
-        return this;
-    }
-
-    /**
-     * Declares a new CLI option, associating it with a config path. The option runtime value is assigned to the
-     * configuration property denoted by the path.
-     *
-     * @param configPath a dot-separated "path" that navigates configuration tree to the desired property. E.g.
-     *                   "jdbc.myds.password".
-     * @param name       the name of the new CLI option.
-     * @return this extender instance
-     * @since 0.24
-     */
-    public BQCoreModuleExtender addOption(String configPath, String name) {
-        contributeOptions().addBinding().toInstance(
-                OptionMetadata.builder(name)
-                        .configPath(configPath)
-                        .valueRequired()
-                        .build());
-        return this;
-    }
-
-    /**
-     * Declares a new CLI option, associating it with a config path. The option runtime value is assigned to the
-     * configuration property denoted by the path. Default value provided here will be used if the option is present,
-     * but no value is specified on the command line.
-     *
-     * @param configPath   a dot-separated "path" that navigates configuration tree to the desired property. E.g.
-     *                     "jdbc.myds.password".
-     * @param defaultValue default option value
-     * @param name         the name of the new CLI option.
-     * @return this extender instance
-     * @since 0.24
-     */
-    public BQCoreModuleExtender addOption(String configPath, String defaultValue, String name) {
-        contributeOptions().addBinding().toInstance(
-                OptionMetadata.builder(name)
-                        .configPath(configPath)
-                        .defaultValue(defaultValue)
-                        .valueOptional()
-                        .build());
         return this;
     }
 
@@ -307,6 +301,10 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
 
     protected Multibinder<OptionRefWithConfig> contributeOptionDecorators() {
         return optionDecorators != null ? optionDecorators : (optionDecorators = newSet(OptionRefWithConfig.class));
+    }
+
+    protected Multibinder<OptionRefWithConfigPath> contributeOptionPathDecorators() {
+        return optionPathDecorators != null ? optionPathDecorators : (optionPathDecorators = newSet(OptionRefWithConfigPath.class));
     }
 
     protected MapBinder<String, String> contributeProperties() {

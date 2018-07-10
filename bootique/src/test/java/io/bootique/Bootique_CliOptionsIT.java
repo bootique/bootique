@@ -20,6 +20,7 @@
 package io.bootique;
 
 import com.google.inject.ProvisionException;
+import com.sun.org.apache.xpath.internal.compiler.OpMap;
 import io.bootique.cli.Cli;
 import io.bootique.command.CommandOutcome;
 import io.bootique.command.CommandWithMetadata;
@@ -79,8 +80,7 @@ public class Bootique_CliOptionsIT {
     @Test
     public void testOverlappingOptions() {
         BQRuntime runtime = runtimeFactory.app("--o1")
-                .module(b -> BQCoreModule.extend(b).addOptions(
-                        OptionMetadata.builder("o1").build(),
+                .module(b -> BQCoreModule.extend(b).addOptions(OptionMetadata.builder("o1").build(),
                         OptionMetadata.builder("o2").build()
                 ))
                 .createRuntime();
@@ -92,8 +92,8 @@ public class Bootique_CliOptionsIT {
     public void testNameConflict_TwoOptions() {
         runtimeFactory.app()
                 .module(b -> BQCoreModule.extend(b)
-                        .addOption(OptionMetadata.builder("opt1").build())
-                        .addOption(OptionMetadata.builder("opt1").build()))
+                        .addOptions(OptionMetadata.builder("opt1").build(),
+                                OptionMetadata.builder("opt1").build()))
                 .createRuntime()
                 .run();
     }
@@ -114,8 +114,7 @@ public class Bootique_CliOptionsIT {
     @Ignore
     public void testOverlappingOptions_Short() {
         BQRuntime runtime = runtimeFactory.app("-o")
-                .module(b -> BQCoreModule.extend(b).addOptions(
-                        OptionMetadata.builder("o1").build(),
+                .module(b -> BQCoreModule.extend(b).addOptions(OptionMetadata.builder("o1").build(),
                         OptionMetadata.builder("o2").build()
                 ))
                 .createRuntime();
@@ -179,11 +178,13 @@ public class Bootique_CliOptionsIT {
 
     @Test
     public void testOption_OverrideConfig() {
-        BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--opt-1=x")
+        BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--opt-1")
                 .module(binder -> BQCoreModule
                         .extend(binder)
-                        .addOption("c.m.l", "opt-1")
-                        .addOption("c.m.k", "2", "opt-2"))
+                        .addOptions(OptionMetadata.builder("opt-1").valueOptional().build(),
+                                OptionMetadata.builder("opt-2").valueOptional().build())
+                        .addConfigPathOnOption("opt-1", "c.m.l")
+                        .addConfigPathOnOption("opt-2", "c.m.k", "2"))
                 .createRuntime();
 
         Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
@@ -199,7 +200,8 @@ public class Bootique_CliOptionsIT {
         BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--opt-1=x")
                 .module(binder -> BQCoreModule
                         .extend(binder)
-                        .addOption("c.m.f", "opt-1"))
+                        .addOption(OptionMetadata.builder("opt-1").valueOptional().build())
+                        .addConfigPathOnOption("opt-1", "c.m.f"))
                 .createRuntime();
         Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
 
@@ -210,7 +212,8 @@ public class Bootique_CliOptionsIT {
     public void testOptionsCommandAndModuleOverlapping() {
         BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--cmd-1", "--opt-1")
                 .module(binder -> BQCoreModule.extend(binder)
-                        .addOption("c.m.k", "2", "opt-1")
+                        .addOption(OptionMetadata.builder("opt-1").valueOptional().build())
+                        .addConfigPathOnOption("opt-1", "c.m.k", "2")
                         .addCommand(new TestOptionCommand1()))
                 .createRuntime();
 
@@ -228,9 +231,11 @@ public class Bootique_CliOptionsIT {
                 "--opt-2=y", "--opt-1=x")
                 .module(binder -> BQCoreModule.extend(binder)
                         .addConfig("classpath:io/bootique/config/test4Copy.yml")
-                        .addOption("c.m.f", "opt-1")
-                        .addOption("c.m.f", "opt-2")
-                        .addOption(OptionMetadata.builder("file-opt-1").build())
+                        .addOptions(OptionMetadata.builder("opt-1").valueOptional().build(),
+                                OptionMetadata.builder("opt-2").valueOptional().build(),
+                                OptionMetadata.builder("file-opt-1").build())
+                        .addConfigPathOnOption("opt-1", "c.m.f")
+                        .addConfigPathOnOption("opt-2", "c.m.f")
                         .addConfigOnOption("file-opt-1", "classpath:io/bootique/config/configTest4Opt1.yml")
                         .addConfigOnOption("file-opt-1", "classpath:io/bootique/config/configTest4Decorate.yml"))
                 .createRuntime();
@@ -245,9 +250,13 @@ public class Bootique_CliOptionsIT {
     @Test
     public void testOptionsWithOverlappingPath_OverrideConfig() {
         BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--opt-2", "--opt-3")
-                .module(binder -> BQCoreModule.extend(binder).addOption("c.m.k", "opt-1")
-                        .addOption("c.m.k", "2", "opt-2")
-                        .addOption("c.m.k", "3", "opt-3"))
+                .module(binder -> BQCoreModule.extend(binder)
+                        .addOptions(OptionMetadata.builder("opt-1").valueOptional().build(),
+                                OptionMetadata.builder("opt-2").valueOptional().build(),
+                                OptionMetadata.builder("opt-3").valueOptional().build())
+                        .addConfigPathOnOption("opt-1", "c.m.k")
+                        .addConfigPathOnOption("opt-2", "c.m.k", "2")
+                        .addConfigPathOnOption("opt-3", "c.m.k", "3"))
                 .createRuntime();
         Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
 
@@ -257,7 +266,8 @@ public class Bootique_CliOptionsIT {
     @Test(expected = ProvisionException.class)
     public void testOptionWithNotMappedConfigPath() {
         BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--opt-1=x")
-                .module(binder -> BQCoreModule.extend(binder).addOption("c.m.k.x", "opt-1"))
+                .module(binder -> BQCoreModule.extend(binder)
+                        .addConfigPathOnOption("opt-1", "c.m.k.x"))
                 .createRuntime();
 
         runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
@@ -279,9 +289,9 @@ public class Bootique_CliOptionsIT {
     public void testMultipleOptionsConfigFiles_OverrideInCLIOrder() {
         BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--file-opt-2", "--file-opt-1")
                 .module(binder -> BQCoreModule.extend(binder)
-                        .addOption(OptionMetadata.builder("file-opt-1").build())
-                        .addOption(OptionMetadata.builder("file-opt-2").build())
-                        .addOption("c.m.f", "opt-1")
+                        .addOptions(OptionMetadata.builder("file-opt-1").build(),
+                                OptionMetadata.builder("file-opt-2").build())
+                        .addConfigPathOnOption("opt-1", "c.m.f")
                         .addConfigOnOption("file-opt-1", "classpath:io/bootique/config/configTest4Opt1.yml")
                         .addConfigOnOption("file-opt-2", "classpath:io/bootique/config/configTest4Opt2.yml"))
                 .createRuntime();
@@ -372,7 +382,8 @@ public class Bootique_CliOptionsIT {
     static final class XeCommand extends CommandWithMetadata {
 
         public XeCommand() {
-            super(CommandMetadata.builder("xe").addOption(OptionMetadata.builder("opt1").build()));
+            super(CommandMetadata.builder("xe")
+                    .addOption(OptionMetadata.builder("opt1").build()));
         }
 
         @Override
@@ -386,8 +397,7 @@ public class Bootique_CliOptionsIT {
         public TestOptionCommand1() {
             super(CommandMetadata.builder(TestOptionCommand1.class)
                     .name("cmd-1")
-                    .addOption(OptionMetadata.builder("opt-1")
-                            .configPath("c.m.f").defaultValue("3")));
+                    .addOption(OptionMetadata.builder("opt-1").build()));
         }
 
         @Override
