@@ -89,6 +89,11 @@ jdbc:
 There are healthchecks specific to Tomcat and Hikari pools, so there's no need to have a generic set of healthchecks that interferes
 with them. You will need to remove references to `bootique-jdbc-instrumented` from your build scripts and replace them with `bootique-jdbc-tomcat-instrumented` (that actually contains healtchecks ported from the removed module) or `bootique-jdbc-hikaricp-instrumented` (that has its own set of health checks).
 
+* [bootique-job #64](https://github.com/bootique/bootique-job/pull/64): If you used Zookeeper for job locking, configuration is done differently
+now. You will need to remove `scheduler.clusteredLocks: true` from YAML, and instead add a dependency on `io.bootique.job:bootique-job-zookeeper`
+(or the new `io.bootique.job:bootique-job-consul`). Either will enable lock clustering, but with its own mechanism.
+
+
 * [bootique-metrics #30](https://github.com/bootique/bootique-metrics/issues/30): There was a massive renaming of module metrics to
 follow a single naming convention. Follow the link to [bootique-metrics #30](https://github.com/bootique/bootique-metrics/issues/30)
 to see the old vs new names across all affected modules.
@@ -96,6 +101,7 @@ to see the old vs new names across all affected modules.
 * [bootique-metrics #31](https://github.com/bootique/bootique-metrics/issues/31): Similarly to metrics, health checks got similarly renamed to
 follow the same naming convention. Follow the link to [bootique-metrics #31](https://github.com/bootique/bootique-metrics/issues/31)
 to see the old vs new names across all affected modules.
+
 
 ## 0.25
 
