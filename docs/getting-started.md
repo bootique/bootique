@@ -150,8 +150,8 @@ You can optionally pass a configuration to almost any Bootique app. This is done
 ```yaml
 jetty:
   context: /hello
-  connector:
-    port: 10001
+  connectors:
+    - port: 10001
 ```
 
 Now restart the app with the new set of parameters: `--server --config=myconfig.yml`. After the restart the app would no longer respond at [http://localhost:8080/](http://localhost:8080/), instead you will need to use a new URL: [http://localhost:10001/hello](http://localhost:10001/hello). This is just a taste of what can be done with configuration. Your app can just as easily obtain its own specific configuration in a form of an app-specific object, as described elsewhere in the docs.
