@@ -11,6 +11,7 @@
 * #218 Value object: Percent
 * #224 Value object: Bytes
 * #226 Add copyright to all sources
+* #228 Integrate Apache Rat in modules for license checking
 * #232 Upgrade bootique and core modules to bootique-modules-parent:0.11
 * #235 Upgrade bootique and core modules to bootique-modules-parent:0.12
 
@@ -52,7 +53,7 @@
 
 ## 0.22
 
-* #90  Module "extend" API - a better version of "contribute*"
+* #90  Module "extend" API - a better version of `contribute*`
 * #119 Relax @BQConfigProperty restrictions.
 * #123 ENVIRONMENT section in help
 * #124 Exposing and aliasing app config environment variables 
