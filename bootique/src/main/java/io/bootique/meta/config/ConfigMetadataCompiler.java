@@ -22,6 +22,7 @@ package io.bootique.meta.config;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
+import io.bootique.help.ValueObjectDescriptor;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -48,10 +49,21 @@ public class ConfigMetadataCompiler {
 
     private Function<Class<?>, Stream<Class<?>>> subclassProvider;
     private Map<Type, ConfigObjectMetadata> seen;
+    private Map<Class<?>, ValueObjectDescriptor> descriptorMap;
 
+    /**
+     * @deprecated since 0.26 use {@link #ConfigMetadataCompiler(Function, Map)}
+     */
+    @Deprecated
     public ConfigMetadataCompiler(Function<Class<?>, Stream<Class<?>>> subclassProvider) {
         this.subclassProvider = subclassProvider;
         this.seen = new ConcurrentHashMap<>();
+    }
+
+    public ConfigMetadataCompiler(Function<Class<?>, Stream<Class<?>>> subclassProvider, Map<Class<?>, ValueObjectDescriptor> descriptorMap) {
+        this.subclassProvider = subclassProvider;
+        this.seen = new ConcurrentHashMap<>();
+        this.descriptorMap = descriptorMap;
     }
 
     private static Type propertyTypeFromSetter(Method maybeSetter) {
@@ -174,10 +186,13 @@ public class ConfigMetadataCompiler {
     }
 
     protected ConfigMetadataNode compileValueMetadata(Descriptor descriptor) {
+        ValueObjectDescriptor valueObjectDescriptor = descriptorMap.get(descriptor.typeClass);
+
         return ConfigValueMetadata
                 .builder(descriptor.getName())
                 .type(descriptor.getType())
                 .description(descriptor.getDescription())
+                .valueLabel(valueObjectDescriptor != null ? valueObjectDescriptor.getDescription() : null)
                 .build();
     }
 

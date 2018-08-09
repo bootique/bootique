@@ -265,14 +265,14 @@ public class BQCoreModule implements Module {
 
     @Provides
     @Singleton
-    ConfigHelpGenerator provideConfigHelpGenerator(ModulesMetadata modulesMetadata, Map<Class<?>, ValueObjectDescriptor> valueObjects, Terminal terminal) {
+    ConfigHelpGenerator provideConfigHelpGenerator(ModulesMetadata modulesMetadata, Terminal terminal) {
 
         int maxColumns = terminal.getColumns();
         if (maxColumns < TTY_MIN_COLUMNS) {
             maxColumns = TTY_DEFAULT_COLUMNS;
         }
 
-        return new DefaultConfigHelpGenerator(modulesMetadata, valueObjects, maxColumns);
+        return new DefaultConfigHelpGenerator(modulesMetadata, maxColumns);
     }
 
     @Provides
@@ -283,8 +283,8 @@ public class BQCoreModule implements Module {
 
     @Provides
     @Singleton
-    ModulesMetadata provideModulesMetadata(ConfigHierarchyResolver hierarchyResolver) {
-        return new ModulesMetadataCompiler(new ConfigMetadataCompiler(hierarchyResolver::directSubclasses))
+    ModulesMetadata provideModulesMetadata(ConfigHierarchyResolver hierarchyResolver, Map<Class<?>, ValueObjectDescriptor> valueObjects) {
+        return new ModulesMetadataCompiler(new ConfigMetadataCompiler(hierarchyResolver::directSubclasses, valueObjects))
                 .compile(this.modulesSource != null ? modulesSource.get() : Collections.emptyList());
     }
 

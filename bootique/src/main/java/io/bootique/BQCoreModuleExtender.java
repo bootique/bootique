@@ -294,7 +294,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      */
     public BQCoreModuleExtender addValueObjectsDescriptors(Map<Class<?>, ValueObjectDescriptor> valueObjectsDescriptors) {
         MapBinder<Class<?>, ValueObjectDescriptor> binder = contributeValueObjectsDescriptors();
-        valueObjectsDescriptors.entrySet().forEach(e -> binder.addBinding(e.getKey()).toInstance(e.getValue()));
+        valueObjectsDescriptors.forEach((key, value) -> binder.permitDuplicates().addBinding(key).toInstance(value));
         return this;
     }
 

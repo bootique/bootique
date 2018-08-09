@@ -20,7 +20,6 @@
 package io.bootique.help.config;
 
 import io.bootique.help.ConsoleAppender;
-import io.bootique.help.ValueObjectDescriptor;
 import io.bootique.meta.MetadataNode;
 import io.bootique.meta.config.ConfigListMetadata;
 import io.bootique.meta.config.ConfigMapMetadata;
@@ -45,12 +44,10 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
 
     static final int DEFAULT_OFFSET = DefaultConfigHelpGenerator.DEFAULT_OFFSET;
 
-    protected Map<Class<?>, ValueObjectDescriptor> valueObjectsDescriptors;
     protected ConsoleAppender out;
 
-    public ConfigSectionGenerator(ConsoleAppender out, Map<Class<?>, ValueObjectDescriptor> valueObjectsDescriptors) {
+    public ConfigSectionGenerator(ConsoleAppender out) {
         this.out = Objects.requireNonNull(out);
-        this.valueObjectsDescriptors = valueObjectsDescriptors;
     }
 
     @Override
@@ -99,7 +96,7 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
     public Object visitListMetadata(ConfigListMetadata metadata) {
         printNode(metadata, false);
 
-        ConfigSectionListGenerator childGenerator = new ConfigSectionListGenerator(out.withOffset(DEFAULT_OFFSET), valueObjectsDescriptors);
+        ConfigSectionListGenerator childGenerator = new ConfigSectionListGenerator(out.withOffset(DEFAULT_OFFSET));
         childGenerator.printListHeader(metadata);
         metadata.getElementType().accept(childGenerator);
 
@@ -112,8 +109,7 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
 
         ConfigSectionMapGenerator childGenerator = new ConfigSectionMapGenerator(
                 metadata.getKeysType(),
-                out.withOffset(DEFAULT_OFFSET),
-                this.valueObjectsDescriptors);
+                out.withOffset(DEFAULT_OFFSET));
 
         childGenerator.printMapHeader(metadata);
         metadata.getValuesType().accept(childGenerator);
@@ -191,7 +187,7 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
     protected void printObjectNoSubclasses(ConfigObjectMetadata metadata) {
 
         ConsoleAppender shifted = out.withOffset(DEFAULT_OFFSET);
-        ConfigSectionGenerator childGenerator = new ConfigSectionGenerator(shifted, valueObjectsDescriptors);
+        ConfigSectionGenerator childGenerator = new ConfigSectionGenerator(shifted);
         childGenerator.printObjectHeader(metadata);
 
         boolean willPrintProperties = !metadata.isAbstractType() && !metadata.getProperties().isEmpty();
@@ -220,71 +216,11 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
         if (asValue) {
             // value header goes on top of property name
             printValueHeader(metadata);
-            String valueLabel = metadata.getType() != null ? sampleValue(metadata.getType()) : "?";
+            String valueLabel = metadata.getValueLabel();
             out.println(metadata.getName(), ": ", valueLabel);
         } else {
             // headers for other types are printed below the property with the object contents
             out.println(metadata.getName(), ":");
-        }
-    }
-
-    protected String sampleValue(Type type) {
-
-        // TODO: allow to provide sample values in metadata, so that we can display something useful
-
-        String typeName = type.getTypeName();
-
-        switch (typeName) {
-            case "boolean":
-            case "java.lang.Boolean":
-                return "<true|false>";
-            case "int":
-            case "java.lang.Integer":
-                return "<int>";
-            case "byte":
-            case "java.lang.Byte":
-                return "<byte>";
-            case "double":
-            case "java.lang.Double":
-                return "<double>";
-            case "float":
-            case "java.lang.Float":
-                return "<float>";
-            case "short":
-            case "java.lang.Short":
-                return "<short>";
-            case "long":
-            case "java.lang.Long":
-                return "<long>";
-            case "java.lang.String":
-                return "<string>";
-            case "io.bootique.resource.ResourceFactory":
-                return "<resource-uri>";
-            case "io.bootique.resource.FolderResourceFactory":
-                return "<folder-resource-uri>";
-            default:
-                if (type instanceof Class) {
-                    Class<?> classType = (Class<?>) type;
-                    if (classType.isEnum()) {
-
-                        StringBuilder out = new StringBuilder("<");
-                        Object[] values = classType.getEnumConstants();
-                        for (int i = 0; i < values.length; i++) {
-                            if (i > 0) {
-                                out.append("|");
-                            }
-                            out.append(values[i]);
-                        }
-                        out.append(">");
-                        return out.toString();
-                    }
-
-                    if (valueObjectsDescriptors != null && valueObjectsDescriptors.get(type) != null) {
-                    	return new StringBuilder("<").append(valueObjectsDescriptors.get(type).getDescription()).append(">").toString();
-					}
-                }
-
-                return "<value>";
         }
     }
 

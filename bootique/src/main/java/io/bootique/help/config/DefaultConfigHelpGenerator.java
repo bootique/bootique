@@ -52,10 +52,6 @@ public class DefaultConfigHelpGenerator implements ConfigHelpGenerator {
         this.modulesMetadata = modulesMetadata;
     }
 
-	/**
-	 * @deprecated since 0.26 use {@link #DefaultConfigHelpGenerator(ModulesMetadata, Map, int)} constructor
-	 */
-	@Deprecated
     public DefaultConfigHelpGenerator(ModulesMetadata modulesMetadata, int lineWidth) {
         this(modulesMetadata, Collections.emptyMap(), lineWidth);
     }
@@ -111,7 +107,7 @@ public class DefaultConfigHelpGenerator implements ConfigHelpGenerator {
 
         // using the underlying appender for config section body. Unlike HelpAppender it allows
         // controlling any number of nested offsets
-        ConfigSectionGenerator generator = new ConfigSectionGenerator(out.getAppender().withOffset(DEFAULT_OFFSET), valueObjectDescriptors);
+        ConfigSectionGenerator generator = new ConfigSectionGenerator(out.getAppender().withOffset(DEFAULT_OFFSET));
         ConfigMetadataNode last = configs.get(configs.size() - 1);
 
         configs.forEach(c -> {
