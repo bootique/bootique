@@ -46,8 +46,8 @@ class DeclaredVariableMetaCompiler {
         // TODO: validation... verify that the variable is bound to a value, not a collection or a map??
 
         return ConfigValueMetadata
-                .builder(variable.getName())
-                .description(configMetadata.getDescription())
+                .builder(variable.getName() != null ? variable.getName() : configMetadata.getName())
+                .description(variable.getDescripption() != null ? variable.getDescripption() : configMetadata.getDescription())
                 .type(configMetadata.getType()).build();
     }
 }
