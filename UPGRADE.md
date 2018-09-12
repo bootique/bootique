@@ -20,7 +20,7 @@
 
 # UPGRADE INSTRUCTIONS
 
-## 0.26
+## 1.0.RC1
 
 * [bootique #188](https://github.com/bootique/bootique/issues/188): Guice was upgraded from 4.0 to
 4.2.0 for better support of the latest versions of Java. This changes the version of Guava lib to
