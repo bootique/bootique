@@ -28,7 +28,7 @@
 
 	<groupId>io.bootique</groupId>
 	<artifactId>bootique-framework-parent</artifactId>
-	<version>0.26-SNAPSHOT</version>
+	<version>1.0.RC1</version>
 	<packaging>pom</packaging>
 
 	<name>bootique-framework-parent</name>

@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 /**
  * Represents a time duration value. Used as a value object to deserialize durations in application configurations.
  *
- * @since 0.26
+ * @since 1.0.RC1
  */
 public class Duration implements Comparable<Duration> {
 

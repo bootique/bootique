@@ -20,7 +20,7 @@
 package io.bootique.value;
 
 /**
- * @since 0.26
+ * @since 1.0.RC1
  */
 public enum BytesUnit {
     BYTES("Bytes", 1),

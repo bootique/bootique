@@ -27,7 +27,7 @@ import java.util.Objects;
 /**
  * Represents a percent value. Used as a value object to deserialize percentages in application configurations.
  *
- * @since 0.26
+ * @since 1.0.RC1
  */
 public class Percent implements Comparable<Percent> {
 

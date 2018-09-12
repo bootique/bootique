@@ -30,7 +30,7 @@ import static io.bootique.value.BytesUnit.*;
 /**
  * Represents a data size value. Used as a value object to deserialize file sizes and such in application configurations.
  *
- * @since 0.26
+ * @since 1.0.RC1
  */
 public class Bytes implements Comparable<Bytes> {
 
