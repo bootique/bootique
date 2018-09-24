@@ -34,7 +34,7 @@ import static io.bootique.value.BytesUnit.*;
  */
 public class Bytes implements Comparable<Bytes> {
 
-    private static final Pattern TOKENIZER = Pattern.compile("^([0-9]+)\\s*([a-z]+)$");
+    private static final Pattern TOKENIZER = Pattern.compile("^([0-9,\\_]+)\\s*([a-z]+)$");
 
     private static final Map<String, BytesUnit> UNIT_VOCABULARY;
 
@@ -68,7 +68,7 @@ public class Bytes implements Comparable<Bytes> {
 
     private static long parseAmount(String amount) {
         try {
-            return Long.parseLong(amount);
+            return Long.parseLong(amount.replaceAll("_", ""));
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Invalid bytes amount: " + amount);
         }

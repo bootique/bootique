@@ -1,5 +1,6 @@
 ## 1.0.RC1
 
+* #136 Config: underscores in numeric literals
 * #188 Update Guice to 4.2.0
 * #189 Update Jackson to 2.9.5
 * #190 StackOverflowError on -H and recursive factories

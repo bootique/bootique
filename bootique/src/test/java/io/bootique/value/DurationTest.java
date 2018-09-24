@@ -32,6 +32,7 @@ public class DurationTest {
     public void testParse_Millis() {
         assertEquals(java.time.Duration.ofMillis(4), Duration.parse("4ms"));
         assertEquals(java.time.Duration.ofSeconds(4), Duration.parse("4000   ms"));
+        assertEquals(java.time.Duration.ofMillis(1800000), Duration.parse("1_800_000ms"));
     }
 
     @Test
@@ -119,10 +120,13 @@ public class DurationTest {
         Duration d2 = new Duration("2s");
         Duration d3 = new Duration("1 sec");
         Duration d4 = new Duration("1000ms");
+        Duration d5 = new Duration("1_000 ms");
 
         assertEquals(d1.hashCode(), d1.hashCode());
         assertEquals(d1.hashCode(), d3.hashCode());
         assertEquals(d1.hashCode(), d4.hashCode());
+        assertEquals(d4.hashCode(), d5.hashCode());
         assertNotEquals(d1.hashCode(), d2.hashCode());
+
     }
 }

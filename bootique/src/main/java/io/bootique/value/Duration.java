@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
 public class Duration implements Comparable<Duration> {
 
     public static final Duration ZERO = new Duration(java.time.Duration.ZERO.toMillis());
-    private static final Pattern TOKENIZER = Pattern.compile("^([0-9]+)\\s*([a-z]+)$");
+    private static final Pattern TOKENIZER = Pattern.compile("^([0-9,\\_]+)\\s*([a-z]+)$");
     private static final Map<String, TemporalUnit> UNIT_VOCABULARY;
 
     static {
@@ -100,7 +100,7 @@ public class Duration implements Comparable<Duration> {
 
     private static long parseAmount(String amount) {
         try {
-            return Long.parseLong(amount);
+            return Long.parseLong(amount.replaceAll("_",""));
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Invalid time amount: " + amount);
         }

@@ -46,6 +46,7 @@ public class BytesTest {
         assertEquals(5120, new Bytes("5 kilobyte").getBytes());
         assertEquals(5120, new Bytes("5kilobytes").getBytes());
         assertEquals(5120, new Bytes("5 kilobytes").getBytes());
+        assertEquals(5120, new Bytes("5_120 bytes").getBytes() );
     }
 
     @Test
@@ -129,10 +130,12 @@ public class BytesTest {
         Bytes b2 = new Bytes("5368709120b");
         Bytes b3 = new Bytes("5gb");
         Bytes b4 = new Bytes("5120 b");
+        Bytes b5 = new Bytes("5_120 b");
 
         assertEquals(b1.hashCode(), b4.hashCode());
         assertEquals(b2.hashCode(), b3.hashCode());
         assertNotEquals(b1.hashCode(), b3.hashCode());
+        assertEquals(b4.hashCode(), b5.hashCode());
     }
 
     @Test
