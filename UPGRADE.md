@@ -93,6 +93,10 @@ with them. You will need to remove references to `bootique-jdbc-instrumented` fr
 now. You will need to remove `scheduler.clusteredLocks: true` from YAML, and instead add a dependency on `io.bootique.job:bootique-job-zookeeper`
 (or the new `io.bootique.job:bootique-job-consul`). Either will enable lock clustering, but with its own mechanism.
 
+* [bootique-job #66](https://github.com/bootique/bootique-job/pull/66): Trigger configurations switched from numeric milliseconds to
+"durations". While the configuration is backwards-compatible, we'd encourage you to review it and replace config keys "fixedDelayMs",
+"fixedRateMs", "initialDelayMs" with "fixedDelay", "fixedRate", "initialDelay" respectively. While you are at it, you may switch to
+more user-friendly forms, such as "3s" or "5min".
 
 * [bootique-metrics #30](https://github.com/bootique/bootique-metrics/issues/30): There was a massive renaming of module metrics to
 follow a single naming convention. Follow the link to [bootique-metrics #30](https://github.com/bootique/bootique-metrics/issues/30)
