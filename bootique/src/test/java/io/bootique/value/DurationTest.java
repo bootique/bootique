@@ -127,6 +127,5 @@ public class DurationTest {
         assertEquals(d1.hashCode(), d4.hashCode());
         assertEquals(d4.hashCode(), d5.hashCode());
         assertNotEquals(d1.hashCode(), d2.hashCode());
-
     }
 }
