@@ -118,7 +118,6 @@ public class BQInternalTestFactory extends ExternalResource {
                     return binder -> BQCoreModule.extend(binder).setVars(variables).declareVars(declaredVars).declareDescriptions(declaredDescriptions);
                 }
 
-
                 @Override
                 public BQModule.Builder moduleBuilder() {
                     return BQModuleProvider.super
