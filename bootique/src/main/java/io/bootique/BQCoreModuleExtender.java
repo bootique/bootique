@@ -179,17 +179,13 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
 
     /**
      * @since 0.26
-     */
-    public BQCoreModuleExtender declareDescription(String configPath, String description) {
-        this.declareVar(configPath, null, description);
-        return this;
-    }
-
-    /**
-     * @since 0.26
+     * Declares a descriptions for the declared config paths.
+     * @param descriptionsByConfigPaths the map of a dot-separated "paths" that navigates through the configuration tree to the property that
+     *                   should be bound form a variable. E.g. "jdbc.myds.password" and a description.
+     * @return this extender instance.
      */
     public BQCoreModuleExtender declareDescriptions(Map<String, String> descriptionsByConfigPaths) {
-        descriptionsByConfigPaths.forEach(this::declareDescription);
+        descriptionsByConfigPaths.forEach((configPath, description) -> declareVar(configPath, null, description));
         return this;
     }
 
