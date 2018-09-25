@@ -34,17 +34,8 @@ public class DeclaredVariable {
 
     public DeclaredVariable(String configPath, String name, String description) {
         this.configPath = Objects.requireNonNull(configPath);
-        this.name = name;
-        this.description = description;
-    }
-
-    /**
-     * @deprecated since 0.26 use {@link #DeclaredVariable(String, String, String)} constructor
-     */
-    @Deprecated
-    public DeclaredVariable(String configPath, String name) {
-        this.configPath = Objects.requireNonNull(configPath);
         this.name = Objects.requireNonNull(name);
+        this.description = description;
     }
 
     public String getName() {
@@ -56,7 +47,7 @@ public class DeclaredVariable {
     }
 
     /**
-     * @since 0.26
+     * @since 1.0.RC1
      */
     public String getDescription() {
         return description;

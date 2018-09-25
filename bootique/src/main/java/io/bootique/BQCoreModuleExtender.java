@@ -151,26 +151,23 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @return this extender instance.
      */
     public BQCoreModuleExtender declareVar(String configPath, String name) {
-        this.declareVar(configPath, name, null);
-        return this;
+        return declareVar(configPath, name, null);
     }
 
     /**
-     * @since 0.26
-     * Declares a configuration variable for the given config path, given name and given description.
-     *
-     * @param configPath a dot-separated "path" that navigates through the configuration tree to the property that
-     *                   should be bound form a variable. E.g. "jdbc.myds.password".
-     * @param name       public name of the variable.
+     * @param configPath  a dot-separated "path" that navigates through the configuration tree to the property that
+     *                    should be bound form a variable. E.g. "jdbc.myds.password".
+     * @param name        public name of the variable.
      * @param description the description for variable.
      * @return this extender instance.
+     * @since 1.0.RC1
+     * Declares a configuration variable for the given config path, given name and given description.
      */
     public BQCoreModuleExtender declareVar(String configPath, String name, String description) {
         DeclaredVariable var = new DeclaredVariable(configPath, name, description);
         contributeVariableDeclarations().addBinding().toInstance(var);
         return this;
     }
-
 
     public BQCoreModuleExtender declareVars(Map<String, String> varsByConfigPaths) {
         varsByConfigPaths.forEach(this::declareVar);
