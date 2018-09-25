@@ -82,6 +82,41 @@ public class Bootique_DeclareVarsIT {
     }
 
     @Test
+    public void testInHelpDescription() {
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ByteArrayOutputStream err = new ByteArrayOutputStream();
+        BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(err));
+
+        BQModuleProvider configurableProvider = new BQModuleProvider() {
+            @Override
+            public Module module() {
+                return b -> {
+                };
+            }
+
+            @Override
+            public Map<String, Type> configs() {
+                return Collections.singletonMap("x", Bean5.class);
+            }
+        };
+
+        BQRuntime runtime = testFactory.app()
+                .module(configurableProvider)
+                .declareVar("x.m", "s", "New description")
+                .bootLogger(logger)
+                .createRuntime();
+
+        Cli cli = runtime.getInstance(Cli.class);
+        runtime.getInstance(HelpCommand.class).run(cli);
+
+        String help = new String(out.toByteArray());
+        assertTrue("No ENVIRONMENT section:\n" + help, help.contains("ENVIRONMENT"));
+        assertTrue(help.contains("New description"));
+        assertFalse(help.contains("Origin description"));
+    }
+
+    @Test
     @Ignore
     public void testInHelpWithMap() {
 
@@ -132,7 +167,7 @@ public class Bootique_DeclareVarsIT {
     static class Bean5 {
         private String m;
 
-        @BQConfigProperty
+        @BQConfigProperty("Origin description")
         public void setM(String m) {
             this.m = m;
         }
