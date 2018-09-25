@@ -178,18 +178,6 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     }
 
     /**
-     * @since 0.26
-     * Declares a descriptions for the declared config paths.
-     * @param descriptionsByConfigPaths the map of a dot-separated "paths" that navigates through the configuration tree to the property that
-     *                   should be bound form a variable. E.g. "jdbc.myds.password" and a description.
-     * @return this extender instance.
-     */
-    public BQCoreModuleExtender declareDescriptions(Map<String, String> descriptionsByConfigPaths) {
-        descriptionsByConfigPaths.forEach((configPath, description) -> declareVar(configPath, null, description));
-        return this;
-    }
-
-    /**
      * Registers a URL of a configuration resource to be loaded by the app unconditionally and prior to any explicitly
      * specified configs. Can be called multiple times for multiple resources.
      *

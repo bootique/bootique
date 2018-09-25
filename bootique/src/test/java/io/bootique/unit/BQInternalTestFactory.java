@@ -21,6 +21,7 @@ package io.bootique.unit;
 
 import com.google.inject.Module;
 import io.bootique.BQCoreModule;
+import io.bootique.BQCoreModuleExtender;
 import io.bootique.BQModule;
 import io.bootique.BQModuleOverrideBuilder;
 import io.bootique.BQModuleProvider;
@@ -115,7 +116,10 @@ public class BQInternalTestFactory extends ExternalResource {
 
                 @Override
                 public Module module() {
-                    return binder -> BQCoreModule.extend(binder).setVars(variables).declareVars(declaredVars).declareDescriptions(declaredDescriptions);
+                    return binder -> {
+                        BQCoreModuleExtender extender = BQCoreModule.extend(binder).setVars(variables);
+                        declaredVars.forEach((p, n) -> extender.declareVar(p, n, declaredDescriptions.get(p)));
+                    };
                 }
 
                 @Override
@@ -147,7 +151,8 @@ public class BQInternalTestFactory extends ExternalResource {
             return (T) this;
         }
 
-        public T declareDescription(String path, String description) {
+        public T declareVar(String path, String var, String description) {
+            declaredVars.put(path, var);
             declaredDescriptions.put(path, description);
             return (T) this;
         }

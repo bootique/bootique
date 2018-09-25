@@ -103,7 +103,7 @@ public class Bootique_DeclareVarsIT {
 
         BQRuntime runtime = testFactory.app()
                 .module(configurableProvider)
-                .declareDescription("x.m", "New description")
+                .declareVar("x.m", "s", "New description")
                 .bootLogger(logger)
                 .createRuntime();
 
