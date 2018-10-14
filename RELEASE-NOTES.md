@@ -15,6 +15,7 @@
 * #228 Integrate Apache Rat in modules for license checking
 * #232 Upgrade bootique and core modules to bootique-modules-parent:0.11
 * #235 Upgrade bootique and core modules to bootique-modules-parent:0.12
+* #246 "Bytes" value type must support uppercase abbreviations
 
 ## 0.25 
 

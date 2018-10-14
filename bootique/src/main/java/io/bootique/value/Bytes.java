@@ -34,7 +34,7 @@ import static io.bootique.value.BytesUnit.*;
  */
 public class Bytes implements Comparable<Bytes> {
 
-    private static final Pattern TOKENIZER = Pattern.compile("^([0-9]+)\\s*([a-z]+)$");
+    private static final Pattern TOKENIZER = Pattern.compile("^([0-9]+)\\s*([a-zA-Z]+)$");
 
     private static final Map<String, BytesUnit> UNIT_VOCABULARY;
 

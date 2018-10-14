@@ -41,6 +41,7 @@ public class BytesTest {
     public void testParse_KB() {
         assertEquals(5 + " " + KB.getName(),  new Bytes("5kb").toString());
         assertEquals(5120, new Bytes("5kb").getBytes());
+        assertEquals(5120, new Bytes("5KB").getBytes());
         assertEquals(5120, new Bytes("5 kb").getBytes());
         assertEquals(5120, new Bytes("5kilobyte").getBytes());
         assertEquals(5120, new Bytes("5 kilobyte").getBytes());
@@ -52,6 +53,7 @@ public class BytesTest {
     public void testParse_MB() {
         assertEquals(5 + " " + MB.getName(),  new Bytes("5mb").toString());
         assertEquals(5242880, new Bytes("5mb").getBytes());
+        assertEquals(5242880, new Bytes("5MB").getBytes());
         assertEquals(5242880, new Bytes("5 mb").getBytes());
         assertEquals(5242880, new Bytes("5megabyte").getBytes());
         assertEquals(5242880, new Bytes("5 megabyte").getBytes());
@@ -63,6 +65,7 @@ public class BytesTest {
     public void testParse_GB() {
         assertEquals(5 + " " + GB.getName(),  new Bytes("5gb").toString());
         assertEquals(5368709120L, new Bytes("5gb").getBytes());
+        assertEquals(5368709120L, new Bytes("5GB").getBytes());
         assertEquals(5368709120L, new Bytes("5 gb").getBytes());
         assertEquals(5368709120L, new Bytes("5gigabyte").getBytes());
         assertEquals(5368709120L, new Bytes("5 gigabyte").getBytes());
