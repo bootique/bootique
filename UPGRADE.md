@@ -98,6 +98,9 @@ now. You will need to remove `scheduler.clusteredLocks: true` from YAML, and ins
 "fixedRateMs", "initialDelayMs" with "fixedDelay", "fixedRate", "initialDelay" respectively. While you are at it, you may switch to
 more user-friendly forms, such as "3s" or "5min".
 
+* [bootique-kafka #19](https://github.com/bootique/bootique-kafka/issues/19): `bootique-kafka-client` repository was renamed to `bootique-kafka`.
+If you are using `bootique-kafka-client`, you will need change the Maven "groupId" to `io.bootique.kafka` from `io.bootique.kafka.client`.
+
 * [bootique-metrics #30](https://github.com/bootique/bootique-metrics/issues/30): There was a massive renaming of module metrics to
 follow a single naming convention. Follow the link to [bootique-metrics #30](https://github.com/bootique/bootique-metrics/issues/30)
 to see the old vs new names across all affected modules.
