@@ -101,6 +101,11 @@ more user-friendly forms, such as "3s" or "5min".
 * [bootique-kafka #19](https://github.com/bootique/bootique-kafka/issues/19): `bootique-kafka-client` repository was renamed to `bootique-kafka`.
 If you are using `bootique-kafka-client`, you will need change the Maven "groupId" to `io.bootique.kafka` from `io.bootique.kafka.client`.
 
+* [bootique-kafka #21](https://github.com/bootique/bootique-kafka/issues/21): "kafkaclient.producer.lingerMs" property got renamed to
+"kafkaclient.producer.linger" and was changed to a Duration type. Please change all references to `kafkaclient.producer.lingerMs`
+in your config to be `kafkaclient.producer.linger`. Note that once you do it, you can use any supported duration format e.g. "1s".
+Also note that the default value for this property was changed from 1 to 0 to match the Kafka default.
+
 * [bootique-metrics #30](https://github.com/bootique/bootique-metrics/issues/30): There was a massive renaming of module metrics to
 follow a single naming convention. Follow the link to [bootique-metrics #30](https://github.com/bootique/bootique-metrics/issues/30)
 to see the old vs new names across all affected modules.
