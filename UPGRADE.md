@@ -107,8 +107,11 @@ in your config to be `kafkaclient.producer.linger`. Note that once you do it, yo
 Also note that the default value for this property was changed from 1 to 0 to match the Kafka default.
 
 * [bootique-kafka #23](https://github.com/bootique/bootique-kafka/issues/23): Per this task, a new user-friendly Consumer API was
-created. Breaking changes: (1) consumers can no longer be obtained via `KafkaClientFactory`. Instead inject `KafkaConsumerFactory`
-and use its consumer builder methods. (2) `kafkaclient.consumer.autoCommitIntervalMs` config is renamed to
+created. Breaking changes:
+
+  * Consumers can no longer be obtained via `KafkaClientFactory`. Instead inject `KafkaConsumerFactory` and use its Consumer builder methods.
+  * Producers can no longer be obtained via `KafkaClientFactory`. Instead inject `KafkaproducerFactory` and use its Producer builder methods.
+  * `kafkaclient.consumer.autoCommitIntervalMs` config is renamed to
 `kafkaclient.consumer.autoCommitInterval` and is now a duration (so you can use readable values like "1ms"). Same goes
 for `kafkaclient.consumer.sessionTimeoutMs` that got renamed to `kafkaclient.consumer.sessionTimeout`.
 
