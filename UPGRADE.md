@@ -20,7 +20,7 @@
 
 # UPGRADE INSTRUCTIONS
 
-## 0.26
+## 1.0.RC1
 
 * [bootique #188](https://github.com/bootique/bootique/issues/188): Guice was upgraded from 4.0 to
 4.2.0 for better support of the latest versions of Java. This changes the version of Guava lib to
@@ -89,6 +89,32 @@ jdbc:
 There are healthchecks specific to Tomcat and Hikari pools, so there's no need to have a generic set of healthchecks that interferes
 with them. You will need to remove references to `bootique-jdbc-instrumented` from your build scripts and replace them with `bootique-jdbc-tomcat-instrumented` (that actually contains healtchecks ported from the removed module) or `bootique-jdbc-hikaricp-instrumented` (that has its own set of health checks).
 
+* [bootique-job #64](https://github.com/bootique/bootique-job/pull/64): If you used Zookeeper for job locking, configuration is done differently
+now. You will need to remove `scheduler.clusteredLocks: true` from YAML, and instead add a dependency on `io.bootique.job:bootique-job-zookeeper`
+(or the new `io.bootique.job:bootique-job-consul`). Either will enable lock clustering, but with its own mechanism.
+
+* [bootique-job #66](https://github.com/bootique/bootique-job/pull/66): Trigger configurations switched from numeric milliseconds to
+"durations". While the configuration is backwards-compatible, we'd encourage you to review it and replace config keys "fixedDelayMs",
+"fixedRateMs", "initialDelayMs" with "fixedDelay", "fixedRate", "initialDelay" respectively. While you are at it, you may switch to
+more user-friendly forms, such as "3s" or "5min".
+
+* [bootique-kafka #19](https://github.com/bootique/bootique-kafka/issues/19): `bootique-kafka-client` repository was renamed to `bootique-kafka`.
+If you are using `bootique-kafka-client`, you will need change the Maven "groupId" to `io.bootique.kafka` from `io.bootique.kafka.client`.
+
+* [bootique-kafka #21](https://github.com/bootique/bootique-kafka/issues/21): "kafkaclient.producer.lingerMs" property got renamed to
+"kafkaclient.producer.linger" and was changed to a Duration type. Please change all references to `kafkaclient.producer.lingerMs`
+in your config to be `kafkaclient.producer.linger`. Note that once you do it, you can use any supported duration format e.g. "1s".
+Also note that the default value for this property was changed from 1 to 0 to match the Kafka default.
+
+* [bootique-kafka #23](https://github.com/bootique/bootique-kafka/issues/23): Per this task, a new user-friendly Consumer API was
+created. Breaking changes:
+
+  * Consumers can no longer be obtained via `KafkaClientFactory`. Instead inject `KafkaConsumerFactory` and use its Consumer builder methods.
+  * Producers can no longer be obtained via `KafkaClientFactory`. Instead inject `KafkaproducerFactory` and use its Producer builder methods.
+  * `kafkaclient.consumer.autoCommitIntervalMs` config is renamed to
+`kafkaclient.consumer.autoCommitInterval` and is now a duration (so you can use readable values like "1ms"). Same goes
+for `kafkaclient.consumer.sessionTimeoutMs` that got renamed to `kafkaclient.consumer.sessionTimeout`.
+
 * [bootique-metrics #30](https://github.com/bootique/bootique-metrics/issues/30): There was a massive renaming of module metrics to
 follow a single naming convention. Follow the link to [bootique-metrics #30](https://github.com/bootique/bootique-metrics/issues/30)
 to see the old vs new names across all affected modules.
@@ -96,6 +122,7 @@ to see the old vs new names across all affected modules.
 * [bootique-metrics #31](https://github.com/bootique/bootique-metrics/issues/31): Similarly to metrics, health checks got similarly renamed to
 follow the same naming convention. Follow the link to [bootique-metrics #31](https://github.com/bootique/bootique-metrics/issues/31)
 to see the old vs new names across all affected modules.
+
 
 ## 0.25
 

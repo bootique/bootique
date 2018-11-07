@@ -1,5 +1,6 @@
 ## 0.26
 
+* #181 Ability to document declared variables
 * #188 Update Guice to 4.2.0
 * #189 Update Jackson to 2.9.5
 * #190 StackOverflowError on -H and recursive factories
@@ -10,8 +11,12 @@
 * #219 Value object: Duration
 * #218 Value object: Percent
 * #224 Value object: Bytes
+* #226 Add copyright to all sources
+* #228 Integrate Apache Rat in modules for license checking
 * #229 Customizable user-friendly output for value objects on -H
 * #232 Upgrade bootique and core modules to bootique-modules-parent:0.11
+* #235 Upgrade bootique and core modules to bootique-modules-parent:0.12
+* #246 "Bytes" value type must support uppercase abbreviations
 
 ## 0.25 
 

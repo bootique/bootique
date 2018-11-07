@@ -23,12 +23,12 @@
 	<parent>
 		<groupId>io.bootique.modules.parent</groupId>
 		<artifactId>bootique-modules-parent</artifactId>
-		<version>0.12</version>
+		<version>0.13</version>
 	</parent>
 
 	<groupId>io.bootique</groupId>
 	<artifactId>bootique-framework-parent</artifactId>
-	<version>0.26-SNAPSHOT</version>
+	<version>1.0.RC1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>bootique-framework-parent</name>

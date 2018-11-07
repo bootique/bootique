@@ -30,11 +30,11 @@ import static io.bootique.value.BytesUnit.*;
 /**
  * Represents a data size value. Used as a value object to deserialize file sizes and such in application configurations.
  *
- * @since 0.26
+ * @since 1.0.RC1
  */
 public class Bytes implements Comparable<Bytes> {
 
-    private static final Pattern TOKENIZER = Pattern.compile("^([0-9]+)\\s*([a-z]+)$");
+    private static final Pattern TOKENIZER = Pattern.compile("^([0-9]+)\\s*([a-zA-Z]+)$");
 
     private static final Map<String, BytesUnit> UNIT_VOCABULARY;
 

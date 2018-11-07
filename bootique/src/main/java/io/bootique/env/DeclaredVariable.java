@@ -30,10 +30,12 @@ public class DeclaredVariable {
 
     private String configPath;
     private String name;
+    private String description;
 
-    public DeclaredVariable(String configPath, String name) {
+    public DeclaredVariable(String configPath, String name, String description) {
         this.configPath = Objects.requireNonNull(configPath);
         this.name = Objects.requireNonNull(name);
+        this.description = description;
     }
 
     public String getName() {
@@ -42,5 +44,12 @@ public class DeclaredVariable {
 
     public String getConfigPath() {
         return configPath;
+    }
+
+    /**
+     * @since 1.0.RC1
+     */
+    public String getDescription() {
+        return description;
     }
 }
