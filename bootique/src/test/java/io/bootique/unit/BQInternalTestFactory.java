@@ -21,6 +21,7 @@ package io.bootique.unit;
 
 import com.google.inject.Module;
 import io.bootique.BQCoreModule;
+import io.bootique.BQCoreModuleExtender;
 import io.bootique.BQModule;
 import io.bootique.BQModuleOverrideBuilder;
 import io.bootique.BQModuleProvider;
@@ -76,12 +77,15 @@ public class BQInternalTestFactory extends ExternalResource {
         private Map<String, String> properties;
         private Map<String, String> variables;
         private Map<String, String> declaredVars;
+        private Map<String, String> declaredDescriptions;
+
 
         protected Builder(Collection<BQRuntime> runtimes, String[] args) {
             this.runtimes = runtimes;
             this.properties = new HashMap<>();
             this.variables = new HashMap<>();
             this.declaredVars = new HashMap<>();
+            this.declaredDescriptions = new HashMap<>();
             this.bootique = Bootique.app(args).module(createPropertiesProvider()).module(createVariablesProvider());
         }
 
@@ -113,7 +117,8 @@ public class BQInternalTestFactory extends ExternalResource {
                 @Override
                 public Module module() {
                     return binder -> {
-                        BQCoreModule.extend(binder).setVars(variables).declareVars(declaredVars);
+                        BQCoreModuleExtender extender = BQCoreModule.extend(binder).setVars(variables);
+                        declaredVars.forEach((p, n) -> extender.declareVar(p, n, declaredDescriptions.get(p)));
                     };
                 }
 
@@ -145,6 +150,13 @@ public class BQInternalTestFactory extends ExternalResource {
             declaredVars.put(path, var);
             return (T) this;
         }
+
+        public T declareVar(String path, String var, String description) {
+            declaredVars.put(path, var);
+            declaredDescriptions.put(path, description);
+            return (T) this;
+        }
+
 
         public T args(String... args) {
             bootique.args(args);

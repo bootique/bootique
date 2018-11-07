@@ -1,6 +1,7 @@
 ## 1.0.RC1
 
 * #136 Config: underscores in numeric literals
+* #181 Ability to document declared variables
 * #188 Update Guice to 4.2.0
 * #189 Update Jackson to 2.9.5
 * #190 StackOverflowError on -H and recursive factories
@@ -15,6 +16,7 @@
 * #228 Integrate Apache Rat in modules for license checking
 * #232 Upgrade bootique and core modules to bootique-modules-parent:0.11
 * #235 Upgrade bootique and core modules to bootique-modules-parent:0.12
+* #246 "Bytes" value type must support uppercase abbreviations
 
 ## 0.25 
 

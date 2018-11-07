@@ -47,7 +47,7 @@ class DeclaredVariableMetaCompiler {
 
         return ConfigValueMetadata
                 .builder(variable.getName())
-                .description(configMetadata.getDescription())
+                .description(variable.getDescription() != null ? variable.getDescription() : configMetadata.getDescription())
                 .type(configMetadata.getType()).build();
     }
 }
