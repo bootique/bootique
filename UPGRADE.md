@@ -123,6 +123,9 @@ to see the old vs new names across all affected modules.
 follow the same naming convention. Follow the link to [bootique-metrics #31](https://github.com/bootique/bootique-metrics/issues/31)
 to see the old vs new names across all affected modules.
 
+* [bootique-agrest #34](https://github.com/bootique/bootique-agrest/issues/34) : LinkRest was changed to Agrest 
+and bootique-agrest. Bootique-linkrest now deprecated. Please use bootique-agrest dependency.
+
 
 ## 0.25
 
