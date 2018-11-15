@@ -23,19 +23,27 @@ import com.google.inject.Module;
 import io.bootique.BQModule;
 import io.bootique.BQModuleProvider;
 import io.bootique.BQRuntime;
+import io.bootique.Bootique;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.help.ConsoleAppender;
+import io.bootique.help.ValueObjectDescriptor;
 import io.bootique.help.config.ConfigSectionMapGenerator;
 import io.bootique.meta.module.ModulesMetadata;
+import io.bootique.resource.FolderResourceFactory;
+import io.bootique.resource.ResourceFactory;
 import io.bootique.unit.BQInternalTestFactory;
+import io.bootique.value.Duration;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.internal.util.reflection.FieldSetter;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -163,6 +171,102 @@ public class ConfigMetadataIT {
                 "                  #\n");
     }
 
+
+    @Test
+    public void testValueObjectConfig() {
+        BQRuntime runtime = runtimeFactory.app()
+                .addValueObjectsDescriptor(Duration.class, new ValueObjectDescriptor("Test Duration"))
+                .module(new BQModuleProvider() {
+            @Override
+            public Module module() {
+                return Mockito.mock(Module.class);
+            }
+
+            @Override
+            public Map<String, Type> configs() {
+                return Collections.singletonMap("pf", TestValueObjectConfig.class);
+            }
+
+            @Override
+            public BQModule.Builder moduleBuilder() {
+                return BQModuleProvider.super
+                        .moduleBuilder()
+                        .name("my");
+            }
+        }).createRuntime();
+
+        Collection<ConfigMetadataNode> configs = runtime
+                .getInstance(ModulesMetadata.class)
+                .getModules()
+                .stream()
+                .filter(mmd -> "my".equals(mmd.getName()))
+                .findFirst()
+                .get()
+                .getConfigs();
+
+        assertEquals(1, configs.size());
+
+        ConfigValueMetadata cm = (ConfigValueMetadata) configs.iterator().next();
+        assertTrue("pf".equals(cm.getName()));
+
+        StringBuilder buffer = new StringBuilder();
+        ConsoleAppender out = new ConsoleAppender(buffer, 300);
+
+        cm.accept(new ConfigSectionMapGenerator(TestValueObjectConfig.class, out));
+        String help = buffer.toString();
+        assertNotNull(help);
+
+        assertEquals(help, "<value>:\n" +
+                "      #\n" +
+                "      # Resolved as 'io.bootique.meta.config.ConfigMetadataIT$TestValueObjectConfig'.\n" +
+                "      #\n" +
+                "\n" +
+                "      # (p1 desc)\n" +
+                "      # Resolved as 'io.bootique.value.Duration'.\n" +
+                "      p1: <Test Duration>\n");
+    }
+
+    @Test
+    public void testgetTypeValueLabel() {
+        ConfigValueMetadata valueMetadata = new ConfigValueMetadata();
+        assertEquals("<int>", valueMetadata.getTypeValueLabel(Integer.class));
+        assertEquals("<int>", valueMetadata.getTypeValueLabel(Integer.TYPE));
+        assertEquals("<true|false>", valueMetadata.getTypeValueLabel(Boolean.class));
+        assertEquals("<true|false>", valueMetadata.getTypeValueLabel(Boolean.TYPE));
+        assertEquals("<string>", valueMetadata.getTypeValueLabel(String.class));
+        assertEquals("<value>", valueMetadata.getTypeValueLabel(Bootique.class));
+        assertEquals("<value>", valueMetadata.getTypeValueLabel(HashMap.class));
+        assertEquals("<value>", valueMetadata.getTypeValueLabel(ArrayList.class));
+        assertEquals("<a|B|Cd>", valueMetadata.getTypeValueLabel(E.class));
+        assertEquals("<resource-uri>", valueMetadata.getTypeValueLabel(ResourceFactory.class));
+        assertEquals("<folder-resource-uri>", valueMetadata.getTypeValueLabel(FolderResourceFactory.class));
+    }
+
+    @Test
+    public void testgetValueLabel() throws NoSuchFieldException {
+        ConfigValueMetadata valueMetadata = new ConfigValueMetadata();
+        FieldSetter.setField(valueMetadata, valueMetadata.getClass().getDeclaredField("valueLabel"), "Test Label");
+        assertEquals("<Test Label>", valueMetadata.getValueLabel());
+    }
+
+    @Test
+    public void testNoTypeValueLabel() {
+        ConfigValueMetadata valueMetadata = new ConfigValueMetadata();
+        assertEquals("?", valueMetadata.getValueLabel());
+    }
+
+    @Test
+    public void testTypeValueLabel() throws NoSuchFieldException {
+        ConfigValueMetadata valueMetadata = new ConfigValueMetadata();
+        FieldSetter.setField(valueMetadata, valueMetadata.getClass().getDeclaredField("type"), E.class);
+
+        assertEquals("<a|B|Cd>", valueMetadata.getValueLabel());
+    }
+
+    public enum E {
+        a, B, Cd
+    }
+
     @BQConfig
     public static class TestConfig {
 
@@ -190,4 +294,17 @@ public class ConfigMetadataIT {
         public void setP4(List<TestRecursiveConfig> v) {
         }
     }
+
+    @BQConfig
+    public static class TestValueObjectConfig {
+
+        private Duration p1;
+
+        @BQConfigProperty("(p1 desc)")
+        public void setP1(Duration p1) {
+            this.p1 = p1;
+        }
+
+    }
+
 }

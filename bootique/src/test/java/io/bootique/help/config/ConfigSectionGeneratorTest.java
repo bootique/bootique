@@ -26,16 +26,17 @@ import io.bootique.meta.config.ConfigMapMetadata;
 import io.bootique.meta.config.ConfigMetadataNode;
 import io.bootique.meta.config.ConfigObjectMetadata;
 import io.bootique.meta.config.ConfigValueMetadata;
-import io.bootique.resource.FolderResourceFactory;
-import io.bootique.resource.ResourceFactory;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Collections.emptyMap;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
@@ -505,26 +506,6 @@ public class ConfigSectionGeneratorTest {
 
         Type genericListType = ConfigRoot2.class.getField("list").getGenericType();
         assertEquals("List<String>", generator.typeLabel(genericListType));
-    }
-
-    @Test
-    public void testSampleValue() throws NoSuchFieldException {
-        ConfigSectionGenerator generator = new ConfigSectionGenerator(mock(ConsoleAppender.class));
-        assertEquals("<int>", generator.sampleValue(Integer.class));
-        assertEquals("<int>", generator.sampleValue(Integer.TYPE));
-        assertEquals("<true|false>", generator.sampleValue(Boolean.class));
-        assertEquals("<true|false>", generator.sampleValue(Boolean.TYPE));
-        assertEquals("<string>", generator.sampleValue(String.class));
-        assertEquals("<value>", generator.sampleValue(Bootique.class));
-        assertEquals("<value>", generator.sampleValue(HashMap.class));
-        assertEquals("<value>", generator.sampleValue(ArrayList.class));
-        assertEquals("<a|B|Cd>", generator.sampleValue(E.class));
-        assertEquals("<resource-uri>", generator.sampleValue(ResourceFactory.class));
-        assertEquals("<folder-resource-uri>", generator.sampleValue(FolderResourceFactory.class));
-    }
-
-    public static enum E {
-        a, B, Cd
     }
 
     public static class ConfigRoot1 {

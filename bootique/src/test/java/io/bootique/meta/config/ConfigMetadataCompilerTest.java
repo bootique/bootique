@@ -31,6 +31,7 @@ import org.junit.Test;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -50,7 +51,7 @@ public class ConfigMetadataCompilerTest {
     }
 
     private ConfigMetadataCompiler createCompiler(Function<Class<?>, Stream<Class<?>>> subclassProvider) {
-        return new ConfigMetadataCompiler(subclassProvider);
+        return new ConfigMetadataCompiler(subclassProvider, Collections.emptyMap());
     }
 
     @Test

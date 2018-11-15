@@ -31,6 +31,7 @@ public class ConfigValueMetadata implements ConfigMetadataNode {
     protected Type type;
     protected String name;
     protected String description;
+    protected String valueLabel;
 
     protected ConfigValueMetadata() {
     }
@@ -51,6 +52,80 @@ public class ConfigValueMetadata implements ConfigMetadataNode {
     @Override
     public String getDescription() {
         return description;
+    }
+
+    /**
+     * @since 0.26
+     */
+    public String getValueLabel() {
+
+        if (valueLabel != null) {
+            return new StringBuilder("<").append(valueLabel).append(">").toString();
+        }
+
+        if (type == null) {
+            return "?";
+        }
+
+        return getTypeValueLabel(type);
+    }
+
+    /**
+     * @since 0.26
+     */
+    public String getTypeValueLabel(Type type) {
+
+        String typeName = type.getTypeName();
+
+        switch (typeName) {
+            case "boolean":
+            case "java.lang.Boolean":
+                return "<true|false>";
+            case "int":
+            case "java.lang.Integer":
+                return "<int>";
+            case "byte":
+            case "java.lang.Byte":
+                return "<byte>";
+            case "double":
+            case "java.lang.Double":
+                return "<double>";
+            case "float":
+            case "java.lang.Float":
+                return "<float>";
+            case "short":
+            case "java.lang.Short":
+                return "<short>";
+            case "long":
+            case "java.lang.Long":
+                return "<long>";
+            case "java.lang.String":
+                return "<string>";
+            case "io.bootique.resource.ResourceFactory":
+                return "<resource-uri>";
+            case "io.bootique.resource.FolderResourceFactory":
+                return "<folder-resource-uri>";
+            default:
+                if (type instanceof Class) {
+                    Class<?> classType = (Class<?>) type;
+                    if (classType.isEnum()) {
+
+                        StringBuilder out = new StringBuilder("<");
+                        Object[] values = classType.getEnumConstants();
+                        for (int i = 0; i < values.length; i++) {
+                            if (i > 0) {
+                                out.append("|");
+                            }
+                            out.append(values[i]);
+                        }
+                        out.append(">");
+                        return out.toString();
+                    }
+
+                }
+
+                return "<value>";
+        }
     }
 
     @Override
@@ -78,6 +153,16 @@ public class ConfigValueMetadata implements ConfigMetadataNode {
 
         public B name(String name) {
             toBuild.name = name;
+            return (B) this;
+        }
+
+        public B valueLabel(String valueLabel) {
+            if(valueLabel != null && valueLabel.length() == 0) {
+                valueLabel = null;
+            }
+
+            toBuild.valueLabel = valueLabel;
+
             return (B) this;
         }
 

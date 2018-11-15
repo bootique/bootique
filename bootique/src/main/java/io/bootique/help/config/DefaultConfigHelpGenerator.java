@@ -21,14 +21,17 @@ package io.bootique.help.config;
 
 import io.bootique.help.ConsoleAppender;
 import io.bootique.help.HelpAppender;
+import io.bootique.help.ValueObjectDescriptor;
 import io.bootique.meta.MetadataNode;
 import io.bootique.meta.config.ConfigMetadataNode;
 import io.bootique.meta.module.ModuleMetadata;
 import io.bootique.meta.module.ModulesMetadata;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -40,11 +43,17 @@ public class DefaultConfigHelpGenerator implements ConfigHelpGenerator {
     static final int DEFAULT_OFFSET = 6;
 
     private ModulesMetadata modulesMetadata;
+    private Map<Class<?>, ValueObjectDescriptor> valueObjectDescriptors;
     private int lineWidth;
 
-    public DefaultConfigHelpGenerator(ModulesMetadata modulesMetadata, int lineWidth) {
+    public DefaultConfigHelpGenerator(ModulesMetadata modulesMetadata, Map<Class<?>, ValueObjectDescriptor> valueObjectDescriptors, int lineWidth) {
         this.lineWidth = lineWidth;
+        this.valueObjectDescriptors = valueObjectDescriptors;
         this.modulesMetadata = modulesMetadata;
+    }
+
+    public DefaultConfigHelpGenerator(ModulesMetadata modulesMetadata, int lineWidth) {
+        this(modulesMetadata, Collections.emptyMap(), lineWidth);
     }
 
     protected HelpAppender createAppender(Appendable out) {

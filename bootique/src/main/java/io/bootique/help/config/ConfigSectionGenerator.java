@@ -216,67 +216,11 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
         if (asValue) {
             // value header goes on top of property name
             printValueHeader(metadata);
-            String valueLabel = metadata.getType() != null ? sampleValue(metadata.getType()) : "?";
+            String valueLabel = metadata.getValueLabel();
             out.println(metadata.getName(), ": ", valueLabel);
         } else {
             // headers for other types are printed below the property with the object contents
             out.println(metadata.getName(), ":");
-        }
-    }
-
-    protected String sampleValue(Type type) {
-
-        // TODO: allow to provide sample values in metadata, so that we can display something useful
-
-        String typeName = type.getTypeName();
-
-        switch (typeName) {
-            case "boolean":
-            case "java.lang.Boolean":
-                return "<true|false>";
-            case "int":
-            case "java.lang.Integer":
-                return "<int>";
-            case "byte":
-            case "java.lang.Byte":
-                return "<byte>";
-            case "double":
-            case "java.lang.Double":
-                return "<double>";
-            case "float":
-            case "java.lang.Float":
-                return "<float>";
-            case "short":
-            case "java.lang.Short":
-                return "<short>";
-            case "long":
-            case "java.lang.Long":
-                return "<long>";
-            case "java.lang.String":
-                return "<string>";
-            case "io.bootique.resource.ResourceFactory":
-                return "<resource-uri>";
-            case "io.bootique.resource.FolderResourceFactory":
-                return "<folder-resource-uri>";
-            default:
-                if (type instanceof Class) {
-                    Class<?> classType = (Class<?>) type;
-                    if (classType.isEnum()) {
-
-                        StringBuilder out = new StringBuilder("<");
-                        Object[] values = classType.getEnumConstants();
-                        for (int i = 0; i < values.length; i++) {
-                            if (i > 0) {
-                                out.append("|");
-                            }
-                            out.append(values[i]);
-                        }
-                        out.append(">");
-                        return out.toString();
-                    }
-                }
-
-                return "<value>";
         }
     }
 

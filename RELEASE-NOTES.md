@@ -1,4 +1,4 @@
-## 1.0.RC1
+## 0.26
 
 * #181 Ability to document declared variables
 * #188 Update Guice to 4.2.0
@@ -13,6 +13,7 @@
 * #224 Value object: Bytes
 * #226 Add copyright to all sources
 * #228 Integrate Apache Rat in modules for license checking
+* #229 Customizable user-friendly output for value objects on -H
 * #232 Upgrade bootique and core modules to bootique-modules-parent:0.11
 * #235 Upgrade bootique and core modules to bootique-modules-parent:0.12
 * #246 "Bytes" value type must support uppercase abbreviations
@@ -55,7 +56,7 @@
 
 ## 0.22
 
-* #90  Module "extend" API - a better version of `contribute*`
+* #90  Module "extend" API - a better version of "contribute*"
 * #119 Relax @BQConfigProperty restrictions.
 * #123 ENVIRONMENT section in help
 * #124 Exposing and aliasing app config environment variables 

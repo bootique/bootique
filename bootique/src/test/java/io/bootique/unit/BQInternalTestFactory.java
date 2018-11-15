@@ -27,6 +27,7 @@ import io.bootique.BQModuleOverrideBuilder;
 import io.bootique.BQModuleProvider;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
+import io.bootique.help.ValueObjectDescriptor;
 import io.bootique.log.BootLogger;
 import org.junit.rules.ExternalResource;
 import org.slf4j.Logger;
@@ -77,6 +78,7 @@ public class BQInternalTestFactory extends ExternalResource {
         private Map<String, String> properties;
         private Map<String, String> variables;
         private Map<String, String> declaredVars;
+        private Map<Class<?>, ValueObjectDescriptor> valueObjectsDescriptors;
         private Map<String, String> declaredDescriptions;
 
 
@@ -85,6 +87,7 @@ public class BQInternalTestFactory extends ExternalResource {
             this.properties = new HashMap<>();
             this.variables = new HashMap<>();
             this.declaredVars = new HashMap<>();
+            this.valueObjectsDescriptors = new HashMap<>();
             this.declaredDescriptions = new HashMap<>();
             this.bootique = Bootique.app(args).module(createPropertiesProvider()).module(createVariablesProvider());
         }
@@ -117,7 +120,8 @@ public class BQInternalTestFactory extends ExternalResource {
                 @Override
                 public Module module() {
                     return binder -> {
-                        BQCoreModuleExtender extender = BQCoreModule.extend(binder).setVars(variables);
+                        BQCoreModuleExtender extender = BQCoreModule.extend(binder).setVars(variables)
+                                .addValueObjectsDescriptors(valueObjectsDescriptors);
                         declaredVars.forEach((p, n) -> extender.declareVar(p, n, declaredDescriptions.get(p)));
                     };
                 }
@@ -148,6 +152,11 @@ public class BQInternalTestFactory extends ExternalResource {
 
         public T declareVar(String path, String var) {
             declaredVars.put(path, var);
+            return (T) this;
+        }
+
+        public T addValueObjectsDescriptor(Class<?> type, ValueObjectDescriptor descriptor) {
+            valueObjectsDescriptors.put(type, descriptor);
             return (T) this;
         }
 
