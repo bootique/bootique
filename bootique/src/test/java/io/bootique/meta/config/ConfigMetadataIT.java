@@ -207,7 +207,7 @@ public class ConfigMetadataIT {
         assertEquals(1, configs.size());
 
         ConfigValueMetadata cm = (ConfigValueMetadata) configs.iterator().next();
-        assertTrue("pf".equals(cm.getName()));
+        assertEquals("pf", cm.getName());
 
         StringBuilder buffer = new StringBuilder();
         ConsoleAppender out = new ConsoleAppender(buffer, 300);
@@ -229,17 +229,17 @@ public class ConfigMetadataIT {
     @Test
     public void testgetTypeValueLabel() {
         ConfigValueMetadata valueMetadata = new ConfigValueMetadata();
-        assertEquals("<int>", valueMetadata.getTypeValueLabel(Integer.class));
-        assertEquals("<int>", valueMetadata.getTypeValueLabel(Integer.TYPE));
-        assertEquals("<true|false>", valueMetadata.getTypeValueLabel(Boolean.class));
-        assertEquals("<true|false>", valueMetadata.getTypeValueLabel(Boolean.TYPE));
-        assertEquals("<string>", valueMetadata.getTypeValueLabel(String.class));
-        assertEquals("<value>", valueMetadata.getTypeValueLabel(Bootique.class));
-        assertEquals("<value>", valueMetadata.getTypeValueLabel(HashMap.class));
-        assertEquals("<value>", valueMetadata.getTypeValueLabel(ArrayList.class));
-        assertEquals("<a|B|Cd>", valueMetadata.getTypeValueLabel(E.class));
-        assertEquals("<resource-uri>", valueMetadata.getTypeValueLabel(ResourceFactory.class));
-        assertEquals("<folder-resource-uri>", valueMetadata.getTypeValueLabel(FolderResourceFactory.class));
+        assertEquals("<int>", valueMetadata.getSampleValue(Integer.class));
+        assertEquals("<int>", valueMetadata.getSampleValue(Integer.TYPE));
+        assertEquals("<true|false>", valueMetadata.getSampleValue(Boolean.class));
+        assertEquals("<true|false>", valueMetadata.getSampleValue(Boolean.TYPE));
+        assertEquals("<string>", valueMetadata.getSampleValue(String.class));
+        assertEquals("<value>", valueMetadata.getSampleValue(Bootique.class));
+        assertEquals("<value>", valueMetadata.getSampleValue(HashMap.class));
+        assertEquals("<value>", valueMetadata.getSampleValue(ArrayList.class));
+        assertEquals("<a|B|Cd>", valueMetadata.getSampleValue(E.class));
+        assertEquals("<resource-uri>", valueMetadata.getSampleValue(ResourceFactory.class));
+        assertEquals("<folder-resource-uri>", valueMetadata.getSampleValue(FolderResourceFactory.class));
     }
 
     @Test

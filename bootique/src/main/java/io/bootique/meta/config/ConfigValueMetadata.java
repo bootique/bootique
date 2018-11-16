@@ -37,7 +37,7 @@ public class ConfigValueMetadata implements ConfigMetadataNode {
     }
 
     public static Builder builder() {
-        return new Builder(new ConfigValueMetadata());
+        return new Builder<>(new ConfigValueMetadata());
     }
 
     public static Builder builder(String name) {
@@ -55,25 +55,25 @@ public class ConfigValueMetadata implements ConfigMetadataNode {
     }
 
     /**
-     * @since 0.26
+     * @since 1.0.RC1
      */
     public String getValueLabel() {
 
         if (valueLabel != null) {
-            return new StringBuilder("<").append(valueLabel).append(">").toString();
+            return "<" + valueLabel + ">";
         }
 
         if (type == null) {
             return "?";
         }
 
-        return getTypeValueLabel(type);
+        return getSampleValue(type);
     }
 
     /**
-     * @since 0.26
+     * @since 1.0.RC1
      */
-    public String getTypeValueLabel(Type type) {
+    public String getSampleValue(Type type) {
 
         String typeName = type.getTypeName();
 
@@ -99,6 +99,9 @@ public class ConfigValueMetadata implements ConfigMetadataNode {
             case "long":
             case "java.lang.Long":
                 return "<long>";
+            case "char":
+            case "java.lang.Character":
+                return "<char>";
             case "java.lang.String":
                 return "<string>";
             case "io.bootique.resource.ResourceFactory":

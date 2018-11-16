@@ -33,14 +33,13 @@ public class ConfigSectionMapGenerator extends ConfigSectionGenerator {
         this.keysType = Objects.requireNonNull(keysType);
     }
 
-
     @Override
     protected void printNode(ConfigValueMetadata metadata, boolean asValue) {
 
         if (asValue) {
-            out.println(metadata.getTypeValueLabel(keysType), ": ", metadata.getValueLabel());
+            out.println(metadata.getSampleValue(keysType), ": ", metadata.getValueLabel());
         } else {
-            out.println(metadata.getTypeValueLabel(keysType), ":");
+            out.println(metadata.getSampleValue(keysType), ":");
         }
     }
 }

@@ -20,15 +20,18 @@
 package io.bootique.help;
 
 /**
- * @since 0.26
+ * Descriptor of value object type.
+ * For now (as of version 1.0.RC1) it only contains description text that will be shown in app help.
+ *
+ * @since 1.0.RC1
  */
 public class ValueObjectDescriptor {
+
+	private final String description;
 
 	public ValueObjectDescriptor(String description) {
 		this.description = description;
 	}
-
-	private String description;
 
 	public String getDescription() {
 		return description;

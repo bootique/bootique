@@ -303,11 +303,11 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      *
      * @param valueObjectsDescriptors - collection of value objects with valueObjectsDescriptors.
      * @return this extender instance
-     * @since 0.26
+     * @since 1.0.RC1
      */
     public BQCoreModuleExtender addValueObjectsDescriptors(Map<Class<?>, ValueObjectDescriptor> valueObjectsDescriptors) {
         MapBinder<Class<?>, ValueObjectDescriptor> binder = contributeValueObjectsDescriptors();
-        valueObjectsDescriptors.forEach((key, value) -> binder.permitDuplicates().addBinding(key).toInstance(value));
+        valueObjectsDescriptors.forEach((key, value) -> binder.addBinding(key).toInstance(value));
         return this;
     }
 
@@ -317,7 +317,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @param object - the value object
      * @param valueObjectsDescriptor - descriptor for value object.
      * @return this extender instance
-     * @since 0.26
+     * @since 1.0.RC1
      */
     public BQCoreModuleExtender addValueObjectDescriptor(Class<?> object, ValueObjectDescriptor valueObjectsDescriptor) {
          contributeValueObjectsDescriptors().addBinding(object).toInstance(valueObjectsDescriptor);
@@ -325,7 +325,11 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     }
 
     protected MapBinder<Class<?>, ValueObjectDescriptor> contributeValueObjectsDescriptors() {
-        return valueObjectsDescriptors != null ? valueObjectsDescriptors : (valueObjectsDescriptors = newMap(new TypeLiteral<Class<?>>() {}, TypeLiteral.get(ValueObjectDescriptor.class)));
+        if (valueObjectsDescriptors != null) {
+            return valueObjectsDescriptors;
+        }
+        valueObjectsDescriptors = newMap(new TypeLiteral<Class<?>>() {}, TypeLiteral.get(ValueObjectDescriptor.class));
+        return valueObjectsDescriptors.permitDuplicates();
     }
 
     protected MapBinder<String, Level> contributeLogLevels() {

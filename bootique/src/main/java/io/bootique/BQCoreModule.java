@@ -283,9 +283,15 @@ public class BQCoreModule implements Module {
 
     @Provides
     @Singleton
-    ModulesMetadata provideModulesMetadata(ConfigHierarchyResolver hierarchyResolver, Map<Class<?>, ValueObjectDescriptor> valueObjects) {
-        return new ModulesMetadataCompiler(new ConfigMetadataCompiler(hierarchyResolver::directSubclasses, valueObjects))
-                .compile(this.modulesSource != null ? modulesSource.get() : Collections.emptyList());
+    ModulesMetadata provideModulesMetadata(ConfigHierarchyResolver hierarchyResolver, Map<Class<?>,
+            ValueObjectDescriptor> valueObjectDescriptors) {
+
+        ConfigMetadataCompiler configCompiler =
+                new ConfigMetadataCompiler(hierarchyResolver::directSubclasses, valueObjectDescriptors);
+        Collection<BQModule> modules = this.modulesSource != null
+                ? modulesSource.get()
+                : Collections.emptyList();
+        return new ModulesMetadataCompiler(configCompiler).compile(modules);
     }
 
     @Provides
@@ -351,7 +357,7 @@ public class BQCoreModule implements Module {
 
     private Map<Class<?>, ValueObjectDescriptor> createValueObjectsDescriptorsMap() {
     	Map<Class<?>, ValueObjectDescriptor> descriptors = new HashMap<>();
-		descriptors.put(Bytes.class, new ValueObjectDescriptor("bytes expression, e.g. 5b, 23mb, 12gigabytes"));
+		descriptors.put(Bytes.class, new ValueObjectDescriptor("bytes expression, e.g. 5b, 23MB, 12gigabytes"));
 		descriptors.put(Duration.class, new ValueObjectDescriptor("duration expression, e.g. 5ms, 2s, 1hr"));
 		descriptors.put(Percent.class, new ValueObjectDescriptor("percent expression, e.g. 15%, 75%"));
 

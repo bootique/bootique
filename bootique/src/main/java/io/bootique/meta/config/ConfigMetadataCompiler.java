@@ -30,6 +30,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -52,14 +53,18 @@ public class ConfigMetadataCompiler {
     private Map<Class<?>, ValueObjectDescriptor> descriptorMap;
 
     /**
-     * @deprecated since 0.26 use {@link #ConfigMetadataCompiler(Function, Map)}
+     * @deprecated since 1.0.RC1 use {@link #ConfigMetadataCompiler(Function, Map)}
      */
     @Deprecated
     public ConfigMetadataCompiler(Function<Class<?>, Stream<Class<?>>> subclassProvider) {
         this.subclassProvider = subclassProvider;
         this.seen = new ConcurrentHashMap<>();
+        this.descriptorMap = Collections.emptyMap();
     }
 
+    /**
+     * @since 1.0.RC1
+     */
     public ConfigMetadataCompiler(Function<Class<?>, Stream<Class<?>>> subclassProvider, Map<Class<?>, ValueObjectDescriptor> descriptorMap) {
         this.subclassProvider = subclassProvider;
         this.seen = new ConcurrentHashMap<>();
