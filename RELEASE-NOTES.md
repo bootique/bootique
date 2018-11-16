@@ -1,4 +1,4 @@
-## 0.26
+## 1.0.RC1
 
 * #181 Ability to document declared variables
 * #188 Update Guice to 4.2.0
