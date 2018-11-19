@@ -325,11 +325,9 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     }
 
     protected MapBinder<Class<?>, ValueObjectDescriptor> contributeValueObjectsDescriptors() {
-        if (valueObjectsDescriptors != null) {
-            return valueObjectsDescriptors;
-        }
-        valueObjectsDescriptors = newMap(new TypeLiteral<Class<?>>() {}, TypeLiteral.get(ValueObjectDescriptor.class));
-        return valueObjectsDescriptors.permitDuplicates();
+        return valueObjectsDescriptors != null
+                ? valueObjectsDescriptors
+                : (valueObjectsDescriptors = newMap(new TypeLiteral<Class<?>>() {}, TypeLiteral.get(ValueObjectDescriptor.class)));
     }
 
     protected MapBinder<String, Level> contributeLogLevels() {

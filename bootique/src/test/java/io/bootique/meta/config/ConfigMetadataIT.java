@@ -33,11 +33,9 @@ import io.bootique.meta.module.ModulesMetadata;
 import io.bootique.resource.FolderResourceFactory;
 import io.bootique.resource.ResourceFactory;
 import io.bootique.unit.BQInternalTestFactory;
-import io.bootique.value.Duration;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.mockito.internal.util.reflection.FieldSetter;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -175,7 +173,7 @@ public class ConfigMetadataIT {
     @Test
     public void testValueObjectConfig() {
         BQRuntime runtime = runtimeFactory.app()
-                .addValueObjectsDescriptor(Duration.class, new ValueObjectDescriptor("Test Duration"))
+                .addValueObjectsDescriptor(TestVO.class, new ValueObjectDescriptor("Test Value Object"))
                 .module(new BQModuleProvider() {
             @Override
             public Module module() {
@@ -222,12 +220,12 @@ public class ConfigMetadataIT {
                 "      #\n" +
                 "\n" +
                 "      # (p1 desc)\n" +
-                "      # Resolved as 'io.bootique.value.Duration'.\n" +
-                "      p1: <Test Duration>\n");
+                "      # Resolved as 'io.bootique.meta.config.ConfigMetadataIT$TestVO'.\n" +
+                "      p1: <Test Value Object>\n");
     }
 
     @Test
-    public void testgetTypeValueLabel() {
+    public void testSampleValue() {
         ConfigValueMetadata valueMetadata = new ConfigValueMetadata();
         assertEquals("<int>", valueMetadata.getSampleValue(Integer.class));
         assertEquals("<int>", valueMetadata.getSampleValue(Integer.TYPE));
@@ -243,9 +241,8 @@ public class ConfigMetadataIT {
     }
 
     @Test
-    public void testgetValueLabel() throws NoSuchFieldException {
-        ConfigValueMetadata valueMetadata = new ConfigValueMetadata();
-        FieldSetter.setField(valueMetadata, valueMetadata.getClass().getDeclaredField("valueLabel"), "Test Label");
+    public void testGetValueLabel() throws NoSuchFieldException {
+        ConfigValueMetadata valueMetadata = ConfigValueMetadata.builder().valueLabel("Test Label").build();
         assertEquals("<Test Label>", valueMetadata.getValueLabel());
     }
 
@@ -257,14 +254,15 @@ public class ConfigMetadataIT {
 
     @Test
     public void testTypeValueLabel() throws NoSuchFieldException {
-        ConfigValueMetadata valueMetadata = new ConfigValueMetadata();
-        FieldSetter.setField(valueMetadata, valueMetadata.getClass().getDeclaredField("type"), E.class);
-
+        ConfigValueMetadata valueMetadata = ConfigValueMetadata.builder().type(E.class).build();
         assertEquals("<a|B|Cd>", valueMetadata.getValueLabel());
     }
 
     public enum E {
         a, B, Cd
+    }
+
+    public static class TestVO {
     }
 
     @BQConfig
@@ -298,10 +296,10 @@ public class ConfigMetadataIT {
     @BQConfig
     public static class TestValueObjectConfig {
 
-        private Duration p1;
+        private TestVO p1;
 
         @BQConfigProperty("(p1 desc)")
-        public void setP1(Duration p1) {
+        public void setP1(TestVO p1) {
             this.p1 = p1;
         }
 
