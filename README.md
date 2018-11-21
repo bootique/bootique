@@ -19,6 +19,8 @@
 
 [![Build Status](https://travis-ci.org/bootique/bootique.svg)](https://travis-ci.org/bootique/bootique)
 [![Maven Central](https://img.shields.io/maven-central/v/io.bootique/bootique.svg?colorB=brightgreen)](https://search.maven.org/artifact/io.bootique/bootique)
+[![Code Quality: Java](https://img.shields.io/lgtm/grade/java/g/bootique/bootique.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/bootique/bootique/context:java)
+[![Total Alerts](https://img.shields.io/lgtm/alerts/g/bootique/bootique.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/bootique/bootique/alerts)
 
 Bootique is a [minimally opinionated](https://medium.com/@andrus_a/bootique-a-minimally-opinionated-platform-for-modern-java-apps-644194c23872#.odwmsbnbh) 
 java launcher and integration technology. It is intended for building container-less runnable Java applications. 
