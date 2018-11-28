@@ -53,7 +53,7 @@ public class JoptCli implements Cli {
 
 	@Override
 	public List<String> optionStrings(String name) {
-		return optionSet.valuesOf(name).stream().map(o -> String.valueOf(o)).collect(toList());
+		return optionSet.valuesOf(name).stream().map(String::valueOf).collect(toList());
 	}
 
 	@SuppressWarnings("unchecked")

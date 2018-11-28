@@ -146,14 +146,7 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
 
             if (omd.getConfigPath() != null) {
                 String cliValue = cli.optionString(omd.getName());
-                if (cliValue == null) {
-                    cliValue = omd.getDefaultValue();
-                }
-
-                String finalCliValue = cliValue;
-                overrider = overrider.andThen(new InPlaceMapOverrider(
-                        singletonMap(omd.getConfigPath(), finalCliValue)
-                ));
+                overrider = overrider.andThen(new InPlaceMapOverrider(singletonMap(omd.getConfigPath(), cliValue)));
             }
         }
 

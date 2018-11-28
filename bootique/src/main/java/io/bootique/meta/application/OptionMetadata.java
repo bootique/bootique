@@ -159,7 +159,8 @@ public class OptionMetadata implements MetadataNode {
         }
 
         /**
-         * Sets the default value for this option.
+         * Sets the default value for this option that will be used if the option is provided on
+         * command line without an explicit value.
          *
          * @param defaultValue a default value for the option.
          * @return this builder instance

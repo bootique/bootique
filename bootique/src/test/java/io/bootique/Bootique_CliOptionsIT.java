@@ -35,10 +35,7 @@ import org.junit.Test;
 
 import java.util.Collection;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class Bootique_CliOptionsIT {
 
@@ -291,6 +288,42 @@ public class Bootique_CliOptionsIT {
         assertEquals("f", bean1.c.m.f);
     }
 
+    @Test
+    public void testOptionDefaultValue() {
+        BQRuntime runtime = runtimeFactory.app("--option")
+                .module(b -> BQCoreModule.extend(b).addOptions(
+                        OptionMetadata.builder("option").defaultValue("val").build()
+                ))
+                .createRuntime();
+        Cli cli = runtime.getInstance(Cli.class);
+        assertTrue(cli.hasOption("option"));
+        assertEquals("val", cli.optionString("option"));
+    }
+
+    @Test
+    public void testMissingOptionDefaultValue() {
+        BQRuntime runtime = runtimeFactory.app()
+                .module(b -> BQCoreModule.extend(b).addOptions(
+                        OptionMetadata.builder("option").defaultValue("val").build()
+                ))
+                .createRuntime();
+        Cli cli = runtime.getInstance(Cli.class);
+        // Check that no value is set if option is missing in args
+        assertFalse(cli.hasOption("option"));
+        assertNull(cli.optionString("option"));
+    }
+
+    @Test
+    public void testCommandWithOptionWithDefaultValue() {
+        BQRuntime runtime = runtimeFactory.app("-cmd", "--option")
+                .module(b -> BQCoreModule.extend(b).addCommand(CommandWithDefaultOptionValue.class))
+                .createRuntime();
+
+        Cli cli = runtime.getInstance(Cli.class);
+        assertTrue(cli.hasOption("o"));
+        assertEquals("val", cli.optionString("o"));
+    }
+
     private void assertCollectionsEquals(Collection<String> result, String... expected) {
         assertArrayEquals(expected, result.toArray());
     }
@@ -388,6 +421,19 @@ public class Bootique_CliOptionsIT {
                     .name("cmd-1")
                     .addOption(OptionMetadata.builder("opt-1")
                             .configPath("c.m.f").defaultValue("3")));
+        }
+
+        @Override
+        public CommandOutcome run(Cli cli) {
+            return CommandOutcome.succeeded();
+        }
+    }
+
+    static final class CommandWithDefaultOptionValue extends CommandWithMetadata {
+
+        public CommandWithDefaultOptionValue() {
+            super(CommandMetadata.builder("cmd")
+                    .addOption(OptionMetadata.builder("option").defaultValue("val").build()));
         }
 
         @Override

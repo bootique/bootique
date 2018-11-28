@@ -27,6 +27,7 @@ import io.bootique.cli.NoArgsCli;
 import io.bootique.command.CommandManager;
 import io.bootique.meta.application.ApplicationMetadata;
 import io.bootique.meta.application.OptionMetadata;
+import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -121,14 +122,24 @@ public class JoptCliFactory implements CliFactory {
         // TODO: how do we resolve short name conflicts?
         List<String> longAndShort = asList(option.getShortName(), option.getName());
         OptionSpecBuilder optionBuilder = parser.acceptsAll(longAndShort, description);
+        ArgumentAcceptingOptionSpec<String> optionSpec = null;
         switch (option.getValueCardinality()) {
             case OPTIONAL:
-                optionBuilder.withOptionalArg().describedAs(option.getValueName());
+                optionSpec = optionBuilder.withOptionalArg().describedAs(option.getValueName());
                 break;
             case REQUIRED:
-                optionBuilder.withRequiredArg().describedAs(option.getValueName());
+                optionSpec = optionBuilder.withRequiredArg().describedAs(option.getValueName());
+                break;
             default:
                 break;
+        }
+
+        if(option.getDefaultValue() != null) {
+            if(optionSpec == null) {
+                // need optional arg to enable default value
+                optionSpec = optionBuilder.withOptionalArg();
+            }
+            optionSpec.defaultsTo(option.getDefaultValue());
         }
     }
 
@@ -149,7 +160,7 @@ public class JoptCliFactory implements CliFactory {
             case 1:
                 return matches.iterator().next();
             default:
-                String opts = matches.stream().collect(Collectors.joining(", "));
+                String opts = String.join(", ", matches);
                 String message = String.format("CLI options match multiple commands: %s.", opts);
                 throw new BootiqueException(1, message);
         }
