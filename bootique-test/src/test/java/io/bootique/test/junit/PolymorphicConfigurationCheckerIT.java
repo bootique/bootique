@@ -71,6 +71,7 @@ public class PolymorphicConfigurationCheckerIT {
     }
 
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, defaultImpl = C4.class)
+    @JsonTypeName("c3")
     public static class C3 implements PolymorphicConfiguration {
     }
 
@@ -83,6 +84,7 @@ public class PolymorphicConfigurationCheckerIT {
     }
 
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME)
+    @JsonTypeName("c6")
     public static class C6 implements PolymorphicConfiguration {
     }
 
