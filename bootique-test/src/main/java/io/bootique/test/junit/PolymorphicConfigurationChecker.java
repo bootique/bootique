@@ -124,7 +124,7 @@ public class PolymorphicConfigurationChecker<T extends PolymorphicConfiguration>
 
         if (isConcrete(expectedRoot)) {
             JsonTypeName typeName = expectedRoot.getAnnotation(JsonTypeName.class);
-            assertNotNull("Concrete root configuration type must be annotated with @JsonTypeName: " + expectedRoot.getName());
+            assertNotNull("Concrete root configuration type must be annotated with @JsonTypeName: " + expectedRoot.getName(), typeName);
         }
     }
 
@@ -139,7 +139,7 @@ public class PolymorphicConfigurationChecker<T extends PolymorphicConfiguration>
         // would have to be used in YAML)
 
         JsonTypeName typeName = t.getAnnotation(JsonTypeName.class);
-        assertNotNull("Non-root configuration type must be annotated with @JsonTypeName: " + t.getName());
+        assertNotNull("Non-root configuration type must be annotated with @JsonTypeName: " + t.getName(), typeName);
     }
 
 
