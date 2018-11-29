@@ -22,11 +22,16 @@
 
 ## 1.0.RC1
 
+* [bootique #249](https://github.com/bootique/bootique/issues/249): Confusing methods 
+`addOption(String configPath, String defaultValue, String name)` and `addOption(String configPath, String name)` 
+in `BQCoreModuleExtender` are replaced with new one `mapConfigPath(String optionName, String configPath)`
+ that has much clearer signature. **Note** that option that will be mapped on config path should be added separately. 
+
 * [bootique #188](https://github.com/bootique/bootique/issues/188): Guice was upgraded from 4.0 to
 4.2.0 for better support of the latest versions of Java. This changes the version of Guava lib to
 `23.6-android` and that Guava brings with it a whole set of other libraries (see the screenshot
 [here](https://groups.google.com/forum/#!topic/bootique-user/elLjQXaK-40). If your code depends
-on Guava elsewhere, be aware of this change. Als (and this is very unfortunate) this upgrade
+on Guava elsewhere, be aware of this change. Also (and this is very unfortunate) this upgrade
 increased the dependency footprint by ~500K.
 
 * [bootique #214](https://github.com/bootique/bootique/issues/214): All APIs previously deprecated are
