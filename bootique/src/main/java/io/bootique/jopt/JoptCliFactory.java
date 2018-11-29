@@ -122,24 +122,18 @@ public class JoptCliFactory implements CliFactory {
         // TODO: how do we resolve short name conflicts?
         List<String> longAndShort = asList(option.getShortName(), option.getName());
         OptionSpecBuilder optionBuilder = parser.acceptsAll(longAndShort, description);
-        ArgumentAcceptingOptionSpec<String> optionSpec = null;
         switch (option.getValueCardinality()) {
             case OPTIONAL:
-                optionSpec = optionBuilder.withOptionalArg().describedAs(option.getValueName());
+                ArgumentAcceptingOptionSpec<String> optionSpec = optionBuilder.withOptionalArg().describedAs(option.getValueName());
+                if(option.getDefaultValue() != null) {
+                    optionSpec.defaultsTo(option.getDefaultValue());
+                }
                 break;
             case REQUIRED:
-                optionSpec = optionBuilder.withRequiredArg().describedAs(option.getValueName());
+                optionBuilder.withRequiredArg().describedAs(option.getValueName());
                 break;
             default:
                 break;
-        }
-
-        if(option.getDefaultValue() != null) {
-            if(optionSpec == null) {
-                // need optional arg to enable default value
-                optionSpec = optionBuilder.withOptionalArg();
-            }
-            optionSpec.defaultsTo(option.getDefaultValue());
         }
     }
 

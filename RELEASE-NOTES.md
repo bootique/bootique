@@ -21,6 +21,7 @@
 * #249 Replace confusing variants of addOption in BQCoreModuleExtender
 * #250 Update modules parent to 0.14
 * #251 Rename method addConfigOnOption in BQCoreModuleExtender
+* #252 Ambiguity in OptionMetadataBuilder default value setter 
 
 ## 0.25 
 

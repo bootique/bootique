@@ -22,6 +22,9 @@
 
 ## 1.0.RC1
 
+* [bootique #251](https://github.com/bootique/bootique/issues/249): Method `defaultValue()` in OptionMetadata builder 
+changed to `valueOptionalWithDefault()`
+
 * [bootique #251](https://github.com/bootique/bootique/issues/249): Method `addConfigOnOption(String optionName, String configResourceId)`
 in `BQCoreModuleExtender` renamed to `mapConfigResource`
 

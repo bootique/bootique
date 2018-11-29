@@ -178,7 +178,7 @@ public class Bootique_CliOptionsIT {
                 .module(binder -> BQCoreModule
                         .extend(binder)
                         .addOptions(OptionMetadata.builder("opt-1").valueOptional().build(),
-                                OptionMetadata.builder("opt-2").valueOptional().defaultValue("2").build())
+                                OptionMetadata.builder("opt-2").valueOptionalWithDefault("2").build())
                         .mapConfigPath("opt-1", "c.m.l")
                         .mapConfigPath("opt-2", "c.m.k"))
                 .createRuntime();
@@ -208,7 +208,7 @@ public class Bootique_CliOptionsIT {
     public void testOptionsCommandAndModuleOverlapping() {
         BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--cmd-1", "--opt-1")
                 .module(binder -> BQCoreModule.extend(binder)
-                        .addOption(OptionMetadata.builder("opt-1").valueOptional().defaultValue("2").build())
+                        .addOption(OptionMetadata.builder("opt-1").valueOptionalWithDefault("2").build())
                         .mapConfigPath("opt-1", "c.m.k")
                         .addCommand(new TestOptionCommand1()))
                 .createRuntime();
@@ -248,8 +248,8 @@ public class Bootique_CliOptionsIT {
         BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--opt-2", "--opt-3")
                 .module(binder -> BQCoreModule.extend(binder)
                         .addOptions(OptionMetadata.builder("opt-1").valueOptional().build(),
-                                OptionMetadata.builder("opt-2").valueOptional().defaultValue("2").build(),
-                                OptionMetadata.builder("opt-3").valueOptional().defaultValue("3").build())
+                                OptionMetadata.builder("opt-2").valueOptionalWithDefault("2").build(),
+                                OptionMetadata.builder("opt-3").valueOptionalWithDefault("3").build())
                         .mapConfigPath("opt-1", "c.m.k")
                         .mapConfigPath("opt-2", "c.m.k")
                         .mapConfigPath("opt-3", "c.m.k"))
@@ -301,7 +301,7 @@ public class Bootique_CliOptionsIT {
     public void testOptionDefaultValue() {
         BQRuntime runtime = runtimeFactory.app("--option")
                 .module(b -> BQCoreModule.extend(b).addOptions(
-                        OptionMetadata.builder("option").defaultValue("val").build()
+                        OptionMetadata.builder("option").valueOptionalWithDefault("val").build()
                 ))
                 .createRuntime();
         Cli cli = runtime.getInstance(Cli.class);
@@ -313,7 +313,7 @@ public class Bootique_CliOptionsIT {
     public void testMissingOptionDefaultValue() {
         BQRuntime runtime = runtimeFactory.app()
                 .module(b -> BQCoreModule.extend(b).addOptions(
-                        OptionMetadata.builder("option").defaultValue("val").build()
+                        OptionMetadata.builder("option").valueOptionalWithDefault("val").build()
                 ))
                 .createRuntime();
         Cli cli = runtime.getInstance(Cli.class);
@@ -442,7 +442,7 @@ public class Bootique_CliOptionsIT {
 
         public CommandWithDefaultOptionValue() {
             super(CommandMetadata.builder("cmd")
-                    .addOption(OptionMetadata.builder("option").defaultValue("val").build()));
+                    .addOption(OptionMetadata.builder("option").valueOptionalWithDefault("val").build()));
         }
 
         @Override

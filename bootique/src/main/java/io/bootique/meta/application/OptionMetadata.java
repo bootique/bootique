@@ -130,16 +130,29 @@ public class OptionMetadata implements MetadataNode {
         }
 
         /**
-         * Sets the default value for this option that will be used if the option is provided on
+         * Marks value optional and sets the default value for this option that will be used if the option is provided on
          * command line without an explicit value.
          *
          * @param defaultValue a default value for the option.
          * @return this builder instance
-         * @since 0.24
+         * @since 1.0.RC1
          */
-        public Builder defaultValue(String defaultValue) {
+        public Builder valueOptionalWithDefault(String defaultValue) {
+            return valueOptionalWithDefault("", defaultValue);
+        }
+
+        /**
+         * Marks value optional and sets the default value for this option that will be used if the option is provided on
+         * command line without an explicit value.
+         *
+         * @param valueName a description of value
+         * @param defaultValue a default value for the option.
+         * @return this builder instance
+         * @since 1.0.RC1
+         */
+        public Builder valueOptionalWithDefault(String valueName, String defaultValue) {
             this.option.defaultValue = defaultValue;
-            return this;
+            return valueOptional(valueName);
         }
 
         public OptionMetadata build() {
