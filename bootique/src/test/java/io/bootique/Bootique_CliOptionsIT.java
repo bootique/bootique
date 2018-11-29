@@ -178,9 +178,9 @@ public class Bootique_CliOptionsIT {
                 .module(binder -> BQCoreModule
                         .extend(binder)
                         .addOptions(OptionMetadata.builder("opt-1").valueOptional().build(),
-                                OptionMetadata.builder("opt-2").valueOptional().build())
-                        .addConfigPathOnOption("opt-1", "c.m.l")
-                        .addConfigPathOnOption("opt-2", "c.m.k", "2"))
+                                OptionMetadata.builder("opt-2").valueOptional().defaultValue("2").build())
+                        .mapConfigPath("opt-1", "c.m.l")
+                        .mapConfigPath("opt-2", "c.m.k"))
                 .createRuntime();
 
         Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
@@ -197,7 +197,7 @@ public class Bootique_CliOptionsIT {
                 .module(binder -> BQCoreModule
                         .extend(binder)
                         .addOption(OptionMetadata.builder("opt-1").valueOptional().build())
-                        .addConfigPathOnOption("opt-1", "c.m.f"))
+                        .mapConfigPath("opt-1", "c.m.f"))
                 .createRuntime();
         Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
 
@@ -208,8 +208,8 @@ public class Bootique_CliOptionsIT {
     public void testOptionsCommandAndModuleOverlapping() {
         BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--cmd-1", "--opt-1")
                 .module(binder -> BQCoreModule.extend(binder)
-                        .addOption(OptionMetadata.builder("opt-1").valueOptional().build())
-                        .addConfigPathOnOption("opt-1", "c.m.k", "2")
+                        .addOption(OptionMetadata.builder("opt-1").valueOptional().defaultValue("2").build())
+                        .mapConfigPath("opt-1", "c.m.k")
                         .addCommand(new TestOptionCommand1()))
                 .createRuntime();
 
@@ -230,8 +230,8 @@ public class Bootique_CliOptionsIT {
                         .addOptions(OptionMetadata.builder("opt-1").valueOptional().build(),
                                 OptionMetadata.builder("opt-2").valueOptional().build(),
                                 OptionMetadata.builder("file-opt-1").build())
-                        .addConfigPathOnOption("opt-1", "c.m.f")
-                        .addConfigPathOnOption("opt-2", "c.m.f")
+                        .mapConfigPath("opt-1", "c.m.f")
+                        .mapConfigPath("opt-2", "c.m.f")
                         .addConfigOnOption("file-opt-1", "classpath:io/bootique/config/configTest4Opt1.yml")
                         .addConfigOnOption("file-opt-1", "classpath:io/bootique/config/configTest4Decorate.yml"))
                 .createRuntime();
@@ -248,11 +248,11 @@ public class Bootique_CliOptionsIT {
         BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--opt-2", "--opt-3")
                 .module(binder -> BQCoreModule.extend(binder)
                         .addOptions(OptionMetadata.builder("opt-1").valueOptional().build(),
-                                OptionMetadata.builder("opt-2").valueOptional().build(),
-                                OptionMetadata.builder("opt-3").valueOptional().build())
-                        .addConfigPathOnOption("opt-1", "c.m.k")
-                        .addConfigPathOnOption("opt-2", "c.m.k", "2")
-                        .addConfigPathOnOption("opt-3", "c.m.k", "3"))
+                                OptionMetadata.builder("opt-2").valueOptional().defaultValue("2").build(),
+                                OptionMetadata.builder("opt-3").valueOptional().defaultValue("3").build())
+                        .mapConfigPath("opt-1", "c.m.k")
+                        .mapConfigPath("opt-2", "c.m.k")
+                        .mapConfigPath("opt-3", "c.m.k"))
                 .createRuntime();
         Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
 
@@ -263,7 +263,7 @@ public class Bootique_CliOptionsIT {
     public void testOptionWithNotMappedConfigPath() {
         BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--opt-1=x")
                 .module(binder -> BQCoreModule.extend(binder)
-                        .addConfigPathOnOption("opt-1", "c.m.k.x"))
+                        .mapConfigPath("opt-1", "c.m.k.x"))
                 .createRuntime();
 
         runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
@@ -287,7 +287,7 @@ public class Bootique_CliOptionsIT {
                 .module(binder -> BQCoreModule.extend(binder)
                         .addOptions(OptionMetadata.builder("file-opt-1").build(),
                                 OptionMetadata.builder("file-opt-2").build())
-                        .addConfigPathOnOption("opt-1", "c.m.f")
+                        .mapConfigPath("opt-1", "c.m.f")
                         .addConfigOnOption("file-opt-1", "classpath:io/bootique/config/configTest4Opt1.yml")
                         .addConfigOnOption("file-opt-2", "classpath:io/bootique/config/configTest4Opt2.yml"))
                 .createRuntime();

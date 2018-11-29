@@ -199,32 +199,32 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * that option is selected. The config is loaded prior to any configuration potentially loaded via the option.
      * This method can be called multiple times for the same option, adding multiple config decorators.
      *
+     * @param optionName       the name of the CLI option
      * @param configResourceId a resource path compatible with {@link io.bootique.resource.ResourceFactory} denoting
      *                         a configuration source. E.g. "a/b/my.yml", or "classpath:com/foo/another.yml".
      * @return this extender instance.
      * @since 0.25
      */
-    public BQCoreModuleExtender addConfigOnOption(String decoratedOptionName, String configResourceId) {
+    public BQCoreModuleExtender addConfigOnOption(String optionName, String configResourceId) {
         // using Multibinder to support multiple decorators for the same option
         contributeOptionDecorators().addBinding()
-                .toInstance(new OptionRefWithConfig(decoratedOptionName, configResourceId));
+                .toInstance(new OptionRefWithConfig(optionName, configResourceId));
         return this;
     }
 
     /**
-     * Decorates a CLI option with a config path. The option runtime value is assigned to the
-     * configuration property denoted by the path. Default value provided here will be used if the option is present,
-     * but no value is specified on the command line.
+     * Maps a CLI option on a config path. The option runtime value is assigned to the
+     * configuration property denoted by the path.
      *
-     * @param configPath          a dot-separated "path" that navigates configuration tree to the desired property. E.g.
-     *                            "jdbc.myds.password".
-     * @param decoratedOptionName the name of the CLI option to be decorated.
+     * @param optionName the name of the CLI option to be decorated.
+     * @param configPath a dot-separated "path" that navigates configuration tree to the desired property.
+     *                   E.g. "jdbc.myds.password".
      * @return this extender instance
      * @since 1.0.RC1
      */
-    public BQCoreModuleExtender addConfigPathOnOption(String decoratedOptionName, String configPath) {
+    public BQCoreModuleExtender mapConfigPath(String optionName, String configPath) {
         contributeOptionPathDecorators().addBinding()
-                .toInstance(new OptionRefWithConfigPath(decoratedOptionName, configPath, null));
+                .toInstance(new OptionRefWithConfigPath(optionName, configPath));
         return this;
     }
 
