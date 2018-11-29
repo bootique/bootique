@@ -19,6 +19,7 @@
 * #235 Upgrade bootique and core modules to bootique-modules-parent:0.12
 * #246 "Bytes" value type must support uppercase abbreviations
 * #249 Replace confusing variants of addOption in BQCoreModuleExtender
+* #250 Update modules parent to 0.14
 
 ## 0.25 
 
