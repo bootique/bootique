@@ -164,7 +164,8 @@ public class Bootique_ConfigurationIT {
                             .module(b -> BQCoreModule.extend(b)
                                     .addConfigOnOption("opt", "classpath:io/bootique/diconfig1.yml")
                                     .addConfigOnOption("opt", "classpath:io/bootique/diconfig2.yml")
-                                    .addOption("a", "opt"))
+                                    .addOption(OptionMetadata.builder("opt").valueOptional().build())
+                                    .addConfigPathOnOption("opt", "a"))
                             .createRuntime();
 
                     return runtime.getInstance(ConfigurationFactory.class)

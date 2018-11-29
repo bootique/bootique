@@ -37,7 +37,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -78,7 +80,7 @@ public class JsonNodeConfigurationFactoryProviderTest {
         when(mockJackson.newObjectMapper()).thenReturn(new ObjectMapper());
 
         ConfigurationFactory factory = new JsonNodeConfigurationFactoryProvider(mockSource, mockEnvironment, mockJackson,
-                new DefaultBootLogger(true), Collections.emptySet(), Collections.emptySet(), null).get();
+                new DefaultBootLogger(true), Collections.emptySet(), Collections.emptySet(), Collections.emptySet(), null).get();
 
         assertNotNull(factory);
         assertTrue(factory instanceof JsonNodeConfigurationFactory);
