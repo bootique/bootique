@@ -80,7 +80,7 @@ The artifact is released in 2 stages: preparing the release and performing the r
 
 * Preparing the release
 ```bash
-mvn release:prepare -Pgpg -Dbootique-version=the release version, e.g. 0.24
+mvn release:prepare -Pgpg -Dbootique.version=the release version, e.g. 0.24
 ```
 * Performing the release
 ```bash
