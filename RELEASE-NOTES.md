@@ -20,6 +20,7 @@
 * #246 "Bytes" value type must support uppercase abbreviations
 * #249 Replace confusing variants of addOption in BQCoreModuleExtender
 * #250 Update modules parent to 0.14
+* #251 Rename method addConfigOnOption in BQCoreModuleExtender
 
 ## 0.25 
 

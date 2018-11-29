@@ -135,8 +135,8 @@ public class Bootique_ConfigurationIT {
                 arg -> {
                     BQRuntime runtime = testFactory.app(arg)
                             .module(b -> BQCoreModule.extend(b)
-                                    .addConfigOnOption("opt", "classpath:io/bootique/diconfig1.yml")
-                                    .addConfigOnOption("opt", "classpath:io/bootique/diconfig2.yml")
+                                    .mapConfigResource("opt", "classpath:io/bootique/diconfig1.yml")
+                                    .mapConfigResource("opt", "classpath:io/bootique/diconfig2.yml")
                                     .addOption(OptionMetadata.builder("opt").build()))
                             .createRuntime();
 
@@ -162,8 +162,8 @@ public class Bootique_ConfigurationIT {
                 arg -> {
                     BQRuntime runtime = testFactory.app(arg)
                             .module(b -> BQCoreModule.extend(b)
-                                    .addConfigOnOption("opt", "classpath:io/bootique/diconfig1.yml")
-                                    .addConfigOnOption("opt", "classpath:io/bootique/diconfig2.yml")
+                                    .mapConfigResource("opt", "classpath:io/bootique/diconfig1.yml")
+                                    .mapConfigResource("opt", "classpath:io/bootique/diconfig2.yml")
                                     .addOption(OptionMetadata.builder("opt").valueOptional().build())
                                     .mapConfigPath("opt", "a"))
                             .createRuntime();

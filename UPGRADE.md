@@ -22,6 +22,9 @@
 
 ## 1.0.RC1
 
+* [bootique #251](https://github.com/bootique/bootique/issues/249): Method `addConfigOnOption(String optionName, String configResourceId)`
+in `BQCoreModuleExtender` renamed to `mapConfigResource`
+
 * [bootique #249](https://github.com/bootique/bootique/issues/249): Confusing methods 
 `addOption(String configPath, String defaultValue, String name)` and `addOption(String configPath, String name)` 
 in `BQCoreModuleExtender` are replaced with new one `mapConfigPath(String optionName, String configPath)`

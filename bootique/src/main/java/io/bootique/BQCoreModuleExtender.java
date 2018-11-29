@@ -195,17 +195,20 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     }
 
     /**
-     * Decorates a CLI option with a URL of a configuration resource to be conditionally loaded by the app when the
-     * that option is selected. The config is loaded prior to any configuration potentially loaded via the option.
-     * This method can be called multiple times for the same option, adding multiple config decorators.
+     * Maps a CLI option to a URL of a configuration resource to be conditionally loaded by the app when
+     * that option is used. The config is loaded prior to any configuration potentially loaded via the option.
+     * This method can be called multiple times for the same option, mapping multiple config resources.
+     * An option with "optionName" must be declared separately via {@link #addOption(OptionMetadata)} or
+     * {@link #addOptions(OptionMetadata...)}.
      *
      * @param optionName       the name of the CLI option
      * @param configResourceId a resource path compatible with {@link io.bootique.resource.ResourceFactory} denoting
      *                         a configuration source. E.g. "a/b/my.yml", or "classpath:com/foo/another.yml".
      * @return this extender instance.
      * @since 0.25
+     * @since 1.0.RC1 renamed from addConfigOnOption to mapConfigResource
      */
-    public BQCoreModuleExtender addConfigOnOption(String optionName, String configResourceId) {
+    public BQCoreModuleExtender mapConfigResource(String optionName, String configResourceId) {
         // using Multibinder to support multiple decorators for the same option
         contributeOptionDecorators().addBinding()
                 .toInstance(new OptionRefWithConfig(optionName, configResourceId));

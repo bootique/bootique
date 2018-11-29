@@ -232,8 +232,8 @@ public class Bootique_CliOptionsIT {
                                 OptionMetadata.builder("file-opt-1").build())
                         .mapConfigPath("opt-1", "c.m.f")
                         .mapConfigPath("opt-2", "c.m.f")
-                        .addConfigOnOption("file-opt-1", "classpath:io/bootique/config/configTest4Opt1.yml")
-                        .addConfigOnOption("file-opt-1", "classpath:io/bootique/config/configTest4Decorate.yml"))
+                        .mapConfigResource("file-opt-1", "classpath:io/bootique/config/configTest4Opt1.yml")
+                        .mapConfigResource("file-opt-1", "classpath:io/bootique/config/configTest4Decorate.yml"))
                 .createRuntime();
 
         Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
@@ -274,7 +274,7 @@ public class Bootique_CliOptionsIT {
         BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--file-opt")
                 .module(binder -> BQCoreModule.extend(binder)
                         .addOption(OptionMetadata.builder("file-opt").build())
-                        .addConfigOnOption("file-opt", "classpath:io/bootique/config/configTest4.yml"))
+                        .mapConfigResource("file-opt", "classpath:io/bootique/config/configTest4.yml"))
                 .createRuntime();
         Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
 
@@ -288,8 +288,8 @@ public class Bootique_CliOptionsIT {
                         .addOptions(OptionMetadata.builder("file-opt-1").build(),
                                 OptionMetadata.builder("file-opt-2").build())
                         .mapConfigPath("opt-1", "c.m.f")
-                        .addConfigOnOption("file-opt-1", "classpath:io/bootique/config/configTest4Opt1.yml")
-                        .addConfigOnOption("file-opt-2", "classpath:io/bootique/config/configTest4Opt2.yml"))
+                        .mapConfigResource("file-opt-1", "classpath:io/bootique/config/configTest4Opt1.yml")
+                        .mapConfigResource("file-opt-2", "classpath:io/bootique/config/configTest4Opt2.yml"))
                 .createRuntime();
         Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
 
