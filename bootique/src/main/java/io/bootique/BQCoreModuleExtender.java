@@ -213,10 +213,11 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     }
 
     /**
-     * Maps a CLI option on a config path. The option runtime value is assigned to the
-     * configuration property denoted by the path.
+     * Maps a CLI option to a config path. The option runtime value is assigned to the
+     * configuration property denoted by the path. An option with "optionName" must be declared separately via
+     * {@link #addOption(OptionMetadata)} or {@link #addOptions(OptionMetadata...)}.
      *
-     * @param optionName the name of the CLI option to be decorated.
+     * @param optionName the name of the CLI option
      * @param configPath a dot-separated "path" that navigates configuration tree to the desired property.
      *                   E.g. "jdbc.myds.password".
      * @return this extender instance
