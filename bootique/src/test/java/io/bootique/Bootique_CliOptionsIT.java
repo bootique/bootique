@@ -76,7 +76,8 @@ public class Bootique_CliOptionsIT {
     @Test
     public void testOverlappingOptions() {
         BQRuntime runtime = runtimeFactory.app("--o1")
-                .module(b -> BQCoreModule.extend(b).addOptions(OptionMetadata.builder("o1").build(),
+                .module(b -> BQCoreModule.extend(b).addOptions(
+                        OptionMetadata.builder("o1").build(),
                         OptionMetadata.builder("o2").build()
                 ))
                 .createRuntime();
@@ -88,7 +89,8 @@ public class Bootique_CliOptionsIT {
     public void testNameConflict_TwoOptions() {
         runtimeFactory.app()
                 .module(b -> BQCoreModule.extend(b)
-                        .addOptions(OptionMetadata.builder("opt1").build(),
+                        .addOptions(
+                                OptionMetadata.builder("opt1").build(),
                                 OptionMetadata.builder("opt1").build()))
                 .createRuntime()
                 .run();
@@ -105,16 +107,30 @@ public class Bootique_CliOptionsIT {
     }
 
     // TODO: ignoring this test for now. There is a bug in JOpt 5.0.3...
-    // JOpt should detect conflicting options and throw an exception. Instead JOpts triggers second option.
+    //       JOpt should detect conflicting options and throw an exception. Instead JOpts triggers second option.
     @Test(expected = ProvisionException.class)
     @Ignore
     public void testOverlappingOptions_Short() {
         BQRuntime runtime = runtimeFactory.app("-o")
-                .module(b -> BQCoreModule.extend(b).addOptions(OptionMetadata.builder("o1").build(),
+                .module(b -> BQCoreModule.extend(b).addOptions(
+                        OptionMetadata.builder("o1").build(),
                         OptionMetadata.builder("o2").build()
                 ))
                 .createRuntime();
         runtime.getInstance(Cli.class);
+    }
+
+    // TODO: Same name of option and command should be disallowed.
+    //  This test is broken, it is here just to document current behaviour.
+    @Test
+    public void testCommandWithOptionNameOverlap() {
+        BQRuntime runtime = runtimeFactory.app("-x")
+                .module(b -> BQCoreModule.extend(b)
+                        .addCommand(Xd1Command.class)
+                        .addOption(OptionMetadata.builder("xd").build())
+                ).createRuntime();
+        runtime.run();
+        assertTrue(runtime.getInstance(Cli.class).hasOption("xd"));
     }
 
     @Test(expected = ProvisionException.class)
