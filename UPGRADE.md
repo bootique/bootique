@@ -22,6 +22,9 @@
 
 ## 1.0.RC1
 
+* [bootique-agrest #35](https://github.com/bootique/bootique-agrest/issues/35): Group of `bootique-linkrest` artifact
+changed from `io.bootique.linkrest` to `io.bootique.agrest`.
+
 * [bootique #251](https://github.com/bootique/bootique/issues/249): Method `defaultValue()` in OptionMetadata builder 
 changed to `valueOptionalWithDefault()`
 
