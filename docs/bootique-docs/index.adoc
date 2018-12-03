@@ -219,10 +219,10 @@ OptionMetadata o = OptionMetadata.builder("qa")
 
 BQCoreModule.extend(binder)
       .addOption(o)
-      .addConfigOnOption(o.getName(), "classpath:a/b/qa.yml");
+      .mapConfigResource(o.getName(), "classpath:a/b/qa.yml");
 ----
 
-* Specifiying a config file on command line. Each Bootique app supports `--config` option that takes a configuration file as its parameter. To specify more than one file, use `--config` option multiple times. Configurations will be loaded and merged together in the order of their appearance on the command line.
+* Specifying a config file on command line. Each Bootique app supports `--config` option that takes a configuration file as its parameter. To specify more than one file, use `--config` option multiple times. Configurations will be loaded and merged together in the order of their appearance on the command line.
 
 * Specifying a single config value via a custom option:
 +
@@ -230,14 +230,15 @@ BQCoreModule.extend(binder)
 ----
 OptionMetadata o = OptionMetadata.builder("db")
       .description("specifies database URL")
-      .configPath("jdbc.mydb.url")
-      .defaultValue("jdbc:mysql://127.0.0.1:3306/mydb")
+      .valueOptionalWithDefault("jdbc:mysql://127.0.0.1:3306/mydb")
       .build();
 
-BQCoreModule.extend(binder).addOption(o);
+BQCoreModule.extend(binder)
+      .addOption(o)
+      .mapConfigPath(o.getName(), "jdbc.mydb.url);
 ----
 +
-This adds a new `--db` option to the app that can be used to set JDBC URL of a datasource called "mydb". If not specified, the default value provided in the code is used.
+This adds a new `--db` option to the app that can be used to set JDBC URL of a datasource called "mydb". If value is not specified, the default one will be used.
 
 ==== Configuration via Properties
 
@@ -262,9 +263,7 @@ class MyModule implements Module {
     public void configure(Binder binder) {
 
         BQCoreModule.extend(binder)
-          .setProperty("bq.my.prop1", "valX");
-
-        BQCoreModule.extend(binder)
+               .setProperty("bq.my.prop1", "valX")
                .setProperty("bq.my.prop2", "valY");
     }
 }
@@ -295,9 +294,7 @@ class MyModule implements Module {
     public void configure(Binder binder) {
 
         BQCoreModule.extend(binder)
-               .declareVar("my.prop1", "P1");
-
-        BQCoreModule.extend(binder)
+               .declareVar("my.prop1", "P1")
                .declareVar("my.prop2", "P2");
     }
 }
@@ -597,9 +594,9 @@ To run all these "secondary" commands when the main command is invoked, Bootique
 [source,java]
 ----
 CommandDecorator extraCommands = CommandDecorator
-  .beforeRun(CustomHealthcheckCommand.class)
-  .alsoRun(ScheduleCommand.class)
-  .alsoRun(HeartbeatCommand.class);
+    .beforeRun(CustomHealthcheckCommand.class)
+    .alsoRun(ScheduleCommand.class)
+    .alsoRun(HeartbeatCommand.class);
 
 BQCoreModule.extend(binder).decorateCommand(ServerCommand.class, extraCommands);
 ----
@@ -614,9 +611,10 @@ In addition to commands, the app can define "options". Options are not associate
 
 [source,java]
 ----
-CliOption option = CliOption
+OptionMetadata option = OptionMetadata
     .builder("email", "An admin email address")
-    .valueRequired("email_address").build();
+    .valueRequired("email_address")
+    .build();
 
 BQCoreModule.extend(binder).addOption(option);
 ----
@@ -643,21 +641,27 @@ While you can process your own options as described above, options often are jus
 [source,java]
 ----
 // Starting the app with "--my-opt=x" will set "jobs.myjob.param" value to "x"
-BQCoreModule.extend(binder).addOption("jobs.myjob.param", "my-opt");
+BQCoreModule.extend(binder)
+        .addOption(OptionMetaData.buidler("my-opt").build())
+        .mapConfigPath("my-opt", "jobs.myjob.param");
 ----
 . Option presence sets a property to a predefined value:
 +
 [source,java]
 ----
 // Starting the app with "--my-opt" will set "jobs.myjob.param" value to "y"
-BQCoreModule.extend(binder).addOption("jobs.myjob.param", "y", "my-opt");
+BQCoreModule.extend(binder)
+        .addOption(OptionMetaData.buidler("my-opt").valueOptionalWithDefault("y").build())
+        .mapConfigPath("my-opt", "jobs.myjob.param");
 ----
 . Option presence loads a config resource, such as a YAML file:
 +
 [source,java]
 ----
 // Starting the app with "--my-opt" is equivalent to starting with "--config=classpath:xyz.yml"
-BQCoreModule.extend(binder).addConfigFileOption("classpath:xyz.yml", "my-opt");
+BQCoreModule.extend(binder)
+        .addOption(OptionMetaData.buidler("my-opt").build())
+        .mapConfigResource("my-opt", "classpath:xyz.yml");
 ----
 
 The order of config-bound options on the command line is significant, just as the order of "`--config`" parameters. Bootique merges configuration associated with options from left to right, overriding any preceding configuration if there is an overlap.
