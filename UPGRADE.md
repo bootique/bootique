@@ -25,16 +25,16 @@
 * [bootique-agrest #35](https://github.com/bootique/bootique-agrest/issues/35): Group of `bootique-linkrest` artifact
 changed from `io.bootique.linkrest` to `io.bootique.agrest`.
 
-* [bootique #251](https://github.com/bootique/bootique/issues/249): Method `defaultValue()` in OptionMetadata builder 
+* [bootique #252](https://github.com/bootique/bootique/issues/252): Method `defaultValue()` in OptionMetadata builder 
 changed to `valueOptionalWithDefault()`
 
-* [bootique #251](https://github.com/bootique/bootique/issues/249): Method `addConfigOnOption(String optionName, String configResourceId)`
+* [bootique #251](https://github.com/bootique/bootique/issues/251): Method `addConfigOnOption(String optionName, String configResourceId)`
 in `BQCoreModuleExtender` renamed to `mapConfigResource`
 
 * [bootique #249](https://github.com/bootique/bootique/issues/249): Confusing methods 
 `addOption(String configPath, String defaultValue, String name)` and `addOption(String configPath, String name)` 
 in `BQCoreModuleExtender` are replaced with new one `mapConfigPath(String optionName, String configPath)`
- that has much clearer signature. **Note** that option that will be mapped on config path should be added separately. 
+ that has much clearer signature. **Note** that option that will be mapped to config path should be added separately. 
 
 * [bootique #188](https://github.com/bootique/bootique/issues/188): Guice was upgraded from 4.0 to
 4.2.0 for better support of the latest versions of Java. This changes the version of Guava lib to
