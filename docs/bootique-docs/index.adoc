@@ -15,7 +15,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-:bootique_parent_version: 0.12
+:bootique_parent_version: 0.13
 :toc:
 
 == Part I. Overview

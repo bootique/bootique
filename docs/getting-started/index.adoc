@@ -16,7 +16,7 @@
 // under the License.
 
 :bootique_version: 1.0.RC1
-:bootique_parent_version: 0.12
+:bootique_parent_version: 0.13
 :toc:
 
 == Hello World in Bootique
