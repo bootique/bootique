@@ -48,7 +48,9 @@ public class Duration implements Comparable<Duration> {
         UNIT_VOCABULARY.put("min", ChronoUnit.MINUTES);
         UNIT_VOCABULARY.put("minute", ChronoUnit.MINUTES);
         UNIT_VOCABULARY.put("minutes", ChronoUnit.MINUTES);
+        UNIT_VOCABULARY.put("h", ChronoUnit.HOURS);
         UNIT_VOCABULARY.put("hr", ChronoUnit.HOURS);
+        UNIT_VOCABULARY.put("hrs", ChronoUnit.HOURS);
         UNIT_VOCABULARY.put("hour", ChronoUnit.HOURS);
         UNIT_VOCABULARY.put("hours", ChronoUnit.HOURS);
         UNIT_VOCABULARY.put("d", ChronoUnit.DAYS);
