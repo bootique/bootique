@@ -1,5 +1,6 @@
 ## 1.0.RC2
 
+* #253 Duration value object does not support fractions
 * #254 Duration doesn't support label 'hrs'
 
 ## 1.0.RC1

@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
 public class Duration implements Comparable<Duration> {
 
     public static final Duration ZERO = new Duration(java.time.Duration.ZERO.toMillis());
-    private static final Pattern TOKENIZER = Pattern.compile("^([0-9]+)\\s*([a-z]+)$");
+    private static final Pattern TOKENIZER = Pattern.compile("^([0-9]*\\.?[0-9]+)\\s*([a-z]+)$");
     private static final Map<String, TemporalUnit> UNIT_VOCABULARY;
 
     static {
@@ -95,14 +95,13 @@ public class Duration implements Comparable<Duration> {
         }
 
         TemporalUnit unit = parseUnit(matcher.group(2));
-        long amount = parseAmount(matcher.group(1));
-
-        return java.time.Duration.of(amount, unit);
+        double amount = parseAmount(matcher.group(1));
+        return createDuration(amount, unit);
     }
 
-    private static long parseAmount(String amount) {
+    private static double parseAmount(String amount) {
         try {
-            return Long.parseLong(amount);
+            return Double.parseDouble(amount);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Invalid time amount: " + amount);
         }
@@ -115,6 +114,29 @@ public class Duration implements Comparable<Duration> {
         }
 
         return unit;
+    }
+
+    private static java.time.Duration createDuration(double amount, TemporalUnit unit) {
+        if (amount == Math.floor(amount)) {
+            return java.time.Duration.of((long) amount, unit);
+        } else {
+            return java.time.Duration.of(convert(amount, unit), ChronoUnit.MILLIS);
+        }
+    }
+
+    private static long convert(double amount, TemporalUnit unit) {
+        switch ((ChronoUnit) unit) {
+            case DAYS:
+                return Math.round(amount * 24 * 60 * 60 * 1000);
+            case HOURS:
+                return Math.round(amount * 60 * 60 * 1000);
+            case MINUTES:
+                return Math.round(amount * 60 * 1000);
+            case SECONDS:
+                return Math.round(amount * 1000);
+            default:
+                throw new IllegalArgumentException("Invalid time amount: " + amount);
+        }
     }
 
     @Override
