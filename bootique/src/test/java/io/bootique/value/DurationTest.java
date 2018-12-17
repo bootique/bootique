@@ -65,9 +65,26 @@ public class DurationTest {
         assertEquals(java.time.Duration.ofHours(24), Duration.parse("1 day"));
     }
 
+    @Test
+    public void testParse_Fract() {
+        assertEquals(java.time.Duration.ofMillis(1100), Duration.parse("1.1s"));
+        assertEquals(java.time.Duration.ofMillis(1235), Duration.parse("1.23456 sec"));
+        assertEquals(java.time.Duration.ofMillis(1600), Duration.parse("1.6 sec"));
+        assertEquals(java.time.Duration.ofMillis(123), Duration.parse(".123 s"));
+        assertEquals(java.time.Duration.ofMillis(543), Duration.parse("0.5433 s"));
+        assertEquals(java.time.Duration.ofMillis(126000), Duration.parse("2.1 min"));
+        assertEquals(java.time.Duration.ofMillis(12816000), Duration.parse("3.56 h"));
+        assertEquals(java.time.Duration.ofMillis(95040000), Duration.parse("1.1days"));
+    }
+
     @Test(expected = NullPointerException.class)
     public void testParse_Null() {
         Duration.parse(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testParse_FractMs() {
+        Duration.parse("1.1 ms");
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -92,12 +109,15 @@ public class DurationTest {
         Duration d3 = new Duration("1 sec");
         Duration d4 = new Duration("1day");
 
+        Duration d5 = new Duration("1.1s");
+        Duration d6 = new Duration("1100ms");
 
         assertTrue(d1.compareTo(d1) == 0);
         assertTrue(d1.compareTo(d2) < 0);
         assertTrue(d2.compareTo(d1) > 0);
         assertTrue(d1.compareTo(d3) == 0);
         assertTrue(d4.compareTo(d1) > 0);
+        assertTrue(d5.compareTo(d6) == 0);
     }
 
     @Test
@@ -107,12 +127,16 @@ public class DurationTest {
         Duration d3 = new Duration("1 sec");
         Duration d4 = new Duration("1000ms");
 
+        Duration d5 = new Duration("1.1s");
+        Duration d6 = new Duration("1100ms");
+
         assertTrue(d1.equals(d1));
         assertFalse(d1.equals(null));
         assertFalse(d1.equals(d2));
         assertTrue(d1.equals(d3));
         assertTrue(d1.equals(d4));
         assertTrue(d4.equals(d1));
+        assertTrue(d5.equals(d6));
     }
 
     @Test
