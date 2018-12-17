@@ -54,6 +54,8 @@ public class DurationTest {
         assertEquals(java.time.Duration.ofHours(4), Duration.parse("4hours"));
         assertEquals(java.time.Duration.ofMinutes(60), Duration.parse("1 hr"));
         assertEquals(java.time.Duration.ofHours(1), Duration.parse("1 hour"));
+        assertEquals(java.time.Duration.ofHours(5), Duration.parse("5 hrs"));
+        assertEquals(java.time.Duration.ofHours(5), Duration.parse("5 h"));
     }
 
     @Test
