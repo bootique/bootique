@@ -1,3 +1,7 @@
+## 1.0.RC2
+
+* #254 Duration doesn't support label 'hrs'
+
 ## 1.0.RC1
 
 * #181 Ability to document declared variables
