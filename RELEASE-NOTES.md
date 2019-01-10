@@ -1,6 +1,7 @@
 ## 1.0.RC2
 
 * #254 Duration doesn't support label 'hrs'
+* #257 Update to bootique-modules-parent 0.15
 
 ## 1.0.RC1
 
