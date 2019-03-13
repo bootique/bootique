@@ -56,9 +56,7 @@ public class RuntimeModuleMergerTest {
 		this.testModules = Arrays.asList(new M0(), new M1(), new M2(), new M3(), new M4());
 
 		this.mockBqModules = new ArrayList<>();
-		testModules.forEach(m -> {
-			mockBqModules.add(createBQModule(m));
-		});
+		testModules.forEach(m -> mockBqModules.add(createBQModule(m)));
 	}
 
 	private void assertOverrideModule(Module m) {
