@@ -130,6 +130,26 @@ public class BootiqueIT {
     }
 
     @Test
+    public void testCreateInjector_Override_Two_With_One() {
+
+        Sub_M34.configCalls = 0;
+
+        Injector i = Bootique.app(args)
+                .module(M3.class)
+                .module(M4.class)
+                .override(M3.class, M4.class).with(Sub_M34.class)
+                .createInjector();
+
+        assertEquals("Overriding module is expected to be called once and only once", 1, Sub_M34.configCalls);
+
+        String s1 = i.getInstance(Key.get(String.class, S1.class));
+        assertEquals("m34_s1", s1);
+
+        String s2 = i.getInstance(Key.get(String.class, S2.class));
+        assertEquals("m34_s2", s2);
+    }
+
+    @Test
     public void testCreateInjector_Overrides_Multi_Level() {
         Injector i = Bootique.app(args)
                 .override(BQCoreModule.class).with(M0.class)
@@ -184,6 +204,20 @@ public class BootiqueIT {
         assertSame(M0.ARGS, args);
     }
 
+    @Target({ElementType.PARAMETER, ElementType.FIELD, ElementType.METHOD})
+    @Retention(RetentionPolicy.RUNTIME)
+    @BindingAnnotation
+    @interface S1 {
+
+    }
+
+    @Target({ElementType.PARAMETER, ElementType.FIELD, ElementType.METHOD})
+    @Retention(RetentionPolicy.RUNTIME)
+    @BindingAnnotation
+    @interface S2 {
+
+    }
+
     static class M0 implements Module {
 
         static String[] ARGS = {"1", "2", "3"};
@@ -202,20 +236,6 @@ public class BootiqueIT {
         public void configure(Binder binder) {
             binder.bind(String[].class).annotatedWith(Args.class).toInstance(ARGS);
         }
-    }
-
-    @Target({ElementType.PARAMETER, ElementType.FIELD, ElementType.METHOD})
-    @Retention(RetentionPolicy.RUNTIME)
-    @BindingAnnotation
-    @interface S1 {
-
-    }
-
-    @Target({ElementType.PARAMETER, ElementType.FIELD, ElementType.METHOD})
-    @Retention(RetentionPolicy.RUNTIME)
-    @BindingAnnotation
-    @interface S2 {
-
     }
 
     static class M2 implements Module {
@@ -259,4 +279,57 @@ public class BootiqueIT {
             return "sub_sub_m2_s2_" + s1;
         }
     }
+
+    static class M3 implements Module {
+
+        @Override
+        public void configure(Binder binder) {
+        }
+
+        @S1
+        @Provides
+        @Singleton
+        String getS1() {
+            return "m3_s1";
+        }
+    }
+
+    static class M4 implements Module {
+
+        @Override
+        public void configure(Binder binder) {
+        }
+
+        @S2
+        @Provides
+        @Singleton
+        String getS2() {
+            return "m4_s2";
+        }
+    }
+
+    static class Sub_M34 implements Module {
+
+        static int configCalls;
+
+        @Override
+        public void configure(Binder binder) {
+            configCalls++;
+        }
+
+        @S1
+        @Provides
+        @Singleton
+        String getS1() {
+            return "m34_s1";
+        }
+
+        @S2
+        @Provides
+        @Singleton
+        String getS2() {
+            return "m34_s2";
+        }
+    }
+
 }
