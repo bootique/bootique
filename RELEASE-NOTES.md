@@ -2,6 +2,7 @@
 
 * #254 Duration doesn't support label 'hrs'
 * #257 Update to bootique-modules-parent 0.15
+* #258 Overriding multiple modules causes the submodule to be configured twice
 
 ## 1.0.RC1
 
