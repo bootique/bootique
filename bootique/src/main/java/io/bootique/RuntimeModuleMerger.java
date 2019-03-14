@@ -65,6 +65,11 @@ class RuntimeModuleMerger {
 
         for (BQModule bqModule : bqModules) {
 
+            // TODO: we are not checking whether BQModule's overrides are present. Absent overrides will be skipped from
+            //  the tree analysys and creation of override modules. We've never seen a problem with that because standard
+            //  Bootique modules are auto-loaded (so if the module class is on classpath, there will be a BQModule).
+            //  But auto-loading is not a given...
+
             RuntimeModule rm = new RuntimeModule(bqModule);
 
             RuntimeModule existing = map.putIfAbsent(rm.getModuleType(), rm);
