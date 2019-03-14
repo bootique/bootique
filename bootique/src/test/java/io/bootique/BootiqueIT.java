@@ -133,6 +133,8 @@ public class BootiqueIT {
     public void testCreateInjector_Override_Two_With_One() {
 
         Sub_M34.configCalls = 0;
+        M3.configCalls = 0;
+        M4.configCalls = 0;
 
         Injector i = Bootique.app(args)
                 .module(M3.class)
@@ -141,6 +143,8 @@ public class BootiqueIT {
                 .createInjector();
 
         assertEquals("Overriding module is expected to be called once and only once", 1, Sub_M34.configCalls);
+        assertEquals("Overridden module is expected to be called once and only once", 1, M3.configCalls);
+        assertEquals("Overridden module is expected to be called once and only once", 1, M4.configCalls);
 
         String s1 = i.getInstance(Key.get(String.class, S1.class));
         assertEquals("m34_s1", s1);
@@ -282,8 +286,11 @@ public class BootiqueIT {
 
     static class M3 implements Module {
 
+        static int configCalls;
+
         @Override
         public void configure(Binder binder) {
+            configCalls++;
         }
 
         @S1
@@ -296,8 +303,11 @@ public class BootiqueIT {
 
     static class M4 implements Module {
 
+        static int configCalls;
+
         @Override
         public void configure(Binder binder) {
+            configCalls++;
         }
 
         @S2

@@ -20,31 +20,59 @@
 package io.bootique;
 
 import com.google.inject.Module;
+import com.google.inject.util.Modules;
+import io.bootique.log.BootLogger;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 class RuntimeModule {
 
+    private BootLogger bootLogger;
     private BQModule bqModule;
     private RuntimeModule overriddenBy;
-    private boolean overridesOthers;
+    private Collection<RuntimeModule> overridden;
 
-    RuntimeModule(BQModule bqModule) {
+    RuntimeModule(BQModule bqModule, BootLogger bootLogger) {
         this.bqModule = bqModule;
+        this.bootLogger = bootLogger;
     }
 
-    public Module getModule() {
-        return bqModule.getModule();
+    public Module resolveModule() {
+
+        if (overridden == null) {
+            bootLogger.trace(() -> traceMessage(bqModule, null));
+            return bqModule.getModule();
+        }
+
+        OverrideLevel level1 = new OverrideLevel();
+        for(RuntimeModule rm : overridden) {
+            bootLogger.trace(() -> traceMessage(rm.getBqModule(), bqModule));
+            rm.resolveModule(level1);
+        }
+
+        return level1.toGuiceModule(bqModule.getModule());
+    }
+
+    private void resolveModule(OverrideLevel level) {
+
+        level.addModule(bqModule.getModule());
+
+        // WARN: using recursion... is there a realistic prospect of this blowing the stack? I haven't seen overrides
+        // more than 2-4 levels deep.
+
+        if (overridden != null) {
+            OverrideLevel subLevel = level.getOrCreateSubLevel();
+
+            for(RuntimeModule rm : overridden) {
+                bootLogger.trace(() -> traceMessage(rm.getBqModule(), bqModule));
+                rm.resolveModule(subLevel);
+            }
+        }
     }
 
     public BQModule getBqModule() {
         return bqModule;
-    }
-
-    public RuntimeModule getOverriddenBy() {
-        return overriddenBy;
     }
 
     void checkCycles() {
@@ -60,8 +88,8 @@ class RuntimeModule {
             // Add next level, to make error message more clear.
             trace.add(this.overriddenBy);
             throw new BootiqueException(1,
-                "Circular override dependency between DI modules: " +
-                    trace.stream().map(rm -> rm.bqModule.getName()).collect(Collectors.joining(" -> ")));
+                    "Circular override dependency between DI modules: " +
+                            trace.stream().map(rm -> rm.bqModule.getName()).collect(Collectors.joining(" -> ")));
         }
 
         if (overriddenBy != null) {
@@ -70,7 +98,7 @@ class RuntimeModule {
     }
 
     Class<? extends Module> getModuleType() {
-        return getModule().getClass();
+        return bqModule.getModule().getClass();
     }
 
     String getModuleName() {
@@ -81,15 +109,22 @@ class RuntimeModule {
         return bqModule.getProviderName();
     }
 
-    boolean doesNotOverrideOthers() {
-        return !overridesOthers;
+    boolean isTop() {
+        return overriddenBy == null;
     }
 
-    public void setOverridesOthers(boolean overridesOthers) {
-        this.overridesOthers = overridesOthers;
+    void addOverridden(RuntimeModule overridden) {
+
+        overridden.setOverriddenBy(this);
+
+        if (this.overridden == null) {
+            this.overridden = new ArrayList<>(4);
+        }
+
+        this.overridden.add(overridden);
     }
 
-    void setOverriddenBy(RuntimeModule module) {
+    private void setOverriddenBy(RuntimeModule module) {
 
         // no more than one override is allowed
         if (this.overriddenBy != null) {
@@ -104,5 +139,63 @@ class RuntimeModule {
         }
 
         this.overriddenBy = module;
+    }
+
+    private String traceMessage(BQModule module, BQModule overriddenBy) {
+
+        StringBuilder message = new StringBuilder("Loading module '")
+                .append(module.getName())
+                .append("'");
+
+        String providerName = module.getProviderName();
+        boolean hasProvider = providerName != null && providerName.length() > 0;
+        if (hasProvider) {
+            message.append(" provided by '").append(providerName).append("'");
+        }
+
+        if (overriddenBy != null) {
+            if (hasProvider) {
+                message.append(",");
+            }
+
+            message.append(" overridden by '").append(overriddenBy.getName()).append("'");
+        }
+
+        return message.toString();
+    }
+
+    // stores overridden modules at a given tree depth regardless of overriding module
+    static class OverrideLevel {
+
+        Collection<Module> modules;
+        OverrideLevel subLevel;
+
+        public OverrideLevel getOrCreateSubLevel() {
+
+            if (this.subLevel == null) {
+                this.subLevel = new OverrideLevel();
+            }
+
+            return subLevel;
+        }
+
+        void addModule(Module module) {
+            if (this.modules == null) {
+                this.modules = new ArrayList<>();
+            }
+
+            this.modules.add(module);
+        }
+
+        Module toGuiceModule(Module parent) {
+
+            if (modules == null) {
+                return parent;
+            }
+
+            // Guice actually allows multiple parents for multiple children.. Can we take advantage of that in some form?
+            Module overridden = Modules.override(modules).with(parent);
+            return subLevel != null ? subLevel.toGuiceModule(overridden) : overridden;
+        }
     }
 }

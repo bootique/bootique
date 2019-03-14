@@ -20,14 +20,9 @@
 package io.bootique;
 
 import com.google.inject.Module;
-import com.google.inject.util.Modules;
 import io.bootique.log.BootLogger;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import static java.util.stream.Collectors.toList;
+import java.util.*;
 
 class RuntimeModuleMerger {
 
@@ -38,21 +33,21 @@ class RuntimeModuleMerger {
     }
 
     Collection<Module> toGuiceModules(Collection<BQModule> bqModules) {
-        return applyOverrides(checkCycles(collectUnique(bqModules)));
+        Collection<RuntimeModule> rtModules = collectUnique(bqModules);
+        rtModules.forEach(RuntimeModule::checkCycles);
+        return resolveGuiceModules(rtModules);
     }
 
-    private Collection<Module> applyOverrides(Collection<RuntimeModule> modules) {
-        return modules.stream()
-                // find "heads" in override dependency linked lists.
-                .filter(RuntimeModule::doesNotOverrideOthers)
-                // fold each overrides linked list into a single module
-                .map(this::fold)
-                .collect(toList());
-    }
+    private Collection<Module> resolveGuiceModules(Collection<RuntimeModule> modules) {
 
-    private Collection<RuntimeModule> checkCycles(Collection<RuntimeModule> modules) {
-        modules.forEach(RuntimeModule::checkCycles);
-        return modules;
+        List<Module> resolved = new ArrayList<>();
+        for (RuntimeModule m : modules) {
+            if (m.isTop()) {
+                resolved.add(m.resolveModule());
+            }
+        }
+
+        return resolved;
     }
 
     private Collection<RuntimeModule> collectUnique(Collection<BQModule> bqModules) {
@@ -70,7 +65,7 @@ class RuntimeModuleMerger {
             //  Bootique modules are auto-loaded (so if the module class is on classpath, there will be a BQModule).
             //  But auto-loading is not a given...
 
-            RuntimeModule rm = new RuntimeModule(bqModule);
+            RuntimeModule rm = new RuntimeModule(bqModule, bootLogger);
 
             RuntimeModule existing = map.putIfAbsent(rm.getModuleType(), rm);
             if (existing != null) {
@@ -91,59 +86,15 @@ class RuntimeModuleMerger {
 
         for (RuntimeModule rm : modules.values()) {
 
-            for(Class<? extends Module> override : rm.getBqModule().getOverrides()) {
+            for (Class<? extends Module> override : rm.getBqModule().getOverrides()) {
                 RuntimeModule rmn = modules.get(override);
-                if(rmn != null) {
-                    rmn.setOverriddenBy(rm);
-                    rm.setOverridesOthers(true);
+                if (rmn != null) {
+                    rm.addOverridden(rmn);
                 }
+                // else:
+                // TODO: complain that the overridden module is not known (may happen when overriding modules
+                //   when auto-loading is not in effect
             }
         }
-    }
-
-    private Module fold(RuntimeModule rm) {
-
-        RuntimeModule overriddenBy = rm.getOverriddenBy();
-
-        if (overriddenBy == null) {
-            trace(rm.getBqModule(), null);
-            return rm.getModule();
-        }
-
-        trace(rm.getBqModule(), overriddenBy.getBqModule());
-
-        // WARN: using recursion because fold.. is there a realistic prospect of this blowing the stack? I haven't
-        // seen overrides more than 2-4 levels deep.
-
-        // fold must happen in this order (overriding starts from the tail). Otherwise the algorithm will not work.
-        return Modules.override(rm.getModule()).with(fold(overriddenBy));
-    }
-
-
-    private void trace(BQModule module, BQModule overriddenBy) {
-        bootLogger.trace(() -> traceMessage(module, overriddenBy));
-    }
-
-    private String traceMessage(BQModule module, BQModule overriddenBy) {
-
-        StringBuilder message = new StringBuilder("Loading module '")
-                .append(module.getName())
-                .append("'");
-
-        String providerName = module.getProviderName();
-        boolean hasProvider = providerName != null && providerName.length() > 0;
-        if (hasProvider) {
-            message.append(" provided by '").append(providerName).append("'");
-        }
-
-        if (overriddenBy != null) {
-            if (hasProvider) {
-                message.append(",");
-            }
-
-            message.append(" overridden by '").append(overriddenBy.getName()).append("'");
-        }
-
-        return message.toString();
     }
 }
