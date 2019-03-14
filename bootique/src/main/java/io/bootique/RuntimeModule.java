@@ -38,23 +38,18 @@ class RuntimeModule {
         this.bootLogger = bootLogger;
     }
 
-    public Module resolveModule() {
+    public Module resolve() {
+
+        bootLogger.trace(() -> traceMessage(bqModule, null));
 
         if (overridden == null) {
-            bootLogger.trace(() -> traceMessage(bqModule, null));
             return bqModule.getModule();
         }
 
-        OverrideLevel level1 = new OverrideLevel();
-        for(RuntimeModule rm : overridden) {
-            bootLogger.trace(() -> traceMessage(rm.getBqModule(), bqModule));
-            rm.resolveModule(level1);
-        }
-
-        return level1.toGuiceModule(bqModule.getModule());
+        return resolve(new OverrideLevel()).toGuiceModule();
     }
 
-    private void resolveModule(OverrideLevel level) {
+    private OverrideLevel resolve(OverrideLevel level) {
 
         level.addModule(bqModule.getModule());
 
@@ -64,11 +59,13 @@ class RuntimeModule {
         if (overridden != null) {
             OverrideLevel subLevel = level.getOrCreateSubLevel();
 
-            for(RuntimeModule rm : overridden) {
+            for (RuntimeModule rm : overridden) {
                 bootLogger.trace(() -> traceMessage(rm.getBqModule(), bqModule));
-                rm.resolveModule(subLevel);
+                rm.resolve(subLevel);
             }
         }
+
+        return level;
     }
 
     public BQModule getBqModule() {
@@ -167,7 +164,7 @@ class RuntimeModule {
     // stores overridden modules at a given tree depth regardless of overriding module
     static class OverrideLevel {
 
-        Collection<Module> modules;
+        List<Module> modules;
         OverrideLevel subLevel;
 
         public OverrideLevel getOrCreateSubLevel() {
@@ -187,7 +184,19 @@ class RuntimeModule {
             this.modules.add(module);
         }
 
-        Module toGuiceModule(Module parent) {
+        /**
+         * Converts top level to Guice module with overrides.
+         */
+        Module toGuiceModule() {
+            if (modules == null || modules.isEmpty()) {
+                throw new IllegalStateException("No parent module");
+            }
+
+            Module m = modules.get(0);
+            return subLevel != null ? subLevel.toGuiceModule(m) : m;
+        }
+
+        private Module toGuiceModule(Module parent) {
 
             if (modules == null) {
                 return parent;

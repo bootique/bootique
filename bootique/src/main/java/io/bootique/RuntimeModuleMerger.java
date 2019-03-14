@@ -43,7 +43,7 @@ class RuntimeModuleMerger {
         List<Module> resolved = new ArrayList<>();
         for (RuntimeModule m : modules) {
             if (m.isTop()) {
-                resolved.add(m.resolveModule());
+                resolved.add(m.resolve());
             }
         }
 
