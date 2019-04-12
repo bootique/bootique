@@ -15,60 +15,20 @@
 
 language: java
 
-#
-# Stage conditions
-#
-# current possible types: push, pull_request, api, cron
-# https://docs.travis-ci.com/user/conditional-builds-stages-jobs/#Left-hand-side
-#
-# 1. branch != master OR type IN (pull_request)
-# 2. branch = master AND type IN (push)
-#
-# ----------------------------------------------
-# |         | push | pull_request | api | cron |
-# ----------------------------------------------
-# |  master |  2   |       1      |     |      |
-# | !master |  1   |       1      |  1  |  1   |
-# ----------------------------------------------
-#
+jdk:
+  - oraclejdk8
+  - oraclejdk11
+  - openjdk-ea
+
+script:
+  - mvn clean verify
 
 jobs:
   include:
-    - stage: build
-      if: branch != master OR type IN (pull_request)
-      jdk: openjdk11
-      script:
-        - mvn clean verify
-    - stage: build
-      if: branch != master OR type IN (pull_request)
-      jdk: openjdk10
-      script:
-        - mvn clean verify
-    - stage: build
-      if: branch != master OR type IN (pull_request)
+    - stage: deploy
       jdk: oraclejdk8
-      script:
-        - mvn clean verify
-    - stage: build
-      if: branch = master AND type IN (push)
-      jdk: openjdk11
-      script:
-        - mvn clean verify
-    - stage: build
-      if: branch = master AND type IN (push)
-      jdk: openjdk10
-      script:
-        - mvn clean verify
-    - stage: build
-      if: branch = master AND type IN (push) AND repo = bootique/bootique
-      jdk: oraclejdk8
-      script:
-        - mvn clean source:jar javadoc:javadoc deploy --settings travis_settings.xml
-    - stage: build
-      if: branch = master AND type IN (push) AND repo != bootique/bootique
-      jdk: oraclejdk8
-      script:
-        - mvn clean verify
+      script: mvn clean source:jar javadoc:javadoc deploy --settings travis_settings.xml
+      if: branch IN (master, 1.0-STABLE) AND type IN (push) AND repo = bootique/bootique
 
 # travis encrypt -r bootique/bootique "CI_DEPLOY_USERNAME='name'"
 # travis encrypt -r bootique/bootique "CI_DEPLOY_PASSWORD='password'"
