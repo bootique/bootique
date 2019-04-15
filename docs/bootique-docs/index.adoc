@@ -330,54 +330,52 @@ NOTE: Notice that previously used naming conventions to bind variables that star
 
 A powerful feature of Jackson is the ability to dynamically create subclasses of the configuration objects. Bootique takes full advantage of this. E.g. imagine a logging module that needs "appenders" to output its log messages (file appender, console appender, syslog appender, etc.). The framework might not be aware of all possible appenders its users might come up with in the future. Yet it still wants to have the ability to instantiate any of them, based solely on the data coming from YAML. Moreover each appender will have its own set of incompatible configuration properties. In fact this is exactly the situation with `bootique-logback` module.
 
-Here is how you ensure that such a polymorphic configuration is possible. Let's start with a simple class hierarchy and a factory that contains a variable of the supertype that we'd like to init to a concrete subclass in runtime:
+Here is how you ensure that such a polymorphic configuration is possible. Let's start with a simple class hierarchy:
 
 [source,java]
 ----
-public abstract class SuperType {
+public abstract class BaseType {
     // ...
 }
 
-public class ConcreteType1 extends SuperType {
+public class ConcreteType1 extends BaseType {
     // ...
 }
 
-public class ConcreteType2 extends SuperType {
-    // ...
-}
-
-public class MyFactory {
-
-    // can be a class or an interface
-    private SuperType subconfig;
-
-    public void setSubconfig(SuperType s) {
-        this.subconfig = s;
-    }
-
+public class ConcreteType2 extends BaseType {
     // ...
 }
 ----
 
-To make polymorphism work, we need to provide some instructions to Jackson. First we need to annotate the supertype and subtypes:
+Now let's create a matching set of factories to create one of the concrete subtypes of `BaseType`. Let's use Jackson annotations to link
+specific types of symbolic names to be used in YAML below:
 
 [source,java]
 ----
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, 
      property = "type", 
      defaultImpl = ConcreteType1.class)
-public abstract class SuperType {
+public abstract class BaseTypeFactory implements PolymorphicConfiguration {
 
+    public abstract BaseType create();
 }
 
 @JsonTypeName("type1")
-public class ConcreteType1 extends SuperType {
+public class ConcreteTypeFactory1 extends BaseTypeFactory {
 
+     @Override
+     public BaseType create() {
+        return new ConcreteType1();
+     }
 }
 
 @JsonTypeName("type2")
-public class ConcreteType2 extends SuperType {
+public class ConcreteTypeFactory2 extends BaseTypeFactory {
 
+     @Override
+     public BaseType create() {
+        return new ConcreteType2();
+     }
 }
 ----
 
@@ -385,9 +383,9 @@ After that we need to create a service provider file called `META-INF/service/io
 
 [source,text]
 ----
-com.foo.SuperType
-com.foo.ConcreteType1
-com.foo.ConcreteType2
+com.foo.BaseTypeFactory
+com.foo.ConcreteTypeFactory1
+com.foo.ConcreteTypeFactory2
 ----
 
 This should be enough to work with configuration like this:
@@ -395,12 +393,25 @@ This should be enough to work with configuration like this:
 [source,yaml]
 ----
 my:
-  subconfig:
-    type: type2
-    someVar: someVal
+  type: type2
+  someVar: someVal
 ----
 
-If another module decides to create yet another subclass of SuperType, it will need to create its own `META-INF/service/io.bootique.config.PolymorphicConfiguration` file that mentions the new subclass.
+The service of `BaseType` is bound in Guice using the standard `ConfigurationFactory` approach described above. Depending on the YAML config,
+one of the subclasses of `BaseType` will be created:
+
+[source,java]
+----
+@Provides
+public BaseType provideBaseType(ConfigurationFactory configFactory) {
+
+    return configFactory
+             .config(BaseTypeFactory.class, "my")
+             .create();
+}
+----
+
+If another module decides to create yet another subclass of BaseType, it will need to create its own `META-INF/service/io.bootique.config.PolymorphicConfiguration` file and add a new factory name there.
 
 === Chapter 8. Using Modules
 
