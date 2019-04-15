@@ -354,7 +354,7 @@ specific types of symbolic names to be used in YAML below:
 ----
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, 
      property = "type", 
-     defaultImpl = ConcreteType1.class)
+     defaultImpl = ConcreteTypeFactory1.class)
 public abstract class BaseTypeFactory implements PolymorphicConfiguration {
 
     public abstract BaseType create();
