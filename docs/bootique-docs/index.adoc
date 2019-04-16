@@ -20,7 +20,7 @@
 
 == Part I. Overview
 
-=== Chapter 1. What is Bootique
+=== What is Bootique
 
 Bootique is a minimally opinionated technology for building container-less runnable Java applications. No JavaEE container required to run your app! It is an ideal platform for http://martinfowler.com/articles/microservices.html[_microservices_], as it allows you to create a fully functional app with minimal-to-no setup. Though it is not limited to a specific kind of app (or the "micro" size) and can be used for REST services, webapps, runnable jobs, DB migrations, JavaFX GUI apps to mention a few examples.
 
@@ -35,15 +35,15 @@ Each Bootique app can be started with a YAML configuration loaded from a file or
 
 Bootique was inspired by two similar products - http://www.dropwizard.io/[Dropwizard] and http://projects.spring.io/spring-boot/[SpringBoot], however its focus is different. Bootique favors modularity and clean pluggable architecture. Bootique is built on top of https://github.com/google/guice[Google Guice] dependency injection (DI) container, which provides the core of its modularity mechanism. This means that pretty much anything in Bootique can be customized/overridden to your liking.
 
-=== Chapter 2. Java Version
+=== Java Version
 
 Java 8 or newer is required.
 
-=== Chapter 3. Build System
+=== Build System
 
 Bootique apps can be built using any Java build system (Ant, Maven, Gradle, etc). Examples in the documentation are based on Maven and `maven-shade-plugin`. While this is not strictly a requirement, Bootique apps are usually packaged into "fat" runnable jars and don't have any external dependencies beyond the JRE.
 
-=== Chapter 4. Programming Skills
+=== Programming Skills
 
 Everything you know about Java programming will be applicable when working with Bootique. You may need to "unlearn" some of the practices related to JavaEE configuration and container deployment though.
 
@@ -53,7 +53,7 @@ Java https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html[Serv
 
 == Part II. Programming
 
-=== Chapter 5. Modules
+=== Modules
 
 Bootique apps are made of "modules". The framework simply locates all available modules, loads them in the DI environment, parses the command line, and then transfers control to a Command (that can originate from any of the modules) that matched the user choice. There's a growing list of modules created by Bootique development team. And you can easily write your own. In fact, programming in Bootique is primarily about writing Modules.
 
@@ -71,7 +71,7 @@ public class MyModule implements Module {
 
 There are other flavors of bindings in Guice. Please refer to https://github.com/google/guice/wiki/Motivation[Guice documentation] for details. One important form extensively used in Bootique is https://github.com/google/guice/wiki/Multibindings[Multibinding].
 
-=== Chapter 6. Modules Auto-Loading
+=== Modules Auto-Loading
 
 Modules can be automatically loaded via `Bootique.autoLoadModules()` as long as they are included in your aplication dependencies. Auto-loading depends on the Java https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html[ServiceLoader mechanism]. To ensure your modules can be auto-loaded do two things. First implement `io.bootique.BQModuleProvider` interface specific to your module:
 
@@ -115,7 +115,7 @@ public class MyModuleProvider implements BQModuleProvider {
 
 If in your Module you are planning to redefine any services from the upstream modules, specify those upstream modules in the `overrides()` collection. In practice overrides are rarely needed, and often can be replaced with service decomposition.
 
-=== Chapter 7. Configuration and Configurable Factories
+=== Configuration and Configurable Factories
 
 Bootique Modules obtain their configuration in a form of "factory objects". We'll show some examples shortly. For now let's focus on the big picture, namely the fact that Bootique app configuration is multi-layered and roughly follows the sequence of "code - config files (contributed) - config files (CLI) - overrides". "Code" is the default values that are provided in constructors of factory objects. Config files overlay those defaults with their own values. Config files can be either contributed in the code, or specified on the command line. Files is where the bulk of configuration usually stored. Finally config values may be further overridden via Java properties and/or environment variables.
 
@@ -413,7 +413,7 @@ public BaseType provideBaseType(ConfigurationFactory configFactory) {
 
 If another module decides to create yet another subclass of BaseType, it will need to create its own `META-INF/service/io.bootique.config.PolymorphicConfiguration` file and add a new factory name there.
 
-=== Chapter 8. Using Modules
+=== Using Modules
 
 Modules can use other "upstream" modules in a few ways:
 
@@ -460,7 +460,7 @@ public class MyModule implements Module {
 
 Here we obtained an extender instance via a static method on BQCoreModule. Most standard modules define their own extenders accessible via `&quot;extend(Binder)&quot;`. This is a pattern you might want to follow in your own modules.
 
-=== Chapter 9. Application Class
+=== Application Class
 
 A class that contains the `&quot;main()&quot;` method is informally called "application". Bootique does not impose any additional requirements on this class. You decide what to put in it. It can be limited to just `&quot;main()&quot;`, or turned into a REST API resource, etc.
 
@@ -488,7 +488,7 @@ You may also implement a separate BQModuleProvider for the Application module. T
 
 If all your code is packaged in auto-loadable modules (which is always a good idea), you may not even need a custom main class. `io.bootique.Bootique` class itself declares a `main()` method and can be used as an app launcher. This creates some interesting possibilities. E.g. you can create Java projects that have no code of their own and are simply collections of modules declared as compile dependencies. More details on packaging are given in the "Runnable Jar" chapter.
 
-=== Chapter 10. Commands
+=== Commands
 
 Bootique runtime contains a set of commands coming from Bootique core and from all the modules currently in effect in the app. On startup Bootique attempts to map command-line arguments to a single command type. If no match is found, a _default_ command is executed (which is normally a "help" command). To list all available commands, the app can be run with `--help` option (in most cases running without any options will have the same effect). E.g.:
 
@@ -614,7 +614,7 @@ BQCoreModule.extend(binder).decorateCommand(ServerCommand.class, extraCommands);
 
 Based on the specified policy Bootique figures out the sequence of execution and runs the main and the secondary commands.
 
-=== Chapter 11. Options
+=== Options
 
 ==== Simple Options
 
@@ -677,7 +677,7 @@ BQCoreModule.extend(binder)
 
 The order of config-bound options on the command line is significant, just as the order of "`--config`" parameters. Bootique merges configuration associated with options from left to right, overriding any preceding configuration if there is an overlap.
 
-=== Chapter 12. Logging
+=== Logging
 
 ==== Loggers in the Code
 
@@ -714,11 +714,11 @@ public class Application {
 
 == Part III. Testing
 
-=== Chapter 13. Bootique and Testing
+=== Bootique and Testing
 
 Bootique is uniquely suitable to be used as a test framework. Within a single test it allows you to start and stop multiple embedded Bootique runtimes, each with distinct set of modules and distinct YAML configurations, making it a powerful tool for _integration testing._ 
 
-=== Chapter 14. Creating Test Runtimes
+=== Creating Test Runtimes
 
 Here we'll demonstrate the use of the core test framework. For module-specific test APIs (e.g. `bootique-jdbc-test`), check documentation of those modules or GitHub. To use the core framework, import the following module in the "test" scope:
 
@@ -775,7 +775,7 @@ public void testAbc() {
 }
 ----
 
-=== Chapter 15. Common Test Scenarios
+=== Common Test Scenarios
 
 Among the things that can be tested are runtime services with real dependencies, standard output of full Bootique applications (i.e. the stuff that would be printed to the console if this were a real app), network services using real network connections (e.g. your REST API's), and so on. Some examples are given below, outlining common techniques.
 
@@ -849,7 +849,7 @@ public void testAutoLoadable() {
 
 == Part IV. Assembly and Deployment
 
-=== Chapter 16. Runnable Jar
+=== Runnable Jar
 
 To build a runnable jar, Bootique relies on `maven-shade-plugin`. To simplify its configuration, your app `pom.xml` may inherit from `bootique-parent` pom. In this case configuration would look like this:
 
@@ -930,7 +930,7 @@ mvn clean package
 java -jar target/myapp-1.0.jar
 ----
 
-=== Chapter 17. Tracing Bootique Startup
+=== Tracing Bootique Startup
 
 To see what modules are loaded and to trace other events that happen on startup, run your jar with `-Dbq.trace` option. E.g.:
 
