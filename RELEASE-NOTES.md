@@ -1,5 +1,6 @@
 ## 1.0.RC2
 
+* #253 Duration value object does not support fractions
 * #254 Duration doesn't support label 'hrs'
 * #257 Update to bootique-modules-parent 0.15
 * #258 Overriding multiple modules causes the submodule to be configured twice
