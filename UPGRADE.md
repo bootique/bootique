@@ -20,6 +20,20 @@
 
 # UPGRADE INSTRUCTIONS
 
+## 1.1
+
+* [bootique-agrest #37](https://github.com/bootique/bootique-agrest/issues/37): While `bootique-agrest` didn't change, 
+the underlying Agrest upgrade from 3.1 to 3.2 intruduced a few breaking changes that affect hopefully a small subset of users:
+
+  * Response with overlapping relationship / attribute "includes" is `include` order dependent [#406](https://github.com/agrestio/agrest/issues/406)
+  * @QueryParameter types changed to Strings and Integers [#408](https://github.com/agrestio/agrest/issues/408) If you are not directly injecting `Include`, `Exclude` and friends (injecting `UriInfo` instead), are you are not affected.
+
+See [Agrest upgrade instructions](https://github.com/agrestio/agrest/blob/master/UPGRADE-NOTES.md#upgrading-to-32) for more details. 
+
+## 1.0
+
+Fully compatible with 1.0.RC1
+
 ## 1.0.RC1
 
 * [bootique-agrest #35](https://github.com/bootique/bootique-agrest/issues/35): Group of `bootique-linkrest` artifact
