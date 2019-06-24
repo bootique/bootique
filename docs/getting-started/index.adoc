@@ -183,7 +183,7 @@ Now restart the app with the new set of parameters: `--server --config=myconfig.
 
 == Injection
 
-We've mentioned that Bootique is built on Google Guice dependency injection (DI) container. We'll talk more about injection elsewhere. Here we'll provide a simple example. Our simple app already has a number of objects and services working behind the scenes that can be injected. One of them is command-line arguments that were provded to the app on startup. Let's extend our resource to include those arguments in the output:
+We've mentioned that Bootique is built on Google Guice dependency injection (DI) container. We'll talk more about injection elsewhere. Here we'll provide a simple example. Our simple app already has a number of objects and services working behind the scenes that can be injected. One of them is command-line arguments that were provided to the app on startup. Let's extend our resource to include those arguments in the output:
 
 [source,java]
 ----
