@@ -73,7 +73,7 @@ There are other flavors of bindings in Guice. Please refer to https://github.com
 
 === Modules Auto-Loading
 
-Modules can be automatically loaded via `Bootique.autoLoadModules()` as long as they are included in your aplication dependencies. Auto-loading depends on the Java https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html[ServiceLoader mechanism]. To ensure your modules can be auto-loaded do two things. First implement `io.bootique.BQModuleProvider` interface specific to your module:
+Modules can be automatically loaded via `Bootique.autoLoadModules()` as long as they are included in your application dependencies. Auto-loading depends on the Java https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html[ServiceLoader mechanism]. To ensure your modules can be auto-loaded do two things. First implement `io.bootique.BQModuleProvider` interface specific to your module:
 
 [source,java]
 ----
@@ -121,7 +121,7 @@ Bootique Modules obtain their configuration in a form of "factory objects". We'l
 
 ==== Configuration via YAML Files
 
-Format of configuration file can be either JSON or YAML. For simplicity we'll focus on YAML format, but the two are interchnageable. Here is an example config file:
+Format of configuration file can be either JSON or YAML. For simplicity we'll focus on YAML format, but the two are interchangeable. Here is an example config file:
 
 [source,yaml]
 ----
@@ -140,7 +140,7 @@ jetty:
 
 While not strictly required, as a rule the top-level keys in the file belong to configuration objects of individual modules. In the example above "log" subtree configures `bootique-logback` module, while "jetty" subtree configures `bootique-jetty`. For standard modules refer to module-specific documentation on the structure of the supported configuration (or run your app `-H` flag to print supported config to the console). Here we'll discuss how to build your own configuration-aware module.
 
-Bootique allows each Module to read its specific configuration subree as an object of the type defined in the Module. Very often such an object is written as a factory that contains a bunch of setters for configuration properties, and a factory method to produce some "service" that a Module is interested in. Here is an example factory:
+Bootique allows each Module to read its specific configuration subtree as an object of the type defined in the Module. Very often such an object is written as a factory that contains a bunch of setters for configuration properties, and a factory method to produce some "service" that a Module is interested in. Here is an example factory:
 
 [source,java]
 ----
@@ -176,7 +176,7 @@ public class MyModule extends ConfigModule {
 
         return configFactory
                  .config(MyFactory.class, configPrefix)
-                 .createMySerice(soService);
+                 .createMyService(soService);
     }
 }
 ----
@@ -653,7 +653,7 @@ While you can process your own options as described above, options often are jus
 ----
 // Starting the app with "--my-opt=x" will set "jobs.myjob.param" value to "x"
 BQCoreModule.extend(binder)
-        .addOption(OptionMetaData.buidler("my-opt").build())
+        .addOption(OptionMetaData.builder("my-opt").build())
         .mapConfigPath("my-opt", "jobs.myjob.param");
 ----
 . Option presence sets a property to a predefined value:
@@ -662,7 +662,7 @@ BQCoreModule.extend(binder)
 ----
 // Starting the app with "--my-opt" will set "jobs.myjob.param" value to "y"
 BQCoreModule.extend(binder)
-        .addOption(OptionMetaData.buidler("my-opt").valueOptionalWithDefault("y").build())
+        .addOption(OptionMetaData.builder("my-opt").valueOptionalWithDefault("y").build())
         .mapConfigPath("my-opt", "jobs.myjob.param");
 ----
 . Option presence loads a config resource, such as a YAML file:
@@ -671,7 +671,7 @@ BQCoreModule.extend(binder)
 ----
 // Starting the app with "--my-opt" is equivalent to starting with "--config=classpath:xyz.yml"
 BQCoreModule.extend(binder)
-        .addOption(OptionMetaData.buidler("my-opt").build())
+        .addOption(OptionMetaData.builder("my-opt").build())
         .mapConfigResource("my-opt", "classpath:xyz.yml");
 ----
 
