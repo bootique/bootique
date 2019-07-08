@@ -21,7 +21,9 @@ package io.bootique;
 
 import com.google.inject.Binder;
 import com.google.inject.Module;
+import io.bootique.config.ConfigurationFactory;
 import io.bootique.names.ClassToName;
+import io.bootique.type.TypeRef;
 
 import java.util.Objects;
 
@@ -30,42 +32,63 @@ import java.util.Objects;
  * subsystem. It is intended as a superclass for Modules that are centered
  * around a single YAML configuration, so it is used in Bootique integration
  * modules, etc.
- * 
+ *
  * @since 0.9
  */
 public abstract class ConfigModule implements Module {
 
-	protected static ClassToName CONFIG_PREFIX_BUILDER = ClassToName
-			.builder()
-			.convertToLowerCase()
-			.stripSuffix("Module")
-			.build();
+    protected static ClassToName CONFIG_PREFIX_BUILDER = ClassToName
+            .builder()
+            .convertToLowerCase()
+            .stripSuffix("Module")
+            .build();
 
-	protected String configPrefix;
+    protected String configPrefix;
 
-	public ConfigModule() {
-		init(defaultConfigPrefix());
-	}
+    public ConfigModule() {
+        init(defaultConfigPrefix());
+    }
 
-	public ConfigModule(String configPrefix) {
-		init(configPrefix);
-	}
+    public ConfigModule(String configPrefix) {
+        init(configPrefix);
+    }
 
-	private void init(String configPrefix) {
-		Objects.requireNonNull(configPrefix);
-		this.configPrefix = configPrefix;
-	}
+    private void init(String configPrefix) {
+        Objects.requireNonNull(configPrefix);
+        this.configPrefix = configPrefix;
+    }
 
-	/**
-	 * Does nothing and is intended for optional overriding.
-	 */
-	@Override
-	public void configure(Binder binder) {
-		// do nothing
-	}
+    /**
+     * Does nothing and is intended for optional overriding.
+     */
+    @Override
+    public void configure(Binder binder) {
+        // do nothing
+    }
 
-	protected String defaultConfigPrefix() {
-		return CONFIG_PREFIX_BUILDER.toName(getClass());
-	}
+    /**
+     * @since 1.1
+     */
+    protected <T> T config(Class<T> type, ConfigurationFactory configurationFactory) {
+        return configurationFactory.config(type, getConfigPrefix());
+    }
+
+    /**
+     * @since 1.1
+     */
+    protected <T> T config(TypeRef<? extends T> type, ConfigurationFactory configurationFactory) {
+        return configurationFactory.config(type, getConfigPrefix());
+    }
+
+    /**
+     * @since 1.1
+     */
+    protected String getConfigPrefix() {
+        return configPrefix;
+    }
+
+    protected String defaultConfigPrefix() {
+        return CONFIG_PREFIX_BUILDER.toName(getClass());
+    }
 
 }

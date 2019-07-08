@@ -19,10 +19,14 @@
 
 package io.bootique;
 
-import static org.junit.Assert.assertEquals;
-
-import io.bootique.ConfigModule;
+import io.bootique.config.ConfigurationFactory;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ConfigModuleTest {
 
@@ -36,6 +40,18 @@ public class ConfigModuleTest {
 	public void testConfigPrefix() {
 		assertEquals("testxyz", new TestXyzModule().configPrefix);
 		assertEquals("custom-prefix", new TestXyzModule("custom-prefix").configPrefix);
+	}
+
+	@Test
+	public void testConfigConfig() {
+
+		ConfigurationFactory f = mock(ConfigurationFactory.class);
+		when(f.config(any(Class.class), anyString()))
+				.then(a -> "_"+ a.getArgument(1));
+
+		TestXyzModule m = new TestXyzModule();
+		String v = m.config(String.class, f);
+		assertEquals("_testxyz", v);
 	}
 
 	class TestXyzModule extends ConfigModule {

@@ -1,6 +1,7 @@
 ## 1.1
 
 * #262 A module superclass to cut down on new module setup 
+* #263 Add methods to ConfigModule to resolve objects from ConfigurationFactory
 
 ## 1.0.RC2
 
