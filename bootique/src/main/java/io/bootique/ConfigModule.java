@@ -28,11 +28,12 @@ import io.bootique.type.TypeRef;
 import java.util.Objects;
 
 /**
- * A Bootique-specific Guice Module that sets up a one or another application
- * subsystem. It is intended as a superclass for Modules that are centered
- * around a single YAML configuration, so it is used in Bootique integration
- * modules, etc.
+ * A superclass of Bootique DI modules that automatically builds a String prefix for resolving Module-specific
+ * configuration based on the module class name. So e.g. if "MyModule" extends "ConfigModule", it will resolve module
+ * configs under the "my" prefix. To use this functionality subclasses need to call one of the "config" methods, e.g.
+ * {@link #config(Class, ConfigurationFactory)}.
  *
+ * @see SelfProvidedModule
  * @since 0.9
  */
 public abstract class ConfigModule implements Module {
