@@ -1,3 +1,7 @@
+## 1.1
+
+* #262 A module superclass to cut down on new module setup 
+
 ## 1.0.RC2
 
 * #253 Duration value object does not support fractions
