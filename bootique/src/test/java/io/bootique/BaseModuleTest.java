@@ -22,11 +22,11 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertSame;
 
-public class SelfProvidedModuleTest {
+public class BaseModuleTest {
 
     @Test
     public void testModule() {
-        SelfProvidedModule m = new SelfProvidedModule() {};
+        BaseModule m = new BaseModule() {};
         assertSame(m, m.module());
     }
 }

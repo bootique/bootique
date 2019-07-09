@@ -21,14 +21,14 @@ package io.bootique;
 import com.google.inject.Module;
 
 /**
- * A superclass of modules that combine functionality of a DI module with that of a module provider. For most modules
+ * A superclass of modules that combines functionality of a DI module with that of a module provider. For most modules
  * creating a separate class that implements {@link BQModuleProvider} is an overkill, and using this class as a superclass
  * cuts down on boilerplate code. Note that this class still requires an entry in
  * `META-INF/services/io.bootique.BQModuleProvider` file for the module to be auto-loadable.
  *
  * @since 1.1
  */
-public abstract class SelfProvidedModule extends ConfigModule implements BQModuleProvider {
+public abstract class BaseModule extends ConfigModule implements BQModuleProvider {
 
     @Override
     public Module module() {

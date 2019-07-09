@@ -33,7 +33,7 @@ import java.util.Objects;
  * configs under the "my" prefix. To use this functionality subclasses need to call one of the "config" methods, e.g.
  * {@link #config(Class, ConfigurationFactory)}.
  *
- * @see SelfProvidedModule
+ * @see BaseModule
  * @since 0.9
  */
 public abstract class ConfigModule implements Module {
