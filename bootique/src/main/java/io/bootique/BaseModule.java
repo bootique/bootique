@@ -30,6 +30,13 @@ import com.google.inject.Module;
  */
 public abstract class BaseModule extends ConfigModule implements BQModuleProvider {
 
+    protected BaseModule() {
+    }
+
+    protected BaseModule(String configPrefix) {
+        super(configPrefix);
+    }
+
     @Override
     public Module module() {
         return this;
