@@ -185,6 +185,8 @@ public class JsonNodeConfigurationFactoryProvider implements Provider<Configurat
 
         JsonNode rootNode = loadConfiguration(properties);
 
+        bootLogger.trace(() -> "Merged configuration: " + rootNode.toString());
+
         ObjectMapper jsonToObjectMapper = jacksonService.newObjectMapper();
         return new JsonNodeConfigurationFactory(rootNode, jsonToObjectMapper);
     }

@@ -2,6 +2,7 @@
 
 * #262 A module superclass to cut down on new module setup 
 * #263 Add methods to ConfigModule to resolve objects from ConfigurationFactory
+* #264 "-Dbq.trace" should print the entire config
 
 ## 1.0.RC2
 
