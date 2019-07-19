@@ -932,7 +932,7 @@ java -jar target/myapp-1.0.jar
 
 === Tracing Bootique Startup
 
-To see what modules are loaded and to trace other events that happen on startup, run your jar with `-Dbq.trace` option. E.g.:
+To see what modules are loaded, to view full app configuration tree and to trace other events that happen on startup, run your app with `-Dbq.trace` option. E.g.:
 
 [source,bash]
 ----
@@ -948,4 +948,9 @@ Adding module 'BQCoreModule' provided by 'Bootique'...
 Adding module 'JerseyModule' provided by 'Bootique'...
 Adding module 'JettyModule' provided by 'JettyModuleProvider'...
 Adding module 'LogbackModule' provided by 'LogbackModuleProvider'...
+Merged configuration: {"log":{"logFormat":"[%d{\"dd/MMM/yyyy:HH:mm:ss,SSS\"}]
+%t %p %X{txid:-?} %X{principal:-?} %c{1}: %m%n%ex"},"trace":""}
 ----
+
+CAUTION: Printing configuration may expose sensitive information, like database passwords, etc. Make sure you use
+`-Dbq.trace` for debugging only and don't leave it on permanently in a deployment environment.
