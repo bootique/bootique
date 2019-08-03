@@ -119,14 +119,25 @@ public class BootiqueExceptionsHandlerIT {
     }
 
     @Test
-    public void testDI_ProviderMethodException() {
+    public void testDI_ProviderMethodBqException() {
         CommandOutcome out = Bootique.app("-m")
-                .module(new ModuleWithProviderMethodException())
+                .module(new ModuleWithProviderMethodBqException())
                 .exec();
 
         assertEquals(1, out.getExitCode());
         assertNull(out.getException());
         assertEquals("test provider exception", out.getMessage());
+    }
+
+    @Test
+    public void testDI_ProviderMethodNPException() {
+        CommandOutcome out = Bootique.app("-m")
+                .module(new ModuleWithProviderMethodNPException())
+                .exec();
+
+        assertEquals(1, out.getExitCode());
+        assertNotNull(out.getException());
+        assertEquals("Command exception: 'test NPE'.", out.getMessage());
     }
 
     @Test
@@ -207,7 +218,7 @@ public class BootiqueExceptionsHandlerIT {
         }
     }
 
-    public static class ModuleWithProviderMethodException implements Module {
+    public static class ModuleWithProviderMethodBqException implements Module {
 
         public static class MyCommand implements Command {
 
@@ -231,6 +242,33 @@ public class BootiqueExceptionsHandlerIT {
         @Singleton
         public MyCommand provideCommand() {
             throw new BootiqueException(1, "test provider exception");
+        }
+    }
+
+    public static class ModuleWithProviderMethodNPException implements Module {
+
+        public static class MyCommand implements Command {
+
+            @Override
+            public CommandMetadata getMetadata() {
+                return CommandMetadata.builder(MyCommand.class).build();
+            }
+
+            @Override
+            public CommandOutcome run(Cli cli) {
+                return null;
+            }
+        }
+
+        @Override
+        public void configure(Binder binder) {
+            BQCoreModule.extend(binder).addCommand(MyCommand.class);
+        }
+
+        @Provides
+        @Singleton
+        public MyCommand provideCommand() {
+            throw new NullPointerException("test NPE");
         }
     }
 
