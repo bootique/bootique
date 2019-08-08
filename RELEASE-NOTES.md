@@ -4,6 +4,7 @@
 * #263 Add methods to ConfigModule to resolve objects from ConfigurationFactory
 * #264 "-Dbq.trace" should print the entire config
 * #265 Update Jackson to 2.10.0.pr1
+* #266 Startup exceptions are swallowed by Guice on Java 11
 
 ## 1.0.RC2
 
