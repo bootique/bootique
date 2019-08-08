@@ -22,6 +22,10 @@
 
 ## 1.1
 
+* [bootique #266](https://github.com/bootique/bootique/issues/266): To improve Java 11 compatibility, Bootique core
+was upgraded to the latest Guice v 4.2.2. This is more of an FYI. No action is needed from the users, unless you 
+are manually managing Guice versions in your app.
+
 * [bootique-agrest #37](https://github.com/bootique/bootique-agrest/issues/37): While `bootique-agrest` didn't change, 
 the underlying Agrest framework intruduced a few breaking changes between 3.1 and 3.2, that hopefully affect only a small subset of users:
 
