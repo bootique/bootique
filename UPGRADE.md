@@ -27,12 +27,18 @@ was upgraded to the latest Guice v 4.2.2. This is more of an FYI. No action is n
 are manually managing Guice versions in your app.
 
 * [bootique-agrest #37](https://github.com/bootique/bootique-agrest/issues/37): While `bootique-agrest` didn't change, 
-the underlying Agrest framework intruduced a few breaking changes between 3.1 and 3.2, that hopefully affect only a small subset of users:
+the underlying Agrest framework introduced a few breaking changes between 3.1 and 3.2, that hopefully affect only a small subset of users:
 
   * Response with overlapping relationship / attribute "includes" is `include` order dependent [#406](https://github.com/agrestio/agrest/issues/406)
   * @QueryParameter types changed to Strings and Integers [#408](https://github.com/agrestio/agrest/issues/408) If you are not directly injecting `Include`, `Exclude` and friends (injecting `UriInfo` instead), are you are not affected.
 
 See [Agrest upgrade instructions](https://github.com/agrestio/agrest/blob/master/UPGRADE-NOTES.md#upgrading-to-32) for more details. 
+
+* [bootique-linkmove #37](https://github.com/bootique/bootique-linkmove/issues/37): LinkMove library was upgraded to 
+v 2.7. While `bootique-linkmove` didn't change, the underlying LinkMove framework introduced a few breaking changes 
+between 2.6 and 2.7. Namely switching of internal ETL data representation to DFLib DataFrame. If your get any 
+compilation errors as a result, see [LinkMove upgrade instructions](https://github.com/nhl/link-move/blob/master/UPGRADE-NOTES.md)
+for details of the 2.7 changes.
 
 ## 1.0
 
