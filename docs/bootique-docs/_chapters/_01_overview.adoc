@@ -1,0 +1,66 @@
+// Licensed to ObjectStyle LLC under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ObjectStyle LLC licenses
+// this file to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+
+== Part I. Overview
+
+=== What is Bootique
+
+Bootique is a minimally opinionated platform for building container-less runnable Java applications. No JavaEE container
+required to run your app! It is an ideal platform for http://martinfowler.com/articles/microservices.html[_microservices_],
+as it allows you to create a fully functional app with minimal-to-no setup. Though it is not limited to a specific
+kind of app (or the "micro" size) and can be used for REST services, webapps, runnable jobs, DB migrations, JavaFX GUI
+apps to mention a few examples.
+
+Unlike traditional container-based apps, Bootique allows you to control your `main()` method and create Java apps that
+behave like simple executable commands that can be run with Java:
+
+[source,bash]
+----
+java -jar my.jar [arguments]
+----
+
+Each Bootique app can be started with a YAML configuration loaded from a file or from a remote URL. Among other benefits,
+such configuration approach ideally suits cloud deployment environments.
+
+Other popular products in this space are http://www.dropwizard.io/[Dropwizard] and
+http://projects.spring.io/spring-boot/[SpringBoot], however Bootique's focus is different. Bootique favors modularity
+and clean pluggable architecture. Bootique is built on top of https://github.com/google/guice[Google Guice] dependency
+injection (DI) container, which provides the core of its modularity mechanism. This means that pretty much anything in
+Bootique can be customized/overridden to your liking.
+
+=== Java Version
+
+Java 8 or newer is required.
+
+=== Build System
+
+Bootique apps can be built using any Java build system (Ant, Maven, Gradle, etc). Examples in the documentation are
+based on Maven.
+
+=== Programming Skills
+
+Everything you know about Java programming will be applicable when working with Bootique. You may need to "unlearn"
+some of the practices related to JavaEE configuration and container deployment though.
+
+Integration between various parts of a Bootique app is done via https://github.com/google/guice[Google Guice]. In most
+cases Bootique API would steer you towards idiomatic approach to integration, so deep knowledge of Guice is not required.
+Though it wouldn't hurt to understand a few main concepts: modules, bindings,
+https://github.com/google/guice/wiki/Multibindings[multibindings],
+http://google.github.io/guice/api-docs/latest/javadoc/index.html?com/google/inject/util/Modules.html[overrides].
+
+Java https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html[ServiceLoader] facility is another important
+part of Bootique, and probably yet another thing that you shouldn't worry too much about initially.
