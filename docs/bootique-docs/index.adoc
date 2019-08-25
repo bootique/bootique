@@ -15,25 +15,35 @@
 // specific language governing permissions and limitations
 // under the License.
 
-:bootique_parent_version: 0.13
+:bootique_parent_version: 0.14
 :toc:
 
 == Part I. Overview
 
 === What is Bootique
 
-Bootique is a minimally opinionated technology for building container-less runnable Java applications. No JavaEE container required to run your app! It is an ideal platform for http://martinfowler.com/articles/microservices.html[_microservices_], as it allows you to create a fully functional app with minimal-to-no setup. Though it is not limited to a specific kind of app (or the "micro" size) and can be used for REST services, webapps, runnable jobs, DB migrations, JavaFX GUI apps to mention a few examples.
+Bootique is a minimally opinionated platform for building container-less runnable Java applications. No JavaEE container
+required to run your app! It is an ideal platform for http://martinfowler.com/articles/microservices.html[_microservices_],
+as it allows you to create a fully functional app with minimal-to-no setup. Though it is not limited to a specific
+kind of app (or the "micro" size) and can be used for REST services, webapps, runnable jobs, DB migrations, JavaFX GUI
+apps to mention a few examples.
 
-Unlike traditional container-based apps, Bootique allows you to control your `main()` method and create Java apps that behave like simple executable commands that can be run with Java:
+Unlike traditional container-based apps, Bootique allows you to control your `main()` method and create Java apps that
+behave like simple executable commands that can be run with Java:
 
 [source,bash]
 ----
 java -jar my.jar [arguments]
 ----
 
-Each Bootique app can be started with a YAML configuration loaded from a file or from a remote URL. Among other benefits, such configuration approach ideally suits cloud deployment environments.
+Each Bootique app can be started with a YAML configuration loaded from a file or from a remote URL. Among other benefits,
+such configuration approach ideally suits cloud deployment environments.
 
-Bootique was inspired by two similar products - http://www.dropwizard.io/[Dropwizard] and http://projects.spring.io/spring-boot/[SpringBoot], however its focus is different. Bootique favors modularity and clean pluggable architecture. Bootique is built on top of https://github.com/google/guice[Google Guice] dependency injection (DI) container, which provides the core of its modularity mechanism. This means that pretty much anything in Bootique can be customized/overridden to your liking.
+Other popular products in this space are http://www.dropwizard.io/[Dropwizard] and
+http://projects.spring.io/spring-boot/[SpringBoot], however Bootique's focus is different. Bootique favors modularity
+and clean pluggable architecture. Bootique is built on top of https://github.com/google/guice[Google Guice] dependency
+injection (DI) container, which provides the core of its modularity mechanism. This means that pretty much anything in
+Bootique can be customized/overridden to your liking.
 
 === Java Version
 
@@ -41,23 +51,37 @@ Java 8 or newer is required.
 
 === Build System
 
-Bootique apps can be built using any Java build system (Ant, Maven, Gradle, etc). Examples in the documentation are based on Maven and `maven-shade-plugin`. While this is not strictly a requirement, Bootique apps are usually packaged into "fat" runnable jars and don't have any external dependencies beyond the JRE.
+Bootique apps can be built using any Java build system (Ant, Maven, Gradle, etc). Examples in the documentation are
+based on Maven.
 
 === Programming Skills
 
-Everything you know about Java programming will be applicable when working with Bootique. You may need to "unlearn" some of the practices related to JavaEE configuration and container deployment though.
+Everything you know about Java programming will be applicable when working with Bootique. You may need to "unlearn"
+some of the practices related to JavaEE configuration and container deployment though.
 
-Integration between various parts of a Bootique app is done via https://github.com/google/guice[Google Guice]. In most cases Bootique API would steer you towards idiomatic approach to integration, so deep knowledge of Guice is not required. Though it wouldn't hurt to understand a few main concepts: modules, bindings, https://github.com/google/guice/wiki/Multibindings[multibindings], http://google.github.io/guice/api-docs/latest/javadoc/index.html?com/google/inject/util/Modules.html[overrides].
+Integration between various parts of a Bootique app is done via https://github.com/google/guice[Google Guice]. In most
+cases Bootique API would steer you towards idiomatic approach to integration, so deep knowledge of Guice is not required.
+Though it wouldn't hurt to understand a few main concepts: modules, bindings,
+https://github.com/google/guice/wiki/Multibindings[multibindings],
+http://google.github.io/guice/api-docs/latest/javadoc/index.html?com/google/inject/util/Modules.html[overrides].
 
-Java https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html[ServiceLoader] facility is another important part of Bootique, and probably yet another thing that you shouldn't worry too much about initially.
+Java https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html[ServiceLoader] facility is another important
+part of Bootique, and probably yet another thing that you shouldn't worry too much about initially.
 
 == Part II. Programming
 
 === Modules
 
-Bootique apps are made of "modules". The framework simply locates all available modules, loads them in the DI environment, parses the command line, and then transfers control to a Command (that can originate from any of the modules) that matched the user choice. There's a growing list of modules created by Bootique development team. And you can easily write your own. In fact, programming in Bootique is primarily about writing Modules.
+Bootique apps are made of "modules". The framework simply locates all available modules, loads them in the DI environment,
+parses the command line, and then transfers control to a Command (that can originate from any of the modules) that
+matched the user choice. There's a growing list of modules created by Bootique development team. And you can easily
+write your own. In fact, programming in Bootique is primarily about writing Modules.
 
-A module is a Java library that contains some code. What makes it a module is a special Java class that implements https://google.github.io/guice/api-docs/latest/javadoc/index.html?com/google/inject/Module.html[Guice Module interface]. This class defines what "services" or other types of objects the module provides (in other words what will be injectable by the module users). This is done in a form of "bindings", i.e. associations between publicly visible injectable service interfaces and specific implementations:
+A module is a Java library that contains some code. What makes it a module is a special Java class that implements
+https://google.github.io/guice/api-docs/latest/javadoc/index.html?com/google/inject/Module.html[Guice Module interface].
+This class defines what "services" or other types of objects the module provides (in other words what will be injectable
+by the module users). This is done in a form of "bindings", i.e. associations between publicly visible injectable
+service interfaces and specific implementations:
 
 [source,java]
 ----
@@ -69,7 +93,8 @@ public class MyModule implements Module {
 }
 ----
 
-There are other flavors of bindings in Guice. Please refer to https://github.com/google/guice/wiki/Motivation[Guice documentation] for details. One important form extensively used in Bootique is https://github.com/google/guice/wiki/Multibindings[Multibinding].
+There are other flavors of bindings in Guice. Please refer to https://github.com/google/guice/wiki/Motivation[Guice documentation]
+for details. One important form extensively used in Bootique is https://github.com/google/guice/wiki/Multibindings[Multibinding].
 
 === Modules Auto-Loading
 
