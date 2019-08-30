@@ -282,9 +282,10 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     }
 
     /**
-     * Binds valueObjectsDescriptors with string description to value objects.
+     * Binds help descriptors keyed by the type of configuration value objects. Standard config value objects include
+     * classes like {@link io.bootique.value.Bytes}, {@link io.bootique.value.Duration}, etc.
      *
-     * @param valueObjectsDescriptors - collection of value objects with valueObjectsDescriptors.
+     * @param valueObjectsDescriptors - map of descriptors by described value type
      * @return this extender instance
      * @since 1.0.RC1
      */
@@ -297,20 +298,21 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     /**
      * Binds descriptors with string description to value objects.
      *
-     * @param object - the value object
+     * @param object                 - the value object
      * @param valueObjectsDescriptor - descriptor for value object.
      * @return this extender instance
      * @since 1.0.RC1
      */
     public BQCoreModuleExtender addValueObjectDescriptor(Class<?> object, ValueObjectDescriptor valueObjectsDescriptor) {
-         contributeValueObjectsDescriptors().addBinding(object).toInstance(valueObjectsDescriptor);
-         return this;
+        contributeValueObjectsDescriptors().addBinding(object).toInstance(valueObjectsDescriptor);
+        return this;
     }
 
     protected MapBinder<Class<?>, ValueObjectDescriptor> contributeValueObjectsDescriptors() {
         return valueObjectsDescriptors != null
                 ? valueObjectsDescriptors
-                : (valueObjectsDescriptors = newMap(new TypeLiteral<Class<?>>() {}, TypeLiteral.get(ValueObjectDescriptor.class)));
+                : (valueObjectsDescriptors = newMap(new TypeLiteral<Class<?>>() {
+        }, TypeLiteral.get(ValueObjectDescriptor.class)));
     }
 
     protected MapBinder<String, Level> contributeLogLevels() {
