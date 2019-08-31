@@ -133,10 +133,11 @@ my-app-1.0/
         slf4j-api-1.7.25.jar
         ...
 ```
-This folder can be archived as a `.tar.gz` or `.zip` and distributed as a single file. It is then unpacked on the
-machine where the application needs to run. Creating such packaging with Maven involves `maven-jar-plugin`,
-`maven-dependency-plugin` and `maven-assembly-plugin`. First let's create a folder structure:
+This folder is usually archived into a single `.tar.gz` or `.zip` file. It would then be unpacked on the
+machine where the application needs to run.
 
+Creating such packaging with Maven involves `maven-jar-plugin`, `maven-dependency-plugin` and `maven-assembly-plugin`.
+First let's create the folder structure:
 [source,xml]
 ----
 <properties>
@@ -178,14 +179,14 @@ machine where the application needs to run. Creating such packaging with Maven i
 </build>
 ----
 
-The above configuration places both main jar and "lib" folder in `target`, so you can build and run the app like this:
+The above configuration places both main jar and "lib/" folder under `target/`, so you can build and run the app like this:
 [source,bash]
 ----
 $ mvn clean package
 $ java -jar target/myapp-1.0.jar
 ----
-To prepare the app distribution, you will need to add an assembly step. Start by creating an `assembly.xml` descriptor
-file:
+To prepare the app for distribution as a single archive, you will need to add an assembly step. Start by creating an
+`assembly.xml` descriptor file:
 [source,xml]
 ----
 <assembly xmlns="http://maven.apache.org/ASSEMBLY/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -208,7 +209,6 @@ file:
 </assembly>
 ----
 Now configure `maven-assembly-plugin`:
-
 [source,xml]
 ----
 <plugin>
@@ -233,9 +233,8 @@ Now configure `maven-assembly-plugin`:
     </executions>
 </plugin>
 ----
-
-Rerun packaging again, and you should see `my-app-1.0.tar.gz` in the `target` folder in addition to the app .jar.
-This archive can be delivered to the end users or copied to your servers and unpacked there:
+After you rerun packaging again, you should see `my-app-1.0.tar.gz` file in the `target` folder. This file can be
+sent to the end users or copied to your servers and unpacked there:
 [source,bash]
 ----
 $ mvn clean package
@@ -244,8 +243,8 @@ $ ls target/*.tar.gz
 my-app-1.0.tar.gz
 ----
 
-An extra benefit of such packaging is that you are able to package any additional files with your application build,
-such as installation instructions, custom startup scripts, etc. All of this is configured in `assembly.xml`.
+NOTE: An extra benefit of such packaging is that you are able to package any additional files with your application distro,
+such as installation instructions, custom startup scripts, licenses, etc. All of this is configured in `assembly.xml`.
 
 === Tracing Bootique Startup
 
