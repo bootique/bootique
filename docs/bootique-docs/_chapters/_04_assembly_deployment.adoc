@@ -243,7 +243,7 @@ $ ls target/*.tar.gz
 my-app-1.0.tar.gz
 ----
 
-NOTE: An extra benefit of such packaging is that you are able to package any additional files with your application distro,
+NOTE: An extra benefit of such packaging is that you can include any additional files with your application distro,
 such as installation instructions, custom startup scripts, licenses, etc. All of this is configured in `assembly.xml`.
 
 === Tracing Bootique Startup
