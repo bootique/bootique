@@ -17,20 +17,21 @@
 
 == Part IV. Assembly and Deployment
 
-Since every Bootique app contains a `main(..)` method, it can be executed using `java` command. Here we are going to
-discuss two common cross-platform approaches - "<<runnable-jar-with-dependencies,Runnable Jar with Dependencies>>" and
-"<<runnable-jar-with-lib,Runnable Jar with "lib" Folder>>" that differ in how dependencies are packaged and referenced.
+This chapter discusses how to package Bootique apps for deployment/distribution and how to run them. We are going to
+present two approaches that produce cross-platform runnable applications -
+"<<runnable-jar-with-dependencies,Runnable Jar with Dependencies>>" and
+"<<runnable-jar-with-lib,Runnable Jar with "lib" Folder>>". They only differ in how dependencies are packaged and
+referenced.
 
-Another way to package apps (not discussed here) is creating native binaries with
-https://docs.oracle.com/en/java/javase/12/tools/jlink.html[jlink] or https://www.graalvm.org/[GraalVM] (since Bootique
-2.0).
+Ultimately any Bootique app is just a Java app with a `main(..)` method and hence can be executed
+using `java` command. With that understanding you can come up with your own custom packaging strategies.
 
 [#runnable-jar-with-dependencies]
 === Runnable Jar with Dependencies
 
-This approach packages application classes (and resources) and all the dependencies in a single "fat" runnable jar. In
-Maven this can be accomplished with `maven-shade-plugin`. To simplify plugin configuration, your app `pom.xml` may
-inherit from `bootique-parent` pom. In this case configuration would look like this:
+Under this approach application classes, resources and all classes and resources from dependency jars are packaged in
+a single "fat" runnable jar. In Maven this can be accomplished with `maven-shade-plugin`. To simplify plugin
+configuration, your app `pom.xml` may inherit from `bootique-parent` pom. Then configuration would look like this:
 
 [source,xml,subs="attributes"]
 ----
@@ -50,19 +51,16 @@ inherit from `bootique-parent` pom. In this case configuration would look like t
     &lt;/plugins&gt;
 &lt;/build&gt;
 ----
-This configuration will build an app with the framework-provided main class, namely `io.bootique.Bootique`. If you want
-to use a custom main class, you will need to redefine Maven `main.class` property:
-
+It will create the app with the framework-provided main class `io.bootique.Bootique`. You can set Maven `main.class`
+property, to use your own main class instead:
 [source,xml]
 ----
 <properties>
     <main.class>com.foo.Application</main.class>
 </properties>
 ----
-If you don't want inherit from the framework pom, you will need to explicitly provide the following (fairly long)
-configuration similar to the one found in
-https://repo1.maven.org/maven2/io/bootique/parent/bootique-parent/0.14/bootique-parent-0.14.pom[`bootique-parent`]:
-
+If you don't want to inherit from the framework pom, you will need to add the following (fairly long)
+piece of configuration to your `pom.xml`:
 [source,xml]
 ----
 <plugin>
@@ -102,7 +100,7 @@ https://repo1.maven.org/maven2/io/bootique/parent/bootique-parent/0.14/bootique-
 </plugin>
 ----
 
-Either way, once your pom is configured, you can assemble and run your jar. E.g.:
+Either way, once the pom is configured, you can assemble and run the jar. E.g.:
 
 [source,bash]
 ----
@@ -113,15 +111,15 @@ java -jar target/myapp-1.0.jar
 [#runnable-jar-with-lib]
 === Runnable Jar with "lib" Folder
 
-"Jar-with-dependencies" packaging described above is very convenient. It produces a single file that is easy to move
-around and execute. It is not without its downsides though:
+"Jar-with-dependencies" packaging described above is extremely convenient. It produces a single file that is easy to move
+around and execute. It is not without downsides though:
 
 * It is incompatible with Java Platform Module System (JPMS). Java allows only one `module-info.class` file per `.jar`.
-So if your app or its dependencies contain one or more of those module descriptor files, `maven-shade-plugin` won't be
+So if your app or its dependencies contain one or more of those module descriptors, `maven-shade-plugin` won't be
 able to package them properly.
-* It is incompatible with multi-release jar files. Actually there's no reason why `maven-shade-plugin` can't
-repackage such jars correctly, but as of this writing (plugin version 3.2.1) it doesn't, losing Java version-specific
-code.
+* It is incompatible with https://openjdk.java.net/jeps/238[multi-release jar files]. Actually there's no technical
+reason why `maven-shade-plugin` can't repackage such jars correctly, but as of this writing (plugin version 3.2.1) it
+doesn't, losing Java version-specific code.
 
 An alternative way of packaging that does not have these limitations is a folder with a runnable application
 jar at the root level and all dependency jars in the `lib/` folder next to it:
