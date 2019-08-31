@@ -133,8 +133,9 @@ my-app-1.0/
         slf4j-api-1.7.25.jar
         ...
 ```
-This folder can be distributed as a `.tar.gz` or `.zip` archive. Creating such packaging with Maven involves
-`maven-jar-plugin`, `maven-dependency-plugin` and `maven-assembly-plugin`. First let's create a folder structure:
+This folder can be archived as a `.tar.gz` or `.zip`, to be distributed as a single file, and then unarchived on the
+machine where the application needs to run. Creating such packaging with Maven involves `maven-jar-plugin`,
+`maven-dependency-plugin` and `maven-assembly-plugin`. First let's create a folder structure:
 
 [source,xml]
 ----
