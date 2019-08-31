@@ -17,9 +17,21 @@
 
 == Part IV. Assembly and Deployment
 
-=== Runnable Jar
+This chapter discusses how to package Bootique apps for deployment/distribution and how to run them. We are going to
+present two approaches that produce cross-platform runnable applications -
+"<<runnable-jar-with-dependencies,Runnable Jar with Dependencies>>" and
+"<<runnable-jar-with-lib,Runnable Jar with "lib" Folder>>". They only differ in how dependencies are packaged and
+referenced.
 
-To build a runnable jar, Bootique relies on `maven-shade-plugin`. To simplify its configuration, your app `pom.xml` may inherit from `bootique-parent` pom. In this case configuration would look like this:
+Ultimately any Bootique app is just a Java app with a `main(..)` method and hence can be executed
+using `java` command. With that understanding you can come up with your own custom packaging strategies.
+
+[#runnable-jar-with-dependencies]
+=== Runnable Jar with Dependencies
+
+Under this approach application classes, resources and all classes and resources from dependency jars are packaged in
+a single "fat" runnable jar. In Maven this can be accomplished with `maven-shade-plugin`. To simplify plugin
+configuration, your app `pom.xml` may inherit from `bootique-parent` pom. Then configuration would look like this:
 
 [source,xml,subs="attributes"]
 ----
@@ -39,18 +51,16 @@ To build a runnable jar, Bootique relies on `maven-shade-plugin`. To simplify it
     &lt;/plugins&gt;
 &lt;/build&gt;
 ----
-
-This configuration will build an app with the framework-provided main class, namely `io.bootique.Bootique`. If you want to use a custom main class (and in most cases you do), you will need to redefine Maven `main.class` property:
-
+It will create the app with the framework-provided main class `io.bootique.Bootique`. You can set Maven `main.class`
+property, to use your own main class instead:
 [source,xml]
 ----
 <properties>
     <main.class>com.foo.Application</main.class>
 </properties>
 ----
-
-If you want to avoid inheriting from the framework parent pom, you will need to explicitly provide the following unwieldy configuration similar to the one found in https://repo1.maven.org/maven2/io/bootique/parent/bootique-parent/0.12/bootique-parent-0.12.pom[`bootique-parent`]:
-
+If you don't want to inherit from the framework pom, you will need to add the following (fairly long)
+piece of configuration to your `pom.xml`:
 [source,xml]
 ----
 <plugin>
@@ -90,13 +100,151 @@ If you want to avoid inheriting from the framework parent pom, you will need to 
 </plugin>
 ----
 
-Either way, once your pom is configured, you can assemble and run your jar. E.g.:
+Either way, once the pom is configured, you can assemble and run the jar. E.g.:
 
 [source,bash]
 ----
 mvn clean package
 java -jar target/myapp-1.0.jar
 ----
+
+[#runnable-jar-with-lib]
+=== Runnable Jar with "lib" Folder
+
+"Jar-with-dependencies" packaging described above is extremely convenient. It produces a single file that is easy to move
+around and execute. It is not without downsides though:
+
+* It is incompatible with Java Platform Module System (JPMS). Java allows only one `module-info.class` file per `.jar`.
+So if your app or its dependencies contain one or more of those module descriptors, `maven-shade-plugin` won't be
+able to package them properly.
+* It is incompatible with https://openjdk.java.net/jeps/238[multi-release jar files]. Actually there's no technical
+reason why `maven-shade-plugin` can't repackage such jars correctly, but as of this writing (plugin version 3.2.1) it
+doesn't, losing Java version-specific code.
+
+An alternative way of packaging that does not have these limitations is a folder with a runnable application
+jar at the root level and all dependency jars in the `lib/` folder next to it:
+```
+my-app-1.0/
+    # Runnable jar with classpath in MANIFEST.MF referencing "lib/*"
+    my-app-1.0.jar
+    # Dependencies folder
+    lib/
+        bootique-X.X.jar
+        slf4j-api-1.7.25.jar
+        ...
+```
+This folder can be distributed as a `.tar.gz` or `.zip` archive. Creating such packaging with Maven involves
+`maven-jar-plugin`, `maven-dependency-plugin` and `maven-assembly-plugin`. First let's create a folder structure:
+
+[source,xml]
+----
+<properties>
+    <main.class>com.foo.Application</main.class>
+</properties>
+...
+<build>
+    <plugins>
+        <plugin>
+            <artifactId>maven-jar-plugin</artifactId>
+            <version>3.1.2</version>
+            <configuration>
+                <archive>
+                    <manifest>
+                        <mainClass>${main.class}</mainClass>
+                        <addClasspath>true</addClasspath>
+                        <classpathPrefix>lib/</classpathPrefix>
+                        <useUniqueVersions>false</useUniqueVersions>
+                    </manifest>
+                </archive>
+            </configuration>
+        </plugin>
+        <plugin>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+                <execution>
+                    <id>assembly</id>
+                    <phase>prepare-package</phase>
+                    <goals>
+                        <goal>copy-dependencies</goal>
+                    </goals>
+                </execution>
+            </executions>
+            <configuration>
+                <outputDirectory>${project.build.directory}/lib</outputDirectory>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+----
+
+The above configuration places both main jar and "lib" folder in `target`, so you can build and run the app like this:
+[source,bash]
+----
+mvn clean package
+java -jar target/myapp-1.0.jar
+----
+To prepare the app distribution, you will need to add an assembly step. Start by creating an `assembly.xml` descriptor
+file:
+[source,xml]
+----
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0 https://maven.apache.org/xsd/assembly-2.0.0.xsd">
+    <id>tar.gz</id>
+    <formats>
+        <format>tar.gz</format>
+    </formats>
+    <fileSets>
+        <fileSet>
+            <directory>${project.build.directory}</directory>
+            <useDefaultExcludes>true</useDefaultExcludes>
+            <outputDirectory>./</outputDirectory>
+            <includes>
+                <include>${project.artifactId}-${project.version}.jar</include>
+                <include>lib/</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+</assembly>
+----
+Now configure `maven-assembly-plugin`:
+
+[source,xml]
+----
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-assembly-plugin</artifactId>
+    <version>3.1.1</version>
+    <configuration>
+        <appendAssemblyId>false</appendAssemblyId>
+        <descriptors>
+            <descriptor>assembly.xml</descriptor>
+        </descriptors>
+        <tarLongFileMode>posix</tarLongFileMode>
+    </configuration>
+     <executions>
+        <execution>
+            <id>assembly</id>
+            <phase>package</phase>
+            <goals>
+                <goal>single</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+----
+
+Rerun packaging again, and you should see `my-app-1.0.tar.gz` in the `target` folder in addition to the app .jar.
+This archive can be delivered to the end users or copied to your servers and unpacked there:
+[source,bash]
+----
+$ mvn clean package
+$ ls target/*.tar.gz
+
+my-app-1.0.tar.gz
+----
+
+An extra benefit of such packaging is that you are able to package any additional files with your application build,
+such as installation instructions, custom startup scripts, etc. All of this is configured in `assembly.xml`.
 
 === Tracing Bootique Startup
 
