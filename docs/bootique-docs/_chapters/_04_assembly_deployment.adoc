@@ -180,8 +180,8 @@ This folder can be distributed as a `.tar.gz` or `.zip` archive. Creating such p
 The above configuration places both main jar and "lib" folder in `target`, so you can build and run the app like this:
 [source,bash]
 ----
-mvn clean package
-java -jar target/myapp-1.0.jar
+$ mvn clean package
+$ java -jar target/myapp-1.0.jar
 ----
 To prepare the app distribution, you will need to add an assembly step. Start by creating an `assembly.xml` descriptor
 file:
@@ -252,7 +252,7 @@ To see what modules are loaded, to view full app configuration tree and to trace
 
 [source,bash]
 ----
-java -Dbq.trace -jar target/myapp-1.0.jar --server
+$ java -Dbq.trace -jar target/myapp-1.0.jar --server
 ----
 
 You may see an output like this:
