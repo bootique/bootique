@@ -148,7 +148,6 @@ First let's create the folder structure:
     <plugins>
         <plugin>
             <artifactId>maven-jar-plugin</artifactId>
-            <version>3.1.2</version>
             <configuration>
                 <archive>
                     <manifest>
