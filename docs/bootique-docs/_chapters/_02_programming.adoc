@@ -136,24 +136,26 @@ public class MyFactory {
 }
 ----
 
-The factory contains configuration property declarations, as well as public setters for these properties (You can create getters as well. It is not strictly required, but may be useful for unit tests, etc.). Now let's take a look at the Module class:
+The factory contains configuration property declarations, as well as public setters for these properties. (You may
+create getters as well. It is not required, but may be useful for unit tests, etc.). Now let's take a look at the
+Module class:
 
 [source,java]
 ----
 public class MyModule extends ConfigModule {
+
+    @Singleton
     @Provides
     public MyService createMyService(
              ConfigurationFactory configFactory,
-             SomeOtherService soService) {
+             SomeOtherService service) {
 
-        return configFactory
-                 .config(MyFactory.class, configPrefix)
-                 .createMyService(soService);
+        return config(MyFactory.class, configFactory).createMyService(service);
     }
 }
 ----
 
-And now a sample configuration that will work with our module:
+A sample configuration that will work with our module may look like this:
 
 [source,yaml]
 ----
@@ -164,13 +166,22 @@ my:
 
 A few points to note here:
 
-* Calling our module "MyModule" and extending from `ConfigModule` gives it access to the protected "configPrefix" instance variable that is initialized to the value of "my" (the naming convention here is to use the Module simple class name without the "Module" suffix and converted to lowercase).
-* `@Provides` annotation is a Guice way of marking a Module method as a "provider" for a certain type of injectable service. All its parameters are themselves injectable objects.
-* `ConfigurationFactory` is the class used to bind a subtree of the app YAML configuration to a given Java object (in our case - MyFactory). The structure of MyFactory is very simple here, but it can be as complex as needed, containing nested objects, arrays, maps, etc. Internally Bootique uses http://wiki.fasterxml.com/JacksonHome[Jackson framework] to bind YAML to a Java class, so all the features of Jackson can be used to craft configuration.
+* Subclassing from `ConfigModule` is optional. `ConfigModule` provides a few utilities, such as a shorter "config"
+method and a default configuration key ("my" in this case. See the next bullet).
+* Calling our module "MyModule" and extending from `ConfigModule` gives it access to the protected "configPrefix"
+property that is initialized to the value of "my" based on the module class name. The naming convention here is to use
+the Module simple class name without the "Module" suffix and converted to lowercase.
+* `@Provides` annotation is a Guice way of marking a Module method as a "provider" for a certain type of injectable
+service. All its parameters are themselves injectable objects.
+* `ConfigurationFactory` is the class used to bind a subtree of the app YAML configuration to a given Java object
+(in our case - MyFactory). The structure of MyFactory is very simple here, but it can be as complex as needed,
+containing nested objects, arrays, maps, etc. Internally Bootique uses
+https://github.com/FasterXML/jackson[Jackson framework] to bind YAML to a Java class, so all the features of Jackson
+can be used to craft configuration.
 
 ==== Configuration File Loading
 
-There are a number of ways to pass a config file to a Bootique app, roughly falling in two categories - files contributed via DI and files passed on command line. Let's discuss them one by one:
+A config file can be passed to a Bootique app via DI (those are usually coming from classpath) or on the command line:
 
 * Contributing a config file via DI:
 +
@@ -179,9 +190,14 @@ There are a number of ways to pass a config file to a Bootique app, roughly fall
 BQCoreModule.extend(binder).addConfig("classpath:com/foo/default.yml");
 ----
 +
-A primary motivation for this style is to provide application default configuration, with YAML files often embedded in the app and read from the classpath (as suggested by the "classpath:.." URL in the example). More then one configuration can be contributed. E.g. individual modules might load their own defaults. Multiple configs are combined in a single config tree by the runtime. The order in which this combination happens is undefined, so make sure there are no conflicts between them. If there are, consider replacing multiple conflicting configs with a single config.
+A primary motivation for this style is to provide application default configuration, with YAML files often embedded in
+the app and read from the classpath (as suggested by the "classpath:.." URL in the example). More then one configuration
+can be contributed. E.g. individual modules might load their own defaults. Multiple configs are combined in a single
+config tree by the runtime. The order in which this combination happens is undefined, so make sure there are no conflicts
+between them. If there are, consider replacing multiple conflicting configs with a single config.
 
-* Conditionally contributing a config file via DI. It is possible to make DI configuration inclusion conditional on the presence of a certain command line option:
+* Conditionally contributing a config file via DI. It is possible to make DI configuration inclusion conditional on the
+presence of a certain command line option:
 +
 [source,java]
 ----
@@ -194,7 +210,9 @@ BQCoreModule.extend(binder)
       .mapConfigResource(o.getName(), "classpath:a/b/qa.yml");
 ----
 
-* Specifying a config file on command line. Each Bootique app supports `--config` option that takes a configuration file as its parameter. To specify more than one file, use `--config` option multiple times. Configurations will be loaded and merged together in the order of their appearance on the command line.
+* Specifying a config file on the command line. Each Bootique app supports `--config` option that takes a configuration
+file as parameter. To specify more than one file, use `--config` option multiple times. Configurations will be loaded
+and merged together in the order of their appearance on the command line.
 
 * Specifying a single config value via a custom option:
 +
@@ -210,7 +228,8 @@ BQCoreModule.extend(binder)
       .mapConfigPath(o.getName(), "jdbc.mydb.url);
 ----
 +
-This adds a new `--db` option to the app that can be used to set JDBC URL of a datasource called "mydb". If value is not specified, the default one will be used.
+This adds a new `--db` option to the app that can be used to set JDBC URL of a datasource called "mydb". If value is
+not specified, the default one will be used.
 
 ==== Configuration via Properties
 
