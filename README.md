@@ -56,7 +56,7 @@ For the impatient, here is how to get started with Bootique:
         <dependency>
             <groupId>io.bootique.bom</groupId>
             <artifactId>bootique-bom</artifactId>
-            <version>1.0</version>
+            <version>1.1</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency> 
@@ -69,12 +69,10 @@ For the impatient, here is how to get started with Bootique:
     <dependency>
         <groupId>io.bootique.jersey</groupId>
         <artifactId>bootique-jersey</artifactId>
-        <scope>compile</scope>
     </dependency>
     <dependency>
         <groupId>io.bootique.logback</groupId>
         <artifactId>bootique-logback</artifactId>
-        <scope>compile</scope>
     </dependency>
 </dependencies>
 ```
