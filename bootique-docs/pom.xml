@@ -40,6 +40,19 @@
         <bootique.parent.version>0.14</bootique.parent.version>
     </properties>
 
+    <pluginRepositories>
+        <pluginRepository>
+            <id>bootique-snapshots</id>
+            <url>https://maven.objectstyle.org/nexus/content/repositories/bootique-snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
     <build>
         <plugins>
             <plugin>
