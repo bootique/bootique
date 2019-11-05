@@ -1,0 +1,151 @@
+// Licensed to ObjectStyle LLC under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ObjectStyle LLC licenses
+// this file to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+
+== Part III. Testing
+
+=== Bootique and Testing
+
+Bootique is uniquely suitable to be used as a test framework. Within a single test it allows you to start and stop multiple embedded Bootique runtimes, each with distinct set of modules and distinct YAML configurations, making it a powerful tool for _integration testing._
+
+=== Creating Test Runtimes
+
+Here we'll demonstrate the use of the core test framework. For module-specific test APIs (e.g. `bootique-jdbc-test`), check documentation of those modules or GitHub. To use the core framework, import the following module in the "test" scope:
+
+[source,xml]
+----
+<dependency>
+    <groupId>io.bootique</groupId>
+    <artifactId>bootique-test</artifactId>
+    <scope>test</scope>
+</dependency>
+----
+
+Then create a `BQTestFactory` in each integration test, annotated with `@Rule` (or `@ClassRule` if you are planning to create a single runtime for all tests in a given class) :
+
+[source,java]
+----
+public class MyTest {
+
+    @Rule
+    public BQTestFactory testFactory = new BQTestFactory();
+}
+----
+
+Now use the factory to create test runtimes. Each runtime object is essentially an entire Bootique application. It can be used to inspect DI contents, execute a command (including commands that start background processes, such as `--server` and `--schedule`), etc. You don't need to stop the runtime explicitly. `BQTestFactory` will take care of shutdown through JUnit lifecycle.
+
+`testFactory.app()` returns a builder that mimics the API of `Bootique` class, with a few test-related extensions. E.g. it allows to load extra modules, etc.
+
+[source,java]
+----
+@Test
+public void testAbc() {
+
+    BQRuntime runtime = testFactory.app()
+        // ensure all classpath modules are included
+        .autoLoadModules()
+        // add an adhoc module specific to the test
+        .module(binder -> binder.bind(MyService.class).to(MyServiceImpl.class))
+        .createRuntime();
+    // ...
+}
+----
+
+If you don't need the runtime instance, but rather want to run a command, you'd call `run()` instead of `createRuntime()` (`run()` is an alias for `createRuntime().run()`):
+
+[source,java]
+----
+@Test
+public void testAbc() {
+
+    CommandOutcome result = testFactory.app("--server")
+        .autoLoadModules()
+        .run();
+    // ...
+}
+----
+
+=== Common Test Scenarios
+
+Among the things that can be tested are runtime services with real dependencies, standard output of full Bootique applications (i.e. the stuff that would be printed to the console if this were a real app), network services using real network connections (e.g. your REST API's), and so on. Some examples are given below, outlining common techniques.
+
+==== Testing Injectable Services
+
+Services can be obtained from test runtime, their methods called, and assertions made about the results of the call:
+
+[source,java]
+----
+@Test
+public void testService() {
+
+    BQRuntime runtime = testFactory.app("--config=src/test/resources/my.yml").createRuntime();
+
+    MyService service = runtime.getInstance(MyService.class);
+    assertEquals("xyz", service.someMethod());
+}
+----
+
+==== Testing Network Services
+
+If a test command starts a web server or some other network service, it can be accessed via a URL right after running the server. E.g.:
+
+[source,java]
+----
+@Test
+public void testServer() {
+
+    testFactory.app("--server").run();
+
+    // using JAX-RS client API
+    WebTarget base = ClientBuilder.newClient().target("http://localhost:8080/");
+    Response r1 = base.path("/somepath").request().get();
+    assertEquals(Status.OK.getStatusCode(), r1.getStatus());
+    assertEquals("{}", r1.readEntity(String.class));
+}
+----
+
+==== Testing Commands
+
+You can emulate a real app execution in a unit test, by running a command and then checking the values of the exist code and `stdin` and `stderr` contents:
+
+[source,java]
+----
+@Test
+public void testCommand() {
+
+    TestIO io = TestIO.noTrace();
+    CommandOutcome outcome = testFactory
+        .app("--help")
+        .bootLogger(io.getBootLogger())
+        .run();
+
+    assertEquals(0, outcome.getExitCode());
+    assertTrue(io.getStdout().contains("--help"));
+    assertTrue(io.getStdout().contains("--config"));
+}
+----
+
+==== Testing Module Validity
+
+When you are writing your own modules, you may want to check that they are configured properly for autoloading (i.e. `META-INF/services/io.bootique.BQModuleProvider` is present in the expected place and contains the right provider. There's a helper class to check for it:
+
+[source,java]
+----
+@Test
+public void testAutoLoadable() {
+    BQModuleProviderChecker.testAutoLoadable(MyModuleProvider.class);
+}
+----

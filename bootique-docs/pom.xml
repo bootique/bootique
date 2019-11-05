@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to ObjectStyle LLC under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ObjectStyle LLC licenses
+  ~ this file to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>bootique-framework-parent</artifactId>
+        <groupId>io.bootique</groupId>
+        <version>2.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>bootique-docs</artifactId>
+
+    <packaging>jar</packaging>
+
+    <properties>
+        <asciidoctorj.version>2.1.0</asciidoctorj.version>
+        <asciidoctor.maven.plugin.version>2.0.0-RC.1</asciidoctor.maven.plugin.version>
+        <jruby.version>9.2.8.0</jruby.version>
+        <bootique.version>${project.version}</bootique.version>
+        <bootique.parent.version>0.14</bootique.parent.version>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.asciidoctor</groupId>
+                <artifactId>asciidoctor-maven-plugin</artifactId>
+                <version>${asciidoctor.maven.plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jruby</groupId>
+                        <artifactId>jruby-complete</artifactId>
+                        <version>${jruby.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.asciidoctor</groupId>
+                        <artifactId>asciidoctorj</artifactId>
+                        <version>${asciidoctorj.version}</version>
+                    </dependency>
+                    <!-- Using Cayenne asciidoc extension to inject custom headers -->
+                    <dependency>
+                        <groupId>io.bootique.docs</groupId>
+                        <artifactId>bootique-asciidoc-internal</artifactId>
+                        <version>${bootique.version}</version>
+                    </dependency>
+                </dependencies>
+
+
+                <executions>
+                    <!-- generate "embeddable" html content with front matter and without header/footer/styles -->
+                    <execution>
+                        <id>asciidoctor-html-web</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <configuration>
+                            <doctype>book</doctype>
+                            <backend>html5</backend>
+                            <headerFooter>false</headerFooter> <!-- do not generate header and footer -->
+                            <outputDirectory>${project.build.directory}/site/docs/</outputDirectory>
+                            <preserveDirectories>true</preserveDirectories>
+                            <!-- this will inject header with "front-matter" markup -->
+                            <extensions>
+                                <extension>
+                                    <className>io.bootique.docs.asciidoc.BootiquePostprocessor</className>
+                                </extension>
+                            </extensions>
+                            <attributes>
+                                <sectnums/>
+                                <icons>font</icons>
+                                <toc>auto</toc>
+                                <bootique_version>${bootique.version}</bootique_version>
+                                <bootique_parent_version>${bootique.parent.version}</bootique_parent_version>
+                            </attributes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
