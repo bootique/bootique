@@ -315,8 +315,6 @@ ENVIRONMENT
            Sets value of some other property.
 ----
 
-NOTE: Notice that previously used naming conventions to bind variables that start with `BQ_*` to config values are deprecated and support for them will be removed soon. Such approach was causing too much unexpected behavior in non-containerized environments. The alternative is explicitly declared variables described above.
-
 ==== Polymorphic Configuration Objects
 
 A powerful feature of Jackson is the ability to dynamically create subclasses of the configuration objects. Bootique takes full advantage of this. E.g. imagine a logging module that needs "appenders" to output its log messages (file appender, console appender, syslog appender, etc.). The framework might not be aware of all possible appenders its users might come up with in the future. Yet it still wants to have the ability to instantiate any of them, based solely on the data coming from YAML. Moreover each appender will have its own set of incompatible configuration properties. In fact this is exactly the situation with `bootique-logback` module.
