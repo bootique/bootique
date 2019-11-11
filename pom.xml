@@ -36,6 +36,7 @@
 
 	<modules>
 		<module>bootique</module>
+		<module>bootique-docs</module>
 		<module>bootique-test</module>
 		<module>bootique-test-badspi-it</module>
 	</modules>
