@@ -172,6 +172,7 @@ First let's create the folder structure:
             </executions>
             <configuration>
                 <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                <includeScope>compile</includeScope>
             </configuration>
         </plugin>
     </plugins>
