@@ -19,14 +19,14 @@
 
 package io.bootique.unit;
 
-import com.google.inject.Module;
 import io.bootique.BQCoreModule;
 import io.bootique.BQCoreModuleExtender;
-import io.bootique.BQModule;
+import io.bootique.BQModuleMetadata;
 import io.bootique.BQModuleOverrideBuilder;
 import io.bootique.BQModuleProvider;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
+import io.bootique.di.BQModule;
 import io.bootique.help.ValueObjectDescriptor;
 import io.bootique.log.BootLogger;
 import org.junit.rules.ExternalResource;
@@ -96,12 +96,12 @@ public class BQInternalTestFactory extends ExternalResource {
             return new BQModuleProvider() {
 
                 @Override
-                public Module module() {
+                public BQModule module() {
                     return binder -> BQCoreModule.extend(binder).setProperties(properties);
                 }
 
                 @Override
-                public BQModule.Builder moduleBuilder() {
+                public BQModuleMetadata.Builder moduleBuilder() {
                     return BQModuleProvider.super
                             .moduleBuilder()
                             .name("BQInternalTestFactory:Builder:properties");
@@ -118,7 +118,7 @@ public class BQInternalTestFactory extends ExternalResource {
             return new BQModuleProvider() {
 
                 @Override
-                public Module module() {
+                public BQModule module() {
                     return binder -> {
                         BQCoreModuleExtender extender = BQCoreModule.extend(binder).setVars(variables)
                                 .addValueObjectsDescriptors(valueObjectsDescriptors);
@@ -127,7 +127,7 @@ public class BQInternalTestFactory extends ExternalResource {
                 }
 
                 @Override
-                public BQModule.Builder moduleBuilder() {
+                public BQModuleMetadata.Builder moduleBuilder() {
                     return BQModuleProvider.super
                             .moduleBuilder()
                             .name("BQInternalTestFactory:Builder:variables");
@@ -182,22 +182,22 @@ public class BQInternalTestFactory extends ExternalResource {
             return (T) this;
         }
 
-        public T module(Class<? extends Module> moduleType) {
+        public T module(Class<? extends BQModule> moduleType) {
             bootique.module(moduleType);
             return (T) this;
         }
 
-        public T modules(Class<? extends Module>... moduleTypes) {
+        public T modules(Class<? extends BQModule>... moduleTypes) {
             bootique.modules(moduleTypes);
             return (T) this;
         }
 
-        public T module(Module m) {
+        public T module(BQModule m) {
             bootique.module(m);
             return (T) this;
         }
 
-        public T modules(Module... modules) {
+        public T modules(BQModule... modules) {
             bootique.modules(modules);
             return (T) this;
         }
@@ -212,19 +212,19 @@ public class BQInternalTestFactory extends ExternalResource {
             return (T) this;
         }
 
-        public BQModuleOverrideBuilder<T> override(Class<? extends Module>... overriddenTypes) {
+        public BQModuleOverrideBuilder<T> override(Class<? extends BQModule>... overriddenTypes) {
 
             BQModuleOverrideBuilder<Bootique> subBuilder = bootique.override(overriddenTypes);
             return new BQModuleOverrideBuilder<T>() {
 
                 @Override
-                public T with(Class<? extends Module> moduleType) {
+                public T with(Class<? extends BQModule> moduleType) {
                     subBuilder.with(moduleType);
                     return (T) Builder.this;
                 }
 
                 @Override
-                public T with(Module module) {
+                public T with(BQModule module) {
                     subBuilder.with(module);
                     return (T) Builder.this;
                 }

@@ -38,10 +38,17 @@
 
 	<properties>
 		<jopt.version>5.0.3</jopt.version>
+		<bootique.version>${project.version}</bootique.version>
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>io.bootique.di</groupId>
+				<artifactId>bootique-di</artifactId>
+				<version>${bootique.version}</version>
+				<scope>compile</scope>
+			</dependency>
 			<dependency>
 				<groupId>net.sf.jopt-simple</groupId>
 				<artifactId>jopt-simple</artifactId>
@@ -80,8 +87,8 @@
 
 		<!-- Compile dependencies -->
 		<dependency>
-			<groupId>com.google.inject</groupId>
-			<artifactId>guice</artifactId>
+			<groupId>io.bootique.di</groupId>
+			<artifactId>bootique-di</artifactId>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

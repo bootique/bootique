@@ -19,7 +19,7 @@
 
 package io.bootique.meta.module;
 
-import io.bootique.BQModule;
+import io.bootique.BQModuleMetadata;
 import io.bootique.meta.config.ConfigMetadataCompiler;
 import io.bootique.meta.config.ConfigMetadataNode;
 
@@ -40,13 +40,13 @@ public class ModulesMetadataCompiler {
         this.configCompiler = configCompiler;
     }
 
-    public ModulesMetadata compile(Collection<BQModule> modules) {
+    public ModulesMetadata compile(Collection<BQModuleMetadata> modules) {
         ModulesMetadata.Builder builder = ModulesMetadata.builder();
         modules.forEach(m -> builder.addModule(toModuleMetadata(m)));
         return builder.build();
     }
 
-    private ModuleMetadata toModuleMetadata(BQModule module) {
+    private ModuleMetadata toModuleMetadata(BQModuleMetadata module) {
         return ModuleMetadata
                 .builder(module.getName())
                 .description(module.getDescription())
@@ -55,7 +55,7 @@ public class ModulesMetadataCompiler {
                 .build();
     }
 
-    private Collection<ConfigMetadataNode> toConfigs(BQModule module) {
+    private Collection<ConfigMetadataNode> toConfigs(BQModuleMetadata module) {
 
         Map<String, Type> configTypes = module.getConfigs();
         if (configTypes.isEmpty()) {

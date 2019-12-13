@@ -23,8 +23,8 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import javax.inject.Qualifier;
 
-import com.google.inject.BindingAnnotation;
 import io.bootique.command.Command;
 
 /**
@@ -33,7 +33,7 @@ import io.bootique.command.Command;
  */
 @Target({ ElementType.PARAMETER, ElementType.FIELD, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
-@BindingAnnotation
+@Qualifier
 public @interface DefaultCommand {
 
 }

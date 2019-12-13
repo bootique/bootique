@@ -23,8 +23,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import com.google.inject.BindingAnnotation;
+import javax.inject.Qualifier;
 
 /**
  * A DI annotation for a String[] of command line arguments passed to the Java
@@ -32,7 +31,7 @@ import com.google.inject.BindingAnnotation;
  */
 @Target({ ElementType.PARAMETER, ElementType.FIELD, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
-@BindingAnnotation
+@Qualifier
 public @interface Args {
 
 }

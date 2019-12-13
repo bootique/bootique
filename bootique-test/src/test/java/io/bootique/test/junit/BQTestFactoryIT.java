@@ -19,8 +19,9 @@
 
 package io.bootique.test.junit;
 
+import javax.inject.Inject;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.google.inject.Inject;
 import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
 import io.bootique.cli.Cli;

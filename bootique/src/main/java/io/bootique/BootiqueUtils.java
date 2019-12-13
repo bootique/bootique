@@ -20,8 +20,8 @@
 package io.bootique;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Utils methods serving {@link Bootique} class.
@@ -35,20 +35,24 @@ final class BootiqueUtils {
     }
 
     static Collection<BQModuleProvider> moduleProviderDependencies(Collection<BQModuleProvider> rootSet) {
-        return moduleProviderDependencies(rootSet, new HashSet<>());
+        return moduleProviderDependencies(rootSet, new HashMap<>()).values();
     }
 
-    private static Collection<BQModuleProvider> moduleProviderDependencies(
+    private static Map<Object, BQModuleProvider> moduleProviderDependencies(
             Collection<BQModuleProvider> rootSet,
-            Set<BQModuleProvider> processed) {
+            Map<Object, BQModuleProvider> processed) {
 
         for (BQModuleProvider moduleProvider : rootSet) {
-            if (!processed.contains(moduleProvider)) {
-                processed.add(moduleProvider);
+            String name = moduleProvider.name();
+            Object key = moduleProvider.getClass().isSynthetic() || name == null || name.isEmpty() || name.equals("Bootique")
+                    ? moduleProvider
+                    : name;
+            if (!processed.containsKey(key)) {
+                processed.put(key, moduleProvider);
 
                 final Collection<BQModuleProvider> dependencies = moduleProvider.dependencies();
                 if (!dependencies.isEmpty()) {
-                    processed.addAll(moduleProviderDependencies(dependencies, processed));
+                    processed.putAll(moduleProviderDependencies(dependencies, processed));
                 }
             }
         }

@@ -19,12 +19,6 @@
 
 package io.bootique;
 
-import com.google.inject.Binder;
-import com.google.inject.Key;
-import com.google.inject.Singleton;
-import com.google.inject.TypeLiteral;
-import com.google.inject.multibindings.MapBinder;
-import com.google.inject.multibindings.Multibinder;
 import io.bootique.annotation.DIConfigs;
 import io.bootique.annotation.DefaultCommand;
 import io.bootique.annotation.EnvironmentProperties;
@@ -35,6 +29,10 @@ import io.bootique.command.CommandDecorator;
 import io.bootique.command.CommandRefDecorated;
 import io.bootique.config.OptionRefWithConfig;
 import io.bootique.config.OptionRefWithConfigPath;
+import io.bootique.di.Binder;
+import io.bootique.di.MapBuilder;
+import io.bootique.di.SetBuilder;
+import io.bootique.di.TypeLiteral;
 import io.bootique.env.DeclaredVariable;
 import io.bootique.help.ValueObjectDescriptor;
 import io.bootique.meta.application.OptionMetadata;
@@ -45,24 +43,24 @@ import java.util.logging.Level;
 import static java.util.Arrays.asList;
 
 /**
- * Provides API to contribute custom extensions to BQCoreModule.  This class is a syntactic sugar for Guice
- * MapBinder and Multibinder.
+ * Provides API to contribute custom extensions to BQCoreModule.
+ * This class is a syntactic sugar for Bootique DI MapBuilder and SetBuilder.
  *
  * @since 0.22
  */
 public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
 
-    private Multibinder<String> configs;
-    private MapBinder<String, String> properties;
-    private MapBinder<String, String> variables;
-    private MapBinder<String, Level> logLevels;
-    private Multibinder<DeclaredVariable> declaredVariables;
-    private Multibinder<OptionMetadata> options;
-    private Multibinder<Command> commands;
-    private Multibinder<CommandRefDecorated> commandDecorators;
-    private Multibinder<OptionRefWithConfig> optionDecorators;
-    private MapBinder<Class<?>, ValueObjectDescriptor> valueObjectsDescriptors;
-    private Multibinder<OptionRefWithConfigPath> optionPathDecorators;
+    private SetBuilder<String> configs;
+    private MapBuilder<String, String> properties;
+    private MapBuilder<String, String> variables;
+    private MapBuilder<String, Level> logLevels;
+    private SetBuilder<DeclaredVariable> declaredVariables;
+    private SetBuilder<OptionMetadata> options;
+    private SetBuilder<Command> commands;
+    private SetBuilder<CommandRefDecorated> commandDecorators;
+    private SetBuilder<OptionRefWithConfig> optionDecorators;
+    private MapBuilder<Class<?>, ValueObjectDescriptor> valueObjectsDescriptors;
+    private SetBuilder<OptionRefWithConfigPath> optionPathDecorators;
 
     protected BQCoreModuleExtender(Binder binder) {
         super(binder);
@@ -92,7 +90,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @return this extender instance.
      */
     public BQCoreModuleExtender setDefaultCommand(Class<? extends Command> commandType) {
-        binder.bind(Key.get(Command.class, DefaultCommand.class)).to(commandType).in(Singleton.class);
+        binder.bind(Command.class, DefaultCommand.class).to(commandType).inSingletonScope();
         return this;
     }
 
@@ -103,7 +101,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @return this extender instance.
      */
     public BQCoreModuleExtender setDefaultCommand(Command command) {
-        binder.bind(Key.get(Command.class, DefaultCommand.class)).toInstance(command);
+        binder.bind(Command.class, DefaultCommand.class).toInstance(command);
         return this;
     }
 
@@ -119,7 +117,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     }
 
     public BQCoreModuleExtender setLogLevel(String name, Level level) {
-        contributeLogLevels().addBinding(name).toInstance(level);
+        contributeLogLevels().put(name, level);
         return this;
     }
 
@@ -129,7 +127,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     }
 
     public BQCoreModuleExtender setProperty(String name, String value) {
-        contributeProperties().addBinding(name).toInstance(value);
+        contributeProperties().put(name, value);
         return this;
     }
 
@@ -139,7 +137,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     }
 
     public BQCoreModuleExtender setVar(String name, String value) {
-        contributeVariables().addBinding(name).toInstance(value);
+        contributeVariables().put(name, value);
         return this;
     }
 
@@ -171,7 +169,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      */
     public BQCoreModuleExtender declareVar(String configPath, String name, String description) {
         DeclaredVariable var = new DeclaredVariable(configPath, name, description);
-        contributeVariableDeclarations().addBinding().toInstance(var);
+        contributeVariableDeclarations().add(var);
         return this;
     }
 
@@ -190,7 +188,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @since 0.25
      */
     public BQCoreModuleExtender addConfig(String configResourceId) {
-        contributeConfigs().addBinding().toInstance(configResourceId);
+        contributeConfigs().add(configResourceId);
         return this;
     }
 
@@ -210,8 +208,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      */
     public BQCoreModuleExtender mapConfigResource(String optionName, String configResourceId) {
         // using Multibinder to support multiple decorators for the same option
-        contributeOptionDecorators().addBinding()
-                .toInstance(new OptionRefWithConfig(optionName, configResourceId));
+        contributeOptionDecorators().add(new OptionRefWithConfig(optionName, configResourceId));
         return this;
     }
 
@@ -227,8 +224,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @since 1.0.RC1
      */
     public BQCoreModuleExtender mapConfigPath(String optionName, String configPath) {
-        contributeOptionPathDecorators().addBinding()
-                .toInstance(new OptionRefWithConfigPath(optionName, configPath));
+        contributeOptionPathDecorators().add(new OptionRefWithConfigPath(optionName, configPath));
         return this;
     }
 
@@ -239,7 +235,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @return this extender instance.
      */
     public BQCoreModuleExtender addOption(OptionMetadata option) {
-        contributeOptions().addBinding().toInstance(option);
+        contributeOptions().add(option);
         return this;
     }
 
@@ -257,13 +253,13 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     }
 
     public BQCoreModuleExtender addCommand(Command command) {
-        contributeCommands().addBinding().toInstance(command);
+        contributeCommands().add(command);
         return this;
     }
 
     public BQCoreModuleExtender addCommand(Class<? extends Command> commandType) {
         // TODO: what does singleton scope means when adding to collection?
-        contributeCommands().addBinding().to(commandType).in(Singleton.class);
+        contributeCommands().add(commandType).inSingletonScope();
         return this;
     }
 
@@ -277,7 +273,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @since 0.25
      */
     public BQCoreModuleExtender decorateCommand(Class<? extends Command> commandType, CommandDecorator commandDecorator) {
-        contributeCommandDecorators().addBinding().toInstance(new CommandRefDecorated(commandType, commandDecorator));
+        contributeCommandDecorators().add(new CommandRefDecorated(commandType, commandDecorator));
         return this;
     }
 
@@ -290,8 +286,8 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @since 1.0.RC1
      */
     public BQCoreModuleExtender addValueObjectsDescriptors(Map<Class<?>, ValueObjectDescriptor> valueObjectsDescriptors) {
-        MapBinder<Class<?>, ValueObjectDescriptor> binder = contributeValueObjectsDescriptors();
-        valueObjectsDescriptors.forEach((key, value) -> binder.addBinding(key).toInstance(value));
+        MapBuilder<Class<?>, ValueObjectDescriptor> binder = contributeValueObjectsDescriptors();
+        valueObjectsDescriptors.forEach(binder::put);
         return this;
     }
 
@@ -304,57 +300,57 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @since 1.0.RC1
      */
     public BQCoreModuleExtender addValueObjectDescriptor(Class<?> object, ValueObjectDescriptor valueObjectsDescriptor) {
-        contributeValueObjectsDescriptors().addBinding(object).toInstance(valueObjectsDescriptor);
+        contributeValueObjectsDescriptors().put(object, valueObjectsDescriptor);
         return this;
     }
 
-    protected MapBinder<Class<?>, ValueObjectDescriptor> contributeValueObjectsDescriptors() {
+    protected MapBuilder<Class<?>, ValueObjectDescriptor> contributeValueObjectsDescriptors() {
         return valueObjectsDescriptors != null
                 ? valueObjectsDescriptors
                 : (valueObjectsDescriptors = newMap(new TypeLiteral<Class<?>>() {
-        }, TypeLiteral.get(ValueObjectDescriptor.class)));
+        }, TypeLiteral.of(ValueObjectDescriptor.class)));
     }
 
-    protected MapBinder<String, Level> contributeLogLevels() {
+    protected MapBuilder<String, Level> contributeLogLevels() {
         return logLevels != null ? logLevels : (logLevels = newMap(String.class, Level.class, LogLevels.class));
     }
 
-    protected Multibinder<OptionMetadata> contributeOptions() {
-        // no synchronization. we don't care if it is created twice. It will still work with Guice.
+    protected SetBuilder<OptionMetadata> contributeOptions() {
+        // no synchronization. we don't care if it is created twice. It will still work with DI container.
         return options != null ? options : (options = newSet(OptionMetadata.class));
     }
 
-    protected Multibinder<DeclaredVariable> contributeVariableDeclarations() {
-        // no synchronization. we don't care if it is created twice. It will still work with Guice.
+    protected SetBuilder<DeclaredVariable> contributeVariableDeclarations() {
+        // no synchronization. we don't care if it is created twice. It will still work with DI container.
         return declaredVariables != null ? declaredVariables : (declaredVariables = newSet(DeclaredVariable.class));
     }
 
-    protected Multibinder<Command> contributeCommands() {
-        // no synchronization. we don't care if it is created twice. It will still work with Guice.
+    protected SetBuilder<Command> contributeCommands() {
+        // no synchronization. we don't care if it is created twice. It will still work with DI container.
         return commands != null ? commands : (commands = newSet(Command.class));
     }
 
-    protected Multibinder<CommandRefDecorated> contributeCommandDecorators() {
+    protected SetBuilder<CommandRefDecorated> contributeCommandDecorators() {
         return commandDecorators != null ? commandDecorators : (commandDecorators = newSet(CommandRefDecorated.class));
     }
 
-    protected Multibinder<OptionRefWithConfig> contributeOptionDecorators() {
+    protected SetBuilder<OptionRefWithConfig> contributeOptionDecorators() {
         return optionDecorators != null ? optionDecorators : (optionDecorators = newSet(OptionRefWithConfig.class));
     }
 
-    protected Multibinder<OptionRefWithConfigPath> contributeOptionPathDecorators() {
+    protected SetBuilder<OptionRefWithConfigPath> contributeOptionPathDecorators() {
         return optionPathDecorators != null ? optionPathDecorators : (optionPathDecorators = newSet(OptionRefWithConfigPath.class));
     }
 
-    protected MapBinder<String, String> contributeProperties() {
+    protected MapBuilder<String, String> contributeProperties() {
         return properties != null ? properties : (properties = newMap(String.class, String.class, EnvironmentProperties.class));
     }
 
-    protected MapBinder<String, String> contributeVariables() {
+    protected MapBuilder<String, String> contributeVariables() {
         return variables != null ? variables : (variables = newMap(String.class, String.class, EnvironmentVariables.class));
     }
 
-    protected Multibinder<String> contributeConfigs() {
+    protected SetBuilder<String> contributeConfigs() {
         return configs != null ? configs : (configs = newSet(String.class, DIConfigs.class));
     }
 }

@@ -19,12 +19,12 @@
 
 package io.bootique;
 
-import com.google.inject.Binder;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.Module;
-import com.google.inject.TypeLiteral;
-import com.google.inject.multibindings.Multibinder;
+import io.bootique.di.Binder;
+import io.bootique.di.Injector;
+import io.bootique.di.Key;
+import io.bootique.di.BQModule;
+
+import io.bootique.di.TypeLiteral;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -61,19 +61,19 @@ public class BootiqueTest {
         assertEquals(2, strings.size());
     }
 
-    static class TestModule1 implements Module {
+    static class TestModule1 implements BQModule {
 
         @Override
         public void configure(Binder binder) {
-            Multibinder.newSetBinder(binder, String.class).addBinding().toInstance("tm1");
+            binder.bindSet(String.class).add("tm1");
         }
     }
 
-    static class TestModule2 implements Module {
+    static class TestModule2 implements BQModule {
 
         @Override
         public void configure(Binder binder) {
-            Multibinder.newSetBinder(binder, String.class).addBinding().toInstance("tm2");
+            binder.bindSet(String.class).add("tm2");
         }
     }
 }

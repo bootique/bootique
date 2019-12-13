@@ -19,13 +19,14 @@
 
 package io.bootique;
 
-import com.google.inject.Binder;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
-import com.google.inject.multibindings.MapBinder;
-import com.google.inject.multibindings.Multibinder;
 
 import java.lang.annotation.Annotation;
+
+import io.bootique.di.Binder;
+import io.bootique.di.Key;
+import io.bootique.di.MapBuilder;
+import io.bootique.di.SetBuilder;
+import io.bootique.di.TypeLiteral;
 
 /**
  * An optional convenience superclass of Module extenders that defines a typical extender structure.
@@ -48,27 +49,33 @@ public abstract class ModuleExtender<T extends ModuleExtender<T>> {
      */
     public abstract T initAllExtensions();
 
-    protected <V> Multibinder<V> newSet(Class<V> elementType) {
-        return Multibinder.newSetBinder(binder, elementType);
+    protected <V> SetBuilder<V> newSet(Class<V> elementType) {
+        return binder.bindSet(elementType);
     }
 
-    protected <V> Multibinder<V> newSet(Class<V> elementType, Class<? extends Annotation> annotatedWith) {
-        return Multibinder.newSetBinder(binder, elementType, annotatedWith);
+    protected <V> SetBuilder<V> newSet(Class<V> elementType, Class<? extends Annotation> annotatedWith) {
+        return binder.bindSet(elementType, annotatedWith);
     }
 
-    protected <V> Multibinder<V> newSet(Key<V> diKey) {
-        return Multibinder.newSetBinder(binder, diKey);
+    protected <V> SetBuilder<V> newSet(Key<V> diKey) {
+        if(diKey.getBindingAnnotation() != null) {
+            return binder.bindSet(diKey.getType(), diKey.getBindingAnnotation());
+        } else if(diKey.getBindingName() != null) {
+            return binder.bindSet(diKey.getType(), diKey.getBindingName());
+        } else {
+            return binder.bindSet(diKey.getType());
+        }
     }
 
-    protected <K, V> MapBinder<K, V> newMap(Class<K> keyType, Class<V> elementType) {
-        return MapBinder.newMapBinder(binder, keyType, elementType);
+    protected <K, V> MapBuilder<K, V> newMap(Class<K> keyType, Class<V> elementType) {
+        return binder.bindMap(keyType, elementType);
     }
 
-    protected <K, V> MapBinder<K, V> newMap(TypeLiteral<K> keyType, TypeLiteral<V> elementType) {
-        return MapBinder.newMapBinder(binder, keyType, elementType);
+    protected <K, V> MapBuilder<K, V> newMap(TypeLiteral<K> keyType, TypeLiteral<V> elementType) {
+        return binder.bindMap(keyType, elementType);
     }
 
-    protected <K, V> MapBinder<K, V> newMap(Class<K> keyType, Class<V> elementType, Class<? extends Annotation> annotatedWith) {
-        return MapBinder.newMapBinder(binder, keyType, elementType, annotatedWith);
+    protected <K, V> MapBuilder<K, V> newMap(Class<K> keyType, Class<V> elementType, Class<? extends Annotation> annotatedWith) {
+        return binder.bindMap(keyType, elementType, annotatedWith);
     }
 }

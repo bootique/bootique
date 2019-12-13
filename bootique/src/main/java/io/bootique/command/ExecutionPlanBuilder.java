@@ -19,7 +19,6 @@
 
 package io.bootique.command;
 
-import com.google.inject.Provider;
 import io.bootique.cli.CliFactory;
 import io.bootique.log.BootLogger;
 
@@ -28,6 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
+import javax.inject.Provider;
 
 /**
  * Optionally decorates commands with the code to execute additional auxiliary commands if those are configured for

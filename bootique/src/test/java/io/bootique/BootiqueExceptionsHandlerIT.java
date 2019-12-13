@@ -19,20 +19,23 @@
 
 package io.bootique;
 
-import com.google.inject.Binder;
-import com.google.inject.Inject;
-import com.google.inject.Module;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandOutcome;
+import io.bootique.command.CommandWithMetadata;
 import io.bootique.config.ConfigurationFactory;
+import io.bootique.di.Binder;
+import io.bootique.di.BQModule;
+import io.bootique.di.Provides;
 import io.bootique.meta.application.CommandMetadata;
 import org.junit.Test;
 
 import java.util.Collection;
 import java.util.Collections;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.inject.Singleton;
 
 import static org.junit.Assert.*;
 
@@ -85,8 +88,9 @@ public class BootiqueExceptionsHandlerIT {
 
     @Test
     public void testConfig_FileNotFound() {
-        CommandOutcome out = Bootique.app("-c", "com/foo/no_such_config.yml")
-                .module(b -> b.bind(ConfigDependent.class).asEagerSingleton())
+        CommandOutcome out = Bootique.app("-c", "com/foo/no_such_config.yml", "-t")
+                .module(b -> b.bind(ConfigDependent.class))
+                .module(b -> BQCoreModule.extend(b).addCommand(TestCommand.class))
                 .exec();
 
         assertEquals(1, out.getExitCode());
@@ -97,8 +101,9 @@ public class BootiqueExceptionsHandlerIT {
 
     @Test
     public void testConfig_BadUrl() {
-        CommandOutcome out = Bootique.app("-c", "nosuchprotocol://myconfig")
-                .module(b -> b.bind(ConfigDependent.class).asEagerSingleton())
+        CommandOutcome out = Bootique.app("-c", "nosuchprotocol://myconfig", "-t")
+                .module(b -> b.bind(ConfigDependent.class))
+                .module(b -> BQCoreModule.extend(b).addCommand(TestCommand.class))
                 .exec();
 
         assertEquals(1, out.getExitCode());
@@ -109,8 +114,9 @@ public class BootiqueExceptionsHandlerIT {
     @Test
     public void testConfig_BadUrlProtocol() {
         // underscores in protocol name cause IllegalArgumentException in URI
-        CommandOutcome out = Bootique.app("-c", "no_such_protocol://myconfig")
-                .module(b -> b.bind(ConfigDependent.class).asEagerSingleton())
+        CommandOutcome out = Bootique.app("-c", "no_such_protocol://myconfig", "-t")
+                .module(b -> b.bind(ConfigDependent.class))
+                .module(b -> BQCoreModule.extend(b).addCommand(TestCommand.class))
                 .exec();
 
         assertEquals(1, out.getExitCode());
@@ -153,8 +159,8 @@ public class BootiqueExceptionsHandlerIT {
         final String outMessage = out.getMessage();
 
         assertTrue(
-            "Circular override dependency between DI modules: ModuleWithOverride2 -> ModuleWithOverride1 -> ModuleWithOverride2".equals(outMessage) ||
-                "Circular override dependency between DI modules: ModuleWithOverride1 -> ModuleWithOverride2 -> ModuleWithOverride1".equals(outMessage)
+            "Circular override dependency between DI modules: ModuleWithOverride2 -> ModuleWithOverride1".equals(outMessage) ||
+                "Circular override dependency between DI modules: ModuleWithOverride1 -> ModuleWithOverride2".equals(outMessage)
         );
     }
 
@@ -218,7 +224,23 @@ public class BootiqueExceptionsHandlerIT {
         }
     }
 
-    public static class ModuleWithProviderMethodBqException implements Module {
+    public static class TestCommand extends CommandWithMetadata {
+
+        @Inject
+        Provider<ConfigDependent> configDependent;
+
+        public TestCommand() {
+            super(CommandMetadata.builder("test"));
+        }
+
+        @Override
+        public CommandOutcome run(Cli cli) {
+            configDependent.get();
+            return CommandOutcome.succeeded();
+        }
+    }
+
+    public static class ModuleWithProviderMethodBqException implements BQModule {
 
         public static class MyCommand implements Command {
 
@@ -245,7 +267,7 @@ public class BootiqueExceptionsHandlerIT {
         }
     }
 
-    public static class ModuleWithProviderMethodNPException implements Module {
+    public static class ModuleWithProviderMethodNPException implements BQModule {
 
         public static class MyCommand implements Command {
 
@@ -274,7 +296,7 @@ public class BootiqueExceptionsHandlerIT {
 
     public static class ModuleProviderWithOverride1 implements BQModuleProvider {
 
-        public static class ModuleWithOverride1 implements Module {
+        public static class ModuleWithOverride1 implements BQModule {
             @Override
             public void configure(Binder binder) {
 
@@ -282,19 +304,19 @@ public class BootiqueExceptionsHandlerIT {
         }
 
         @Override
-        public Module module() {
+        public BQModule module() {
             return new ModuleWithOverride1();
         }
 
         @Override
-        public Collection<Class<? extends Module>> overrides() {
+        public Collection<Class<? extends BQModule>> overrides() {
             return Collections.singleton(ModuleProviderWithOverride2.ModuleWithOverride2.class);
         }
     }
 
     public static class ModuleProviderWithOverride2 implements BQModuleProvider {
 
-        public static class ModuleWithOverride2 implements Module {
+        public static class ModuleWithOverride2 implements BQModule {
             @Override
             public void configure(Binder binder) {
 
@@ -302,12 +324,12 @@ public class BootiqueExceptionsHandlerIT {
         }
 
         @Override
-        public Module module() {
+        public BQModule module() {
             return new ModuleWithOverride2();
         }
 
         @Override
-        public Collection<Class<? extends Module>> overrides() {
+        public Collection<Class<? extends BQModule>> overrides() {
             return Collections.singleton(ModuleProviderWithOverride1.ModuleWithOverride1.class);
         }
     }
@@ -315,13 +337,13 @@ public class BootiqueExceptionsHandlerIT {
     public static class CoreOverrideProvider1 implements BQModuleProvider {
 
         @Override
-        public Module module() {
+        public BQModule module() {
             return b -> {
             };
         }
 
         @Override
-        public Collection<Class<? extends Module>> overrides() {
+        public Collection<Class<? extends BQModule>> overrides() {
             return Collections.singleton(BQCoreModule.class);
         }
     }
@@ -329,13 +351,13 @@ public class BootiqueExceptionsHandlerIT {
     public static class CoreOverrideProvider2 implements BQModuleProvider {
 
         @Override
-        public Module module() {
+        public BQModule module() {
             return b -> {
             };
         }
 
         @Override
-        public Collection<Class<? extends Module>> overrides() {
+        public Collection<Class<? extends BQModule>> overrides() {
             return Collections.singleton(BQCoreModule.class);
         }
     }

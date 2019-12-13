@@ -20,10 +20,10 @@
 package io.bootique;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
 import io.bootique.cli.Cli;
 import io.bootique.config.ConfigurationSource;
+import io.bootique.di.Key;
+import io.bootique.di.TypeLiteral;
 import io.bootique.env.Environment;
 import io.bootique.jackson.JacksonService;
 import io.bootique.meta.application.OptionMetadata;

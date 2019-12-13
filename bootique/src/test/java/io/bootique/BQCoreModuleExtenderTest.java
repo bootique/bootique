@@ -19,15 +19,16 @@
 
 package io.bootique;
 
-import com.google.inject.Guice;
-import com.google.inject.Inject;
-import com.google.inject.Injector;
 import io.bootique.annotation.EnvironmentProperties;
+import io.bootique.di.DIBootstrap;
+import io.bootique.di.Injector;
 import io.bootique.meta.application.OptionMetadata;
 import org.junit.Test;
 
 import java.util.Map;
 import java.util.Set;
+
+import javax.inject.Inject;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -37,7 +38,7 @@ public class BQCoreModuleExtenderTest {
     @Test
     public void testSetProperties() {
 
-        Injector i = Guice.createInjector(b -> {
+        Injector i = DIBootstrap.createInjector(b -> {
 
             BQCoreModule.extend(b).setProperty("a", "b").setProperty("c", "d");
             b.bind(MapInspector.class);
@@ -54,7 +55,7 @@ public class BQCoreModuleExtenderTest {
         OptionMetadata o1 = OptionMetadata.builder("o1").build();
         OptionMetadata o2 = OptionMetadata.builder("o2").build();
 
-        Injector i = Guice.createInjector(b -> {
+        Injector i = DIBootstrap.createInjector(b -> {
             BQCoreModule.extend(b).addOptions(o1, o2);
 
             b.bind(OptionsInspector.class);

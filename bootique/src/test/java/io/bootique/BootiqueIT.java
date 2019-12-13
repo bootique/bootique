@@ -19,12 +19,12 @@
 
 package io.bootique;
 
-import com.google.inject.Injector;
-import com.google.inject.Key;
 import io.bootique.annotation.Args;
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandOutcome;
+import io.bootique.di.Injector;
+import io.bootique.di.Key;
 import io.bootique.it.ItestModuleProvider;
 import io.bootique.meta.application.CommandMetadata;
 import org.junit.Test;

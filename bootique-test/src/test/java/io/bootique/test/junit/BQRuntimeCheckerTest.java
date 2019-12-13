@@ -19,10 +19,10 @@
 
 package io.bootique.test.junit;
 
-import com.google.inject.Binder;
-import com.google.inject.Module;
 import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
+import io.bootique.di.Binder;
+import io.bootique.di.BQModule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -43,7 +43,7 @@ public class BQRuntimeCheckerTest {
         BQRuntimeChecker.testModulesLoaded(runtime, NonLoadedModule.class);
     }
 
-    static class NonLoadedModule implements Module {
+    static class NonLoadedModule implements BQModule {
 
         @Override
         public void configure(Binder binder) {

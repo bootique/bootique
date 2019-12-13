@@ -19,7 +19,8 @@
 
 package io.bootique.run;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
+
 import io.bootique.BQCoreModule;
 import io.bootique.cli.Cli;
 import io.bootique.command.CommandOutcome;

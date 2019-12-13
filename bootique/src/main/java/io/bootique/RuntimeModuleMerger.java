@@ -19,7 +19,7 @@
 
 package io.bootique;
 
-import com.google.inject.Module;
+import io.bootique.di.BQModule;
 import io.bootique.log.BootLogger;
 
 import java.util.*;
@@ -32,69 +32,48 @@ class RuntimeModuleMerger {
         this.bootLogger = bootLogger;
     }
 
-    Collection<Module> toGuiceModules(Collection<BQModule> bqModules) {
-        Collection<RuntimeModule> rtModules = collectUnique(bqModules);
-        rtModules.forEach(RuntimeModule::checkCycles);
-        return resolveGuiceModules(rtModules);
+    Collection<BQModule> toDIModules(Collection<BQModuleMetadata> bqModules) {
+        ModuleGraph moduleGraph = new ModuleGraph();
+        Map<Class<? extends BQModule>, BQModuleMetadata> moduleByClass = new HashMap<>();
+        bqModules.forEach(bqModule -> {
+            Class<? extends BQModule> moduleClass = bqModule.getModule().getClass();
+            moduleByClass.putIfAbsent(moduleClass, bqModule);
+            moduleGraph.add(bqModule);
+            if(bqModule.getOverrides().isEmpty()) {
+                bootLogger.trace(() -> traceMessage(bqModule, null));
+            }
+        });
+        bqModules.forEach(bqModule -> bqModule.getOverrides()
+                .forEach(override -> {
+                    BQModuleMetadata overrideModule = moduleByClass.get(override);
+                    moduleGraph.add(bqModule, overrideModule);
+                    bootLogger.trace(() -> traceMessage(bqModule, overrideModule));
+                }));
+
+        List<BQModule> modules = new ArrayList<>(moduleByClass.size());
+        moduleGraph.topSort().forEach(moduleClass -> modules.add(moduleClass.getModule()));
+        return modules;
     }
 
-    private Collection<Module> resolveGuiceModules(Collection<RuntimeModule> modules) {
+    private String traceMessage(BQModuleMetadata module, BQModuleMetadata overriddenBy) {
+        StringBuilder message = new StringBuilder("Loading module '")
+                .append(module.getName())
+                .append("'");
 
-        List<Module> resolved = new ArrayList<>();
-        for (RuntimeModule m : modules) {
-            if (m.isTop()) {
-                resolved.add(m.resolve());
-            }
+        String providerName = module.getProviderName();
+        boolean hasProvider = providerName != null && providerName.length() > 0;
+        if (hasProvider) {
+            message.append(" provided by '").append(providerName).append("'");
         }
 
-        return resolved;
-    }
-
-    private Collection<RuntimeModule> collectUnique(Collection<BQModule> bqModules) {
-
-        // TODO: looking up modules by java type limits the use of lambdas as modules. E.g. we loaded test
-        //  properties are dynamically created modules in a repeatedly called Lambda. This didn't work..
-        //  So perhaps use provider name as a unique key?
-
-        Map<Class<? extends Module>, RuntimeModule> map = new LinkedHashMap<>();
-
-        for (BQModule bqModule : bqModules) {
-
-            // TODO: we are not checking whether BQModule's overrides are present. Absent overrides will be skipped from
-            //  the tree analysis and creation of override modules. We've never seen a problem with that because standard
-            //  Bootique modules are auto-loaded (so if the module class is on classpath, there will be a BQModule).
-            //  But auto-loading is not a given...
-
-            RuntimeModule rm = new RuntimeModule(bqModule, bootLogger);
-
-            RuntimeModule existing = map.putIfAbsent(rm.getModuleType(), rm);
-            if (existing != null) {
-                bootLogger.trace(() -> String.format(
-                        "Skipping module '%s' provided by '%s' (already provided by '%s')...",
-                        rm.getModuleName(),
-                        rm.getProviderName(),
-                        existing.getProviderName()));
+        if (overriddenBy != null) {
+            if (hasProvider) {
+                message.append(",");
             }
+
+            message.append(" overridden by '").append(overriddenBy.getName()).append("'");
         }
 
-        calcOverrideGraph(map);
-
-        return map.values();
-    }
-
-    private void calcOverrideGraph(Map<Class<? extends Module>, RuntimeModule> modules) {
-
-        for (RuntimeModule rm : modules.values()) {
-
-            for (Class<? extends Module> override : rm.getBqModule().getOverrides()) {
-                RuntimeModule rmn = modules.get(override);
-                if (rmn != null) {
-                    rm.addOverridden(rmn);
-                }
-                // else:
-                // TODO: complain that the overridden module is not known (may happen when overriding modules
-                //   when auto-loading is not in effect
-            }
-        }
+        return message.toString();
     }
 }

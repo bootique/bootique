@@ -19,14 +19,14 @@
 
 package io.bootique;
 
-import com.google.inject.Module;
+import io.bootique.di.BQModule;
 
 /**
  * @since 0.10
  */
 public interface BQModuleOverrideBuilder<T> {
 
-	T with(Class<? extends Module> moduleType);
+	T with(Class<? extends BQModule> moduleType);
 
 	/**
 	 * @since 0.12
@@ -34,5 +34,5 @@ public interface BQModuleOverrideBuilder<T> {
 	 *            overrding Module.
 	 * @return {@link Bootique} instance we are configuring.
 	 */
-	T with(Module module);
+	T with(BQModule module);
 }

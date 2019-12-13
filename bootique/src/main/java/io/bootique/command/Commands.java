@@ -19,17 +19,15 @@
 
 package io.bootique.command;
 
-import com.google.inject.Binder;
-import com.google.inject.Binding;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.Module;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import com.google.inject.multibindings.Multibinder;
+import io.bootique.annotation.DefaultCommand;
 import io.bootique.BQCoreModule;
 import io.bootique.BQModuleProvider;
-import io.bootique.annotation.DefaultCommand;
+import io.bootique.di.Binder;
+import io.bootique.di.Injector;
+import io.bootique.di.Key;
+import io.bootique.di.BQModule;
+import io.bootique.di.Provides;
+import io.bootique.di.SetBuilder;
 import io.bootique.help.HelpCommand;
 import io.bootique.log.BootLogger;
 
@@ -38,13 +36,15 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import javax.inject.Provider;
+import javax.inject.Singleton;
 
 /**
  * A helper to build a non-standard command set in an app.
  *
  * @since 0.12
  */
-public class Commands implements Module {
+public class Commands implements BQModule {
 
     private Collection<Class<? extends Command>> commandTypes;
     private Collection<Command> commands;
@@ -55,8 +55,8 @@ public class Commands implements Module {
         this.commands = new HashSet<>();
     }
 
-    static Multibinder<Command> contributeExtraCommands(Binder binder) {
-        return Multibinder.newSetBinder(binder, Command.class, ExtraCommands.class);
+    static SetBuilder<Command> contributeExtraCommands(Binder binder) {
+        return binder.bindSet(Command.class, ExtraCommands.class);
     }
 
     @SafeVarargs
@@ -67,15 +67,19 @@ public class Commands implements Module {
     // copy/paste from BQCoreModule
     private static Optional<Command> defaultCommand(Injector injector) {
         // default is optional, so check via injector whether it is bound...
-        Binding<Command> binding = injector.getExistingBinding(Key.get(Command.class, DefaultCommand.class));
-        return binding != null ? Optional.of(binding.getProvider().get()) : Optional.empty();
+        Key<Command> key = Key.get(Command.class, DefaultCommand.class);
+        if(injector.hasProvider(key)) {
+            Provider<Command> commandProvider = injector.getProvider(key);
+            return Optional.of(commandProvider.get());
+        }
+        return Optional.empty();
     }
 
     @Override
     public void configure(Binder binder) {
-        Multibinder<Command> extraCommandsBinder = Commands.contributeExtraCommands(binder);
-        commandTypes.forEach(ct -> extraCommandsBinder.addBinding().to(ct));
-        commands.forEach(c -> extraCommandsBinder.addBinding().toInstance(c));
+        SetBuilder<Command> extraCommandsBinder = Commands.contributeExtraCommands(binder);
+        commandTypes.forEach(extraCommandsBinder::add);
+        commands.forEach(extraCommandsBinder::add);
     }
 
     @Provides
@@ -107,12 +111,12 @@ public class Commands implements Module {
             return new BQModuleProvider() {
 
                 @Override
-                public Module module() {
+                public BQModule module() {
                     return commands;
                 }
 
                 @Override
-                public Collection<Class<? extends Module>> overrides() {
+                public Collection<Class<? extends BQModule>> overrides() {
                     return Collections.singleton(BQCoreModule.class);
                 }
 

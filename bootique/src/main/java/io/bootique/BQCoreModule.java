@@ -19,14 +19,6 @@
 
 package io.bootique;
 
-import com.google.inject.Binder;
-import com.google.inject.Binding;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.Module;
-import com.google.inject.Provider;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
 import io.bootique.annotation.Args;
 import io.bootique.annotation.DIConfigs;
 import io.bootique.annotation.DefaultCommand;
@@ -46,6 +38,11 @@ import io.bootique.config.ConfigurationFactory;
 import io.bootique.config.ConfigurationSource;
 import io.bootique.config.PolymorphicConfiguration;
 import io.bootique.config.TypesFactory;
+import io.bootique.di.Binder;
+import io.bootique.di.Injector;
+import io.bootique.di.Key;
+import io.bootique.di.BQModule;
+import io.bootique.di.Provides;
 import io.bootique.env.DeclaredVariable;
 import io.bootique.env.DefaultEnvironment;
 import io.bootique.env.Environment;
@@ -86,13 +83,15 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;
+import javax.inject.Provider;
+import javax.inject.Singleton;
 
 /**
- * The main {@link Module} of Bootique DI runtime. Declares a minimal set of
+ * The main {@link BQModule} of Bootique DI runtime. Declares a minimal set of
  * services needed for a Bootique app to start: services for parsing command
  * line, reading configuration, selectign and running a Command.
  */
-public class BQCoreModule implements Module {
+public class BQCoreModule implements BQModule {
 
     // TODO: duplicate of FormattedAppender.MIN_LINE_WIDTH
     private static final int TTY_MIN_COLUMNS = 40;
@@ -106,7 +105,7 @@ public class BQCoreModule implements Module {
     private String[] args;
     private ShutdownManager shutdownManager;
     private BootLogger bootLogger;
-    private Supplier<Collection<BQModule>> modulesSource;
+    private Supplier<Collection<BQModuleMetadata>> modulesSource;
 
     private BQCoreModule() {
     }
@@ -135,8 +134,12 @@ public class BQCoreModule implements Module {
 
     private static Optional<Command> defaultCommand(Injector injector) {
         // default is optional, so check via injector whether it is bound...
-        Binding<Command> binding = injector.getExistingBinding(Key.get(Command.class, DefaultCommand.class));
-        return binding != null ? Optional.of(binding.getProvider().get()) : Optional.empty();
+        Key<Command> key = Key.get(Command.class, DefaultCommand.class);
+        if(injector.hasProvider(key)) {
+            Provider<Command> commandProvider = injector.getProvider(key);
+            return Optional.of(commandProvider.get());
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -151,11 +154,11 @@ public class BQCoreModule implements Module {
         // bind instances
         binder.bind(BootLogger.class).toInstance(Objects.requireNonNull(bootLogger));
         binder.bind(ShutdownManager.class).toInstance(Objects.requireNonNull(shutdownManager));
-        binder.bind(String[].class).annotatedWith(Args.class).toInstance(Objects.requireNonNull(args));
+        binder.bind(String[].class, Args.class).toInstance(Objects.requireNonNull(args));
 
         // too much code to create config factory.. extracting it in a provider
         // class...
-        binder.bind(ConfigurationFactory.class).toProvider(JsonNodeConfigurationFactoryProvider.class).in(Singleton.class);
+        binder.bind(ConfigurationFactory.class).toProvider(JsonNodeConfigurationFactoryProvider.class).inSingletonScope();
     }
 
     OptionMetadata createConfigOption() {
@@ -230,7 +233,7 @@ public class BQCoreModule implements Module {
 
         Provider<ExecutorService> executorProvider = () -> {
             ExecutorService service = Executors.newCachedThreadPool(new CommandDispatchThreadFactory());
-            shutdownManager.addShutdownHook(() -> service.shutdownNow());
+            shutdownManager.addShutdownHook(service::shutdownNow);
             return service;
         };
 
@@ -288,7 +291,7 @@ public class BQCoreModule implements Module {
 
         ConfigMetadataCompiler configCompiler =
                 new ConfigMetadataCompiler(hierarchyResolver::directSubclasses, valueObjectDescriptors);
-        Collection<BQModule> modules = this.modulesSource != null
+        Collection<BQModuleMetadata> modules = this.modulesSource != null
                 ? modulesSource.get()
                 : Collections.emptyList();
         return new ModulesMetadataCompiler(configCompiler).compile(modules);
@@ -393,7 +396,7 @@ public class BQCoreModule implements Module {
          * @return this builder instance.
          * @since 0.21
          */
-        public Builder moduleSource(Supplier<Collection<BQModule>> modulesSource) {
+        public Builder moduleSource(Supplier<Collection<BQModuleMetadata>> modulesSource) {
             module.modulesSource = modulesSource;
             return this;
         }

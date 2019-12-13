@@ -23,12 +23,12 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-class DeferredModulesSource implements Supplier<Collection<BQModule>> {
+class DeferredModulesSource implements Supplier<Collection<BQModuleMetadata>> {
 
-    private Collection<BQModule> modules;
+    private Collection<BQModuleMetadata> modules;
 
     @Override
-    public Collection<BQModule> get() {
+    public Collection<BQModuleMetadata> get() {
 
         if (modules == null) {
             throw new IllegalStateException("DeferredModuleMetadataSupplier is not initialized");
@@ -38,7 +38,7 @@ class DeferredModulesSource implements Supplier<Collection<BQModule>> {
     }
 
     // this method must be called exactly once before 'get' can be invoked....
-    void init(Collection<BQModule> modules) {
+    void init(Collection<BQModuleMetadata> modules) {
 
         if (this.modules != null) {
             throw new IllegalStateException("DeferredModuleMetadataSupplier is already initialized");

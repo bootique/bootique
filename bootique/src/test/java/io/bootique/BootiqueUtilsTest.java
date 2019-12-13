@@ -66,8 +66,11 @@ public class BootiqueUtilsTest {
         assertEquals(3, bqModuleProviders.size());
 
         verify(testModuleProvider1, new AtLeast(1)).dependencies();
+        verify(testModuleProvider1, new AtLeast(1)).name();
         verify(testModuleProvider2, new AtLeast(1)).dependencies();
+        verify(testModuleProvider2, new AtLeast(1)).name();
         verify(testModuleProvider3, new AtLeast(1)).dependencies();
+        verify(testModuleProvider3, new AtLeast(1)).name();
 
         verifyNoMoreInteractions(testModuleProvider1, testModuleProvider2, testModuleProvider3);
     }
@@ -88,8 +91,11 @@ public class BootiqueUtilsTest {
         assertEquals(3, bqModuleProviders.size());
 
         verify(testModuleProvider1, new AtLeast(1)).dependencies();
+        verify(testModuleProvider1, new AtLeast(1)).name();
         verify(testModuleProvider2, new AtLeast(1)).dependencies();
+        verify(testModuleProvider2, new AtLeast(1)).name();
         verify(testModuleProvider3, new AtLeast(1)).dependencies();
+        verify(testModuleProvider3, new AtLeast(1)).name();
 
         verifyNoMoreInteractions(testModuleProvider1, testModuleProvider2, testModuleProvider3);
     }
@@ -111,8 +117,11 @@ public class BootiqueUtilsTest {
         assertEquals(3, bqModuleProviders.size());
 
         verify(testModuleProvider1, new AtLeast(1)).dependencies();
+        verify(testModuleProvider1, new AtLeast(1)).name();
         verify(testModuleProvider2, new AtLeast(1)).dependencies();
+        verify(testModuleProvider2, new AtLeast(1)).name();
         verify(testModuleProvider3, new AtLeast(1)).dependencies();
+        verify(testModuleProvider3, new AtLeast(1)).name();
 
         verifyNoMoreInteractions(testModuleProvider1, testModuleProvider2, testModuleProvider3);
     }

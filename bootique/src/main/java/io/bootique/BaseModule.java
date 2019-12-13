@@ -18,7 +18,7 @@
  */
 package io.bootique;
 
-import com.google.inject.Module;
+import io.bootique.di.BQModule;
 
 /**
  * A superclass of modules that combines functionality of a DI module with that of a module provider. For most modules
@@ -38,7 +38,7 @@ public abstract class BaseModule extends ConfigModule implements BQModuleProvide
     }
 
     @Override
-    public Module module() {
+    public BQModule module() {
         return this;
     }
 }

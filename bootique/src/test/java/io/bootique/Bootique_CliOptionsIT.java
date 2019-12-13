@@ -19,12 +19,12 @@
 
 package io.bootique;
 
-import com.google.inject.ProvisionException;
 import io.bootique.cli.Cli;
 import io.bootique.command.CommandOutcome;
 import io.bootique.command.CommandWithMetadata;
 import io.bootique.config.CliConfigurationSource;
 import io.bootique.config.ConfigurationFactory;
+import io.bootique.di.DIRuntimeException;
 import io.bootique.meta.application.CommandMetadata;
 import io.bootique.meta.application.OptionMetadata;
 import io.bootique.run.Runner;
@@ -85,7 +85,7 @@ public class Bootique_CliOptionsIT {
         assertFalse(runtime.getInstance(Cli.class).hasOption("o2"));
     }
 
-    @Test(expected = ProvisionException.class)
+    @Test(expected = DIRuntimeException.class)
     public void testNameConflict_TwoOptions() {
         runtimeFactory.app()
                 .module(b -> BQCoreModule.extend(b)
@@ -96,7 +96,7 @@ public class Bootique_CliOptionsIT {
                 .run();
     }
 
-    @Test(expected = ProvisionException.class)
+    @Test(expected = DIRuntimeException.class)
     public void testNameConflict_TwoCommands() {
         runtimeFactory.app()
                 .module(b -> BQCoreModule.extend(b)
@@ -108,7 +108,7 @@ public class Bootique_CliOptionsIT {
 
     // TODO: ignoring this test for now. There is a bug in JOpt 5.0.3...
     //       JOpt should detect conflicting options and throw an exception. Instead JOpts triggers second option.
-    @Test(expected = ProvisionException.class)
+    @Test(expected = DIRuntimeException.class)
     @Ignore
     public void testOverlappingOptions_Short() {
         BQRuntime runtime = runtimeFactory.app("-o")
@@ -133,7 +133,7 @@ public class Bootique_CliOptionsIT {
         assertTrue(runtime.getInstance(Cli.class).hasOption("xd"));
     }
 
-    @Test(expected = ProvisionException.class)
+    @Test(expected = DIRuntimeException.class)
     public void testCommand_IllegalShort() {
         BQRuntime runtime = runtimeFactory.app("-x")
                 .module(b -> BQCoreModule.extend(b).addCommand(XaCommand.class))
@@ -149,7 +149,7 @@ public class Bootique_CliOptionsIT {
         assertTrue(runtime.getInstance(Cli.class).hasOption("xa"));
     }
 
-    @Test(expected = ProvisionException.class)
+    @Test(expected = DIRuntimeException.class)
     public void testOverlappingCommands_IllegalShort() {
         BQRuntime runtime = runtimeFactory.app("-x")
                 .module(b -> BQCoreModule.extend(b).addCommand(XaCommand.class).addCommand(XbCommand.class))
@@ -157,7 +157,7 @@ public class Bootique_CliOptionsIT {
         runtime.getInstance(Cli.class);
     }
 
-    @Test(expected = ProvisionException.class)
+    @Test(expected = DIRuntimeException.class)
     public void testIllegalAbbreviation() {
         BQRuntime runtime = runtimeFactory.app("--xc")
                 .module(b -> BQCoreModule.extend(b).addCommand(XccCommand.class))
@@ -275,7 +275,7 @@ public class Bootique_CliOptionsIT {
         assertEquals(3, bean1.c.m.k);
     }
 
-    @Test(expected = ProvisionException.class)
+    @Test(expected = DIRuntimeException.class)
     public void testOptionWithNotMappedConfigPath() {
         BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--opt-1=x")
                 .module(binder -> BQCoreModule.extend(binder)

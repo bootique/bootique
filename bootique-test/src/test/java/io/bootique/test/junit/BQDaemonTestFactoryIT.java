@@ -19,7 +19,8 @@
 
 package io.bootique.test.junit;
 
-import com.google.inject.Inject;
+import javax.inject.Inject;
+
 import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
 import io.bootique.BootiqueException;

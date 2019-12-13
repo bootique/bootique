@@ -19,9 +19,9 @@
 
 package io.bootique;
 
-import com.google.inject.Binder;
-import com.google.inject.Module;
 import io.bootique.config.ConfigurationFactory;
+import io.bootique.di.Binder;
+import io.bootique.di.BQModule;
 import io.bootique.names.ClassToName;
 import io.bootique.type.TypeRef;
 
@@ -36,7 +36,7 @@ import java.util.Objects;
  * @see BaseModule
  * @since 0.9
  */
-public abstract class ConfigModule implements Module {
+public abstract class ConfigModule implements BQModule {
 
     protected static ClassToName CONFIG_PREFIX_BUILDER = ClassToName
             .builder()

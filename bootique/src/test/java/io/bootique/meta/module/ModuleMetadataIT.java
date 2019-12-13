@@ -19,11 +19,11 @@
 
 package io.bootique.meta.module;
 
-import com.google.inject.Binder;
-import com.google.inject.Module;
-import io.bootique.BQModule;
+import io.bootique.BQModuleMetadata;
 import io.bootique.BQModuleProvider;
 import io.bootique.BQRuntime;
+import io.bootique.di.Binder;
+import io.bootique.di.BQModule;
 import io.bootique.unit.BQInternalTestFactory;
 import org.junit.Rule;
 import org.junit.Test;
@@ -67,13 +67,13 @@ public class ModuleMetadataIT {
     public void testCustomNamedModule() {
         BQRuntime runtime = runtimeFactory.app().module(new BQModuleProvider() {
             @Override
-            public Module module() {
+            public BQModule module() {
                 return b -> {
                 };
             }
 
             @Override
-            public BQModule.Builder moduleBuilder() {
+            public BQModuleMetadata.Builder moduleBuilder() {
                 return BQModuleProvider.super
                         .moduleBuilder()
                         .name("mymodule");
@@ -108,12 +108,12 @@ public class ModuleMetadataIT {
     static class M1Provider implements BQModuleProvider {
 
         @Override
-        public Module module() {
+        public BQModule module() {
             return new M1Module();
         }
     }
 
-    static class M1Module implements Module {
+    static class M1Module implements BQModule {
         @Override
         public void configure(Binder binder) {
         }

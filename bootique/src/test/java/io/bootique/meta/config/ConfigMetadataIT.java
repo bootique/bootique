@@ -19,13 +19,13 @@
 
 package io.bootique.meta.config;
 
-import com.google.inject.Module;
-import io.bootique.BQModule;
+import io.bootique.BQModuleMetadata;
 import io.bootique.BQModuleProvider;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
+import io.bootique.di.BQModule;
 import io.bootique.help.ConsoleAppender;
 import io.bootique.help.ValueObjectDescriptor;
 import io.bootique.help.config.ConfigSectionMapGenerator;
@@ -58,8 +58,8 @@ public class ConfigMetadataIT {
     public void testSingleConfig() {
         BQRuntime runtime = runtimeFactory.app().module(new BQModuleProvider() {
             @Override
-            public Module module() {
-                return Mockito.mock(Module.class);
+            public BQModule module() {
+                return Mockito.mock(BQModule.class);
             }
 
             @Override
@@ -68,7 +68,7 @@ public class ConfigMetadataIT {
             }
 
             @Override
-            public BQModule.Builder moduleBuilder() {
+            public BQModuleMetadata.Builder moduleBuilder() {
                 return BQModuleProvider.super
                         .moduleBuilder()
                         .name("my");
@@ -112,8 +112,8 @@ public class ConfigMetadataIT {
     public void testRecursiveConfig() {
         BQRuntime runtime = runtimeFactory.app().module(new BQModuleProvider() {
             @Override
-            public Module module() {
-                return Mockito.mock(Module.class);
+            public BQModule module() {
+                return Mockito.mock(BQModule.class);
             }
 
             @Override
@@ -122,7 +122,7 @@ public class ConfigMetadataIT {
             }
 
             @Override
-            public BQModule.Builder moduleBuilder() {
+            public BQModuleMetadata.Builder moduleBuilder() {
                 return BQModuleProvider.super
                         .moduleBuilder()
                         .name("my");
@@ -176,8 +176,8 @@ public class ConfigMetadataIT {
                 .addValueObjectsDescriptor(TestVO.class, new ValueObjectDescriptor("Test Value Object"))
                 .module(new BQModuleProvider() {
             @Override
-            public Module module() {
-                return Mockito.mock(Module.class);
+            public BQModule module() {
+                return Mockito.mock(BQModule.class);
             }
 
             @Override
@@ -186,7 +186,7 @@ public class ConfigMetadataIT {
             }
 
             @Override
-            public BQModule.Builder moduleBuilder() {
+            public BQModuleMetadata.Builder moduleBuilder() {
                 return BQModuleProvider.super
                         .moduleBuilder()
                         .name("my");

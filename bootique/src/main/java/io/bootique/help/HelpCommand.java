@@ -19,7 +19,8 @@
 
 package io.bootique.help;
 
-import com.google.inject.Provider;
+import javax.inject.Provider;
+
 import io.bootique.meta.application.CommandMetadata;
 import io.bootique.cli.Cli;
 import io.bootique.command.CommandOutcome;

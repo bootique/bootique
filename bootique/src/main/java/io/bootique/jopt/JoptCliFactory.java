@@ -19,7 +19,6 @@
 
 package io.bootique.jopt;
 
-import com.google.inject.Provider;
 import io.bootique.BootiqueException;
 import io.bootique.cli.Cli;
 import io.bootique.cli.CliFactory;
@@ -37,7 +36,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import javax.inject.Provider;
 
 import static java.util.Arrays.asList;
 

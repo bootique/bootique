@@ -19,7 +19,7 @@
 
 package io.bootique;
 
-import com.google.inject.Module;
+import io.bootique.di.BQModule;
 
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -37,21 +37,21 @@ import java.util.Map;
 public interface BQModuleProvider {
 
     /**
-     * Returns a Guice module specific to this provider.
+     * Returns a DI module specific to this provider.
      *
-     * @return an instance of a Guice Module specific to this provider.
+     * @return an instance of a DI Module specific to this provider.
      */
-    Module module();
+    BQModule module();
 
     /**
-     * Returns a new instance of {@link io.bootique.BQModule.Builder} initialized with module for this provider.
+     * Returns a new instance of {@link BQModuleMetadata.Builder} initialized with module for this provider.
      * Subclasses can invoke extra builder methods to provide metadata, etc.
      *
-     * @return a new instance of {@link BQModule} specific to this provider.
+     * @return a new instance of {@link BQModuleMetadata} specific to this provider.
      * @since 0.21
      */
-    default BQModule.Builder moduleBuilder() {
-        return BQModule
+    default BQModuleMetadata.Builder moduleBuilder() {
+        return BQModuleMetadata
                 .builder(module())
                 .overrides(overrides())
                 .providerName(name())
@@ -78,7 +78,7 @@ public interface BQModuleProvider {
      * Module created by this provider.
      * @since 0.10
      */
-    default Collection<Class<? extends Module>> overrides() {
+    default Collection<Class<? extends BQModule>> overrides() {
         return Collections.emptyList();
     }
 

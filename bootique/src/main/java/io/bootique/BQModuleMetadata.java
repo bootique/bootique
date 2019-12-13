@@ -19,7 +19,7 @@
 
 package io.bootique;
 
-import com.google.inject.Module;
+import io.bootique.di.BQModule;
 import io.bootique.names.ClassToName;
 
 import java.lang.reflect.Type;
@@ -28,32 +28,33 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * A thin wrapper around Guice DI module that helps Bootique to extract module metadata and override dependencies.
+ * A thin wrapper around Bootique DI module that helps Bootique to extract module metadata and override dependencies.
  *
  * @since 0.21
+ * @since 2.0 renamed from BQModule to BQModuleMetadata
  */
-public class BQModule {
+public class BQModuleMetadata {
 
     // for now module names are simple class names... maybe change this to use Maven module names?
     protected static ClassToName MODULE_NAME_BUILDER = ClassToName
             .builder()
             .build();
 
-    private Module module;
+    private BQModule module;
     private String name;
     private String description;
     private String providerName;
-    private Collection<Class<? extends Module>> overrides;
+    private Collection<Class<? extends BQModule>> overrides;
     private Map<String, Type> configs;
 
-    private BQModule() {
+    private BQModuleMetadata() {
     }
 
-    public static Builder builder(Module module) {
+    public static Builder builder(BQModule module) {
         return new Builder(module);
     }
 
-    public Module getModule() {
+    public BQModule getModule() {
         return module;
     }
 
@@ -69,7 +70,7 @@ public class BQModule {
         return providerName;
     }
 
-    public Collection<Class<? extends Module>> getOverrides() {
+    public Collection<Class<? extends BQModule>> getOverrides() {
         return overrides;
     }
 
@@ -78,14 +79,14 @@ public class BQModule {
     }
 
     public static class Builder {
-        private BQModule module;
+        private BQModuleMetadata module;
 
-        private Builder(Module module) {
-            this.module = new BQModule();
+        private Builder(BQModule module) {
+            this.module = new BQModuleMetadata();
             this.module.module = Objects.requireNonNull(module);
         }
 
-        public BQModule build() {
+        public BQModuleMetadata build() {
 
             if(module.name == null) {
                 module.name = MODULE_NAME_BUILDER.toName(module.module.getClass());
@@ -109,7 +110,7 @@ public class BQModule {
             return this;
         }
 
-        public Builder overrides(Collection<Class<? extends Module>> overrides) {
+        public Builder overrides(Collection<Class<? extends BQModule>> overrides) {
             module.overrides = overrides;
             return this;
         }

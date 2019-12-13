@@ -19,7 +19,6 @@
 
 package io.bootique.command;
 
-import com.google.inject.Provider;
 import io.bootique.BootiqueException;
 import io.bootique.cli.Cli;
 import io.bootique.cli.CliFactory;
@@ -33,6 +32,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
+import javax.inject.Provider;
 
 /**
  * A composite command made of the main command and auxiliary commands run before the main command or in parallel with it.

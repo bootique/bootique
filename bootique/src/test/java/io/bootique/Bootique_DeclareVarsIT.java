@@ -19,10 +19,10 @@
 
 package io.bootique;
 
-import com.google.inject.Module;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.cli.Cli;
+import io.bootique.di.BQModule;
 import io.bootique.help.HelpCommand;
 import io.bootique.log.BootLogger;
 import io.bootique.log.DefaultBootLogger;
@@ -54,7 +54,7 @@ public class Bootique_DeclareVarsIT {
 
         BQModuleProvider configurableProvider = new BQModuleProvider() {
             @Override
-            public Module module() {
+            public BQModule module() {
                 return b -> {
                 };
             }
@@ -90,7 +90,7 @@ public class Bootique_DeclareVarsIT {
 
         BQModuleProvider configurableProvider = new BQModuleProvider() {
             @Override
-            public Module module() {
+            public BQModule module() {
                 return b -> {
                 };
             }
@@ -126,7 +126,7 @@ public class Bootique_DeclareVarsIT {
 
         BQModuleProvider configurableProvider = new BQModuleProvider() {
             @Override
-            public Module module() {
+            public BQModule module() {
                 return b -> {
                 };
             }

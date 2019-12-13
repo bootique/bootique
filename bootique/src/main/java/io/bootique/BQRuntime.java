@@ -19,11 +19,10 @@
 
 package io.bootique;
 
-import com.google.inject.Binding;
-import com.google.inject.Injector;
-import com.google.inject.Key;
 import io.bootique.annotation.Args;
 import io.bootique.command.CommandOutcome;
+import io.bootique.di.Injector;
+import io.bootique.di.Key;
 import io.bootique.log.BootLogger;
 import io.bootique.run.Runner;
 import io.bootique.shutdown.ShutdownManager;
@@ -61,14 +60,11 @@ public class BQRuntime {
      * @return a DI-bound instance of a given type.
      * @since 0.23
      */
-    // TODO: Guice API is exposed directly... bad
     public <T> T getInstance(Key<T> diKey) {
-        Binding<T> binding = injector.getExistingBinding(diKey);
-
-        // note that Guice default behavior is to attempt creating a binding on
-        // the fly, if there's no explicit one available. We are overriding this
-        // behavior.
-        return Objects.requireNonNull(binding, "No binding for key: " + diKey).getProvider().get();
+        if(!injector.hasProvider(diKey)) {
+            throw new NullPointerException("No binding for key: " + diKey);
+        }
+        return injector.getProvider(diKey).get();
     }
 
     public BootLogger getBootLogger() {

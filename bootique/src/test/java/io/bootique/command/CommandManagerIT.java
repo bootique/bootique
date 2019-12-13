@@ -19,11 +19,11 @@
 
 package io.bootique.command;
 
-import com.google.inject.Binder;
-import com.google.inject.Module;
 import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
 import io.bootique.cli.Cli;
+import io.bootique.di.Binder;
+import io.bootique.di.BQModule;
 import io.bootique.help.HelpCommand;
 import io.bootique.meta.application.CommandMetadata;
 import io.bootique.unit.BQInternalTestFactory;
@@ -60,7 +60,7 @@ public class CommandManagerIT {
     public void testDefaultAndHelpAndModuleCommands() {
 
         Command defaultCommand = cli -> CommandOutcome.succeeded();
-        Module defaultCommandModule = binder -> BQCoreModule.extend(binder).setDefaultCommand(defaultCommand);
+        BQModule defaultCommandModule = binder -> BQCoreModule.extend(binder).setDefaultCommand(defaultCommand);
 
         BQRuntime runtime = runtimeFactory.app().modules(M0.class, M1.class).module(defaultCommandModule).createRuntime();
 
@@ -117,7 +117,7 @@ public class CommandManagerIT {
             }
         };
 
-        Module defaultCommandModule = binder -> BQCoreModule.extend(binder).setDefaultCommand(defaultCommand);
+        BQModule defaultCommandModule = binder -> BQCoreModule.extend(binder).setDefaultCommand(defaultCommand);
 
         BQRuntime runtime = runtimeFactory.app()
                 .modules(M0.class, M1.class)
@@ -139,7 +139,7 @@ public class CommandManagerIT {
     }
 
 
-    public static class M0 implements Module {
+    public static class M0 implements BQModule {
 
         static final Command mockCommand;
 
@@ -154,7 +154,7 @@ public class CommandManagerIT {
         }
     }
 
-    public static class M1 implements Module {
+    public static class M1 implements BQModule {
 
         static final Command mockCommand;
 

@@ -19,11 +19,11 @@
 
 package io.bootique.test.junit;
 
-import com.google.inject.Module;
 import io.bootique.BQCoreModule;
 import io.bootique.BQModuleOverrideBuilder;
 import io.bootique.BQModuleProvider;
 import io.bootique.Bootique;
+import io.bootique.di.BQModule;
 import io.bootique.log.BootLogger;
 
 import java.util.Collection;
@@ -62,7 +62,7 @@ public abstract class BQTestRuntimeBuilder<T extends BQTestRuntimeBuilder<T>> {
         return new BQModuleProvider() {
 
             @Override
-            public Module module() {
+            public BQModule module() {
                 return binder -> BQCoreModule.extend(binder).setProperties(properties);
             }
 
@@ -122,21 +122,21 @@ public abstract class BQTestRuntimeBuilder<T extends BQTestRuntimeBuilder<T>> {
      * @return this instance of test runtime builder.
      * @see #autoLoadModules()
      */
-    public T module(Class<? extends Module> moduleType) {
+    public T module(Class<? extends BQModule> moduleType) {
         bootique.module(moduleType);
         return (T) this;
     }
 
     /**
      * Adds an array of Module types to the Bootique DI runtime. Each type will
-     * be instantiated by Bootique and added to the Guice DI container.
+     * be instantiated by Bootique and added to the DI container.
      *
      * @param moduleTypes custom Module classes to add to Bootique DI runtime.
      * @return this instance of test runtime builder.
      * @see #autoLoadModules()
      */
     @SafeVarargs
-    public final T modules(Class<? extends Module>... moduleTypes) {
+    public final T modules(Class<? extends BQModule>... moduleTypes) {
         bootique.modules(moduleTypes);
         return (T) this;
     }
@@ -145,7 +145,7 @@ public abstract class BQTestRuntimeBuilder<T extends BQTestRuntimeBuilder<T>> {
      * @param m a module to add to the test runtime.
      * @return this instance of test runtime builder.
      */
-    public T module(Module m) {
+    public T module(BQModule m) {
         bootique.module(m);
         return (T) this;
     }
@@ -156,7 +156,7 @@ public abstract class BQTestRuntimeBuilder<T extends BQTestRuntimeBuilder<T>> {
      * @param modules an array of modules to add to Bootiqie DI runtime.
      * @return this instance of test runtime builder.
      */
-    public T modules(Module... modules) {
+    public T modules(BQModule... modules) {
         bootique.modules(modules);
         return (T) this;
     }
@@ -180,19 +180,19 @@ public abstract class BQTestRuntimeBuilder<T extends BQTestRuntimeBuilder<T>> {
      * @return {@link BQModuleOverrideBuilder} object to specify a Module
      * overriding other modules.
      */
-    public BQModuleOverrideBuilder<T> override(Class<? extends Module>... overriddenTypes) {
+    public BQModuleOverrideBuilder<T> override(Class<? extends BQModule>... overriddenTypes) {
 
         BQModuleOverrideBuilder<Bootique> subBuilder = bootique.override(overriddenTypes);
         return new BQModuleOverrideBuilder<T>() {
 
             @Override
-            public T with(Class<? extends Module> moduleType) {
+            public T with(Class<? extends BQModule> moduleType) {
                 subBuilder.with(moduleType);
                 return (T) BQTestRuntimeBuilder.this;
             }
 
             @Override
-            public T with(Module module) {
+            public T with(BQModule module) {
                 subBuilder.with(module);
                 return (T) BQTestRuntimeBuilder.this;
             }

@@ -19,10 +19,10 @@
 
 package io.bootique.it;
 
-import com.google.inject.Binder;
-import com.google.inject.Module;
+import io.bootique.di.Binder;
+import io.bootique.di.BQModule;
 
-public class ItestModule implements Module {
+public class ItestModule implements BQModule {
 
 	@Override
 	public void configure(Binder binder) {

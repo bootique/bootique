@@ -18,14 +18,12 @@
  */
 package io.bootique;
 
-import com.google.inject.Binder;
-import com.google.inject.BindingAnnotation;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.Module;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
 import io.bootique.annotation.Args;
+import io.bootique.di.Binder;
+import io.bootique.di.Injector;
+import io.bootique.di.Key;
+import io.bootique.di.BQModule;
+import io.bootique.di.Provides;
 import org.junit.Test;
 
 import java.lang.annotation.ElementType;
@@ -34,6 +32,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Collection;
 import java.util.Collections;
+
+import javax.inject.Qualifier;
+import javax.inject.Singleton;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
@@ -69,12 +70,12 @@ public class Bootique_ModuleOverridesIT {
         BQModuleProvider provider = new BQModuleProvider() {
 
             @Override
-            public Module module() {
+            public BQModule module() {
                 return new M0();
             }
 
             @Override
-            public Collection<Class<? extends Module>> overrides() {
+            public Collection<Class<? extends BQModule>> overrides() {
                 return Collections.singleton(BQCoreModule.class);
             }
         };
@@ -177,53 +178,53 @@ public class Bootique_ModuleOverridesIT {
 
     @Target({ElementType.PARAMETER, ElementType.FIELD, ElementType.METHOD})
     @Retention(RetentionPolicy.RUNTIME)
-    @BindingAnnotation
+    @Qualifier
     @interface S1 {
 
     }
 
     @Target({ElementType.PARAMETER, ElementType.FIELD, ElementType.METHOD})
     @Retention(RetentionPolicy.RUNTIME)
-    @BindingAnnotation
+    @Qualifier
     @interface S2 {
 
     }
 
     @Target({ElementType.PARAMETER, ElementType.FIELD, ElementType.METHOD})
     @Retention(RetentionPolicy.RUNTIME)
-    @BindingAnnotation
+    @Qualifier
     @interface S3 {
 
     }
 
     @Target({ElementType.PARAMETER, ElementType.FIELD, ElementType.METHOD})
     @Retention(RetentionPolicy.RUNTIME)
-    @BindingAnnotation
+    @Qualifier
     @interface S4 {
 
     }
 
-    static class M0 implements Module {
+    static class M0 implements BQModule {
 
         static String[] ARGS = {"1", "2", "3"};
 
         @Override
         public void configure(Binder binder) {
-            binder.bind(String[].class).annotatedWith(Args.class).toInstance(ARGS);
+            binder.bind(String[].class, Args.class).toInstance(ARGS);
         }
     }
 
-    static class M1 implements Module {
+    static class M1 implements BQModule {
 
         static String[] ARGS = {"x", "y", "z"};
 
         @Override
         public void configure(Binder binder) {
-            binder.bind(String[].class).annotatedWith(Args.class).toInstance(ARGS);
+            binder.bind(String[].class, Args.class).toInstance(ARGS);
         }
     }
 
-    static class M2 implements Module {
+    static class M2 implements BQModule {
 
         @Override
         public void configure(Binder binder) {
@@ -237,7 +238,7 @@ public class Bootique_ModuleOverridesIT {
         }
     }
 
-    static class SubM2 implements Module {
+    static class SubM2 implements BQModule {
 
         @Override
         public void configure(Binder binder) {
@@ -251,7 +252,7 @@ public class Bootique_ModuleOverridesIT {
         }
     }
 
-    static class SubSubM2 implements Module {
+    static class SubSubM2 implements BQModule {
 
         @Override
         public void configure(Binder binder) {
@@ -265,7 +266,7 @@ public class Bootique_ModuleOverridesIT {
         }
     }
 
-    static class M3 implements Module {
+    static class M3 implements BQModule {
 
         static int configCalls;
 
@@ -289,7 +290,7 @@ public class Bootique_ModuleOverridesIT {
         }
     }
 
-    static class M4 implements Module {
+    static class M4 implements BQModule {
 
         static int configCalls;
 
@@ -313,7 +314,7 @@ public class Bootique_ModuleOverridesIT {
         }
     }
 
-    static class M5 implements Module {
+    static class M5 implements BQModule {
 
         static int configCalls;
 
@@ -337,7 +338,7 @@ public class Bootique_ModuleOverridesIT {
         }
     }
 
-    static class M6 implements Module {
+    static class M6 implements BQModule {
 
         static int configCalls;
 
@@ -354,7 +355,7 @@ public class Bootique_ModuleOverridesIT {
         }
     }
 
-    static class M7 implements Module {
+    static class M7 implements BQModule {
 
         static int configCalls;
 
@@ -371,7 +372,7 @@ public class Bootique_ModuleOverridesIT {
         }
     }
 
-    static class M8 implements Module {
+    static class M8 implements BQModule {
 
         static int configCalls;
 
@@ -388,7 +389,7 @@ public class Bootique_ModuleOverridesIT {
         }
     }
 
-    static class M9 implements Module {
+    static class M9 implements BQModule {
 
         static int configCalls;
 

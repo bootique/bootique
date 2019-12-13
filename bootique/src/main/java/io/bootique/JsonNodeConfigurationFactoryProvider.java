@@ -21,8 +21,6 @@ package io.bootique;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
-import com.google.inject.Provider;
 import io.bootique.cli.Cli;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.config.ConfigurationSource;
@@ -52,6 +50,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
 
 import static java.util.Collections.singletonMap;
 import static java.util.function.Function.identity;

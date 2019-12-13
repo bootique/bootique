@@ -19,8 +19,8 @@
 
 package io.bootique.test.junit;
 
-import com.google.inject.Module;
 import io.bootique.BQModuleProvider;
+import io.bootique.di.BQModule;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -42,7 +42,7 @@ public class BQModuleProviderCheckerTest {
     public static class P1 implements BQModuleProvider {
 
         @Override
-        public Module module() {
+        public BQModule module() {
             return b -> {
             };
         }

@@ -19,13 +19,11 @@
 
 package io.bootique;
 
-import com.google.inject.CreationException;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Module;
-import com.google.inject.ProvisionException;
-import com.google.inject.spi.Message;
 import io.bootique.command.CommandOutcome;
+import io.bootique.di.DIBootstrap;
+import io.bootique.di.DIRuntimeException;
+import io.bootique.di.Injector;
+import io.bootique.di.BQModule;
 import io.bootique.env.DefaultEnvironment;
 import io.bootique.log.BootLogger;
 import io.bootique.log.DefaultBootLogger;
@@ -41,8 +39,6 @@ import java.util.Collections;
 import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.function.Supplier;
-
-import static java.util.stream.Collectors.joining;
 
 /**
  * A main launcher class of Bootique. You may use this class as the main class to start the app. Or you may write your
@@ -75,7 +71,7 @@ public class Bootique {
         this.shutdownManager = createShutdownManager();
     }
 
-    static Module createModule(Class<? extends Module> moduleType) {
+    static BQModule createModule(Class<? extends BQModule> moduleType) {
         try {
             return moduleType.getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException |
@@ -201,7 +197,7 @@ public class Bootique {
      * @see #autoLoadModules()
      * @since 0.8
      */
-    public Bootique module(Class<? extends Module> moduleType) {
+    public Bootique module(Class<? extends BQModule> moduleType) {
         Objects.requireNonNull(moduleType);
         providers.add(() -> createModule(moduleType));
         return this;
@@ -209,7 +205,7 @@ public class Bootique {
 
     /**
      * Adds an array of Module types to the Bootique DI runtime. Each type will
-     * be instantiated by Bootique and added to the Guice DI container.
+     * be instantiated by Bootique and added to the DI container.
      *
      * @param moduleTypes custom Module classes to add to Bootique DI runtime.
      * @return this Bootique instance
@@ -217,21 +213,21 @@ public class Bootique {
      * @since 0.8
      */
     @SafeVarargs
-    public final Bootique modules(Class<? extends Module>... moduleTypes) {
+    public final Bootique modules(Class<? extends BQModule>... moduleTypes) {
 
-        for (Class<? extends Module> c : moduleTypes) {
+        for (Class<? extends BQModule> c : moduleTypes) {
             module(c);
         }
 
         return this;
     }
 
-    public Bootique module(Module m) {
+    public Bootique module(BQModule m) {
         Objects.requireNonNull(m);
         providers.add(new BQModuleProvider() {
 
             @Override
-            public Module module() {
+            public BQModule module() {
                 return m;
             }
 
@@ -249,7 +245,7 @@ public class Bootique {
      * @param modules an array of modules to add to Bootiqie DI runtime.
      * @return this instance of {@link Bootique}.
      */
-    public Bootique modules(Module... modules) {
+    public Bootique modules(BQModule... modules) {
         Arrays.asList(modules).forEach(this::module);
         return this;
     }
@@ -276,21 +272,21 @@ public class Bootique {
      * overriding other modules.
      */
     @SafeVarargs
-    public final BQModuleOverrideBuilder<Bootique> override(Class<? extends Module>... overriddenTypes) {
+    public final BQModuleOverrideBuilder<Bootique> override(Class<? extends BQModule>... overriddenTypes) {
         return new BQModuleOverrideBuilder<Bootique>() {
 
             @Override
-            public Bootique with(Class<? extends Module> moduleType) {
+            public Bootique with(Class<? extends BQModule> moduleType) {
 
                 providers.add(new BQModuleProvider() {
 
                     @Override
-                    public Module module() {
+                    public BQModule module() {
                         return createModule(moduleType);
                     }
 
                     @Override
-                    public Collection<Class<? extends Module>> overrides() {
+                    public Collection<Class<? extends BQModule>> overrides() {
                         return Arrays.asList(overriddenTypes);
                     }
                 });
@@ -299,16 +295,16 @@ public class Bootique {
             }
 
             @Override
-            public Bootique with(Module module) {
+            public Bootique with(BQModule module) {
                 providers.add(new BQModuleProvider() {
 
                     @Override
-                    public Module module() {
+                    public BQModule module() {
                         return module;
                     }
 
                     @Override
-                    public Collection<Class<? extends Module>> overrides() {
+                    public Collection<Class<? extends BQModule>> overrides() {
                         return Arrays.asList(overriddenTypes);
                     }
                 });
@@ -362,19 +358,9 @@ public class Bootique {
                 shutdown(shutdownManager, bootLogger);
                 Runtime.getRuntime().removeShutdownHook(shutdownThread);
             }
-        }
-        // unwrap standard Guice exceptions...
-        catch (CreationException ce) {
+        } catch (DIRuntimeException ce) {
+            // unwrap standard DI exceptions...
             o = processExceptions(ce.getCause(), ce);
-        } catch (ProvisionException pe) {
-            // Actually we can provide multiple exceptions here
-            // since ProvisionException save all errors in error messages
-            final Throwable cause = pe.getErrorMessages()
-                    .stream()
-                    .findFirst()
-                    .map(Message::getCause)
-                    .orElse(null);
-            o = processExceptions(cause, pe);
         } catch (Throwable th) {
             o = processExceptions(th, th);
         }
@@ -409,10 +395,9 @@ public class Bootique {
     }
 
     private void shutdown(ShutdownManager shutdownManager, BootLogger logger) {
-        shutdownManager.shutdown().forEach((s, th) -> {
-            logger.stderr(String.format("Error performing shutdown of '%s': %s", s.getClass().getSimpleName(),
-                    th.getMessage()));
-        });
+        shutdownManager.shutdown().forEach((s, th) ->
+                logger.stderr(String.format("Error performing shutdown of '%s': %s",
+                        s.getClass().getSimpleName(), th.getMessage())));
     }
 
     private CommandOutcome processExceptions(Throwable th, Throwable parentTh) {
@@ -432,7 +417,7 @@ public class Bootique {
     }
 
     private String getArgsAsString() {
-        return Arrays.stream(args).collect(joining(" "));
+        return String.join(" ", args);
     }
 
     private BQRuntime createRuntime(Injector injector) {
@@ -451,7 +436,7 @@ public class Bootique {
 
         DeferredModulesSource modulesSource = new DeferredModulesSource();
 
-        Collection<BQModule> bqModules = new ArrayList<>();
+        Collection<BQModuleMetadata> bqModules = new ArrayList<>();
 
         // note that 'moduleMetadata' is invalid at this point; it will be initialized later in this method, which
         // is safe to do, as it won't be used until the Injector is created by the method caller.
@@ -467,20 +452,23 @@ public class Bootique {
         // now that all modules are collected, finish 'moduleMetadata' initialization
         modulesSource.init(bqModules);
 
-        // convert to Guice modules respecting overrides, etc.
-        Collection<Module> modules = new RuntimeModuleMerger(bootLogger).toGuiceModules(bqModules);
-        return Guice.createInjector(modules);
+        // convert to DI modules respecting overrides, etc.
+        Collection<BQModule> modules = new RuntimeModuleMerger(bootLogger).toDIModules(bqModules);
+        return DIBootstrap.injectorBuilder(modules)
+                .enableDynamicBindings()
+                .defaultNoScope()
+                .build();
     }
 
     private Collection<BQModuleProvider> builderProviders() {
         return providers;
     }
 
-    private BQModuleProvider coreModuleProvider(Supplier<Collection<BQModule>> moduleSource) {
+    private BQModuleProvider coreModuleProvider(Supplier<Collection<BQModuleMetadata>> moduleSource) {
         return new BQModuleProvider() {
 
             @Override
-            public Module module() {
+            public BQModule module() {
                 return BQCoreModule.builder().args(args)
                         .bootLogger(bootLogger)
                         .shutdownManager(shutdownManager)
@@ -493,7 +481,7 @@ public class Bootique {
             }
 
             @Override
-            public BQModule.Builder moduleBuilder() {
+            public BQModuleMetadata.Builder moduleBuilder() {
                 return BQModuleProvider.super
                         .moduleBuilder()
                         .description("The core of Bootique runtime.");
@@ -503,7 +491,7 @@ public class Bootique {
 
     Collection<BQModuleProvider> autoLoadedProviders() {
         Collection<BQModuleProvider> modules = new ArrayList<>();
-        ServiceLoader.load(BQModuleProvider.class).forEach(p -> modules.add(p));
+        ServiceLoader.load(BQModuleProvider.class).forEach(modules::add);
         return modules;
     }
 }
