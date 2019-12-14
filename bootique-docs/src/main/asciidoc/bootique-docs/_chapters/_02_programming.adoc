@@ -269,7 +269,7 @@ Properties can be provided to Bootique via BQCoreModule extender:
 
 [source,java]
 ----
-class MyModule implements Module {
+class MyModule implements BQModule {
     public void configure(Binder binder) {
 
         BQCoreModule.extend(binder)
