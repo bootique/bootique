@@ -457,6 +457,7 @@ public class Bootique {
         return DIBootstrap.injectorBuilder(modules)
                 .enableDynamicBindings()
                 .defaultNoScope()
+                .allowProxyCreation()
                 .build();
     }
 
