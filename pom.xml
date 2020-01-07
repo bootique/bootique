@@ -39,6 +39,7 @@
 		<module>bootique-docs</module>
 		<module>bootique-test</module>
 		<module>bootique-test-badspi-it</module>
+		<module>bootique-test-junit5</module>
 	</modules>
 
 	<scm>
