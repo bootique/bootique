@@ -118,7 +118,7 @@ bootique-jooq           | bootique-jdbc                                     |
 bootique-tapestry       | bootique-jetty                                    |
 bootique-jersey         | bootique-jetty                                    |
 bootique-linkmove       | bootique-jdbc, bootique-cayenne                   |    
-bootique-linkrest       | bootique-jersey, bootique-cayenne                 |
+bootique-agrest       | bootique-jersey, bootique-cayenne                 |
 bootique-jersey-client  | bootique-jersey, bootique-logback                 |
 bootique-mvc            | bootique-jetty, bootique-jersey                   |   
 bootique-shiro          | bootique-jetty, boutique-jersey, bootique-jdbc    |

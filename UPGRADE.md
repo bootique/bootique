@@ -26,6 +26,13 @@
 
 * [bootique-jersey #47](https://github.com/bootique/bootique-jersey/issues/47): An internal injection point (a `Set<Package>` listing Java packages that contain Jersey components) is now using an extra annotation to avoid polluting common DI namespace. In an unlikely event that your code explicitly injects a `Set<Package>` to get custom Jersey components, you will need to annotate the injection point with `@JerseyResource`.
 
+* [bootique-agrest #42](https://github.com/bootique/bootique-agrest/issues/42): Previously deprecated `bootique-linkrest`
+integration with the legacy LinkRest framework is removed. If you are still using it, you should be able to switch to 
+the new well-supported incarnation of this framework called Agrest. On Bootique side, simply replace the import
+of `bootique-linkrest` with `bootique-agrest`, and on LinkRest side follow the 
+[upgrade instructions](https://github.com/agrestio/agrest/blob/master/UPGRADE-NOTES.md#upgrading-to-30) back from 
+Agrest version 3.0.
+
 ## 1.1
 
 * [bootique #266](https://github.com/bootique/bootique/issues/266): To improve Java 11 compatibility, Bootique core
