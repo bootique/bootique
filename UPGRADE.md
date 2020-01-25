@@ -20,6 +20,12 @@
 
 # UPGRADE INSTRUCTIONS
 
+## 2.0 
+
+* Upgrade from Guice DI to "bootique-di". The core of Bootique - its dependency injection engine - was switched over from Google Guice to a faster, lighter ["bootique-di"](https://github.com/bootique/bootique-di). The two DI implementations are conceptiually rather close, so there is a straightforward migration path. More details are provided in the [DI Migration Guide](https://bootique.io/docs/latest/migrate-from-guice/). 
+
+* [bootique-jersey #47](https://github.com/bootique/bootique-jersey/issues/47): An internal injection point (a `Set<Package>` listing Java packages that contain Jersey components) is now using an extra annotation to avoid polluting common DI namespace. In an unlikely event that your code explicitly injects a `Set<Package>` to get custom Jersey components, you will need to annotate the injection point with `@JerseyResource`.
+
 ## 1.1
 
 * [bootique #266](https://github.com/bootique/bootique/issues/266): To improve Java 11 compatibility, Bootique core
