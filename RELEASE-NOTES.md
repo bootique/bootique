@@ -1,3 +1,7 @@
+## 2.0
+
+* #267 Support specifying config key for "-H"
+
 ## 1.1
 
 * #262 A module superclass to cut down on new module setup 

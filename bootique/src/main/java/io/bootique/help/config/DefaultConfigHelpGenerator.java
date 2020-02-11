@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -57,6 +58,16 @@ public class DefaultConfigHelpGenerator implements ConfigHelpGenerator {
 
     @Override
     public void append(Appendable out) {
+        append(out, metadataNode -> true);
+    }
+
+    /**
+     * @param out Appendable that will be used to append data to
+     * @param predicate The predicate to configure stream filter
+     * @since 2.0
+     */
+    @Override
+    public void append(Appendable out, Predicate<MetadataNode> predicate) {
         HelpAppender appender = createAppender(out);
 
         List<ModuleMetadata> sortedModules = modulesMetadata
@@ -67,9 +78,11 @@ public class DefaultConfigHelpGenerator implements ConfigHelpGenerator {
 
         printModules(appender, sortedModules);
 
-        List<ConfigMetadataNode> sortedConfigs = sortedModules.stream()
+        List<ConfigMetadataNode> sortedConfigs = sortedModules
+                .stream()
                 .map(ModuleMetadata::getConfigs)
                 .flatMap(Collection::stream)
+                .filter(predicate)
                 .sorted(Comparator.comparing(MetadataNode::getName))
                 .collect(Collectors.toList());
 
@@ -83,9 +96,7 @@ public class DefaultConfigHelpGenerator implements ConfigHelpGenerator {
         }
 
         out.printSectionName("MODULES");
-        modules.forEach(m -> {
-            printModuleName(out, m.getName(), m.getDescription());
-        });
+        modules.forEach(m -> printModuleName(out, m.getName(), m.getDescription()));
     }
 
     protected void printConfigurations(HelpAppender out, List<ConfigMetadataNode> configs) {
