@@ -19,12 +19,24 @@
 
 package io.bootique.help.config;
 
+import io.bootique.meta.MetadataNode;
+
+import java.util.function.Predicate;
+
 /**
  * @since 0.21
  */
 public interface ConfigHelpGenerator {
 
     void append(Appendable out);
+
+    /**
+     *
+     * @param out Appendable that will be used to append data to
+     * @param predicate The predicate to configure stream filter
+     * @since 2.0
+     */
+    void append(Appendable out, Predicate<MetadataNode> predicate);
 
     default String generate() {
         StringBuilder out = new StringBuilder();

@@ -21,11 +21,15 @@ package io.bootique.help.config;
 
 import javax.inject.Provider;
 
+import io.bootique.meta.MetadataNode;
 import io.bootique.meta.application.CommandMetadata;
 import io.bootique.cli.Cli;
 import io.bootique.command.CommandOutcome;
 import io.bootique.command.CommandWithMetadata;
 import io.bootique.log.BootLogger;
+
+import java.util.List;
+import java.util.function.Predicate;
 
 public class HelpConfigCommand extends CommandWithMetadata {
 
@@ -44,11 +48,15 @@ public class HelpConfigCommand extends CommandWithMetadata {
 
     @Override
     public CommandOutcome run(Cli cli) {
+        List<String> arguments = cli.standaloneArguments();
+
+        Predicate<MetadataNode> predicate = (arguments.size() == 0)
+                ? o -> true
+                : o -> arguments.contains(o.getName());
 
         StringBuilder out = new StringBuilder();
-        helpGeneratorProvider.get().append(out);
+        helpGeneratorProvider.get().append(out, predicate);
         bootLogger.stdout(out.toString());
-
         return CommandOutcome.succeeded();
     }
 }
