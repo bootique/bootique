@@ -28,8 +28,6 @@ import java.util.function.Predicate;
  */
 public interface ConfigHelpGenerator {
 
-    void append(Appendable out);
-
     /**
      *
      * @param out Appendable that will be used to append data to
@@ -37,6 +35,10 @@ public interface ConfigHelpGenerator {
      * @since 2.0
      */
     void append(Appendable out, Predicate<MetadataNode> predicate);
+
+    default void append(Appendable out) {
+        append(out, metadataNode -> true);
+    }
 
     default String generate() {
         StringBuilder out = new StringBuilder();

@@ -56,11 +56,6 @@ public class DefaultConfigHelpGenerator implements ConfigHelpGenerator {
         return new ConsoleAppender(out, lineWidth);
     }
 
-    @Override
-    public void append(Appendable out) {
-        append(out, metadataNode -> true);
-    }
-
     /**
      * @param out Appendable that will be used to append data to
      * @param predicate The predicate to configure stream filter
