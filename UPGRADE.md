@@ -24,6 +24,9 @@
 
 * Upgrade from Guice DI to "bootique-di". The core of Bootique - its dependency injection engine - was switched over from Google Guice to a faster, lighter ["bootique-di"](https://github.com/bootique/bootique-di). The two DI implementations are conceptiually rather close, so there is a straightforward migration path. More details are provided in the [DI Migration Guide](https://bootique.io/docs/latest/migrate-from-guice/). 
 
+* [bootique-cayenne #68](https://github.com/bootique/bootique-cayenne/issues/68): `maps` configuration option is changed 
+from **list** to **map**. You need to upgrade your yml configs accordingly.
+
 * [bootique-jersey #47](https://github.com/bootique/bootique-jersey/issues/47): An internal injection point 
 (a `Set<Package>` listing Java packages that contain Jersey components) is now using an extra annotation to avoid 
 polluting common DI namespace. In an unlikely event that your code explicitly injects a `Set<Package>` to get custom 
