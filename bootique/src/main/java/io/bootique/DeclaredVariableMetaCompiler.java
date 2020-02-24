@@ -32,6 +32,8 @@ class DeclaredVariableMetaCompiler {
     static Optional<ConfigValueMetadata> compileIfValid(DeclaredVariable var, ModulesMetadata modulesMetadata) {
 
         for (ModuleMetadata mm : modulesMetadata.getModules()) {
+            // TODO: 'findConfig' does a String split over and over again as we iterate through the loop.
+            //  Precalculate this once.
             Optional<ConfigMetadataNode> cmn = mm.findConfig(var.getConfigPath());
             if (cmn.isPresent()) {
                 return cmn.map(n -> compileMetadata(var, n));
