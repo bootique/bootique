@@ -30,14 +30,9 @@ This class defines what "services" or other types of objects the module provides
 by the module users). This is done in a form of "bindings", i.e. associations between publicly visible injectable
 service interfaces and specific implementations:
 
-[source,java]
+[source,java,indent=0]
 ----
-public class MyModule implements BQModule {
-    @Override
-    public void configure(Binder binder) {
-        binder.bind(MyService.class).to(MyServiceImpl.class);
-    }
-}
+include::../../../../test/java/io/bootique/docks/programming/modules/MyModule.java[tags=MyModule]
 ----
 
 There are other flavors of bindings in Bootique DI. Please refer to https://bootique.io/docs/latest/bootique-di-docs[documentation]
@@ -49,14 +44,9 @@ Modules can be automatically loaded via `Bootique.autoLoadModules()` as long as 
 Auto-loading depends on the Java https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html[ServiceLoader mechanism].
 To ensure your modules can be auto-loaded do two things. First implement `io.bootique.BQModuleProvider` interface specific to your module:
 
-[source,java]
+[source,java,indent=0]
 ----
-public class MyModuleProvider implements BQModuleProvider {
-    @Override
-    public BQModule module() {
-        return new MyModule();
-    }
-}
+include::../../../../test/java/io/bootique/docks/programming/modules/MyModuleProvider.java[tags=MyModuleProvider]
 ----
 
 After that create a file `META-INF/services/io.bootique.BQModuleProvider` with the only line being the name of your BQModuleProvider implementor. E.g.:
@@ -68,23 +58,9 @@ com.foo.MyModuleProvider
 
 `BQModuleProvider` has two more methods that you can optionally implement to help Bootique to make sense of the module being loaded:
 
-[source,java]
+[source,java,indent=0]
 ----
-public class MyModuleProvider implements BQModuleProvider {
-    // ...
-
-    // provides human-readable name of the module
-    @Override
-    public String name() {
-        return "CustomName";
-    }
-
-    // a collection of modules whose services are overridden by this module
-    @Override
-    public Collection<Class<? extends Module>> overrides() {
-        return Collections.singleton(BQCoreModule.class);
-    }
-}
+include::../../../../test/java/io/bootique/docks/programming/modules/MyModuleProvider.java[tag=MyModuleProviderMethods]
 ----
 
 If in your Module you are planning to redefine any services from the upstream modules, specify those upstream modules in the `overrides()` collection.
@@ -128,45 +104,18 @@ Bootique allows each Module to read its specific configuration subtree as an obj
 Very often such an object is written as a factory that contains a bunch of setters for configuration properties,
 and a factory method to produce some "service" that a Module is interested in. Here is an example factory:
 
-[source,java]
+[source,java,indent=0]
 ----
-public class MyFactory {
-
-    private int intProperty;
-    private String stringProperty;
-
-    public void setIntProperty(int i) {
-        this.intProperty = i;
-    }
-
-    public void setStringProperty(String s) {
-        this.stringProperty = s;
-    }
-
-    // factory method
-    public MyService createMyService(SomeOtherService soService) {
-        return new MyServiceImpl(soService, intProperty, stringProperty);
-    }
-}
+include::../../../../test/java/io/bootique/docks/programming/configuration/yaml/MyFactory.java[tag=MyFactory]
 ----
 
 The factory contains configuration property declarations, as well as public setters for these properties. (You may
 create getters as well. It is not required, but may be useful for unit tests, etc.). Now let's take a look at the
 Module class:
 
-[source,java]
+[source,java,indent=0]
 ----
-public class MyModule extends ConfigModule {
-
-    @Singleton
-    @Provides
-    public MyService createMyService(
-             ConfigurationFactory configFactory,
-             SomeOtherService service) {
-
-        return config(MyFactory.class, configFactory).createMyService(service);
-    }
-}
+include::../../../../test/java/io/bootique/docks/programming/configuration/yaml/MyModule.java[tag=MyModuleConfig]
 ----
 
 A sample configuration that will work with our module may look like this:
@@ -199,9 +148,9 @@ A config file can be passed to a Bootique app via DI (those are usually coming f
 
 * Contributing a config file via DI:
 +
-[source,java]
+[source,java,indent=0]
 ----
-BQCoreModule.extend(binder).addConfig("classpath:com/foo/default.yml");
+include::../../../../test/java/io/bootique/docks/programming/configuration/fileLoading/MyModule.java[tag=MyModuleExtendBinder]
 ----
 +
 A primary motivation for this style is to provide application default configuration, with YAML files often embedded in
@@ -213,15 +162,9 @@ between them. If there are, consider replacing multiple conflicting configs with
 * Conditionally contributing a config file via DI. It is possible to make DI configuration inclusion conditional on the
 presence of a certain command line option:
 +
-[source,java]
+[source,java,indent=0]
 ----
-OptionMetadata o = OptionMetadata.builder("qa")
-      .description("when present, uses QA config")
-      .build();
-
-BQCoreModule.extend(binder)
-      .addOption(o)
-      .mapConfigResource(o.getName(), "classpath:a/b/qa.yml");
+include::../../../../test/java/io/bootique/docks/programming/configuration/fileLoading/MyModule.java[tag=MyModuleQAOption]
 ----
 
 * Specifying a config file on the command line. Each Bootique app supports `--config` option that takes a configuration
@@ -230,16 +173,9 @@ and merged together in the order of their appearance on the command line.
 
 * Specifying a single config value via a custom option:
 +
-[source,java]
+[source,java,indent=0]
 ----
-OptionMetadata o = OptionMetadata.builder("db")
-      .description("specifies database URL")
-      .valueOptionalWithDefault("jdbc:mysql://127.0.0.1:3306/mydb")
-      .build();
-
-BQCoreModule.extend(binder)
-      .addOption(o)
-      .mapConfigPath(o.getName(), "jdbc.mydb.url);
+include::../../../../test/java/io/bootique/docks/programming/configuration/fileLoading/MyModule.java[tag=MyModuleDBOption]
 ----
 +
 This adds a new `--db` option to the app that can be used to set JDBC URL of a datasource called "mydb". If value is
@@ -267,16 +203,9 @@ This "namespace" makes configuration explicit and helps to avoid random naming c
 
 Properties can be provided to Bootique via BQCoreModule extender:
 
-[source,java]
+[source,java,indent=0]
 ----
-class MyModule implements BQModule {
-    public void configure(Binder binder) {
-
-        BQCoreModule.extend(binder)
-               .setProperty("bq.my.prop1", "valX")
-               .setProperty("bq.my.prop2", "valY");
-    }
-}
+include::../../../../test/java/io/bootique/docks/programming/configuration/properties/MyModule.java[tag=MyModule]
 ----
 
 Alternatively they can be loaded from system properties. E.g.:
@@ -303,16 +232,9 @@ they won't be visible in the process list.
 To declare variables associated with configuration values, use the following API
 (notice that no "bq." prefix is necessary here to identify the configuration value):
 
-[source,java]
+[source,java,indent=0]
 ----
-class MyModule implements BQModule {
-    public void configure(Binder binder) {
-
-        BQCoreModule.extend(binder)
-               .declareVar("my.prop1", "P1")
-               .declareVar("my.prop2", "P2");
-    }
-}
+include::../../../../test/java/io/bootique/docks/programming/configuration/environment/MyModule.java[tag=MyModule]
 ----
 
 So now a person running the app may set the above configuration as
@@ -351,51 +273,21 @@ In fact this is exactly the situation with `bootique-logback` module.
 
 Here is how you ensure that such a polymorphic configuration is possible. Let's start with a simple class hierarchy:
 
-[source,java]
+[source,java,indent=0]
 ----
-public abstract class BaseType {
-    // ...
-}
-
-public class ConcreteType1 extends BaseType {
-    // ...
-}
-
-public class ConcreteType2 extends BaseType {
-    // ...
-}
+include::../../../../test/java/io/bootique/docks/programming/configuration/polymorphic/BaseType.java[tag=polymorphic]
+include::../../../../test/java/io/bootique/docks/programming/configuration/polymorphic/ConcreteType1.java[tag=polymorphic]
+include::../../../../test/java/io/bootique/docks/programming/configuration/polymorphic/ConcreteType2.java[tag=polymorphic]
 ----
 
 Now let's create a matching set of factories to create one of the concrete subtypes of `BaseType`. Let's use Jackson annotations to link
 specific types of symbolic names to be used in YAML below:
 
-[source,java]
+[source,java,indent=0]
 ----
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME,
-     property = "type",
-     defaultImpl = ConcreteTypeFactory1.class)
-public abstract class BaseTypeFactory implements PolymorphicConfiguration {
-
-    public abstract BaseType create();
-}
-
-@JsonTypeName("type1")
-public class ConcreteTypeFactory1 extends BaseTypeFactory {
-
-     @Override
-     public BaseType create() {
-        return new ConcreteType1();
-     }
-}
-
-@JsonTypeName("type2")
-public class ConcreteTypeFactory2 extends BaseTypeFactory {
-
-     @Override
-     public BaseType create() {
-        return new ConcreteType2();
-     }
-}
+include::../../../../test/java/io/bootique/docks/programming/configuration/polymorphic/factory/BaseTypeFactory.java[tag=polymorphic]
+include::../../../../test/java/io/bootique/docks/programming/configuration/polymorphic/factory/ConcreteTypeFactory1.java[tag=polymorphic]
+include::../../../../test/java/io/bootique/docks/programming/configuration/polymorphic/factory/ConcreteTypeFactory2.java[tag=polymorphic]
 ----
 
 After that we need to create a service provider file called `META-INF/service/io.bootique.config.PolymorphicConfiguration`
@@ -420,15 +312,9 @@ my:
 The service of `BaseType` is bound in Bootique DI using the standard `ConfigurationFactory` approach described above.
 Depending on the YAML config, one of the subclasses of `BaseType` will be created:
 
-[source,java]
+[source,java,indent=0]
 ----
-@Provides
-public BaseType provideBaseType(ConfigurationFactory configFactory) {
-
-    return configFactory
-             .config(BaseTypeFactory.class, "my")
-             .create();
-}
+include::../../../../test/java/io/bootique/docks/programming/configuration/polymorphic/factory/BaseTypeFactory.java[tag=polymorphicProvides]
 ----
 
 If another module decides to create yet another subclass of BaseType,
@@ -450,18 +336,9 @@ as an example of an upstream module, as it is available in all apps.
 
 You can inject any services declared in other modules. E.g. BQCoreModule provides a number of objects and services that can be accessed via injection:
 
-[source,java]
+[source,java,indent=0]
 ----
-class MyService {
-
-    @Args
-    @Inject
-    private String[] args;
-
-    public String getArgsString() {
-        return Arrays.asList(getArgs()).stream().collect(joining(" "));
-    }
-}
+include::../../../../test/java/io/bootique/docks/programming/modules/using/MyService.java[tag=MyService]
 ----
 
 In this example we injected command line arguments that were used to start the app.
@@ -474,15 +351,9 @@ Bootique DI supports https://bootique.io/docs/latest/bootique-di-docs/#_collecti
 intended to _contribute_ objects defined in a downstream module to collections/maps used by services in upstream modules.
 Bootique hides Bootique DI API complexities, usually providing "extenders" in each module. E.g. the following code adds `MyCommand` the app set of commands:
 
-[source,java]
+[source,java,indent=0]
 ----
-public class MyModule implements BQModule {
-
-    @Override
-    public void configure(Binder binder) {
-        BQCoreModule.extend(binder).addCommand(MyCommand.class);
-    }
-}
+include::../../../../test/java/io/bootique/docks/programming/modules/using/MyModule.java[tag=MyModule]
 ----
 
 Here we obtained an extender instance via a static method on BQCoreModule.
@@ -500,18 +371,9 @@ It can be limited to just `&quot;main()&quot;`, or turned into a REST API resour
 Most often then not it makes sense to turn the application class into a Module though.
 After all a Bootique app is just a collection of Modules, and this way the application class would represent that one final Module to rule them all:
 
-[source,java]
+[source,java,indent=0]
 ----
-public class Application implements BQModule {
-
-   public static void main(String[] args) {
-      Bootique.app(args).module(Application.class).autoLoadModules().exec().exit();
-   }
-
-   public void configure(Binder binder) {
-      // load app-specific services; redefine standard ones
-   }
-}
+include::../../../../test/java/io/bootique/docks/programming/application/Application.java[tag=Application]
 ----
 
 You may also implement a separate BQModuleProvider for the Application module. Then `autoLoadModules()` will discover it just like any other Module,
@@ -561,28 +423,9 @@ Most common commands are already available in various standard modules, still of
 To do that, first create a command class. It should implement `io.bootique.command.Command` interface,
 though usually it more practical to extend `io.bootique.command.CommandWithMetadata` and provide some metadata used in help and elsewhere:
 
-[source,java]
+[source,java,indent=0]
 ----
-public class MyCommand extends CommandWithMetadata {
-
-    private static CommandMetadata createMetadata() {
-        return CommandMetadata.builder(MyCommand.class)
-                .description("My command does something important.")
-                .build();
-    }
-
-    public MyCommand() {
-        super(createMetadata());
-    }
-
-    @Override
-    public CommandOutcome run(Cli cli) {
-
-        // ... run the command here....
-
-        return CommandOutcome.succeeded();
-    }
-}
+include::../../../../test/java/io/bootique/docks/programming/commands/writing/MyCommand.java[tag=Commands]
 ----
 
 The command initializes metadata in constructor and implements the "run" method to run its code.
@@ -590,36 +433,16 @@ The return CommandOutcome object instructs Bootique what to do when the command 
 The object contains desired system exit code, and exceptions that occurred during execution.
 To make the new command available to Bootique, add it to `BQCoreModule`'s extender, as was already shown above:
 
-[source,java]
+[source,java,indent=0]
 ----
-public class MyModule implements BQModule {
-
-    @Override
-    public void configure(Binder binder) {
-        BQCoreModule.extend(binder).addCommand(MyCommand.class);
-    }
-}
+include::../../../../test/java/io/bootique/docks/programming/commands/writing/MyModule.java[tag=Commands]
 ----
 
 To implement a "daemon" command running forever until it receives an OS signal (e.g. a web server waiting for user requests) , do something like this:
 
-[source,java]
+[source,java,indent=0]
 ----
-@Override
-public CommandOutcome run(Cli cli) {
-
-    // ... start some process in a different thread ....
-
-    // now wait till the app is stopped from another thread
-    // or the JVM is terminated
-    try {
-        Thread.currentThread().join();
-    } catch (InterruptedException e) {
-        // ignore exception or log if needed
-    }
-
-    return CommandOutcome.succeeded();
-}
+include::../../../../test/java/io/bootique/docks/programming/commands/writing/MyCommand.java[tag=CommandsRun]
 ----
 
 ==== Injection in Commands
@@ -629,15 +452,9 @@ Since commands are sometimes instantiated, but not executed (e.g. when `--help` 
 it is often desirable to avoid immediate instantiation of all dependencies of a given command.
 So a common pattern with commands is to inject `javax.inject.Provider` instead of direct dependency:
 
-[source,java]
+[source,java,indent=0]
 ----
-@Inject
-private Provider<SomeService> provider;
-
-@Override
-public CommandOutcome run(Cli cli) {
-    provider.get().someMethod();
-}
+include::../../../../test/java/io/bootique/docks/programming/commands/injection/MyCommand.java[tag=Commands]
 ----
 
 ==== Decorating Commands
@@ -653,14 +470,9 @@ To run all these "secondary" commands when the main command is invoked, Bootique
 First you create a decorator policy object that specifies one or more secondary commands and their invocation strategy (either _before_ the main command,
 or _in parallel_ with it). Second you "decorate" the main command with that policy:
 
-[source,java]
+[source,java,indent=0]
 ----
-CommandDecorator extraCommands = CommandDecorator
-    .beforeRun(CustomHealthcheckCommand.class)
-    .alsoRun(ScheduleCommand.class)
-    .alsoRun(HeartbeatCommand.class);
-
-BQCoreModule.extend(binder).decorateCommand(ServerCommand.class, extraCommands);
+include::../../../../test/java/io/bootique/docks/programming/commands/decorating/MyCommand.java[tag=Commands]
 ----
 
 Based on the specified policy Bootique figures out the sequence of execution and runs the main and the secondary commands.
@@ -674,27 +486,16 @@ and simply pass command-line values to commands and services.
 E.g. the standard "`--config`" option is used by `CliConfigurationSource` service to locate configuration file.
 Unrecognized options cause application startup errors. To be recognized, options need to be "contributed" to Bootique similar to commands:
 
-[source,java]
+[source,java,indent=0]
 ----
-OptionMetadata option = OptionMetadata
-    .builder("email", "An admin email address")
-    .valueRequired("email_address")
-    .build();
-
-BQCoreModule.extend(binder).addOption(option);
+include::../../../../test/java/io/bootique/docks/programming/options/MyOption.java[tag=Options]
 ----
 
 To read a value of the option, a service should inject `io.bootique.cli.Cli` object (commands also get this object as a parameter to "run") :
 
-[source,java]
+[source,java,indent=0]
 ----
-@Inject
-private Cli cli;
-
-public void doSomething() {
-    Collection<String> emails = cli.optionStrings("email");
-    // do something with option values....
-}
+include::../../../../test/java/io/bootique/docks/programming/options/MyOption.java[tag=OptionsInject]
 ----
 
 ==== Configuration Options
@@ -704,30 +505,21 @@ Bootique supports three flavors of associating options with configuration. Let's
 
 . Option value sets a config property:
 +
-[source,java]
+[source,java,indent=0]
 ----
-// Starting the app with "--my-opt=x" will set "jobs.myjob.param" value to "x"
-BQCoreModule.extend(binder)
-        .addOption(OptionMetaData.builder("my-opt").build())
-        .mapConfigPath("my-opt", "jobs.myjob.param");
+include::../../../../test/java/io/bootique/docks/programming/options/configuration/MyOption.java[tag=OptionsConfig]
 ----
 . Option presence sets a property to a predefined value:
 +
-[source,java]
+[source,java,indent=0]
 ----
-// Starting the app with "--my-opt" will set "jobs.myjob.param" value to "y"
-BQCoreModule.extend(binder)
-        .addOption(OptionMetaData.builder("my-opt").valueOptionalWithDefault("y").build())
-        .mapConfigPath("my-opt", "jobs.myjob.param");
+include::../../../../test/java/io/bootique/docks/programming/options/configuration/MyOption.java[tag=OptionsPredefined]
 ----
 . Option presence loads a config resource, such as a YAML file:
 +
-[source,java]
+[source,java,indent=0]
 ----
-// Starting the app with "--my-opt" is equivalent to starting with "--config=classpath:xyz.yml"
-BQCoreModule.extend(binder)
-        .addOption(OptionMetaData.builder("my-opt").build())
-        .mapConfigResource("my-opt", "classpath:xyz.yml");
+include::../../../../test/java/io/bootique/docks/programming/options/configuration/MyOption.java[tag=OptionsYaml]
 ----
 
 The order of config-bound options on the command line is significant, just as the order of "`--config`" parameters.
@@ -765,11 +557,7 @@ To enable Bootique trace logs, start the app with `-Dbq.trace` as described in t
 BootLogger is injectable, in case your own code needs to use it. If the default BootLogger behavior is not satisfactory,
 it can be overridden right in the `main(..)` method, as unlike other services, you may need to change it before DI is available:
 
-[source,java]
+[source,java,indent=0]
 ----
-public class Application {
-  public static void main(String[] args) {
-     Bootique.app(args).bootLogger(new MyBootLogger()).run();
-  }
-}
+include::../../../../test/java/io/bootique/docks/programming/logging/Application.java[tag=Logging]
 ----

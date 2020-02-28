@@ -56,22 +56,9 @@ This will allow `&lt;dependencies/&gt;` section that will follow shortly to incl
 
 As you see we want a `bootique-jersey` and `bootique-logback` modules in our app. Those may depend on other modules, but we don't have to think about it. Those dependencies will be included by Maven automatically. Now let's create the main Java class that will run the app:
 
-[source,java]
+[source,java,indent=0]
 ----
-package com.foo;
-
-import io.bootique.Bootique;
-
-public class Application {
-
-    public static void main(String[] args) {
-        Bootique
-            .app(args)
-            .autoLoadModules()
-            .exec()
-            .exit();
-    }
-}
+include::../../test/java/com/foo/Application.java[tags=Main]
 ----
 
 There's only one line of meaningful code inside the `main()` method, but this is already a working Bootique app. Meaning it is runnable and can do a few things. So let's try running this class from your IDE. You will see the output like this on the IDE console:
@@ -98,48 +85,16 @@ OPTIONS
 
 So the app printed its help message telling us which commands and options it understands. `--server` option looks promising, but before we use it, let's actually write a REST endpoint that will answer to our requests. We'll use standard Java https://en.wikipedia.org/wiki/Java_API_for_RESTful_Web_Services[JAX-RS API] for that:
 
-[source,java]
+[source,java,indent=0]
 ----
-package com.foo;
-
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-
-@Path("/")
-public class HelloResource {
-
-    @GET
-    public String hello() {
-        return "Hello, world!";
-    }
-}
+include::../../test/java/com/foo/HelloResource.java[tags=HelloResource]
 ----
 
 Note that we could have placed this code straight in the Main class. Which makes for an effective demo (an app that can fit in one class), but not for a particularly clean design. So keeping the resource in its own class. Now let's amend the `Main` class to tell Bootique where to find the resource:
 
-[source,java]
+[source,java,indent=0]
 ----
-package com.foo;
-
-import com.google.inject.Module;
-import io.bootique.Bootique;
-import io.bootique.jersey.JerseyModule;
-
-public class Application {
-
-    public static void main(String[] args) {
-
-        Module module = binder -> 
-                  JerseyModule.extend(binder).addResource(HelloResource.class);
-
-        Bootique
-            .app(args)
-            .module(module)
-            .autoLoadModules()
-            .exec()
-            .exit();
-    }
-}
+include::../../test/java/com/foo/Application.java[tags=Application]
 ----
 
 Here we created our own module that "contributes" resource configuration to the JerseyModule. Now let's try to run the app with the changes. Add `--server` to the command run parameters before doing it. Now when the app is started, you will see different output:
@@ -183,33 +138,9 @@ Now restart the app with the new set of parameters: `--server --config=myconfig.
 
 We've mentioned that Bootique is built on Google Guice dependency injection (DI) container. We'll talk more about injection elsewhere. Here we'll provide a simple example. Our simple app already has a number of objects and services working behind the scenes that can be injected. One of them is command-line arguments that were provided to the app on startup. Let's extend our resource to include those arguments in the output:
 
-[source,java]
+[source,java,indent=0]
 ----
-package com.foo;
-
-import static java.util.stream.Collectors.joining;
-
-import java.util.Arrays;
-
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-
-import com.google.inject.Inject;
-import io.bootique.annotation.Args;
-
-@Path("/")
-public class HelloResource {
-
-    @Inject
-    @Args
-    private String[] args;
-
-    @GET
-    public String hello() {
-        String allArgs = Arrays.asList(args).stream().collect(joining(" "));
-        return "Hello, world! The app was started with the following arguments: " + allArgs;
-    }
-}
+include::../../test/java/com/foo/HelloResource.java[tags=HelloInjectResource]
 ----
 
 As you see, we declared a variable of type `String[]` and annotated it with `@Inject` and `@Args`. `@Inject` (must be a `com.google.inject.Inject`, not `javax.inject.Inject`) ensures that the value is initialized via injection, and `@Args` tells Bootique which one of possibly many String[] instances from the DI container we are expecting here.

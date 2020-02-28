@@ -31,6 +31,24 @@
     <artifactId>bootique-docs</artifactId>
 
     <packaging>jar</packaging>
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.bootique</groupId>
+            <artifactId>bootique-test</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.bootique.jersey</groupId>
+            <artifactId>bootique-jersey</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 
     <properties>
         <asciidoctorj.version>2.1.0</asciidoctorj.version>
