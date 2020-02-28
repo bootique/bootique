@@ -29,6 +29,7 @@ class ConfigMetadataNodeProxy implements ConfigMetadataNode {
     private String name;
     private String description;
     private ConfigMetadataNode delegate;
+    private ConfigValueMetadata temporaryDelegate;
 
     ConfigMetadataNodeProxy(String name, String description, ConfigMetadataNode delegate) {
         this.name = name;
@@ -53,6 +54,17 @@ class ConfigMetadataNodeProxy implements ConfigMetadataNode {
 
     @Override
     public <T> T accept(ConfigMetadataVisitor<T> visitor) {
-        return delegate.accept(visitor);
+
+        try {
+            temporaryDelegate = (ConfigValueMetadata) delegate;
+            temporaryDelegate.name = this.name;
+            temporaryDelegate.description = this.description;
+            return temporaryDelegate.accept(visitor);
+        } finally {
+            temporaryDelegate.name = delegate.getName();
+            temporaryDelegate.description = delegate.getDescription();
+            delegate = temporaryDelegate;
+        }
+
     }
 }
