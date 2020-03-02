@@ -42,6 +42,9 @@ Agrest version 3.0.
 * [bootique-kafka #28](https://github.com/bootique/bootique-kafka/issues/28): Support for the legacy Kafka client v 0.8
 is removed. A newer client should be used. See [https://github.com/bootique/bootique-kafka] for details.
 
+* [bootique-jetty #95](https://github.com/bootique/bootique-jetty/issues/95): Default value for `maxThreads` property was 
+lowered from 1024 to 200. If you relied on this default value you should now set it explicitly in the app config.
+
 ## 1.1
 
 * [bootique #266](https://github.com/bootique/bootique/issues/266): To improve Java 11 compatibility, Bootique core
