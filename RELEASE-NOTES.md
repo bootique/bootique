@@ -1,6 +1,7 @@
 ## 2.0
 
 * #267 Support specifying config key for "-H"
+* #276 Job parameters mapped as declared vars not shown in help 
 * #280 BQRuntimeDaemon hides exceptions thrown in runtime 
 
 ## 1.1

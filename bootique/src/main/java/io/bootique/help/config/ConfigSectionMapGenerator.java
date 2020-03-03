@@ -23,15 +23,15 @@ import io.bootique.help.ConsoleAppender;
 import io.bootique.meta.config.ConfigValueMetadata;
 
 import java.lang.reflect.Type;
-import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 public class ConfigSectionMapGenerator extends ConfigSectionGenerator {
 
     private Class<?> keysType;
 
-    public ConfigSectionMapGenerator(Class<?> keysType, ConsoleAppender out, HashSet<Type> metadataTypes) {
-        super(out, metadataTypes);
+    public ConfigSectionMapGenerator(Class<?> keysType, ConsoleAppender out, Set<Type> seenMetadataTypes) {
+        super(out, seenMetadataTypes);
         this.keysType = Objects.requireNonNull(keysType);
     }
 

@@ -32,10 +32,10 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -45,13 +45,16 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
 
     static final int DEFAULT_OFFSET = DefaultConfigHelpGenerator.DEFAULT_OFFSET;
 
-    private HashSet<Type> metadataTypes;
+    /**
+     * Set to trace already printed types. It is used to break a possible recursion.
+     */
+    private Set<Type> seenMetadataTypes;
 
     protected ConsoleAppender out;
 
-    public ConfigSectionGenerator(ConsoleAppender out, HashSet<Type> metadataTypes) {
+    public ConfigSectionGenerator(ConsoleAppender out, Set<Type> seenMetadataTypes) {
         this.out = Objects.requireNonNull(out);
-        this.metadataTypes = metadataTypes;
+        this.seenMetadataTypes = seenMetadataTypes;
     }
 
     @Override
@@ -64,8 +67,8 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
                     @Override
                     public ConfigObjectMetadata visitObjectMetadata(ConfigObjectMetadata visited) {
 
-                        // include the root type even if it has no properties.. This ensure its header is printed in
-                        // maps and lists
+                        // Include the root type even if it has no properties.
+                        // This ensure its header is printed in maps and lists
                         if (metadata == visited) {
                             return visited;
                         }
@@ -73,7 +76,7 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
                         return visited.isAbstractType() || visited.getProperties().isEmpty() ? null : visited;
                     }
                 }))
-                .filter(md -> md != null)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
         if (!selfAndSubconfigs.isEmpty()) {
@@ -100,7 +103,7 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
     public Object visitListMetadata(ConfigListMetadata metadata) {
         printNode(metadata, false);
 
-        ConfigSectionListGenerator childGenerator = new ConfigSectionListGenerator(out.withOffset(DEFAULT_OFFSET), this.metadataTypes);
+        ConfigSectionListGenerator childGenerator = new ConfigSectionListGenerator(out.withOffset(DEFAULT_OFFSET), this.seenMetadataTypes);
         childGenerator.printListHeader(metadata);
         metadata.getElementType().accept(childGenerator);
 
@@ -113,7 +116,7 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
 
         ConfigSectionMapGenerator childGenerator = new ConfigSectionMapGenerator(
                 metadata.getKeysType(),
-                out.withOffset(DEFAULT_OFFSET), this.metadataTypes);
+                out.withOffset(DEFAULT_OFFSET), this.seenMetadataTypes);
 
         childGenerator.printMapHeader(metadata);
         metadata.getValuesType().accept(childGenerator);
@@ -191,10 +194,10 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
     protected void printObjectNoSubclasses(ConfigObjectMetadata metadata) {
 
         ConsoleAppender shifted = out.withOffset(DEFAULT_OFFSET);
-        ConfigSectionGenerator childGenerator = new ConfigSectionGenerator(shifted, this.metadataTypes);
+        ConfigSectionGenerator childGenerator = new ConfigSectionGenerator(shifted, this.seenMetadataTypes);
         childGenerator.printObjectHeader(metadata);
 
-        boolean willPrintProperties = metadataTypes.add(metadata.getType())
+        boolean willPrintProperties = seenMetadataTypes.add(metadata.getType())
                 && !metadata.isAbstractType()
                 && !metadata.getProperties().isEmpty();
 
@@ -212,9 +215,7 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
             metadata.getProperties()
                     .stream()
                     .sorted(Comparator.comparing(MetadataNode::getName))
-                    .forEach(p -> {
-                        p.accept(childGenerator);
-                    });
+                    .forEach(p -> p.accept(childGenerator));
         }
     }
 

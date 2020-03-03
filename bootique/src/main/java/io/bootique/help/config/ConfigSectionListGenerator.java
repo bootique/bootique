@@ -23,15 +23,15 @@ import io.bootique.help.ConsoleAppender;
 import io.bootique.meta.config.ConfigValueMetadata;
 
 import java.lang.reflect.Type;
-import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @since 0.21
  */
 class ConfigSectionListGenerator extends ConfigSectionGenerator {
 
-    public ConfigSectionListGenerator(ConsoleAppender out, HashSet<Type> metadataTypes) {
-        super(out, metadataTypes);
+    public ConfigSectionListGenerator(ConsoleAppender out, Set<Type> seenMetadataTypes) {
+        super(out, seenMetadataTypes);
     }
 
     @Override

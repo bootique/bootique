@@ -306,8 +306,4 @@ public class ConfigMetadataIT {
 
     }
 
-
-
-
-
 }
