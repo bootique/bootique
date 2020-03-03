@@ -33,11 +33,7 @@ import io.bootique.test.TestIO;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class BQDaemonTestFactoryIT {
 
@@ -66,9 +62,27 @@ public class BQDaemonTestFactoryIT {
                             BQCoreModule.extend(b).setDefaultCommand(cli -> failed))
                     .startupCheck(r -> false)
                     .start();
+            fail("Should throw exception");
         } catch (BootiqueException e) {
             assertEquals(-1, e.getOutcome().getExitCode());
             assertEquals("Daemon failed to start: " + failed, e.getOutcome().getMessage());
+        }
+    }
+
+    @Test
+    public void testStart_RuntimeFailure() {
+        CommandOutcome failed = CommandOutcome.failed(-1, "Intended failure");
+        try {
+            testFactory.app("")
+                    .module(b ->
+                            BQCoreModule.extend(b).addCommand(cli -> failed))
+                    .startupCheck(r -> false)
+                    .start();
+            fail("Should throw exception");
+        } catch (BootiqueException e) {
+            assertEquals(-1, e.getOutcome().getExitCode());
+            assertTrue(e.getOutcome().getMessage()
+                    .startsWith("Daemon failed to start: [-1: Error invoking provider method 'provideCli()'" ));
         }
     }
 

@@ -72,7 +72,13 @@ public class BQRuntimeDaemon {
     }
 
     public void start() {
-        this.executor.submit(() -> outcome = runtime.run());
+        this.executor.submit(() -> {
+            try {
+                outcome = runtime.run();
+            } catch (Exception ex) {
+                outcome = CommandOutcome.failed(-1, ex);
+            }
+        });
         checkStartupSucceeded(startupTimeout, startupTimeoutTimeUnit);
     }
 
