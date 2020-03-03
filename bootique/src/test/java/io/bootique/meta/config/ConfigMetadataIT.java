@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -146,11 +147,11 @@ public class ConfigMetadataIT {
         StringBuilder buffer = new StringBuilder();
         ConsoleAppender out = new ConsoleAppender(buffer, 300);
 
-        cm.accept(new ConfigSectionMapGenerator(TestRecursiveConfig.class, out));
+        cm.accept(new ConfigSectionMapGenerator(TestRecursiveConfig.class, out, new HashSet<>()));
         String help = buffer.toString();
         assertNotNull(help);
 
-        assertEquals(help, "<value>:\n" +
+        assertEquals("<value>:\n" +
                 "      #\n" +
                 "      # Resolved as 'io.bootique.meta.config.ConfigMetadataIT$TestRecursiveConfig'.\n" +
                 "      #\n" +
@@ -166,7 +167,7 @@ public class ConfigMetadataIT {
                 "            -\n" +
                 "                  #\n" +
                 "                  # Resolved as 'io.bootique.meta.config.ConfigMetadataIT$TestRecursiveConfig'.\n" +
-                "                  #\n");
+                "                  #\n", help);
     }
 
 
@@ -175,23 +176,23 @@ public class ConfigMetadataIT {
         BQRuntime runtime = runtimeFactory.app()
                 .addValueObjectsDescriptor(TestVO.class, new ValueObjectDescriptor("Test Value Object"))
                 .module(new BQModuleProvider() {
-            @Override
-            public BQModule module() {
-                return Mockito.mock(BQModule.class);
-            }
+                    @Override
+                    public BQModule module() {
+                        return Mockito.mock(BQModule.class);
+                    }
 
-            @Override
-            public Map<String, Type> configs() {
-                return Collections.singletonMap("pf", TestValueObjectConfig.class);
-            }
+                    @Override
+                    public Map<String, Type> configs() {
+                        return Collections.singletonMap("pf", TestValueObjectConfig.class);
+                    }
 
-            @Override
-            public BQModuleMetadata.Builder moduleBuilder() {
-                return BQModuleProvider.super
-                        .moduleBuilder()
-                        .name("my");
-            }
-        }).createRuntime();
+                    @Override
+                    public BQModuleMetadata.Builder moduleBuilder() {
+                        return BQModuleProvider.super
+                                .moduleBuilder()
+                                .name("my");
+                    }
+                }).createRuntime();
 
         Collection<ConfigMetadataNode> configs = runtime
                 .getInstance(ModulesMetadata.class)
@@ -210,7 +211,7 @@ public class ConfigMetadataIT {
         StringBuilder buffer = new StringBuilder();
         ConsoleAppender out = new ConsoleAppender(buffer, 300);
 
-        cm.accept(new ConfigSectionMapGenerator(TestValueObjectConfig.class, out));
+        cm.accept(new ConfigSectionMapGenerator(TestValueObjectConfig.class, out, new HashSet<>()));
         String help = buffer.toString();
         assertNotNull(help);
 
@@ -304,5 +305,9 @@ public class ConfigMetadataIT {
         }
 
     }
+
+
+
+
 
 }

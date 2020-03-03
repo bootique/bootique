@@ -32,6 +32,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -44,10 +45,13 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
 
     static final int DEFAULT_OFFSET = DefaultConfigHelpGenerator.DEFAULT_OFFSET;
 
+    private HashSet<Type> metadataTypes;
+
     protected ConsoleAppender out;
 
-    public ConfigSectionGenerator(ConsoleAppender out) {
+    public ConfigSectionGenerator(ConsoleAppender out, HashSet<Type> metadataTypes) {
         this.out = Objects.requireNonNull(out);
+        this.metadataTypes = metadataTypes;
     }
 
     @Override
@@ -96,7 +100,7 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
     public Object visitListMetadata(ConfigListMetadata metadata) {
         printNode(metadata, false);
 
-        ConfigSectionListGenerator childGenerator = new ConfigSectionListGenerator(out.withOffset(DEFAULT_OFFSET));
+        ConfigSectionListGenerator childGenerator = new ConfigSectionListGenerator(out.withOffset(DEFAULT_OFFSET), this.metadataTypes);
         childGenerator.printListHeader(metadata);
         metadata.getElementType().accept(childGenerator);
 
@@ -109,7 +113,7 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
 
         ConfigSectionMapGenerator childGenerator = new ConfigSectionMapGenerator(
                 metadata.getKeysType(),
-                out.withOffset(DEFAULT_OFFSET));
+                out.withOffset(DEFAULT_OFFSET), this.metadataTypes);
 
         childGenerator.printMapHeader(metadata);
         metadata.getValuesType().accept(childGenerator);
@@ -187,10 +191,13 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
     protected void printObjectNoSubclasses(ConfigObjectMetadata metadata) {
 
         ConsoleAppender shifted = out.withOffset(DEFAULT_OFFSET);
-        ConfigSectionGenerator childGenerator = new ConfigSectionGenerator(shifted);
+        ConfigSectionGenerator childGenerator = new ConfigSectionGenerator(shifted, this.metadataTypes);
         childGenerator.printObjectHeader(metadata);
 
-        boolean willPrintProperties = !metadata.isAbstractType() && !metadata.getProperties().isEmpty();
+        boolean willPrintProperties = metadataTypes.add(metadata.getType())
+                && !metadata.isAbstractType()
+                && !metadata.getProperties().isEmpty();
+
         boolean willPrintType = metadata.getTypeLabel() != null;
 
         if (willPrintProperties || willPrintType) {

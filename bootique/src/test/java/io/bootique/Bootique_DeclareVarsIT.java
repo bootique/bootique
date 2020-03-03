@@ -27,7 +27,6 @@ import io.bootique.help.HelpCommand;
 import io.bootique.log.BootLogger;
 import io.bootique.log.DefaultBootLogger;
 import io.bootique.unit.BQInternalTestFactory;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -117,7 +116,6 @@ public class Bootique_DeclareVarsIT {
     }
 
     @Test
-    @Ignore
     public void testInHelpWithMap() {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();

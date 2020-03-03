@@ -28,6 +28,7 @@ import io.bootique.meta.module.ModulesMetadata;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -104,7 +105,7 @@ public class DefaultConfigHelpGenerator implements ConfigHelpGenerator {
 
         // using the underlying appender for config section body. Unlike HelpAppender it allows
         // controlling any number of nested offsets
-        ConfigSectionGenerator generator = new ConfigSectionGenerator(out.getAppender().withOffset(DEFAULT_OFFSET));
+        ConfigSectionGenerator generator = new ConfigSectionGenerator(out.getAppender().withOffset(DEFAULT_OFFSET), new HashSet<>());
         ConfigMetadataNode last = configs.get(configs.size() - 1);
 
         configs.forEach(c -> {
