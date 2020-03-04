@@ -411,15 +411,12 @@ public class Bootique {
     }
 
     private void shutdown(ShutdownManager shutdownManager, BootLogger logger) {
-        shutdownManager.shutdown().forEach((s, th) -> {
-            logger.stderr(String.format("Error performing shutdown of '%s': %s", s.getClass().getSimpleName(),
-                    th.getMessage()));
-        });
+        shutdownManager.shutdown().forEach((s, th) ->
+                logger.stderr(String.format("Error performing shutdown of '%s': %s", s.getClass().getSimpleName(),
+                        th.getMessage())));
     }
 
     private CommandOutcome processExceptions(Throwable th, Throwable parentTh) {
-
-
         if (th instanceof BootiqueException) {
             CommandOutcome originalOutcome = ((BootiqueException) th).getOutcome();
 
@@ -434,7 +431,7 @@ public class Bootique {
     }
 
     private String getArgsAsString() {
-        return Arrays.stream(args).collect(joining(" "));
+        return String.join(" ", args);
     }
 
     private BQRuntime createRuntime(Injector injector) {
@@ -505,7 +502,7 @@ public class Bootique {
 
     Collection<BQModuleProvider> autoLoadedProviders() {
         Collection<BQModuleProvider> modules = new ArrayList<>();
-        ServiceLoader.load(BQModuleProvider.class).forEach(p -> modules.add(p));
+        ServiceLoader.load(BQModuleProvider.class).forEach(modules::add);
         return modules;
     }
 }
