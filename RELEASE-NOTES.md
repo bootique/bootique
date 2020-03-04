@@ -1,3 +1,7 @@
+## 1.2
+
+* #259 "CLI options match multiple commands" error sometimes reported with a stack 
+
 ## 1.1
 
 * #262 A module superclass to cut down on new module setup 

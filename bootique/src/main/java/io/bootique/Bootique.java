@@ -365,16 +365,11 @@ public class Bootique {
         }
         // unwrap standard Guice exceptions...
         catch (CreationException ce) {
-            o = processExceptions(ce.getCause(), ce);
+            o = processExceptions(getCause(ce.getErrorMessages()), ce);
         } catch (ProvisionException pe) {
             // Actually we can provide multiple exceptions here
             // since ProvisionException save all errors in error messages
-            final Throwable cause = pe.getErrorMessages()
-                    .stream()
-                    .findFirst()
-                    .map(Message::getCause)
-                    .orElse(null);
-            o = processExceptions(cause, pe);
+            o = processExceptions(getCause(pe.getErrorMessages()), pe);
         } catch (Throwable th) {
             o = processExceptions(th, th);
         }
@@ -389,6 +384,13 @@ public class Bootique {
         }
 
         return o;
+    }
+
+    private Throwable getCause(Collection<Message> guiceMessages) {
+        return guiceMessages.stream()
+                .findFirst()
+                .map(Message::getCause)
+                .orElse(null);
     }
 
     private Thread createJVMShutdownHook() {
