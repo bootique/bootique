@@ -36,46 +36,25 @@ Here we'll demonstrate the use of the core test framework. For module-specific t
 
 Then create a `BQTestFactory` in each integration test, annotated with `@Rule` (or `@ClassRule` if you are planning to create a single runtime for all tests in a given class) :
 
-[source,java]
+[source,java,indent=0]
 ----
-public class MyTest {
-
-    @Rule
-    public BQTestFactory testFactory = new BQTestFactory();
-}
+include::../../../../test/java/io/bootique/docs/testing/MyTest.java[tag=Testing]
 ----
 
 Now use the factory to create test runtimes. Each runtime object is essentially an entire Bootique application. It can be used to inspect DI contents, execute a command (including commands that start background processes, such as `--server` and `--schedule`), etc. You don't need to stop the runtime explicitly. `BQTestFactory` will take care of shutdown through JUnit lifecycle.
 
 `testFactory.app()` returns a builder that mimics the API of `Bootique` class, with a few test-related extensions. E.g. it allows to load extra modules, etc.
 
-[source,java]
+[source,java,indent=0]
 ----
-@Test
-public void testAbc() {
-
-    BQRuntime runtime = testFactory.app()
-        // ensure all classpath modules are included
-        .autoLoadModules()
-        // add an adhoc module specific to the test
-        .module(binder -> binder.bind(MyService.class).to(MyServiceImpl.class))
-        .createRuntime();
-    // ...
-}
+include::../../../../test/java/io/bootique/docs/testing/MyTest.java[tag=TestAbc1]
 ----
 
 If you don't need the runtime instance, but rather want to run a command, you'd call `run()` instead of `createRuntime()` (`run()` is an alias for `createRuntime().run()`):
 
-[source,java]
+[source,java,indent=0]
 ----
-@Test
-public void testAbc() {
-
-    CommandOutcome result = testFactory.app("--server")
-        .autoLoadModules()
-        .run();
-    // ...
-}
+include::../../../../test/java/io/bootique/docs/testing/MyTest.java[tag=TestAbc2]
 ----
 
 === Common Test Scenarios
@@ -86,66 +65,34 @@ Among the things that can be tested are runtime services with real dependencies,
 
 Services can be obtained from test runtime, their methods called, and assertions made about the results of the call:
 
-[source,java]
+[source,java,indent=0]
 ----
-@Test
-public void testService() {
-
-    BQRuntime runtime = testFactory.app("--config=src/test/resources/my.yml").createRuntime();
-
-    MyService service = runtime.getInstance(MyService.class);
-    assertEquals("xyz", service.someMethod());
-}
+include::../../../../test/java/io/bootique/docs/testing/InjectableTest.java[tag=Testing]
 ----
 
 ==== Testing Network Services
 
 If a test command starts a web server or some other network service, it can be accessed via a URL right after running the server. E.g.:
 
-[source,java]
+[source,java,indent=0]
 ----
-@Test
-public void testServer() {
-
-    testFactory.app("--server").run();
-
-    // using JAX-RS client API
-    WebTarget base = ClientBuilder.newClient().target("http://localhost:8080/");
-    Response r1 = base.path("/somepath").request().get();
-    assertEquals(Status.OK.getStatusCode(), r1.getStatus());
-    assertEquals("{}", r1.readEntity(String.class));
-}
+include::../../../../test/java/io/bootique/docs/testing/NetworkTest.java[tag=Testing]
 ----
 
 ==== Testing Commands
 
 You can emulate a real app execution in a unit test, by running a command and then checking the values of the exist code and `stdin` and `stderr` contents:
 
-[source,java]
+[source,java,indent=0]
 ----
-@Test
-public void testCommand() {
-
-    TestIO io = TestIO.noTrace();
-    CommandOutcome outcome = testFactory
-        .app("--help")
-        .bootLogger(io.getBootLogger())
-        .run();
-
-    assertEquals(0, outcome.getExitCode());
-    assertTrue(io.getStdout().contains("--help"));
-    assertTrue(io.getStdout().contains("--config"));
-}
+include::../../../../test/java/io/bootique/docs/testing/CommandTest.java[tag=Testing]
 ----
 
 ==== Testing Module Validity
 
 When you are writing your own modules, you may want to check that they are configured properly for autoloading (i.e. `META-INF/services/io.bootique.BQModuleProvider` is present in the expected place and contains the right provider. There's a helper class to check for it:
 
-[source,java]
+[source,java,indent=0]
 ----
-@Test
-public void testAutoLoadable() {
-    BQModuleProviderChecker.testAutoLoadable(MyModuleProvider.class);
-}
+include::../../../../test/java/io/bootique/docs/testing/ValidityTest.java[tag=Testing]
 ----
