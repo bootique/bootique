@@ -32,7 +32,7 @@ service interfaces and specific implementations:
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/programming/modules/MyModule.java[tags=MyModule]
+include::../../../../test/java/io/bootique/docs/programming/modules/MyModule.java[tags=MyModule]
 ----
 
 There are other flavors of bindings in Bootique DI. Please refer to https://bootique.io/docs/latest/bootique-di-docs[documentation]
@@ -46,7 +46,7 @@ To ensure your modules can be auto-loaded do two things. First implement `io.boo
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/programming/modules/MyModuleProvider.java[tags=MyModuleProvider]
+include::../../../../test/java/io/bootique/docs/programming/modules/MyModuleProvider.java[tags=MyModuleProvider]
 ----
 
 After that create a file `META-INF/services/io.bootique.BQModuleProvider` with the only line being the name of your BQModuleProvider implementor. E.g.:
@@ -60,7 +60,7 @@ com.foo.MyModuleProvider
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/programming/modules/MyModuleProvider.java[tag=MyModuleProviderMethods]
+include::../../../../test/java/io/bootique/docs/programming/modules/MyModuleProvider.java[tag=MyModuleProviderMethods]
 ----
 
 If in your Module you are planning to redefine any services from the upstream modules, specify those upstream modules in the `overrides()` collection.
@@ -106,7 +106,7 @@ and a factory method to produce some "service" that a Module is interested in. H
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/programming/configuration/yaml/MyFactory.java[tag=MyFactory]
+include::../../../../test/java/io/bootique/docs/programming/configuration/yaml/MyFactory.java[tag=MyFactory]
 ----
 
 The factory contains configuration property declarations, as well as public setters for these properties. (You may
@@ -115,7 +115,7 @@ Module class:
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/programming/configuration/yaml/MyModule.java[tag=MyModuleConfig]
+include::../../../../test/java/io/bootique/docs/programming/configuration/yaml/MyModule.java[tag=MyModuleConfig]
 ----
 
 A sample configuration that will work with our module may look like this:
@@ -150,7 +150,7 @@ A config file can be passed to a Bootique app via DI (those are usually coming f
 +
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/programming/configuration/fileLoading/MyModule.java[tag=MyModuleExtendBinder]
+include::../../../../test/java/io/bootique/docs/programming/configuration/fileLoading/MyModule.java[tag=MyModuleExtendBinder]
 ----
 +
 A primary motivation for this style is to provide application default configuration, with YAML files often embedded in
@@ -164,7 +164,7 @@ presence of a certain command line option:
 +
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/programming/configuration/fileLoading/MyModule.java[tag=MyModuleQAOption]
+include::../../../../test/java/io/bootique/docs/programming/configuration/fileLoading/MyModule.java[tag=MyModuleQAOption]
 ----
 
 * Specifying a config file on the command line. Each Bootique app supports `--config` option that takes a configuration
@@ -175,7 +175,7 @@ and merged together in the order of their appearance on the command line.
 +
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/programming/configuration/fileLoading/MyModule.java[tag=MyModuleDBOption]
+include::../../../../test/java/io/bootique/docs/programming/configuration/fileLoading/MyModule.java[tag=MyModuleDBOption]
 ----
 +
 This adds a new `--db` option to the app that can be used to set JDBC URL of a datasource called "mydb". If value is
@@ -205,7 +205,7 @@ Properties can be provided to Bootique via BQCoreModule extender:
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/programming/configuration/properties/MyModule.java[tag=MyModule]
+include::../../../../test/java/io/bootique/docs/programming/configuration/properties/MyModule.java[tag=MyModule]
 ----
 
 Alternatively they can be loaded from system properties. E.g.:
@@ -234,7 +234,7 @@ To declare variables associated with configuration values, use the following API
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/programming/configuration/environment/MyModule.java[tag=MyModule]
+include::../../../../test/java/io/bootique/docs/programming/configuration/environment/MyModule.java[tag=MyModule]
 ----
 
 So now a person running the app may set the above configuration as
@@ -275,9 +275,9 @@ Here is how you ensure that such a polymorphic configuration is possible. Let's 
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/programming/configuration/polymorphic/BaseType.java[tag=polymorphic]
-include::../../../../test/java/io/bootique/docks/programming/configuration/polymorphic/ConcreteType1.java[tag=polymorphic]
-include::../../../../test/java/io/bootique/docks/programming/configuration/polymorphic/ConcreteType2.java[tag=polymorphic]
+include::../../../../test/java/io/bootique/docs/programming/configuration/polymorphic/BaseType.java[tag=polymorphic]
+include::../../../../test/java/io/bootique/docs/programming/configuration/polymorphic/ConcreteType1.java[tag=polymorphic]
+include::../../../../test/java/io/bootique/docs/programming/configuration/polymorphic/ConcreteType2.java[tag=polymorphic]
 ----
 
 Now let's create a matching set of factories to create one of the concrete subtypes of `BaseType`. Let's use Jackson annotations to link
@@ -285,9 +285,9 @@ specific types of symbolic names to be used in YAML below:
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/programming/configuration/polymorphic/factory/BaseTypeFactory.java[tag=polymorphic]
-include::../../../../test/java/io/bootique/docks/programming/configuration/polymorphic/factory/ConcreteTypeFactory1.java[tag=polymorphic]
-include::../../../../test/java/io/bootique/docks/programming/configuration/polymorphic/factory/ConcreteTypeFactory2.java[tag=polymorphic]
+include::../../../../test/java/io/bootique/docs/programming/configuration/polymorphic/factory/BaseTypeFactory.java[tag=polymorphic]
+include::../../../../test/java/io/bootique/docs/programming/configuration/polymorphic/factory/ConcreteTypeFactory1.java[tag=polymorphic]
+include::../../../../test/java/io/bootique/docs/programming/configuration/polymorphic/factory/ConcreteTypeFactory2.java[tag=polymorphic]
 ----
 
 After that we need to create a service provider file called `META-INF/service/io.bootique.config.PolymorphicConfiguration`
@@ -314,7 +314,7 @@ Depending on the YAML config, one of the subclasses of `BaseType` will be create
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/programming/configuration/polymorphic/factory/BaseTypeFactory.java[tag=polymorphicProvides]
+include::../../../../test/java/io/bootique/docs/programming/configuration/polymorphic/factory/BaseTypeFactory.java[tag=polymorphicProvides]
 ----
 
 If another module decides to create yet another subclass of BaseType,
@@ -338,7 +338,7 @@ You can inject any services declared in other modules. E.g. BQCoreModule provide
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/programming/modules/using/MyService.java[tag=MyService]
+include::../../../../test/java/io/bootique/docs/programming/modules/using/MyService.java[tag=MyService]
 ----
 
 In this example we injected command line arguments that were used to start the app.
@@ -353,7 +353,7 @@ Bootique hides Bootique DI API complexities, usually providing "extenders" in ea
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/programming/modules/using/MyModule.java[tag=MyModule]
+include::../../../../test/java/io/bootique/docs/programming/modules/using/MyModule.java[tag=MyModule]
 ----
 
 Here we obtained an extender instance via a static method on BQCoreModule.
@@ -373,7 +373,7 @@ After all a Bootique app is just a collection of Modules, and this way the appli
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/programming/application/Application.java[tag=Application]
+include::../../../../test/java/io/bootique/docs/programming/application/Application.java[tag=Application]
 ----
 
 You may also implement a separate BQModuleProvider for the Application module. Then `autoLoadModules()` will discover it just like any other Module,
@@ -425,7 +425,7 @@ though usually it more practical to extend `io.bootique.command.CommandWithMetad
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/programming/commands/writing/MyCommand.java[tag=Commands]
+include::../../../../test/java/io/bootique/docs/programming/commands/writing/MyCommand.java[tag=Commands]
 ----
 
 The command initializes metadata in constructor and implements the "run" method to run its code.
@@ -435,14 +435,14 @@ To make the new command available to Bootique, add it to `BQCoreModule`'s extend
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/programming/commands/writing/MyModule.java[tag=Commands]
+include::../../../../test/java/io/bootique/docs/programming/commands/writing/MyModule.java[tag=Commands]
 ----
 
 To implement a "daemon" command running forever until it receives an OS signal (e.g. a web server waiting for user requests) , do something like this:
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/programming/commands/writing/MyCommand.java[tag=CommandsRun]
+include::../../../../test/java/io/bootique/docs/programming/commands/writing/MyCommand.java[tag=CommandsRun]
 ----
 
 ==== Injection in Commands
@@ -454,7 +454,7 @@ So a common pattern with commands is to inject `javax.inject.Provider` instead o
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/programming/commands/injection/MyCommand.java[tag=Commands]
+include::../../../../test/java/io/bootique/docs/programming/commands/injection/MyCommand.java[tag=Commands]
 ----
 
 ==== Decorating Commands
@@ -472,7 +472,7 @@ or _in parallel_ with it). Second you "decorate" the main command with that poli
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/programming/commands/decorating/MyCommand.java[tag=Commands]
+include::../../../../test/java/io/bootique/docs/programming/commands/decorating/MyCommand.java[tag=Commands]
 ----
 
 Based on the specified policy Bootique figures out the sequence of execution and runs the main and the secondary commands.
@@ -488,14 +488,14 @@ Unrecognized options cause application startup errors. To be recognized, options
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/programming/options/MyOption.java[tag=Options]
+include::../../../../test/java/io/bootique/docs/programming/options/MyOption.java[tag=Options]
 ----
 
 To read a value of the option, a service should inject `io.bootique.cli.Cli` object (commands also get this object as a parameter to "run") :
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/programming/options/MyOption.java[tag=OptionsInject]
+include::../../../../test/java/io/bootique/docs/programming/options/MyOption.java[tag=OptionsInject]
 ----
 
 ==== Configuration Options
@@ -507,19 +507,19 @@ Bootique supports three flavors of associating options with configuration. Let's
 +
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/programming/options/configuration/MyOption.java[tag=OptionsConfig]
+include::../../../../test/java/io/bootique/docs/programming/options/configuration/MyOption.java[tag=OptionsConfig]
 ----
 . Option presence sets a property to a predefined value:
 +
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/programming/options/configuration/MyOption.java[tag=OptionsPredefined]
+include::../../../../test/java/io/bootique/docs/programming/options/configuration/MyOption.java[tag=OptionsPredefined]
 ----
 . Option presence loads a config resource, such as a YAML file:
 +
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/programming/options/configuration/MyOption.java[tag=OptionsYaml]
+include::../../../../test/java/io/bootique/docs/programming/options/configuration/MyOption.java[tag=OptionsYaml]
 ----
 
 The order of config-bound options on the command line is significant, just as the order of "`--config`" parameters.
@@ -559,5 +559,5 @@ it can be overridden right in the `main(..)` method, as unlike other services, y
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/programming/logging/Application.java[tag=Logging]
+include::../../../../test/java/io/bootique/docs/programming/logging/Application.java[tag=Logging]
 ----

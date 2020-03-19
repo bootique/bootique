@@ -3,6 +3,7 @@ package io.bootique.docs.testing;
 import io.bootique.BQRuntime;
 import io.bootique.command.CommandOutcome;
 import io.bootique.test.junit.BQTestFactory;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -29,6 +30,7 @@ public class MyTest {
 // end::TestAbc1[]
 
 
+    @Ignore("No real Jersey module available")
 // tag::TestAbc2[]
     @Test
     public void testABC() {

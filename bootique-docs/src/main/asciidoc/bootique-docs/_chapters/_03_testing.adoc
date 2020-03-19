@@ -38,7 +38,7 @@ Then create a `BQTestFactory` in each integration test, annotated with `@Rule` (
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/testing/MyTest.java[tag=Testing]
+include::../../../../test/java/io/bootique/docs/testing/MyTest.java[tag=Testing]
 ----
 
 Now use the factory to create test runtimes. Each runtime object is essentially an entire Bootique application. It can be used to inspect DI contents, execute a command (including commands that start background processes, such as `--server` and `--schedule`), etc. You don't need to stop the runtime explicitly. `BQTestFactory` will take care of shutdown through JUnit lifecycle.
@@ -47,14 +47,14 @@ Now use the factory to create test runtimes. Each runtime object is essentially 
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/testing/MyTest.java[tag=TestAbc1]
+include::../../../../test/java/io/bootique/docs/testing/MyTest.java[tag=TestAbc1]
 ----
 
 If you don't need the runtime instance, but rather want to run a command, you'd call `run()` instead of `createRuntime()` (`run()` is an alias for `createRuntime().run()`):
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/testing/MyTest.java[tag=TestAbc2]
+include::../../../../test/java/io/bootique/docs/testing/MyTest.java[tag=TestAbc2]
 ----
 
 === Common Test Scenarios
@@ -67,7 +67,7 @@ Services can be obtained from test runtime, their methods called, and assertions
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/testing/InjectableTest.java[tag=Testing]
+include::../../../../test/java/io/bootique/docs/testing/InjectableTest.java[tag=Testing]
 ----
 
 ==== Testing Network Services
@@ -76,7 +76,7 @@ If a test command starts a web server or some other network service, it can be a
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/testing/NetworkTest.java[tag=Testing]
+include::../../../../test/java/io/bootique/docs/testing/NetworkTest.java[tag=Testing]
 ----
 
 ==== Testing Commands
@@ -85,7 +85,7 @@ You can emulate a real app execution in a unit test, by running a command and th
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/testing/CommandTest.java[tag=Testing]
+include::../../../../test/java/io/bootique/docs/testing/CommandTest.java[tag=Testing]
 ----
 
 ==== Testing Module Validity
@@ -94,5 +94,5 @@ When you are writing your own modules, you may want to check that they are confi
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docks/testing/ValidityTest.java[tag=Testing]
+include::../../../../test/java/io/bootique/docs/testing/ValidityTest.java[tag=Testing]
 ----

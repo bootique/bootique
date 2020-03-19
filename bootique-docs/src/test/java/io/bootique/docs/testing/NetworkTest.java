@@ -1,6 +1,7 @@
 package io.bootique.docs.testing;
 
 import io.bootique.test.junit.BQTestFactory;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -15,6 +16,7 @@ public class NetworkTest {
     @Rule
     public BQTestFactory testFactory = new BQTestFactory();
 
+    @Ignore("No real Jersey module available")
     // tag::Testing[]
     @Test
     public void testServer() {
