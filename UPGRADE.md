@@ -45,6 +45,11 @@ is removed. A newer client should be used. See [https://github.com/bootique/boot
 * [bootique-jetty #95](https://github.com/bootique/bootique-jetty/issues/95): Default value for `maxThreads` property was 
 lowered from 1024 to 200. If you relied on this default value you should now set it explicitly in the app config.
 
+
+* [bootique-swagger #18](https://github.com/bootique/bootique-swagger/issues/18): The default URL of the Swagger UI 
+has changed from "/swagger" to "/swagger-ui". You'll need to either start using the new URL, or change it via configuration
+property `swaggerui.urlPattern`.
+
 ## 1.1
 
 * [bootique #266](https://github.com/bootique/bootique/issues/266): To improve Java 11 compatibility, Bootique core
