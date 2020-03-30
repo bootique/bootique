@@ -36,6 +36,16 @@
         Provides a test framework on top of Bootique.
     </description>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.junit.vintage</groupId>
+                <artifactId>junit-vintage-engine</artifactId>
+                <version>${junit5.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <!-- Compile dependencies -->
         <dependency>
@@ -43,18 +53,9 @@
             <artifactId>bootique-test-junit5</artifactId>
             <version>${project.version}</version>
         </dependency>
-
-        <!-- Provided dependencies -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>org.junit.vintage</groupId>
             <artifactId>junit-vintage-engine</artifactId>
-            <version>${junit5.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <!-- Unit test dependencies -->

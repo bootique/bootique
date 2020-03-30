@@ -23,12 +23,12 @@ import io.bootique.di.BQModule;
 import io.bootique.meta.module.ModuleMetadata;
 import io.bootique.meta.module.ModulesMetadata;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * @since 2.0
@@ -44,19 +44,28 @@ public class BQRuntimeChecker {
     @SafeVarargs
     public static void testModulesLoaded(BQRuntime runtime, Class<? extends BQModule>... expectedModules) {
 
-        final ModulesMetadata modulesMetadata = runtime.getInstance(ModulesMetadata.class);
+        ModulesMetadata modulesMetadata = runtime.getInstance(ModulesMetadata.class);
 
-        final List<String> actualModules = modulesMetadata
+        List<String> actualModules = modulesMetadata
                 .getModules()
                 .stream()
                 .map(ModuleMetadata::getName)
                 .collect(toList());
 
-        final String[] expectedModuleNames = Stream.of(expectedModules)
+        List<String> missingModules = new ArrayList<>();
+        Stream.of(expectedModules)
                 .map(Class::getSimpleName)
-                .toArray(String[]::new);
+                .forEach(n -> {
 
-        // Using class names for checking module existing - weak.
-        assertThat(actualModules, hasItems(expectedModuleNames));
+                    // Using class names for checking module existing - weak.
+                    if (!actualModules.contains(n)) {
+                        missingModules.add(n);
+                    }
+                });
+
+
+        if(!missingModules.isEmpty()) {
+            fail("The following expected modules are missing: " + missingModules);
+        }
     }
 }
