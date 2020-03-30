@@ -30,6 +30,9 @@ import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+/**
+ * @since 2.0
+ */
 public class BQRuntimeChecker {
 
     /**

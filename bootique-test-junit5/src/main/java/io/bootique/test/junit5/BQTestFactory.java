@@ -21,7 +21,6 @@ package io.bootique.test.junit5;
 import io.bootique.BQRuntime;
 import io.bootique.command.CommandOutcome;
 import io.bootique.config.ConfigurationFactory;
-import io.bootique.test.junit.BQTestRuntimeBuilder;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -40,6 +39,8 @@ import java.util.Collection;
  *   public static BQTestFactory testFactory = new BQTestFactory();
  * }
  * </pre>
+ *
+ * @since 2.0
  */
 public class BQTestFactory implements BeforeEachCallback, AfterEachCallback {
 

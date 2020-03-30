@@ -40,6 +40,9 @@ import java.util.stream.StreamSupport;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * @since 2.0
+ */
 public class BQModuleProviderChecker {
     private Class<? extends BQModuleProvider> provider;
 

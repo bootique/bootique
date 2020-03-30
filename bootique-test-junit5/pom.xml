@@ -20,15 +20,9 @@
     <dependencies>
         <dependency>
             <groupId>io.bootique</groupId>
-            <artifactId>bootique-test</artifactId>
+            <artifactId>bootique</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>junit</groupId>
-                    <artifactId>junit</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- Provided dependencies -->
