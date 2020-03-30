@@ -18,10 +18,10 @@
  */
 package io.bootique.test.junit5;
 
-import com.google.inject.Binder;
-import com.google.inject.Module;
 import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
+import io.bootique.di.BQModule;
+import io.bootique.di.Binder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -29,7 +29,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 public class BQRuntimeCheckerTest {
 
     @RegisterExtension
-    public static BQTestExtension testExtension = new BQTestExtension();
+    public static BQTestFactory testExtension = new BQTestFactory();
 
     @Test
     public void testTestModulesLoaded() {
@@ -44,7 +44,7 @@ public class BQRuntimeCheckerTest {
                 () -> BQRuntimeChecker.testModulesLoaded(runtime, NonLoadedModule.class));
     }
 
-    static class NonLoadedModule implements Module {
+    static class NonLoadedModule implements BQModule {
 
         @Override
         public void configure(Binder binder) {

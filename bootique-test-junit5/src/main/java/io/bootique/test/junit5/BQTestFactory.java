@@ -37,11 +37,11 @@ import java.util.Collection;
  * public class MyTest {
  *
  *   &#64;RegisterExtension
- *   public static BQTestExtension testExtension = new BQTestExtension();
+ *   public static BQTestFactory testFactory = new BQTestFactory();
  * }
  * </pre>
  */
-public class BQTestExtension implements BeforeEachCallback, AfterEachCallback {
+public class BQTestFactory implements BeforeEachCallback, AfterEachCallback {
 
     private Collection<BQRuntime> runtimes;
     private boolean autoLoadModules;
@@ -49,7 +49,7 @@ public class BQTestExtension implements BeforeEachCallback, AfterEachCallback {
     /**
      * Sets the default policy for this factory to auto-load modules for each app.
      */
-    public BQTestExtension autoLoadModules() {
+    public BQTestFactory autoLoadModules() {
         this.autoLoadModules = true;
         return this;
     }

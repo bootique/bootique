@@ -19,7 +19,6 @@
 package io.bootique.test.junit5;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.google.inject.Inject;
 import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
 import io.bootique.cli.Cli;
@@ -33,17 +32,19 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import javax.inject.Inject;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class BQTestExtensionIT {
+public class BQTestFactoryIT {
 
     @RegisterExtension
-    public static BQTestExtension bqTestExtension = new BQTestExtension();
+    public static BQTestFactory bqTestFactory = new BQTestFactory();
 
     @Test
     public void testCreateRuntimeInjection() {
-        BQRuntime runtime = bqTestExtension.app("-x").autoLoadModules().createRuntime();
+        BQRuntime runtime = bqTestFactory.app("-x").autoLoadModules().createRuntime();
         Assertions.assertArrayEquals(new String[]{"-x"}, runtime.getArgs());
     }
 
@@ -52,7 +53,7 @@ public class BQTestExtensionIT {
 
         TestIO io = TestIO.noTrace();
 
-        CommandOutcome result = bqTestExtension.app("-x")
+        CommandOutcome result = bqTestFactory.app("-x")
                 .autoLoadModules()
                 .module(b -> BQCoreModule.extend(b).addCommand(XCommand.class))
                 .bootLogger(io.getBootLogger())
@@ -70,7 +71,7 @@ public class BQTestExtensionIT {
         System.setProperty("bq.c.m.k", "bq_c_m_k");
         System.setProperty("bq.c.m.l", "bq_c_m_l");
 
-        BQRuntime runtime = bqTestExtension.app("--config=src/test/resources/configEnvironment.yml").createRuntime();
+        BQRuntime runtime = bqTestFactory.app("--config=src/test/resources/configEnvironment.yml").createRuntime();
 
         Bean1 b1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
 

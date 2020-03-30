@@ -18,8 +18,8 @@
  */
 package io.bootique.test.junit5;
 
-import com.google.inject.Module;
 import io.bootique.BQRuntime;
+import io.bootique.di.BQModule;
 import io.bootique.meta.module.ModuleMetadata;
 import io.bootique.meta.module.ModulesMetadata;
 
@@ -39,7 +39,7 @@ public class BQRuntimeChecker {
      * @param expectedModules a vararg array of expected module types.
      */
     @SafeVarargs
-    public static void testModulesLoaded(BQRuntime runtime, Class<? extends Module>... expectedModules) {
+    public static void testModulesLoaded(BQRuntime runtime, Class<? extends BQModule>... expectedModules) {
 
         final ModulesMetadata modulesMetadata = runtime.getInstance(ModulesMetadata.class);
 

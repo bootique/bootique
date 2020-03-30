@@ -18,8 +18,8 @@
  */
 package io.bootique.test.junit5;
 
-import com.google.inject.Module;
 import io.bootique.BQModuleProvider;
+import io.bootique.di.BQModule;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -43,7 +43,7 @@ public class BQModuleProviderCheckerTest {
     public static class P1 implements BQModuleProvider {
 
         @Override
-        public Module module() {
+        public BQModule module() {
             return b -> {
             };
         }

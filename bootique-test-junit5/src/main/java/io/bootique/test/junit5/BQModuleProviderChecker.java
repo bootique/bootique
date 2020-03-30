@@ -114,8 +114,8 @@ public class BQModuleProviderChecker {
         }
     }
 
-    protected void testWithFactory(Consumer<BQTestExtension> test) throws Exception {
-        BQTestExtension testExtension = new BQTestExtension();
+    protected void testWithFactory(Consumer<BQTestFactory> test) throws Exception {
+        BQTestFactory testExtension = new BQTestFactory();
         ExtensionContext extensionContext = new TestExtensionContext();
         try {
             testExtension.beforeEach(extensionContext);

@@ -34,6 +34,11 @@
 	<name>bootique-framework-parent</name>
 	<description>Parent of Bootique core framework and Bootique docs.</description>
 
+	<properties>
+		<!-- TODO: move to bootique-modules-parent ? -->
+		<junit5.version>5.5.2</junit5.version>
+	</properties>
+
 	<modules>
 		<module>bootique</module>
 		<module>bootique-test</module>
