@@ -22,7 +22,11 @@
 
 ## 2.0 
 
-* Upgrade from Guice DI to "bootique-di". The core of Bootique - its dependency injection engine - was switched over from Google Guice to a faster, lighter ["bootique-di"](https://github.com/bootique/bootique-di). The two DI implementations are conceptiually rather close, so there is a straightforward migration path. More details are provided in the [DI Migration Guide](https://bootique.io/docs/latest/migrate-from-guice/). 
+* [bootique #269](https://github.com/bootique/bootique/issues/269) Upgrade from Guice DI to "bootique-di". That's the BIG one! 
+The core of Bootique - its dependency injection engine - was switched over from Google Guice to a faster, lighter 
+["bootique-di"](https://github.com/bootique/bootique-di). The two DI implementations are conceptiually rather close, so 
+there is a straightforward migration path. More details are provided in the 
+[DI Migration Guide](https://bootique.io/docs/latest/migrate-from-guice/). 
 
 * [bootique #271](https://github.com/bootique/bootique/issues/271): Bootique is now integrated with JUnit 5. While you 
 still have the option to use JUnit 4, and can take your time to 

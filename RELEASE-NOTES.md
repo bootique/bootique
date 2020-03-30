@@ -1,7 +1,7 @@
 ## 2.0
 
-* Replaced Guice with bootique-di
 * #267 Support specifying config key for "-H"
+* #269 Migrate from Guice to Bootique DI
 * #271 bootique-test integration with junit5
 * #276 Job parameters mapped as declared vars not shown in help 
 * #280 BQRuntimeDaemon hides exceptions thrown in runtime 
