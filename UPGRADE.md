@@ -30,7 +30,8 @@ there is a straightforward migration path. More details are provided in the
 
 * [bootique #271](https://github.com/bootique/bootique/issues/271): Bootique is now integrated with JUnit 5. A few notes:
  
-  * For class-scoped test factory use the new `BQTestClassFactory` instead of `BQTestFactory`. 
+  * Use `@RegisterExtension` to annotate `BQTestFactory`. For class-scoped test factory use the new `BQTestClassFactory`,
+  also annotated with `@RegisterExtension`.
   * JUnit 4 compatibility. You still have the option to use JUnit 4, and can take your time to 
 [migrate to 5](https://junit.org/junit5/docs/current/user-guide/#migrating-from-junit4). Note that JUnit 4 support
 is now done via JUnit 5 "Vintage" engine and JUnit itself is a _compile_ dependency of "bootique-test" (it used to be 
