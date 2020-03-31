@@ -75,7 +75,7 @@ public class BQTestClassFactory implements BeforeAllCallback, AfterAllCallback {
     }
 
     @Override
-    public void afterAll(ExtensionContext context) throws Exception {
+    public void afterAll(ExtensionContext context) {
         runtimes.shutdown();
     }
 }
