@@ -37,10 +37,10 @@ import javax.inject.Inject;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class BQTestFactoryIT {
+public class BQTestClassFactoryIT {
 
     @RegisterExtension
-    public static BQTestFactory testFactory = new BQTestFactory();
+    public static BQTestClassFactory testFactory = new BQTestClassFactory();
 
     @Test
     public void testCreateRuntimeInjection() {

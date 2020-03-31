@@ -18,40 +18,39 @@
  */
 package io.bootique.test.junit5;
 
-import org.junit.jupiter.api.extension.AfterEachCallback;
-import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 /**
  * A JUnit 5 extension that allows to create one or more Bootique runtimes within a JUnit test, performing automatic
- * shutdown of all created runtimes after the end of each test method. You would normally add this extension to the
- * test programmatically, either as a static or an instance variable annotated with
- * {@link org.junit.jupiter.api.extension.RegisterExtension}. E.g.:
+ * shutdown of all created runtimes at the end of all tests in a class. You would normally add this extension to the
+ * test programmatically, as a static variable annotated with {@link org.junit.jupiter.api.extension.RegisterExtension}. E.g.:
  *
  * <pre>
  * public class MyTest {
  *
  *   &#64;RegisterExtension
- *   public static BQTestFactory testFactory = new BQTestFactory();
+ *   public static BQTestClassFactory testFactory = new BQTestClassFactory();
  * }
  * </pre>
  *
- * @see BQTestClassFactory
+ * @see BQTestFactory
  * @since 2.0
  */
-public class BQTestFactory implements BeforeEachCallback, AfterEachCallback {
+public class BQTestClassFactory implements BeforeAllCallback, AfterAllCallback {
 
     private TestRuntimesManager runtimes;
     private boolean autoLoadModules;
 
-    public BQTestFactory() {
+    public BQTestClassFactory() {
         this.runtimes = new TestRuntimesManager();
     }
 
     /**
      * Sets the default policy for this factory to auto-load modules for each app.
      */
-    public BQTestFactory autoLoadModules() {
+    public BQTestClassFactory autoLoadModules() {
         this.autoLoadModules = true;
         return this;
     }
@@ -71,12 +70,12 @@ public class BQTestFactory implements BeforeEachCallback, AfterEachCallback {
     }
 
     @Override
-    public void beforeEach(ExtensionContext extensionContext) {
+    public void beforeAll(ExtensionContext context) {
         runtimes.reset();
     }
 
     @Override
-    public void afterEach(ExtensionContext extensionContext) {
+    public void afterAll(ExtensionContext context) throws Exception {
         runtimes.shutdown();
     }
 }

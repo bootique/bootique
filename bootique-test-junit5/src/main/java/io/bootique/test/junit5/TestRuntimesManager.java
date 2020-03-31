@@ -22,6 +22,7 @@ import io.bootique.BQRuntime;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * @since 2.0
@@ -31,6 +32,7 @@ public class TestRuntimesManager {
     private Collection<BQRuntime> runtimes;
 
     public void add(BQRuntime runtime) {
+        Objects.requireNonNull(runtimes, "'runtimes' not initialized. Called outside factory lifecycle?");
         this.runtimes.add(runtime);
     }
 
