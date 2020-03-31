@@ -28,13 +28,16 @@ The core of Bootique - its dependency injection engine - was switched over from 
 there is a straightforward migration path. More details are provided in the 
 [DI Migration Guide](https://bootique.io/docs/latest/migrate-from-guice/). 
 
-* [bootique #271](https://github.com/bootique/bootique/issues/271): Bootique is now integrated with JUnit 5. While you 
-still have the option to use JUnit 4, and can take your time to 
-[migrate to 5](https://junit.org/junit5/docs/current/user-guide/#migrating-from-junit4), still note that JUnit 4 support
+* [bootique #271](https://github.com/bootique/bootique/issues/271): Bootique is now integrated with JUnit 5. A few notes:
+ 
+  * For class-scoped test factory use the new `BQTestClassFactory` instead of `BQTestFactory`. 
+  * JUnit 4 compatibility. You still have the option to use JUnit 4, and can take your time to 
+[migrate to 5](https://junit.org/junit5/docs/current/user-guide/#migrating-from-junit4). Note that JUnit 4 support
 is now done via JUnit 5 "Vintage" engine and JUnit itself is a _compile_ dependency of "bootique-test" (it used to be 
 "_provided_"). So if you import "bootique-test", you can remove an explicit JUnit dependency, and can mix and match
-4 and 5 style tests in your code. Also note that `BQDaemonTestFactory` is not available under 5, as it is fairly useless
-and doesn't bring any advantages over `BQTestFactory`.
+4 and 5 style tests in your code. 
+  * `BQDaemonTestFactory` is not available under 5, as it is fairly useless and doesn't bring any advantages over 
+  `BQTestFactory`.
 
 * [bootique-cayenne #68](https://github.com/bootique/bootique-cayenne/issues/68): `maps` configuration option is changed 
 from **list** to **map**. You need to upgrade your yml configs accordingly.
