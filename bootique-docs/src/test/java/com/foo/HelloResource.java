@@ -2,12 +2,13 @@
 // tag::HelloInjectResource[]
 package com.foo;
 
+import io.bootique.annotation.Args;
+
+import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-// end::HelloResource[]
-import javax.inject.Inject;
 
-import io.bootique.annotation.Args;
+// end::HelloResource[]
 // tag::HelloResource[]
 
 @Path("/")
@@ -30,7 +31,7 @@ public class HelloResource {
         // end::HelloResource[]
         } else {
         // tag::HelloInjectResource[]
-        return "Hello, world! The app was started with the following arguments: " + allArgs;
+        return "Hello, world! The app was started with these args: " + allArgs;
         // end::HelloInjectResource[]
         }
         // tag::HelloInjectResource[]
