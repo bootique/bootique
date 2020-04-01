@@ -7,11 +7,11 @@ import io.bootique.jersey.JerseyModule;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
-public class MyModuleProvider implements BQModuleProvider{
+public class MyModuleProvider implements BQModuleProvider {
 
     @Override
     public BQModule module() {
-       return b -> JerseyModule.extend(b).addResource(SomeResource.class);
+        return b -> JerseyModule.extend(b).addResource(SomeResource.class);
     }
 
     @Path("/somepath")

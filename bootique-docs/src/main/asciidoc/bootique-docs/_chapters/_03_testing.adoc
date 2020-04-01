@@ -19,38 +19,58 @@
 
 === Bootique and Testing
 
-Bootique is uniquely suitable to be used as a test framework. Within a single test it allows you to start and stop multiple embedded Bootique runtimes, each with distinct set of modules and distinct YAML configurations, making it a powerful tool for _integration testing._
+Bootique is uniquely suitable to be used as a test framework. Within a single test it allows you to start and stop
+multiple embedded Bootique runtimes, each with а distinct set of modules and а YAML configuration, making it a
+powerful tool for _integration testing._
 
 === Creating Test Runtimes
 
-Here we'll demonstrate the use of the core test framework. For module-specific test APIs (e.g. `bootique-jdbc-test`), check documentation of those modules or GitHub. To use the core framework, import the following module in the "test" scope:
+Here we'll demonstrate the use of the core test framework. For module-specific test APIs (e.g. `bootique-jdbc-test-junit5`),
+check documentation of those modules.
 
+NOTE: Bootique provides integration for both JUnit 4 and JUnit 5 (both can even be combined in the same project via
+JUnit 5 https://junit.org/junit5/docs/current/user-guide/#migrating-from-junit4-running["vintage engine"]). This chapter
+will focus on JUnit 5 instructions. For JUnit 4 docs, please check documentation for Bootique 1.x.
+
+To start using Bootique test extensions, import the following module in the "test" scope:
 [source,xml]
 ----
 <dependency>
     <groupId>io.bootique</groupId>
-    <artifactId>bootique-test</artifactId>
+    <artifactId>bootique-test-junit5</artifactId>
     <scope>test</scope>
 </dependency>
 ----
 
-Then create a `BQTestFactory` in each integration test, annotated with `@Rule` (or `@ClassRule` if you are planning to create a single runtime for all tests in a given class) :
+To be able to create test Bootique runtimes (and make sure they are properly shut down after the test), you will use
+one of the two JUnit extensions - `BQTestFactory` and `BQTestClassFactory`. The former is used to create runtime(s)
+within a single test method. The latter - for runtimes shared within a single test class by multiple tests.
 
 [source,java,indent=0]
 ----
 include::../../../../test/java/io/bootique/docs/testing/MyTest.java[tag=Testing]
 ----
 
-Now use the factory to create test runtimes. Each runtime object is essentially an entire Bootique application. It can be used to inspect DI contents, execute a command (including commands that start background processes, such as `--server` and `--schedule`), etc. You don't need to stop the runtime explicitly. `BQTestFactory` will take care of shutdown through JUnit lifecycle.
+[source,java,indent=0]
+----
+include::../../../../test/java/io/bootique/docs/testing/MyClassTest.java[tag=Testing]
+----
 
-`testFactory.app()` returns a builder that mimics the API of `Bootique` class, with a few test-related extensions. E.g. it allows to load extra modules, etc.
+Each runtime object created via test factory is essentially an entire Bootique application. It can
+be used to inspect DI contents, execute a command (including commands that start background processes, such
+as `--server` and `--schedule`), etc. You don't need to stop the runtime explicitly. `BQTestFactory` and
+`BQTestClassFactory` will take care of shutdown through JUnit lifecycle.
+
+`testFactory.app()` returns a builder that mimics the API of `Bootique` class, with a few test-related extensions. It
+allows to load extra modules, etc.
 
 [source,java,indent=0]
 ----
 include::../../../../test/java/io/bootique/docs/testing/MyTest.java[tag=TestAbc1]
 ----
 
-If you don't need the runtime instance, but rather want to run a command, you'd call `run()` instead of `createRuntime()` (`run()` is an alias for `createRuntime().run()`):
+If you don't need the runtime instance, but rather want to run a command, you'd call `run()` instead of
+`createRuntime()` (`run()` is an alias for `createRuntime().run()`):
 
 [source,java,indent=0]
 ----
@@ -72,7 +92,8 @@ include::../../../../test/java/io/bootique/docs/testing/InjectableTest.java[tag=
 
 ==== Testing Network Services
 
-If a test command starts a web server or some other network service, it can be accessed via a URL right after running the server. E.g.:
+If a test command starts a web server or some other network service, it can be accessed via a URL right after running
+the server. E.g.:
 
 [source,java,indent=0]
 ----
@@ -81,7 +102,8 @@ include::../../../../test/java/io/bootique/docs/testing/NetworkTest.java[tag=Tes
 
 ==== Testing Commands
 
-You can emulate a real app execution in a unit test, by running a command and then checking the values of the exist code and `stdin` and `stderr` contents:
+You can emulate a real app execution in a unit test, by running a command and then checking the values of the exist
+code and `stdin` and `stderr` contents:
 
 [source,java,indent=0]
 ----
@@ -90,7 +112,9 @@ include::../../../../test/java/io/bootique/docs/testing/CommandTest.java[tag=Tes
 
 ==== Testing Module Validity
 
-When you are writing your own modules, you may want to check that they are configured properly for autoloading (i.e. `META-INF/services/io.bootique.BQModuleProvider` is present in the expected place and contains the right provider. There's a helper class to check for it:
+When you are writing your own modules, you may want to check that they are configured properly for autoloading
+(i.e. `META-INF/services/io.bootique.BQModuleProvider` is present in the expected place and contains the right provider.
+There's a helper class to check for it:
 
 [source,java,indent=0]
 ----

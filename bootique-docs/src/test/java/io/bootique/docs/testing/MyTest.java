@@ -2,16 +2,16 @@ package io.bootique.docs.testing;
 
 import io.bootique.BQRuntime;
 import io.bootique.command.CommandOutcome;
-import io.bootique.test.junit.BQTestFactory;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import io.bootique.test.junit5.BQTestFactory;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 // tag::Testing[]
 public class MyTest {
 
-    @Rule
-    public BQTestFactory testFactory = new BQTestFactory();
+    @RegisterExtension
+    public static BQTestFactory testFactory = new BQTestFactory();
     // end::Testing[]
 
 
@@ -30,7 +30,7 @@ public class MyTest {
 // end::TestAbc1[]
 
 
-    @Ignore("No real Jersey module available")
+    @Disabled("No real Jersey module available")
 // tag::TestAbc2[]
     @Test
     public void testABC() {

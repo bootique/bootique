@@ -1,15 +1,15 @@
 package io.bootique.docs.testing;
 
 import io.bootique.BQRuntime;
-import io.bootique.test.junit.BQTestFactory;
-import org.junit.Rule;
-import org.junit.Test;
+import io.bootique.test.junit5.BQTestFactory;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class InjectableTest {
 
-    @Rule
+    @RegisterExtension
     public BQTestFactory testFactory = new BQTestFactory();
 
     // tag::Testing[]

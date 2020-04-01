@@ -25,17 +25,17 @@ Your `pom.xml` in addition to the required project information tags will need to
 
 [source,xml,subs="attributes"]
 ----
-&lt;dependencyManagement&gt;
-  &lt;dependencies&gt;
-    &lt;dependency&gt;
-      &lt;groupId&gt;io.bootique.bom&lt;/groupId&gt;
-      &lt;artifactId&gt;bootique-bom&lt;/artifactId&gt;
-      &lt;version&gt;{bootique_version}&lt;/version&gt;
-      &lt;type&gt;pom&lt;/type&gt;
-      &lt;scope&gt;import&lt;/scope&gt;
-    &lt;/dependency&gt;
-  &lt;/dependencies&gt;
-&lt;/dependencyManagement&gt;
+<dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>io.bootique.bom</groupId>
+      <artifactId>bootique-bom</artifactId>
+      <version>{bootique.version}</version>
+      <type>pom</type>
+      <scope>import</scope>
+    </dependency>
+  </dependencies>
+</dependencyManagement>
 ----
 
 This will allow `&lt;dependencies/&gt;` section that will follow shortly to include various Bootique modules and not worry about their individual versions.
@@ -63,7 +63,7 @@ Those dependencies will be included by Maven automatically. Now let's create the
 
 [source,java,indent=0]
 ----
-include::../../test/java/com/foo/Application.java[tags=Main]
+include::../../../test/java/com/foo/Application.java[tags=Main]
 ----
 
 There's only one line of meaningful code inside the `main()` method, but this is already a working Bootique app.
@@ -96,7 +96,7 @@ We'll use standard Java https://en.wikipedia.org/wiki/Java_API_for_RESTful_Web_S
 
 [source,java]
 ----
-include::../../test/java/com/foo/HelloResource.java[tags=HelloResource]
+include::../../../test/java/com/foo/HelloResource.java[tags=HelloResource]
 ----
 
 Note that we could have placed this code straight in the Main class.
@@ -105,7 +105,7 @@ So keeping the resource in its own class. Now let's amend the `Main` class to te
 
 [source,java]
 ----
-include::../../test/java/com/foo/Application.java[tags=Application]
+include::../../../test/java/com/foo/Application.java[tags=Application]
 ----
 
 Here we created our own module that "contributes" resource configuration to the JerseyModule.
@@ -171,7 +171,7 @@ Let's extend our resource to include those arguments in the output:
 
 [source,java]
 ----
-include::../../test/java/com/foo/HelloResource.java[tags=HelloInjectResource]
+include::../../../test/java/com/foo/HelloResource.java[tags=HelloInjectResource]
 ----
 
 As you see, we declared a variable of type `String[]` and annotated it with `@javax.inject.Inject` and `@io.bootique.annotation.Args`.
@@ -192,11 +192,11 @@ To simplify it, you can set a parent of your `pom.xml` to be a standard Bootique
 
 [source,xml,subs="attributes"]
 ----
-&lt;parent&gt;
-    &lt;groupId&gt;io.bootique.parent&lt;/groupId&gt;
-    &lt;artifactId&gt;bootique-parent&lt;/artifactId&gt;
-    &lt;version&gt;{bootique_parent_version}&lt;/version&gt;
-&lt;/parent&gt;
+<parent>
+    <group>io.bootique.parent</group>
+    <artifactId>bootique-parent</artifactId>
+    <version>{bootique_parent_version}</version>
+</parent>
 ----
 
 Other required `pom.xml` additions:
@@ -206,7 +206,10 @@ Other required `pom.xml` additions:
 <properties>
     <main.class>com.foo.Application</main.class>
 </properties>
-<!--...-->
+----
+
+[source,xml]
+----
 <build>
     <plugins>
         <plugin>
