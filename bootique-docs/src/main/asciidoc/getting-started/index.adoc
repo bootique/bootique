@@ -17,7 +17,7 @@
 
 :bq-header: getting-started/_data/header.html
 
-include::_chapters/_01_hello_world.adoc[]
-include::_chapters/_02_configuration.adoc[]
-include::_chapters/_03_injection.adoc[]
-include::_chapters/_04_packaging.adoc[]
+include::getting-started/_chapters/_01_hello_world.adoc[]
+include::getting-started/_chapters/_02_configuration.adoc[]
+include::getting-started/_chapters/_03_injection.adoc[]
+include::getting-started/_chapters/_04_packaging.adoc[]
