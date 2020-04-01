@@ -79,7 +79,9 @@ include::../../../../test/java/io/bootique/docs/testing/MyTest.java[tag=TestAbc2
 
 === Common Test Scenarios
 
-Among the things that can be tested are runtime services with real dependencies, standard output of full Bootique applications (i.e. the stuff that would be printed to the console if this were a real app), network services using real network connections (e.g. your REST API's), and so on. Some examples are given below, outlining common techniques.
+Among the things that can be tested are runtime services with real dependencies, standard output of full Bootique
+applications (i.e. the stuff that would be printed to the console if this were a real app), network services using
+real network connections (e.g. your REST API's), and so on. Some examples are given below, outlining common techniques.
 
 ==== Testing Injectable Services
 
