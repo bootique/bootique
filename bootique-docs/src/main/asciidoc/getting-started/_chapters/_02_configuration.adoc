@@ -1,0 +1,40 @@
+// Licensed to ObjectStyle LLC under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ObjectStyle LLC licenses
+// this file to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+
+== Configuration
+
+You can optionally pass a configuration to almost any Bootique app. This is done with a `--config` parameter.
+An argument to `--config` is either a path to a configuration file or a URL of a service that serves such configuration remotely
+(imagine an app starting on a cloud that downloads its configuration from a central server).
+The format of the file is YAML (though, just like everything in Bootique, this can be customized).
+Let's create a config file that changes Jetty listen port and the app context path.
+To do this create a file in the app run directory, with an arbitrary name, e.g. `myconfig.yml` with the following contents:
+
+[source,yaml]
+----
+jetty:
+  context: /hello
+  connectors:
+    - port: 10001
+----
+
+Now restart the app with the new set of parameters: `--server --config=myconfig.yml`.
+After the restart the app would no longer respond at http://localhost:8080/[http://localhost:8080/],
+instead you will need to use a new URL: http://localhost:10001/hello[http://localhost:10001/hello].
+This is just a taste of what can be done with configuration.
+Your app can just as easily obtain its own specific configuration in a form of an app-specific object, as described
+elsewhere in the docs.

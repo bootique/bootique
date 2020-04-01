@@ -1,0 +1,70 @@
+// Licensed to ObjectStyle LLC under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ObjectStyle LLC licenses
+// this file to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+
+== Packaging
+
+Till now we've been running our app from IDE (which also happened to be much easier than running typical container-aware apps).
+Now let's package our app as a runnable "fat" jar to be able to run it from command line (e.g. in deployment environment).
+Assembling "fat" jar requires a bit of configuration of the Maven `maven-shade-plugin`.
+To simplify it, you can set a parent of your `pom.xml` to be a standard Bootique parent:
+
+[source,xml,subs="attributes"]
+----
+<parent>
+    <group>io.bootique.parent</group>
+    <artifactId>bootique-parent</artifactId>
+    <version>{bootique_parent_version}</version>
+</parent>
+----
+
+Other required `pom.xml` additions:
+
+[source,xml]
+----
+<properties>
+    <main.class>com.foo.Application</main.class>
+</properties>
+----
+
+[source,xml]
+----
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+        </plugin>
+    </plugins>
+</build>
+----
+
+Once this is setup you can build and run the app:
+
+[source,bash]
+----
+mvn clean package
+
+# Using myapp-1.0.jar as an example; the actual jar name depends on your POM settings
+java -jar target/myapp-1.0.jar --server --config=myconfig.yml
+----
+
+The result should be the same as running from the IDE,
+and the app should be still accessible at http://localhost:10001/hello[http://localhost:10001/hello].
+Now your jar can be deployed in any environment that has Java 8.
+
+This concludes our simple tutorial.
+Now you can explore our http://bootique.io/docs/[documentation] to read more about Bootique core and individual modules.

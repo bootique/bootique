@@ -1,0 +1,136 @@
+// Licensed to ObjectStyle LLC under one
+// or more contributor license agreements.  See the NOTICE file
+// distributed with this work for additional information
+// regarding copyright ownership.  The ObjectStyle LLC licenses
+// this file to you under the Apache License, Version 2.0 (the
+// "License"); you may not use this file except in compliance
+// with the License.  You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing,
+// software distributed under the License is distributed on an
+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+// KIND, either express or implied.  See the License for the
+// specific language governing permissions and limitations
+// under the License.
+== Hello World in Bootique
+
+The goal of this chapter is to write a simple REST app using Bootique.
+Let's start with a new Java Maven project created in your favorite IDE.
+Your `pom.xml` in addition to the required project information tags will need to declare a few BOM ("Bill of Material") imports in the `&lt;dependencyManagement/&gt;` section:
+
+[source,xml,subs="attributes+"]
+----
+<dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>io.bootique.bom</groupId>
+      <artifactId>bootique-bom</artifactId>
+      <version>{bootique_version}</version>
+      <type>pom</type>
+      <scope>import</scope>
+    </dependency>
+  </dependencies>
+</dependencyManagement>
+----
+
+This will allow `<dependencies/>` section that will follow shortly to include various Bootique modules and not worry about their individual versions.
+So let's create this section and import a few modules:
+
+[source,xml]
+----
+<dependencies>
+  <dependency>
+    <groupId>io.bootique.jersey</groupId>
+    <artifactId>bootique-jersey</artifactId>
+    <scope>compile</scope>
+  </dependency>
+  <dependency>
+    <groupId>io.bootique.logback</groupId>
+    <artifactId>bootique-logback</artifactId>
+    <scope>compile</scope>
+  </dependency>
+</dependencies>
+----
+
+As you see we want a `bootique-jersey` and `bootique-logback` modules in our app.
+Those may depend on other modules, but we don't have to think about it.
+Those dependencies will be included by Maven automatically. Now let's create the main Java class that will run the app:
+
+[source,java,indent=0]
+----
+include::../../../../test/java/com/foo/Application.java[tags=Main]
+----
+
+There's only one line of meaningful code inside the `main()` method, but this is already a working Bootique app.
+Meaning it is runnable and can do a few things. So let's try running this class from your IDE.
+You will see the output like this on the IDE console:
+
+[source]
+----
+NAME
+      com.foo.Application
+
+OPTIONS
+      -c yaml_location, --config=yaml_location
+           Specifies YAML config location, which can be a file path or a URL.
+
+      -h, --help
+           Prints this message.
+
+      -H, --help-config
+           Prints information about application modules and their configuration
+           options.
+
+      -s, --server
+           Starts Jetty server.
+----
+
+So the app printed its help message telling us which commands and options it understands.
+`--server` option looks promising, but before we use it, let's actually write a REST endpoint that will answer to our requests.
+We'll use standard Java https://en.wikipedia.org/wiki/Java_API_for_RESTful_Web_Services[JAX-RS API] for that:
+
+[source,java]
+----
+include::../../../../test/java/com/foo/HelloResource.java[tags=HelloResource]
+----
+
+Note that we could have placed this code straight in the Main class.
+Which makes for an effective demo (an app that can fit in one class), but not for a particularly clean design.
+So keeping the resource in its own class. Now let's amend the `Main` class to tell Bootique where to find the resource:
+
+[source,java]
+----
+include::../../../../test/java/com/foo/Application.java[tags=Application]
+----
+
+Here we created our own module that "contributes" resource configuration to the JerseyModule.
+Now let's try to run the app with the changes. Add `--server` to the command run parameters before doing it.
+Now when the app is started, you will see different output:
+
+[source]
+----
+INFO main o.e.jetty.util.log: Logging initialized @1328ms
+INFO main i.b.j.s.ServerFactory: Adding listener io.bootique.jetty.servlet.DefaultServletEnvironment
+INFO main i.b.j.s.ServletFactory: Adding servlet 'jersey' mapped to /*
+INFO main i.b.j.s.ServerLifecycleLogger: Starting jetty...
+INFO main o.e.j.server.Server: jetty-9.4.19.v20190610
+INFO main o.e.j.s.h.ContextHandler: Started o.e.j.s.ServletContextHandler@27dc79f7{/,null,AVAILABLE}
+INFO main o.e.j.s.ServerConnector: Started ServerConnector@3a45c42a{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+INFO main o.e.j.server.Server: Started @2005ms
+INFO main i.b.j.s.ServerLifecycleLogger: Started Jetty in 584 ms. Base URL: http://127.0.0.1:8080/
+----
+
+Notice that the app did not terminate immediately, and is waiting for user requests.
+Now let's try opening the URL http://localhost:8080/[http://localhost:8080/] in the browser.
+We should see 'Hello, world!' as request output. We just built a working REST app that does not require deployment to a web container,
+and generally wasn't that hard to write. The takeaway here is this:
+
+* You start the app via `Bootique` class, that gives you a runnable "shell" of your future app in one line of code.
+* Declaring modules in the app dependencies and using `Bootique.autoLoadModules()`
+gives the app the ability to respond to commands from those modules
+(in our example `--server` command coming from implicit bootique-jetty module started an embedded web server ).
+* You can contribute your own code to modules to build an app with desired behavior.
+
+Next we'll talk about configuration...
