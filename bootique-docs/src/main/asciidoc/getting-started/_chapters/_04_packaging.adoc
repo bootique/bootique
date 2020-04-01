@@ -22,7 +22,7 @@ Now let's package our app as a runnable "fat" jar to be able to run it from comm
 Assembling "fat" jar requires a bit of configuration of the Maven `maven-shade-plugin`.
 To simplify it, you can set a parent of your `pom.xml` to be a standard Bootique parent:
 
-[source,xml,subs="attributes"]
+[source,xml,subs="attributes+"]
 ----
 <parent>
     <group>io.bootique.parent</group>
