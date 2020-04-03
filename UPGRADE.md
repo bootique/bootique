@@ -61,6 +61,9 @@ is removed. A newer client should be used. See [https://github.com/bootique/boot
 * [bootique-jetty #95](https://github.com/bootique/bootique-jetty/issues/95): Default value for `maxThreads` property was 
 lowered from 1024 to 200. If you relied on this default value you should now set it explicitly in the app config.
 
+* [bootique-jersey #48](https://github.com/bootique/bootique-jersey/issues/48): `bootique-jersey-client` is no longer 
+a "top-level" project and was merged to `bootique-jersey`. There's no code changes, but the module coordinates have changed.
+Instead of `io.bootique.jersey.client:bootique-jersey-client` you will need to import `io.bootique.jersey:bootique-jersey-client`.
 
 * [bootique-swagger #18](https://github.com/bootique/bootique-swagger/issues/18): The default URL of the Swagger UI 
 has changed from "/swagger" to "/swagger-ui". You'll need to either start using the new URL, or change it via configuration
