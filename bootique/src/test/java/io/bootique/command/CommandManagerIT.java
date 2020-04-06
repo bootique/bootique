@@ -24,11 +24,14 @@ import io.bootique.BQRuntime;
 import io.bootique.cli.Cli;
 import io.bootique.di.Binder;
 import io.bootique.di.BQModule;
+import io.bootique.di.Provides;
 import io.bootique.help.HelpCommand;
 import io.bootique.meta.application.CommandMetadata;
 import io.bootique.unit.BQInternalTestFactory;
 import org.junit.Rule;
 import org.junit.Test;
+
+import javax.inject.Singleton;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -138,6 +141,17 @@ public class CommandManagerIT {
         assertSame(defaultCommand, commandManager.getPublicDefaultCommand().get());
     }
 
+    @Test
+    public void testDefaultCommandViaProvidesMethod() {
+
+        BQRuntime runtime = runtimeFactory.app()
+                .modules(M2.class)
+                .createRuntime();
+
+        CommandOutcome o = runtime.run();
+        assertFalse(o.isSuccess());
+        assertEquals("m2-command-label", o.getMessage());
+    }
 
     public static class M0 implements BQModule {
 
@@ -166,6 +180,36 @@ public class CommandManagerIT {
         @Override
         public void configure(Binder binder) {
             BQCoreModule.extend(binder).addCommand(mockCommand);
+        }
+    }
+
+    public static class M2 implements BQModule {
+
+        @Override
+        public void configure(Binder binder) {
+            BQCoreModule.extend(binder).setDefaultCommand(DefaultCommand2.class);
+        }
+
+        @Provides
+        @Singleton
+        DefaultCommand2 provideDefaultCommand2() {
+            return new DefaultCommand2("m2-command-label");
+        }
+    }
+
+    public static class DefaultCommand2 extends CommandWithMetadata {
+
+        private String message;
+
+        // intentionally using non-default constructor, to ensure DI can't instantiate it without a @Provides method
+        public DefaultCommand2(String message) {
+            super(CommandMetadata.builder(DefaultCommand2.class).build());
+            this.message = message;
+        }
+
+        @Override
+        public CommandOutcome run(Cli cli) {
+            return CommandOutcome.failed(-1, message);
         }
     }
 }
