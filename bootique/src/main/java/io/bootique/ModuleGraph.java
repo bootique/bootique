@@ -21,10 +21,10 @@ package io.bootique;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,16 +35,17 @@ class ModuleGraph {
     /**
      * {@link LinkedHashMap} is used for supporting insertion order.
      */
-    private final Map<BQModuleMetadata, List<BQModuleMetadata>> neighbors = new LinkedHashMap<>();
+    private final Map<BQModuleMetadata, List<BQModuleMetadata>> neighbors;
 
-    ModuleGraph() {
+    ModuleGraph(int size) {
+        neighbors = new LinkedHashMap<>(size);
     }
 
     /**
      * Add a vertex to the graph. Nothing happens if vertex is already in graph.
      */
     void add(BQModuleMetadata vertex) {
-        neighbors.putIfAbsent(vertex, new ArrayList<>());
+        neighbors.putIfAbsent(vertex, new ArrayList<>(0));
     }
 
     /**
@@ -86,7 +87,7 @@ class ModuleGraph {
     List<BQModuleMetadata> topSort() {
         Map<BQModuleMetadata, Integer> degree = inDegree();
         Deque<BQModuleMetadata> zeroDegree = new ArrayDeque<>(neighbors.size());
-        LinkedList<BQModuleMetadata> result = new LinkedList<>();
+        List<BQModuleMetadata> result = new ArrayList<>(neighbors.size());
 
         degree.forEach((k, v) -> {
             if(v == 0) {
@@ -96,7 +97,7 @@ class ModuleGraph {
 
         while (!zeroDegree.isEmpty()) {
             BQModuleMetadata v = zeroDegree.pop();
-            result.push(v);
+            result.add(v);
 
             neighbors.get(v).forEach(neighbor ->
                     degree.computeIfPresent(neighbor, (k, oldValue) -> {
@@ -119,6 +120,7 @@ class ModuleGraph {
             throw new BootiqueException(1, "Circular override dependency between DI modules: " + cycleString);
         }
 
+        Collections.reverse(result);
         return result;
     }
 }

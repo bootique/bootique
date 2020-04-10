@@ -19,10 +19,14 @@
 
 package io.bootique;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import io.bootique.di.BQModule;
 import io.bootique.log.BootLogger;
-
-import java.util.*;
 
 class RuntimeModuleMerger {
 
@@ -32,22 +36,22 @@ class RuntimeModuleMerger {
         this.bootLogger = bootLogger;
     }
 
-    Collection<BQModule> toDIModules(Collection<BQModuleMetadata> bqModules) {
-        ModuleGraph moduleGraph = new ModuleGraph();
+    Collection<BQModule> toDIModules(Collection<BQModuleMetadata> bqModulesMetadata) {
+        ModuleGraph moduleGraph = new ModuleGraph(bqModulesMetadata.size());
         Map<Class<? extends BQModule>, BQModuleMetadata> moduleByClass = new HashMap<>();
-        bqModules.forEach(bqModule -> {
-            Class<? extends BQModule> moduleClass = bqModule.getModule().getClass();
-            moduleByClass.putIfAbsent(moduleClass, bqModule);
-            moduleGraph.add(bqModule);
-            if(bqModule.getOverrides().isEmpty()) {
-                bootLogger.trace(() -> traceMessage(bqModule, null));
+        bqModulesMetadata.forEach(metadata -> {
+            Class<? extends BQModule> moduleClass = metadata.getModule().getClass();
+            moduleByClass.putIfAbsent(moduleClass, metadata);
+            moduleGraph.add(metadata);
+            if(metadata.getOverrides().isEmpty()) {
+                bootLogger.trace(() -> traceMessage(metadata, null));
             }
         });
-        bqModules.forEach(bqModule -> bqModule.getOverrides()
+        bqModulesMetadata.forEach(metadata -> metadata.getOverrides()
                 .forEach(override -> {
                     BQModuleMetadata overrideModule = moduleByClass.get(override);
-                    moduleGraph.add(bqModule, overrideModule);
-                    bootLogger.trace(() -> traceMessage(bqModule, overrideModule));
+                    moduleGraph.add(metadata, overrideModule);
+                    bootLogger.trace(() -> traceMessage(metadata, overrideModule));
                 }));
 
         List<BQModule> modules = new ArrayList<>(moduleByClass.size());
