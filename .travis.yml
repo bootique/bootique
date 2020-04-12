@@ -20,6 +20,9 @@ jdk:
   - oraclejdk11
   - openjdk-ea
 
+# This prevents Travis from running "mvn install" on its own before running our script
+install: /bin/true
+
 script:
   - mvn clean verify
 
