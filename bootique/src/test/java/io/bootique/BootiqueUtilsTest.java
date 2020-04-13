@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.internal.verification.AtLeast;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
@@ -36,7 +37,7 @@ public class BootiqueUtilsTest {
 
     @Test
     public void testToArray() {
-        assertArrayEquals(new String[]{}, BootiqueUtils.toArray(asList()));
+        assertArrayEquals(new String[]{}, BootiqueUtils.toArray(Collections.emptyList()));
         assertArrayEquals(new String[]{"a", "b", "c"}, BootiqueUtils.toArray(asList("a", "b", "c")));
     }
 
@@ -56,20 +57,35 @@ public class BootiqueUtilsTest {
 
         when(testModuleProvider1.dependencies()).thenReturn(asList(testModuleProvider2, testModuleProvider3));
 
-        Collection<BQModuleProvider> bqModuleProviders =
-                BootiqueUtils.moduleProviderDependencies(singletonList(testModuleProvider1));
+        BQModuleMetadata.Builder builder1 = mock(BQModuleMetadata.Builder.class);
+        BQModuleMetadata metadata1 = mock(BQModuleMetadata.class);
+        when(builder1.build()).thenReturn(metadata1);
+        when(testModuleProvider1.moduleBuilder()).thenReturn(builder1);
 
-        assertEquals(3, bqModuleProviders.size());
-        assertTrue(bqModuleProviders.contains(testModuleProvider1));
-        assertTrue(bqModuleProviders.contains(testModuleProvider2));
-        assertTrue(bqModuleProviders.contains(testModuleProvider3));
+        BQModuleMetadata.Builder builder2 = mock(BQModuleMetadata.Builder.class);
+        BQModuleMetadata metadata2 = mock(BQModuleMetadata.class);
+        when(builder2.build()).thenReturn(metadata2);
+        when(testModuleProvider2.moduleBuilder()).thenReturn(builder2);
+
+        BQModuleMetadata.Builder builder3 = mock(BQModuleMetadata.Builder.class);
+        BQModuleMetadata metadata3 = mock(BQModuleMetadata.class);
+        when(builder3.build()).thenReturn(metadata3);
+        when(testModuleProvider3.moduleBuilder()).thenReturn(builder3);
+
+        Collection<BQModuleMetadata> bqModuleMetadata =
+            BootiqueUtils.moduleProviderDependencies(singletonList(testModuleProvider1));
+
+        assertEquals(3, bqModuleMetadata.size());
+        assertTrue(bqModuleMetadata.contains(testModuleProvider1));
+        assertTrue(bqModuleMetadata.contains(testModuleProvider2));
+        assertTrue(bqModuleMetadata.contains(testModuleProvider3));
 
         verify(testModuleProvider1, new AtLeast(1)).dependencies();
-        verify(testModuleProvider1, new AtLeast(1)).name();
+        verify(testModuleProvider1, new AtLeast(1)).moduleBuilder();
         verify(testModuleProvider2, new AtLeast(1)).dependencies();
-        verify(testModuleProvider2, new AtLeast(1)).name();
+        verify(testModuleProvider2, new AtLeast(1)).moduleBuilder();
         verify(testModuleProvider3, new AtLeast(1)).dependencies();
-        verify(testModuleProvider3, new AtLeast(1)).name();
+        verify(testModuleProvider3, new AtLeast(1)).moduleBuilder();
 
         verifyNoMoreInteractions(testModuleProvider1, testModuleProvider2, testModuleProvider3);
     }
@@ -80,23 +96,37 @@ public class BootiqueUtilsTest {
         BQModuleProvider testModuleProvider2 = mock(BQModuleProvider.class);
         BQModuleProvider testModuleProvider3 = mock(BQModuleProvider.class);
 
-        when(testModuleProvider1.dependencies()).thenReturn(singletonList(testModuleProvider2));
-        when(testModuleProvider2.dependencies()).thenReturn(singletonList(testModuleProvider3));
+        when(testModuleProvider1.dependencies()).thenReturn(asList(testModuleProvider2, testModuleProvider3));
 
-        Collection<BQModuleProvider> bqModuleProviders =
+        BQModuleMetadata.Builder builder1 = mock(BQModuleMetadata.Builder.class);
+        BQModuleMetadata metadata1 = mock(BQModuleMetadata.class);
+        when(builder1.build()).thenReturn(metadata1);
+        when(testModuleProvider1.moduleBuilder()).thenReturn(builder1);
+
+        BQModuleMetadata.Builder builder2 = mock(BQModuleMetadata.Builder.class);
+        BQModuleMetadata metadata2 = mock(BQModuleMetadata.class);
+        when(builder2.build()).thenReturn(metadata2);
+        when(testModuleProvider2.moduleBuilder()).thenReturn(builder2);
+
+        BQModuleMetadata.Builder builder3 = mock(BQModuleMetadata.Builder.class);
+        BQModuleMetadata metadata3 = mock(BQModuleMetadata.class);
+        when(builder3.build()).thenReturn(metadata3);
+        when(testModuleProvider3.moduleBuilder()).thenReturn(builder3);
+
+        Collection<BQModuleMetadata> bqModuleMetadata =
                 BootiqueUtils.moduleProviderDependencies(singletonList(testModuleProvider1));
 
-        assertEquals(3, bqModuleProviders.size());
-        assertTrue(bqModuleProviders.contains(testModuleProvider1));
-        assertTrue(bqModuleProviders.contains(testModuleProvider2));
-        assertTrue(bqModuleProviders.contains(testModuleProvider3));
+        assertEquals(3, bqModuleMetadata.size());
+        assertTrue(bqModuleMetadata.contains(testModuleProvider1));
+        assertTrue(bqModuleMetadata.contains(testModuleProvider2));
+        assertTrue(bqModuleMetadata.contains(testModuleProvider3));
 
         verify(testModuleProvider1, new AtLeast(1)).dependencies();
-        verify(testModuleProvider1, new AtLeast(1)).name();
+        verify(testModuleProvider1, new AtLeast(1)).moduleBuilder();
         verify(testModuleProvider2, new AtLeast(1)).dependencies();
-        verify(testModuleProvider2, new AtLeast(1)).name();
+        verify(testModuleProvider2, new AtLeast(1)).moduleBuilder();
         verify(testModuleProvider3, new AtLeast(1)).dependencies();
-        verify(testModuleProvider3, new AtLeast(1)).name();
+        verify(testModuleProvider3, new AtLeast(1)).moduleBuilder();
 
         verifyNoMoreInteractions(testModuleProvider1, testModuleProvider2, testModuleProvider3);
     }
@@ -107,24 +137,37 @@ public class BootiqueUtilsTest {
         BQModuleProvider testModuleProvider2 = mock(BQModuleProvider.class);
         BQModuleProvider testModuleProvider3 = mock(BQModuleProvider.class);
 
-        when(testModuleProvider1.dependencies()).thenReturn(singletonList(testModuleProvider2));
-        when(testModuleProvider2.dependencies()).thenReturn(singletonList(testModuleProvider3));
-        when(testModuleProvider3.dependencies()).thenReturn(singletonList(testModuleProvider1));
+        when(testModuleProvider1.dependencies()).thenReturn(asList(testModuleProvider2, testModuleProvider3));
 
-        Collection<BQModuleProvider> bqModuleProviders =
+        BQModuleMetadata.Builder builder1 = mock(BQModuleMetadata.Builder.class);
+        BQModuleMetadata metadata1 = mock(BQModuleMetadata.class);
+        when(builder1.build()).thenReturn(metadata1);
+        when(testModuleProvider1.moduleBuilder()).thenReturn(builder1);
+
+        BQModuleMetadata.Builder builder2 = mock(BQModuleMetadata.Builder.class);
+        BQModuleMetadata metadata2 = mock(BQModuleMetadata.class);
+        when(builder2.build()).thenReturn(metadata2);
+        when(testModuleProvider2.moduleBuilder()).thenReturn(builder2);
+
+        BQModuleMetadata.Builder builder3 = mock(BQModuleMetadata.Builder.class);
+        BQModuleMetadata metadata3 = mock(BQModuleMetadata.class);
+        when(builder3.build()).thenReturn(metadata3);
+        when(testModuleProvider3.moduleBuilder()).thenReturn(builder3);
+
+        Collection<BQModuleMetadata> bqModuleMetadata =
                 BootiqueUtils.moduleProviderDependencies(singletonList(testModuleProvider1));
 
-        assertEquals(3, bqModuleProviders.size());
-        assertTrue(bqModuleProviders.contains(testModuleProvider1));
-        assertTrue(bqModuleProviders.contains(testModuleProvider2));
-        assertTrue(bqModuleProviders.contains(testModuleProvider3));
+        assertEquals(3, bqModuleMetadata.size());
+        assertTrue(bqModuleMetadata.contains(testModuleProvider1));
+        assertTrue(bqModuleMetadata.contains(testModuleProvider2));
+        assertTrue(bqModuleMetadata.contains(testModuleProvider3));
 
         verify(testModuleProvider1, new AtLeast(1)).dependencies();
-        verify(testModuleProvider1, new AtLeast(1)).name();
+        verify(testModuleProvider1, new AtLeast(1)).moduleBuilder();
         verify(testModuleProvider2, new AtLeast(1)).dependencies();
-        verify(testModuleProvider2, new AtLeast(1)).name();
+        verify(testModuleProvider2, new AtLeast(1)).moduleBuilder();
         verify(testModuleProvider3, new AtLeast(1)).dependencies();
-        verify(testModuleProvider3, new AtLeast(1)).name();
+        verify(testModuleProvider3, new AtLeast(1)).moduleBuilder();
 
         verifyNoMoreInteractions(testModuleProvider1, testModuleProvider2, testModuleProvider3);
     }

@@ -20,8 +20,8 @@
 package io.bootique;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Utils methods serving {@link Bootique} class.
@@ -34,30 +34,25 @@ final class BootiqueUtils {
         throw new AssertionError("Should not be called.");
     }
 
-    static Collection<BQModuleProvider> moduleProviderDependencies(Collection<BQModuleProvider> rootSet) {
-        return moduleProviderDependencies(rootSet, new HashMap<>()).values();
+    static Collection<BQModuleMetadata> moduleProviderDependencies(Collection<BQModuleProvider> rootSet) {
+        return moduleProviderDependencies(rootSet, new HashSet<>());
     }
 
-    private static Map<Object, BQModuleProvider> moduleProviderDependencies(
+    private static Set<BQModuleMetadata> moduleProviderDependencies(
             Collection<BQModuleProvider> rootSet,
-            Map<Object, BQModuleProvider> processed) {
+            Set<BQModuleMetadata> metadata) {
 
         for (BQModuleProvider moduleProvider : rootSet) {
-            String name = moduleProvider.name();
-            Object key = moduleProvider.getClass().isSynthetic() || name == null || name.isEmpty() || name.equals("Bootique")
-                    ? moduleProvider
-                    : name;
-            if (!processed.containsKey(key)) {
-                processed.put(key, moduleProvider);
-
-                final Collection<BQModuleProvider> dependencies = moduleProvider.dependencies();
+            BQModuleMetadata next = moduleProvider.moduleBuilder().build();
+            if(metadata.add(next)) {
+                Collection<BQModuleProvider> dependencies = moduleProvider.dependencies();
                 if (!dependencies.isEmpty()) {
-                    processed.putAll(moduleProviderDependencies(dependencies, processed));
+                    metadata.addAll(moduleProviderDependencies(dependencies, metadata));
                 }
             }
         }
 
-        return processed;
+        return metadata;
     }
 
     static String[] mergeArrays(String[] a1, String[] a2) {
