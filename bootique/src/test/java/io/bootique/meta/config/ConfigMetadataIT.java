@@ -167,7 +167,7 @@ public class ConfigMetadataIT {
                 "            -\n" +
                 "                  #\n" +
                 "                  # Resolved as 'io.bootique.meta.config.ConfigMetadataIT$TestRecursiveConfig'.\n" +
-                "                  #\n", help);
+                "                  #\n", help.replace("\r", ""));
     }
 
 
@@ -215,14 +215,14 @@ public class ConfigMetadataIT {
         String help = buffer.toString();
         assertNotNull(help);
 
-        assertEquals(help, "<value>:\n" +
+        assertEquals("<value>:\n" +
                 "      #\n" +
                 "      # Resolved as 'io.bootique.meta.config.ConfigMetadataIT$TestValueObjectConfig'.\n" +
                 "      #\n" +
                 "\n" +
                 "      # (p1 desc)\n" +
                 "      # Resolved as 'io.bootique.meta.config.ConfigMetadataIT$TestVO'.\n" +
-                "      p1: <Test Value Object>\n");
+                "      p1: <Test Value Object>\n", help.replace("\r", ""));
     }
 
     @Test
