@@ -5,6 +5,7 @@
 * #271 bootique-test integration with junit5
 * #276 Job parameters mapped as declared vars not shown in help 
 * #280 BQRuntimeDaemon hides exceptions thrown in runtime 
+* #284 Update to bootique-modules-parent 2.0
 
 ## 1.1
 
