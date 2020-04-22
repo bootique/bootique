@@ -43,7 +43,7 @@
     <pluginRepositories>
         <pluginRepository>
             <id>bootique-snapshots</id>
-            <url>https://maven.objectstyle.org/nexus/content/repositories/bootique-snapshots</url>
+            <url>https://oss.jfrog.org/artifactory/libs-snapshot</url>
             <releases>
                 <enabled>false</enabled>
             </releases>
