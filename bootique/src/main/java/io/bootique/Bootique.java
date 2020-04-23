@@ -454,11 +454,7 @@ public class Bootique {
 
         // convert to DI modules respecting overrides, etc.
         Collection<BQModule> modules = new RuntimeModuleMerger(bootLogger).toDIModules(bqModules);
-        return DIBootstrap.injectorBuilder(modules)
-                .enableDynamicBindings()
-                .defaultNoScope()
-                .allowProxyCreation()
-                .build();
+        return DIBootstrap.injectorBuilder(modules).build();
     }
 
     private Collection<BQModuleProvider> builderProviders() {
