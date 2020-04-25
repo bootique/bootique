@@ -25,10 +25,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Scanner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class ResourceFactoryTest {
 
@@ -93,5 +93,21 @@ public class ResourceFactoryTest {
 	public void testGetUrl_ClasspathUrlWithSlash() throws IOException {
 		String cpUrl = "classpath:/io/bootique/config/test2.yml";
 		resourceContents(cpUrl);
+	}
+
+	@Test
+	public void testGetUrls_ClasspathUrl() {
+		Collection<URL> urls = new ResourceFactory("classpath:io/bootique/config/test2.yml").getUrls();
+		assertEquals(1, urls.size());
+		String u1 = urls.iterator().next().toString();
+		assertTrue(u1, u1.endsWith("io/bootique/config/test2.yml"));
+	}
+
+	@Test
+	public void testGetUrls_File() {
+		Collection<URL> urls = new ResourceFactory("src/test/resources/io/bootique/config/test1.yml").getUrls();
+		assertEquals(1, urls.size());
+		String u1 = urls.iterator().next().toString();
+		assertTrue(u1, u1.endsWith("src/test/resources/io/bootique/config/test1.yml"));
 	}
 }

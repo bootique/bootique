@@ -25,6 +25,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -78,6 +83,17 @@ public class ResourceFactory {
     }
 
     /**
+     * Returns a collection of URLs that matched this resource id. Normally this will be the equivalent of {@link #getUrl()},
+     * however sometimes "classpath:" URLs can have duplicates.
+     *
+     * @return a collection of URLs that matched this resource id.
+     * @since 2.0
+     */
+    public Collection<URL> getUrls() {
+        return resolveUrls(this.resourceId);
+    }
+
+    /**
      * Returns resource ID string used to initialize this ResourceFactory.
      *
      * @return resource ID string used to initialize this ResourceFactory.
@@ -87,22 +103,42 @@ public class ResourceFactory {
         return resourceId;
     }
 
+    protected Collection<URL> resolveUrls(String resourceId) {
+
+        // resourceId can be either a file path or a URL or a classpath: URL
+        if (resourceId.startsWith(CLASSPATH_URL_PREFIX)) {
+
+            String path = resolveAsClasspath(resourceId);
+
+            Enumeration<URL> cpUrls;
+            try {
+                cpUrls = ResourceFactory.class.getClassLoader().getResources(path);
+            } catch (IOException e) {
+                throw new RuntimeException("Can't resolve resources for path: " + path, e);
+            }
+
+            if (!cpUrls.hasMoreElements()) {
+                throw new IllegalArgumentException("Classpath URL not found: " + resourceId);
+            }
+
+            List<URL> urls = new ArrayList<>(2);
+            while (cpUrls.hasMoreElements()) {
+                urls.add(cpUrls.nextElement());
+            }
+
+            return urls;
+        }
+
+        return Collections.singletonList(resolveAsUri(resourceId));
+    }
+
     protected URL resolveUrl(String resourceId) {
 
         // resourceId can be either a file path or a URL or a classpath: URL
-
         if (resourceId.startsWith(CLASSPATH_URL_PREFIX)) {
 
-            String path = resourceId.substring(CLASSPATH_URL_PREFIX.length());
-
-            // classpath URLs must not start with a slash. This does not work
-            // with ClassLoader.
-            if (path.length() > 0 && path.charAt(0) == '/') {
-                throw new RuntimeException(CLASSPATH_URL_PREFIX + " URLs must not start with a slash: " + resourceId);
-            }
-
+            String path = resolveAsClasspath(resourceId);
             URL cpUrl = ResourceFactory.class.getClassLoader().getResource(path);
-
             if (cpUrl == null) {
                 throw new IllegalArgumentException("Classpath URL not found: " + resourceId);
             }
@@ -110,6 +146,22 @@ public class ResourceFactory {
             return cpUrl;
         }
 
+        return resolveAsUri(resourceId);
+    }
+
+    protected String resolveAsClasspath(String resourceId) {
+        String path = resourceId.substring(CLASSPATH_URL_PREFIX.length());
+
+        // classpath URLs must not start with a slash. This does not work with ClassLoader.
+        // TODO: should we silently strip the leading path?
+        if (path.length() > 0 && path.charAt(0) == '/') {
+            throw new RuntimeException(CLASSPATH_URL_PREFIX + " URLs must not start with a slash: " + resourceId);
+        }
+
+        return path;
+    }
+
+    protected URL resolveAsUri(String resourceId) {
         URI uri;
         try {
             uri = URI.create(resourceId);
