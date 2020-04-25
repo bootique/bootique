@@ -67,7 +67,21 @@ Instead of `io.bootique.jersey.client:bootique-jersey-client` you will need to i
 
 * [bootique-swagger #18](https://github.com/bootique/bootique-swagger/issues/18): The default URL of the Swagger UI 
 has changed from "/swagger" to "/swagger-ui". You'll need to either start using the new URL, or change it via configuration
-property `swaggerui.urlPattern`.
+property `swaggerui.<label>.uiPath`.
+
+* [bootique-swagger #21](https://github.com/bootique/bootique-swagger/issues/21): To support the same Swagger UI servlet 
+serving multiple models in one app ("multitenancy"), "swaggerui" configuration is now nested, consisting of zero or
+more named configurations. To update your config, change it from something like:
+```yaml
+swaggerui:
+  specUrl: "https://example.org/spec1.yml"
+```
+to something like this:
+```yaml
+swaggerui:
+  default: # "default" is an arbitrary name. You can use your own
+     specUrl: "https://example.org/spec1.yml"
+```
 
 ## 1.1
 
