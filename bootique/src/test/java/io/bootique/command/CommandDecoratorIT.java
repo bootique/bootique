@@ -42,10 +42,11 @@ import static org.mockito.Mockito.when;
 
 public class CommandDecoratorIT {
 
+    private final ThreadTester threadTester = new ThreadTester();
+
     @Rule
     public BQInternalTestFactory testFactory = new BQInternalTestFactory();
-
-    private final ThreadTester threadTester = new ThreadTester();
+    
     private MainCommand mainCommand;
     private SuccessfulCommand successfulCommand;
     private FailingCommand failingCommand;
@@ -54,12 +55,7 @@ public class CommandDecoratorIT {
     public void before() {
 
         // test for previous tests side effects - the previous test must be cleanly shutdown...
-        try {
-            this.threadTester.assertPoolSize(0);
-        }catch (NullPointerException npe) {
-            npe.printStackTrace();
-            fail();
-        }
+        this.threadTester.assertPoolSize(0);
 
         this.mainCommand = new MainCommand();
         this.successfulCommand = new SuccessfulCommand();
