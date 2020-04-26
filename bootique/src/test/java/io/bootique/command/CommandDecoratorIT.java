@@ -34,9 +34,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -47,7 +45,7 @@ public class CommandDecoratorIT {
     @Rule
     public BQInternalTestFactory testFactory = new BQInternalTestFactory();
 
-    private ThreadTester threadTester = new ThreadTester();
+    private final ThreadTester threadTester = new ThreadTester();
     private MainCommand mainCommand;
     private SuccessfulCommand successfulCommand;
     private FailingCommand failingCommand;
@@ -56,7 +54,12 @@ public class CommandDecoratorIT {
     public void before() {
 
         // test for previous tests side effects - the previous test must be cleanly shutdown...
-        this.threadTester.assertPoolSize(0);
+        try {
+            this.threadTester.assertPoolSize(0);
+        }catch (NullPointerException npe) {
+            npe.printStackTrace();
+            fail();
+        }
 
         this.mainCommand = new MainCommand();
         this.successfulCommand = new SuccessfulCommand();
