@@ -79,6 +79,20 @@ public class Bootique_Configuration_PropertiesIT {
     }
 
     @Test
+    public void testOverrideValueArray_Empty() {
+        BQRuntime runtime = app()
+                .property("bq.testOverrideValueArrayEmpty.h[0]", "J")
+                .property("bq.testOverrideValueArrayEmpty.h[1]", "A")
+                .createRuntime();
+
+        TestOverrideValueArrayBean b = runtime.getInstance(ConfigurationFactory.class)
+                .config(TestOverrideValueArrayBean.class, "testOverrideValueArrayEmpty");
+
+        assertEquals("J", b.h.get(0));
+        assertEquals("A", b.h.get(1));
+    }
+
+    @Test
     public void testOverrideObjectArray() {
         BQRuntime runtime = app()
                 .property("bq.testOverrideObjectArray.d[1].e", "20")
