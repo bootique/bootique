@@ -81,15 +81,21 @@ public class Bootique_Configuration_PropertiesIT {
     @Test
     public void testOverrideValueArray_Empty() {
         BQRuntime runtime = app()
-                .property("bq.testOverrideValueArrayEmpty.h[0]", "J")
-                .property("bq.testOverrideValueArrayEmpty.h[1]", "A")
+                .module(b -> BQCoreModule.extend(b)
+                        // calling 'setProperty' on BQCOreModule instead of BQInternalTestFactory,
+                        // as the real ordering is important
+                        .setProperty("bq.testOverrideValueArrayEmpty.h[0]", "J")
+                        .setProperty("bq.testOverrideValueArrayEmpty.h[1]", "A")
+                        .setProperty("bq.testOverrideValueArrayEmpty.h[2]", "Z"))
                 .createRuntime();
 
         TestOverrideValueArrayBean b = runtime.getInstance(ConfigurationFactory.class)
                 .config(TestOverrideValueArrayBean.class, "testOverrideValueArrayEmpty");
 
+        assertEquals(3, b.h.size());
         assertEquals("J", b.h.get(0));
         assertEquals("A", b.h.get(1));
+        assertEquals("Z", b.h.get(2));
     }
 
     @Test

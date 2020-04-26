@@ -21,6 +21,7 @@ package io.bootique.config.jackson;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import java.util.Comparator;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -39,7 +40,12 @@ public class InPlaceMapOverrider implements Function<JsonNode, JsonNode> {
 
     @Override
     public JsonNode apply(JsonNode t) {
-        properties.entrySet().forEach(e -> {
+
+        // Sorting property names. The reason is array properties ("abc.xyz[1]")... If multiple entries are added to
+        // array, and internally they are out of order, ArrayIndexOutOfBoundsException occurs
+
+        // TODO: ordering is a hack. Sorting is done lexicographically, this will only work for the first 10 entries.
+        properties.entrySet().stream().sorted(Comparator.comparing(Map.Entry::getKey)).forEach(e -> {
 
             PathSegment target = lastPathComponent(t, e.getKey());
             target.fillMissingParents();
