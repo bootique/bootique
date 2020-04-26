@@ -20,13 +20,13 @@
 package io.bootique;
 
 
-import java.lang.annotation.Annotation;
-
 import io.bootique.di.Binder;
 import io.bootique.di.Key;
 import io.bootique.di.MapBuilder;
 import io.bootique.di.SetBuilder;
 import io.bootique.di.TypeLiteral;
+
+import java.lang.annotation.Annotation;
 
 /**
  * An optional convenience superclass of Module extenders that defines a typical extender structure.
@@ -57,6 +57,13 @@ public abstract class ModuleExtender<T extends ModuleExtender<T>> {
         return binder.bindSet(elementType, annotatedWith);
     }
 
+    /**
+     * @since 2.0
+     */
+    protected <V> SetBuilder<V> newSet(Class<V> elementType, String bindingName) {
+        return binder.bindSet(elementType, bindingName);
+    }
+
     protected <V> SetBuilder<V> newSet(Key<V> diKey) {
         if(diKey.getBindingAnnotation() != null) {
             return binder.bindSet(diKey.getType(), diKey.getBindingAnnotation());
@@ -77,5 +84,12 @@ public abstract class ModuleExtender<T extends ModuleExtender<T>> {
 
     protected <K, V> MapBuilder<K, V> newMap(Class<K> keyType, Class<V> elementType, Class<? extends Annotation> annotatedWith) {
         return binder.bindMap(keyType, elementType, annotatedWith);
+    }
+
+    /**
+     * @since 2.0
+     */
+    protected <K, V> MapBuilder<K, V> newMap(Class<K> keyType, Class<V> elementType, String bindingName) {
+        return binder.bindMap(keyType, elementType, bindingName);
     }
 }
