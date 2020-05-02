@@ -55,6 +55,33 @@ of `bootique-linkrest` with `bootique-agrest`, and on LinkRest side follow the
 [upgrade instructions](https://github.com/agrestio/agrest/blob/master/UPGRADE-NOTES.md#upgrading-to-30) back from 
 Agrest version 3.0.
 
+* [bootique-job #82](https://github.com/bootique/bootique-job/issues/82): Previously deprecated trigger 
+millisecond-based configs properties got removed. Please check your configurations and replace them with duration-based 
+analogs (durations are string that contain units, e.g. "5ms", "6sec", etc.) :
+                        
+  * `scheduler.triggers.fixedRateMs` should become `scheduler.triggers.fixedRate`
+  * `scheduler.triggers.fixedDelayMs` should become `scheduler.triggers.fixedDelay`
+  * `scheduler.triggers.initialDelayMs` should become `scheduler.triggers.initialDelay`
+
+To update your config, change it from something like:
+```yaml
+scheduler:
+  triggers:
+    - job: j1
+      trigger: t1
+      initialDelayMs: 10
+      fixedDelayMs: 10000
+```
+to something like this:
+```yaml
+scheduler:
+  triggers:
+    - job: j1
+      trigger: t1
+      initialDelay: 10ms
+      fixedDelay: 10sec
+```
+
 * [bootique-kafka #28](https://github.com/bootique/bootique-kafka/issues/28): Support for the legacy Kafka client v 0.8
 is removed. A newer client should be used. See [https://github.com/bootique/bootique-kafka] for details.
 
