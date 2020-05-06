@@ -23,7 +23,7 @@
 	<parent>
 		<groupId>io.bootique.modules.parent</groupId>
 		<artifactId>bootique-modules-parent</artifactId>
-		<version>2.0</version>
+		<version>2.0.1</version>
 	</parent>
 
 	<groupId>io.bootique</groupId>
@@ -58,54 +58,4 @@
         </repository>
     </distributionManagement>
 
-	<!-- Optional profile used to sign artifacts -->
-	<profiles>
-		<profile>
-			<id>gpg</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-gpg-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>sign-artifacts</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>sign</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>rat</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.rat</groupId>
-						<artifactId>apache-rat-plugin</artifactId>
-						<version>0.12</version>
-						<executions>
-							<execution>
-								<phase>verify</phase>
-								<goals>
-									<goal>check</goal>
-								</goals>
-
-							</execution>
-						</executions>
-						<configuration>
-							<excludes>
-								<exclude>docs/bootique-docs.md</exclude>
-								<exclude>docs/getting-started.md</exclude>
-							</excludes>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 </project>
