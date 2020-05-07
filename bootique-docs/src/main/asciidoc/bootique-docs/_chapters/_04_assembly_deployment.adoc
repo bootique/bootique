@@ -168,6 +168,9 @@ First let's create the folder structure:
                     <goals>
                         <goal>copy-dependencies</goal>
                     </goals>
+                    <configuration>
+                        <includeScope>runtime</includeScope>
+                    </configuration>
                 </execution>
             </executions>
             <configuration>
