@@ -37,7 +37,7 @@ public class TestRuntimesManager {
     }
 
     protected int size() {
-        return runtimes.size();
+        return runtimes != null ? runtimes.size() : 0;
     }
 
     public void reset() {
