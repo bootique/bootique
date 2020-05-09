@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class BQTestFactoryIT {
 
     @RegisterExtension
-    public static BQTestFactory testFactory = new BQTestFactory();
+    public BQTestFactory testFactory = new BQTestFactory();
 
     @Test
     @DisplayName("Args passed")

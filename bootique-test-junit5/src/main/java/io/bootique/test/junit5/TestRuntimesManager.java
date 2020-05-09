@@ -36,6 +36,10 @@ public class TestRuntimesManager {
         this.runtimes.add(runtime);
     }
 
+    protected int size() {
+        return runtimes.size();
+    }
+
     public void reset() {
         this.runtimes = new ArrayList<>();
     }

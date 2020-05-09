@@ -48,6 +48,10 @@ public class BQTestFactory implements BeforeEachCallback, AfterEachCallback {
         this.runtimes = new TestRuntimesManager();
     }
 
+    protected TestRuntimesManager getRuntimes() {
+        return runtimes;
+    }
+
     /**
      * Sets the default policy for this factory to auto-load modules for each app.
      */
