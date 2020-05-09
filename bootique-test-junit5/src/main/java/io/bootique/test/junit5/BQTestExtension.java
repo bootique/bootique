@@ -37,7 +37,7 @@ import java.util.function.Predicate;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Starts runtimes annotated with @{@link BQRun}. Runtimes must be static variables and are started once per test class
+ * Starts runtimes annotated with @{@link BQApp}. Runtimes must be static variables and are started once per test class
  * and are shut down when all tests in this class finish.
  *
  * @since 2.0
@@ -85,19 +85,21 @@ public class BQTestExtension implements BeforeAllCallback, AfterAllCallback {
         }
 
         Preconditions.notNull(runtime, () -> "Runtime instance '" + field.getName() + "' must be initialized explicitly");
-        return new TestRuntime(runtime, field.getName());
+        return new TestRuntime(runtime, field.getName(), field.getAnnotation(BQApp.class));
     }
 
     protected void startAndRegisterForShutdown(TestRuntime runtime, ExtensionContext.Store store) {
 
-        CommandOutcome out = runtime.run();
-        assertTrue(out.isSuccess(), () -> "Runtime '" + runtime.name + " failed to start: " + out);
+        if (!runtime.skipRun()) {
+            CommandOutcome out = runtime.run();
+            assertTrue(out.isSuccess(), () -> "Runtime '" + runtime.name + " failed to start: " + out);
+        }
 
-        // shutdown later or shutdown now (emulating Bootique.exec() behavior)
-        if (out.forkedToBackground()) {
-            store.getOrComputeIfAbsent(RUNNING_SHARED_RUNTIMES, s -> new ArrayList<>(), List.class).add(runtime);
-        } else {
+        if (runtime.immediateShutdown()) {
+            // should we warn of quick shutdown of daemon apps? Or apps that were not run?
             runtime.shutdown();
+        } else {
+            store.getOrComputeIfAbsent(RUNNING_SHARED_RUNTIMES, s -> new ArrayList<>(), List.class).add(runtime);
         }
     }
 
@@ -106,7 +108,7 @@ public class BQTestExtension implements BeforeAllCallback, AfterAllCallback {
 
             // provide diagnostics for misapplied or missing annotations
             // TODO: will it be actually more useful to throw instead of print a warning?
-            if (AnnotationSupport.isAnnotated(f, BQRun.class)) {
+            if (AnnotationSupport.isAnnotated(f, BQApp.class)) {
 
                 if (!BQRuntime.class.isAssignableFrom(f.getType())) {
                     logger.warn(() -> "Field '" + f.getName() + "' is annotated with @BQRun but is not a BQRuntime. Ignoring...");
@@ -129,10 +131,20 @@ public class BQTestExtension implements BeforeAllCallback, AfterAllCallback {
 
         private BQRuntime runtime;
         private String name;
+        private BQApp config;
 
-        public TestRuntime(BQRuntime runtime, String name) {
+        public TestRuntime(BQRuntime runtime, String name, BQApp config) {
             this.runtime = runtime;
             this.name = name;
+            this.config = config;
+        }
+
+        public boolean skipRun() {
+            return config.skipRun();
+        }
+
+        public boolean immediateShutdown() {
+            return config.immediateShutdown();
         }
 
         public CommandOutcome run() {

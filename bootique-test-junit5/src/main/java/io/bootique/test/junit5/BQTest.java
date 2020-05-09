@@ -26,6 +26,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Registers Bootique Junit 5 extension that will manage emulated test apps in the annotated test class. Used in
+ * conjunction with static fields annotated with @{@link BQApp}.
+ *
+ * @since 2.0
+ */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @ExtendWith(BQTestExtension.class)

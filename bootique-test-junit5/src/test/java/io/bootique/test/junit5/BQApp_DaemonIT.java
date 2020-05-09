@@ -38,12 +38,12 @@ import java.util.concurrent.Executors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(BQRun_DaemonCommandIT.ShutdownTester.class)
+@ExtendWith(BQApp_DaemonIT.ShutdownTester.class)
 @BQTest
-@DisplayName("@BQRun daemon command")
-public class BQRun_DaemonCommandIT {
+@DisplayName("@BQApp daemon command")
+public class BQApp_DaemonIT {
 
-    @BQRun
+    @BQApp
     public static final BQRuntime app = Bootique.app("-x")
             .module(b -> BQCoreModule.extend(b).addCommand(XCommand.class))
             .createRuntime();

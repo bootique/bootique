@@ -1,21 +1,3 @@
-/*
- * Licensed to ObjectStyle LLC under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ObjectStyle LLC licenses
- * this file to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
 package io.bootique.test.junit5;
 
 import io.bootique.BQCoreModule;
@@ -34,22 +16,24 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ExtendWith(BQRun_ForegroundCommandIT.ShutdownTester.class)
+@ExtendWith(BQApp_SkipRunIT.ShutdownTester.class)
 @BQTest
-@DisplayName("@BQRun foreground command")
-public class BQRun_ForegroundCommandIT {
+@DisplayName("@BQApp.skipRun = true")
+public class BQApp_SkipRunIT {
 
-    @BQRun
+    @BQApp(skipRun = true)
     public static final BQRuntime app = Bootique.app("-x")
             .module(b -> BQCoreModule.extend(b).addCommand(XCommand.class))
             .createRuntime();
 
     @Test
-    public void testDidRun() {
-        assertEquals(1, XCommand.runCount);
+    public void testDidNotRun() {
         assertDoesNotThrow(() -> app.getInstance(XCommand.class));
+        assertEquals(0, XCommand.runCount);
     }
 
     public static class ShutdownTester implements AfterAllCallback {

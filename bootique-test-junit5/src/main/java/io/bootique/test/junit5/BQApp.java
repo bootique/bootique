@@ -26,8 +26,22 @@ import java.lang.annotation.Target;
 /**
  * Used to annotate static {@link io.bootique.BQRuntime} instances in a unit test to instruct JUnit to start these
  * runtimes, and shut them down when all the tests in the class are finished.
+ *
+ * @since 2.0
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface BQRun {
+public @interface BQApp {
+
+    /**
+     * If true, skips starting up the app. {@link io.bootique.BQRuntime} will still be shutdown at the end of
+     * the test cycle to clean up any resources.
+     */
+    boolean skipRun() default false;
+
+    /**
+     * If true, shuts down the app {@link io.bootique.BQRuntime} immediately after the command exit. Usually
+     * appropriate for non-"daemon" apps
+     */
+    boolean immediateShutdown() default false;
 }
