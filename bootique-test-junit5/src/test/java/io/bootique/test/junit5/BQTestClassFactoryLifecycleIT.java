@@ -18,15 +18,12 @@
  */
 package io.bootique.test.junit5;
 
-import io.bootique.di.BQModule;
-import io.bootique.di.Binder;
+import io.bootique.BQModuleProvider;
+import io.bootique.BaseModule;
 import io.bootique.di.Provides;
 import io.bootique.shutdown.ShutdownManager;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -36,80 +33,64 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class BQTestClassFactoryLifecycleIT {
 
     private static final AtomicInteger shutdowns = new AtomicInteger(0);
 
     @RegisterExtension
     @Order(1)
-    public static OutermostCallback testFactoryChecker = new OutermostCallback();
+    public static Tester tester = new Tester();
 
     @RegisterExtension
     @Order(2)
     public static BQTestClassFactory testFactory = new BQTestClassFactory();
 
-    @Test
-    @DisplayName("Check shutdowns 1")
-    @Order(1)
-    public void testShutdowns1() {
-        assertEquals(0, testFactory.getRuntimes().size());
-        assertEquals(0, shutdowns.get());
-
-        makeRuntimeWithShutdownTracker();
-
-        assertEquals(1, testFactory.getRuntimes().size());
-        assertEquals(0, shutdowns.get());
+    @RepeatedTest(value = 3, name = "Check shutdowns ... {currentRepetition}")
+    public void testShutdowns() {
+        tester.run();
     }
 
-    @Test
-    @DisplayName("Check shutdowns 2")
-    @Order(2)
-    public void testShutdowns2() {
-        assertEquals(1, testFactory.getRuntimes().size());
-        assertEquals(0, shutdowns.get());
-
-        makeRuntimeWithShutdownTracker();
-
-        assertEquals(2, testFactory.getRuntimes().size());
-        assertEquals(0, shutdowns.get());
-    }
-
-    private void makeRuntimeWithShutdownTracker() {
-        testFactory.app()
-                .module(new ShutdownTrackerModule())
-                .createRuntime()
-                .getInstance(ShutdownTracker.class);
-    }
-
-    public static class ShutdownTrackerModule implements BQModule {
-
-        @Override
-        public void configure(Binder binder) {
-        }
+    public static class ShutdownTrackerModule extends BaseModule {
 
         @Provides
         @Singleton
-        ShutdownTracker provideShutdownTracker(ShutdownManager shutdownManager) {
-            ShutdownTracker tracker = new ShutdownTracker();
-            shutdownManager.addShutdownHook(tracker::shutdown);
-            return tracker;
+        Tester provideTester(ShutdownManager shutdownManager) {
+            shutdownManager.addShutdownHook(tester::onShutdown);
+            return tester;
         }
     }
 
-    public static class ShutdownTracker {
+    public static class Tester implements AfterAllCallback {
 
-        public void shutdown() {
-            shutdowns.getAndIncrement();
+        private int calls;
+        private int shutdowns;
+
+        public void onShutdown() {
+            shutdowns++;
         }
-    }
 
-    public static class OutermostCallback implements AfterAllCallback {
+        public void run() {
+
+            assertEquals(0, shutdowns);
+            assertEquals(calls, testFactory.getRuntimes().size());
+
+            testFactory.app()
+                    .module((BQModuleProvider) new ShutdownTrackerModule())
+                    .createRuntime()
+                    // this will bootstrap shutdown hook
+                    .getInstance(Tester.class);
+
+            assertEquals(0, shutdowns);
+            
+            calls++;
+            assertEquals(calls, testFactory.getRuntimes().size());
+        }
 
         @Override
-        public void afterAll(ExtensionContext context) throws Exception {
-            assertEquals(2, testFactory.getRuntimes().size(), "All runtimes must stay in the end, in a shutdown state");
-            assertEquals(2, shutdowns.get());
+        public void afterAll(ExtensionContext context) {
+            assertEquals(3, calls);
+            assertEquals(3, shutdowns);
+            assertEquals(3, testFactory.getRuntimes().size(), "All runtimes must stay in the end, in a shutdown state");
         }
     }
 }

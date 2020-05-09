@@ -18,89 +18,75 @@
  */
 package io.bootique.test.junit5;
 
-import io.bootique.di.BQModule;
-import io.bootique.di.Binder;
+import io.bootique.BQModuleProvider;
+import io.bootique.BaseModule;
 import io.bootique.di.Provides;
 import io.bootique.shutdown.ShutdownManager;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import javax.inject.Singleton;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class BQTestFactoryLifecycleIT {
 
-    private static final AtomicInteger shutdowns = new AtomicInteger(0);
+    @RegisterExtension
+    @Order(1)
+    public static Tester tester = new Tester();
 
     @RegisterExtension
     public static BQTestFactory testFactory = new BQTestFactory();
 
-    @AfterAll
-    public static void afterClass() {
-        assertEquals(1, testFactory.getRuntimes().size(), "Only one runtime must stay in the end, in a shutdown state");
-        assertEquals(2, shutdowns.get());
+    @RepeatedTest(value = 3, name = "Check shutdowns ... {currentRepetition}")
+    public void testShutdowns() {
+        tester.run();
     }
 
-    @Test
-    @DisplayName("Check shutdowns 1")
-    @Order(1)
-    public void testShutdowns1() {
-        assertEquals(0, testFactory.getRuntimes().size());
-        assertEquals(0, shutdowns.get());
-
-        makeRuntimeWithShutdownTracker();
-
-        assertEquals(1, testFactory.getRuntimes().size());
-        assertEquals(0, shutdowns.get());
-    }
-
-    @Test
-    @DisplayName("Check shutdowns 2")
-    @Order(2)
-    public void testShutdowns2() {
-        assertEquals(0, testFactory.getRuntimes().size());
-        assertEquals(1, shutdowns.get());
-
-        makeRuntimeWithShutdownTracker();
-
-        assertEquals(1, testFactory.getRuntimes().size());
-        assertEquals(1, shutdowns.get());
-    }
-
-    private void makeRuntimeWithShutdownTracker() {
-        testFactory.app()
-                .module(new ShutdownTrackerModule())
-                .createRuntime()
-                .getInstance(ShutdownTracker.class);
-    }
-
-    public static class ShutdownTrackerModule implements BQModule {
-
-        @Override
-        public void configure(Binder binder) {
-        }
+    public static class ShutdownTrackerModule extends BaseModule {
 
         @Provides
         @Singleton
-        ShutdownTracker provideShutdownTracker(ShutdownManager shutdownManager) {
-            ShutdownTracker tracker = new ShutdownTracker();
-            shutdownManager.addShutdownHook(tracker::shutdown);
-            return tracker;
+        Tester provideTester(ShutdownManager shutdownManager) {
+            shutdownManager.addShutdownHook(BQTestFactoryLifecycleIT.tester::onShutdown);
+            return BQTestFactoryLifecycleIT.tester;
         }
     }
 
-    public static class ShutdownTracker {
+    public static class Tester implements AfterAllCallback {
 
-        public void shutdown() {
-            shutdowns.getAndIncrement();
+        private int calls;
+        private int shutdowns;
+
+        public void onShutdown() {
+            shutdowns++;
+        }
+
+        public void run() {
+
+            assertEquals(calls, shutdowns);
+            assertEquals(0, testFactory.getRuntimes().size());
+
+            testFactory.app()
+                    .module((BQModuleProvider) new ShutdownTrackerModule())
+                    .createRuntime()
+                    // this will bootstrap shutdown hook
+                    .getInstance(Tester.class);
+
+            assertEquals(calls, shutdowns);
+            assertEquals(1, testFactory.getRuntimes().size());
+
+            calls++;
+        }
+
+        @Override
+        public void afterAll(ExtensionContext context) {
+            assertEquals(3, calls);
+            assertEquals(3, shutdowns);
+            assertEquals(1, testFactory.getRuntimes().size(), "Only one runtime must stay in the end, in a shutdown state");
         }
     }
 }
