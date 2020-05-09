@@ -29,13 +29,10 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import javax.inject.Singleton;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BQTestClassFactoryLifecycleIT {
-
-    private static final AtomicInteger shutdowns = new AtomicInteger(0);
 
     @RegisterExtension
     @Order(1)

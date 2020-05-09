@@ -7,6 +7,7 @@
 * #280 BQRuntimeDaemon hides exceptions thrown in runtime 
 * #284 Update to bootique-modules-parent 2.0
 * #286 Update to bootique-modules-parent 2.0.1 
+* #287 bootique-test-junit5: manage static BQRuntime fields 
 
 ## 1.1
 
