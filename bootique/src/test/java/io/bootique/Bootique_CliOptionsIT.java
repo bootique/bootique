@@ -29,17 +29,17 @@ import io.bootique.meta.application.CommandMetadata;
 import io.bootique.meta.application.OptionMetadata;
 import io.bootique.run.Runner;
 import io.bootique.unit.BQInternalTestFactory;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.util.Collection;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class Bootique_CliOptionsIT {
 
-    @Rule
+    @RegisterExtension
     public BQInternalTestFactory runtimeFactory = new BQInternalTestFactory();
 
     @Test
@@ -85,31 +85,31 @@ public class Bootique_CliOptionsIT {
         assertFalse(runtime.getInstance(Cli.class).hasOption("o2"));
     }
 
-    @Test(expected = DIRuntimeException.class)
+    @Test
     public void testNameConflict_TwoOptions() {
-        runtimeFactory.app()
+        assertThrows(DIRuntimeException.class, () -> runtimeFactory.app()
                 .module(b -> BQCoreModule.extend(b)
                         .addOptions(
                                 OptionMetadata.builder("opt1").build(),
                                 OptionMetadata.builder("opt1").build()))
                 .createRuntime()
-                .run();
+                .run());
     }
 
-    @Test(expected = DIRuntimeException.class)
+    @Test
     public void testNameConflict_TwoCommands() {
-        runtimeFactory.app()
+        assertThrows(DIRuntimeException.class, () -> runtimeFactory.app()
                 .module(b -> BQCoreModule.extend(b)
                         .addCommand(Xd1Command.class)
                         .addCommand(Xd2Command.class))
                 .createRuntime()
-                .run();
+                .run());
     }
 
     // TODO: ignoring this test for now. There is a bug in JOpt 5.0.3...
     //       JOpt should detect conflicting options and throw an exception. Instead JOpts triggers second option.
-    @Test(expected = DIRuntimeException.class)
-    @Ignore
+    @Test
+    @Disabled
     public void testOverlappingOptions_Short() {
         BQRuntime runtime = runtimeFactory.app("-o")
                 .module(b -> BQCoreModule.extend(b).addOptions(
@@ -117,7 +117,7 @@ public class Bootique_CliOptionsIT {
                         OptionMetadata.builder("o2").build()
                 ))
                 .createRuntime();
-        runtime.getInstance(Cli.class);
+        assertThrows(DIRuntimeException.class, () -> runtime.getInstance(Cli.class));
     }
 
     // TODO: Same name of option and command should be disallowed.
@@ -133,12 +133,12 @@ public class Bootique_CliOptionsIT {
         assertTrue(runtime.getInstance(Cli.class).hasOption("xd"));
     }
 
-    @Test(expected = DIRuntimeException.class)
+    @Test
     public void testCommand_IllegalShort() {
         BQRuntime runtime = runtimeFactory.app("-x")
                 .module(b -> BQCoreModule.extend(b).addCommand(XaCommand.class))
                 .createRuntime();
-        runtime.getInstance(Cli.class);
+        assertThrows(DIRuntimeException.class, () -> runtime.getInstance(Cli.class));
     }
 
     @Test
@@ -149,20 +149,20 @@ public class Bootique_CliOptionsIT {
         assertTrue(runtime.getInstance(Cli.class).hasOption("xa"));
     }
 
-    @Test(expected = DIRuntimeException.class)
+    @Test
     public void testOverlappingCommands_IllegalShort() {
         BQRuntime runtime = runtimeFactory.app("-x")
                 .module(b -> BQCoreModule.extend(b).addCommand(XaCommand.class).addCommand(XbCommand.class))
                 .createRuntime();
-        runtime.getInstance(Cli.class);
+        assertThrows(DIRuntimeException.class, () -> runtime.getInstance(Cli.class));
     }
 
-    @Test(expected = DIRuntimeException.class)
+    @Test
     public void testIllegalAbbreviation() {
         BQRuntime runtime = runtimeFactory.app("--xc")
                 .module(b -> BQCoreModule.extend(b).addCommand(XccCommand.class))
                 .createRuntime();
-        runtime.getInstance(Cli.class);
+        assertThrows(DIRuntimeException.class, () -> runtime.getInstance(Cli.class));
     }
 
     @Test
@@ -275,14 +275,15 @@ public class Bootique_CliOptionsIT {
         assertEquals(3, bean1.c.m.k);
     }
 
-    @Test(expected = DIRuntimeException.class)
+    @Test
     public void testOptionWithNotMappedConfigPath() {
         BQRuntime runtime = runtimeFactory.app("--config=classpath:io/bootique/config/test4.yml", "--opt-1=x")
                 .module(binder -> BQCoreModule.extend(binder)
                         .mapConfigPath("opt-1", "c.m.k.x"))
                 .createRuntime();
 
-        runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
+        assertThrows(DIRuntimeException.class, () -> runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, ""));
+
     }
 
     @Test

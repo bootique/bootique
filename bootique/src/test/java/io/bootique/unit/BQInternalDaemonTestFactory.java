@@ -21,6 +21,7 @@ package io.bootique.unit;
 
 import io.bootique.BQRuntime;
 import io.bootique.log.BootLogger;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,14 +43,14 @@ public class BQInternalDaemonTestFactory extends BQInternalTestFactory {
     protected ExecutorService executor;
 
     @Override
-    protected void before() {
+    public void beforeEach(ExtensionContext extensionContext) {
         this.executor = Executors.newCachedThreadPool();
-        super.before();
+        super.beforeEach(extensionContext);
     }
 
     @Override
-    protected void after() {
-        super.after();
+    public void afterEach(ExtensionContext extensionContext) {
+        super.afterEach(extensionContext);
 
         executor.shutdownNow();
         try {

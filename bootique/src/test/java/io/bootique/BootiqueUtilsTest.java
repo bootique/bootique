@@ -19,17 +19,14 @@
 
 package io.bootique;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.internal.verification.AtLeast;
 
 import java.util.Collection;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -53,17 +50,19 @@ public class BootiqueUtilsTest {
 
     @Test
     public void moduleProviderDependencies() {
-        final BQModuleProvider testModuleProvider1 = mock(BQModuleProvider.class);
-        final BQModuleProvider testModuleProvider2 = mock(BQModuleProvider.class);
-        final BQModuleProvider testModuleProvider3 = mock(BQModuleProvider.class);
+        BQModuleProvider testModuleProvider1 = mock(BQModuleProvider.class);
+        BQModuleProvider testModuleProvider2 = mock(BQModuleProvider.class);
+        BQModuleProvider testModuleProvider3 = mock(BQModuleProvider.class);
 
         when(testModuleProvider1.dependencies()).thenReturn(asList(testModuleProvider2, testModuleProvider3));
 
-        final Collection<BQModuleProvider> bqModuleProviders =
-            BootiqueUtils.moduleProviderDependencies(singletonList(testModuleProvider1));
+        Collection<BQModuleProvider> bqModuleProviders =
+                BootiqueUtils.moduleProviderDependencies(singletonList(testModuleProvider1));
 
-        assertThat(bqModuleProviders, hasItems(testModuleProvider1, testModuleProvider2, testModuleProvider3));
         assertEquals(3, bqModuleProviders.size());
+        assertTrue(bqModuleProviders.contains(testModuleProvider1));
+        assertTrue(bqModuleProviders.contains(testModuleProvider2));
+        assertTrue(bqModuleProviders.contains(testModuleProvider3));
 
         verify(testModuleProvider1, new AtLeast(1)).dependencies();
         verify(testModuleProvider1, new AtLeast(1)).name();
@@ -77,18 +76,20 @@ public class BootiqueUtilsTest {
 
     @Test
     public void moduleProviderDependenciesTwoLevels() {
-        final BQModuleProvider testModuleProvider1 = mock(BQModuleProvider.class);
-        final BQModuleProvider testModuleProvider2 = mock(BQModuleProvider.class);
-        final BQModuleProvider testModuleProvider3 = mock(BQModuleProvider.class);
+        BQModuleProvider testModuleProvider1 = mock(BQModuleProvider.class);
+        BQModuleProvider testModuleProvider2 = mock(BQModuleProvider.class);
+        BQModuleProvider testModuleProvider3 = mock(BQModuleProvider.class);
 
         when(testModuleProvider1.dependencies()).thenReturn(singletonList(testModuleProvider2));
         when(testModuleProvider2.dependencies()).thenReturn(singletonList(testModuleProvider3));
 
-        final Collection<BQModuleProvider> bqModuleProviders =
-            BootiqueUtils.moduleProviderDependencies(singletonList(testModuleProvider1));
+        Collection<BQModuleProvider> bqModuleProviders =
+                BootiqueUtils.moduleProviderDependencies(singletonList(testModuleProvider1));
 
-        assertThat(bqModuleProviders, hasItems(testModuleProvider1, testModuleProvider2, testModuleProvider3));
         assertEquals(3, bqModuleProviders.size());
+        assertTrue(bqModuleProviders.contains(testModuleProvider1));
+        assertTrue(bqModuleProviders.contains(testModuleProvider2));
+        assertTrue(bqModuleProviders.contains(testModuleProvider3));
 
         verify(testModuleProvider1, new AtLeast(1)).dependencies();
         verify(testModuleProvider1, new AtLeast(1)).name();
@@ -102,19 +103,21 @@ public class BootiqueUtilsTest {
 
     @Test
     public void moduleProviderDependenciesCircular() {
-        final BQModuleProvider testModuleProvider1 = mock(BQModuleProvider.class);
-        final BQModuleProvider testModuleProvider2 = mock(BQModuleProvider.class);
-        final BQModuleProvider testModuleProvider3 = mock(BQModuleProvider.class);
+        BQModuleProvider testModuleProvider1 = mock(BQModuleProvider.class);
+        BQModuleProvider testModuleProvider2 = mock(BQModuleProvider.class);
+        BQModuleProvider testModuleProvider3 = mock(BQModuleProvider.class);
 
         when(testModuleProvider1.dependencies()).thenReturn(singletonList(testModuleProvider2));
         when(testModuleProvider2.dependencies()).thenReturn(singletonList(testModuleProvider3));
         when(testModuleProvider3.dependencies()).thenReturn(singletonList(testModuleProvider1));
 
-        final Collection<BQModuleProvider> bqModuleProviders =
-            BootiqueUtils.moduleProviderDependencies(singletonList(testModuleProvider1));
+        Collection<BQModuleProvider> bqModuleProviders =
+                BootiqueUtils.moduleProviderDependencies(singletonList(testModuleProvider1));
 
-        assertThat(bqModuleProviders, hasItems(testModuleProvider1, testModuleProvider2, testModuleProvider3));
         assertEquals(3, bqModuleProviders.size());
+        assertTrue(bqModuleProviders.contains(testModuleProvider1));
+        assertTrue(bqModuleProviders.contains(testModuleProvider2));
+        assertTrue(bqModuleProviders.contains(testModuleProvider3));
 
         verify(testModuleProvider1, new AtLeast(1)).dependencies();
         verify(testModuleProvider1, new AtLeast(1)).name();

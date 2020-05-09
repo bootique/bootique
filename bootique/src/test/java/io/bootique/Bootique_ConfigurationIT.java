@@ -23,18 +23,18 @@ import io.bootique.config.ConfigurationFactory;
 import io.bootique.meta.application.OptionMetadata;
 import io.bootique.type.TypeRef;
 import io.bootique.unit.BQInternalTestFactory;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.util.Map;
 import java.util.function.Function;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class Bootique_ConfigurationIT {
 
-    @Rule
+    @RegisterExtension
     public BQInternalTestFactory testFactory = new BQInternalTestFactory();
 
     @Test

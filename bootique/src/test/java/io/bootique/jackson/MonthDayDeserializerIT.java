@@ -21,14 +21,14 @@ package io.bootique.jackson;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.time.Month;
 import java.time.MonthDay;
 import java.time.temporal.TemporalAccessor;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MonthDayDeserializerIT extends DeserializerTestBase {
 

@@ -19,16 +19,17 @@
 
 package io.bootique.help;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ConsoleAppenderTest {
 
     // TODO: what's the point of hardcoded min line width?
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testConstructorMinWidth() {
-        new ConsoleAppender(new StringBuilder(), ConsoleAppender.MIN_LINE_WIDTH - 2);
+        assertThrows(IllegalArgumentException.class, () -> new ConsoleAppender(new StringBuilder(), ConsoleAppender.MIN_LINE_WIDTH - 2));
     }
 
     @Test

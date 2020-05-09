@@ -23,45 +23,45 @@ import io.bootique.cli.Cli;
 import io.bootique.log.BootLogger;
 import io.bootique.resource.ResourceFactory;
 import io.bootique.unit.BQInternalWebServerTestFactory;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.net.URL;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.joining;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 public class CliConfigurationSource_WebConfigSourceIT {
 
-	@Rule
-	public BQInternalWebServerTestFactory testFactory = new BQInternalWebServerTestFactory();
+    @RegisterExtension
+    public BQInternalWebServerTestFactory testFactory = new BQInternalWebServerTestFactory();
 
-	private BootLogger mockBootLogger;
-	private Function<URL, String> configReader;
+    private BootLogger mockBootLogger;
+    private Function<URL, String> configReader;
 
-	@Before
-	public void before() throws Exception {
-		this.mockBootLogger = mock(BootLogger.class);
-		this.configReader = CliConfigurationSourceTest.createConfigReader();
-	}
+    @BeforeEach
+    public void before() {
+        this.mockBootLogger = mock(BootLogger.class);
+        this.configReader = CliConfigurationSourceTest.createConfigReader();
+    }
 
-	@Test
-	public void testGet_HttpUrl() {
+    @Test
+    public void testGet_HttpUrl() {
 
-		testFactory.app("--server").resourceUrl(new ResourceFactory("classpath:io/bootique/config"))
-				.createRuntime();
+        testFactory.app("--server").resourceUrl(new ResourceFactory("classpath:io/bootique/config"))
+                .createRuntime();
 
-		String url = "http://localhost:12025/CliConfigurationSource_WebConfigSourceIT1.yml";
-		Cli cli = CliConfigurationSourceTest.createCli(url);
-		String config = CliConfigurationSource.builder(mockBootLogger)
-				.cliConfigs(cli)
-				.build()
-				.get()
-				.map(configReader)
-				.collect(joining(";"));
-		assertEquals("g: h", config);
-	}
+        String url = "http://localhost:12025/CliConfigurationSource_WebConfigSourceIT1.yml";
+        Cli cli = CliConfigurationSourceTest.createCli(url);
+        String config = CliConfigurationSource.builder(mockBootLogger)
+                .cliConfigs(cli)
+                .build()
+                .get()
+                .map(configReader)
+                .collect(joining(";"));
+        assertEquals("g: h", config);
+    }
 }

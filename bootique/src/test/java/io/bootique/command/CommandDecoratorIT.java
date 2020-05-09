@@ -25,33 +25,31 @@ import io.bootique.cli.Cli;
 import io.bootique.meta.application.CommandMetadata;
 import io.bootique.meta.application.OptionMetadata;
 import io.bootique.unit.BQInternalTestFactory;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class CommandDecoratorIT {
 
     private final ThreadTester threadTester = new ThreadTester();
 
-    @Rule
+    @RegisterExtension
     public BQInternalTestFactory testFactory = new BQInternalTestFactory();
     
     private MainCommand mainCommand;
     private SuccessfulCommand successfulCommand;
     private FailingCommand failingCommand;
 
-    @Before
+    @BeforeEach
     public void before() {
 
         // test for previous tests side effects - the previous test must be cleanly shutdown...
@@ -340,7 +338,7 @@ public class CommandDecoratorIT {
 
         public void runExpectingSuccess() {
             CommandOutcome outcome = run();
-            assertTrue(outcome.getMessage(), outcome.isSuccess());
+            assertTrue(outcome.isSuccess(), outcome.getMessage());
             assertTrue(mainCommand.isExecuted());
         }
 

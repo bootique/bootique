@@ -22,14 +22,14 @@ package io.bootique.meta.application;
 import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
 import io.bootique.unit.BQInternalTestFactory;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ApplicationMetadataIT {
 
-    @Rule
+    @RegisterExtension
     public BQInternalTestFactory runtimeFactory = new BQInternalTestFactory();
 
     @Test

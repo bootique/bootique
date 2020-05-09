@@ -20,16 +20,14 @@
 package io.bootique.jackson;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.time.OffsetTime;
 import java.time.ZoneOffset;
 import java.time.temporal.TemporalAccessor;
 
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class OffsetTimeDeserializerIT extends DeserializerTestBase {
 
@@ -39,8 +37,8 @@ public class OffsetTimeDeserializerIT extends DeserializerTestBase {
 
         OffsetTime value = deserialize(OffsetTime.class, "\"" + offsetTime + "\"");
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", offsetTime, value);
+        assertNotNull(value);
+        assertEquals(offsetTime, value);
     }
 
     @Test
@@ -49,8 +47,8 @@ public class OffsetTimeDeserializerIT extends DeserializerTestBase {
 
         OffsetTime value = deserialize(OffsetTime.class, "\"10:15:30+01:00\"");
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", offsetTime, value);
+        assertNotNull(value);
+        assertEquals(offsetTime, value);
     }
 
     @Test
@@ -69,9 +67,9 @@ public class OffsetTimeDeserializerIT extends DeserializerTestBase {
         mapper.addMixIn(TemporalAccessor.class, MockObjectConfiguration.class);
         TemporalAccessor value = mapper.readValue("[\"" + OffsetTime.class.getName() + "\",\"10:15:30+01:00\"]", TemporalAccessor.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be a OffsetTime.", value instanceof OffsetTime);
-        assertEquals("The value is not correct.", offsetTime, value);
+        assertNotNull(value);
+        assertTrue(value instanceof OffsetTime, "The value should be a OffsetTime.");
+        assertEquals(offsetTime, value);
     }
 
 }

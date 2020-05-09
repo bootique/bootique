@@ -19,7 +19,7 @@
 
 package io.bootique.resource;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +28,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Scanner;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ResourceFactoryTest {
 
@@ -89,10 +89,10 @@ public class ResourceFactoryTest {
 		assertEquals("c: d", resourceContents(cpUrl));
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testGetUrl_ClasspathUrlWithSlash() throws IOException {
 		String cpUrl = "classpath:/io/bootique/config/test2.yml";
-		resourceContents(cpUrl);
+		assertThrows(RuntimeException.class, () -> resourceContents(cpUrl));
 	}
 
 	@Test
@@ -100,7 +100,7 @@ public class ResourceFactoryTest {
 		Collection<URL> urls = new ResourceFactory("classpath:io/bootique/config/test2.yml").getUrls();
 		assertEquals(1, urls.size());
 		String u1 = urls.iterator().next().toString();
-		assertTrue(u1, u1.endsWith("io/bootique/config/test2.yml"));
+		assertTrue(u1.endsWith("io/bootique/config/test2.yml"), u1);
 	}
 
 	@Test
@@ -108,6 +108,6 @@ public class ResourceFactoryTest {
 		Collection<URL> urls = new ResourceFactory("src/test/resources/io/bootique/config/test1.yml").getUrls();
 		assertEquals(1, urls.size());
 		String u1 = urls.iterator().next().toString();
-		assertTrue(u1, u1.endsWith("src/test/resources/io/bootique/config/test1.yml"));
+		assertTrue(u1.endsWith("src/test/resources/io/bootique/config/test1.yml"), u1);
 	}
 }

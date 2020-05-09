@@ -29,7 +29,9 @@ import io.bootique.Bootique;
 import io.bootique.di.BQModule;
 import io.bootique.help.ValueObjectDescriptor;
 import io.bootique.log.BootLogger;
-import org.junit.rules.ExternalResource;
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.BeforeEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,17 +40,21 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BQInternalTestFactory extends ExternalResource {
+public class BQInternalTestFactory implements BeforeEachCallback, AfterEachCallback {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BQInternalTestFactory.class);
 
     protected Collection<BQRuntime> runtimes;
 
     @Override
-    protected void after() {
+    public void beforeEach(ExtensionContext extensionContext) {
+        this.runtimes = new ArrayList<>();
+    }
+
+    @Override
+    public void afterEach(ExtensionContext extensionContext) {
 
         LOGGER.info("Stopping runtime...");
-
         Collection<BQRuntime> localRuntimes = this.runtimes;
 
         if (localRuntimes != null) {
@@ -60,11 +66,6 @@ public class BQInternalTestFactory extends ExternalResource {
                 }
             });
         }
-    }
-
-    @Override
-    protected void before() {
-        this.runtimes = new ArrayList<>();
     }
 
     public Builder app(String... args) {

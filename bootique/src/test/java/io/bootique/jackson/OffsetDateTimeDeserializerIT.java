@@ -20,16 +20,14 @@
 package io.bootique.jackson;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.TemporalAccessor;
 
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class OffsetDateTimeDeserializerIT extends DeserializerTestBase {
 
@@ -39,8 +37,8 @@ public class OffsetDateTimeDeserializerIT extends DeserializerTestBase {
 
         OffsetDateTime value = deserialize(OffsetDateTime.class, "\"" + offsetDateTime.toString() + "\"");
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", offsetDateTime, value);
+        assertNotNull(value, "The value should not be null.");
+        assertEquals(offsetDateTime, value, "The value is not correct.");
     }
 
     @Test
@@ -49,8 +47,8 @@ public class OffsetDateTimeDeserializerIT extends DeserializerTestBase {
 
         OffsetDateTime value = deserialize(OffsetDateTime.class, "\"2017-09-02T10:15:30+01:00\"");
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", offsetDateTime, value);
+        assertNotNull(value, "The value should not be null.");
+        assertEquals(offsetDateTime, value, "The value is not correct.");
     }
 
     @Test
@@ -69,9 +67,9 @@ public class OffsetDateTimeDeserializerIT extends DeserializerTestBase {
         mapper.addMixIn(TemporalAccessor.class, MockObjectConfiguration.class);
         TemporalAccessor value = mapper.readValue("[\"" + OffsetDateTime.class.getName() + "\",\"2017-09-02T10:15:30+01:00\"]", TemporalAccessor.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be a OffsetDateTime.", value instanceof OffsetDateTime);
-        assertEquals("The value is not correct.", offsetDateTime, value);
+        assertNotNull(value, "The value should not be null.");
+        assertTrue(value instanceof OffsetDateTime, "The value should be a OffsetDateTime.");
+        assertEquals(offsetDateTime, value, "The value is not correct.");
     }
 
 }

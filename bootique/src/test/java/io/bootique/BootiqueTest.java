@@ -25,20 +25,19 @@ import io.bootique.di.Key;
 import io.bootique.di.BQModule;
 
 import io.bootique.di.TypeLiteral;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
-import static org.hamcrest.core.IsCollectionContaining.hasItems;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BootiqueTest {
 
     private Bootique bootique;
 
-    @Before
+    @BeforeEach
     public void before() {
         this.bootique = Bootique.app();
     }
@@ -48,8 +47,9 @@ public class BootiqueTest {
         Injector i = bootique.modules(new TestModule1(), new TestModule2()).createInjector();
         Set<String> strings = i.getInstance(Key.get(new TypeLiteral<Set<String>>(){}));
 
-        assertThat(strings, hasItems("tm1", "tm2"));
         assertEquals(2, strings.size());
+        assertTrue(strings.contains("tm1"));
+        assertTrue(strings.contains("tm2"));
     }
 
     @Test
@@ -57,8 +57,9 @@ public class BootiqueTest {
         Injector i = bootique.modules(TestModule1.class, TestModule2.class).createInjector();
         Set<String> strings = i.getInstance(Key.get(new TypeLiteral<Set<String>>(){}));
 
-        assertThat(strings, hasItems("tm1", "tm2"));
         assertEquals(2, strings.size());
+        assertTrue(strings.contains("tm1"));
+        assertTrue(strings.contains("tm2"));
     }
 
     static class TestModule1 implements BQModule {

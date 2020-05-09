@@ -33,8 +33,8 @@ import io.bootique.meta.module.ModulesMetadata;
 import io.bootique.resource.FolderResourceFactory;
 import io.bootique.resource.ResourceFactory;
 import io.bootique.unit.BQInternalTestFactory;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.Mockito;
 
 import java.lang.reflect.Type;
@@ -46,13 +46,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ConfigMetadataIT {
 
-    @Rule
+    @RegisterExtension
     public BQInternalTestFactory runtimeFactory = new BQInternalTestFactory();
 
     @Test

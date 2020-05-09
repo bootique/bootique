@@ -22,12 +22,12 @@ package io.bootique.jackson;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.Month;
 import java.time.YearMonth;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class YearMonthDeserializerIT extends DeserializerTestBase {
 

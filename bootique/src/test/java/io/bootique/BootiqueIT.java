@@ -27,12 +27,12 @@ import io.bootique.di.Injector;
 import io.bootique.di.Key;
 import io.bootique.it.ItestModuleProvider;
 import io.bootique.meta.application.CommandMetadata;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BootiqueIT {
 

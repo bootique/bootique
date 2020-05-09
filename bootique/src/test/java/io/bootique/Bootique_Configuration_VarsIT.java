@@ -24,19 +24,17 @@ import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.unit.BQInternalTestFactory;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class Bootique_Configuration_VarsIT {
 
-    @Rule
+    @RegisterExtension
     public BQInternalTestFactory testFactory = new BQInternalTestFactory();
 
     private BQInternalTestFactory.Builder app() {
@@ -78,8 +76,8 @@ public class Bootique_Configuration_VarsIT {
                 .createRuntime();
 
         Bean4 b4 = runtime.getInstance(ConfigurationFactory.class).config(Bean4.class, "");
-        assertNotNull("Map did not resolve", b4.m);
-        assertEquals("Unexpected map contents: " + b4.m, "myValue", b4.m.get("propCamelCase"));
+        assertNotNull(b4.m, "Map did not resolve");
+        assertEquals("myValue", b4.m.get("propCamelCase"), "Unexpected map contents: " + b4.m);
     }
 
     @Test

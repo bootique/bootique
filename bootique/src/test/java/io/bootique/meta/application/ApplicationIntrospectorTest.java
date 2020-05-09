@@ -20,9 +20,11 @@
 package io.bootique.meta.application;
 
 import io.bootique.Bootique;
-import io.bootique.meta.application.ApplicationIntrospector;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 
 public class ApplicationIntrospectorTest {
 
@@ -34,8 +36,8 @@ public class ApplicationIntrospectorTest {
         // TODO: until https://github.com/bootique/bootique/issues/52 is available,
         // we can't make an exact assertion here, as tests can be started from different IDEs, etc.
 
-        Assert.assertNotNull(mainClass);
-        Assert.assertNotEquals(Bootique.class, mainClass);
+        assertNotNull(mainClass);
+        assertNotEquals(Bootique.class, mainClass);
     }
 
     @Test
@@ -46,7 +48,7 @@ public class ApplicationIntrospectorTest {
         // TODO: until https://github.com/bootique/bootique/issues/52 is available,
         // we can't make an exact assertion here, as tests can be started from different IDEs, etc.
 
-        Assert.assertNotNull(name);
-        Assert.assertNotEquals("Bootique", name);
+        assertNotNull(name);
+        assertNotEquals("Bootique", name);
     }
 }

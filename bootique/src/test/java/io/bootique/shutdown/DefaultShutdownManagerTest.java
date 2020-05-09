@@ -19,14 +19,13 @@
 
 package io.bootique.shutdown;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 
-import io.bootique.shutdown.DefaultShutdownManager;
-import org.junit.Before;
-import org.junit.Test;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 public class DefaultShutdownManagerTest {
 
@@ -34,7 +33,7 @@ public class DefaultShutdownManagerTest {
 	private AutoCloseable mockCloseable1;
 	private AutoCloseable mockCloseable2;
 
-	@Before
+	@BeforeEach
 	public void before() {
 		this.shutdownManager = new DefaultShutdownManager(Duration.ofMillis(1000l));
 

@@ -21,16 +21,16 @@ package io.bootique;
 
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.unit.BQInternalTestFactory;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Bootique_Configuration_PropertiesIT {
 
-    @Rule
+    @RegisterExtension
     public BQInternalTestFactory testFactory = new BQInternalTestFactory();
 
     private BQInternalTestFactory.Builder app() {

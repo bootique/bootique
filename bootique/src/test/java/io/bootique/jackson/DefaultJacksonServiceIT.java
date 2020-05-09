@@ -29,20 +29,18 @@ import com.fasterxml.jackson.databind.node.TreeTraversingParser;
 import io.bootique.config.PolymorphicConfiguration;
 import io.bootique.config.TypesFactory;
 import io.bootique.log.DefaultBootLogger;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultJacksonServiceIT {
 
     private TypesFactory<PolymorphicConfiguration> typesFactory;
 
-    @Before
+    @BeforeEach
     public void before() {
         typesFactory = new TypesFactory<>(
                 getClass().getClassLoader(),

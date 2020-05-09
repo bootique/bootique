@@ -20,16 +20,14 @@
 package io.bootique.jackson;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.TemporalAccessor;
 
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ZonedDateTimeDeserializerIT extends DeserializerTestBase {
     @Test
@@ -38,8 +36,8 @@ public class ZonedDateTimeDeserializerIT extends DeserializerTestBase {
 
         ZonedDateTime value = deserialize(ZonedDateTime.class, "\"" + zonedDateTime.toString() + "\"");
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", zonedDateTime, value);
+        assertNotNull(value);
+        assertEquals(zonedDateTime, value);
     }
 
     @Test
@@ -48,8 +46,8 @@ public class ZonedDateTimeDeserializerIT extends DeserializerTestBase {
 
         ZonedDateTime value = deserialize(ZonedDateTime.class, "\"2017-09-02T10:15:30+01:00\"");
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", zonedDateTime, value);
+        assertNotNull(value);
+        assertEquals(zonedDateTime, value);
     }
 
     @Test
@@ -68,9 +66,9 @@ public class ZonedDateTimeDeserializerIT extends DeserializerTestBase {
         mapper.addMixIn(TemporalAccessor.class, MockObjectConfiguration.class);
         TemporalAccessor value = mapper.readValue("[\"" + ZonedDateTime.class.getName() + "\",\"2017-09-02T10:15:30+01:00\"]", TemporalAccessor.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be a ZonedDateTime.", value instanceof ZonedDateTime);
-        assertEquals("The value is not correct.", zonedDateTime, value);
+        assertNotNull(value);
+        assertTrue(value instanceof ZonedDateTime, "The value should be a ZonedDateTime.");
+        assertEquals(zonedDateTime, value);
     }
 
 }

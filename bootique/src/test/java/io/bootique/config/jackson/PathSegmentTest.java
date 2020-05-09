@@ -20,14 +20,11 @@
 package io.bootique.config.jackson;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PathSegmentTest {
 
@@ -40,10 +37,10 @@ public class PathSegmentTest {
         assertEquals("a", last.get().getNode().asText());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testLastPathComponent_Value_PastEnd() {
         JsonNode node = YamlReader.read("a");
-        PathSegment.create(node, "x").lastPathComponent();
+        assertThrows(IllegalArgumentException.class, () -> PathSegment.create(node, "x").lastPathComponent());
     }
 
     @Test
@@ -83,34 +80,34 @@ public class PathSegmentTest {
         assertEquals("e", last.get().getNode().asText());
     }
 
-    @Test(expected = ArrayIndexOutOfBoundsException.class)
+    @Test
     public void testLastPathComponent_ArrayOutOfBounds() {
         JsonNode node = YamlReader.read("a:\n  - b: 1\n  - b: 2");
-        PathSegment.create(node, "a[-1]").lastPathComponent();
+        assertThrows(ArrayIndexOutOfBoundsException.class, () -> PathSegment.create(node, "a[-1]").lastPathComponent());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testLastPathComponent_Array_NonNumericIndex() {
         JsonNode node = YamlReader.read("a:\n  - b: 1\n  - b: 2");
-        PathSegment.create(node, "a[a]").lastPathComponent();
+        assertThrows(IllegalArgumentException.class, () -> PathSegment.create(node, "a[a]").lastPathComponent());
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testLastPathComponent_Array_MissingClosingParen1() {
         JsonNode node = YamlReader.read("a:\n  - b: 1\n  - b: 2");
-        PathSegment.create(node, "a[1.").lastPathComponent();
+        assertThrows(IllegalStateException.class, () -> PathSegment.create(node, "a[1.").lastPathComponent());
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testLastPathComponent_Array_MissingClosingParen2() {
         JsonNode node = YamlReader.read("a:\n  - b: 1\n  - b: 2");
-        PathSegment.create(node, "a[12").lastPathComponent();
+        assertThrows(IllegalStateException.class, () -> PathSegment.create(node, "a[12").lastPathComponent());
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testLastPathComponent_Array_Nested_PropertyMissingDot() {
         JsonNode node = YamlReader.read("a:\n  - b: 1\n  - b: 2");
-        PathSegment.create(node, "a[1]b").lastPathComponent();
+        assertThrows(IllegalStateException.class, () -> PathSegment.create(node, "a[1]b").lastPathComponent());
     }
 
     @Test
@@ -118,13 +115,13 @@ public class PathSegmentTest {
         JsonNode node = YamlReader.read("- 1\n- 2");
 
         Optional<PathSegment<?>> last0 = PathSegment.create(node, "[0]").lastPathComponent();
-        assertTrue("Couldn't resolve '[0]' path", last0.isPresent());
-        assertNotNull("Couldn't resolve '[0]' path", last0.get().getNode());
+        assertTrue(last0.isPresent(), "Couldn't resolve '[0]' path");
+        assertNotNull(last0.get().getNode(), "Couldn't resolve '[0]' path");
         assertEquals(1, last0.get().getNode().asInt());
 
         Optional<PathSegment<?>> last1 = PathSegment.create(node, "[1]").lastPathComponent();
-        assertTrue("Couldn't resolve '[1]' path", last1.isPresent());
-        assertNotNull("Couldn't resolve '[1]' path", last1.get().getNode());
+        assertTrue(last1.isPresent(), "Couldn't resolve '[1]' path");
+        assertNotNull(last1.get().getNode(), "Couldn't resolve '[1]' path");
         assertEquals(2, last1.get().getNode().asInt());
     }
 
@@ -133,13 +130,13 @@ public class PathSegmentTest {
         JsonNode node = YamlReader.read("a:\n  - 1\n  - 2");
 
         Optional<PathSegment<?>> last0 = PathSegment.create(node, "a[0]").lastPathComponent();
-        assertTrue("Couldn't resolve 'a[0]' path", last0.isPresent());
-        assertNotNull("Couldn't resolve 'a[0]' path", last0.get().getNode());
+        assertTrue(last0.isPresent(), "Couldn't resolve 'a[0]' path");
+        assertNotNull(last0.get().getNode(), "Couldn't resolve 'a[0]' path");
         assertEquals(1, last0.get().getNode().asInt());
 
         Optional<PathSegment<?>> last1 = PathSegment.create(node, "a[1]").lastPathComponent();
-        assertTrue("Couldn't resolve 'a[1]' path", last1.isPresent());
-        assertNotNull("Couldn't resolve 'a[1]' path", last1.get().getNode());
+        assertTrue(last1.isPresent(), "Couldn't resolve 'a[1]' path");
+        assertNotNull(last1.get().getNode(), "Couldn't resolve 'a[1]' path");
         assertEquals(2, last1.get().getNode().asInt());
     }
 
@@ -148,8 +145,8 @@ public class PathSegmentTest {
         JsonNode node = YamlReader.read("a:\n  - 1\n  - 2");
 
         Optional<PathSegment<?>> last = PathSegment.create(node, "a[2]").lastPathComponent();
-        assertTrue("Couldn't resolve 'a[2]' path", last.isPresent());
-        assertNull("Index past array end must resolve to an null element", last.get().getNode());
+        assertTrue(last.isPresent(), "Couldn't resolve 'a[2]' path");
+        assertNull(last.get().getNode(), "Index past array end must resolve to an null element");
     }
 
     @Test
@@ -157,8 +154,8 @@ public class PathSegmentTest {
         JsonNode node = YamlReader.read("a:\n  - 1\n  - 2");
 
         Optional<PathSegment<?>> last = PathSegment.create(node, "a[.length]").lastPathComponent();
-        assertTrue("Couldn't resolve 'a[.length]' path", last.isPresent());
-        assertNull("Index past array end must resolve to an null element", last.get().getNode());
+        assertTrue(last.isPresent(), "Couldn't resolve 'a[.length]' path");
+        assertNull(last.get().getNode(), "Index past array end must resolve to an null element");
     }
 
     @Test
@@ -166,8 +163,8 @@ public class PathSegmentTest {
         JsonNode node = YamlReader.read("a:\n  - b: 1\n  - b: 2");
         Optional<PathSegment<?>> last = PathSegment.create(node, "a[1].b").lastPathComponent();
 
-        assertTrue("Couldn't resolve 'a[1].b' path", last.isPresent());
-        assertNotNull("Couldn't resolve 'a[1].b' path", last.get().getNode());
+        assertTrue(last.isPresent(), "Couldn't resolve 'a[1].b' path");
+        assertNotNull(last.get().getNode(), "Couldn't resolve 'a[1].b' path");
         assertEquals(2, last.get().getNode().asInt());
     }
 }

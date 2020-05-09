@@ -20,21 +20,21 @@
 package io.bootique.terminal;
 
 import io.bootique.log.BootLogger;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 
 public class SttyTerminalTest {
 
     private SttyTerminal terminal;
 
-    @Before
+    @BeforeEach
     public void before() {
         terminal = new SttyTerminal(mock(BootLogger.class));
     }

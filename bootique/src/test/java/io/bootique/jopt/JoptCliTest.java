@@ -20,12 +20,12 @@
 package io.bootique.jopt;
 
 import joptsimple.OptionSet;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -34,7 +34,7 @@ public class JoptCliTest {
 
 	private OptionSet mockParsed;
 
-	@Before
+	@BeforeEach
 	public void before() {
 		this.mockParsed = mock(OptionSet.class);
 	}

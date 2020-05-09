@@ -24,20 +24,19 @@ import io.bootique.command.Command;
 import io.bootique.command.CommandOutcome;
 import io.bootique.command.CommandWithMetadata;
 import io.bootique.config.ConfigurationFactory;
-import io.bootique.di.Binder;
 import io.bootique.di.BQModule;
+import io.bootique.di.Binder;
 import io.bootique.di.Provides;
 import io.bootique.meta.application.CommandMetadata;
-import org.junit.Test;
-
-import java.util.Collection;
-import java.util.Collections;
+import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
+import java.util.Collection;
+import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BootiqueExceptionsHandlerIT {
 
@@ -95,8 +94,8 @@ public class BootiqueExceptionsHandlerIT {
 
         assertEquals(1, out.getExitCode());
         assertNull(out.getException());
-        assertTrue(out.getMessage(), out.getMessage().startsWith("Config resource is not found or is inaccessible: file:"));
-        assertTrue(out.getMessage(), out.getMessage().endsWith("no_such_config.yml"));
+        assertTrue(out.getMessage().startsWith("Config resource is not found or is inaccessible: file:"), out.getMessage());
+        assertTrue(out.getMessage().endsWith("no_such_config.yml"), out.getMessage());
     }
 
     @Test
@@ -159,8 +158,8 @@ public class BootiqueExceptionsHandlerIT {
         final String outMessage = out.getMessage();
 
         assertTrue(
-            "Circular override dependency between DI modules: ModuleWithOverride2 -> ModuleWithOverride1".equals(outMessage) ||
-                "Circular override dependency between DI modules: ModuleWithOverride1 -> ModuleWithOverride2".equals(outMessage)
+                "Circular override dependency between DI modules: ModuleWithOverride2 -> ModuleWithOverride1".equals(outMessage) ||
+                        "Circular override dependency between DI modules: ModuleWithOverride1 -> ModuleWithOverride2".equals(outMessage)
         );
     }
 
@@ -173,9 +172,8 @@ public class BootiqueExceptionsHandlerIT {
 
         assertEquals(1, out.getExitCode());
         assertNull(out.getException());
-        assertTrue(out.getMessage(), out.getMessage()
-                .startsWith("Module BQCoreModule provided by Bootique is overridden twice by " +
-                        "BootiqueExceptionsHandlerIT"));
+        assertTrue(out.getMessage().startsWith("Module BQCoreModule provided by Bootique is overridden twice by BootiqueExceptionsHandlerIT"),
+                out.getMessage());
     }
 
     @Test
@@ -242,19 +240,6 @@ public class BootiqueExceptionsHandlerIT {
 
     public static class ModuleWithProviderMethodBqException implements BQModule {
 
-        public static class MyCommand implements Command {
-
-            @Override
-            public CommandMetadata getMetadata() {
-                return CommandMetadata.builder(MyCommand.class).build();
-            }
-
-            @Override
-            public CommandOutcome run(Cli cli) {
-                return null;
-            }
-        }
-
         @Override
         public void configure(Binder binder) {
             BQCoreModule.extend(binder).addCommand(MyCommand.class);
@@ -265,9 +250,6 @@ public class BootiqueExceptionsHandlerIT {
         public MyCommand provideCommand() {
             throw new BootiqueException(1, "test provider exception");
         }
-    }
-
-    public static class ModuleWithProviderMethodNPException implements BQModule {
 
         public static class MyCommand implements Command {
 
@@ -281,6 +263,9 @@ public class BootiqueExceptionsHandlerIT {
                 return null;
             }
         }
+    }
+
+    public static class ModuleWithProviderMethodNPException implements BQModule {
 
         @Override
         public void configure(Binder binder) {
@@ -292,16 +277,22 @@ public class BootiqueExceptionsHandlerIT {
         public MyCommand provideCommand() {
             throw new NullPointerException("test NPE");
         }
+
+        public static class MyCommand implements Command {
+
+            @Override
+            public CommandMetadata getMetadata() {
+                return CommandMetadata.builder(MyCommand.class).build();
+            }
+
+            @Override
+            public CommandOutcome run(Cli cli) {
+                return null;
+            }
+        }
     }
 
     public static class ModuleProviderWithOverride1 implements BQModuleProvider {
-
-        public static class ModuleWithOverride1 implements BQModule {
-            @Override
-            public void configure(Binder binder) {
-
-            }
-        }
 
         @Override
         public BQModule module() {
@@ -312,16 +303,16 @@ public class BootiqueExceptionsHandlerIT {
         public Collection<Class<? extends BQModule>> overrides() {
             return Collections.singleton(ModuleProviderWithOverride2.ModuleWithOverride2.class);
         }
-    }
 
-    public static class ModuleProviderWithOverride2 implements BQModuleProvider {
-
-        public static class ModuleWithOverride2 implements BQModule {
+        public static class ModuleWithOverride1 implements BQModule {
             @Override
             public void configure(Binder binder) {
 
             }
         }
+    }
+
+    public static class ModuleProviderWithOverride2 implements BQModuleProvider {
 
         @Override
         public BQModule module() {
@@ -331,6 +322,13 @@ public class BootiqueExceptionsHandlerIT {
         @Override
         public Collection<Class<? extends BQModule>> overrides() {
             return Collections.singleton(ModuleProviderWithOverride1.ModuleWithOverride1.class);
+        }
+
+        public static class ModuleWithOverride2 implements BQModule {
+            @Override
+            public void configure(Binder binder) {
+
+            }
         }
     }
 

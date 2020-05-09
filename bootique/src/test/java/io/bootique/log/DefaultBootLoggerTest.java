@@ -19,22 +19,19 @@
 
 package io.bootique.log;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.PrintStream;
 
-import io.bootique.log.DefaultBootLogger;
-import org.junit.Before;
-import org.junit.Test;
+import static org.mockito.Mockito.*;
 
 public class DefaultBootLoggerTest {
 
 	private PrintStream mockStdout;
 	private PrintStream mockStderr;
 
-	@Before
+	@BeforeEach
 	public void before() {
 		this.mockStdout = mock(PrintStream.class);
 		this.mockStderr = mock(PrintStream.class);
@@ -47,7 +44,7 @@ public class DefaultBootLoggerTest {
 
 		logger.stdout("outmsg");
 		verify(mockStdout).println("outmsg");
-		verifyZeroInteractions(mockStderr);
+		verifyNoInteractions(mockStderr);
 	}
 	
 	@Test
@@ -67,7 +64,7 @@ public class DefaultBootLoggerTest {
 
 		logger.trace(() -> "mytrace");
 		verify(mockStderr).println("mytrace");
-		verifyZeroInteractions(mockStdout);
+		verifyNoInteractions(mockStdout);
 	}
 	
 	@Test
@@ -76,7 +73,7 @@ public class DefaultBootLoggerTest {
 		DefaultBootLogger logger = new DefaultBootLogger(false, mockStdout, mockStderr);
 
 		logger.trace(() -> "mytrace");
-		verifyZeroInteractions(mockStderr);
-		verifyZeroInteractions(mockStdout);
+		verifyNoInteractions(mockStderr);
+		verifyNoInteractions(mockStdout);
 	}
 }

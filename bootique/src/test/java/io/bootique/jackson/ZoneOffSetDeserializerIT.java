@@ -20,15 +20,13 @@
 package io.bootique.jackson;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.time.ZoneOffset;
 import java.time.temporal.TemporalAccessor;
 
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ZoneOffSetDeserializerIT extends DeserializerTestBase {
     @Test
@@ -37,8 +35,8 @@ public class ZoneOffSetDeserializerIT extends DeserializerTestBase {
 
         ZoneOffset value = deserialize(ZoneOffset.class, "\"+17:10\"");
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", zoneOffset, value);
+        assertNotNull(value);
+        assertEquals(zoneOffset, value);
     }
 
     @Test
@@ -47,8 +45,8 @@ public class ZoneOffSetDeserializerIT extends DeserializerTestBase {
 
         ZoneOffset value = deserialize(ZoneOffset.class, "\"" + zoneOffset.toString() + "\"");
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", zoneOffset, value);
+        assertNotNull(value);
+        assertEquals(zoneOffset, value);
     }
 
     @Test
@@ -57,8 +55,8 @@ public class ZoneOffSetDeserializerIT extends DeserializerTestBase {
 
         ZoneOffset value = deserialize(ZoneOffset.class, "\"" + zoneOffset.toString() + "\"");
 
-        assertNotNull("The value should not be null.", value);
-        assertEquals("The value is not correct.", zoneOffset, value);
+        assertNotNull(value);
+        assertEquals(zoneOffset, value);
     }
 
     @Test
@@ -77,8 +75,8 @@ public class ZoneOffSetDeserializerIT extends DeserializerTestBase {
         mapper.addMixIn(TemporalAccessor.class, MockObjectConfiguration.class);
         TemporalAccessor value = mapper.readValue("[\"" + ZoneOffset.class.getName() + "\",\"+17:10\"]", TemporalAccessor.class);
 
-        assertNotNull("The value should not be null.", value);
-        assertTrue("The value should be a ZoneOffset.", value instanceof ZoneOffset);
-        assertEquals("The value is not correct.", zoneOffset, value);
+        assertNotNull(value);
+        assertTrue(value instanceof ZoneOffset, "The value should be a ZoneOffset.");
+        assertEquals(zoneOffset, value);
     }
 }

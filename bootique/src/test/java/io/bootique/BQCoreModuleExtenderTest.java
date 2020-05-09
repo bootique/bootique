@@ -23,15 +23,15 @@ import io.bootique.annotation.EnvironmentProperties;
 import io.bootique.di.DIBootstrap;
 import io.bootique.di.Injector;
 import io.bootique.meta.application.OptionMetadata;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BQCoreModuleExtenderTest {
 

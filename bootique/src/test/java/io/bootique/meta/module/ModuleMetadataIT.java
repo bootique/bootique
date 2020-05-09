@@ -22,27 +22,27 @@ package io.bootique.meta.module;
 import io.bootique.BQModuleMetadata;
 import io.bootique.BQModuleProvider;
 import io.bootique.BQRuntime;
-import io.bootique.di.Binder;
 import io.bootique.di.BQModule;
+import io.bootique.di.Binder;
 import io.bootique.unit.BQInternalTestFactory;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ModuleMetadataIT {
 
-    @Rule
+    @RegisterExtension
     public BQInternalTestFactory runtimeFactory = new BQInternalTestFactory();
 
     @Test
     public void testDefault() {
         ModulesMetadata md = runtimeFactory.app().createRuntime().getInstance(ModulesMetadata.class);
 
-        assertEquals("Expected BQCoreModule + 2 test modules", 3, md.getModules().size());
+        assertEquals(3, md.getModules().size(), "Expected BQCoreModule + 2 test modules");
 
         Optional<ModuleMetadata> coreMd = md.getModules()
                 .stream()
@@ -60,7 +60,7 @@ public class ModuleMetadataIT {
                 .createRuntime()
                 .getInstance(ModulesMetadata.class);
 
-        assertEquals("Expected BQCoreModule + 2 test modules + custom module", 4, md.getModules().size());
+        assertEquals(4, md.getModules().size(), "Expected BQCoreModule + 2 test modules + custom module");
     }
 
     @Test
@@ -81,7 +81,7 @@ public class ModuleMetadataIT {
         }).createRuntime();
 
         ModulesMetadata md = runtime.getInstance(ModulesMetadata.class);
-        assertEquals("Expected BQCoreModule + 2 test modules + custom module", 4, md.getModules().size());
+        assertEquals(4, md.getModules().size(), "Expected BQCoreModule + 2 test modules + custom module");
 
         Optional<ModuleMetadata> myMd = md.getModules()
                 .stream()
@@ -96,7 +96,7 @@ public class ModuleMetadataIT {
                 .module(new M1Provider())
                 .createRuntime().getInstance(ModulesMetadata.class);
 
-        assertEquals("Expected BQCoreModule + 2 test modules + custom module", 4, md.getModules().size());
+        assertEquals(4, md.getModules().size(), "Expected BQCoreModule + 2 test modules + custom module");
 
         Optional<ModuleMetadata> m1Md = md.getModules()
                 .stream()

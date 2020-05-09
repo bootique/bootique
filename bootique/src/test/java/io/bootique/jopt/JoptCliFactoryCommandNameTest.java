@@ -27,15 +27,14 @@ import io.bootique.command.ManagedCommand;
 import io.bootique.meta.application.ApplicationMetadata;
 import io.bootique.meta.application.CommandMetadata;
 import io.bootique.meta.application.OptionMetadata;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -43,7 +42,7 @@ public class JoptCliFactoryCommandNameTest {
 
     private Map<String, ManagedCommand> commands;
 
-    @Before
+    @BeforeEach
     public void before() {
         this.commands = new HashMap<>();
     }
@@ -67,13 +66,13 @@ public class JoptCliFactoryCommandNameTest {
         assertEquals("c1", cli.commandName());
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void testCommandName_MultipleMatches() {
 
         addMockCommand("c1", "me", "them");
         addMockCommand("c2", "us", "others");
 
-        createCli("--me --c1 --c2");
+        assertThrows(RuntimeException.class, () -> createCli("--me --c1 --c2"));
     }
 
     private void addMockCommand(String name, String... options) {

@@ -21,12 +21,13 @@ package io.bootique.command;
 
 import io.bootique.cli.Cli;
 import io.bootique.meta.application.CommandMetadata;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class DefaultCommandManagerTest {
 
@@ -45,19 +46,18 @@ public class DefaultCommandManagerTest {
         DefaultCommandManager cm = new DefaultCommandManager(map);
         assertSame(c1, cm.lookupByType(C1.class).getCommand());
         assertSame(c2, cm.lookupByType(C2.class).getCommand());
-        assertSame("No default command included in lookup", c3, cm.lookupByType(C3.class).getCommand());
+        assertSame(c3, cm.lookupByType(C3.class).getCommand(), "No default command included in lookup");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testLookupByType_Missing() {
 
         Map<String, ManagedCommand> map = new HashMap<>();
         map.put("x", ManagedCommand.builder(c1).build());
 
         DefaultCommandManager cm = new DefaultCommandManager(map);
-        cm.lookupByType(C2.class);
+        assertThrows(IllegalArgumentException.class, () -> cm.lookupByType(C2.class));
     }
-
 
     @Test
     public void testLookupByName() {
@@ -70,17 +70,17 @@ public class DefaultCommandManagerTest {
         DefaultCommandManager cm = new DefaultCommandManager(map);
         assertSame(c1, cm.lookupByName("c1").getCommand());
         assertSame(c2, cm.lookupByName("c2").getCommand());
-        assertSame("No default command included in lookup", c3, cm.lookupByName("c3").getCommand());
+        assertSame(c3, cm.lookupByName("c3").getCommand(), "No default command included in lookup");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testLookupByName_Missing() {
 
         Map<String, ManagedCommand> map = new HashMap<>();
         map.put("c1", ManagedCommand.forCommand(c1));
 
         DefaultCommandManager cm = new DefaultCommandManager(map);
-        cm.lookupByName("c2");
+        assertThrows(IllegalArgumentException.class, () -> cm.lookupByName("c2"));
     }
 
     static class C1 extends CommandWithMetadata {

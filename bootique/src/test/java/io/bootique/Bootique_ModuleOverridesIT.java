@@ -19,13 +19,15 @@
 package io.bootique;
 
 import io.bootique.annotation.Args;
+import io.bootique.di.BQModule;
 import io.bootique.di.Binder;
 import io.bootique.di.Injector;
 import io.bootique.di.Key;
-import io.bootique.di.BQModule;
 import io.bootique.di.Provides;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+import javax.inject.Qualifier;
+import javax.inject.Singleton;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -33,11 +35,8 @@ import java.lang.annotation.Target;
 import java.util.Collection;
 import java.util.Collections;
 
-import javax.inject.Qualifier;
-import javax.inject.Singleton;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class Bootique_ModuleOverridesIT {
 
@@ -99,9 +98,9 @@ public class Bootique_ModuleOverridesIT {
                 .override(M3.class, M4.class).with(M5.class)
                 .createInjector();
 
-        assertEquals("Overriding module is expected to be called once and only once", 1, M5.configCalls);
-        assertEquals("Overridden module is expected to be called once and only once", 1, M3.configCalls);
-        assertEquals("Overridden module is expected to be called once and only once", 1, M4.configCalls);
+        assertEquals(1, M5.configCalls, "Overriding module is expected to be called once and only once");
+        assertEquals(1, M3.configCalls, "Overriding module is expected to be called once and only once");
+        assertEquals(1, M4.configCalls, "Overriding module is expected to be called once and only once");
 
         String s1 = i.getInstance(Key.get(String.class, S1.class));
         assertEquals("m5_s1", s1);

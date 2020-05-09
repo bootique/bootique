@@ -22,7 +22,7 @@ package io.bootique.help.config;
 import io.bootique.Bootique;
 import io.bootique.meta.config.ConfigObjectMetadata;
 import io.bootique.meta.config.ConfigValueMetadata;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ConfigSectionGeneratorFoldingTest {
 

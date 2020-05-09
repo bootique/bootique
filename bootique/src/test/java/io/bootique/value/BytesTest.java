@@ -19,10 +19,10 @@
 
 package io.bootique.value;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static io.bootique.value.BytesUnit.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BytesTest {
 
@@ -73,26 +73,25 @@ public class BytesTest {
         assertEquals(5368709120L, new Bytes("5 gigabytes").getBytes());
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testParse_Null() {
-        new Bytes(null);
+        assertThrows(NullPointerException.class, () -> new Bytes(null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testParse_Empty() {
-        new Bytes("");
+        assertThrows(IllegalArgumentException.class, () -> new Bytes(""));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testParse_Invalid1() {
-        new Bytes("4 nosuchthing");
+        assertThrows(IllegalArgumentException.class, () -> new Bytes("4 nosuchthing"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testParse_Invalid2() {
-        new Bytes("not_a_number sec");
+        assertThrows(IllegalArgumentException.class, () -> new Bytes("not_a_number sec"));
     }
-
 
     @Test
     public void testCompareTo() {

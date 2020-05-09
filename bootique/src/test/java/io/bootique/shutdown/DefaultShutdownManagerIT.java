@@ -19,25 +19,21 @@
 
 package io.bootique.shutdown;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 
-import io.bootique.shutdown.DefaultShutdownManager;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
 
 public class DefaultShutdownManagerIT {
 
 	private AutoCloseable mockCloseable1;
 	private AutoCloseable mockCloseable2;
 
-	@Before
+	@BeforeEach
 	public void before() {
-
 		this.mockCloseable1 = mock(AutoCloseable.class);
 		this.mockCloseable2 = mock(AutoCloseable.class);
 	}

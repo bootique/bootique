@@ -24,21 +24,19 @@ import io.bootique.BQRuntime;
 import io.bootique.cli.Cli;
 import io.bootique.meta.application.CommandMetadata;
 import io.bootique.unit.BQInternalTestFactory;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.util.HashSet;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CommandsIT {
 
-    @Rule
+    @RegisterExtension
     public BQInternalTestFactory testFactory = new BQInternalTestFactory();
 
     private String[] args;
@@ -48,7 +46,7 @@ public class CommandsIT {
         assertEquals(new HashSet<>(asList(expectedCommands)), commands.keySet());
     }
 
-    @Before
+    @BeforeEach
     public void before() {
         args = new String[]{"a", "b", "c"};
     }

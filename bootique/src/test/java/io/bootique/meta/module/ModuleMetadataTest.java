@@ -23,11 +23,11 @@ import io.bootique.meta.config.ConfigMapMetadata;
 import io.bootique.meta.config.ConfigMetadataNode;
 import io.bootique.meta.config.ConfigObjectMetadata;
 import io.bootique.meta.config.ConfigValueMetadata;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ModuleMetadataTest {
 

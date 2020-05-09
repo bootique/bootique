@@ -21,13 +21,13 @@ package io.bootique.config.jackson;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class InPlaceMapOverriderTest {
 
@@ -39,7 +39,7 @@ public class InPlaceMapOverriderTest {
 
         JsonNode node = YamlReader.read("a: 5");
         JsonNode overridden = overrider.apply(node);
-        assertSame("Overriding must happen in place", node, overridden);
+        assertSame(node, overridden, "Overriding must happen in place");
     }
 
     @Test

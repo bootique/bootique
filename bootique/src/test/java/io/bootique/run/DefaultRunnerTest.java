@@ -19,17 +19,17 @@
 
 package io.bootique.run;
 
-import io.bootique.command.ExecutionPlanBuilder;
-import io.bootique.command.ManagedCommand;
-import io.bootique.meta.application.CommandMetadata;
-import io.bootique.meta.application.OptionMetadata;
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandManager;
 import io.bootique.command.CommandOutcome;
 import io.bootique.command.DefaultCommandManager;
-import org.junit.Before;
-import org.junit.Test;
+import io.bootique.command.ExecutionPlanBuilder;
+import io.bootique.command.ManagedCommand;
+import io.bootique.meta.application.CommandMetadata;
+import io.bootique.meta.application.OptionMetadata;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -37,14 +37,9 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class DefaultRunnerTest {
 
@@ -63,7 +58,7 @@ public class DefaultRunnerTest {
         return mock;
     }
 
-    @Before
+    @BeforeEach
     public void before() {
         this.mockCli = mock(Cli.class);
     }
@@ -108,7 +103,7 @@ public class DefaultRunnerTest {
         verify(mockHelp, times(0)).run(mockCli);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testRun_NoMatch() {
 
         when(mockCli.commandName()).thenReturn("c3");
@@ -119,7 +114,7 @@ public class DefaultRunnerTest {
         Command mockC1 = mockCommand("c1", CommandOutcome.succeeded(), "c1o1", "c1o2");
         Command mockC2 = mockCommand("c2", CommandOutcome.succeeded(), "c2o1");
 
-        run(Optional.of(mockDefault), Optional.of(mockHelp), mockC1, mockC2);
+        assertThrows(IllegalStateException.class, () -> run(Optional.of(mockDefault), Optional.of(mockHelp), mockC1, mockC2));
     }
 
     @Test

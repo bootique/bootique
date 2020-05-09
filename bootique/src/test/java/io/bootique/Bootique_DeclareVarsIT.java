@@ -27,8 +27,8 @@ import io.bootique.help.HelpCommand;
 import io.bootique.log.BootLogger;
 import io.bootique.log.DefaultBootLogger;
 import io.bootique.unit.BQInternalTestFactory;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -36,12 +36,12 @@ import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.Map;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class Bootique_DeclareVarsIT {
 
-    @Rule
+    @RegisterExtension
     public BQInternalTestFactory testFactory = new BQInternalTestFactory();
 
     @Test
@@ -75,7 +75,7 @@ public class Bootique_DeclareVarsIT {
         runtime.getInstance(HelpCommand.class).run(cli);
 
         String help = new String(out.toByteArray());
-        assertTrue("No ENVIRONMENT section:\n" + help, help.contains("ENVIRONMENT"));
+        assertTrue(help.contains("ENVIRONMENT"), "No ENVIRONMENT section:\n" + help);
         assertTrue(help.contains("X_VALID_VAR"));
         assertFalse(help.contains("X_INVALID_VAR"));
     }
@@ -110,7 +110,7 @@ public class Bootique_DeclareVarsIT {
         runtime.getInstance(HelpCommand.class).run(cli);
 
         String help = new String(out.toByteArray());
-        assertTrue("No ENVIRONMENT section:\n" + help, help.contains("ENVIRONMENT"));
+        assertTrue(help.contains("ENVIRONMENT"), "No ENVIRONMENT section:\n" + help);
         assertTrue(help.contains("New description"));
         assertFalse(help.contains("Origin description"));
     }
@@ -146,7 +146,7 @@ public class Bootique_DeclareVarsIT {
         runtime.getInstance(HelpCommand.class).run(cli);
 
         String help = new String(out.toByteArray());
-        assertTrue("No ENVIRONMENT section:\n" + help, help.contains("ENVIRONMENT"));
+        assertTrue(help.contains("ENVIRONMENT"), "No ENVIRONMENT section:\n" + help);
         assertTrue(help.contains("X_VALID_VAR"));
         assertFalse(help.contains("X_INVALID_VAR"));
     }

@@ -19,8 +19,6 @@
 
 package io.bootique.run;
 
-import javax.inject.Inject;
-
 import io.bootique.BQCoreModule;
 import io.bootique.cli.Cli;
 import io.bootique.command.CommandOutcome;
@@ -32,22 +30,24 @@ import io.bootique.log.DefaultBootLogger;
 import io.bootique.meta.application.CommandMetadata;
 import io.bootique.unit.BQInternalInMemoryPrintStream;
 import io.bootique.unit.BQInternalTestFactory;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import javax.inject.Inject;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DefaultRunnerIT {
 
-    @Rule
+    @RegisterExtension
     public BQInternalTestFactory testFactory = new BQInternalTestFactory();
 
     private BQInternalInMemoryPrintStream out;
     private BootLogger logger;
 
-    @Before
+    @BeforeEach
     public void before() {
         this.out = new BQInternalInMemoryPrintStream(System.out);
         this.logger = new DefaultBootLogger(true, out, System.err);

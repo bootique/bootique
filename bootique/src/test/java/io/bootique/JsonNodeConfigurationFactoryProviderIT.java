@@ -30,27 +30,26 @@ import io.bootique.meta.application.OptionMetadata;
 import io.bootique.resource.ResourceFactory;
 import io.bootique.unit.BQInternalTestFactory;
 import io.bootique.unit.BQInternalWebServerTestFactory;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.util.Collections;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JsonNodeConfigurationFactoryProviderIT {
 
-    @ClassRule
-    public static BQInternalWebServerTestFactory WEB_CONFIG_FACTORY = new BQInternalWebServerTestFactory();
-    @Rule
+    @RegisterExtension
+    public BQInternalWebServerTestFactory wsTestFactory = new BQInternalWebServerTestFactory();
+
+    @RegisterExtension
     public BQInternalTestFactory testFactory = new BQInternalTestFactory();
 
-    @BeforeClass
-    public static void beforeClass() {
-        WEB_CONFIG_FACTORY.app("--server").resourceUrl(new ResourceFactory("classpath:io/bootique"))
-                .createRuntime();
+    @BeforeEach
+    public void startWebserver() {
+        wsTestFactory.app("--server").resourceUrl(new ResourceFactory("classpath:io/bootique")).createRuntime();
     }
 
     @Test

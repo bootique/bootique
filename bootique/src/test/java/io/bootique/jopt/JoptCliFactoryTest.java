@@ -27,16 +27,14 @@ import io.bootique.command.ManagedCommand;
 import io.bootique.meta.application.ApplicationMetadata;
 import io.bootique.meta.application.CommandMetadata;
 import io.bootique.meta.application.OptionMetadata;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -44,7 +42,7 @@ public class JoptCliFactoryTest {
 
     private Map<String, ManagedCommand> commands;
 
-    @Before
+    @BeforeEach
     public void before() {
         this.commands = new HashMap<>();
     }

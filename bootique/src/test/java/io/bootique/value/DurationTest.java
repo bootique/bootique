@@ -19,12 +19,9 @@
 
 package io.bootique.value;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DurationTest {
 
@@ -77,29 +74,29 @@ public class DurationTest {
         assertEquals(java.time.Duration.ofMillis(95040000), Duration.parse("1.1days"));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testParse_Null() {
-        Duration.parse(null);
+        assertThrows(NullPointerException.class, () -> Duration.parse(null));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testParse_FractMs() {
-        Duration.parse("1.1 ms");
+        assertThrows(IllegalArgumentException.class, () -> Duration.parse("1.1 ms"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testParse_Empty() {
-        Duration.parse("");
+        assertThrows(IllegalArgumentException.class, () -> Duration.parse(""));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testParse_Invalid1() {
-        Duration.parse("4 nosuchthing");
+        assertThrows(IllegalArgumentException.class, () -> Duration.parse("4 nosuchthing"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testParse_Invalid2() {
-        Duration.parse("not_a_number sec");
+        assertThrows(IllegalArgumentException.class, () -> Duration.parse("not_a_number sec"));
     }
 
     @Test

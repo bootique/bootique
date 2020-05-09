@@ -19,12 +19,12 @@
 
 package io.bootique;
 
-import io.bootique.di.Binder;
 import io.bootique.di.BQModule;
+import io.bootique.di.Binder;
 import io.bootique.log.BootLogger;
 import io.bootique.log.DefaultBootLogger;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,9 +32,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -45,7 +43,7 @@ public class RuntimeModuleMergerTest {
 	private List<BQModuleMetadata> mockBqModules;
 	private List<BQModule> testModules;
 
-	@Before
+	@BeforeEach
 	public void before() {
 
 		// using real logger to better understand what's going on in the tests
@@ -142,7 +140,7 @@ public class RuntimeModuleMergerTest {
 		assertTrue(modules.contains(testModules.get(3)));
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testGetModules_OverrideCycle() {
 
 		// 0 replaces 3 ; 3 replaces 0
@@ -150,10 +148,10 @@ public class RuntimeModuleMergerTest {
 		mockBqModules.set(3, createBQModule(testModules.get(3), M0.class));
 
 		Collection<BQModuleMetadata> bqModules = Arrays.asList(mockBqModules.get(0), mockBqModules.get(3));
-		new RuntimeModuleMerger(bootLogger).toDIModules(bqModules);
+		assertThrows(RuntimeException.class, () -> new RuntimeModuleMerger(bootLogger).toDIModules(bqModules));
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testGetModules_OverrideIndirectCycle() {
 
 		// 0 replaces 3 ; 3 replaces 4 ; 4 replaces 0
@@ -163,7 +161,7 @@ public class RuntimeModuleMergerTest {
 
 		Collection<BQModuleMetadata> bqModules = Arrays.asList(mockBqModules.get(0), mockBqModules.get(4),
 				mockBqModules.get(3));
-		new RuntimeModuleMerger(bootLogger).toDIModules(bqModules);
+		assertThrows(RuntimeException.class, () -> new RuntimeModuleMerger(bootLogger).toDIModules(bqModules));
 	}
 
 //	@Test(expected = RuntimeException.class)

@@ -32,19 +32,14 @@
 
     <name>bootique-test-badspi-it: tests of tests with broken PolymorphicConfig</name>
     <description>
-        Contains integration tests for PolymorphicConfigurationChecker that require separate classloader.
+        Contains integration tests for PolymorphicConfigurationChecker that require a separate classloader.
     </description>
 
     <dependencies>
         <dependency>
             <groupId>io.bootique</groupId>
-            <artifactId>bootique-test</artifactId>
+            <artifactId>bootique-test-junit5</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

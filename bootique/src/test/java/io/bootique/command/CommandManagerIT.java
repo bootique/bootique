@@ -22,27 +22,25 @@ package io.bootique.command;
 import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
 import io.bootique.cli.Cli;
-import io.bootique.di.Binder;
 import io.bootique.di.BQModule;
+import io.bootique.di.Binder;
 import io.bootique.di.Provides;
 import io.bootique.help.HelpCommand;
 import io.bootique.meta.application.CommandMetadata;
 import io.bootique.unit.BQInternalTestFactory;
-import org.junit.Rule;
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import javax.inject.Singleton;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class CommandManagerIT {
 
-    @Rule
+    @RegisterExtension
     public BQInternalTestFactory runtimeFactory = new BQInternalTestFactory();
 
     @Test
@@ -50,7 +48,7 @@ public class CommandManagerIT {
         BQRuntime runtime = runtimeFactory.app().modules(M0.class, M1.class).createRuntime();
 
         CommandManager commandManager = runtime.getInstance(CommandManager.class);
-        assertEquals("help, helpconfig and module commands must be present", 4, commandManager.getAllCommands().size());
+        assertEquals(4, commandManager.getAllCommands().size(), "help, helpconfig and module commands must be present");
 
         assertSame(M0.mockCommand, commandManager.lookupByName("m0command").getCommand());
         assertSame(M1.mockCommand, commandManager.lookupByName("m1command").getCommand());
@@ -130,9 +128,9 @@ public class CommandManagerIT {
         CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
         // the main assertion we care about...
-        assertSame("Default command did not override another command with same name",
-                defaultCommand,
-                commandManager.lookupByName("m0command").getCommand());
+        assertSame(defaultCommand,
+                commandManager.lookupByName("m0command").getCommand(),
+                "Default command did not override another command with same name");
 
         // sanity check
         assertEquals(4, commandManager.getAllCommands().size());
