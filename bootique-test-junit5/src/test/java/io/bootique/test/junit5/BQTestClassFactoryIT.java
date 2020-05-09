@@ -28,14 +28,14 @@ import io.bootique.config.ConfigurationFactory;
 import io.bootique.log.BootLogger;
 import io.bootique.meta.application.CommandMetadata;
 import io.bootique.test.TestIO;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import javax.inject.Inject;
+import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BQTestClassFactoryIT {
 
@@ -43,13 +43,15 @@ public class BQTestClassFactoryIT {
     public static BQTestClassFactory testFactory = new BQTestClassFactory();
 
     @Test
-    public void testCreateRuntimeInjection() {
-        BQRuntime runtime = testFactory.app("-x").autoLoadModules().createRuntime();
-        Assertions.assertArrayEquals(new String[]{"-x"}, runtime.getArgs());
+    @DisplayName("Args passed")
+    public void testArgsPassed() {
+        BQRuntime rt = testFactory.app("-x").args("-y").args(Collections.singleton("-z")).autoLoadModules().createRuntime();
+        assertArrayEquals(new String[]{"-x", "-y", "-z"}, rt.getArgs());
     }
 
     @Test
-    public void testCreateRuntime_Streams_NoTrace() {
+    @DisplayName("Custom BootLogger")
+    public void testBootLogger() {
 
         TestIO io = TestIO.noTrace();
 
@@ -66,6 +68,7 @@ public class BQTestClassFactoryIT {
     }
 
     @Test
+    @DisplayName("System props don't leak to test")
     public void testConfigEnvExcludes_System() {
         System.setProperty("bq.a", "bq_a");
         System.setProperty("bq.c.m.k", "bq_c_m_k");
