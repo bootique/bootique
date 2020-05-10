@@ -19,12 +19,13 @@
 
 === Modules
 
-Bootique apps are made of "modules". The framework simply locates all available modules, loads them in the DI environment,
-parses the command line, and then transfers control to a Command (that can originate from any of the modules) that
-matched the user choice. There's a growing list of modules created by Bootique development team. And you can easily
-write your own. In fact, programming in Bootique is primarily about writing Modules.
+Bootique apps consist of "modules". The framework locates all available modules, loads them in the DI environment,
+parses the command line, and then transfers control to a Command object (that can originate from any of the modules)
+that matched parameters passed to the app on the command. There's a constantly growing list of modules maintained by
+the Bootique development team. And you can easily write your own. In fact, programming in Bootique is primarily about
+writing Modules.
 
-A module is a Java library that contains some code. What makes it a module is a special Java class that implements
+A module is a Java library that contains some code. What makes it special is a Java class that implements
 https://bootique.io/docs/latest/bootique-di-docs/#_bqmodule[Bootique DI Module interface].
 This class defines what "services" or other types of objects the module provides (in other words what will be injectable
 by the module users). This is done in a form of "bindings", i.e. associations between publicly visible injectable
@@ -38,7 +39,7 @@ include::../../../../test/java/io/bootique/docs/programming/modules/MyModule.jav
 There are other flavors of bindings in Bootique DI. Please refer to https://bootique.io/docs/latest/bootique-di-docs[documentation]
 for details. One important form extensively used in Bootique is https://bootique.io/docs/latest/bootique-di-docs/#_collections[collection binding].
 
-=== Modules Auto-Loading
+=== Module Providers and Auto-Loading
 
 Modules can be automatically loaded via `Bootique.autoLoadModules()` as long as they are included in your application dependencies.
 Auto-loading depends on the Java https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html[ServiceLoader mechanism].
@@ -63,8 +64,27 @@ com.foo.MyModuleProvider
 include::../../../../test/java/io/bootique/docs/programming/modules/MyModuleProvider.java[tag=MyModuleProviderMethods]
 ----
 
-If in your Module you are planning to redefine any services from the upstream modules, specify those upstream modules in the `overrides()` collection.
-In practice overrides are rarely needed, and often can be replaced with service decomposition.
+If you are planning to redefine any services from the upstream modules in your Module, specify those upstream modules
+in the `overrides()` collection. In practice overrides are rarely needed, and often can be replaced with service
+decomposition.
+
+=== BaseModule
+
+Both module and provider classes can be combined in one to reduce the boilerplate code. To do that you simply subclass
+your module from `BaseModule`:
+
+[source,java,indent=0]
+----
+include::../../../../test/java/io/bootique/docs/programming/modules/MyOtherModule.java[tag=MyOtherModule]
+----
+
+For auto-loading you'd put it in `META-INF/services/io.bootique.BQModuleProvider`:
+[source,text]
+----
+com.foo.MyOtherModule
+----
+Inheriting from `BaseModule` provides other advantages that we'll discuss in the "Configuration" section and is a
+recommended approach to writing modules since Bootique 2.0.
 
 === Configuration and Configurable Factories
 
@@ -102,7 +122,7 @@ For standard modules refer to module-specific documentation on the structure of 
 
 Bootique allows each Module to read its specific configuration subtree as an object of the type defined in the Module.
 Very often such an object is written as a factory that contains a bunch of setters for configuration properties,
-and a factory method to produce some "service" that a Module is interested in. Here is an example factory:
+and a factory method to produce some "service" a Module is interested in. Here is an example factory:
 
 [source,java,indent=0]
 ----
@@ -129,9 +149,9 @@ my:
 
 A few points to note here:
 
-* Subclassing from `ConfigModule` is optional. `ConfigModule` provides a few utilities, such as a shorter "config"
-method and a default configuration key ("my" in this case. See the next bullet).
-* Calling our module "MyModule" and extending from `ConfigModule` gives it access to the protected "configPrefix"
+* Subclassing from `BaseModule` provides a few utilities, such as a shorter "config" method and a default configuration
+key ("my" in this case. See the next bullet).
+* Calling our module "MyModule" and extending from `BaseModule` gives it access to the protected "configPrefix"
 property that is initialized to the value of "my" based on the module class name. The naming convention here is to use
 the Module simple class name without the "Module" suffix and converted to lowercase.
 * `@Provides` annotation is a Bootique DI way of marking a `BQModule` method as a "provider" for a certain type of injectable
@@ -193,7 +213,7 @@ my:
 ----
 
 can be represented as two properties ("my.prop1", "my.prop2") being assigned some values.
-Bootique takes advantage of this structural equivalence and allows to define configuration via properties as an alternative
+Bootique takes advantage of this structural equivalence and allows defining configuration via properties as an alternative
 (or more frequently - an addition) to YAML.
 If the same "key" is defined in both YAML file and a property, `ConfigurationFactory` would use the value of the property
 (in other words properties override YAML values).

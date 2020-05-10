@@ -1,11 +1,11 @@
 package io.bootique.docs.programming.configuration.fileLoading;
 
 import io.bootique.BQCoreModule;
-import io.bootique.ConfigModule;
+import io.bootique.BaseModule;
 import io.bootique.di.Binder;
 import io.bootique.meta.application.OptionMetadata;
 
-public class MyModule extends ConfigModule {
+public class MyModule extends BaseModule {
 
     @Override
     public void configure(Binder binder) {

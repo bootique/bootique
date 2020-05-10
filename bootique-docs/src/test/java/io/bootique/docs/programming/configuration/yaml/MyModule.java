@@ -1,7 +1,7 @@
 package io.bootique.docs.programming.configuration.yaml;
 
 import io.bootique.BQCoreModule;
-import io.bootique.ConfigModule;
+import io.bootique.BaseModule;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.di.Binder;
 import io.bootique.di.Provides;
@@ -11,7 +11,7 @@ import io.bootique.meta.application.OptionMetadata;
 import javax.inject.Singleton;
 
 // tag::MyModuleConfig[]
-public class MyModule extends ConfigModule {
+public class MyModule extends BaseModule {
 
     @Singleton
     @Provides
