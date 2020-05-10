@@ -79,7 +79,7 @@ public class Bootique_ModuleOverridesIT {
             }
         };
 
-        Injector i = Bootique.app(args).module(provider).createInjector();
+        Injector i = Bootique.app(args).moduleProvider(provider).createInjector();
 
         String[] args = i.getInstance(Key.get(String[].class, Args.class));
         assertSame(M0.ARGS, args);

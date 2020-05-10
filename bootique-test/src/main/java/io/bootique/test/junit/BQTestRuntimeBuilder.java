@@ -55,7 +55,7 @@ public abstract class BQTestRuntimeBuilder<T extends BQTestRuntimeBuilder<T>> {
         properties.put(EXCLUDE_SYSTEM_VARIABLES, "true");
 
         this.properties = properties;
-        this.bootique = Bootique.app(args).module(createPropertiesProvider());
+        this.bootique = Bootique.app(args).moduleProvider(createPropertiesProvider());
     }
 
     protected BQModuleProvider createPropertiesProvider() {
@@ -167,9 +167,10 @@ public abstract class BQTestRuntimeBuilder<T extends BQTestRuntimeBuilder<T>> {
      *
      * @param moduleProvider a provider of Module and override spec.
      * @return this instance of test runtime builder.
+     * @since 2.0
      */
-    public T module(BQModuleProvider moduleProvider) {
-        bootique.module(moduleProvider);
+    public T moduleProvider(BQModuleProvider moduleProvider) {
+        bootique.moduleProvider(moduleProvider);
         return (T) this;
     }
 

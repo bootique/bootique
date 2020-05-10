@@ -90,7 +90,7 @@ public class BQInternalTestFactory implements BeforeEachCallback, AfterEachCallb
             this.declaredVars = new HashMap<>();
             this.valueObjectsDescriptors = new HashMap<>();
             this.declaredDescriptions = new HashMap<>();
-            this.bootique = Bootique.app(args).module(createPropertiesProvider()).module(createVariablesProvider());
+            this.bootique = Bootique.app(args).moduleProvider(createPropertiesProvider()).moduleProvider(createVariablesProvider());
         }
 
         protected BQModuleProvider createPropertiesProvider() {
@@ -204,7 +204,7 @@ public class BQInternalTestFactory implements BeforeEachCallback, AfterEachCallb
         }
 
         public T module(BQModuleProvider moduleProvider) {
-            bootique.module(moduleProvider);
+            bootique.moduleProvider(moduleProvider);
             return (T) this;
         }
 

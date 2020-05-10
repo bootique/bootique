@@ -148,8 +148,8 @@ public class BootiqueExceptionsHandlerIT {
     @Test
     public void testModules_CircularOverrides() {
         CommandOutcome out = Bootique.app()
-                .module(new ModuleProviderWithOverride1())
-                .module(new ModuleProviderWithOverride2())
+                .moduleProvider(new ModuleProviderWithOverride1())
+                .moduleProvider(new ModuleProviderWithOverride2())
                 .exec();
 
         assertEquals(1, out.getExitCode());
@@ -166,8 +166,8 @@ public class BootiqueExceptionsHandlerIT {
     @Test
     public void testModules_MultipleOverrides() {
         CommandOutcome out = Bootique.app()
-                .module(new CoreOverrideProvider1())
-                .module(new CoreOverrideProvider2())
+                .moduleProvider(new CoreOverrideProvider1())
+                .moduleProvider(new CoreOverrideProvider2())
                 .exec();
 
         assertEquals(1, out.getExitCode());

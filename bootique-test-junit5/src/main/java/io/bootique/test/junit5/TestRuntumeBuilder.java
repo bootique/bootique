@@ -56,7 +56,7 @@ public class TestRuntumeBuilder {
         properties.put(EXCLUDE_SYSTEM_VARIABLES, "true");
 
         this.properties = properties;
-        this.bootique = Bootique.app(args).module(createPropertiesProvider());
+        this.bootique = Bootique.app(args).moduleProvider(createPropertiesProvider());
         this.runtimes = runtimes;
     }
 
@@ -191,7 +191,7 @@ public class TestRuntumeBuilder {
      * @return this instance of test runtime builder.
      */
     public TestRuntumeBuilder module(BQModuleProvider moduleProvider) {
-        bootique.module(moduleProvider);
+        bootique.moduleProvider(moduleProvider);
         return this;
     }
 

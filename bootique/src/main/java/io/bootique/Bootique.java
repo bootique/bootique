@@ -256,9 +256,9 @@ public class Bootique {
      *
      * @param moduleProvider a provider of Module and override spec.
      * @return this instance of {@link Bootique}.
-     * @since 0.12
+     * @since 2.0
      */
-    public Bootique module(BQModuleProvider moduleProvider) {
+    public Bootique moduleProvider(BQModuleProvider moduleProvider) {
         Objects.requireNonNull(moduleProvider);
         providers.add(moduleProvider);
         return this;
