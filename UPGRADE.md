@@ -39,6 +39,10 @@ is now done via JUnit 5 "Vintage" engine and JUnit itself is a _compile_ depende
 4 and 5 style tests in your code. 
   * `BQDaemonTestFactory` is not available under 5, as it is fairly useless and doesn't bring any advantages over 
   `BQTestFactory`.
+  
+* [bootique #288](https://github.com/bootique/bootique/issues/288): `Bootique.module(BQModuleProvider)` and 
+`BQTestRuntimeBuilder.module(BQModuleProvider)` were renamed to `moduleProvider` to avoid arguments ambiguity. If you 
+get compilation errors for these methods, replace them with `moduleProvider(BQModuleProvider)`.
 
 * [bootique-cayenne #68](https://github.com/bootique/bootique-cayenne/issues/68): `maps` configuration option is changed 
 from **list** to **map**. You need to upgrade your yml configs accordingly.
