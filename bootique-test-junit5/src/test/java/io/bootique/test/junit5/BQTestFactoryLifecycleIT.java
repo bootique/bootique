@@ -18,7 +18,6 @@
  */
 package io.bootique.test.junit5;
 
-import io.bootique.BQModuleProvider;
 import io.bootique.BaseModule;
 import io.bootique.di.Provides;
 import io.bootique.shutdown.ShutdownManager;
@@ -71,7 +70,7 @@ public class BQTestFactoryLifecycleIT {
             assertEquals(0, testFactory.getRuntimes().size());
 
             testFactory.app()
-                    .module((BQModuleProvider) new ShutdownTrackerModule())
+                    .module(new ShutdownTrackerModule())
                     .createRuntime()
                     // this will bootstrap shutdown hook
                     .getInstance(Tester.class);

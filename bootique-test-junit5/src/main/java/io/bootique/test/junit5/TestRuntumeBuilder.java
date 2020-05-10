@@ -190,7 +190,7 @@ public class TestRuntumeBuilder {
      * @param moduleProvider a provider of Module and override spec.
      * @return this instance of test runtime builder.
      */
-    public TestRuntumeBuilder module(BQModuleProvider moduleProvider) {
+    public TestRuntumeBuilder moduleProvider(BQModuleProvider moduleProvider) {
         bootique.moduleProvider(moduleProvider);
         return this;
     }
