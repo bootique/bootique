@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.function.Supplier;
@@ -224,18 +225,7 @@ public class Bootique {
 
     public Bootique module(BQModule m) {
         Objects.requireNonNull(m);
-        providers.add(new BQModuleProvider() {
-
-            @Override
-            public BQModule module() {
-                return m;
-            }
-
-            @Override
-            public String name() {
-                return "Bootique";
-            }
-        });
+        providers.add(() -> m);
         return this;
     }
 
@@ -436,24 +426,22 @@ public class Bootique {
 
         DeferredModulesSource modulesSource = new DeferredModulesSource();
 
-        Collection<BQModuleMetadata> bqModules = new ArrayList<>();
+        Collection<BQModuleMetadata> bqModulesMetadata = new HashSet<>();
 
         // note that 'moduleMetadata' is invalid at this point; it will be initialized later in this method, which
         // is safe to do, as it won't be used until the Injector is created by the method caller.
-        bqModules.add(coreModuleProvider(modulesSource).moduleBuilder().build());
+        bqModulesMetadata.add(coreModuleProvider(modulesSource).moduleBuilder().build());
 
-        BootiqueUtils.moduleProviderDependencies(builderProviders())
-                .forEach(p -> bqModules.add(p.moduleBuilder().build()));
-
+        bqModulesMetadata.addAll(BootiqueUtils.moduleProviderDependencies(builderProviders()));
         if (autoLoadModules) {
-            autoLoadedProviders().forEach(p -> bqModules.add(p.moduleBuilder().build()));
+            autoLoadedProviders().forEach(p -> bqModulesMetadata.add(p.moduleBuilder().build()));
         }
 
         // now that all modules are collected, finish 'moduleMetadata' initialization
-        modulesSource.init(bqModules);
+        modulesSource.init(bqModulesMetadata);
 
         // convert to DI modules respecting overrides, etc.
-        Collection<BQModule> modules = new RuntimeModuleMerger(bootLogger).toDIModules(bqModules);
+        Collection<BQModule> modules = new RuntimeModuleMerger(bootLogger).toDIModules(bqModulesMetadata);
         return DIBootstrap.injectorBuilder(modules).build();
     }
 

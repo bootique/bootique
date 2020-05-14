@@ -41,6 +41,7 @@ public class BQModuleMetadata {
             .build();
 
     private BQModule module;
+    private BQModuleId moduleId;
     private String name;
     private String description;
     private String providerName;
@@ -78,12 +79,28 @@ public class BQModuleMetadata {
         return configs;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        BQModuleMetadata that = (BQModuleMetadata) o;
+
+        return moduleId.equals(that.moduleId);
+    }
+
+    @Override
+    public int hashCode() {
+        return moduleId.hashCode();
+    }
+
     public static class Builder {
         private BQModuleMetadata module;
 
         private Builder(BQModule module) {
             this.module = new BQModuleMetadata();
             this.module.module = Objects.requireNonNull(module);
+            this.module.moduleId = BQModuleId.of(module);
         }
 
         public BQModuleMetadata build() {
