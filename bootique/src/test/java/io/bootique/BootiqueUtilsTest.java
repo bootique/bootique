@@ -20,7 +20,6 @@
 package io.bootique;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.internal.verification.AtLeast;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -28,10 +27,7 @@ import java.util.Collections;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class BootiqueUtilsTest {
 
@@ -76,16 +72,16 @@ public class BootiqueUtilsTest {
             BootiqueUtils.moduleProviderDependencies(singletonList(testModuleProvider1));
 
         assertEquals(3, bqModuleMetadata.size());
-        assertTrue(bqModuleMetadata.contains(testModuleProvider1));
-        assertTrue(bqModuleMetadata.contains(testModuleProvider2));
-        assertTrue(bqModuleMetadata.contains(testModuleProvider3));
+        assertTrue(bqModuleMetadata.contains(metadata1));
+        assertTrue(bqModuleMetadata.contains(metadata2));
+        assertTrue(bqModuleMetadata.contains(metadata3));
 
-        verify(testModuleProvider1, new AtLeast(1)).dependencies();
-        verify(testModuleProvider1, new AtLeast(1)).moduleBuilder();
-        verify(testModuleProvider2, new AtLeast(1)).dependencies();
-        verify(testModuleProvider2, new AtLeast(1)).moduleBuilder();
-        verify(testModuleProvider3, new AtLeast(1)).dependencies();
-        verify(testModuleProvider3, new AtLeast(1)).moduleBuilder();
+        verify(testModuleProvider1, times(1)).dependencies();
+        verify(testModuleProvider1, times(1)).moduleBuilder();
+        verify(testModuleProvider2, times(1)).dependencies();
+        verify(testModuleProvider2, times(1)).moduleBuilder();
+        verify(testModuleProvider3, times(1)).dependencies();
+        verify(testModuleProvider3, times(1)).moduleBuilder();
 
         verifyNoMoreInteractions(testModuleProvider1, testModuleProvider2, testModuleProvider3);
     }
@@ -117,16 +113,16 @@ public class BootiqueUtilsTest {
                 BootiqueUtils.moduleProviderDependencies(singletonList(testModuleProvider1));
 
         assertEquals(3, bqModuleMetadata.size());
-        assertTrue(bqModuleMetadata.contains(testModuleProvider1));
-        assertTrue(bqModuleMetadata.contains(testModuleProvider2));
-        assertTrue(bqModuleMetadata.contains(testModuleProvider3));
+        assertTrue(bqModuleMetadata.contains(metadata1));
+        assertTrue(bqModuleMetadata.contains(metadata2));
+        assertTrue(bqModuleMetadata.contains(metadata3));
 
-        verify(testModuleProvider1, new AtLeast(1)).dependencies();
-        verify(testModuleProvider1, new AtLeast(1)).moduleBuilder();
-        verify(testModuleProvider2, new AtLeast(1)).dependencies();
-        verify(testModuleProvider2, new AtLeast(1)).moduleBuilder();
-        verify(testModuleProvider3, new AtLeast(1)).dependencies();
-        verify(testModuleProvider3, new AtLeast(1)).moduleBuilder();
+        verify(testModuleProvider1, times(1)).dependencies();
+        verify(testModuleProvider1, times(1)).moduleBuilder();
+        verify(testModuleProvider2, times(1)).dependencies();
+        verify(testModuleProvider2, times(1)).moduleBuilder();
+        verify(testModuleProvider3, times(1)).dependencies();
+        verify(testModuleProvider3, times(1)).moduleBuilder();
 
         verifyNoMoreInteractions(testModuleProvider1, testModuleProvider2, testModuleProvider3);
     }
@@ -158,16 +154,16 @@ public class BootiqueUtilsTest {
                 BootiqueUtils.moduleProviderDependencies(singletonList(testModuleProvider1));
 
         assertEquals(3, bqModuleMetadata.size());
-        assertTrue(bqModuleMetadata.contains(testModuleProvider1));
-        assertTrue(bqModuleMetadata.contains(testModuleProvider2));
-        assertTrue(bqModuleMetadata.contains(testModuleProvider3));
+        assertTrue(bqModuleMetadata.contains(metadata1));
+        assertTrue(bqModuleMetadata.contains(metadata2));
+        assertTrue(bqModuleMetadata.contains(metadata3));
 
-        verify(testModuleProvider1, new AtLeast(1)).dependencies();
-        verify(testModuleProvider1, new AtLeast(1)).moduleBuilder();
-        verify(testModuleProvider2, new AtLeast(1)).dependencies();
-        verify(testModuleProvider2, new AtLeast(1)).moduleBuilder();
-        verify(testModuleProvider3, new AtLeast(1)).dependencies();
-        verify(testModuleProvider3, new AtLeast(1)).moduleBuilder();
+        verify(testModuleProvider1, times(1)).dependencies();
+        verify(testModuleProvider1, times(1)).moduleBuilder();
+        verify(testModuleProvider2, times(1)).dependencies();
+        verify(testModuleProvider2, times(1)).moduleBuilder();
+        verify(testModuleProvider3, times(1)).dependencies();
+        verify(testModuleProvider3, times(1)).moduleBuilder();
 
         verifyNoMoreInteractions(testModuleProvider1, testModuleProvider2, testModuleProvider3);
     }
