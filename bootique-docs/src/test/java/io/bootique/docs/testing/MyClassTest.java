@@ -1,7 +1,7 @@
 package io.bootique.docs.testing;
 
 import io.bootique.BQRuntime;
-import io.bootique.test.junit5.BQTestClassFactory;
+import io.bootique.junit5.BQTestClassFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.RegisterExtension;
 

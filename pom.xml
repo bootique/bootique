@@ -39,9 +39,9 @@
         <module>bootique</module>
         <module>bootique-test</module>
         <module>bootique-test-badspi-it</module>
-        <module>bootique-test-junit5</module>
-        <module>bootique-test-junit5-badspi-it</module>
-        <module>bootique-test-junit4and5-it</module>
+        <module>bootique-junit5</module>
+        <module>bootique-junit5-badspi-it</module>
+        <module>bootique-junit4and5-it</module>
         <module>bootique-docs</module>
     </modules>
 

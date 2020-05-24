@@ -16,33 +16,38 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package io.bootique.junit5;
 
-package io.bootique.test.junit;
-
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeName;
-import io.bootique.junit5.PolymorphicConfigurationChecker;
+import io.bootique.BQModuleProvider;
+import io.bootique.di.BQModule;
+import io.bootique.junit5.BQModuleProviderChecker;
 import org.junit.jupiter.api.Test;
-import org.opentest4j.AssertionFailedError;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class PolymorphicConfigurationCheckerIT {
+public class BQModuleProviderCheckerTest {
 
     @Test
-    public void test_NotPolymorphicConfiguration() {
+    public void testMatchingProvider() {
+        BQModuleProvider p = new BQModuleProviderChecker(P1.class).matchingProvider();
 
-        // intentionally tricking Java type boundary checks
-        Class c1 = C1.class;
-        Class c2 = C2.class;
-        assertThrows(AssertionFailedError.class, () -> PolymorphicConfigurationChecker.test(c1, c2));
+        assertNotNull(p);
+        assertTrue(p instanceof P1);
     }
 
-    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, defaultImpl = C2.class)
-    public static class C1 {
+    @Test
+    public void testTestMetadata() {
+        new BQModuleProviderChecker(P1.class).testMetadata();
     }
 
-    @JsonTypeName("c2")
-    public static class C2 extends C1 {
+    public static class P1 implements BQModuleProvider {
+
+        @Override
+        public BQModule module() {
+            return b -> {
+            };
+        }
     }
+
 }

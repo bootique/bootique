@@ -16,33 +16,21 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package io.bootique.test.junit4and5;
 
-package io.bootique.test.junit;
-
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeName;
-import io.bootique.junit5.PolymorphicConfigurationChecker;
+import io.bootique.junit5.BQTestFactory;
 import org.junit.jupiter.api.Test;
-import org.opentest4j.AssertionFailedError;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.Assert.assertTrue;
 
-public class PolymorphicConfigurationCheckerIT {
+public class JUnit5IT {
+
+    @RegisterExtension
+    public final BQTestFactory testFactory = new BQTestFactory();
 
     @Test
-    public void test_NotPolymorphicConfiguration() {
-
-        // intentionally tricking Java type boundary checks
-        Class c1 = C1.class;
-        Class c2 = C2.class;
-        assertThrows(AssertionFailedError.class, () -> PolymorphicConfigurationChecker.test(c1, c2));
-    }
-
-    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, defaultImpl = C2.class)
-    public static class C1 {
-    }
-
-    @JsonTypeName("c2")
-    public static class C2 extends C1 {
+    public void test() {
+        assertTrue(testFactory.app("-h").run().isSuccess());
     }
 }

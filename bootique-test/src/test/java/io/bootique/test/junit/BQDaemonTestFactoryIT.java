@@ -29,7 +29,7 @@ import io.bootique.command.CommandOutcome;
 import io.bootique.command.CommandWithMetadata;
 import io.bootique.log.BootLogger;
 import io.bootique.meta.application.CommandMetadata;
-import io.bootique.test.TestIO;
+import io.bootique.junit5.TestIO;
 import org.junit.Rule;
 import org.junit.Test;
 

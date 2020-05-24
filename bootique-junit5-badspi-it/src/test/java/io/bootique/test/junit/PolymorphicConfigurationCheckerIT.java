@@ -23,7 +23,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.bootique.junit5.PolymorphicConfigurationChecker;
 import org.junit.jupiter.api.Test;
-import org.opentest4j.AssertionFailedError;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -35,7 +34,8 @@ public class PolymorphicConfigurationCheckerIT {
         // intentionally tricking Java type boundary checks
         Class c1 = C1.class;
         Class c2 = C2.class;
-        assertThrows(AssertionFailedError.class, () -> PolymorphicConfigurationChecker.test(c1, c2));
+
+        assertThrows(AssertionError.class, ()->  PolymorphicConfigurationChecker.test(c1, c2));
     }
 
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, defaultImpl = C2.class)

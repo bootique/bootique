@@ -16,8 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package io.bootique.test.junit;
+package io.bootique.junit5;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.bootique.BQCoreModule;
@@ -26,29 +25,34 @@ import io.bootique.cli.Cli;
 import io.bootique.command.CommandOutcome;
 import io.bootique.command.CommandWithMetadata;
 import io.bootique.config.ConfigurationFactory;
-import io.bootique.junit5.TestIO;
+import io.bootique.junit5.BQTestFactory;
 import io.bootique.log.BootLogger;
 import io.bootique.meta.application.CommandMetadata;
-import org.junit.Rule;
-import org.junit.Test;
+import io.bootique.junit5.TestIO;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import javax.inject.Inject;
+import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BQTestFactoryIT {
 
-    @Rule
+    @RegisterExtension
     public BQTestFactory testFactory = new BQTestFactory();
 
     @Test
-    public void testCreateRuntime_Injection() {
-        BQRuntime runtime = testFactory.app("-x").autoLoadModules().createRuntime();
-        assertArrayEquals(new String[]{"-x"}, runtime.getArgs());
+    @DisplayName("Args passed")
+    public void testArgsPassed() {
+        BQRuntime rt = testFactory.app("-x").args("-y").args(Collections.singleton("-z")).autoLoadModules().createRuntime();
+        assertArrayEquals(new String[]{"-x", "-y", "-z"}, rt.getArgs());
     }
 
     @Test
-    public void testCreateRuntime_Streams_NoTrace() {
+    @DisplayName("Custom BootLogger")
+    public void testBootLogger() {
 
         TestIO io = TestIO.noTrace();
 
@@ -65,6 +69,7 @@ public class BQTestFactoryIT {
     }
 
     @Test
+    @DisplayName("System props don't leak to test")
     public void testConfigEnvExcludes_System() {
         System.setProperty("bq.a", "bq_a");
         System.setProperty("bq.c.m.k", "bq_c_m_k");
@@ -141,4 +146,5 @@ public class BQTestFactoryIT {
             return CommandOutcome.succeeded();
         }
     }
+
 }

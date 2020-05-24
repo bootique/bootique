@@ -27,18 +27,15 @@
         <version>2.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>bootique-test-badspi-it</artifactId>
+    <artifactId>bootique-junit4and5-it</artifactId>
     <packaging>jar</packaging>
 
-    <name>bootique-test-badspi-it: tests of tests with broken PolymorphicConfig</name>
-    <description>
-        Contains integration tests for PolymorphicConfigurationChecker that require a separate classloader.
-    </description>
+    <name>bootique-junit4and5-it: integration tests combining JUnit 4 and 5 test cases</name>
 
     <dependencies>
         <dependency>
             <groupId>io.bootique</groupId>
-            <artifactId>bootique-junit5</artifactId>
+            <artifactId>bootique-test</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
