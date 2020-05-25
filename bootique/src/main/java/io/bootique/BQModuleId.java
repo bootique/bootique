@@ -45,6 +45,9 @@ class BQModuleId {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
+        if(moduleClass.isSynthetic()) {
+            return false;
+        }
         BQModuleId that = (BQModuleId) o;
         return moduleClass.equals(that.moduleClass);
     }
