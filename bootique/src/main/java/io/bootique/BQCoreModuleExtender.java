@@ -19,11 +19,7 @@
 
 package io.bootique;
 
-import io.bootique.annotation.DIConfigs;
-import io.bootique.annotation.DefaultCommand;
-import io.bootique.annotation.EnvironmentProperties;
-import io.bootique.annotation.EnvironmentVariables;
-import io.bootique.annotation.LogLevels;
+import io.bootique.annotation.*;
 import io.bootique.command.Command;
 import io.bootique.command.CommandDecorator;
 import io.bootique.command.CommandRefDecorated;
@@ -51,6 +47,8 @@ import static java.util.Arrays.asList;
 public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
 
     private SetBuilder<String> configs;
+    private SetBuilder<String> postConfigs;
+
     private MapBuilder<String, String> properties;
     private MapBuilder<String, String> variables;
     private MapBuilder<String, Level> logLevels;
@@ -69,6 +67,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     @Override
     public BQCoreModuleExtender initAllExtensions() {
         contributeConfigs();
+        contributePostConfigs();
         contributeProperties();
         contributeVariables();
         contributeVariableDeclarations();
@@ -189,6 +188,21 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      */
     public BQCoreModuleExtender addConfig(String configResourceId) {
         contributeConfigs().add(configResourceId);
+        return this;
+    }
+
+    /**
+     * Registers a URL of a configuration resource to be loaded by the app unconditionally and <i>after</i> any explicitly
+     * specified configs. Can be called multiple times for multiple resources. Unlike {@link #addConfig(String)},
+     * this method should be rarely used in applications, and is instead intended for unit test and other extensions.
+     *
+     * @param configResourceId a resource path compatible with {@link io.bootique.resource.ResourceFactory} denoting
+     *                         a configuration source. E.g. "a/b/my.yml", or "classpath:com/foo/another.yml".
+     * @return this extender instance.
+     * @since 2.0
+     */
+    public BQCoreModuleExtender addPostConfig(String configResourceId) {
+        contributePostConfigs().add(configResourceId);
         return this;
     }
 
@@ -352,5 +366,9 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
 
     protected SetBuilder<String> contributeConfigs() {
         return configs != null ? configs : (configs = newSet(String.class, DIConfigs.class));
+    }
+
+    protected SetBuilder<String> contributePostConfigs() {
+        return postConfigs != null ? postConfigs : (postConfigs = newSet(String.class, DIPostConfigs.class));
     }
 }

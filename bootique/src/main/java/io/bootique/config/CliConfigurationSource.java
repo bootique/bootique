@@ -65,13 +65,16 @@ public class CliConfigurationSource implements ConfigurationSource {
      */
     public static class Builder {
         private BootLogger bootLogger;
-        private List<String> cliConfigs;
+
         private Set<String> diConfigs;
+        private List<String> cliConfigs;
+        private Set<String> diPostConfigs;
 
         protected Builder(BootLogger bootLogger) {
             this.bootLogger = bootLogger;
-            this.cliConfigs = Collections.emptyList();
             this.diConfigs = Collections.emptySet();
+            this.cliConfigs = Collections.emptyList();
+            this.diPostConfigs = Collections.emptySet();
         }
 
         public Builder cliConfigs(Cli cli) {
@@ -84,21 +87,27 @@ public class CliConfigurationSource implements ConfigurationSource {
             return this;
         }
 
+        /**
+         * @since 2.0
+         */
+        public Builder diPostConfigs(Set<String> diPostConfigs) {
+            this.diPostConfigs = diPostConfigs;
+            return this;
+        }
+
         public CliConfigurationSource build() {
             return new CliConfigurationSource(mergeConfigs(), bootLogger);
         }
 
         private List<String> mergeConfigs() {
 
-            // DI configs go first in undefined order; CLI configs follow in the order they were declared
-            // on command line
-
-            if (diConfigs.isEmpty()) {
-                return cliConfigs;
-            }
+            // 1. DI configs go first in undefined order
+            // 2. CLI configs follow in the order they were declared on command line
+            // 3. DI post-configs go last
 
             List<String> merged = new ArrayList<>(diConfigs);
             merged.addAll(cliConfigs);
+            merged.addAll(diPostConfigs);
             return merged;
         }
     }

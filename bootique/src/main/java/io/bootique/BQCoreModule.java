@@ -19,30 +19,12 @@
 
 package io.bootique;
 
-import io.bootique.annotation.Args;
-import io.bootique.annotation.DIConfigs;
-import io.bootique.annotation.DefaultCommand;
-import io.bootique.annotation.EnvironmentProperties;
-import io.bootique.annotation.EnvironmentVariables;
+import io.bootique.annotation.*;
 import io.bootique.cli.Cli;
 import io.bootique.cli.CliFactory;
-import io.bootique.command.Command;
-import io.bootique.command.CommandDecorator;
-import io.bootique.command.CommandDispatchThreadFactory;
-import io.bootique.command.CommandManager;
-import io.bootique.command.CommandManagerBuilder;
-import io.bootique.command.CommandRefDecorated;
-import io.bootique.command.ExecutionPlanBuilder;
-import io.bootique.config.CliConfigurationSource;
-import io.bootique.config.ConfigurationFactory;
-import io.bootique.config.ConfigurationSource;
-import io.bootique.config.PolymorphicConfiguration;
-import io.bootique.config.TypesFactory;
-import io.bootique.di.Binder;
-import io.bootique.di.Injector;
-import io.bootique.di.Key;
-import io.bootique.di.BQModule;
-import io.bootique.di.Provides;
+import io.bootique.command.*;
+import io.bootique.config.*;
+import io.bootique.di.*;
 import io.bootique.env.DeclaredVariable;
 import io.bootique.env.DefaultEnvironment;
 import io.bootique.env.Environment;
@@ -73,18 +55,12 @@ import io.bootique.value.Bytes;
 import io.bootique.value.Duration;
 import io.bootique.value.Percent;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import javax.inject.Provider;
+import javax.inject.Singleton;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;
-import javax.inject.Provider;
-import javax.inject.Singleton;
 
 /**
  * The main {@link BQModule} of Bootique DI runtime. Declares a minimal set of
@@ -135,7 +111,7 @@ public class BQCoreModule implements BQModule {
     private static Optional<Command> defaultCommand(Injector injector) {
         // default is optional, so check via injector whether it is bound...
         Key<Command> key = Key.get(Command.class, DefaultCommand.class);
-        if(injector.hasProvider(key)) {
+        if (injector.hasProvider(key)) {
             Provider<Command> commandProvider = injector.getProvider(key);
             return Optional.of(commandProvider.get());
         }
@@ -188,11 +164,17 @@ public class BQCoreModule implements BQModule {
 
     @Provides
     @Singleton
-    ConfigurationSource provideConfigurationSource(Cli cli, @DIConfigs Set<String> diConfigs, BootLogger bootLogger) {
+    ConfigurationSource provideConfigurationSource(
+            Cli cli,
+            @DIConfigs Set<String> diConfigs,
+            @DIPostConfigs Set<String> diPostConfigs,
+            BootLogger bootLogger) {
+
         return CliConfigurationSource
                 .builder(bootLogger)
                 .diConfigs(diConfigs)
                 .cliConfigs(cli)
+                .diPostConfigs(diPostConfigs)
                 .build();
     }
 
@@ -359,13 +341,13 @@ public class BQCoreModule implements BQModule {
     }
 
     private Map<Class<?>, ValueObjectDescriptor> createValueObjectsDescriptorsMap() {
-    	Map<Class<?>, ValueObjectDescriptor> descriptors = new HashMap<>();
-		descriptors.put(Bytes.class, new ValueObjectDescriptor("bytes expression, e.g. 5b, 23MB, 12gigabytes"));
-		descriptors.put(Duration.class, new ValueObjectDescriptor("duration expression, e.g. 5ms, 2s, 1hr"));
-		descriptors.put(Percent.class, new ValueObjectDescriptor("percent expression, e.g. 15%, 75%"));
+        Map<Class<?>, ValueObjectDescriptor> descriptors = new HashMap<>();
+        descriptors.put(Bytes.class, new ValueObjectDescriptor("bytes expression, e.g. 5b, 23MB, 12gigabytes"));
+        descriptors.put(Duration.class, new ValueObjectDescriptor("duration expression, e.g. 5ms, 2s, 1hr"));
+        descriptors.put(Percent.class, new ValueObjectDescriptor("percent expression, e.g. 15%, 75%"));
 
-    	return descriptors;
-	}
+        return descriptors;
+    }
 
     public static class Builder {
         private BQCoreModule module;

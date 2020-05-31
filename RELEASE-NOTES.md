@@ -9,6 +9,7 @@
 * #286 Update to bootique-modules-parent 2.0.1 
 * #287 bootique-test-junit5: manage static BQRuntime fields 
 * #288 Ambiguous "Bootique.module(..)" methods
+* #289 "Bootique.extend(binder).addPostConfig()" extension for unit tests
 
 ## 1.1
 
