@@ -28,7 +28,7 @@ jobs:
     - stage: deploy
       jdk: openjdk8
       script: mvn clean source:jar javadoc:javadoc deploy -DskipTests --settings travis_settings.xml
-      if: branch IN (master, 1.0-STABLE) AND type IN (push) AND repo = bootique/bootique
+      if: branch IN (master, 1.x) AND type IN (push) AND repo = bootique/bootique
 
 # travis encrypt -r bootique/bootique "CI_DEPLOY_USERNAME='name'"
 # travis encrypt -r bootique/bootique "CI_DEPLOY_PASSWORD='password'"
