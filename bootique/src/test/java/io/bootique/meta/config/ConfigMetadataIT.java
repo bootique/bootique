@@ -150,7 +150,7 @@ public class ConfigMetadataIT {
         String help = buffer.toString();
         assertNotNull(help);
 
-        assertEquals(help, "<value>:\n" +
+        assertEquals(help.replace("\r", ""), "<value>:\n" +
                 "      #\n" +
                 "      # Resolved as 'io.bootique.meta.config.ConfigMetadataIT$TestRecursiveConfig'.\n" +
                 "      #\n" +
@@ -214,7 +214,7 @@ public class ConfigMetadataIT {
         String help = buffer.toString();
         assertNotNull(help);
 
-        assertEquals(help, "<value>:\n" +
+        assertEquals(help.replace("\r", ""), "<value>:\n" +
                 "      #\n" +
                 "      # Resolved as 'io.bootique.meta.config.ConfigMetadataIT$TestValueObjectConfig'.\n" +
                 "      #\n" +
