@@ -20,9 +20,6 @@ package io.bootique.junit5.handler;
 
 import io.bootique.junit5.BQTestScope;
 import io.bootique.junit5.BQTestTool;
-import io.bootique.junit5.scope.BQAfterMethodCallback;
-import io.bootique.junit5.scope.BQBeforeMethodCallback;
-import io.bootique.junit5.scope.BQBeforeScopeCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.platform.commons.JUnitException;
 import org.junit.platform.commons.util.ReflectionUtils;
@@ -71,29 +68,24 @@ public class GlobalCallbackRegistry extends CallbackRegistry {
 
     protected void add(Field f, GlobalCallbacks globalCallbacks) {
         Callback callback = globalCallbacks.computeIfAbsent(f, this::callback);
-        callback.addToRegistry(this);
+
+        if (callback.getBeforeAll() != null) {
+            beforeAll = addToCallbacks(beforeAll, callback.getBeforeAll());
+        }
+
+        if (callback.getBeforeEach() != null) {
+            beforeEach = addToCallbacks(beforeEach, callback.getBeforeEach());
+        }
+
+        if (callback.getAfterEach() != null) {
+            afterEach = addToCallbacks(afterEach, callback.getAfterEach());
+        }
+
+        // don't bother with "afterAll". When it is called on a class, we don't know whether this is the last class
+        // in the test scope or not...
     }
 
     protected Callback callback(Field field) {
-
-        Object callback = resolveInstance(null, field);
-        Callback callbackWrapper = new Callback();
-
-        if (callback instanceof BQBeforeScopeCallback) {
-            callbackWrapper.beforeAll = new OnlyOnceBeforeScopeCallback((BQBeforeScopeCallback) callback, BQTestScope.GLOBAL);
-        }
-
-        if (callback instanceof BQBeforeMethodCallback) {
-            callbackWrapper.beforeEach = c -> ((BQBeforeMethodCallback) callback).beforeMethod(BQTestScope.GLOBAL, c);
-        }
-
-        if (callback instanceof BQAfterMethodCallback) {
-            callbackWrapper.afterEach = c -> ((BQAfterMethodCallback) callback).afterMethod(BQTestScope.GLOBAL, c);
-        }
-
-        // don't bother with "afterAll" for the GLOBAL scope. We won't be able to tell whether class end
-        // signifies the end of the scope.
-
-        return callbackWrapper;
+        return Callback.create(resolveInstance(null, field));
     }
 }

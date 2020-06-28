@@ -18,23 +18,37 @@
  */
 package io.bootique.junit5.handler;
 
+import org.junit.jupiter.api.extension.ExtensionContext;
+
 import java.lang.reflect.Field;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 /**
  * @since 2.0
  */
-public class GlobalCallbacks {
+public class GlobalCallbacks implements ExtensionContext.Store.CloseableResource {
 
+    private ExtensionContext closingContext;
     private final Map<Field, Callback> callbacks;
 
-    public GlobalCallbacks() {
+    public GlobalCallbacks(ExtensionContext closingContext) {
         callbacks = new ConcurrentHashMap<>();
+        this.closingContext = Objects.requireNonNull(closingContext);
     }
 
     public Callback computeIfAbsent(Field f, Function<Field, Callback> callbackCalc) {
         return callbacks.computeIfAbsent(f, callbackCalc);
+    }
+
+    @Override
+    public void close() throws Throwable {
+        for (Callback c : callbacks.values()) {
+            if (c.getAfterAll() != null) {
+                c.getAfterAll().afterAll(closingContext);
+            }
+        }
     }
 }

@@ -65,10 +65,10 @@ public class BQTestToolHandler implements BeforeEachCallback, AfterEachCallback,
         // storing CallbackRegistry in the class context to make sure the right fields are invoked for a given test
 
         ExtensionContext classContext = getClassContext(context);
-        GlobalCallbacks globalCallbacks = (GlobalCallbacks) classContext
-                .getRoot()
+        ExtensionContext rootContext = classContext.getRoot();
+        GlobalCallbacks globalCallbacks = (GlobalCallbacks) rootContext
                 .getStore(NAMESPACE)
-                .getOrComputeIfAbsent(GLOBAL_CALLBACKS, s -> new GlobalCallbacks());
+                .getOrComputeIfAbsent(GLOBAL_CALLBACKS, s -> new GlobalCallbacks(rootContext));
 
         return (CallbackRegistry) classContext
                 .getStore(NAMESPACE)

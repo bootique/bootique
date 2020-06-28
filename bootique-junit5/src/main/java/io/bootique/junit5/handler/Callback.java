@@ -18,6 +18,11 @@
  */
 package io.bootique.junit5.handler;
 
+import io.bootique.junit5.BQTestScope;
+import io.bootique.junit5.scope.BQAfterMethodCallback;
+import io.bootique.junit5.scope.BQAfterScopeCallback;
+import io.bootique.junit5.scope.BQBeforeMethodCallback;
+import io.bootique.junit5.scope.BQBeforeScopeCallback;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
@@ -33,21 +38,42 @@ public class Callback {
     protected AfterEachCallback afterEach;
     protected AfterAllCallback afterAll;
 
-    public void addToRegistry(CallbackRegistry registry) {
-        if (beforeAll != null) {
-            registry.beforeAll = registry.addToCallbacks(registry.beforeAll, beforeAll);
+    public static Callback create(Object callback) {
+
+        Callback callbackWrapper = new Callback();
+
+        if (callback instanceof BQBeforeScopeCallback) {
+            callbackWrapper.beforeAll = new OnlyOnceBeforeScopeCallback((BQBeforeScopeCallback) callback, BQTestScope.GLOBAL);
         }
 
-        if (beforeEach != null) {
-            registry.beforeEach = registry.addToCallbacks(registry.beforeEach, beforeEach);
+        if (callback instanceof BQBeforeMethodCallback) {
+            callbackWrapper.beforeEach = c -> ((BQBeforeMethodCallback) callback).beforeMethod(BQTestScope.GLOBAL, c);
         }
 
-        if (afterEach != null) {
-            registry.afterEach = registry.addToCallbacks(registry.afterEach, afterEach);
+        if (callback instanceof BQAfterMethodCallback) {
+            callbackWrapper.afterEach = c -> ((BQAfterMethodCallback) callback).afterMethod(BQTestScope.GLOBAL, c);
         }
 
-        if (afterAll != null) {
-            registry.afterAll = registry.addToCallbacks(registry.afterAll, afterAll);
+        if (callback instanceof BQAfterScopeCallback) {
+            callbackWrapper.afterAll = c -> ((BQAfterScopeCallback) callback).afterScope(BQTestScope.GLOBAL, c);
         }
+
+        return callbackWrapper;
+    }
+
+    public BeforeAllCallback getBeforeAll() {
+        return beforeAll;
+    }
+
+    public BeforeEachCallback getBeforeEach() {
+        return beforeEach;
+    }
+
+    public AfterAllCallback getAfterAll() {
+        return afterAll;
+    }
+
+    public AfterEachCallback getAfterEach() {
+        return afterEach;
     }
 }
