@@ -21,7 +21,7 @@ package io.bootique.junit5.handler;
 import io.bootique.junit5.BQTestScope;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.extension.*;
-import org.junit.platform.commons.support.AnnotationSupport;
+import org.junit.platform.commons.JUnitException;
 import org.junit.platform.commons.util.Preconditions;
 import org.junit.platform.commons.util.ReflectionUtils;
 
@@ -76,16 +76,13 @@ public class BQTestToolHandler implements BeforeEachCallback, AfterEachCallback,
                 .getOrComputeIfAbsent(INSTANCE_CALLBACK_REGISTRY, s -> createCallbackRegistry(context, false));
     }
 
-    protected CallbackRegistry createCallbackRegistry(ExtensionContext context, boolean staticTools) {
+    protected CallbackRegistry createCallbackRegistry(ExtensionContext context, boolean staticVars) {
 
         CallbackRegistry registry = new CallbackRegistry();
 
-        // TODO: global scope support via a static registry
         Class<?> testType = context.getRequiredTestClass();
-        Object testInstance = staticTools ? null : context.getRequiredTestInstance();
-        Predicate<Field> predicate = staticTools
-                ? isIncluded().and(f -> ReflectionUtils.isStatic(f))
-                : isIncluded().and(f -> !ReflectionUtils.isStatic(f));
+        Object testInstance = staticVars ? null : context.getRequiredTestInstance();
+        Predicate<Field> predicate = f -> includeField(f, staticVars);
 
         ReflectionUtils
                 .findFields(testType, predicate, ReflectionUtils.HierarchyTraversalMode.TOP_DOWN)
@@ -94,8 +91,26 @@ public class BQTestToolHandler implements BeforeEachCallback, AfterEachCallback,
         return registry;
     }
 
-    protected Predicate<Field> isIncluded() {
-        return f -> AnnotationSupport.isAnnotated(f, BQTestTool.class);
+    protected boolean includeField(Field f, boolean staticVars) {
+
+        BQTestTool a = f.getAnnotation(BQTestTool.class);
+        if (a != null) {
+
+            boolean isStatic = ReflectionUtils.isStatic(f);
+            if (isStatic != staticVars) {
+                return false;
+            }
+
+            if (a.value() == BQTestScope.GLOBAL && !isStatic) {
+                throw new JUnitException("@BQTestTool field '"
+                        + f.getDeclaringClass().getName() + "." + f.getName()
+                        + "' must be static to be used in GLOBAL scope");
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     protected void addToRegistry(CallbackRegistry registry, Object testInstance, Field f) {

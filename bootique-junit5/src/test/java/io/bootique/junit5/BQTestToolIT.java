@@ -18,10 +18,6 @@
  */
 package io.bootique.junit5;
 
-import io.bootique.junit5.scope.BQAfterScopeCallback;
-import io.bootique.junit5.scope.BQAfterMethodCallback;
-import io.bootique.junit5.scope.BQBeforeScopeCallback;
-import io.bootique.junit5.scope.BQBeforeMethodCallback;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -30,26 +26,20 @@ import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @ExtendWith(BQTestToolIT.ShutdownTester.class)
 @BQTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class BQTestToolIT {
 
     @BQTestTool
-    static final Ext1 implicitClassScope = new Ext1();
+    static final BQTestToolCallbackRecorder implicitClassScope = new BQTestToolCallbackRecorder();
 
     @BQTestTool
-    final Ext1 implicitMethodScope = new Ext1();
+    final BQTestToolCallbackRecorder implicitMethodScope = new BQTestToolCallbackRecorder();
 
-    // TODO: we are not properly testing GLOBAL scope in a single test case...
+    // We are not properly testing GLOBAL scope in a single test case, but there is a separate test case for globals
     @BQTestTool(BQTestScope.GLOBAL)
-    static final Ext1 explicitGlobalScope = new Ext1();
+    static final BQTestToolCallbackRecorder explicitGlobalScope = new BQTestToolCallbackRecorder();
 
     @Test
     @Order(1)
@@ -83,43 +73,6 @@ public class BQTestToolIT {
         implicitMethodScope.assertCallback(1, "beforeMethod", "test2", BQTestScope.TEST_METHOD);
     }
 
-    public static class Ext1 implements BQBeforeScopeCallback, BQAfterScopeCallback, BQBeforeMethodCallback, BQAfterMethodCallback {
-
-        private List<Callback> callbacks = new ArrayList<>();
-
-        public void assertCallback(int order, String label, BQTestScope scope) {
-            assertTrue(order < callbacks.size(), "No callback at index " + order +
-                    ". Only " + callbacks.size() + " callbacks were registered");
-            assertCallback(order, label, null, scope);
-        }
-
-        public void assertCallback(int order, String label, String methodName, BQTestScope scope) {
-            callbacks.get(order).assertCallback(label, methodName, scope);
-        }
-
-        @Override
-        public void beforeScope(BQTestScope scope, ExtensionContext context) {
-            callbacks.add(new Callback("beforeScope", null, scope));
-        }
-
-        @Override
-        public void beforeMethod(BQTestScope scope, ExtensionContext context) {
-            String method = context.getRequiredTestMethod().getName();
-            callbacks.add(new Callback("beforeMethod", method, scope));
-        }
-
-        @Override
-        public void afterMethod(BQTestScope scope, ExtensionContext context) {
-            String method = context.getRequiredTestMethod().getName();
-            callbacks.add(new Callback("afterMethod", method, scope));
-        }
-
-        @Override
-        public void afterScope(BQTestScope scope, ExtensionContext context) {
-            callbacks.add(new Callback("afterScope", null, scope));
-        }
-    }
-
     static class ShutdownTester implements AfterAllCallback {
 
         @Override
@@ -137,34 +90,6 @@ public class BQTestToolIT {
             implicitClassScope.assertCallback(3, "beforeMethod", "test2", BQTestScope.TEST_CLASS);
             implicitClassScope.assertCallback(4, "afterMethod", "test2", BQTestScope.TEST_CLASS);
             implicitClassScope.assertCallback(5, "afterScope", BQTestScope.TEST_CLASS);
-        }
-    }
-
-    static class Callback {
-
-        String label;
-        String methodName;
-        BQTestScope scope;
-
-        public Callback(String label, String methodName, BQTestScope scope) {
-            this.label = label;
-            this.methodName = methodName;
-            this.scope = scope;
-        }
-
-        public void assertCallback(String label, String methodName, BQTestScope scope) {
-            assertEquals(label, this.label, "Unexpected callback was invoked: " + this);
-            assertEquals(methodName, this.methodName, "Unexpected test method: " + this);
-            assertEquals(scope, this.scope, "Unexpected callback scope: " + this);
-        }
-
-        @Override
-        public String toString() {
-            return "{" +
-                    "label='" + label + '\'' +
-                    ", methodName='" + methodName + '\'' +
-                    ", scope=" + scope +
-                    '}';
         }
     }
 }

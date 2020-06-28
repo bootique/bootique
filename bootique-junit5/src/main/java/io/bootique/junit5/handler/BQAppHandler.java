@@ -33,7 +33,6 @@ import org.junit.platform.commons.util.ReflectionUtils;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -55,7 +54,7 @@ public class BQAppHandler implements BeforeAllCallback, AfterAllCallback {
         ExtensionContext.Store store = context.getStore(NAMESPACE);
         Class<?> testType = context.getRequiredTestClass();
         ReflectionUtils
-                .findFields(testType, isRunnable(), ReflectionUtils.HierarchyTraversalMode.TOP_DOWN)
+                .findFields(testType, this::isRunnable, ReflectionUtils.HierarchyTraversalMode.TOP_DOWN)
                 .stream()
                 .map(f -> getInstance(null, f))
                 .forEach(r -> startAndRegisterForShutdown(r, store));
@@ -102,28 +101,26 @@ public class BQAppHandler implements BeforeAllCallback, AfterAllCallback {
         }
     }
 
-    protected Predicate<Field> isRunnable() {
-        return f -> {
+    protected boolean isRunnable(Field f) {
 
-            // provide diagnostics for misapplied or missing annotations
-            // TODO: will it be actually more useful to throw instead of print a warning?
-            if (AnnotationSupport.isAnnotated(f, BQApp.class)) {
+        // provide diagnostics for misapplied or missing annotations
+        // TODO: will it be actually more useful to throw instead of print a warning?
+        if (AnnotationSupport.isAnnotated(f, BQApp.class)) {
 
-                if (!BQRuntime.class.isAssignableFrom(f.getType())) {
-                    LOGGER.warn(() -> "Field '" + f.getName() + "' is annotated with @BQRun but is not a BQRuntime. Ignoring...");
-                    return false;
-                }
-
-                if (!ReflectionUtils.isStatic(f)) {
-                    LOGGER.warn(() -> "BQRuntime field '" + f.getName() + "' is annotated with @BQRun but is not static. Ignoring...");
-                    return false;
-                }
-
-                return true;
+            if (!BQRuntime.class.isAssignableFrom(f.getType())) {
+                LOGGER.warn(() -> "Field '" + f.getName() + "' is annotated with @BQRun but is not a BQRuntime. Ignoring...");
+                return false;
             }
 
-            return false;
-        };
+            if (!ReflectionUtils.isStatic(f)) {
+                LOGGER.warn(() -> "BQRuntime field '" + f.getName() + "' is annotated with @BQRun but is not static. Ignoring...");
+                return false;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     static class TestRuntime {

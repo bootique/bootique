@@ -45,7 +45,7 @@ public class CallbackRegistry {
                 // TODO: global scope instances must be managed separately via static wrappers that ensure "only-once"
                 //  invocation of "beforeAll" across multiple test classes
                 case GLOBAL:
-                    this.beforeAll = addToCallbacks(beforeAll, c -> ((BQBeforeScopeCallback) tool).beforeScope(BQTestScope.GLOBAL, c));
+                    this.beforeAll = addToCallbacks(beforeAll, new OnlyOnceBeforeScopeCallback((BQBeforeScopeCallback) tool, BQTestScope.GLOBAL));
                     break;
                 case TEST_CLASS:
                     this.beforeAll = addToCallbacks(beforeAll, c -> ((BQBeforeScopeCallback) tool).beforeScope(BQTestScope.TEST_CLASS, c));
