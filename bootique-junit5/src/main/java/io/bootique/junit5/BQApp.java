@@ -25,7 +25,8 @@ import java.lang.annotation.Target;
 
 /**
  * Used to annotate static {@link io.bootique.BQRuntime} instances in a unit test to instruct JUnit to start these
- * runtimes, and shut them down when all the tests in the class are finished.
+ * runtimes, and shut them down when all the tests in the class are finished. To activate requires @{@link BQTest}
+ * annotation on the parent class.
  *
  * @since 2.0
  */

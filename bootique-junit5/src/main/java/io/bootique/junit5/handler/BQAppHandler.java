@@ -16,10 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package io.bootique.junit5;
+package io.bootique.junit5.handler;
 
 import io.bootique.BQRuntime;
 import io.bootique.command.CommandOutcome;
+import io.bootique.junit5.BQApp;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -42,13 +43,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * @since 2.0
  */
-public class BQTestExtension implements BeforeAllCallback, AfterAllCallback {
+public class BQAppHandler implements BeforeAllCallback, AfterAllCallback {
 
-    // usijg JUnit logger
-    private static final Logger logger = LoggerFactory.getLogger(BQTestExtension.class);
-
-    private static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(BQTestExtension.class);
-
+    // using JUnit logger
+    private static final Logger LOGGER = LoggerFactory.getLogger(BQAppHandler.class);
+    private static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(BQAppHandler.class);
     private static final String RUNNING_SHARED_RUNTIMES = "runningSharedRuntimes";
 
     @Override
@@ -111,12 +110,12 @@ public class BQTestExtension implements BeforeAllCallback, AfterAllCallback {
             if (AnnotationSupport.isAnnotated(f, BQApp.class)) {
 
                 if (!BQRuntime.class.isAssignableFrom(f.getType())) {
-                    logger.warn(() -> "Field '" + f.getName() + "' is annotated with @BQRun but is not a BQRuntime. Ignoring...");
+                    LOGGER.warn(() -> "Field '" + f.getName() + "' is annotated with @BQRun but is not a BQRuntime. Ignoring...");
                     return false;
                 }
 
                 if (!ReflectionUtils.isStatic(f)) {
-                    logger.warn(() -> "BQRuntime field '" + f.getName() + "' is annotated with @BQRun but is not static. Ignoring...");
+                    LOGGER.warn(() -> "BQRuntime field '" + f.getName() + "' is annotated with @BQRun but is not static. Ignoring...");
                     return false;
                 }
 
@@ -148,12 +147,12 @@ public class BQTestExtension implements BeforeAllCallback, AfterAllCallback {
         }
 
         public CommandOutcome run() {
-            logger.debug(() -> "Starting Bootique runtime '" + name + "'...");
+            LOGGER.debug(() -> "Starting Bootique runtime '" + name + "'...");
             return runtime.run();
         }
 
         public void shutdown() {
-            logger.debug(() -> "Stopping Bootique runtime '" + name + "'...");
+            LOGGER.debug(() -> "Stopping Bootique runtime '" + name + "'...");
             try {
                 runtime.shutdown();
             } catch (Exception e) {

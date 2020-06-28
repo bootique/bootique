@@ -18,25 +18,28 @@
  */
 package io.bootique.junit5;
 
-import io.bootique.junit5.handler.BQAppHandler;
-import io.bootique.junit5.handler.BQTestToolHandler;
-import org.junit.jupiter.api.extension.ExtendWith;
+import io.bootique.junit5.scope.BQAfterMethodCallback;
+import io.bootique.junit5.scope.BQAfterScopeCallback;
+import io.bootique.junit5.scope.BQBeforeMethodCallback;
+import io.bootique.junit5.scope.BQBeforeScopeCallback;
 
 import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Registers Bootique Junit 5 extension that will manage emulated test apps in the annotated test class. Used in
- * conjunction with fields annotated with @{@link BQApp} and @{@link BQTestTool}.
+ * Used to annotate fields that are Bootique test "tools", allowing Bootique to manage their lifecycle, which is a
+ * superset of JUnit 5 lifecycle. To activate requires @{@link BQTest} annotation on the parent class. Annotated tool
+ * object may implement one or more of {@link BQBeforeScopeCallback},
+ * {@link BQAfterScopeCallback}, {@link BQBeforeMethodCallback},
+ * {@link BQAfterMethodCallback}.
  *
  * @since 2.0
  */
-@Target(ElementType.TYPE)
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-@ExtendWith({BQAppHandler.class, BQTestToolHandler.class})
-@Inherited
-public @interface BQTest {
+public @interface BQTestTool {
+
+    BQTestScope value() default BQTestScope.IMPLICIT;
 }

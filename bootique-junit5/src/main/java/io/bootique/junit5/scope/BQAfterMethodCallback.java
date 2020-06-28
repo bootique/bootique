@@ -16,27 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package io.bootique.junit5;
+package io.bootique.junit5.scope;
 
-import io.bootique.junit5.handler.BQAppHandler;
-import io.bootique.junit5.handler.BQTestToolHandler;
-import org.junit.jupiter.api.extension.ExtendWith;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import io.bootique.junit5.BQTestScope;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
 /**
- * Registers Bootique Junit 5 extension that will manage emulated test apps in the annotated test class. Used in
- * conjunction with fields annotated with @{@link BQApp} and @{@link BQTestTool}.
- *
  * @since 2.0
  */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-@ExtendWith({BQAppHandler.class, BQTestToolHandler.class})
-@Inherited
-public @interface BQTest {
+public interface BQAfterMethodCallback {
+
+    void afterMethod(BQTestScope scope, ExtensionContext context) throws Exception;
 }
