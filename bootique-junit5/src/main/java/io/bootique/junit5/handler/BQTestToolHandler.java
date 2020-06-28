@@ -18,15 +18,8 @@
  */
 package io.bootique.junit5.handler;
 
-import io.bootique.junit5.BQTestScope;
 import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.extension.*;
-import org.junit.platform.commons.JUnitException;
-import org.junit.platform.commons.util.Preconditions;
-import org.junit.platform.commons.util.ReflectionUtils;
-
-import java.lang.reflect.Field;
-import java.util.function.Predicate;
 
 /**
  * Manages custom lifecycles of objects annotated with @{@link BQTestTool}.
@@ -36,110 +29,76 @@ import java.util.function.Predicate;
 public class BQTestToolHandler implements BeforeEachCallback, AfterEachCallback, BeforeAllCallback, AfterAllCallback {
 
     private static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(BQTestToolHandler.class);
-    private static final String STATIC_CALLBACK_REGISTRY = "staticCallbackRegistry";
-    private static final String INSTANCE_CALLBACK_REGISTRY = "instanceCallbackRegistry";
+    private static final String GLOBAL_CALLBACKS = "globalCallbacks";
+    private static final String GLOBAL_CALLBACK_REGISTRY = "globalCallbackRegistry";
+    private static final String CLASS_CALLBACK_REGISTRY = "classCallbackRegistry";
+    private static final String METHOD_CALLBACK_REGISTRY = "methodCallbackRegistry";
 
     @Override
     public void beforeAll(ExtensionContext context) throws Exception {
-        getOrCreateStaticCallbackRegistry(context).beforeAll(context);
-    }
-
-    @Override
-    public void afterEach(ExtensionContext context) throws Exception {
-        getOrCreateStaticCallbackRegistry(context).afterEach(context);
-        getOrCreateInstanceCallbackRegistry(context).afterEach(context);
+        getOrCreateGlobalCallbackRegistry(context).beforeAll(context);
+        getOrCreateClassCallbackRegistry(context).beforeAll(context);
     }
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
-        getOrCreateStaticCallbackRegistry(context).beforeEach(context);
-        getOrCreateInstanceCallbackRegistry(context).beforeEach(context);
+        getOrCreateGlobalCallbackRegistry(context).beforeEach(context);
+        getOrCreateClassCallbackRegistry(context).beforeEach(context);
+        getOrCreateMethodCallbackRegistry(context).beforeEach(context);
+    }
+
+    @Override
+    public void afterEach(ExtensionContext context) throws Exception {
+        getOrCreateGlobalCallbackRegistry(context).afterEach(context);
+        getOrCreateClassCallbackRegistry(context).afterEach(context);
+        getOrCreateMethodCallbackRegistry(context).afterEach(context);
     }
 
     @Override
     public void afterAll(ExtensionContext context) throws Exception {
-        getOrCreateStaticCallbackRegistry(context).afterAll(context);
+        // don't bother invoking GLOBAL callbacks
+        getOrCreateClassCallbackRegistry(context).afterAll(context);
     }
 
-    protected CallbackRegistry getOrCreateStaticCallbackRegistry(ExtensionContext context) {
-        // using "root" context for the registry store
-        return (CallbackRegistry) context
+    protected CallbackRegistry getOrCreateGlobalCallbackRegistry(ExtensionContext context) {
+        // storing GlobalCallbacks (callbacks by Field) in the root context to be shared between test classes
+        // storing CallbackRegistry in the class context to make sure the right fields are invoked for a given test
+
+        ExtensionContext classContext = getClassContext(context);
+        GlobalCallbacks globalCallbacks = (GlobalCallbacks) classContext
                 .getRoot()
                 .getStore(NAMESPACE)
-                .getOrComputeIfAbsent(STATIC_CALLBACK_REGISTRY, s -> createCallbackRegistry(context, true));
+                .getOrComputeIfAbsent(GLOBAL_CALLBACKS, s -> new GlobalCallbacks());
+
+        return (CallbackRegistry) classContext
+                .getStore(NAMESPACE)
+                .getOrComputeIfAbsent(GLOBAL_CALLBACK_REGISTRY, s -> GlobalCallbackRegistry.create(context, globalCallbacks));
     }
 
-    protected CallbackRegistry getOrCreateInstanceCallbackRegistry(ExtensionContext context) {
-        // using leaf context for the registry store
+    protected CallbackRegistry getOrCreateClassCallbackRegistry(ExtensionContext context) {
+        // storing in ClassExtensionContext
+        return (CallbackRegistry) getClassContext(context)
+                .getStore(NAMESPACE)
+                .getOrComputeIfAbsent(CLASS_CALLBACK_REGISTRY, s -> ClassCallbackRegistry.create(context));
+    }
+
+    protected CallbackRegistry getOrCreateMethodCallbackRegistry(ExtensionContext context) {
+        // storing in leaf context whatever it is
         return (CallbackRegistry) context
                 .getStore(NAMESPACE)
-                .getOrComputeIfAbsent(INSTANCE_CALLBACK_REGISTRY, s -> createCallbackRegistry(context, false));
+                .getOrComputeIfAbsent(METHOD_CALLBACK_REGISTRY, s -> MethodCallbackRegistry.create(context));
     }
 
-    protected CallbackRegistry createCallbackRegistry(ExtensionContext context, boolean staticVars) {
-
-        CallbackRegistry registry = new CallbackRegistry();
-
-        Class<?> testType = context.getRequiredTestClass();
-        Object testInstance = staticVars ? null : context.getRequiredTestInstance();
-        Predicate<Field> predicate = f -> includeField(f, staticVars);
-
-        ReflectionUtils
-                .findFields(testType, predicate, ReflectionUtils.HierarchyTraversalMode.TOP_DOWN)
-                .forEach(f -> addToRegistry(registry, testInstance, f));
-
-        return registry;
-    }
-
-    protected boolean includeField(Field f, boolean staticVars) {
-
-        BQTestTool a = f.getAnnotation(BQTestTool.class);
-        if (a != null) {
-
-            boolean isStatic = ReflectionUtils.isStatic(f);
-            if (isStatic != staticVars) {
-                return false;
-            }
-
-            if (a.value() == BQTestScope.GLOBAL && !isStatic) {
-                throw new JUnitException("@BQTestTool field '"
-                        + f.getDeclaringClass().getName() + "." + f.getName()
-                        + "' must be static to be used in GLOBAL scope");
-            }
-
-            return true;
+    protected ExtensionContext getClassContext(ExtensionContext context) {
+        if (context == null) {
+            throw new RuntimeException("Can't find org.junit.jupiter.engine.descriptor.ClassExtensionContext in the context hierarchy");
         }
 
-        return false;
-    }
-
-    protected void addToRegistry(CallbackRegistry registry, Object testInstance, Field f) {
-        Object instance = resolveInstance(testInstance, f);
-        BQTestScope scope = resolveScope(f);
-        registry.add(scope, instance);
-    }
-
-    protected Object resolveInstance(Object testInstance, Field f) {
-        f.setAccessible(true);
-        Object instance;
-        try {
-            instance = f.get(testInstance);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException("Error reading runtime field", e);
+        // access non-public class
+        if (context.getClass().getName().equals("org.junit.jupiter.engine.descriptor.ClassExtensionContext")) {
+            return context;
         }
-        Preconditions.notNull(instance, () -> "Test tool instance '" + f.getName() + "' must be initialized explicitly");
-        return instance;
-    }
 
-    protected BQTestScope resolveScope(Field f) {
-        BQTestTool config = f.getAnnotation(BQTestTool.class);
-        switch (config.value()) {
-            case GLOBAL:
-            case TEST_METHOD:
-            case TEST_CLASS:
-                return config.value();
-            default:
-                return ReflectionUtils.isStatic(f) ? BQTestScope.TEST_CLASS : BQTestScope.TEST_METHOD;
-        }
+        return getClassContext(context.getParent().orElse(null));
     }
 }

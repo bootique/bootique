@@ -54,7 +54,7 @@ class BQTestToolCallbackRecorder implements BQBeforeScopeCallback, BQAfterScopeC
 
     public void assertCallback(int pos, String label, BQTestScope scope) {
         assertTrue(pos < callbacks.size(), "No callback at index " + pos +
-                ". Only " + callbacks.size() + " callbacks were registered");
+                ". " + callbacks.size() + " callbacks were registered");
         assertCallback(pos, label, null, scope);
     }
 

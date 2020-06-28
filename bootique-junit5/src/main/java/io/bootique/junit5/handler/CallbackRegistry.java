@@ -18,97 +18,34 @@
  */
 package io.bootique.junit5.handler;
 
-import io.bootique.junit5.BQTestScope;
-import io.bootique.junit5.scope.BQAfterMethodCallback;
-import io.bootique.junit5.scope.BQAfterScopeCallback;
-import io.bootique.junit5.scope.BQBeforeMethodCallback;
-import io.bootique.junit5.scope.BQBeforeScopeCallback;
 import org.junit.jupiter.api.extension.*;
+import org.junit.platform.commons.util.Preconditions;
 
+import java.lang.reflect.Field;
 import java.util.LinkedHashSet;
 
 /**
  * @since 2.0
  */
-public class CallbackRegistry {
+public abstract class CallbackRegistry {
 
-    private LinkedHashSet<BeforeAllCallback> beforeAll;
-    private LinkedHashSet<BeforeEachCallback> beforeEach;
-    private LinkedHashSet<AfterEachCallback> afterEach;
-    private LinkedHashSet<AfterAllCallback> afterAll;
+    protected LinkedHashSet<BeforeAllCallback> beforeAll;
+    protected LinkedHashSet<BeforeEachCallback> beforeEach;
+    protected LinkedHashSet<AfterEachCallback> afterEach;
+    protected LinkedHashSet<AfterAllCallback> afterAll;
 
-    public void add(BQTestScope scope, Object tool) {
+    public abstract boolean supportedCallback(Field callbackField);
 
-        if (tool instanceof BQBeforeScopeCallback) {
-
-            switch (scope) {
-                // TODO: global scope instances must be managed separately via static wrappers that ensure "only-once"
-                //  invocation of "beforeAll" across multiple test classes
-                case GLOBAL:
-                    this.beforeAll = addToCallbacks(beforeAll, new OnlyOnceBeforeScopeCallback((BQBeforeScopeCallback) tool, BQTestScope.GLOBAL));
-                    break;
-                case TEST_CLASS:
-                    this.beforeAll = addToCallbacks(beforeAll, c -> ((BQBeforeScopeCallback) tool).beforeScope(BQTestScope.TEST_CLASS, c));
-                    break;
-                case TEST_METHOD:
-                    this.beforeEach = addToCallbacks(beforeEach, c -> ((BQBeforeScopeCallback) tool).beforeScope(BQTestScope.TEST_METHOD, c));
-                    break;
-                default:
-                    throw new IllegalArgumentException("Unsupported/unresolved test scope: " + scope);
-            }
+    protected static Object resolveInstance(Object testInstance, Field f) {
+        f.setAccessible(true);
+        Object instance;
+        try {
+            instance = f.get(testInstance);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("Error reading runtime field", e);
         }
-
-        if (tool instanceof BQBeforeMethodCallback) {
-
-            switch (scope) {
-                case GLOBAL:
-                    this.beforeEach = addToCallbacks(beforeEach, c -> ((BQBeforeMethodCallback) tool).beforeMethod(BQTestScope.GLOBAL, c));
-                    break;
-                case TEST_CLASS:
-                    this.beforeEach = addToCallbacks(beforeEach, c -> ((BQBeforeMethodCallback) tool).beforeMethod(BQTestScope.TEST_CLASS, c));
-                    break;
-                case TEST_METHOD:
-                    this.beforeEach = addToCallbacks(beforeEach, c -> ((BQBeforeMethodCallback) tool).beforeMethod(BQTestScope.TEST_METHOD, c));
-                    break;
-                default:
-                    throw new IllegalArgumentException("Unsupported/unresolved test scope: " + scope);
-            }
-        }
-
-        if (tool instanceof BQAfterMethodCallback) {
-
-            switch (scope) {
-                case GLOBAL:
-                    this.afterEach = addToCallbacks(afterEach, c -> ((BQAfterMethodCallback) tool).afterMethod(BQTestScope.GLOBAL, c));
-                    break;
-                case TEST_CLASS:
-                    this.afterEach = addToCallbacks(afterEach, c -> ((BQAfterMethodCallback) tool).afterMethod(BQTestScope.TEST_CLASS, c));
-                    break;
-                case TEST_METHOD:
-                    this.afterEach = addToCallbacks(afterEach, c -> ((BQAfterMethodCallback) tool).afterMethod(BQTestScope.TEST_METHOD, c));
-                    break;
-                default:
-                    throw new IllegalArgumentException("Unsupported/unresolved test scope: " + scope);
-            }
-        }
-
-        if (tool instanceof BQAfterScopeCallback) {
-
-            switch (scope) {
-                case GLOBAL:
-                    // don't bother with "afterAll" for the GLOBAL scope. We won't be able to tell whether class end
-                    // signifies the end of the scope.
-                    break;
-                case TEST_CLASS:
-                    this.afterAll = addToCallbacks(afterAll, c -> ((BQAfterScopeCallback) tool).afterScope(BQTestScope.TEST_CLASS, c));
-                    break;
-                case TEST_METHOD:
-                    this.afterEach = addToCallbacks(afterEach, c -> ((BQAfterScopeCallback) tool).afterScope(BQTestScope.TEST_METHOD, c));
-                    break;
-                default:
-                    throw new IllegalArgumentException("Unsupported/unresolved test scope: " + scope);
-            }
-        }
+        Preconditions.notNull(instance, () -> "Test tool instance '" + f.getName() + "' must be initialized explicitly");
+        return instance;
     }
 
     protected <T> LinkedHashSet<T> addToCallbacks(LinkedHashSet<T> set, T instance) {
