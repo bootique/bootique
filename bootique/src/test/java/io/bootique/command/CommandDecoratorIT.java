@@ -362,7 +362,7 @@ public class CommandDecoratorIT {
                             .decorateCommand(mainCommand.getClass(), decorator));
 
             if (moduleProvider != null) {
-                builder.module(moduleProvider);
+                builder.moduleProvider(moduleProvider);
             }
 
             return builder.createRuntime().run();

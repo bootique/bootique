@@ -65,7 +65,7 @@ public class Bootique_DeclareVarsIT {
         };
 
         BQRuntime runtime = testFactory.app()
-                .module(configurableProvider)
+                .moduleProvider(configurableProvider)
                 .declareVar("x.m", "X_VALID_VAR")
                 .declareVar("x.y.prop", "X_INVALID_VAR")
                 .bootLogger(logger)
@@ -101,7 +101,7 @@ public class Bootique_DeclareVarsIT {
         };
 
         BQRuntime runtime = testFactory.app()
-                .module(configurableProvider)
+                .moduleProvider(configurableProvider)
                 .declareVar("x.m", "s", "New description")
                 .bootLogger(logger)
                 .createRuntime();
@@ -136,7 +136,7 @@ public class Bootique_DeclareVarsIT {
         };
 
         BQRuntime runtime = testFactory.app()
-                .module(configurableProvider)
+                .moduleProvider(configurableProvider)
                 .declareVar("x.m.prop", "X_VALID_VAR")
                 .declareVar("x.m.prop.x", "X_INVALID_VAR")
                 .bootLogger(logger)

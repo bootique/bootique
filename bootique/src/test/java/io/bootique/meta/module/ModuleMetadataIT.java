@@ -65,7 +65,7 @@ public class ModuleMetadataIT {
 
     @Test
     public void testCustomNamedModule() {
-        BQRuntime runtime = runtimeFactory.app().module(new BQModuleProvider() {
+        BQRuntime runtime = runtimeFactory.app().moduleProvider(new BQModuleProvider() {
             @Override
             public BQModule module() {
                 return b -> {
@@ -93,7 +93,7 @@ public class ModuleMetadataIT {
     @Test
     public void testProvider() {
         ModulesMetadata md = runtimeFactory.app()
-                .module(new M1Provider())
+                .moduleProvider(new M1Provider())
                 .createRuntime().getInstance(ModulesMetadata.class);
 
         assertEquals(4, md.getModules().size(), "Expected BQCoreModule + 2 test modules + custom module");

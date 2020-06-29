@@ -54,7 +54,7 @@ public class CommandsIT {
     @Test
     public void testModuleCommands() {
         BQModuleProvider provider = Commands.builder().build();
-        BQRuntime runtime = testFactory.app(args).module(provider).createRuntime();
+        BQRuntime runtime = testFactory.app(args).moduleProvider(provider).createRuntime();
         CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
         Map<String, ManagedCommand> commands = commandManager.getAllCommands();
@@ -71,7 +71,7 @@ public class CommandsIT {
     @Test
     public void testNoModuleCommands() {
         BQModuleProvider provider = Commands.builder().noModuleCommands().build();
-        BQRuntime runtime = testFactory.app(args).module(provider).createRuntime();
+        BQRuntime runtime = testFactory.app(args).moduleProvider(provider).createRuntime();
         CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
         Map<String, ManagedCommand> commands = commandManager.getAllCommands();
@@ -88,7 +88,7 @@ public class CommandsIT {
     @Test
     public void testModule_ExtraCommandAsType() {
         BQModuleProvider provider = Commands.builder(C1.class).build();
-        BQRuntime runtime = testFactory.app(args).module(provider).createRuntime();
+        BQRuntime runtime = testFactory.app(args).moduleProvider(provider).createRuntime();
         CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
         Map<String, ManagedCommand> commands = commandManager.getAllCommands();
@@ -108,7 +108,7 @@ public class CommandsIT {
     @Test
     public void testModule_ExtraCommandAsInstance() {
         BQModuleProvider provider = Commands.builder().add(new C1()).build();
-        BQRuntime runtime = testFactory.app(args).module(provider).createRuntime();
+        BQRuntime runtime = testFactory.app(args).moduleProvider(provider).createRuntime();
         CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
         Map<String, ManagedCommand> commands = commandManager.getAllCommands();
@@ -118,7 +118,7 @@ public class CommandsIT {
     @Test
     public void testModule_ExtraCommandOverride() {
         BQModuleProvider provider = Commands.builder().add(C2_Help.class).build();
-        BQRuntime runtime = testFactory.app(args).module(provider).createRuntime();
+        BQRuntime runtime = testFactory.app(args).moduleProvider(provider).createRuntime();
         CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
         Map<String, ManagedCommand> commands = commandManager.getAllCommands();

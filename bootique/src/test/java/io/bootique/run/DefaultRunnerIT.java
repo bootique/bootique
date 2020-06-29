@@ -101,7 +101,7 @@ public class DefaultRunnerIT {
 
         testFactory.app()
                 .module(b -> BQCoreModule.extend(b).addCommand(XCommand.class))
-                .module(Commands.builder(YCommand.class).noModuleCommands().build())
+                .moduleProvider(Commands.builder(YCommand.class).noModuleCommands().build())
                 .bootLogger(logger)
                 .createRuntime()
                 .run();
@@ -114,7 +114,7 @@ public class DefaultRunnerIT {
 
         testFactory.app()
                 .module(b -> BQCoreModule.extend(b).addCommand(XCommand.class))
-                .module(Commands.builder(YCommand.class, HelpCommand.class).noModuleCommands().build())
+                .moduleProvider(Commands.builder(YCommand.class, HelpCommand.class).noModuleCommands().build())
                 .bootLogger(logger)
                 .createRuntime()
                 .run();
@@ -135,7 +135,7 @@ public class DefaultRunnerIT {
 
         testFactory.app()
                 .module(b -> BQCoreModule.extend(b).addCommand(XCommand.class))
-                .module(Commands.builder(XHelpCommand.class).noModuleCommands().build())
+                .moduleProvider(Commands.builder(XHelpCommand.class).noModuleCommands().build())
                 .bootLogger(logger)
                 .createRuntime()
                 .run();
@@ -151,7 +151,7 @@ public class DefaultRunnerIT {
 
         testFactory.app()
                 .module(b -> BQCoreModule.extend(b).setDefaultCommand(XCommand.class))
-                .module(Commands.builder(X1Command.class).noModuleCommands().build())
+                .moduleProvider(Commands.builder(X1Command.class).noModuleCommands().build())
                 .bootLogger(logger)
                 .createRuntime()
                 .run();

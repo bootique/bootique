@@ -203,7 +203,7 @@ public class BQInternalTestFactory implements BeforeEachCallback, AfterEachCallb
             return (T) this;
         }
 
-        public T module(BQModuleProvider moduleProvider) {
+        public T moduleProvider(BQModuleProvider moduleProvider) {
             bootique.moduleProvider(moduleProvider);
             return (T) this;
         }

@@ -55,7 +55,7 @@ public class ConfigMetadataIT {
 
     @Test
     public void testSingleConfig() {
-        BQRuntime runtime = runtimeFactory.app().module(new BQModuleProvider() {
+        BQRuntime runtime = runtimeFactory.app().moduleProvider(new BQModuleProvider() {
             @Override
             public BQModule module() {
                 return Mockito.mock(BQModule.class);
@@ -109,7 +109,7 @@ public class ConfigMetadataIT {
 
     @Test
     public void testRecursiveConfig() {
-        BQRuntime runtime = runtimeFactory.app().module(new BQModuleProvider() {
+        BQRuntime runtime = runtimeFactory.app().moduleProvider(new BQModuleProvider() {
             @Override
             public BQModule module() {
                 return Mockito.mock(BQModule.class);
@@ -173,7 +173,7 @@ public class ConfigMetadataIT {
     public void testValueObjectConfig() {
         BQRuntime runtime = runtimeFactory.app()
                 .addValueObjectsDescriptor(TestVO.class, new ValueObjectDescriptor("Test Value Object"))
-                .module(new BQModuleProvider() {
+                .moduleProvider(new BQModuleProvider() {
                     @Override
                     public BQModule module() {
                         return Mockito.mock(BQModule.class);

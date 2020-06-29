@@ -72,7 +72,7 @@ public class CommandDecorator_CommandsIT {
                         .addCommand(MainCommand.class)
                         .addCommand(SuccessfulCommand.class)
                         .decorateCommand(MainCommand.class, decorator))
-                .module(commandsOverride)
+                .moduleProvider(commandsOverride)
                 .createRuntime();
     }
 
