@@ -27,6 +27,7 @@ import io.bootique.help.HelpCommand;
 import io.bootique.log.BootLogger;
 import io.bootique.log.DefaultBootLogger;
 import io.bootique.unit.BQInternalTestFactory;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -34,6 +35,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Type;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -151,6 +153,43 @@ public class Bootique_DeclareVarsIT {
         assertFalse(help.contains("X_INVALID_VAR"));
     }
 
+    @Test
+    @Disabled("Declared vars with array indices are excluded from help #292")
+    public void testInHelpWithList() {
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ByteArrayOutputStream err = new ByteArrayOutputStream();
+        BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(err));
+
+        BQModuleProvider configurableProvider = new BQModuleProvider() {
+            @Override
+            public BQModule module() {
+                return b -> {
+                };
+            }
+
+            @Override
+            public Map<String, Type> configs() {
+                return Collections.singletonMap("x", Bean6.class);
+            }
+        };
+
+        BQRuntime runtime = testFactory.app()
+                .moduleProvider(configurableProvider)
+                .declareVar("x.a[0]", "X_VALID_VAR")
+                .declareVar("x.a[0].x", "X_INVALID_VAR")
+                .bootLogger(logger)
+                .createRuntime();
+
+        Cli cli = runtime.getInstance(Cli.class);
+        runtime.getInstance(HelpCommand.class).run(cli);
+
+        String help = new String(out.toByteArray());
+        assertTrue(help.contains("ENVIRONMENT"), "No ENVIRONMENT section:\n" + help);
+        assertTrue(help.contains("X_VALID_VAR"));
+        assertFalse(help.contains("X_INVALID_VAR"));
+    }
+
     @BQConfig
     static class Bean4 {
         private Map<String, String> m;
@@ -168,6 +207,16 @@ public class Bootique_DeclareVarsIT {
         @BQConfigProperty("Origin description")
         public void setM(String m) {
             this.m = m;
+        }
+    }
+
+    @BQConfig
+    static class Bean6 {
+        private List<String> a;
+
+        @BQConfigProperty
+        public void setA(List<String> a) {
+            this.a = a;
         }
     }
 }
