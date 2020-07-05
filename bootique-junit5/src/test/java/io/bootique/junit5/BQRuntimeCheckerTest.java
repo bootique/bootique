@@ -22,26 +22,24 @@ import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
 import io.bootique.di.BQModule;
 import io.bootique.di.Binder;
-import io.bootique.junit5.BQRuntimeChecker;
-import io.bootique.junit5.BQTestFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
+@BQTest
 public class BQRuntimeCheckerTest {
 
-    @RegisterExtension
-    public static BQTestFactory testExtension = new BQTestFactory();
+    @BQTestTool
+    final BQTestFactory testFactory = new BQTestFactory();
 
     @Test
     public void testTestModulesLoaded() {
-        final BQRuntime runtime = testExtension.app().createRuntime();
+        BQRuntime runtime = testFactory.app().createRuntime();
         BQRuntimeChecker.testModulesLoaded(runtime, BQCoreModule.class);
     }
 
     @Test
     public void testTestModulesNotLoaded() {
-        final BQRuntime runtime = testExtension.app().createRuntime();
+        BQRuntime runtime = testFactory.app().createRuntime();
         Assertions.assertThrows(AssertionError.class,
                 () -> BQRuntimeChecker.testModulesLoaded(runtime, NonLoadedModule.class));
     }

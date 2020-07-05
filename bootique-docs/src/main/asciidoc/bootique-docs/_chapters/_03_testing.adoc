@@ -43,8 +43,9 @@ To start using Bootique test extensions, import the following module in the "tes
 ----
 
 To be able to create test Bootique runtimes (and make sure they are properly shut down after the test), you will use
-one of the two JUnit extensions - `BQTestFactory` and `BQTestClassFactory`. The former is used to create runtime(s)
-within a single test method. The latter - for runtimes shared within a single test class by multiple tests.
+`BQTestFactory`. If the factory is declared as an instance variable, it is used to create runtime(s)
+within a single test method. If it is a static variable, it is used for runtimes shared within a single test class by
+multiple tests.
 
 [source,java,indent=0]
 ----
@@ -58,8 +59,8 @@ include::../../../../test/java/io/bootique/docs/testing/MyClassTest.java[tag=Tes
 
 Each runtime object created via test factory is essentially an entire Bootique application. It can
 be used to inspect DI contents, execute a command (including commands that start background processes, such
-as `--server` and `--schedule`), etc. You don't need to stop the runtime explicitly. `BQTestFactory` and
-`BQTestClassFactory` will take care of shutdown through JUnit lifecycle.
+as `--server` and `--schedule`), etc. You don't need to stop the runtime explicitly. `BQTestFactory` will take care
+of shutdown through JUnit lifecycle.
 
 `testFactory.app()` returns a builder that mimics the API of `Bootique` class, with a few test-related extensions. It
 allows to load extra modules, etc.

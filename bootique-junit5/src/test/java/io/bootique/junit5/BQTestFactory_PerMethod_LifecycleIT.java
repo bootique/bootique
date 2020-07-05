@@ -21,7 +21,6 @@ package io.bootique.junit5;
 import io.bootique.BaseModule;
 import io.bootique.di.Provides;
 import io.bootique.shutdown.ShutdownManager;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -31,14 +30,14 @@ import javax.inject.Singleton;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BQTestFactoryLifecycleIT {
+@BQTest
+public class BQTestFactory_PerMethod_LifecycleIT {
 
     @RegisterExtension
-    @Order(1)
     public static Tester tester = new Tester();
 
-    @RegisterExtension
-    public static BQTestFactory testFactory = new BQTestFactory();
+    @BQTestTool(BQTestScope.TEST_METHOD)
+    final static BQTestFactory testFactory = new BQTestFactory();
 
     @RepeatedTest(value = 3, name = "Check shutdowns ... {currentRepetition}")
     public void testShutdowns() {
@@ -50,8 +49,8 @@ public class BQTestFactoryLifecycleIT {
         @Provides
         @Singleton
         Tester provideTester(ShutdownManager shutdownManager) {
-            shutdownManager.addShutdownHook(BQTestFactoryLifecycleIT.tester::onShutdown);
-            return BQTestFactoryLifecycleIT.tester;
+            shutdownManager.addShutdownHook(BQTestFactory_PerMethod_LifecycleIT.tester::onShutdown);
+            return BQTestFactory_PerMethod_LifecycleIT.tester;
         }
     }
 

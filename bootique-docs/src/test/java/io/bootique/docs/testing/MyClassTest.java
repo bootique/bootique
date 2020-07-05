@@ -1,22 +1,24 @@
 package io.bootique.docs.testing;
 
 import io.bootique.BQRuntime;
-import io.bootique.junit5.BQTestClassFactory;
+import io.bootique.junit5.BQTest;
+import io.bootique.junit5.BQTestFactory;
+import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 // tag::Testing[]
+@BQTest
 public class MyClassTest {
 
-    @RegisterExtension
-    public static BQTestClassFactory testFactory = new BQTestClassFactory();
+    @BQTestTool
+    final static BQTestFactory testFactory = new BQTestFactory();
     // end::Testing[]
 
     private static BQRuntime sharedRuntime;
 
     @BeforeAll
     public static void initSharedRuntime() {
-        sharedRuntime =  testFactory.app()
+        sharedRuntime = testFactory.app()
                 // ensure all classpath modules are included
                 .autoLoadModules()
                 // add an adhoc module specific to the test

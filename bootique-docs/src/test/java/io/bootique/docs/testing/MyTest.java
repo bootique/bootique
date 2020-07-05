@@ -2,20 +2,22 @@ package io.bootique.docs.testing;
 
 import io.bootique.BQRuntime;
 import io.bootique.command.CommandOutcome;
+import io.bootique.junit5.BQTest;
 import io.bootique.junit5.BQTestFactory;
+import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 // tag::Testing[]
+@BQTest
 public class MyTest {
 
-    @RegisterExtension
-    public static BQTestFactory testFactory = new BQTestFactory();
+    @BQTestTool
+    final BQTestFactory testFactory = new BQTestFactory();
     // end::Testing[]
 
 
-// tag::TestAbc1[]
+    // tag::TestAbc1[]
     @Test
     public void testAbc() {
 

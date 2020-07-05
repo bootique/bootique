@@ -18,28 +18,33 @@
  */
 package io.bootique.junit5;
 
-import org.junit.jupiter.api.extension.AfterEachCallback;
-import org.junit.jupiter.api.extension.BeforeEachCallback;
+import io.bootique.junit5.scope.BQAfterScopeCallback;
+import io.bootique.junit5.scope.BQBeforeScopeCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 /**
- * A JUnit 5 extension that allows to create one or more Bootique runtimes within a JUnit test, performing automatic
- * shutdown of all created runtimes after the end of each test method. You would normally add this extension to the
- * test programmatically, either as a static or an instance variable annotated with
- * {@link org.junit.jupiter.api.extension.RegisterExtension}. E.g.:
+ * Allows to create one or more Bootique runtimes within a JUnit test, performing automatic shutdown of all created
+ * runtimes at the end of the factory scope. Can be declared as a static or an instance variable in a test class
+ * and annotated with {@link BQTestTool} (and the containing test class must be annotated with {@link BQTest}). Shutdown
+ * of the managed runtimes is down based on the explicit (as defined in the {@link BQTestTool} annotation), or implied
+ * scope of the factory.
  *
  * <pre>
  * public class MyTest {
  *
- *   &#64;RegisterExtension
- *   public static BQTestFactory testFactory = new BQTestFactory();
+ *   // shuts down all runtimes created by the factory after running all tests in MyClass
+ *   &#64;BQTestTool
+ *   public static BQTestFactory classScopeFactory = new BQTestFactory();
+ *
+ *   // shuts down all runtimes created by the factory after each test method
+ *   &#64;BQTestTool
+ *   public BQTestFactory methodScopeFactory = new BQTestFactory();
  * }
  * </pre>
  *
- * @see BQTestClassFactory
  * @since 2.0
  */
-public class BQTestFactory implements BeforeEachCallback, AfterEachCallback {
+public class BQTestFactory implements BQBeforeScopeCallback, BQAfterScopeCallback {
 
     private TestRuntimesManager runtimes;
     private boolean autoLoadModules;
@@ -75,12 +80,12 @@ public class BQTestFactory implements BeforeEachCallback, AfterEachCallback {
     }
 
     @Override
-    public void beforeEach(ExtensionContext extensionContext) {
+    public void beforeScope(BQTestScope scope, ExtensionContext context) {
         runtimes.reset();
     }
 
     @Override
-    public void afterEach(ExtensionContext extensionContext) {
+    public void afterScope(BQTestScope scope, ExtensionContext context) {
         runtimes.shutdown();
     }
 }

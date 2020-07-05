@@ -25,23 +25,21 @@ import io.bootique.cli.Cli;
 import io.bootique.command.CommandOutcome;
 import io.bootique.command.CommandWithMetadata;
 import io.bootique.config.ConfigurationFactory;
-import io.bootique.junit5.BQTestClassFactory;
 import io.bootique.log.BootLogger;
 import io.bootique.meta.application.CommandMetadata;
-import io.bootique.junit5.TestIO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import javax.inject.Inject;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class BQTestClassFactoryIT {
+@BQTest
+public class BQTestFactory_PerClass_IT {
 
-    @RegisterExtension
-    public static BQTestClassFactory testFactory = new BQTestClassFactory();
+    @BQTestTool
+    static final BQTestFactory testFactory = new BQTestFactory();
 
     @Test
     @DisplayName("Args passed")

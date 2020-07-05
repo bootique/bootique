@@ -20,27 +20,25 @@ package io.bootique.junit5;
 
 import io.bootique.BaseModule;
 import io.bootique.di.Provides;
-import io.bootique.junit5.BQTestClassFactory;
+import io.bootique.junit5.scope.BQAfterScopeCallback;
 import io.bootique.shutdown.ShutdownManager;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import javax.inject.Singleton;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BQTestClassFactoryLifecycleIT {
+@BQTest
+public class BQTestFactory_PerClass_LifecycleIT {
 
-    @RegisterExtension
-    @Order(1)
-    public static Tester tester = new Tester();
+    // "BQTestTool" default ordering should align with field declaration ordering
+    // (suppose depends on compiler and runtime?)
+    @BQTestTool
+    static final Tester tester = new Tester();
 
-    @RegisterExtension
-    @Order(2)
-    public static BQTestClassFactory testFactory = new BQTestClassFactory();
+    @BQTestTool
+    static final BQTestFactory testFactory = new BQTestFactory();
 
     @RepeatedTest(value = 3, name = "Check shutdowns ... {currentRepetition}")
     public void testShutdowns() {
@@ -57,7 +55,7 @@ public class BQTestClassFactoryLifecycleIT {
         }
     }
 
-    public static class Tester implements AfterAllCallback {
+    public static class Tester implements BQAfterScopeCallback {
 
         private int calls;
         private int shutdowns;
@@ -78,13 +76,13 @@ public class BQTestClassFactoryLifecycleIT {
                     .getInstance(Tester.class);
 
             assertEquals(0, shutdowns);
-            
+
             calls++;
             assertEquals(calls, testFactory.getRuntimes().size());
         }
 
         @Override
-        public void afterAll(ExtensionContext context) {
+        public void afterScope(BQTestScope scope, ExtensionContext context) {
             assertEquals(3, calls);
             assertEquals(3, shutdowns);
             assertEquals(3, testFactory.getRuntimes().size(), "All runtimes must stay in the end, in a shutdown state");

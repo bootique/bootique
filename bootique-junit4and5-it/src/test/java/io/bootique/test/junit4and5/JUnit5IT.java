@@ -18,16 +18,18 @@
  */
 package io.bootique.test.junit4and5;
 
+import io.bootique.junit5.BQTest;
 import io.bootique.junit5.BQTestFactory;
+import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.Assert.assertTrue;
 
+@BQTest
 public class JUnit5IT {
 
-    @RegisterExtension
-    public final BQTestFactory testFactory = new BQTestFactory();
+    @BQTestTool
+    final BQTestFactory testFactory = new BQTestFactory();
 
     @Test
     public void test() {

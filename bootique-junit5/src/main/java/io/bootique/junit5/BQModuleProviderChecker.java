@@ -117,14 +117,14 @@ public class BQModuleProviderChecker {
         }
     }
 
-    protected void testWithFactory(Consumer<BQTestFactory> test) throws Exception {
-        BQTestFactory testExtension = new BQTestFactory();
+    protected void testWithFactory(Consumer<BQTestFactory> test) {
+        BQTestFactory testFactory = new BQTestFactory();
         ExtensionContext extensionContext = new TestExtensionContext();
         try {
-            testExtension.beforeEach(extensionContext);
-            test.accept(testExtension);
+            testFactory.beforeScope(BQTestScope.TEST_METHOD, extensionContext);
+            test.accept(testFactory);
         } finally {
-            testExtension.afterEach(extensionContext);
+            testFactory.afterScope(BQTestScope.TEST_METHOD, extensionContext);
         }
     }
 
@@ -196,7 +196,8 @@ public class BQModuleProviderChecker {
         }
 
         @Override
-        public void publishReportEntry(Map<String, String> map) {}
+        public void publishReportEntry(Map<String, String> map) {
+        }
 
         @Override
         public Store getStore(Namespace namespace) {
