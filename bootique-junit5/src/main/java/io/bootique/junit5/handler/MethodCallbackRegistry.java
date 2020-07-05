@@ -60,7 +60,7 @@ public class MethodCallbackRegistry extends CallbackRegistry {
         switch (a.value()) {
             case TEST_METHOD:
                 return true;
-            case IMPLICIT:
+            case IMPLIED:
                 // instance fields with no explicit scope should be treated as TEST_CLASS
                 return !ReflectionUtils.isStatic(callbackField);
             default:

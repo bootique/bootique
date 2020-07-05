@@ -19,12 +19,22 @@
 package io.bootique.junit5;
 
 /**
+ * Defines possible test tool scopes within the JUnit 5 lifecycle.
+ *
  * @since 2.0
  */
 public enum BQTestScope {
 
+    /**
+     * A scope that spans then entire test run that may include multiple test classes.
+     */
     GLOBAL,
     TEST_CLASS,
     TEST_METHOD,
-    IMPLICIT;
+
+    /**
+     * An implied scope based on whether the tool field is declared as a static or an instance variable. Static
+     * corresponds to {@link #TEST_CLASS} scope, while instance - to {@link #TEST_METHOD}.
+     */
+    IMPLIED;
 }

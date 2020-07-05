@@ -67,7 +67,7 @@ public class ClassCallbackRegistry extends CallbackRegistry {
                             + "' must be static to be used in TEST_CLASS scope");
                 }
                 return true;
-            case IMPLICIT:
+            case IMPLIED:
                 // static fields with no explicit scope should be treated as TEST_CLASS
                 return isStatic;
             default:

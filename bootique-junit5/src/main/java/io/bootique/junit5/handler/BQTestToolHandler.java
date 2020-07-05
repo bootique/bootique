@@ -56,7 +56,8 @@ public class BQTestToolHandler implements BeforeEachCallback, AfterEachCallback,
 
     @Override
     public void afterAll(ExtensionContext context) throws Exception {
-        // don't bother invoking GLOBAL callbacks
+        // Only invoking per-class callbacks. Don't bother with GLOBAL callbacks. GLOBALs are shutdown elsewhere by
+        // implementing ExtensionContext.Store.CloseableResource
         getOrCreateClassCallbackRegistry(context).afterAll(context);
     }
 

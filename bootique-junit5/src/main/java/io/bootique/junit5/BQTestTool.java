@@ -41,5 +41,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface BQTestTool {
 
-    BQTestScope value() default BQTestScope.IMPLICIT;
+    BQTestScope value() default BQTestScope.IMPLIED;
 }
