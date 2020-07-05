@@ -1,35 +1,41 @@
 package io.bootique.docs.testing;
 
+import io.bootique.BQCoreModule;
+import io.bootique.BQRuntime;
+import io.bootique.Bootique;
+import io.bootique.docs.FakeServerCommand;
+import io.bootique.jetty.JettyTester;
+import io.bootique.junit5.BQApp;
 import io.bootique.junit5.BQTest;
-import io.bootique.junit5.BQTestFactory;
-import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @BQTest
 public class NetworkTest {
 
-    @BQTestTool
-    final BQTestFactory testFactory = new BQTestFactory();
+    // tag::Testing[]
+    // a tool from "bootique-jetty-junit5". Doesn't require @BQTestTool,
+    // as it has no lifecycle of its own
+    static final JettyTester jetty = JettyTester.create();
 
+    @BQApp
+    static final BQRuntime app = Bootique
+            .app("--server")
+            .module(jetty.moduleReplacingConnectors())
+            // end::Testing[]
+            .module(b -> BQCoreModule.extend(b).addCommand(FakeServerCommand.class))
+            // tag::Testing[]
+            .createRuntime();
+
+    // end::Testing[]
     @Disabled("No real Jersey module available")
     // tag::Testing[]
     @Test
     public void testServer() {
-
-        testFactory.app("--server").autoLoadModules().run();
-
-        // using JAX-RS client API
-        WebTarget base = ClientBuilder.newClient().target("http://localhost:8080/");
-        Response r1 = base.path("/somepath").request().get();
-        assertEquals(Response.Status.OK.getStatusCode(), r1.getStatus());
-        assertEquals("{}", r1.readEntity(String.class));
+        Response response = jetty.getTarget().path("/somepath").request().get();
+        JettyTester.assertOk(response);
     }
     // end::Testing[]
 }

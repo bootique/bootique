@@ -8,43 +8,45 @@ import io.bootique.junit5.BQTestTool;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-// tag::Testing[]
+// tag::BQTest[]
 @BQTest
 public class MyTest {
+// end::BQTest[]
 
+    // tag::TestFactory[]
     @BQTestTool
     final BQTestFactory testFactory = new BQTestFactory();
-    // end::Testing[]
+    // end::TestFactory[]
 
 
-    // tag::TestAbc1[]
+    @Disabled("Fake command, will fail")
+    // tag::TestAbc[]
     @Test
     public void testAbc() {
 
-        BQRuntime runtime = testFactory.app()
+        CommandOutcome result = testFactory.app("--server")
                 // ensure all classpath modules are included
                 .autoLoadModules()
                 // add an adhoc module specific to the test
                 .module(binder -> binder.bind(MyService.class).to(MyServiceImpl.class))
-                .createRuntime();
-        // ...
-    }
-// end::TestAbc1[]
-
-
-    @Disabled("No real Jersey module available")
-// tag::TestAbc2[]
-    @Test
-    public void testABC() {
-
-        CommandOutcome result = testFactory.app("--server")
-                .autoLoadModules()
                 .run();
         // ...
     }
-// end::TestAbc2[]
+// end::TestAbc[]
 
-// tag::Testing[]
+
+// tag::TestXyz[]
+    @Test
+    public void testXyz() {
+
+        BQRuntime app = testFactory.app("--server")
+                .autoLoadModules()
+                .createRuntime();
+        // ...
+    }
+// end::TestXyz[]
+
+// tag::BQTest[]
 }
-// end::Testing[]
+// end::BQTest[]
 

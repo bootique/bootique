@@ -19,70 +19,134 @@
 
 === Bootique and Testing
 
-Bootique is uniquely suitable to be used as a test framework. Within a single test it allows you to start and stop
-multiple embedded Bootique runtimes, each with а distinct set of modules and а YAML configuration, making it a
-powerful tool for _integration testing._
-
-=== Creating Test Runtimes
-
-Here we'll demonstrate the use of the core test framework. For module-specific test APIs (e.g. `bootique-jdbc-test-junit5`),
-check documentation of those modules.
-
-NOTE: Bootique provides integration for both JUnit 4 and JUnit 5 (both can even be combined in the same project via
-JUnit 5 https://junit.org/junit5/docs/current/user-guide/#migrating-from-junit4-running["vintage engine"]). This chapter
+NOTE: Bootique provides integration for both JUnit 4 and JUnit 5. Both can even be combined in the same project via
+JUnit 5 https://junit.org/junit5/docs/current/user-guide/#migrating-from-junit4-running["vintage engine"]. This chapter
 will focus on JUnit 5 instructions. For JUnit 4 docs, please check documentation for Bootique 1.x.
+
+Bootique is uniquely suitable to be used as a test framework. Within a single test it allows you to start and stop
+multiple in-process runtimes, each with а distinct set of modules and configurations. Bootique test facilities are
+controlled with a small number of annotations: `@BQTest`, `@BQTestTool` and `@BQApp`, that will be described below.
+
+This chapter is about the core test framework. For module-specific test APIs (e.g. `bootique-jdbc-junit5`,
+`bootique-jetty-junit5`), check documentation of those modules. They all follow the same base principles
+described here.
 
 To start using Bootique test extensions, import the following module in the "test" scope:
 [source,xml]
 ----
 <dependency>
     <groupId>io.bootique</groupId>
-    <artifactId>bootique-test-junit5</artifactId>
+    <artifactId>bootique-junit5</artifactId>
     <scope>test</scope>
 </dependency>
 ----
 
-To be able to create test Bootique runtimes (and make sure they are properly shut down after the test), you will use
-`BQTestFactory`. If the factory is declared as an instance variable, it is used to create runtime(s)
-within a single test method. If it is a static variable, it is used for runtimes shared within a single test class by
-multiple tests.
+Each test class using Bootique extensions must be annotated with `@BQTest`:
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docs/testing/MyTest.java[tag=Testing]
+include::../../../../test/java/io/bootique/docs/testing/MyTest.java[tag=BQTest]
+----
+
+Doing that tells Bootique to manage lifecycle of test `BQRuntimes` and test "tools".
+
+=== Test BQRuntimes
+
+`BQRuntime` is an object representing an entire app (i.e. an object whose state and behavior you are checking in your
+test). You can declare `BQRuntime` as a static field of the test class, initialize it the way you would initialize an
+application (yes, using the same factory method from `Bootique` class), and annotate with `@BQApp` to let Bootique
+start and stop it when appropriate:
+
+[source,java,indent=0]
+----
+include::../../../../test/java/io/bootique/docs/testing/BQAppTest.java[tag=BQApp]
+----
+
+The "app" will be started by Bootique before all the tests in this class, and will be shutdown after all the tests are
+finished. You can declare any number of such "apps" within a test to emulate fairly complex systems. And as you can
+see in the example, you can pass any command or configuration as arguments to the `app(..)` method (that emulates a
+command-line invocation).
+
+Sometimes you just need a runtime instance, and do not want to execute any commands. For this case use `@BQApp(skipRun=true)`:
+
+[source,java,indent=0]
+----
+include::../../../../test/java/io/bootique/docs/testing/BQAppNoRunTest.java[tag=BQApp]
+----
+
+=== Test Tools and Scopes
+
+Bootique provides a number of test tools that help you customize the apps for the test environment
+(e.g. `DbTester` tool from `bootique-jdbc` starts a test database and supplies a "module" to the app with DataSource
+configuration to access that DB; `JettyTester` from `bootique-jetty` configures HTTP connector to listen on a random
+unoccupied port and provides a Java client to send requests to the server, etc.).
+
+Tools are declared as fields in a test class, each annotated with `@BQTestTool`. A tool can exist in a certain
+scope (as defined by `@BQTestTool(value=...)`. "Scope" determines when the tool is initialized and shutdown during
+the test. The following scopes are available:
+
+* `BQTestScope.TEST_CLASS`: A scope of a single test class. Roughly corresponds to `@BeforeAll` / `@AfterAll` from JUnit.
+All tools in this scope must be declared as static variables.
+* `BQTestScope.TEST_METHOD`: A scope of a single test method. Roughly corresponds to `@BeforeEach` / `@AfterEach` from JUnit.
+* `BQTestScope.GLOBAL`: Allows a given tool to be shared with more than one test class. JUnit has no analog of a "global"
+scope, but it is quite useful for expensive reusable resources (e.g. Docker containers), so Bootique supports it for all
+the tools.
+* `BQTestScope.IMPLIED`: This is the default scope of `@BQTestTool`. If the field is static it is equivalent to
+`TEST_CLASS`, if non-static - `TEST_METHOD`. This way most of the time you don't need to explicitly define the scope,
+but just need to declare your tool as static or instance variable.
+
+Some examples:
+
+[source,java,indent=0]
+----
+include::../../../../test/java/io/bootique/docs/testing/BQTestToolTest.java[tag=BQTestTool_static]
 ----
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docs/testing/MyClassTest.java[tag=Testing]
+include::../../../../test/java/io/bootique/docs/testing/BQTestToolTest.java[tag=BQTestTool_instance]
 ----
-
-Each runtime object created via test factory is essentially an entire Bootique application. It can
-be used to inspect DI contents, execute a command (including commands that start background processes, such
-as `--server` and `--schedule`), etc. You don't need to stop the runtime explicitly. `BQTestFactory` will take care
-of shutdown through JUnit lifecycle.
-
-`testFactory.app()` returns a builder that mimics the API of `Bootique` class, with a few test-related extensions. It
-allows to load extra modules, etc.
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docs/testing/MyTest.java[tag=TestAbc1]
+include::../../../../test/java/io/bootique/docs/testing/BQTestToolTest.java[tag=BQTestTool_global]
 ----
 
-If you don't need the runtime instance, but rather want to run a command, you'd call `run()` instead of
-`createRuntime()` (`run()` is an alias for `createRuntime().run()`):
+=== BQTestFactory Tool
+
+A very common test tool is `BQTestFactory`. It allows to create and run `BQRuntimes` on the fly inside test class
+methods, and as such is a more flexible alternative to `@BQApp` annotation:
+[source,java,indent=0]
+----
+include::../../../../test/java/io/bootique/docs/testing/MyTest.java[tag=TestFactory]
+----
+
+`BQTestFactory.app()` does roughly the same
+thing as `Bootique.app()`, with an important difference that all created runtimes will be automatically shut down at the
+end of the factory scope. E.g. in the following example `testFactory` would shut down any runtimes created in each
+test method right after that method finishes (since `testFactory` is an instance variable, the default scope is
+`TEST_METHOD`):
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docs/testing/MyTest.java[tag=TestAbc2]
+include::../../../../test/java/io/bootique/docs/testing/MyTest.java[tag=TestAbc]
 ----
+
+If you need the runtime instance to poke inside the app's DI container, you can call `createRuntime()` instead of
+`run()`:
+
+[source,java,indent=0]
+----
+include::../../../../test/java/io/bootique/docs/testing/MyTest.java[tag=TestXyz]
+----
+`BQRuntime` of course has its own `run()` method, so you can both inspect the runtime and run a command.
 
 === Common Test Scenarios
 
 Among the things that can be tested are runtime services with real dependencies, standard output of full Bootique
 applications (i.e. the stuff that would be printed to the console if this were a real app), network services using
-real network connections (e.g. your REST API's), and so on. Some examples are given below, outlining common techniques.
+real network connections (e.g. your REST API's), and so on. Some examples are given below, outlining the common
+techniques.
 
 ==== Testing Injectable Services
 
@@ -105,8 +169,7 @@ include::../../../../test/java/io/bootique/docs/testing/NetworkTest.java[tag=Tes
 
 ==== Testing Commands
 
-You can emulate a real app execution in a unit test, by running a command and then checking the values of the exist
-code and `stdin` and `stderr` contents:
+You can run the app in the test and check the values of the exit code and `stdin` and `stderr` contents:
 
 [source,java,indent=0]
 ----
