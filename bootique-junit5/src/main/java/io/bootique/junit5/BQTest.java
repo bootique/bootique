@@ -22,11 +22,7 @@ import io.bootique.junit5.handler.BQAppHandler;
 import io.bootique.junit5.handler.BQTestToolHandler;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * Registers Bootique Junit 5 extension that will manage emulated test apps in the annotated test class. Used in
@@ -36,7 +32,8 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@ExtendWith({BQAppHandler.class, BQTestToolHandler.class})
+// TODO: need TestToolHandler to be run before the AppHandler.. Is there a guarantee that the order here is followed?
+@ExtendWith({BQTestToolHandler.class, BQAppHandler.class})
 @Inherited
 public @interface BQTest {
 }
