@@ -10,6 +10,7 @@
 * #287 bootique-test-junit5: manage static BQRuntime fields 
 * #288 Ambiguous "Bootique.module(..)" methods
 * #289 "Bootique.extend(binder).addPostConfig()" extension for unit tests
+* #291 JUnit 5: Scope management with "@BQTestTool" annotation 
 
 ## 1.1
 
