@@ -16,9 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package io.bootique.junit5.handler;
+package io.bootique.junit5.handler.testtool;
 
 import io.bootique.junit5.BQTestTool;
+import io.bootique.junit5.handler.HandlerUtil;
 import org.junit.jupiter.api.extension.*;
 
 /**
@@ -65,7 +66,7 @@ public class BQTestToolHandler implements BeforeEachCallback, AfterEachCallback,
         // storing GlobalCallbacks (callbacks by Field) in the root context to be shared between test classes
         // storing CallbackRegistry in the class context to make sure the right fields are invoked for a given test
 
-        ExtensionContext classContext = getClassContext(context);
+        ExtensionContext classContext = HandlerUtil.getClassContext(context);
         ExtensionContext rootContext = classContext.getRoot();
         GlobalCallbacks globalCallbacks = (GlobalCallbacks) rootContext
                 .getStore(NAMESPACE)
@@ -78,7 +79,7 @@ public class BQTestToolHandler implements BeforeEachCallback, AfterEachCallback,
 
     protected CallbackRegistry getOrCreateClassCallbackRegistry(ExtensionContext context) {
         // storing in ClassExtensionContext
-        return (CallbackRegistry) getClassContext(context)
+        return (CallbackRegistry) HandlerUtil.getClassContext(context)
                 .getStore(NAMESPACE)
                 .getOrComputeIfAbsent(CLASS_CALLBACK_REGISTRY, s -> ClassCallbackRegistry.create(context));
     }
@@ -88,18 +89,5 @@ public class BQTestToolHandler implements BeforeEachCallback, AfterEachCallback,
         return (CallbackRegistry) context
                 .getStore(NAMESPACE)
                 .getOrComputeIfAbsent(METHOD_CALLBACK_REGISTRY, s -> MethodCallbackRegistry.create(context));
-    }
-
-    protected ExtensionContext getClassContext(ExtensionContext context) {
-        if (context == null) {
-            throw new RuntimeException("Can't find org.junit.jupiter.engine.descriptor.ClassExtensionContext in the context hierarchy");
-        }
-
-        // access non-public class
-        if (context.getClass().getName().equals("org.junit.jupiter.engine.descriptor.ClassExtensionContext")) {
-            return context;
-        }
-
-        return getClassContext(context.getParent().orElse(null));
     }
 }

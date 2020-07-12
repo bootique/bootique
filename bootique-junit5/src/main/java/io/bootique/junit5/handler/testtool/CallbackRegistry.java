@@ -16,10 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package io.bootique.junit5.handler;
+package io.bootique.junit5.handler.testtool;
 
 import org.junit.jupiter.api.extension.*;
-import org.junit.platform.commons.util.Preconditions;
 
 import java.lang.reflect.Field;
 import java.util.LinkedHashSet;
@@ -36,17 +35,6 @@ public abstract class CallbackRegistry {
 
     public abstract boolean supportedCallback(Field callbackField);
 
-    protected static Object resolveInstance(Object testInstance, Field f) {
-        f.setAccessible(true);
-        Object instance;
-        try {
-            instance = f.get(testInstance);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException("Error reading runtime field", e);
-        }
-        Preconditions.notNull(instance, () -> "Test tool instance '" + f.getName() + "' must be initialized explicitly");
-        return instance;
-    }
 
     protected <T> LinkedHashSet<T> addToCallbacks(LinkedHashSet<T> set, T instance) {
         if (set == null) {

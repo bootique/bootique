@@ -16,16 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package io.bootique.junit5.handler;
+package io.bootique.junit5.handler.testtool;
 
 import io.bootique.junit5.BQTestScope;
 import io.bootique.junit5.BQTestTool;
+import io.bootique.junit5.handler.HandlerUtil;
 import io.bootique.junit5.scope.BQAfterMethodCallback;
 import io.bootique.junit5.scope.BQAfterScopeCallback;
 import io.bootique.junit5.scope.BQBeforeMethodCallback;
 import io.bootique.junit5.scope.BQBeforeScopeCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.platform.commons.JUnitException;
 import org.junit.platform.commons.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
@@ -34,18 +34,19 @@ import java.util.function.Predicate;
 /**
  * @since 2.0
  */
-public class ClassCallbackRegistry extends CallbackRegistry {
+public class MethodCallbackRegistry extends CallbackRegistry {
 
-    public static ClassCallbackRegistry create(ExtensionContext context) {
+    public static MethodCallbackRegistry create(ExtensionContext context) {
 
-        ClassCallbackRegistry registry = new ClassCallbackRegistry();
+        MethodCallbackRegistry registry = new MethodCallbackRegistry();
 
         Class<?> testType = context.getRequiredTestClass();
+        Object testInstance = context.getRequiredTestInstance();
         Predicate<Field> predicate = f -> registry.supportedCallback(f);
 
         ReflectionUtils
                 .findFields(testType, predicate, ReflectionUtils.HierarchyTraversalMode.TOP_DOWN)
-                .forEach(f -> registry.add(resolveInstance(null, f)));
+                .forEach(f -> registry.add(HandlerUtil.resolveInstance(testInstance, f)));
 
         return registry;
     }
@@ -57,40 +58,32 @@ public class ClassCallbackRegistry extends CallbackRegistry {
             return false;
         }
 
-        boolean isStatic = ReflectionUtils.isStatic(callbackField);
-
         switch (a.value()) {
-            case TEST_CLASS:
-                if (!isStatic) {
-                    throw new JUnitException("@BQTestTool field '"
-                            + callbackField.getDeclaringClass().getName() + "." + callbackField.getName()
-                            + "' must be static to be used in TEST_CLASS scope");
-                }
+            case TEST_METHOD:
                 return true;
             case IMPLIED:
-                // static fields with no explicit scope should be treated as TEST_CLASS
-                return isStatic;
+                // instance fields with no explicit scope should be treated as TEST_CLASS
+                return !ReflectionUtils.isStatic(callbackField);
             default:
                 return false;
         }
     }
 
     protected void add(Object callback) {
-
         if (callback instanceof BQBeforeScopeCallback) {
-            this.beforeAll = addToCallbacks(beforeAll, c -> ((BQBeforeScopeCallback) callback).beforeScope(BQTestScope.TEST_CLASS, c));
+            this.beforeEach = addToCallbacks(beforeEach, c -> ((BQBeforeScopeCallback) callback).beforeScope(BQTestScope.TEST_METHOD, c));
         }
 
         if (callback instanceof BQBeforeMethodCallback) {
-            this.beforeEach = addToCallbacks(beforeEach, c -> ((BQBeforeMethodCallback) callback).beforeMethod(BQTestScope.TEST_CLASS, c));
+            this.beforeEach = addToCallbacks(beforeEach, c -> ((BQBeforeMethodCallback) callback).beforeMethod(BQTestScope.TEST_METHOD, c));
         }
 
         if (callback instanceof BQAfterMethodCallback) {
-            this.afterEach = addToCallbacks(afterEach, c -> ((BQAfterMethodCallback) callback).afterMethod(BQTestScope.TEST_CLASS, c));
+            this.afterEach = addToCallbacks(afterEach, c -> ((BQAfterMethodCallback) callback).afterMethod(BQTestScope.TEST_METHOD, c));
         }
 
         if (callback instanceof BQAfterScopeCallback) {
-            this.afterAll = addToCallbacks(afterAll, c -> ((BQAfterScopeCallback) callback).afterScope(BQTestScope.TEST_CLASS, c));
+            this.afterEach = addToCallbacks(afterEach, c -> ((BQAfterScopeCallback) callback).afterScope(BQTestScope.TEST_METHOD, c));
         }
     }
 }

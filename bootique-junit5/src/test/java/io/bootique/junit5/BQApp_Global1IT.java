@@ -18,31 +18,12 @@
  */
 package io.bootique.junit5;
 
-/**
- * Defines scopes of Bootique test tools within JUnit 5 test execution.
- *
- * @since 2.0
- */
-public enum BQTestScope {
+import org.junit.jupiter.api.Test;
 
-    /**
-     * A scope that spans the entire JUnit run, that may include multiple test classes.
-     */
-    GLOBAL,
+public class BQApp_Global1IT extends BQApp_Global_Base {
 
-    /**
-     * A scope that spans a single test class.
-     */
-    TEST_CLASS,
-
-    /**
-     * A scope that spans a single test method.
-     */
-    TEST_METHOD,
-
-    /**
-     * An implied scope based on whether the tool field is declared as a static or an instance variable. Static
-     * corresponds to {@link #TEST_CLASS} scope, while instance - to {@link #TEST_METHOD}.
-     */
-    IMPLIED;
+    @Test
+    public void test1() {
+        assertState();
+    }
 }

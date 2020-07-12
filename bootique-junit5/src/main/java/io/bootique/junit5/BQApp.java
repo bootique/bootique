@@ -34,6 +34,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface BQApp {
 
+    BQTestScope value() default BQTestScope.IMPLIED;
+
     /**
      * If true, skips starting up the app. {@link io.bootique.BQRuntime} will still be shutdown at the end of
      * the test cycle to clean up any resources.

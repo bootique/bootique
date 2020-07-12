@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package io.bootique.junit5.handler;
+package io.bootique.junit5.handler.testtool;
 
 import io.bootique.junit5.BQTestScope;
 import io.bootique.junit5.scope.BQBeforeScopeCallback;

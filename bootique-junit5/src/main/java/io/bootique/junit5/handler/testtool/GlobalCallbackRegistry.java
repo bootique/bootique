@@ -16,10 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package io.bootique.junit5.handler;
+package io.bootique.junit5.handler.testtool;
 
 import io.bootique.junit5.BQTestScope;
 import io.bootique.junit5.BQTestTool;
+import io.bootique.junit5.handler.HandlerUtil;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.platform.commons.JUnitException;
 import org.junit.platform.commons.util.ReflectionUtils;
@@ -86,6 +87,6 @@ public class GlobalCallbackRegistry extends CallbackRegistry {
     }
 
     protected Callback callback(Field field) {
-        return Callback.create(resolveInstance(null, field));
+        return Callback.create(HandlerUtil.resolveInstance(null, field));
     }
 }

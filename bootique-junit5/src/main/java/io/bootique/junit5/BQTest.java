@@ -18,8 +18,8 @@
  */
 package io.bootique.junit5;
 
-import io.bootique.junit5.handler.BQAppHandler;
-import io.bootique.junit5.handler.BQTestToolHandler;
+import io.bootique.junit5.handler.app.BQAppHandler;
+import io.bootique.junit5.handler.testtool.BQTestToolHandler;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.lang.annotation.*;
