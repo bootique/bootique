@@ -36,42 +36,42 @@ public class BQAppHandler implements BeforeAllCallback, BeforeEachCallback, Afte
 
     @Override
     public void beforeAll(ExtensionContext context) {
-        getOrCreateGlobalAppRegistry(context);
-        getOrCreateClassAppRegistry(context);
+        getOrCreateGlobalAppRegistry(context).beforeContext(context);
+        getOrCreateClassAppRegistry(context).beforeContext(context);
     }
 
     @Override
     public void beforeEach(ExtensionContext context) {
-        getOrCreateMethodAppRegistry(context);
+        getOrCreateMethodAppRegistry(context).beforeContext(context);
     }
 
     @Override
     public void afterEach(ExtensionContext context) {
-        getOrCreateMethodAppRegistry(context).shutdown();
+        getOrCreateMethodAppRegistry(context).afterContext();
     }
 
     @Override
     public void afterAll(ExtensionContext context) {
         // Only invoking per-class callbacks. Don't bother with GLOBAL callbacks. GLOBALs are shutdown elsewhere by
         // implementing ExtensionContext.Store.CloseableResource
-        getOrCreateClassAppRegistry(context).shutdown();
+        getOrCreateClassAppRegistry(context).afterContext();
     }
 
     protected BQAppRegistry getOrCreateGlobalAppRegistry(ExtensionContext context) {
         return (BQAppRegistry) context.getRoot()
                 .getStore(NAMESPACE)
-                .getOrComputeIfAbsent(GLOBAL_REGISTRY, s -> GlobalAppRegistry.create(context).start());
+                .getOrComputeIfAbsent(GLOBAL_REGISTRY, s -> new GlobalAppRegistry());
     }
 
     protected BQAppRegistry getOrCreateClassAppRegistry(ExtensionContext context) {
         return (BQAppRegistry) HandlerUtil.getClassContext(context)
                 .getStore(NAMESPACE)
-                .getOrComputeIfAbsent(CLASS_REGISTRY, s -> ClassAppRegistry.create(context).start());
+                .getOrComputeIfAbsent(CLASS_REGISTRY, s -> new ClassAppRegistry());
     }
 
     protected BQAppRegistry getOrCreateMethodAppRegistry(ExtensionContext context) {
         return (BQAppRegistry) context
                 .getStore(NAMESPACE)
-                .getOrComputeIfAbsent(METHOD_REGISTRY, s -> MethodAppRegistry.create(context).start());
+                .getOrComputeIfAbsent(METHOD_REGISTRY, s -> new MethodAppRegistry());
     }
 }

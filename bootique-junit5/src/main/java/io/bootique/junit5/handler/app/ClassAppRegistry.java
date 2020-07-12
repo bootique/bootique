@@ -25,29 +25,21 @@ import org.junit.platform.commons.JUnitException;
 import org.junit.platform.commons.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
-import java.util.function.Predicate;
 
 /**
  * @since 2.0
  */
 public class ClassAppRegistry extends BQAppRegistry {
 
-    public static ClassAppRegistry create(ExtensionContext context) {
-
-        ClassAppRegistry registry = new ClassAppRegistry();
-
+    @Override
+    public void beforeContext(ExtensionContext context) {
         Class<?> testType = context.getRequiredTestClass();
-        Predicate<Field> predicate = f -> registry.supportsApp(f);
-
         ReflectionUtils
-                .findFields(testType, predicate, ReflectionUtils.HierarchyTraversalMode.TOP_DOWN)
-                .forEach(f -> registry.addRuntime(null, f));
-
-        return registry;
+                .findFields(testType, this::supportsApp, ReflectionUtils.HierarchyTraversalMode.TOP_DOWN)
+                .forEach(f -> onAppFieldFound(null, f));
     }
 
-    @Override
-    public boolean supportsApp(Field appField) {
+    protected boolean supportsApp(Field appField) {
 
         BQApp a = appField.getAnnotation(BQApp.class);
         if (a == null) {

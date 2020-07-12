@@ -28,14 +28,16 @@ import io.bootique.di.BQModule;
 import io.bootique.di.Binder;
 import io.bootique.di.Provides;
 import io.bootique.shutdown.ShutdownManager;
+import org.junit.jupiter.api.Test;
 
 import javax.inject.Singleton;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+// not inheriting from BQApp_Global_Base to see if unrelated classes can coexist in a single test runner
 @BQTest
-public class BQApp_Global_Base {
+public class BQApp_Global3IT {
 
     @BQApp(BQTestScope.GLOBAL)
     protected static final BQRuntime globalApp = Bootique
@@ -44,7 +46,8 @@ public class BQApp_Global_Base {
             .module(new TestModule())
             .createRuntime();
 
-    protected void assertState() {
+    @Test
+    public void test1() {
         globalApp.getInstance(DaemonCommand.class).assertStarted();
         globalApp.getInstance(DaemonCommand.class).assertNotStopped();
     }
@@ -76,7 +79,7 @@ public class BQApp_Global_Base {
         }
 
         public void assertStarted() {
-            assertTrue(started);
+            assertTrue(started, "Runtime is not started");
         }
 
         public void assertNotStopped() {

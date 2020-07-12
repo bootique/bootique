@@ -11,6 +11,7 @@
 * #288 Ambiguous "Bootique.module(..)" methods
 * #289 "Bootique.extend(binder).addPostConfig()" extension for unit tests
 * #291 JUnit 5: Scope management with "@BQTestTool" annotation 
+* #293 @BQApp must support the same lifecycles as @BQTestTool
 
 ## 1.1
 

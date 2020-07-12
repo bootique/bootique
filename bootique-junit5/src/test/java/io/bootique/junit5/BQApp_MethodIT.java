@@ -28,25 +28,48 @@ import io.bootique.di.BQModule;
 import io.bootique.di.Binder;
 import io.bootique.di.Provides;
 import io.bootique.shutdown.ShutdownManager;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.AfterEachCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
 import javax.inject.Singleton;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @BQTest
-public class BQApp_Global_Base {
+public class BQApp_MethodIT implements AfterEachCallback {
 
-    @BQApp(BQTestScope.GLOBAL)
-    protected static final BQRuntime globalApp = Bootique
+    @BQApp
+    protected final BQRuntime methodApp = Bootique
             .app("--daemon")
             .autoLoadModules()
             .module(new TestModule())
             .createRuntime();
 
-    protected void assertState() {
-        globalApp.getInstance(DaemonCommand.class).assertStarted();
-        globalApp.getInstance(DaemonCommand.class).assertNotStopped();
+    @Override
+    public void afterEach(ExtensionContext context) {
+        methodApp.getInstance(DaemonCommand.class).assertStarted();
+        methodApp.getInstance(DaemonCommand.class).assertStopped();
+    }
+
+    @Test
+    public void test1() {
+        methodApp.getInstance(DaemonCommand.class).assertStarted();
+        methodApp.getInstance(DaemonCommand.class).assertNotStopped();
+    }
+
+    @Test
+    public void test2() {
+        methodApp.getInstance(DaemonCommand.class).assertStarted();
+        methodApp.getInstance(DaemonCommand.class).assertNotStopped();
+    }
+
+    @RepeatedTest(3)
+    public void testRepeated() {
+        methodApp.getInstance(DaemonCommand.class).assertStarted();
+        methodApp.getInstance(DaemonCommand.class).assertNotStopped();
     }
 
     static class TestModule implements BQModule {
@@ -69,6 +92,7 @@ public class BQApp_Global_Base {
 
         private boolean started;
         private boolean stopped;
+        private AtomicInteger counter = new AtomicInteger();
 
         @Override
         public void close() {
@@ -76,16 +100,22 @@ public class BQApp_Global_Base {
         }
 
         public void assertStarted() {
-            assertTrue(started);
+            assertTrue(started, "Runtime is not started");
+            assertEquals(1, counter.get(), "Runtime started more than once: " + counter.get());
         }
 
         public void assertNotStopped() {
             assertFalse(stopped, "Runtime should not have been shut down");
         }
 
+        public void assertStopped() {
+            assertTrue(stopped, "Runtime should have been shut down");
+        }
+
         @Override
         public CommandOutcome run(Cli cli) {
             started = true;
+            counter.getAndIncrement();
             return CommandOutcome.succeededAndForkedToBackground();
         }
     }

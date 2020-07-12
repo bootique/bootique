@@ -19,59 +19,41 @@
 package io.bootique.junit5.handler.app;
 
 import io.bootique.BQRuntime;
-import io.bootique.command.CommandOutcome;
 import io.bootique.junit5.BQApp;
 import io.bootique.junit5.handler.HandlerUtil;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.platform.commons.util.Preconditions;
 
 import java.lang.reflect.Field;
-import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
 
 /**
  * @since 2.0
  */
 public abstract class BQAppRegistry {
 
-    private LinkedHashSet<ManagedTestRuntime> runtimes;
+    private LinkedHashMap<Field, ManagedTestRuntime> runtimes;
 
     public BQAppRegistry() {
-        this.runtimes = new LinkedHashSet<>();
+        this.runtimes = new LinkedHashMap<>();
     }
 
-    protected static ManagedTestRuntime createManagedRuntime(Object testInstance, Field field) {
+    protected ManagedTestRuntime createManagedRuntime(Object testInstance, Field field) {
         BQRuntime runtime = (BQRuntime) HandlerUtil.resolveInstance(testInstance, field);
         Preconditions.notNull(runtime, () -> "Runtime instance '" + field.getName() + "' must be initialized explicitly");
         return new ManagedTestRuntime(runtime, field.getName(), field.getAnnotation(BQApp.class));
     }
 
-    public abstract boolean supportsApp(Field appField);
+    public abstract void beforeContext(ExtensionContext context);
 
-    public void addRuntime(Object testInstance, Field field) {
-        runtimes.add(createManagedRuntime(testInstance, field));
-    }
-
-    public BQAppRegistry start() {
-        runtimes.forEach(this::start);
-        return this;
-    }
-
-    protected void start(ManagedTestRuntime runtime) {
-        if (!runtime.skipRun()) {
-            CommandOutcome out = runtime.run();
-            Assertions.assertTrue(out.isSuccess(), () -> "Runtime '" + runtime.getName() + " failed to start: " + out);
-        }
-
-        if (runtime.immediateShutdown()) {
-            // TODO: should we warn of quick shutdown of daemon apps? Or apps that were not run?
-            runtime.shutdown();
-        }
-    }
-
-    public void shutdown() {
-        runtimes.stream()
+    public void afterContext() {
+        runtimes.values().stream()
                 // skip runtimes that were already shutdown
                 .filter(r -> !r.immediateShutdown())
                 .forEach(ManagedTestRuntime::shutdown);
+    }
+
+    protected void onAppFieldFound(Object testInstance, Field field) {
+        runtimes.computeIfAbsent(field, f -> createManagedRuntime(testInstance, f).startIfNeeded());
     }
 }

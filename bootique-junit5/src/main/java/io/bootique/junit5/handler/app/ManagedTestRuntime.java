@@ -21,6 +21,7 @@ package io.bootique.junit5.handler.app;
 import io.bootique.BQRuntime;
 import io.bootique.command.CommandOutcome;
 import io.bootique.junit5.BQApp;
+import org.junit.jupiter.api.Assertions;
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
 
@@ -46,17 +47,27 @@ public class ManagedTestRuntime {
         return config.immediateShutdown();
     }
 
-    public boolean skipRun() {
-        return config.skipRun();
-    }
-
     public String getName() {
         return name;
     }
 
-    public CommandOutcome run() {
+    public ManagedTestRuntime startIfNeeded() {
+        if (!config.skipRun()) {
+            run();
+        }
+
+        if (immediateShutdown()) {
+            // TODO: should we warn of quick shutdown of daemon apps? Or apps that were not run?
+            this.shutdown();
+        }
+
+        return this;
+    }
+
+    public void run() {
         LOGGER.debug(() -> "Starting Bootique runtime '" + name + "'...");
-        return runtime.run();
+        CommandOutcome result = runtime.run();
+        Assertions.assertTrue(result.isSuccess(), () -> "Runtime '" + getName() + " failed to start: " + result);
     }
 
     public void shutdown() {
