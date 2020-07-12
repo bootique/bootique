@@ -35,8 +35,12 @@ public abstract class HandlerUtil {
             instance = f.get(testInstance);
         } catch (IllegalAccessException e) {
             throw new RuntimeException("Error reading runtime field", e);
+        } catch (Throwable e) {
+            throw new RuntimeException("Error during field initialization", e);
         }
-        Preconditions.notNull(instance, () -> "Test instance '" + f.getName() + "' must be initialized explicitly");
+
+        Preconditions.notNull(instance, () -> "Test instance '" + f.getName()
+                + "' is null. It must be initialized explicitly");
         return instance;
     }
 

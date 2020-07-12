@@ -20,7 +20,6 @@ package io.bootique.junit5.handler.testtool;
 
 import io.bootique.junit5.BQTestScope;
 import io.bootique.junit5.BQTestTool;
-import io.bootique.junit5.handler.HandlerUtil;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.platform.commons.JUnitException;
 import org.junit.platform.commons.util.ReflectionUtils;
@@ -42,7 +41,9 @@ public class GlobalCallbackRegistry extends CallbackRegistry {
 
         ReflectionUtils
                 .findFields(testType, predicate, ReflectionUtils.HierarchyTraversalMode.TOP_DOWN)
-                .forEach(f -> registry.add(f, globalCallbacks));
+                .stream()
+                .map(globalCallbacks::computeIfAbsent)
+                .forEach(registry::add);
 
         return registry;
     }
@@ -67,8 +68,7 @@ public class GlobalCallbackRegistry extends CallbackRegistry {
         return true;
     }
 
-    protected void add(Field f, GlobalCallbacks globalCallbacks) {
-        Callback callback = globalCallbacks.computeIfAbsent(f, this::callback);
+    protected void add(Callback callback) {
 
         if (callback.getBeforeAll() != null) {
             beforeAll = addToCallbacks(beforeAll, callback.getBeforeAll());
@@ -84,9 +84,5 @@ public class GlobalCallbackRegistry extends CallbackRegistry {
 
         // don't bother with "afterAll". When it is called on a class, we don't know whether this is the last class
         // in the test scope or not...
-    }
-
-    protected Callback callback(Field field) {
-        return Callback.create(HandlerUtil.resolveInstance(null, field));
     }
 }

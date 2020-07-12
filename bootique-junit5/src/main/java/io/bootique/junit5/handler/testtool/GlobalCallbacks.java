@@ -18,6 +18,7 @@
  */
 package io.bootique.junit5.handler.testtool;
 
+import io.bootique.junit5.handler.HandlerUtil;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 import java.lang.reflect.Field;
@@ -37,6 +38,10 @@ public class GlobalCallbacks implements ExtensionContext.Store.CloseableResource
     public GlobalCallbacks(ExtensionContext closingContext) {
         callbacks = new ConcurrentHashMap<>();
         this.closingContext = Objects.requireNonNull(closingContext);
+    }
+
+    public Callback computeIfAbsent(Field f) {
+        return computeIfAbsent(f, ff -> Callback.create(HandlerUtil.resolveInstance(null, ff)));
     }
 
     public Callback computeIfAbsent(Field f, Function<Field, Callback> callbackCalc) {
