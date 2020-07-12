@@ -23,7 +23,6 @@ import io.bootique.command.CommandOutcome;
 import io.bootique.junit5.BQApp;
 import io.bootique.junit5.handler.HandlerUtil;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.platform.commons.util.Preconditions;
 
 import java.lang.reflect.Field;
@@ -32,7 +31,7 @@ import java.util.LinkedHashSet;
 /**
  * @since 2.0
  */
-public abstract class BQAppRegistry implements ExtensionContext.Store.CloseableResource {
+public abstract class BQAppRegistry {
 
     private LinkedHashSet<ManagedTestRuntime> runtimes;
 
@@ -69,8 +68,7 @@ public abstract class BQAppRegistry implements ExtensionContext.Store.CloseableR
         }
     }
 
-    @Override
-    public void close() {
+    public void shutdown() {
         runtimes.stream()
                 // skip runtimes that were already shutdown
                 .filter(r -> !r.immediateShutdown())

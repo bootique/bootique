@@ -20,50 +20,57 @@ package io.bootique.junit5.handler.app;
 
 import io.bootique.junit5.BQApp;
 import io.bootique.junit5.handler.HandlerUtil;
-import org.junit.jupiter.api.extension.BeforeAllCallback;
-import org.junit.jupiter.api.extension.BeforeEachCallback;
-import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.*;
 
 /**
  * Starts runtimes annotated with {@link BQApp}, shuts them down at the end of their declared or implied scope.
  *
  * @since 2.0
  */
-public class BQAppHandler implements BeforeAllCallback, BeforeEachCallback {
+public class BQAppHandler implements BeforeAllCallback, BeforeEachCallback, AfterEachCallback, AfterAllCallback {
 
     private static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(BQAppHandler.class);
     private static final String GLOBAL_REGISTRY = "globalRegistry";
     private static final String CLASS_REGISTRY = "classRegistry";
     private static final String METHOD_REGISTRY = "methodRegistry";
 
-    // "before" methods would init the registries, start the apps and store the registries in a configured scope.
-    // JUnit stores will shut down the registries at the end of the scope, so no need for "after" methods
-
     @Override
     public void beforeAll(ExtensionContext context) {
-        initGlobalAppRegistryIfNeeded(context);
-        initClassAppRegistryIfNeeded(context);
+        getOrCreateGlobalAppRegistry(context);
+        getOrCreateClassAppRegistry(context);
     }
 
     @Override
     public void beforeEach(ExtensionContext context) {
-        initMethodAppRegistryIfNeeded(context);
+        getOrCreateMethodAppRegistry(context);
     }
 
-    protected void initGlobalAppRegistryIfNeeded(ExtensionContext context) {
-        context.getRoot()
+    @Override
+    public void afterEach(ExtensionContext context) {
+        getOrCreateMethodAppRegistry(context).shutdown();
+    }
+
+    @Override
+    public void afterAll(ExtensionContext context) {
+        // Only invoking per-class callbacks. Don't bother with GLOBAL callbacks. GLOBALs are shutdown elsewhere by
+        // implementing ExtensionContext.Store.CloseableResource
+        getOrCreateClassAppRegistry(context).shutdown();
+    }
+
+    protected BQAppRegistry getOrCreateGlobalAppRegistry(ExtensionContext context) {
+        return (BQAppRegistry) context.getRoot()
                 .getStore(NAMESPACE)
                 .getOrComputeIfAbsent(GLOBAL_REGISTRY, s -> GlobalAppRegistry.create(context).start());
     }
 
-    protected void initClassAppRegistryIfNeeded(ExtensionContext context) {
-        HandlerUtil.getClassContext(context)
+    protected BQAppRegistry getOrCreateClassAppRegistry(ExtensionContext context) {
+        return (BQAppRegistry) HandlerUtil.getClassContext(context)
                 .getStore(NAMESPACE)
                 .getOrComputeIfAbsent(CLASS_REGISTRY, s -> ClassAppRegistry.create(context).start());
     }
 
-    protected void initMethodAppRegistryIfNeeded(ExtensionContext context) {
-        context
+    protected BQAppRegistry getOrCreateMethodAppRegistry(ExtensionContext context) {
+        return (BQAppRegistry) context
                 .getStore(NAMESPACE)
                 .getOrComputeIfAbsent(METHOD_REGISTRY, s -> MethodAppRegistry.create(context).start());
     }
