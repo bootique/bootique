@@ -118,6 +118,9 @@ swaggerui:
 was upgraded to support OpenAPI spec 3.0 (instead of the legacy Swagger 2.0). If you were using Swagger annotations,
 you will need to migrate from "io.swagger:swagger-annotations" to "io.swagger.core.v3:swagger-annotations".
 
+* [bootique-curator #17](https://github.com/bootique/bootique-curator/issues/17): With Curator dependency upgrade, 
+`bootique-curator` now supports Zookeeper 3.5 or newer.
+
 ## 1.1
 
 * [bootique #266](https://github.com/bootique/bootique/issues/266): To improve Java 11 compatibility, Bootique core
