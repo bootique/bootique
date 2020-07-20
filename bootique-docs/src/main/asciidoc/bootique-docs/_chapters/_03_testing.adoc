@@ -77,7 +77,8 @@ include::../../../../test/java/io/bootique/docs/testing/BQAppNoRunTest.java[tag=
 === Test Tools and Scopes
 
 Bootique provides a number of test tools that help you customize the apps for the test environment
-(e.g. `DbTester` tool from `bootique-jdbc` starts a test database and supplies a "module" to the app with DataSource
+(e.g. `TcDbTester` tool from `bootique-jdbc-junit5-testcontainers` starts a test database and supplies a "module" to
+the app with DataSource
 configuration to access that DB; `JettyTester` from `bootique-jetty` configures HTTP connector to listen on a random
 unoccupied port and provides a Java client to send requests to the server, etc.).
 
