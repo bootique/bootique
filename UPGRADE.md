@@ -96,6 +96,9 @@ lowered from 1024 to 200. If you relied on this default value you should now set
 a "top-level" project and was merged to `bootique-jersey`. There's no code changes, but the module coordinates have changed.
 Instead of `io.bootique.jersey.client:bootique-jersey-client` you will need to import `io.bootique.jersey:bootique-jersey-client`.
 
+* [bootique-rabbitmq #1](https://github.com/bootique/bootique-rabbitmq/issues/1): `bootique-rabitmq-client` artifact 
+"group" changed from `io.bootique.rabbitmq.client` to `io.bootique.rabbitmq`. Adjust your build scripts accordingly.
+
 * [bootique-swagger #18](https://github.com/bootique/bootique-swagger/issues/18): The default URL of the Swagger UI 
 has changed from "/swagger" to "/swagger-ui". You'll need to either start using the new URL, or change it via configuration
 property `swaggerui.<label>.uiPath`.
