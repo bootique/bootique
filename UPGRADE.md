@@ -99,10 +99,14 @@ Instead of `io.bootique.jersey.client:bootique-jersey-client` you will need to i
 * [bootique-rabbitmq #1](https://github.com/bootique/bootique-rabbitmq/issues/1): `bootique-rabitmq-client` artifact 
 "group" changed from `io.bootique.rabbitmq.client` to `io.bootique.rabbitmq`. Adjust your build scripts accordingly.
 
-* [bootique-rabbitmq #2](https://github.com/bootique/bootique-rabbitmq/issues/2): `ChannelFactory` was moved to 
-`io.bootique.rabbitmq.client` package. Adjust your imports accordingly. Do not inject `ConnectionFactory`. 
-ChannelFactory API that previously required a `Connection` argument is deprecated. Replace it with the new methods 
-that take connection name String.
+* [bootique-rabbitmq #2](https://github.com/bootique/bootique-rabbitmq/issues/2): There was a deep configuration system
+refactoring:
+
+  * `ChannelFactory` was moved to `io.bootique.rabbitmq.client` package. Adjust your imports accordingly.
+  * `ConnectionFactory` was renamed to `ChannelManager` and is no longer injectable. You will rarely need to access it
+  directly, but if you do, you can retrieve it from `ChannelFactory`
+  * `ChannelFactory` methods no longer require a `Connection` parameter. Pass the connection *name* instead. The old
+  methods are still around, but are deprecated.
 
 * [bootique-swagger #18](https://github.com/bootique/bootique-swagger/issues/18): The default URL of the Swagger UI 
 has changed from "/swagger" to "/swagger-ui". You'll need to either start using the new URL, or change it via configuration
