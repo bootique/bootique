@@ -22,6 +22,9 @@ Now let's package our app as a runnable "fat" jar to be able to run it from comm
 Assembling "fat" jar requires a bit of configuration of the Maven `maven-shade-plugin`.
 To simplify it, you can set a parent of your `pom.xml` to be a standard Bootique parent:
 
+.Maven
+[%collapsible%open]
+====
 [source,xml,subs="attributes+"]
 ----
 <parent>
@@ -30,9 +33,24 @@ To simplify it, you can set a parent of your `pom.xml` to be a standard Bootique
     <version>{bootique_parent_version}</version>
 </parent>
 ----
+====
+
+For gradle you can set the parent of your `settings.gradle`
+
+.Gradle
+[%collapsible]
+====
+[source,groovy]
+----
+include 'io.bootique.parent:bootique-parent{bootique_parent_version}'
+----
+====
 
 Other required `pom.xml` additions:
 
+.Maven
+[%collapsible%open]
+====
 [source,xml]
 ----
 <properties>
@@ -51,6 +69,16 @@ Other required `pom.xml` additions:
     </plugins>
 </build>
 ----
+====
+
+.Gradle
+[%collapsible]
+====
+[source,groovy]
+----
+mainClassName = 'io.bootique.test.Application'
+----
+====
 
 Once this is setup you can build and run the app:
 

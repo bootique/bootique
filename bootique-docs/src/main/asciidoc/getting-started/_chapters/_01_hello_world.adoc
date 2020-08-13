@@ -20,6 +20,9 @@ The goal of this chapter is to write a simple REST app using Bootique.
 Let's start with a new Java Maven project created in your favorite IDE.
 Your `pom.xml` in addition to the required project information tags will need to declare a few BOM ("Bill of Material") imports in the `&lt;dependencyManagement/&gt;` section:
 
+.Maven
+[%collapsible%open]
+====
 [source,xml,subs="attributes+"]
 ----
 <dependencyManagement>
@@ -34,10 +37,25 @@ Your `pom.xml` in addition to the required project information tags will need to
   </dependencies>
 </dependencyManagement>
 ----
+====
+
+.Gradle
+[%collapsible]
+====
+[source,groovy,subs="attributes"]
+----
+dependencies {
+    implementation platform('io.bootique.bom:bootique-bom:{bootique_version}')
+}
+----
+====
 
 This will allow `<dependencies/>` section that will follow shortly to include various Bootique modules and not worry about their individual versions.
 So let's create this section and import a few modules:
 
+.Maven
+[%collapsible%open]
+====
 [source,xml]
 ----
 <dependencies>
@@ -53,6 +71,19 @@ So let's create this section and import a few modules:
   </dependency>
 </dependencies>
 ----
+====
+
+.Gradle
+[%collapsible]
+====
+[source,groovy]
+----
+dependencies {
+    implementation 'io.bootique.jersey:bootique-jersey:compile'
+    implementation 'io.bootique.logback:bootique-logback:compile'
+}
+----
+====
 
 As you see we want a `bootique-jersey` and `bootique-logback` modules in our app.
 Those may depend on other modules, but we don't have to think about it.
