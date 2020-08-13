@@ -32,6 +32,10 @@ This chapter is about the core test framework. For module-specific test APIs (e.
 described here.
 
 To start using Bootique test extensions, import the following module in the "test" scope:
+
+.Maven
+[%collapsible%open]
+====
 [source,xml]
 ----
 <dependency>
@@ -40,6 +44,18 @@ To start using Bootique test extensions, import the following module in the "tes
     <scope>test</scope>
 </dependency>
 ----
+====
+
+.Gradle
+[%collapsible]
+====
+[source,groovy]
+----
+{
+  testImplementation: 'io.bootique:bootique-junit5:test'
+}
+----
+====
 
 Each test class using Bootique extensions must be annotated with `@BQTest`:
 
