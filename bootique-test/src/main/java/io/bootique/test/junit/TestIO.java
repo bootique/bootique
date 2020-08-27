@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package io.bootique.junit5;
+package io.bootique.test.junit;
 
 import io.bootique.log.BootLogger;
 import io.bootique.log.DefaultBootLogger;
@@ -25,7 +25,7 @@ import io.bootique.log.DefaultBootLogger;
 /**
  * Encapsulates tested process STDIN and STDERR streams.
  *
- * @since 2.0
+ * @since 0.23
  */
 public class TestIO {
 

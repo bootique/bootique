@@ -40,7 +40,7 @@
         <!-- Compile dependencies -->
         <dependency>
             <groupId>io.bootique</groupId>
-            <artifactId>bootique-junit5</artifactId>
+            <artifactId>bootique</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

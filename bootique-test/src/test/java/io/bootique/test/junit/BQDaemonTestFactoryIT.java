@@ -19,8 +19,6 @@
 
 package io.bootique.test.junit;
 
-import javax.inject.Inject;
-
 import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
 import io.bootique.BootiqueException;
@@ -29,9 +27,10 @@ import io.bootique.command.CommandOutcome;
 import io.bootique.command.CommandWithMetadata;
 import io.bootique.log.BootLogger;
 import io.bootique.meta.application.CommandMetadata;
-import io.bootique.junit5.TestIO;
 import org.junit.Rule;
 import org.junit.Test;
+
+import javax.inject.Inject;
 
 import static org.junit.Assert.*;
 

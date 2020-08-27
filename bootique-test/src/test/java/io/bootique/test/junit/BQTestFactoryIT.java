@@ -26,7 +26,6 @@ import io.bootique.cli.Cli;
 import io.bootique.command.CommandOutcome;
 import io.bootique.command.CommandWithMetadata;
 import io.bootique.config.ConfigurationFactory;
-import io.bootique.junit5.TestIO;
 import io.bootique.log.BootLogger;
 import io.bootique.meta.application.CommandMetadata;
 import org.junit.Rule;
