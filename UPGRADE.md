@@ -20,7 +20,7 @@
 
 # UPGRADE INSTRUCTIONS
 
-## 2.0 
+## 2.0.M1 
 
 * [bootique #269](https://github.com/bootique/bootique/issues/269) Upgrade from Guice DI to "bootique-di". That's the BIG one! 
 The core of Bootique - its dependency injection engine - was switched over from Google Guice to a faster, lighter 

@@ -1,4 +1,4 @@
-## 2.0
+## 2.0.M1
 
 * #267 Support specifying config key for "-H"
 * #269 Migrate from Guice to Bootique DI
