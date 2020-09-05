@@ -49,6 +49,17 @@ public class Bootique_ConfigurationIT {
     }
 
     @Test
+    public void testConfigBoundToString() {
+        BQRuntime runtime = testFactory
+                .app()
+                .module(b -> BQCoreModule.extend(b).setProperty("bq.x", "val"))
+                .createRuntime();
+
+        String val = runtime.getInstance(ConfigurationFactory.class).config(String.class, "x");
+        assertEquals("val", val);
+    }
+
+    @Test
     public void testCombineConfigAndEmptyConfig() {
         BQRuntime runtime = testFactory
                 .app("--config=classpath:io/bootique/test1.yml", "--config=classpath:io/bootique/empty.yml")
