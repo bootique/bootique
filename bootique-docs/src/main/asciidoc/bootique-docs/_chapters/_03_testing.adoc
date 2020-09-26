@@ -50,6 +50,7 @@ include::../../../../test/java/io/bootique/docs/testing/MyTest.java[tag=BQTest]
 
 Doing that tells Bootique to manage lifecycle of test `BQRuntimes` and test "tools".
 
+[#bqruntime]
 === Test BQRuntimes
 
 `BQRuntime` is an object representing an entire app (i.e. an object whose state and behavior you are checking in your

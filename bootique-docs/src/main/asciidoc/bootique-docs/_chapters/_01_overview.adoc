@@ -50,15 +50,3 @@ Java 8 or newer is required.
 
 Bootique apps can be built using any Java build system (Ant, Maven, Gradle, etc). Examples in the documentation are
 based on Maven.
-
-=== Programming Skills
-
-Everything you know about Java programming will be applicable when working with Bootique. You may need to "unlearn"
-some of the practices related to JavaEE configuration and container deployment though.
-
-Integration between various parts of a Bootique app is done via https://bootique.io/docs/latest/bootique-di-docs/[Bootique DI].
-In most cases Bootique API would steer you towards idiomatic approach to integration, so deep knowledge of Bootique DI is not required.
-Though it wouldn't hurt to understand a few main concepts: modules, bindings, set and map bindings.
-
-Java https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html[ServiceLoader] facility is another important
-part of Bootique, and probably yet another thing that you shouldn't worry too much about initially.

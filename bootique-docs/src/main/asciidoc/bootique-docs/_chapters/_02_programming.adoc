@@ -17,48 +17,95 @@
 
 == Part II. Programming
 
+=== BQRuntime and Dependency Injection
+
+The main object and entry point to everything in a Bootique app is `BQRuntime`. It holds all other objects,
+configuration, commands, etc. When you are calling `Bootique.app(args).autoLoadModules().exec()` in your `main()`
+method you are creating a BQRuntime and telling it to run the app.
+
+You rarely interact with `BQRuntime` directly (except when writing <<bqruntime,unit tests>>), instead it acts as a
+"container" for your code. The basic service that it provides to the app is _Dependency Injection_ (DI). If you have
+ever worked with any other DI implementation in Java, the one in Bootique should look familiar. It uses standard
+injection annotations from `javax.inject` package (https://jcp.org/en/jsr/detail?id=330[JSR-330]). If you are new to DI,
+no worries, we'll document everything you need to know about it here.
+
+BQRuntime internally has an object called `Injector` that handles DI. It is a map of all reusable objects (often called
+"services"). Registering in DI allows a service to simply declare all other services they need for their operation,
+and the environment would find those dependencies and "inject" them in the objects.
+
+We will be introducing main injection concepts in a context of a Bootique application further in this guide. Also
+Bootique contains many user-friendly "shortcuts" (such as module "extenders") that internally use injection, but allow
+to achive many common functions in a more user-friendly way.
+
 === Modules
 
-Bootique apps consist of "modules". The framework locates all available modules, loads them in the DI environment,
-parses the command line, and then transfers control to a Command object (that can originate from any of the modules)
-that matched parameters passed to the app on the command. There's a constantly growing list of modules maintained by
-the Bootique development team. And you can easily write your own. In fact, programming in Bootique is primarily about
-writing Modules.
+`BQRuntime` loads its classes from "modules". Modules are logical collections of services. E.g. a standard
+"bootique-jetty" module integrates Jetty server into your application, "bootique-jdbc" provides a way to work with
+relational databases, and so on. Bootique team maintains a constantly growing list of such modules. Your own code is
+also organized in modules.
 
-A module is a Java library that contains some code. What makes it special is a Java class that implements
-https://bootique.io/docs/latest/bootique-di-docs/#_bqmodule[Bootique DI Module interface].
-This class defines what "services" or other types of objects the module provides (in other words what will be injectable
-by the module users). This is done in a form of "bindings", i.e. associations between publicly visible injectable
-service interfaces and specific implementations:
-
+At its core a module is simply a library of Java classes and resources with one extra special class implementing
+`BQModule`. This class serves as an "assembly descriptor" for the objects in the library. It explains to the DI
+environment how to create and configure them. Here is a simple module with a `configure` method (we'll explain `Binder`
+a bit later):
 [source,java,indent=0]
 ----
 include::../../../../test/java/io/bootique/docs/programming/modules/MyModule.java[tags=MyModule]
 ----
 
-There are other flavors of bindings in Bootique DI. Please refer to https://bootique.io/docs/latest/bootique-di-docs[documentation]
-for details. One important form extensively used in Bootique is https://bootique.io/docs/latest/bootique-di-docs/#_collections[collection binding].
+By convention each module is packaged in a dedicated .jar file, though nothing would prevent you to keep more than one
+module in a single .jar.
+
+=== Services
+
+As mentioned above, DI manages a subset of application objects that we informally call "services". Here is a rough list
+of DI functionality around services:
+
+* It provides a powerful mechanism to assemble service instances, with injection of dependencies, applying external
+configuration, using custom factories
+* It makes the constructed service available to be injected in other objects that depend on it
+* It enables "programming to interfaces" paradigm, decoupling dependencies from specific implementations
+* It manages each service scope (most often - singleton) and lifecycle (a shutdown callback can be executed if needed)
+* It infers the startup order to satisfy service interdependencies
+
+NOTE: It is up to you as a programmer to decide which objects are services and which are just regular objects. Common
+traits of services: (1) are singletons; (2) known to the rest of the application via their "contract" interfaces; (3)
+require complex configuration and assembly; (4) expensive to create.
+
+There are two ways to declare a service in a module - via explicit _bindings_ and with _provider_ methods. Bindings
+are placed in the `configure()` method of the module:
+
+[source,java,indent=0]
+----
+include::../../../../test/java/io/bootique/docs/programming/modules/BindingModule.java[tags=binding]
+----
+<1> Creates an association between `MyService` interface and a specific implementation. `MyService` can now be injected
+into other services. A single instance of `MyServiceImpl` is created automatically by the DI container, its own
+dependencies injected either via annotated constructor or into annotated fields as described in the injection section.
+
+TODO...
 
 === Module Providers and Auto-Loading
 
-Modules can be automatically loaded via `Bootique.autoLoadModules()` as long as they are included in your application dependencies.
-Auto-loading depends on the Java https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html[ServiceLoader mechanism].
-To ensure your modules can be auto-loaded do two things. First implement `io.bootique.BQModuleProvider` interface specific to your module:
-
+Modules can be automatically loaded via `Bootique.autoLoadModules()` as long as they are present in the application
+dependencies. Auto-loading uses Java
+https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html[ServiceLoader mechanism]. To ensure your modules
+can be auto-loaded you need to do two things. First implement `io.bootique.BQModuleProvider` interface specific to
+your module:
 [source,java,indent=0]
 ----
 include::../../../../test/java/io/bootique/docs/programming/modules/MyModuleProvider.java[tags=MyModuleProvider]
 ----
-
-After that create a file `META-INF/services/io.bootique.BQModuleProvider` with the only line being the name of your BQModuleProvider implementor. E.g.:
+Second, create a file `META-INF/services/io.bootique.BQModuleProvider` with the only line being the name of your
+BQModuleProvider implementor. E.g.:
 
 [source,text]
 ----
 com.foo.MyModuleProvider
 ----
 
-`BQModuleProvider` has two more methods that you can optionally implement to help Bootique to make sense of the module being loaded:
-
+`BQModuleProvider` has two more methods that you can optionally implement to help Bootique to make sense of the module
+being loaded:
 [source,java,indent=0]
 ----
 include::../../../../test/java/io/bootique/docs/programming/modules/MyModuleProvider.java[tag=MyModuleProviderMethods]
