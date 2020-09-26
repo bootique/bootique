@@ -17,7 +17,7 @@
 
 == Part II. Programming
 
-=== BQRuntime and Dependency Injection
+=== BQRuntime and DI
 
 The main object and entry point to everything in a Bootique app is `BQRuntime`. It holds all other objects,
 configuration, commands, etc. When you are calling `Bootique.app(args).autoLoadModules().exec()` in your `main()`
@@ -29,9 +29,8 @@ ever worked with any other DI implementation in Java, the one in Bootique should
 injection annotations from `javax.inject` package (https://jcp.org/en/jsr/detail?id=330[JSR-330]). If you are new to DI,
 no worries, we'll document everything you need to know about it here.
 
-BQRuntime internally has an object called `Injector` that handles DI. It is a map of all reusable objects (often called
-"services"). Registering in DI allows a service to simply declare all other services they need for their operation,
-and the environment would find those dependencies and "inject" them in the objects.
+BQRuntime internally contains an `Injector` object that handles DI. It is a map of various reusable objects (called
+"services"). More information on the concept of services is provided <<services,here>>.
 
 We will be introducing main injection concepts in a context of a Bootique application further in this guide. Also
 Bootique contains many user-friendly "shortcuts" (such as module "extenders") that internally use injection, but allow
@@ -44,18 +43,18 @@ to achive many common functions in a more user-friendly way.
 relational databases, and so on. Bootique team maintains a constantly growing list of such modules. Your own code is
 also organized in modules.
 
-At its core a module is simply a library of Java classes and resources with one extra special class implementing
-`BQModule`. This class serves as an "assembly descriptor" for the objects in the library. It explains to the DI
-environment how to create and configure them. Here is a simple module with a `configure` method (we'll explain `Binder`
-a bit later):
+At its core a module is simply a bunch of Java classes and resources. What makes it a module is a precense of one
+special class implementing `BQModule`. This class is an "assembly descriptor" for the objects in the library. It
+contains information used by the DI environment to create and configure them. Here is a simple module class (we'll
+explain `configure(Binder)` method a bit later):
 [source,java,indent=0]
 ----
 include::../../../../test/java/io/bootique/docs/programming/modules/MyModule.java[tags=MyModule]
 ----
+By convention each module classes are packaged in a dedicated ".jar" file, though nothing would prevent you to keep
+more than one module in a single .jar.
 
-By convention each module is packaged in a dedicated .jar file, though nothing would prevent you to keep more than one
-module in a single .jar.
-
+[#services]
 === Services
 
 As mentioned above, DI manages a subset of application objects that we informally call "services". Here is a rough list
@@ -63,7 +62,7 @@ of DI functionality around services:
 
 * It provides a powerful mechanism to assemble service instances, with injection of dependencies, applying external
 configuration, using custom factories
-* It makes the constructed service available to be injected in other objects that depend on it
+* It makes each constructed service available to be injected in other objects that depend on it
 * It enables "programming to interfaces" paradigm, decoupling dependencies from specific implementations
 * It manages each service scope (most often - singleton) and lifecycle (a shutdown callback can be executed if needed)
 * It infers the startup order to satisfy service interdependencies
@@ -72,18 +71,69 @@ NOTE: It is up to you as a programmer to decide which objects are services and w
 traits of services: (1) are singletons; (2) known to the rest of the application via their "contract" interfaces; (3)
 require complex configuration and assembly; (4) expensive to create.
 
-There are two ways to declare a service in a module - via explicit _bindings_ and with _provider_ methods. Bindings
-are placed in the `configure()` method of the module:
+=== Injection and Bindings
+
+Services can annotate their fields and/or constructors with `@Inject` to indicate which internal variables they want
+to be injected by the DI container. Do demonstrate this we will show a couple of implementations of a simple "hello"
+service that returns a greeting:
+[source,java,indent=0]
+----
+include::../../../../test/java/io/bootique/docs/programming/injection/Hello.java[tags=hello]
+----
+An implementation of this service would need another service called `UserNameService` that returns a user name and
+needs to be injected. Here is a field injection flavor:
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docs/programming/modules/BindingModule.java[tags=binding]
+include::../../../../test/java/io/bootique/docs/programming/injection/HelloService1.java[tags=fieldInjection]
 ----
-<1> Creates an association between `MyService` interface and a specific implementation. `MyService` can now be injected
-into other services. A single instance of `MyServiceImpl` is created automatically by the DI container, its own
-dependencies injected either via annotated constructor or into annotated fields as described in the injection section.
+And here is a constructor flavor:
+[source,java,indent=0]
+----
+include::../../../../test/java/io/bootique/docs/programming/injection/HelloService2.java[tags=constructorInjection]
+----
+Both flavors are identical in terms of functionality. Constructor variety is more verbose, but arguably results in a
+cleaner API, as the object can be created if needed  without a DI environment. Regardless of which flavor was selected,
+the implementation needs to be _bound_ in the module class:
+[source,java,indent=0]
+----
+include::../../../../test/java/io/bootique/docs/programming/injection/HelloModule1.java[tags=binding]
+----
+This creates a permanent association between `Hello` interface and a specific implementation. `Hello` can now be injected
+into other services. A single instance of `HelloService2` is created automatically by the DI container, with a real
+object transparently provided for the "nameService".
 
-TODO...
+If the service construction requires additional logic, instead of binding service implementation, you can create and
+bind a Java class that implements `Provider<Service>`. E.g.:
+
+[source,java,indent=0]
+----
+include::../../../../test/java/io/bootique/docs/programming/injection/HelloService3Provider.java[tags=provider]
+----
+[source,java,indent=0]
+----
+include::../../../../test/java/io/bootique/docs/programming/injection/HelloModule2.java[tags=binding]
+----
+Provider class has the same rules for injection of its own dependencies (either annotated fields or annotated
+constructor).
+
+The benefit of the provider is that it can implement custom assembly logic as mentioned above, which is separate from
+the service itself. It also allows the service it creates to be completely free from injection annotations. Still often
+creating a provider class is an overkill, and there is a simpler way to define small bits of assembly code -
+"provider methods" that are declared right in the module class:
+[source,java,indent=0]
+----
+include::../../../../test/java/io/bootique/docs/programming/injection/HelloModule3.java[tags=binding]
+----
+<1> Does both assembly and binding of the Hello service.
+<2> "configure" method can be empty, as the service was already bound via `provideHello` (or it can contain bindings for other
+unrelated services)
+
+A few notes on the `provideHello` method. It can be called anything. What makes it a provider is the `@Provides`
+annotation. Its access modifier is also irrelevant (can be public, protected, etc.). As mentioned above this method
+does both assembly and binding of the "Hello" service. The return type of the method (`Hello`) is used as the binding
+key. And while there is no `@Inject` annotation in use anywhere, injection in fact also happens here - all method
+arguments ("nameService" in this case) are assumed to be injectable and provided by the DI environment.
 
 === Module Providers and Auto-Loading
 
