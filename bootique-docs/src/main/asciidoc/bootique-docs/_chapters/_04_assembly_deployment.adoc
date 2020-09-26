@@ -15,7 +15,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-== Part IV. Assembly and Deployment
+== Assembly and Deployment
 
 This chapter discusses how to package Bootique apps for deployment/distribution and how to run them. We are going to
 present two approaches that produce cross-platform runnable applications -

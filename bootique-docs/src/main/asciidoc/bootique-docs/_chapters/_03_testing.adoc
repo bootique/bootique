@@ -15,7 +15,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-== Part III. Testing
+== Testing
 
 === Bootique and Testing
 

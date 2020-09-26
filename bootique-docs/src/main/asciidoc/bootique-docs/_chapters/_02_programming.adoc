@@ -15,7 +15,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-== Part II. Programming
+== Programming
 
 A typical "main" class in a Bootique application looks like this:
 
