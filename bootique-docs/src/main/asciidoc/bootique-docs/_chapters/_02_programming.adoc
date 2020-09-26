@@ -17,31 +17,42 @@
 
 == Part II. Programming
 
+A typical "main" class in a Bootique application looks like this:
+
+[source,java,indent=0]
+----
+include::../../../../test/java/io/bootique/docs/programming/Application.java[tag=Application]
+----
+
+<1> `Bootique` class is the "builder" of our app that allows to configure it before startup
+<2> Enables <<providers_and_authloading,module auto-loading>>
+<3> Creates a `BQRuntime` object and calls its "run()" method. The outcome depends on what modules the application
+is made of and what CLI options were passed to it on startup.
+<4> Exits the app passing the exit code that is the result of the execution to the OS shell that started the app.
+
+This is it in a nutshell. Now let's discuss the details...
+
 === BQRuntime and DI
 
-The main object and entry point to everything in a Bootique app is `BQRuntime`. It holds all other objects,
-configuration, commands, etc. When you are calling `Bootique.app(args).autoLoadModules().exec()` in your `main()`
-method you are creating a BQRuntime and telling it to run the app.
+`BQRuntime` is the object representing a Bootique app. It is the entry point to everything in the app. It holds all
+other objects ("services"), configuration, commands, etc. Despite its importance, you'd rarely interact with
+`BQRuntime` directly (except when writing <<bqruntime,unit tests>>), instead it acts as a "container" for your code.
 
-You rarely interact with `BQRuntime` directly (except when writing <<bqruntime,unit tests>>), instead it acts as a
-"container" for your code. The basic service that it provides to the app is _Dependency Injection_ (DI). If you have
-ever worked with any other DI implementation in Java, the one in Bootique should look familiar. It uses standard
-injection annotations from `javax.inject` package (https://jcp.org/en/jsr/detail?id=330[JSR-330]). If you are new to DI,
-no worries, we'll document everything you need to know about it here.
+Foundation of `BQRuntime` functionality is _dependency injection_ (DI) that helps to glue things together even in
+most complex applications.
 
-BQRuntime internally contains an `Injector` object that handles DI. It is a map of various reusable objects (called
-"services"). More information on the concept of services is provided <<services,here>>.
+NOTE: If you are familiar with other DI implementations in Java, you will find a lot of similarities. Namely standard
+injection annotations from `javax.inject` package (https://jcp.org/en/jsr/detail?id=330[JSR-330]). But also quite a few
+differences. The closest DI implementation to Bootique is good old Guice.
 
-We will be introducing main injection concepts in a context of a Bootique application further in this guide. Also
-Bootique contains many user-friendly "shortcuts" (such as module "extenders") that internally use injection, but allow
-to achive many common functions in a more user-friendly way.
+`BQRuntime` loads its services from "modules", so next let's discuss modules.
 
 === Modules
 
-`BQRuntime` loads its classes from "modules". Modules are logical collections of services. E.g. a standard
+Each module is a logical collection of (hopefully related) services. E.g. a standard
 "bootique-jetty" module integrates Jetty server into your application, "bootique-jdbc" provides a way to work with
-relational databases, and so on. Bootique team maintains a constantly growing list of such modules. Your own code is
-also organized in modules.
+relational databases, and so on. Bootique team maintains a constantly growing list of such modules. Your own code will
+also be organized as modules.
 
 At its core a module is simply a bunch of Java classes and resources. What makes it a module is a precense of one
 special class implementing `BQModule`. This class is an "assembly descriptor" for the objects in the library. It
@@ -51,8 +62,12 @@ explain `configure(Binder)` method a bit later):
 ----
 include::../../../../test/java/io/bootique/docs/programming/modules/MyModule.java[tags=MyModule]
 ----
-By convention each module classes are packaged in a dedicated ".jar" file, though nothing would prevent you to keep
-more than one module in a single .jar.
+By convention all classes beloning to a given module are packaged in a dedicated ".jar" file, though nothing would
+prevent you to keep more than one module in a single .jar.
+
+NOTE: Java Platform Module System (JPMS) is logically close to Bootique modules, and we would love to fully align the
+two. Unfortunately it is our experience that forcing the users to adhere to JPMS everywhere would result in lots of
+limitations and invariable productivity loss, so we are intentionally ignoring possible JPMS synergies.
 
 [#services]
 === Services
@@ -143,6 +158,7 @@ TODO
 ==== Injection and Generics
 TODO
 
+[#providers_and_authloading]
 === Module Providers and Auto-Loading
 
 For a module to be included in `BQRuntime`, it has be explicitly mentioned when starting a Bootique app
@@ -489,6 +505,7 @@ Here we obtained an extender instance via a static method on BQCoreModule.
 Most standard modules define their own extenders accessible via `&quot;extend(Binder)&quot;`.
 This is a pattern you might want to follow in your own modules.
 
+[#applicationclass]
 === Application Class
 
 A class containing the `&quot;main()&quot;` method is informally called "application".
