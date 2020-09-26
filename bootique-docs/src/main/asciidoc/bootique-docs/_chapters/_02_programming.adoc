@@ -337,33 +337,32 @@ Depending on the YAML config, one of the subclasses of `BaseType` will be create
 include::../../../../test/java/io/bootique/docs/programming/configuration/polymorphic/factory/BaseTypeFactory.java[tag=polymorphicProvides]
 ----
 
-If another module decides to create yet another subclass of BaseType,
-it will need to create its own `META-INF/service/io.bootique.config.PolymorphicConfiguration` file and add a new factory name there.
+If another module decides to create yet another subclass of BaseType, it will need to create its own
+`META-INF/service/io.bootique.config.PolymorphicConfiguration` file and add a new factory name there.
 
 === Using Modules
 
-Modules can use other "upstream" modules in a few ways:
+Modules often depend to other "upstream" modules. They can interact with upstream modules in a few ways:
 
-* "Import": a downstream module uses another module as a library, ignoring its injectable services.
-* "Use" : downstream module's classes inject classes from an upstream module.
-* "Contribute": downstream module injects objects to collections and maps defined in upstream modules.
+* Use upstream services - inject objects defined in an upstream module in this module objects
+* Contribute extensions - inject module's objects to collections and maps from the upstream module, thus extending
+upstream module behavior.
 
-Import case is trivial, so we'll concentrate on the two remaining scenarios.
-We will use https://github.com/bootique/bootique/blob/master/bootique/src/main/java/io/bootique/BQCoreModule.java[BQCoreModule]
+Let's use https://github.com/bootique/bootique/blob/master/bootique/src/main/java/io/bootique/BQCoreModule.java[BQCoreModule]
 as an example of an upstream module, as it is available in all apps.
 
 ==== Injecting Other Module's Services
 
-You can inject any services declared in other modules. E.g. BQCoreModule provides a number of objects and services that can be accessed via injection:
+You can inject any services declared in other modules. E.g. `BQCoreModule` defines an array of CLI arguments passed to
+the `main()` method, that can be injected in our module:
 
 [source,java,indent=0]
 ----
 include::../../../../test/java/io/bootique/docs/programming/modules/using/MyService.java[tag=MyService]
 ----
 
-In this example we injected command line arguments that were used to start the app.
-Note that since there can potentially be more than one `String[]` in a DI container,
-Bootique `@Args` annotation is used to uniquely identify the array that we want here.
+<1> Since there can potentially be more than one `String[]` in a DI container, Bootique `@Args` annotation is used to
+disambiguate the array that we are referring to.
 
 ==== Contributing to Other Modules
 
@@ -372,7 +371,8 @@ Bootique `@Args` annotation is used to uniquely identify the array that we want 
 
 Bootique DI supports {link-todi-with-underscores}[Collection bindings],
 intended to _contribute_ objects defined in a downstream module to collections/maps used by services in upstream modules.
-Bootique hides Bootique DI API complexities, usually providing "extenders" in each module. E.g. the following code adds `MyCommand` the app set of commands:
+Bootique hides DI API complexities, usually providing "extenders" in each module. E.g. the following code adds
+`MyCommand` the app set of commands:
 
 [source,java,indent=0]
 ----
@@ -385,22 +385,21 @@ This is a pattern you might want to follow in your own modules.
 
 === Application Class
 
-A class that contains the `&quot;main()&quot;` method is informally called "application".
+A class containing the `&quot;main()&quot;` method is informally called "application".
 Bootique does not impose any additional requirements on this class. You decide what to put in it.
-It can be limited to just `&quot;main()&quot;`, or turned into a REST API resource, etc.
+It can be limited to just `&quot;main()&quot;`, or be a REST API endpoint, or something else entirely.
 
-==== Application as a Module
-
-Most often then not it makes sense to turn the application class into a Module though.
-After all a Bootique app is just a collection of Modules, and this way the application class would represent that one final Module to rule them all:
+Though the most common approach is to turn the application class into a Module. After all a Bootique app is a collection
+of Modules, and the application class would represent that one main Module to rule them all:
 
 [source,java,indent=0]
 ----
 include::../../../../test/java/io/bootique/docs/programming/application/Application.java[tag=Application]
 ----
 
-You may also implement a separate BQModuleProvider for the Application module. Then `autoLoadModules()` will discover it just like any other Module,
-and there won't be a need to add Application module explicitly.
+<1> Explicitly adds `Application` to the list of runtime modules. Since the superclass of `Application` is `BaseModule`,
+you may put the application class in `META-INF/services/io.bootique.BQModuleProvider` to make it auto-loadable and
+remove this line.
 
 ==== Common Main Class
 

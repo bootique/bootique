@@ -8,7 +8,11 @@ import io.bootique.di.Binder;
 public class Application extends BaseModule {
 
     public static void main(String[] args) {
-        Bootique.app(args).module(Application.class).autoLoadModules().exec().exit();
+        Bootique.app(args)
+                .autoLoadModules()
+                .module(Application.class) // <1>
+                .exec()
+                .exit();
     }
 
     public void configure(Binder binder) {
