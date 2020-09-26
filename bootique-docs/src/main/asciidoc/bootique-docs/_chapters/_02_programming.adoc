@@ -114,57 +114,66 @@ include::../../../../test/java/io/bootique/docs/programming/injection/HelloServi
 ----
 include::../../../../test/java/io/bootique/docs/programming/injection/HelloModule2.java[tags=binding]
 ----
-Provider class has the same rules for injection of its own dependencies (either annotated fields or annotated
+Provider class has the same rules for injection of its own dependencies as services (either annotated fields or annotated
 constructor).
 
-The benefit of the provider is that it can implement custom assembly logic as mentioned above, which is separate from
-the service itself. It also allows the service it creates to be completely free from injection annotations. Still often
-creating a provider class is an overkill, and there is a simpler way to define small bits of assembly code -
+The benefit of the provider is that it can implement custom assembly logic, which is separate from
+the service itself. It also allows the service it creates to be completely free from injection annotations. Still
+creating a provider class may be an overkill, and there is a simpler way to define small bits of assembly code -
 "provider methods" that are declared right in the module class:
 [source,java,indent=0]
 ----
 include::../../../../test/java/io/bootique/docs/programming/injection/HelloModule3.java[tags=binding]
 ----
-<1> Does both assembly and binding of the Hello service.
-<2> "configure" method can be empty, as the service was already bound via `provideHello` (or it can contain bindings for other
-unrelated services)
+<1> Provider method that does both assembly and binding of the Hello service.
+<2> "configure" method can be empty, as the service was already bound via `provideHello`. Of course it can also contain
+bindings for unrelated services.
 
-A few notes on the `provideHello` method. It can be called anything. What makes it a provider is the `@Provides`
-annotation. Its access modifier is also irrelevant (can be public, protected, etc.). As mentioned above this method
-does both assembly and binding of the "Hello" service. The return type of the method (`Hello`) is used as the binding
-key. And while there is no `@Inject` annotation in use anywhere, injection in fact also happens here - all method
-arguments ("nameService" in this case) are assumed to be injectable and provided by the DI environment.
+A few notes on the `provideHello` method. What makes it a provider is the `@Provides` annotation. Its access modifier
+is irrelevant (can be "public", "protected", etc.). As mentioned above, this method does both assembly and binding of
+the "Hello" service. The return type (`Hello`) is used as the binding key. And while there is no `@Inject` annotation
+in use anywhere, injection in fact also happens here - all method arguments ("nameService" in this case) are injected
+by the DI environment.
+
+=== Advanced Injection
+
+==== Injection in Collections
+TODO
+
+==== Injection and Generics
+TODO
 
 === Module Providers and Auto-Loading
 
-Modules can be automatically loaded via `Bootique.autoLoadModules()` as long as they are present in the application
-dependencies. Auto-loading uses Java
-https://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html[ServiceLoader mechanism]. To ensure your modules
-can be auto-loaded you need to do two things. First implement `io.bootique.BQModuleProvider` interface specific to
-your module:
+For a module to be included in `BQRuntime`, it has be explicitly mentioned when starting a Bootique app
+(`Bootique.app(args).module(MyModule.class)`). Though this is highly impractical in real apps, and most often than not
+the alternative auto-loading mechanism is used. To enable auto-loading, call `Bootique.autoLoadModules()` as a part of
+the startup sequence. Also modules themselves need to be created in a certain way to be eligible for auto-loading:
+
+1. There must be a special per-module class that implements `io.bootique.BQModuleProvider`:
+
 [source,java,indent=0]
 ----
 include::../../../../test/java/io/bootique/docs/programming/modules/MyModuleProvider.java[tags=MyModuleProvider]
 ----
-Second, create a file `META-INF/services/io.bootique.BQModuleProvider` with the only line being the name of your
-BQModuleProvider implementor. E.g.:
+
+In fact you don't need a sperate class. The module itself can implement this interface (see a discussion of
+<<basemodule,BaseModule superclass>>).
+
+2. create a file `META-INF/services/io.bootique.BQModuleProvider` with the only line being the name of your
+provider implementor. E.g.:
 
 [source,text]
 ----
 com.foo.MyModuleProvider
 ----
 
-`BQModuleProvider` has two more methods that you can optionally implement to help Bootique to make sense of the module
-being loaded:
-[source,java,indent=0]
-----
-include::../../../../test/java/io/bootique/docs/programming/modules/MyModuleProvider.java[tag=MyModuleProviderMethods]
-----
+NOTE: All standard Bootique modules are auto-loadable.
 
-If you are planning to redefine any services from the upstream modules in your Module, specify those upstream modules
-in the `overrides()` collection. In practice overrides are rarely needed, and often can be replaced with service
-decomposition.
+`BQModuleProvider` has other methods that you can optionally implement that provide Bootique with extra metatada and
+other module information. Inspect the interface to see what they are.
 
+[#basemodule]
 === BaseModule
 
 Both module and provider classes can be combined in one to reduce the boilerplate code. To do that you simply subclass
@@ -439,7 +448,7 @@ If another module decides to create yet another subclass of BaseType, it will ne
 
 === Using Modules
 
-Modules often depend to other "upstream" modules. They can interact with upstream modules in a few ways:
+Modules often depend on other "upstream" modules. They can interact with upstream modules in a few ways:
 
 * Use upstream services - inject objects defined in an upstream module in this module objects
 * Contribute extensions - inject module's objects to collections and maps from the upstream module, thus extending

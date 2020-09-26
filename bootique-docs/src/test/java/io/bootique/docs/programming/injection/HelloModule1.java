@@ -8,7 +8,9 @@ public class HelloModule1 implements BQModule {
     // tag::binding[]
     @Override
     public void configure(Binder binder) {
-        binder.bind(Hello.class).to(HelloService2.class).inSingletonScope();
+        binder.bind(Hello.class)
+                .to(HelloService2.class)
+                .inSingletonScope();
     }
     // end::binding[]
 }
