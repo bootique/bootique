@@ -34,9 +34,9 @@ public abstract class HandlerUtil {
         try {
             instance = f.get(testInstance);
         } catch (IllegalAccessException e) {
-            throw new RuntimeException("Error reading runtime field", e);
+            throw new RuntimeException("Error reading field '" + f.getName() + "'", e);
         } catch (Throwable e) {
-            throw new RuntimeException("Error during field initialization", e);
+            throw new RuntimeException("Error during initialization of field '" + f.getName() + "'", e);
         }
 
         Preconditions.notNull(instance, () -> "Test instance '" + f.getName()
