@@ -20,6 +20,26 @@
 
 # UPGRADE INSTRUCTIONS
 
+## 2.0.B1
+
+* [bootique-metrics #41](https://github.com/bootique/bootique-metrics/issues/41): A few configuration keys were changed
+for `heartbeat`. Rename the following config keys in YAML or properties: 
+
+* `heartbeat.initialDelayMs` to `heartbeat.initialDelay`
+* `heartbeat.fixedDelayMs` to `heartbeat.fixedDelay`
+* `heartbeat.healthCheckTimeoutMs` to `heartbeat.healthCheckTimeout`
+
+While you are at it, you can change the values to human-readable "durations":
+
+```yaml
+# was:
+# heartbeat:
+#   healthCheckTimeoutMs: 20000
+# became:
+heartbeat:
+ healthCheckTimeout: 20sec
+```
+
 ## 2.0.M1 
 
 * [bootique #269](https://github.com/bootique/bootique/issues/269) Upgrade from Guice DI to "bootique-di". That's the BIG one! 
