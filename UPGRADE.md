@@ -44,6 +44,12 @@ heartbeat:
 If you are using delete with condition anywhere in tests (`table.delete().and(..)` or `table.delete().or(..)`), you
 will get a compilation error. Change those calls to `table.delete().where(..)` to fix it.
 
+* [bootique-jdbc #107](https://github.com/bootique/bootique-jdbc/issues/107): Table API related to SELECT queries
+got reworked. If you receive compilation errors in tests either because `Table.selectColumns` signature is different, 
+or `Table.get*` or `Table.select*` methods are missing, consider replacing your code with either the new select API 
+(`Table.selectColumns(..)`) or a matcher (`Table.get*` are an indicator that you likely need a matcher to compare 
+values in DB instead of selecting them in Java).
+
 
 ## 2.0.M1 
 
