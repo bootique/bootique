@@ -40,6 +40,11 @@ heartbeat:
  healthCheckTimeout: 20sec
 ```
 
+* [bootique-jdbc #106](https://github.com/bootique/bootique-jdbc/issues/106): Delete with condition API got improved.
+If you are using delete with condition anywhere in tests (`table.delete().and(..)` or `table.delete().or(..)`), you
+will get a compilation error. Change those calls to `table.delete().where(..)` to fix it.
+
+
 ## 2.0.M1 
 
 * [bootique #269](https://github.com/bootique/bootique/issues/269) Upgrade from Guice DI to "bootique-di". That's the BIG one! 
