@@ -36,7 +36,7 @@
         <jruby.version>9.2.8.0</jruby.version>
         <bootique.version>${project.version}</bootique.version>
         <bootique.parent.version>0.14</bootique.parent.version>
-        <bootique.asciidoc.extension.version>2.0-SNAPSHOT</bootique.asciidoc.extension.version>
+        <bootique.asciidoc.extension.version>2.0.M1</bootique.asciidoc.extension.version>
     </properties>
 
     <pluginRepositories>
