@@ -1,6 +1,7 @@
 ## 2.0.B1
 
 * #297 Upgrade to Jackson 2.11.3
+* #298 Upgrade to Junit 4.13.1 and Junit 5.7.0
 
 ## 2.0.M1
 

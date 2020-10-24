@@ -35,6 +35,7 @@ import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -202,6 +203,11 @@ public class BQModuleProviderChecker {
         @Override
         public Store getStore(Namespace namespace) {
             return null;
+        }
+
+        @Override
+        public <T> Optional<T> getConfigurationParameter(String key, Function<String, T> transformer) {
+            return Optional.empty();
         }
     }
 }
