@@ -1,3 +1,7 @@
+## 2.0.B1
+
+* #297 Upgrade to Jackson 2.11.3
+
 ## 2.0.M1
 
 * #267 Support specifying config key for "-H"
