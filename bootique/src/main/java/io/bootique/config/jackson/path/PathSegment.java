@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package io.bootique.config.jackson;
+package io.bootique.config.jackson.path;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -32,7 +32,7 @@ import java.util.stream.StreamSupport;
 /**
  * A helper class to navigate {@link JsonNode} objects.
  */
-abstract class PathSegment<T extends JsonNode> implements Iterable<PathSegment<?>> {
+public abstract class PathSegment<T extends JsonNode> implements Iterable<PathSegment<?>> {
 
     protected static final JsonNodeFactory NODE_FACTORY = new JsonNodeFactory(true);
 
@@ -52,7 +52,7 @@ abstract class PathSegment<T extends JsonNode> implements Iterable<PathSegment<?
         this.path = path;
     }
 
-    static PathSegment<?> create(JsonNode node, String path) {
+    public static PathSegment<?> create(JsonNode node, String path) {
 
         if (path.length() == 0) {
             return new LastPathSegment(node, null, null);
@@ -98,19 +98,19 @@ abstract class PathSegment<T extends JsonNode> implements Iterable<PathSegment<?
         return (ObjectNode) node;
     }
 
-    Optional<PathSegment<?>> lastPathComponent() {
+    public Optional<PathSegment<?>> lastPathComponent() {
         return StreamSupport.stream(spliterator(), false).reduce((a, b) -> b);
     }
 
-    JsonNode getNode() {
+    public  JsonNode getNode() {
         return node;
     }
 
-    PathSegment getParent() {
+    public PathSegment getParent() {
         return parent;
     }
 
-    String getIncomingPath() {
+    public String getIncomingPath() {
         return incomingPath;
     }
 
@@ -129,11 +129,11 @@ abstract class PathSegment<T extends JsonNode> implements Iterable<PathSegment<?
 
     protected abstract PathSegment parseNextNotEmpty(String path);
 
-    abstract JsonNode readChild(String childName);
+    protected abstract JsonNode readChild(String childName);
 
-    abstract void writeChild(String childName, JsonNode childNode);
+    protected abstract void writeChild(String childName, JsonNode childNode);
 
-    abstract void writeChildValue(String childName, String value);
+    public abstract void writeChildValue(String childName, String value);
 
     protected PathSegment<JsonNode> createValueChild(String childName) {
         JsonNode child = readChild(childName);
@@ -150,7 +150,7 @@ abstract class PathSegment<T extends JsonNode> implements Iterable<PathSegment<?
         return new IndexPathSegment(an, this, childName, remainingPath);
     }
 
-    void fillMissingParents() {
+    public void fillMissingParents() {
         parent.fillMissingNodes(incomingPath, node);
     }
 

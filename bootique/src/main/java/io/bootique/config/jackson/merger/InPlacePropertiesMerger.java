@@ -17,9 +17,10 @@
  * under the License.
  */
 
-package io.bootique.config.jackson;
+package io.bootique.config.jackson.merger;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.bootique.config.jackson.path.PathSegment;
 
 import java.util.Comparator;
 import java.util.Map;
@@ -30,11 +31,11 @@ import java.util.function.Function;
  *
  * @since 0.17
  */
-public class InPlaceMapOverrider implements Function<JsonNode, JsonNode> {
+public class InPlacePropertiesMerger implements Function<JsonNode, JsonNode> {
 
     private Map<String, String> properties;
 
-    public InPlaceMapOverrider(Map<String, String> properties) {
+    public InPlacePropertiesMerger(Map<String, String> properties) {
         this.properties = properties;
     }
 

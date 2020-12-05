@@ -16,27 +16,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package io.bootique.config.jackson.parser;
 
-package io.bootique.config.jackson;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-
-public class YamlReader {
-    public static JsonNode read(String yaml) {
-
-        ByteArrayInputStream in = new ByteArrayInputStream(yaml.getBytes());
-
-        try {
-            YAMLParser parser = new YAMLFactory().createParser(in);
-            return new ObjectMapper().readTree(parser);
-        } catch (IOException e) {
-            throw new RuntimeException("Error reading yaml: " + yaml, e);
-        }
-    }
+/**
+ * @since 2.0.B1
+ */
+public enum ParserType {
+    YAML, JSON
 }

@@ -16,27 +16,34 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package io.bootique.config.jackson;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
+import io.bootique.annotation.DIPostConfigs;
+import io.bootique.config.jackson.merger.JsonConfigurationMerger;
+import io.bootique.config.jackson.parser.JsonConfigurationParser;
+import io.bootique.log.BootLogger;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import javax.inject.Inject;
+import java.util.Set;
 
-public class YamlReader {
-    public static JsonNode read(String yaml) {
+/**
+ * @since 2.0.B1
+ */
+public class DIPostConfigurationLoader extends UrlConfigurationLoader {
 
-        ByteArrayInputStream in = new ByteArrayInputStream(yaml.getBytes());
+    public static final int ORDER = CliCustomOptionsConfigurationLoader.ORDER + 10;
 
-        try {
-            YAMLParser parser = new YAMLFactory().createParser(in);
-            return new ObjectMapper().readTree(parser);
-        } catch (IOException e) {
-            throw new RuntimeException("Error reading yaml: " + yaml, e);
-        }
+    @Inject
+    public DIPostConfigurationLoader(
+            BootLogger bootLogger,
+            JsonConfigurationParser parser,
+            JsonConfigurationMerger merger,
+            @DIPostConfigs Set<String> diPostConfigs) {
+        super(bootLogger, parser, merger, diPostConfigs);
+    }
+
+    @Override
+    public int getOrder() {
+        return ORDER;
     }
 }

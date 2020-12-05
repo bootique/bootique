@@ -26,6 +26,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TreeTraversingParser;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.bootique.config.ConfigurationFactory;
+import io.bootique.config.jackson.path.CiPropertySegment;
+import io.bootique.config.jackson.path.PathSegment;
 import io.bootique.type.TypeRef;
 
 import java.io.IOException;
@@ -34,15 +36,15 @@ import java.io.IOException;
  * {@link ConfigurationFactory} based on Jackson {@link JsonNode} data
  * structure. The actual configuration can come from JSON, YAML, XML, etc.
  *
- * @since 0.17
+ * @since 2.0.B1
  */
-public class JsonNodeConfigurationFactory implements ConfigurationFactory {
+public class JsonConfigurationFactory implements ConfigurationFactory {
 
-    private JsonNode rootNode;
-    private ObjectMapper mapper;
-    private TypeFactory typeFactory;
+    final JsonNode rootNode;
+    private final ObjectMapper mapper;
+    private final TypeFactory typeFactory;
 
-    public JsonNodeConfigurationFactory(JsonNode rootConfigNode, ObjectMapper objectMapper) {
+    public JsonConfigurationFactory(JsonNode rootConfigNode, ObjectMapper objectMapper) {
         this.typeFactory = TypeFactory.defaultInstance();
         this.mapper = objectMapper;
         this.rootNode = rootConfigNode;
@@ -94,7 +96,7 @@ public class JsonNodeConfigurationFactory implements ConfigurationFactory {
 
         return CiPropertySegment
                 .create(rootNode, path)
-                .lastPathComponent().map(t -> t.getNode())
+                .lastPathComponent().map(PathSegment::getNode)
                 .orElse(new ObjectNode(null));
     }
 

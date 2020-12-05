@@ -627,9 +627,9 @@ Based on the specified policy Bootique figures out the sequence of execution and
 ==== Simple Options
 
 In addition to commands, the app can define "options". Options are not associated with any runnable java code,
-and simply pass command-line values to commands and services.
-E.g. the standard "`--config`" option is used by `CliConfigurationSource` service to locate configuration file.
-Unrecognized options cause application startup errors. To be recognized, options need to be "contributed" to Bootique similar to commands:
+and simply pass command-line values to commands and services. E.g. the standard "`--config`" option is used to locate
+configuration file(s). Unrecognized options cause application startup errors. To be recognized, options need to be
+"contributed" to Bootique similar to commands:
 
 [source,java,indent=0]
 ----

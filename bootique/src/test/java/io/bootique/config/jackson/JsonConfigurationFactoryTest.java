@@ -36,20 +36,19 @@ import java.util.Scanner;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class JsonNodeConfigurationFactoryTest {
+public class JsonConfigurationFactoryTest {
 
-    private JsonNodeConfigurationFactory factory(String yaml) {
+    private JsonConfigurationFactory factory(String yaml) {
         JsonNode rootConfig = YamlReader.read(yaml);
-        return new JsonNodeConfigurationFactory(rootConfig, new ObjectMapper());
+        return new JsonConfigurationFactory(rootConfig, new ObjectMapper());
     }
 
     @Test
     public void testConfig() {
-
         Bean1 b1 = factory("s: SS\ni: 55").config(Bean1.class, "");
         assertNotNull(b1);
-        assertEquals("SS", b1.getS());
-        assertEquals(55, b1.getI());
+        assertEquals("SS", b1.s);
+        assertEquals(55, b1.i);
     }
 
     @Test
@@ -182,21 +181,18 @@ public class JsonNodeConfigurationFactoryTest {
 
         private String s;
         private int i;
+        private long l;
 
         public String getS() {
             return s;
-        }
-
-        public void setS(String s) {
-            this.s = s;
         }
 
         public int getI() {
             return i;
         }
 
-        public void setI(int i) {
-            this.i = i;
+        public long getL() {
+            return l;
         }
     }
 
@@ -206,10 +202,6 @@ public class JsonNodeConfigurationFactoryTest {
 
         public Bean1 getB1() {
             return b1;
-        }
-
-        public void setB1(Bean1 b1) {
-            this.b1 = b1;
         }
     }
 
@@ -228,20 +220,12 @@ public class JsonNodeConfigurationFactoryTest {
         public String getP1() {
             return p1;
         }
-
-        public void setP1(String p1) {
-            this.p1 = p1;
-        }
     }
 
     @JsonTypeName("sub2")
     public static class BeanSub2 extends BeanSuper {
 
         private String p2;
-
-        public void setP1(String p2) {
-            this.p2 = p2;
-        }
 
         public String getP2() {
             return p2;

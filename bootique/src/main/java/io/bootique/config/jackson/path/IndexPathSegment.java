@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package io.bootique.config.jackson;
+package io.bootique.config.jackson.path;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 /**
  * A path segment with remaining path being an array index.
  */
-class IndexPathSegment extends PathSegment<ArrayNode> {
+public class IndexPathSegment extends PathSegment<ArrayNode> {
 
     // a symbolic index that allows to append values to array without knowing the length
     private static final String PAST_END_INDEX = ".length";
@@ -81,18 +81,18 @@ class IndexPathSegment extends PathSegment<ArrayNode> {
     }
 
     @Override
-    JsonNode readChild(String childName) {
+    protected JsonNode readChild(String childName) {
         return node != null ? node.get(toIndex(childName)) : null;
     }
 
     @Override
-    void writeChildValue(String childName, String value) {
+    public void writeChildValue(String childName, String value) {
         JsonNode childNode = value == null ? node.nullNode() : node.textNode(value);
         writeChild(childName, childNode);
     }
 
     @Override
-    void writeChild(String childName, JsonNode childNode) {
+    protected void writeChild(String childName, JsonNode childNode) {
         int index = toIndex(childName);
 
         // allow replacing elements at index

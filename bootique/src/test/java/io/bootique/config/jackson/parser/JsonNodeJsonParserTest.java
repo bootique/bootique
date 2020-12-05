@@ -17,34 +17,31 @@
  * under the License.
  */
 
-package io.bootique.config.jackson;
+package io.bootique.config.jackson.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.Optional;
-import java.util.function.Function;
 
-/**
- * @since 0.17
- */
-public class JsonNodeJsonParser implements Function<InputStream, Optional<JsonNode>> {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-	private ObjectMapper mapper;
+public class JsonNodeJsonParserTest {
 
-	public JsonNodeJsonParser(ObjectMapper mapper) {
-		this.mapper = mapper;
-	}
+	@Test
+	public void testApply() {
 
-	@Override
-	public Optional<JsonNode> apply(InputStream t) {
-		try {
-			return Optional.ofNullable(mapper.readTree(t));
-		} catch (IOException e) {
-			throw new RuntimeException("Error reading config data", e);
-		}
+		InputStream in = new ByteArrayInputStream("{\"a\":\"b\",\"b\": \"c\"}".getBytes());
+		ObjectMapper mapper = new ObjectMapper();
+
+		JsonNode node = new JsonNodeJsonParser(mapper).apply(in);
+		assertNotNull(node);
+
+		assertEquals("b", node.get("a").asText());
+		assertEquals("c", node.get("b").asText());
 	}
 
 }

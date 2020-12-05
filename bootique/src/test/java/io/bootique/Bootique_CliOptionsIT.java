@@ -22,8 +22,8 @@ package io.bootique;
 import io.bootique.cli.Cli;
 import io.bootique.command.CommandOutcome;
 import io.bootique.command.CommandWithMetadata;
-import io.bootique.config.CliConfigurationSource;
 import io.bootique.config.ConfigurationFactory;
+import io.bootique.config.jackson.CliConfigurationLoader;
 import io.bootique.di.DIRuntimeException;
 import io.bootique.meta.application.CommandMetadata;
 import io.bootique.meta.application.OptionMetadata;
@@ -45,13 +45,13 @@ public class Bootique_CliOptionsIT {
     @Test
     public void testConfigOption() {
         BQRuntime runtime = runtimeFactory.app("--config=abc.yml").createRuntime();
-        assertCollectionsEquals(runtime.getInstance(Cli.class).optionStrings(CliConfigurationSource.CONFIG_OPTION), "abc.yml");
+        assertCollectionsEquals(runtime.getInstance(Cli.class).optionStrings(CliConfigurationLoader.CONFIG_OPTION), "abc.yml");
     }
 
     @Test
     public void testConfigOptions() {
         BQRuntime runtime = runtimeFactory.app("--config=abc.yml", "--config=xyz.yml").createRuntime();
-        assertCollectionsEquals(runtime.getInstance(Cli.class).optionStrings(CliConfigurationSource.CONFIG_OPTION), "abc.yml",
+        assertCollectionsEquals(runtime.getInstance(Cli.class).optionStrings(CliConfigurationLoader.CONFIG_OPTION), "abc.yml",
                 "xyz.yml");
     }
 
