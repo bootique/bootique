@@ -17,11 +17,11 @@
  * under the License.
  */
 
-package io.bootique.config.jackson;
+package io.bootique.config.jackson.path;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-class LastPathSegment extends PathSegment<JsonNode> {
+public class LastPathSegment extends PathSegment<JsonNode> {
 
     LastPathSegment(JsonNode node, PathSegment parent, String incomingPath) {
         super(node, parent, incomingPath, null);
@@ -38,17 +38,17 @@ class LastPathSegment extends PathSegment<JsonNode> {
     }
 
     @Override
-    JsonNode readChild(String childName) {
+    protected JsonNode readChild(String childName) {
         throw new UnsupportedOperationException("This node is not supposed to have children");
     }
 
     @Override
-    void writeChildValue(String childName, String value) {
+    public void writeChildValue(String childName, String value) {
         throw new UnsupportedOperationException("This node is not supposed to have children");
     }
 
     @Override
-    void writeChild(String childName, JsonNode childNode) {
+    protected void writeChild(String childName, JsonNode childNode) {
         throw new UnsupportedOperationException("This node is not supposed to have children");
     }
 }

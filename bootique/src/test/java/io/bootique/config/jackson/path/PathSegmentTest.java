@@ -17,9 +17,10 @@
  * under the License.
  */
 
-package io.bootique.config.jackson;
+package io.bootique.config.jackson.path;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.bootique.config.jackson.YamlReader;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;

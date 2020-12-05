@@ -19,11 +19,17 @@
 
 package io.bootique;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.bootique.annotation.*;
 import io.bootique.cli.Cli;
 import io.bootique.cli.CliFactory;
 import io.bootique.command.*;
 import io.bootique.config.*;
+import io.bootique.config.jackson.*;
+import io.bootique.config.jackson.merger.InPlaceLeftHandMerger;
+import io.bootique.config.jackson.merger.JsonConfigurationMerger;
+import io.bootique.config.jackson.parser.*;
 import io.bootique.di.*;
 import io.bootique.env.DeclaredVariable;
 import io.bootique.env.DefaultEnvironment;
@@ -57,9 +63,11 @@ import io.bootique.value.Percent;
 
 import javax.inject.Provider;
 import javax.inject.Singleton;
+import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -125,23 +133,55 @@ public class BQCoreModule implements BQModule {
                 .initAllExtensions()
                 .addValueObjectsDescriptors(createValueObjectsDescriptorsMap())
                 .addOption(createConfigOption())
-                .addCommand(HelpConfigCommand.class);
+                .addCommand(HelpConfigCommand.class)
+
+                // standard config loaders
+                .addConfigLoader(DIConfigurationLoader.class)
+                .addConfigLoader(CliConfigurationLoader.class)
+                .addConfigLoader(CliCustomOptionsConfigurationLoader.class)
+                .addConfigLoader(DIPostConfigurationLoader.class)
+                .addConfigLoader(PropertiesConfigurationLoader.class);
 
         // bind instances
         binder.bind(BootLogger.class).toInstance(Objects.requireNonNull(bootLogger));
         binder.bind(ShutdownManager.class).toInstance(Objects.requireNonNull(shutdownManager));
         binder.bind(String[].class, Args.class).toInstance(Objects.requireNonNull(args));
-
-        // too much code to create config factory.. extracting it in a provider
-        // class...
-        binder.bind(ConfigurationFactory.class).toProvider(JsonNodeConfigurationFactoryProvider.class).inSingletonScope();
     }
 
     OptionMetadata createConfigOption() {
         return OptionMetadata
-                .builder(CliConfigurationSource.CONFIG_OPTION,
+                .builder(CliConfigurationLoader.CONFIG_OPTION,
                         "Specifies YAML config location, which can be a file path or a URL.")
                 .valueRequired("yaml_location").build();
+    }
+
+    @Provides
+    @Singleton
+    ConfigurationFactory provideConfigurationFactory(Set<JsonConfigurationLoader> loaders, JacksonService jackson) {
+
+        JsonNode root = JsonConfigurationLoader.load(loaders);
+        bootLogger.trace(() -> "Merged configuration: " + root.toString());
+
+        ObjectMapper jsonToObjectMapper = jackson.newObjectMapper();
+        return new JsonConfigurationFactory(root, jsonToObjectMapper);
+    }
+
+    @Provides
+    @Singleton
+    JsonConfigurationParser provideJsonConfigurationParser(JacksonService jacksonService) {
+
+        ObjectMapper textToJsonMapper = jacksonService.newObjectMapper();
+        Map<ParserType, Function<InputStream, JsonNode>> parsers = new EnumMap<>(ParserType.class);
+        parsers.put(ParserType.YAML, new JsonNodeYamlParser(textToJsonMapper));
+        parsers.put(ParserType.JSON, new JsonNodeJsonParser(textToJsonMapper));
+
+        return new MultiFormatJsonNodeParser(parsers, bootLogger);
+    }
+
+    @Provides
+    @Singleton
+    JsonConfigurationMerger provideJsonConfigurationMerger() {
+        return new InPlaceLeftHandMerger(bootLogger);
     }
 
     @Provides
@@ -160,22 +200,6 @@ public class BQCoreModule implements BQModule {
     @Singleton
     Runner provideRunner(Cli cli, CommandManager commandManager, ExecutionPlanBuilder execPlanBuilder) {
         return new DefaultRunner(cli, commandManager, execPlanBuilder);
-    }
-
-    @Provides
-    @Singleton
-    ConfigurationSource provideConfigurationSource(
-            Cli cli,
-            @DIConfigs Set<String> diConfigs,
-            @DIPostConfigs Set<String> diPostConfigs,
-            BootLogger bootLogger) {
-
-        return CliConfigurationSource
-                .builder(bootLogger)
-                .diConfigs(diConfigs)
-                .cliConfigs(cli)
-                .diPostConfigs(diPostConfigs)
-                .build();
     }
 
     @Provides

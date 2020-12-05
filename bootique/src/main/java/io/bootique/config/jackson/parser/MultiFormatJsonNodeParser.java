@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package io.bootique.config.jackson;
+package io.bootique.config.jackson.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.bootique.BootiqueException;
@@ -28,25 +28,20 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 
-public class MultiFormatJsonNodeParser implements Function<URL, Optional<JsonNode>> {
+public class MultiFormatJsonNodeParser implements JsonConfigurationParser {
 
-    public enum ParserType {
-        YAML, JSON
-    }
+    private final Map<ParserType, Function<InputStream, JsonNode>> parsers;
+    private final BootLogger bootLogger;
 
-    private Map<ParserType, Function<InputStream, Optional<JsonNode>>> parsers;
-    private BootLogger bootLogger;
-
-    public MultiFormatJsonNodeParser(Map<ParserType, Function<InputStream, Optional<JsonNode>>> parsers, BootLogger bootLogger) {
+    public MultiFormatJsonNodeParser(Map<ParserType, Function<InputStream, JsonNode>> parsers, BootLogger bootLogger) {
         this.parsers = parsers;
         this.bootLogger = bootLogger;
     }
 
     @Override
-    public Optional<JsonNode> apply(URL url) {
+    public JsonNode parse(URL url) {
 
         URLConnection connection;
         try {
@@ -68,7 +63,7 @@ public class MultiFormatJsonNodeParser implements Function<URL, Optional<JsonNod
             type = ParserType.YAML;
         }
 
-        Function<InputStream, Optional<JsonNode>> parser = parser(type);
+        Function<InputStream, JsonNode> parser = parser(type);
 
         try (InputStream in = connection.getInputStream()) {
             return parser.apply(in);
@@ -77,9 +72,9 @@ public class MultiFormatJsonNodeParser implements Function<URL, Optional<JsonNod
         }
     }
 
-    Function<InputStream, Optional<JsonNode>> parser(ParserType type) {
+    Function<InputStream, JsonNode> parser(ParserType type) {
 
-        Function<InputStream, Optional<JsonNode>> parser = parsers.get(type);
+        Function<InputStream, JsonNode> parser = parsers.get(type);
 
         if (parser == null) {
             bootLogger.trace(() -> "No parser for type: " + type);

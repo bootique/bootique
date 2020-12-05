@@ -17,17 +17,33 @@
  * under the License.
  */
 
-package io.bootique.config;
+package io.bootique.config.jackson.parser;
 
-import java.net.URL;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.function.Function;
 
 /**
- * A facade that presents configuration data as a stream to consumers.
- * Configuration can be stored in a file, etc. Configuration source is agnostic
- * to the media type of configuration (JSON, YAML, etc.)
+ * @since 2.0.B1
  */
-public interface ConfigurationSource extends Supplier<Stream<URL>> {
+public class JsonNodeJsonParser implements Function<InputStream, JsonNode> {
+
+	private ObjectMapper mapper;
+
+	public JsonNodeJsonParser(ObjectMapper mapper) {
+		this.mapper = mapper;
+	}
+
+	@Override
+	public JsonNode apply(InputStream t) {
+		try {
+			return mapper.readTree(t);
+		} catch (IOException e) {
+			throw new RuntimeException("Error reading config data", e);
+		}
+	}
 
 }

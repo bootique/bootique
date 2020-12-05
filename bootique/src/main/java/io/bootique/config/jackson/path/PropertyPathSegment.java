@@ -17,28 +17,28 @@
  * under the License.
  */
 
-package io.bootique.config.jackson;
+package io.bootique.config.jackson.path;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-class PropertyPathSegment extends PathSegment<ObjectNode> {
+public class PropertyPathSegment extends PathSegment<ObjectNode> {
 
     PropertyPathSegment(ObjectNode node, PathSegment parent, String incomingPath, String remainingPath) {
         super(node, parent, incomingPath, remainingPath);
     }
 
     @Override
-    JsonNode readChild(String childName) {
+    protected JsonNode readChild(String childName) {
         return node != null ? node.get(childName) : null;
     }
 
-    void writeChild(String childName, JsonNode childNode) {
+    protected void writeChild(String childName, JsonNode childNode) {
         node.set(childName, childNode);
     }
 
     @Override
-    void writeChildValue(String childName, String value) {
+    public void writeChildValue(String childName, String value) {
         JsonNode childNode = value == null ? node.nullNode() : node.textNode(value);
         writeChild(childName, childNode);
     }

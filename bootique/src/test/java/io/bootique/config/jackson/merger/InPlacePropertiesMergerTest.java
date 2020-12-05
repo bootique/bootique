@@ -17,10 +17,12 @@
  * under the License.
  */
 
-package io.bootique.config.jackson;
+package io.bootique.config.jackson.merger;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import io.bootique.config.jackson.YamlReader;
+import io.bootique.config.jackson.merger.InPlacePropertiesMerger;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -29,13 +31,13 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class InPlaceMapOverriderTest {
+public class InPlacePropertiesMergerTest {
 
     @Test
     public void testApply_InPlace() {
 
         Map<String, String> props = Collections.singletonMap("a", "50");
-        InPlaceMapOverrider overrider = new InPlaceMapOverrider(props);
+        InPlacePropertiesMerger overrider = new InPlacePropertiesMerger(props);
 
         JsonNode node = YamlReader.read("a: 5");
         JsonNode overridden = overrider.apply(node);
@@ -46,7 +48,7 @@ public class InPlaceMapOverriderTest {
     public void testApply() {
 
         Map<String, String> props = Collections.singletonMap("a", "50");
-        InPlaceMapOverrider overrider = new InPlaceMapOverrider(props);
+        InPlacePropertiesMerger overrider = new InPlacePropertiesMerger(props);
 
         JsonNode node = YamlReader.read("a: 5");
         overrider.apply(node);
@@ -58,7 +60,7 @@ public class InPlaceMapOverriderTest {
     public void testApply_Nested() {
 
         Map<String, String> props = Collections.singletonMap("a.b", "50");
-        InPlaceMapOverrider overrider = new InPlaceMapOverrider(props);
+        InPlacePropertiesMerger overrider = new InPlacePropertiesMerger(props);
 
         JsonNode node = YamlReader.read("a:\n  b: 5");
         overrider.apply(node);
@@ -70,7 +72,7 @@ public class InPlaceMapOverriderTest {
     public void testApply_MissingRecreated() {
 
         Map<String, String> props = Collections.singletonMap("a.b", "50");
-        InPlaceMapOverrider overrider = new InPlaceMapOverrider(props);
+        InPlacePropertiesMerger overrider = new InPlacePropertiesMerger(props);
 
         JsonNode node = YamlReader.read("a:");
         overrider.apply(node);
@@ -82,7 +84,7 @@ public class InPlaceMapOverriderTest {
     public void testApply_ObjectArray() {
 
         Map<String, String> props = Collections.singletonMap("a[1]", "50");
-        InPlaceMapOverrider overrider = new InPlaceMapOverrider(props);
+        InPlacePropertiesMerger overrider = new InPlacePropertiesMerger(props);
 
         JsonNode node = YamlReader.read("a:\n" +
                 "  - 1\n" +
@@ -101,7 +103,7 @@ public class InPlaceMapOverriderTest {
     public void testApply_ObjectArray_PastEnd() {
 
         Map<String, String> props = Collections.singletonMap("a[2]", "50");
-        InPlaceMapOverrider overrider = new InPlaceMapOverrider(props);
+        InPlacePropertiesMerger overrider = new InPlacePropertiesMerger(props);
 
         JsonNode node = YamlReader.read("a:\n" +
                 "  - 1\n" +

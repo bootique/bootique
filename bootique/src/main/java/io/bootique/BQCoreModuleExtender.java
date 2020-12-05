@@ -25,6 +25,7 @@ import io.bootique.command.CommandDecorator;
 import io.bootique.command.CommandRefDecorated;
 import io.bootique.config.OptionRefWithConfig;
 import io.bootique.config.OptionRefWithConfigPath;
+import io.bootique.config.jackson.JsonConfigurationLoader;
 import io.bootique.di.Binder;
 import io.bootique.di.MapBuilder;
 import io.bootique.di.SetBuilder;
@@ -59,6 +60,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     private SetBuilder<OptionRefWithConfig> optionDecorators;
     private MapBuilder<Class<?>, ValueObjectDescriptor> valueObjectsDescriptors;
     private SetBuilder<OptionRefWithConfigPath> optionPathDecorators;
+    private SetBuilder<JsonConfigurationLoader> configurationLoaders;
 
     protected BQCoreModuleExtender(Binder binder) {
         super(binder);
@@ -78,6 +80,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
         contributeOptionDecorators();
         contributeValueObjectsDescriptors();
         contributeOptionPathDecorators();
+        contributeConfigurationLoaders();
 
         return this;
     }
@@ -318,6 +321,30 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
         return this;
     }
 
+    /**
+     * Adds an internal strategy for loading configurations. Note that Bootique already comes preconfigured with a
+     * comprehensive set of strategies to load configuration from config files and URLs, so you'd rarely need to
+     * specify your own strategy.
+     *
+     * @since 2.0.B1
+     */
+    public BQCoreModuleExtender addConfigLoader(JsonConfigurationLoader loader) {
+        contributeConfigurationLoaders().add(loader);
+        return this;
+    }
+
+    /**
+     * Adds an internal strategy for loading configurations. Note that Bootique already comes preconfigured with a
+     * comprehensive set of strategies to load configuration from config files and URLs, so you'd rarely need to
+     * specify your own strategy.
+     *
+     * @since 2.0.B1
+     */
+    public BQCoreModuleExtender addConfigLoader(Class<? extends JsonConfigurationLoader> loaderType) {
+        contributeConfigurationLoaders().add(loaderType);
+        return this;
+    }
+
     protected MapBuilder<Class<?>, ValueObjectDescriptor> contributeValueObjectsDescriptors() {
         return valueObjectsDescriptors != null
                 ? valueObjectsDescriptors
@@ -370,5 +397,9 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
 
     protected SetBuilder<String> contributePostConfigs() {
         return postConfigs != null ? postConfigs : (postConfigs = newSet(String.class, DIPostConfigs.class));
+    }
+
+    protected SetBuilder<JsonConfigurationLoader> contributeConfigurationLoaders() {
+        return configurationLoaders != null ? configurationLoaders : (configurationLoaders = newSet(JsonConfigurationLoader.class));
     }
 }

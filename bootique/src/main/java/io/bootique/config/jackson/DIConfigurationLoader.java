@@ -16,37 +16,34 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package io.bootique.config.jackson;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import io.bootique.annotation.DIConfigs;
+import io.bootique.config.jackson.merger.JsonConfigurationMerger;
+import io.bootique.config.jackson.parser.JsonConfigurationParser;
+import io.bootique.log.BootLogger;
 
-import java.net.URL;
-import java.util.Optional;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
+import javax.inject.Inject;
+import java.util.Set;
 
 /**
- * Overrides JsonNode object values from one configuration resource.
- *
- * @since 0.24
+ * @since 2.0.B1
  */
-public class InPlaceResourceOverrider implements Function<JsonNode, JsonNode> {
+public class DIConfigurationLoader extends UrlConfigurationLoader {
 
-    private URL source;
-    private Function<URL, Optional<JsonNode>> parser;
-    private BinaryOperator<JsonNode> merger;
+    public static final int ORDER = 0;
 
-    public InPlaceResourceOverrider(URL source, Function<URL, Optional<JsonNode>> parser, BinaryOperator<JsonNode> merger) {
-        this.source = source;
-        this.parser = parser;
-        this.merger = merger;
+    @Inject
+    public DIConfigurationLoader(
+            BootLogger bootLogger,
+            JsonConfigurationParser parser,
+            JsonConfigurationMerger merger,
+            @DIConfigs Set<String> diConfigs) {
+        super(bootLogger, parser, merger, diConfigs);
     }
 
     @Override
-    public JsonNode apply(JsonNode jsonNode) {
-        return parser.apply(source)
-                .map(configNode -> merger.apply(jsonNode, configNode))
-                .orElse(jsonNode);
+    public int getOrder() {
+        return ORDER;
     }
 }

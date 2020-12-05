@@ -16,27 +16,37 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package io.bootique.config.jackson;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
+import io.bootique.config.jackson.merger.InPlacePropertiesMerger;
+import io.bootique.env.Environment;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import javax.inject.Inject;
+import java.util.Map;
 
-public class YamlReader {
-    public static JsonNode read(String yaml) {
+/**
+ * @since 2.0.B1
+ */
+public class PropertiesConfigurationLoader implements JsonConfigurationLoader {
 
-        ByteArrayInputStream in = new ByteArrayInputStream(yaml.getBytes());
+    public static final int ORDER = DIPostConfigurationLoader.ORDER + 10;
 
-        try {
-            YAMLParser parser = new YAMLFactory().createParser(in);
-            return new ObjectMapper().readTree(parser);
-        } catch (IOException e) {
-            throw new RuntimeException("Error reading yaml: " + yaml, e);
-        }
+    private final Environment environment;
+
+    @Inject
+    public PropertiesConfigurationLoader(Environment environment) {
+        this.environment = environment;
+    }
+
+    @Override
+    public int getOrder() {
+        return ORDER;
+    }
+
+    @Override
+    public JsonNode updateConfiguration(JsonNode mutableInput) {
+        Map<String, String> properties = environment.frameworkProperties();
+        return new InPlacePropertiesMerger(properties).apply(mutableInput);
     }
 }

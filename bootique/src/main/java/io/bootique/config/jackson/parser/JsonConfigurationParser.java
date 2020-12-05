@@ -16,33 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package io.bootique.config.jackson;
+package io.bootique.config.jackson.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.Optional;
+import java.net.URL;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+/**
+ * @since 2.0.B1
+ */
+public interface JsonConfigurationParser {
 
-public class JsonNodeJsonParserTest {
-
-	@Test
-	public void testApply() {
-
-		InputStream in = new ByteArrayInputStream("{\"a\":\"b\",\"b\": \"c\"}".getBytes());
-		ObjectMapper mapper = new ObjectMapper();
-
-		Optional<JsonNode> node = new JsonNodeJsonParser(mapper).apply(in);
-		assertTrue(node.isPresent());
-
-		assertEquals("b", node.get().get("a").asText());
-		assertEquals("c", node.get().get("b").asText());
-	}
-
+    JsonNode parse(URL url);
 }

@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package io.bootique.config.jackson;
+package io.bootique.config.jackson.merger;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
@@ -25,7 +25,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.bootique.log.BootLogger;
 
 import java.util.Iterator;
-import java.util.function.BinaryOperator;
 
 /**
  * A configuration merger that merges right-hand config argument into left-hand
@@ -36,7 +35,7 @@ import java.util.function.BinaryOperator;
  *
  * @since 0.17
  */
-public class InPlaceLeftHandMerger implements BinaryOperator<JsonNode> {
+public class InPlaceLeftHandMerger implements JsonConfigurationMerger {
 
     private BootLogger bootLogger;
 

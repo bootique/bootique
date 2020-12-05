@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package io.bootique.config.jackson;
+package io.bootique.config.jackson.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,10 +25,9 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class JsonNodeYamlParserTest {
 
@@ -38,11 +37,11 @@ public class JsonNodeYamlParserTest {
 		InputStream in = new ByteArrayInputStream("a: b\nb: c".getBytes());
 		ObjectMapper mapper = new ObjectMapper();
 
-		Optional<JsonNode> node = new JsonNodeYamlParser(mapper).apply(in);
-		assertTrue(node.isPresent());
+		JsonNode node = new JsonNodeYamlParser(mapper).apply(in);
+		assertNotNull(node);
 
-		assertEquals("b", node.get().get("a").asText());
-		assertEquals("c", node.get().get("b").asText());
+		assertEquals("b", node.get("a").asText());
+		assertEquals("c", node.get("b").asText());
 	}
 
 }

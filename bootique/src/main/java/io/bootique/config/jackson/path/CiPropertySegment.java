@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package io.bootique.config.jackson;
+package io.bootique.config.jackson.path;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -29,9 +29,9 @@ import java.util.Map.Entry;
 /**
  * A path segment for case-insensitive path.
  */
-class CiPropertySegment extends PropertyPathSegment {
+public class CiPropertySegment extends PropertyPathSegment {
 
-    static PathSegment<?> create(JsonNode node, String path) {
+    public static PathSegment<?> create(JsonNode node, String path) {
 
         if (path.length() == 0) {
             return new LastPathSegment(node, null, null);
