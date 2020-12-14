@@ -20,12 +20,10 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
-    name: JDK ${{ matrix.java }}, DB ${{ matrix.db-profile }}
-    continue-on-error: ${{ matrix.java == '16-ea' }}
+    name: JDK ${{ matrix.java }}
     strategy:
       matrix:
-        java: [8]
-        db-profile: [hsql]
+        java: [8, 11, 16-ea]
 
     steps:
       - name: Checkout repository
@@ -36,19 +34,13 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
 
-      - uses: actions/cache@v2
-        with:
-          path: $HOME/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-
-      - name: Set up DB ${{ matrix.db-profile }}
+      - name: Maven verify
         run: mvn clean verify
 
   deploy:
     runs-on: ubuntu-latest
     needs: test
-#    if: ${{ github.event_name == 'push' && ( github.ref == 'refs/heads/master' || github.ref == 'refs/heads/1.0-STABLE' ) && github.repository == 'bootique/bootique' }}
+    if: ${{ github.event_name == 'push' && ( github.ref == 'refs/heads/master' || github.ref == 'refs/heads/1.0-STABLE' ) && github.repository == 'bootique/bootique' }}
     env:
 #      CI_DEPLOY_USERNAME: ${{ secrets.CI_DEPLOY_USERNAME }}
 #      CI_DEPLOY_PASSWORD: ${{ secrets.CI_DEPLOY_PASSWORD }}
