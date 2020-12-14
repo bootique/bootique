@@ -1,0 +1,65 @@
+# Licensed to ObjectStyle LLC under one or more
+# contributor license agreements. See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ObjectStyle LLC licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License. You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: bootique
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: JDK ${{ matrix.java }}, DB ${{ matrix.db-profile }}
+    continue-on-error: ${{ matrix.java == '16-ea' }}
+    strategy:
+      matrix:
+        java: [8]
+        db-profile: [hsql]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up java ${{ matrix.java }}
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+
+      - uses: actions/cache@v2
+        with:
+          path: $HOME/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
+      - name: Set up DB ${{ matrix.db-profile }}
+        run: mvn clean verify
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+#    if: ${{ github.event_name == 'push' && ( github.ref == 'refs/heads/master' || github.ref == 'refs/heads/1.0-STABLE' ) && github.repository == 'bootique/bootique' }}
+    env:
+#      CI_DEPLOY_USERNAME: ${{ secrets.CI_DEPLOY_USERNAME }}
+#      CI_DEPLOY_PASSWORD: ${{ secrets.CI_DEPLOY_PASSWORD }}
+      GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+      GITHUB_USERNAME: ${{ github.actor }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v1
+      - name: Set up java 8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 8
+      - name: Deploy
+        run: mvn clean source:jar javadoc:javadoc deploy -DskipTests --settings .github/workflows/.settings.xml

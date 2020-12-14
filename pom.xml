@@ -51,10 +51,15 @@
     </scm>
 
     <distributionManagement>
+<!--        <repository>-->
+<!--            <id>bintray-bootique-releases</id>-->
+<!--            <name>bintray-bootique-releases</name>-->
+<!--            <url>https://api.bintray.com/maven/bootique/releases/bootique/;publish=1</url>-->
+<!--        </repository>-->
         <repository>
-            <id>bintray-bootique-releases</id>
-            <name>bintray-bootique-releases</name>
-            <url>https://api.bintray.com/maven/bootique/releases/bootique/;publish=1</url>
+            <id>github</id>
+            <name>GitHub KravchenkoAS Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/KravchenkoAS/bootique</url>
         </repository>
     </distributionManagement>
 
