@@ -22,6 +22,14 @@
 
 ## 2.0.B1
 
+* [bootique #300](https://github.com/bootique/bootique/issues/300): Injectable `ConfigurationSource` object was removed
+  as a result of configuration-loading pipeline refactoring. If you redefined it to customize configuration locations, 
+  implement a simpler `JsonConfigurationLoader` instead and register it like this: 
+  
+```java
+BQCoreModule.extend(b).addConfigLoader(MyLoader.class);
+```
+
 * [bootique-metrics #41](https://github.com/bootique/bootique-metrics/issues/41): A few configuration keys were changed
 for `heartbeat`. Rename the following config keys in YAML or properties: 
 
