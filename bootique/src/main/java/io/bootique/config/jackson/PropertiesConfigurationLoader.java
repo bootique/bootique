@@ -30,7 +30,7 @@ import java.util.Map;
  */
 public class PropertiesConfigurationLoader implements JsonConfigurationLoader {
 
-    public static final int ORDER = DIPostConfigurationLoader.ORDER + 10;
+    public static final int ORDER = CliCustomOptionsConfigurationLoader.ORDER + 10;
 
     private final Environment environment;
 

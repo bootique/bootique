@@ -139,7 +139,6 @@ public class BQCoreModule implements BQModule {
                 .addConfigLoader(DIConfigurationLoader.class)
                 .addConfigLoader(CliConfigurationLoader.class)
                 .addConfigLoader(CliCustomOptionsConfigurationLoader.class)
-                .addConfigLoader(DIPostConfigurationLoader.class)
                 .addConfigLoader(PropertiesConfigurationLoader.class);
 
         // bind instances

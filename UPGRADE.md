@@ -22,13 +22,15 @@
 
 ## 2.0.B1
 
-* [bootique #300](https://github.com/bootique/bootique/issues/300): Injectable `ConfigurationSource` object was removed
-  as a result of configuration-loading pipeline refactoring. If you redefined it to customize configuration locations, 
-  implement a simpler `JsonConfigurationLoader` instead and register it like this: 
+* [bootique #300](https://github.com/bootique/bootique/issues/300): The new API allows to register configuration-loading
+  extensions like this:
   
 ```java
 BQCoreModule.extend(b).addConfigLoader(MyLoader.class);
 ```
+This obsoletes a couple of existing mechanisms. If you relied on `ConfigurationSource` object or on
+`BQCoreModule.extend(b).addPostConfig("..")` (introduced in 2.0.M1), they will no longer be available and should be
+replaced with custom `JsonConfigurationLoader`.
 
 * [bootique-metrics #41](https://github.com/bootique/bootique-metrics/issues/41): A few configuration keys were changed
 for `heartbeat`. Rename the following config keys in YAML or properties: 
