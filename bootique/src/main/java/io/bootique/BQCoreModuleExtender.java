@@ -117,7 +117,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     }
 
     public BQCoreModuleExtender setLogLevel(String name, Level level) {
-        contributeLogLevels().put(name, level);
+        contributeLogLevels().putInstance(name, level);
         return this;
     }
 
@@ -127,7 +127,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     }
 
     public BQCoreModuleExtender setProperty(String name, String value) {
-        contributeProperties().put(name, value);
+        contributeProperties().putInstance(name, value);
         return this;
     }
 
@@ -137,7 +137,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     }
 
     public BQCoreModuleExtender setVar(String name, String value) {
-        contributeVariables().put(name, value);
+        contributeVariables().putInstance(name, value);
         return this;
     }
 
@@ -287,7 +287,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      */
     public BQCoreModuleExtender addValueObjectsDescriptors(Map<Class<?>, ValueObjectDescriptor> valueObjectsDescriptors) {
         MapBuilder<Class<?>, ValueObjectDescriptor> binder = contributeValueObjectsDescriptors();
-        valueObjectsDescriptors.forEach(binder::put);
+        valueObjectsDescriptors.forEach(binder::putInstance);
         return this;
     }
 
@@ -300,7 +300,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @since 1.0.RC1
      */
     public BQCoreModuleExtender addValueObjectDescriptor(Class<?> object, ValueObjectDescriptor valueObjectsDescriptor) {
-        contributeValueObjectsDescriptors().put(object, valueObjectsDescriptor);
+        contributeValueObjectsDescriptors().putInstance(object, valueObjectsDescriptor);
         return this;
     }
 
