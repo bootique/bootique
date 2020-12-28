@@ -79,7 +79,7 @@ public class Commands implements BQModule {
     public void configure(Binder binder) {
         SetBuilder<Command> extraCommandsBinder = Commands.contributeExtraCommands(binder);
         commandTypes.forEach(extraCommandsBinder::add);
-        commands.forEach(extraCommandsBinder::add);
+        commands.forEach(extraCommandsBinder::addInstance);
     }
 
     @Provides

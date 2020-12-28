@@ -66,7 +66,7 @@ public class BootiqueTest {
 
         @Override
         public void configure(Binder binder) {
-            binder.bindSet(String.class).add("tm1");
+            binder.bindSet(String.class).addInstance("tm1");
         }
     }
 
@@ -74,7 +74,7 @@ public class BootiqueTest {
 
         @Override
         public void configure(Binder binder) {
-            binder.bindSet(String.class).add("tm2");
+            binder.bindSet(String.class).addInstance("tm2");
         }
     }
 }

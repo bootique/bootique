@@ -93,8 +93,8 @@ public class BQModuleIdTest {
 
     @Test
     public void testLambda() {
-        BQModuleId moduleId1 = BQModuleId.of(binder -> binder.bindSet(String.class).add("lambda"));
-        BQModuleId moduleId2 = BQModuleId.of(binder -> binder.bindSet(String.class).add("lambda 2"));
+        BQModuleId moduleId1 = BQModuleId.of(binder -> binder.bindSet(String.class).addInstance("lambda"));
+        BQModuleId moduleId2 = BQModuleId.of(binder -> binder.bindSet(String.class).addInstance("lambda 2"));
 
         assertEquals(moduleId1, moduleId1);
         assertEquals(moduleId1.hashCode(), moduleId1.hashCode());
@@ -142,28 +142,28 @@ public class BQModuleIdTest {
     }
 
     static void configure(Binder binder) {
-        binder.bindSet(String.class).add("method ref");
+        binder.bindSet(String.class).addInstance("method ref");
     }
 
     private static void configure2(Binder binder) {
-        binder.bindSet(String.class).add("method ref 2");
+        binder.bindSet(String.class).addInstance("method ref 2");
     }
 
     public BQModule createModule(String name) {
-        return binder -> binder.bindSet(String.class).add(name);
+        return binder -> binder.bindSet(String.class).addInstance(name);
     }
 
     public static class MyStaticModule implements BQModule {
         @Override
         public void configure(Binder binder) {
-            binder.bindSet(String.class).add("static class");
+            binder.bindSet(String.class).addInstance("static class");
         }
     }
 
     static class MyStaticModule2 implements BQModule {
         @Override
         public void configure(Binder binder) {
-            binder.bindSet(String.class).add("static class 2");
+            binder.bindSet(String.class).addInstance("static class 2");
         }
     }
 
@@ -171,7 +171,7 @@ public class BQModuleIdTest {
     protected class MyModule implements BQModule {
         @Override
         public void configure(Binder binder) {
-            binder.bindSet(String.class).add("nested class");
+            binder.bindSet(String.class).addInstance("nested class");
         }
     }
 
@@ -179,7 +179,7 @@ public class BQModuleIdTest {
     private class MyModule2 implements BQModule {
         @Override
         public void configure(Binder binder) {
-            binder.bindSet(String.class).add("nested class 2");
+            binder.bindSet(String.class).addInstance("nested class 2");
         }
     }
 }

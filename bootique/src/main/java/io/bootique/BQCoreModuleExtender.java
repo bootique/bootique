@@ -169,7 +169,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      */
     public BQCoreModuleExtender declareVar(String configPath, String name, String description) {
         DeclaredVariable var = new DeclaredVariable(configPath, name, description);
-        contributeVariableDeclarations().add(var);
+        contributeVariableDeclarations().addInstance(var);
         return this;
     }
 
@@ -188,7 +188,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @since 0.25
      */
     public BQCoreModuleExtender addConfig(String configResourceId) {
-        contributeConfigs().add(configResourceId);
+        contributeConfigs().addInstance(configResourceId);
         return this;
     }
 
@@ -208,7 +208,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      */
     public BQCoreModuleExtender mapConfigResource(String optionName, String configResourceId) {
         // using Multibinder to support multiple decorators for the same option
-        contributeOptionDecorators().add(new OptionRefWithConfig(optionName, configResourceId));
+        contributeOptionDecorators().addInstance(new OptionRefWithConfig(optionName, configResourceId));
         return this;
     }
 
@@ -224,7 +224,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @since 1.0.RC1
      */
     public BQCoreModuleExtender mapConfigPath(String optionName, String configPath) {
-        contributeOptionPathDecorators().add(new OptionRefWithConfigPath(optionName, configPath));
+        contributeOptionPathDecorators().addInstance(new OptionRefWithConfigPath(optionName, configPath));
         return this;
     }
 
@@ -235,7 +235,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @return this extender instance.
      */
     public BQCoreModuleExtender addOption(OptionMetadata option) {
-        contributeOptions().add(option);
+        contributeOptions().addInstance(option);
         return this;
     }
 
@@ -253,7 +253,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     }
 
     public BQCoreModuleExtender addCommand(Command command) {
-        contributeCommands().add(command);
+        contributeCommands().addInstance(command);
         return this;
     }
 
@@ -273,7 +273,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @since 0.25
      */
     public BQCoreModuleExtender decorateCommand(Class<? extends Command> commandType, CommandDecorator commandDecorator) {
-        contributeCommandDecorators().add(new CommandRefDecorated(commandType, commandDecorator));
+        contributeCommandDecorators().addInstance(new CommandRefDecorated(commandType, commandDecorator));
         return this;
     }
 
@@ -312,7 +312,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @since 2.0.B1
      */
     public BQCoreModuleExtender addConfigLoader(JsonConfigurationLoader loader) {
-        contributeConfigurationLoaders().add(loader);
+        contributeConfigurationLoaders().addInstance(loader);
         return this;
     }
 
