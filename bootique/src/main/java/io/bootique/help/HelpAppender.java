@@ -72,6 +72,7 @@ public class HelpAppender {
     }
 
     public void printText(String... parts) {
+        // TODO: should this be 'foldPrintln(..)'?
         getOrCreateOffsetAppender().println(parts);
     }
 

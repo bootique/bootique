@@ -81,10 +81,9 @@ public class DefaultHelpGenerator implements HelpGenerator {
 
         Objects.requireNonNull(name);
 
-        if (description != null) {
-            out.printText(name, ": ", description);
-        } else {
-            out.printText(name);
+        out.printText(name);
+        if(description != null) {
+            out.printDescription(description);
         }
     }
 

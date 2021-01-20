@@ -60,7 +60,8 @@ public class DefaultHelpGeneratorTest {
 
         assertLines(new DefaultHelpGenerator(app, 80),
                 "NAME",
-                "      myapp: this is my app"
+                "      myapp",
+                "           this is my app"
         );
     }
 
@@ -238,6 +239,7 @@ public class DefaultHelpGeneratorTest {
 
         ApplicationMetadata app = ApplicationMetadata
                 .builder("myapp")
+                .description("Word17 word18 word19 word20 longword21 longerword22 morewords23")
                 .addOption(opt1)
                 .addOption(opt2)
                 .addOption(opt3)
@@ -246,6 +248,9 @@ public class DefaultHelpGeneratorTest {
         assertLines(new DefaultHelpGenerator(app, 41),
                 "NAME",
                 "      myapp",
+                "           Word17 word18 word19 word20",
+                "           longword21 longerword22",
+                "           morewords23",
                 "",
                 "OPTIONS",
                 "      -a, --a1",
@@ -306,6 +311,7 @@ public class DefaultHelpGeneratorTest {
 
         ApplicationMetadata app = ApplicationMetadata
                 .builder("myapp")
+                .description("Word17 word18 word19 word20 longword21 longerword22 morewords23")
                 .addOption(opt1)
                 .addOption(opt2)
                 .addOption(opt3)
@@ -315,6 +321,7 @@ public class DefaultHelpGeneratorTest {
         assertLines(new DefaultHelpGenerator(app, 80),
                 "NAME",
                 "      myapp",
+                "           Word17 word18 word19 word20 longword21 longerword22 morewords23",
                 "",
                 "OPTIONS",
                 "      -a, --a1",
