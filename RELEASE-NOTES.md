@@ -4,6 +4,7 @@
 * #298 Upgrade to Junit 4.13.1 and Junit 5.7.0
 * #300 Pluggable configuration loaders
 * #303 "-h" : application description doesn't fold to terminal width
+* #304 Update to bootique-modules-parent 2.0.5
 
 ## 2.0.M1
 
