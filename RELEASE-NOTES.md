@@ -2,6 +2,7 @@
 
 * #259 "CLI options match multiple commands" error sometimes reported with a stack
 * #290 Update to bootique-modules-parent 1.2.1  
+* #305 Bootique 1.x: Update to bootique-modules-parent 1.2.2
 
 ## 1.1
 
