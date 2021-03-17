@@ -32,7 +32,7 @@ bootique-shiro | [![build test deploy](https://github.com/bootique/bootique-shir
 bootique-simplejavamail | [![build test deploy](https://github.com/bootique/bootique-simplejavamail/workflows/build%20test%20deploy/badge.svg)](https://github.com/bootique/bootique-simplejavamail/actions)
 bootique-swagger | [![build test deploy](https://github.com/bootique/bootique-swagger/workflows/build%20test%20deploy/badge.svg)](https://github.com/bootique/bootique-swagger/actions)
 bootique-tapestry | [![build test deploy](https://github.com/bootique/bootique-tapestry/workflows/build%20test%20deploy/badge.svg)](https://github.com/bootique/bootique-tapestry/actions)
-bootique-tool | -
+bootique-tool | [![verify](https://github.com/bootique/bootique-tool/actions/workflows/verify.yml/badge.svg)](https://github.com/bootique/bootique-tool/actions/workflows/verify.yml)
 bootique-undertow | [![build test deploy](https://github.com/bootique/bootique-undertow/workflows/build%20test%20deploy/badge.svg)](https://github.com/bootique/bootique-undertow/actions)
             
 
