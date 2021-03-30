@@ -17,7 +17,7 @@
   under the License.
   -->
 
-[![Build Status](https://travis-ci.org/bootique/bootique.svg)](https://travis-ci.org/bootique/bootique)
+[![build test deploy 1.x](https://github.com/bootique/bootique/actions/workflows/maven-1x.yml/badge.svg)](https://github.com/bootique/bootique/actions/workflows/maven-1x.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/io.bootique/bootique.svg?colorB=brightgreen)](https://search.maven.org/artifact/io.bootique/bootique)
 
 Bootique is a [minimally opinionated](https://medium.com/@andrus_a/bootique-a-minimally-opinionated-platform-for-modern-java-apps-644194c23872#.odwmsbnbh) 
