@@ -23,31 +23,42 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
+import io.bootique.jackson.JacksonService;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.function.Function;
+import java.net.URL;
+import javax.inject.Inject;
 
 /**
  * @since 2.0.B1
  */
-public class JsonNodeYamlParser implements Function<InputStream, JsonNode> {
+public class YamlConfigurationFormatParser implements ConfigurationFormatParser {
 
-	private YAMLFactory yamlFactory;
-	private ObjectMapper mapper;
+	private final YAMLFactory yamlFactory;
+	private final ObjectMapper mapper;
 
-	public JsonNodeYamlParser(ObjectMapper mapper) {
-		this.mapper = mapper;
+	@Inject
+	public YamlConfigurationFormatParser(JacksonService jackson) {
+		this.mapper = jackson.newObjectMapper();
 		this.yamlFactory = new YAMLFactory();
 	}
 
 	@Override
-	public JsonNode apply(InputStream t) {
+	public JsonNode parse(InputStream stream) {
 		try {
-			YAMLParser parser = yamlFactory.createParser(t);
+			YAMLParser parser = yamlFactory.createParser(stream);
 			return mapper.readTree(parser);
 		} catch (IOException e) {
 			throw new RuntimeException("Error reading config data", e);
 		}
+	}
+
+	@Override
+	public boolean shouldParse(URL url, String contentType) {
+		// TODO: there's no official MIME type yet for YAML
+		return  "application/x-yaml".equals(contentType)
+				|| url.getPath().endsWith(".yml")
+				|| url.getPath().endsWith(".yaml");
 	}
 }

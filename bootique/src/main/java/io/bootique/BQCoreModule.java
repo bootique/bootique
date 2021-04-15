@@ -63,11 +63,9 @@ import io.bootique.value.Percent;
 
 import javax.inject.Provider;
 import javax.inject.Singleton;
-import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -135,6 +133,10 @@ public class BQCoreModule implements BQModule {
                 .addOption(createConfigOption())
                 .addCommand(HelpConfigCommand.class)
 
+                // standard config formats
+                .addConfigFormatParser(JsonConfigurationFormatParser.class)
+                .addConfigFormatParser(YamlConfigurationFormatParser.class)
+
                 // standard config loaders
                 .addConfigLoader(DIConfigurationLoader.class)
                 .addConfigLoader(CliConfigurationLoader.class)
@@ -167,14 +169,8 @@ public class BQCoreModule implements BQModule {
 
     @Provides
     @Singleton
-    JsonConfigurationParser provideJsonConfigurationParser(JacksonService jacksonService) {
-
-        ObjectMapper textToJsonMapper = jacksonService.newObjectMapper();
-        Map<ParserType, Function<InputStream, JsonNode>> parsers = new EnumMap<>(ParserType.class);
-        parsers.put(ParserType.YAML, new JsonNodeYamlParser(textToJsonMapper));
-        parsers.put(ParserType.JSON, new JsonNodeJsonParser(textToJsonMapper));
-
-        return new MultiFormatJsonNodeParser(parsers, bootLogger);
+    JsonConfigurationParser provideJsonConfigurationParser(Set<ConfigurationFormatParser> parsers) {
+        return new MultiFormatJsonNodeParser(parsers);
     }
 
     @Provides
@@ -341,10 +337,10 @@ public class BQCoreModule implements BQModule {
 
         DefaultEnvironment.Builder environment = DefaultEnvironment.builder();
 
-        if (Boolean.valueOf(diProperties.get(EXCLUDE_SYSTEM_PROPERTIES))) {
+        if (Boolean.parseBoolean(diProperties.get(EXCLUDE_SYSTEM_PROPERTIES))) {
             environment.excludeSystemProperties();
         }
-        if (Boolean.valueOf(diProperties.containsKey(EXCLUDE_SYSTEM_VARIABLES))) {
+        if (diProperties.containsKey(EXCLUDE_SYSTEM_VARIABLES)) {
             environment.excludeSystemVariables();
         }
 
