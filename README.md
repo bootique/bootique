@@ -33,9 +33,9 @@ provides Bootique core. Bootique team also develops a number of important module
 
 ## Quick Links
 
-* [WebSite](http://bootique.io)
-* [Getting Started](http://bootique.io/docs/0/getting-started/)
-* [Docs](http://bootique.io/docs/) - documentation collection for Bootique core and all standard 
+* [WebSite](https://bootique.io)
+* [Getting Started](https://bootique.io/docs/2.x/getting-started/)
+* [Docs](https://bootique.io/docs/) - documentation collection for Bootique core and all standard 
   modules.
 
 ## Support
