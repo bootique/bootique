@@ -24,6 +24,8 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /**
  * Represents a percent value. Used as a value object to deserialize percentages in application configurations.
  *
@@ -98,6 +100,7 @@ public class Percent implements Comparable<Percent> {
     }
 
     @Override
+    @JsonValue
     public String toString() {
         return percent + "%";
     }

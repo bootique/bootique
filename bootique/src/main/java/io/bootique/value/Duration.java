@@ -27,6 +27,8 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /**
  * Represents a time duration value. Used as a value object to deserialize durations in application configurations.
  *
@@ -163,6 +165,7 @@ public class Duration implements Comparable<Duration> {
     }
 
     @Override
+    @JsonValue
     public String toString() {
         return stringDuration;
     }
