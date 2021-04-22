@@ -25,7 +25,7 @@ To simplify it, you can set a parent of your `pom.xml` to be a standard Bootique
 [source,xml,subs="attributes+"]
 ----
 <parent>
-    <group>io.bootique.parent</group>
+    <groupId>io.bootique.parent</groupId>
     <artifactId>bootique-parent</artifactId>
     <version>{bootique_parent_version}</version>
 </parent>
