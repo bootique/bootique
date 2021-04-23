@@ -26,6 +26,7 @@ import io.bootique.command.CommandRefDecorated;
 import io.bootique.config.OptionRefWithConfig;
 import io.bootique.config.OptionRefWithConfigPath;
 import io.bootique.config.jackson.JsonConfigurationLoader;
+import io.bootique.config.jackson.parser.ConfigurationFormatParser;
 import io.bootique.di.Binder;
 import io.bootique.di.MapBuilder;
 import io.bootique.di.SetBuilder;
@@ -59,6 +60,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     private SetBuilder<OptionRefWithConfig> optionDecorators;
     private MapBuilder<Class<?>, ValueObjectDescriptor> valueObjectsDescriptors;
     private SetBuilder<OptionRefWithConfigPath> optionPathDecorators;
+    private SetBuilder<ConfigurationFormatParser> configurationFormatParsers;
     private SetBuilder<JsonConfigurationLoader> configurationLoaders;
 
     protected BQCoreModuleExtender(Binder binder) {
@@ -79,6 +81,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
         contributeValueObjectsDescriptors();
         contributeOptionPathDecorators();
         contributeConfigurationLoaders();
+        contributeConfigurationFormatParsers();
 
         return this;
     }
@@ -328,6 +331,17 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
         return this;
     }
 
+    /**
+     * Adds parser for the configuration file format.
+     * Bootique supports JSON and YAML configuration formats out of the box.
+     *
+     * @since 2.0.B1
+     */
+    public BQCoreModuleExtender addConfigFormatParser(Class<? extends ConfigurationFormatParser> parserType) {
+        contributeConfigurationFormatParsers().add(parserType);
+        return this;
+    }
+
     protected MapBuilder<Class<?>, ValueObjectDescriptor> contributeValueObjectsDescriptors() {
         return valueObjectsDescriptors != null
                 ? valueObjectsDescriptors
@@ -380,5 +394,9 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
 
     protected SetBuilder<JsonConfigurationLoader> contributeConfigurationLoaders() {
         return configurationLoaders != null ? configurationLoaders : (configurationLoaders = newSet(JsonConfigurationLoader.class));
+    }
+
+    protected SetBuilder<ConfigurationFormatParser> contributeConfigurationFormatParsers() {
+        return configurationFormatParsers != null ? configurationFormatParsers : (configurationFormatParsers = newSet(ConfigurationFormatParser.class));
     }
 }

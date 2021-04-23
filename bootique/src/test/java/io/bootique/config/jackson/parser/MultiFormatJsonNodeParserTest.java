@@ -19,83 +19,40 @@
 
 package io.bootique.config.jackson.parser;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import io.bootique.log.BootLogger;
+import io.bootique.jackson.JacksonService;
 import org.junit.jupiter.api.Test;
 
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.function.Function;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
-import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 public class MultiFormatJsonNodeParserTest {
 
-    @SuppressWarnings("unchecked")
-    private Map<ParserType, Function<InputStream, JsonNode>> createParsersMap(ParserType... types) {
+    ConfigurationFormatParser jsonParser = new JsonConfigurationFormatParser(mock(JacksonService.class));
+    ConfigurationFormatParser yamlParser = new YamlConfigurationFormatParser(mock(JacksonService.class));
 
-        Map<ParserType, Function<InputStream, JsonNode>> map = new EnumMap<>(ParserType.class);
-        asList(types).forEach(t -> map.put(t, mock(Function.class)));
-
-        return map;
+    private Set<ConfigurationFormatParser> createParsersSet() {
+        return new HashSet<>(Arrays.asList(jsonParser, yamlParser));
     }
 
     @Test
-    public void testParser() {
-        Map<ParserType, Function<InputStream, JsonNode>> parsers = createParsersMap(ParserType.JSON, ParserType.YAML);
+    public void testParserForUrl() throws MalformedURLException {
+        MultiFormatJsonNodeParser parser = new MultiFormatJsonNodeParser(createParsersSet());
 
-        MultiFormatJsonNodeParser parser = new MultiFormatJsonNodeParser(parsers, mock(BootLogger.class));
-        assertSame(parsers.get(ParserType.YAML), parser.parser(ParserType.YAML));
-        assertSame(parsers.get(ParserType.JSON), parser.parser(ParserType.JSON));
-    }
+        assertSame(jsonParser, parser.parserForUrl(new URL("http://example.org/test.json"), ""));
+        assertSame(jsonParser, parser.parserForUrl(new URL("http://example.org/test"), "application/json"));
+        assertSame(jsonParser, parser.parserForUrl(new URL("http://example.org/test.json?test=abc"), ""));
 
-    @Test
-    public void testParser_MissingYaml() {
-        Map<ParserType, Function<InputStream, JsonNode>> parsers = createParsersMap(ParserType.JSON);
-        assertThrows(IllegalStateException.class, () -> new MultiFormatJsonNodeParser(parsers, mock(BootLogger.class)).parser(ParserType.YAML));
-    }
+        assertSame(yamlParser, parser.parserForUrl(new URL("http://example.org/test.yml"), ""));
+        assertSame(yamlParser, parser.parserForUrl(new URL("http://example.org/test.yaml"), ""));
+        assertSame(yamlParser, parser.parserForUrl(new URL("http://example.org/test.yaml?test=abc"), ""));
+        assertSame(yamlParser, parser.parserForUrl(new URL("http://example.org/test"), "application/x-yaml"));
 
-    @Test
-    public void testParserTypeFromExtension_Unknown() throws MalformedURLException {
-
-        MultiFormatJsonNodeParser parser = new MultiFormatJsonNodeParser(Collections.emptyMap(),
-                mock(BootLogger.class));
-
-        assertNull(parser.parserTypeFromExtension(new URL("http://example.org/test")));
-        assertNull(parser.parserTypeFromExtension(new URL("http://example.org/")));
-        assertNull(parser.parserTypeFromExtension(new URL("http://example.org/test.txt")));
-    }
-
-    @Test
-    public void testParserTypeFromExtension() throws MalformedURLException {
-
-        MultiFormatJsonNodeParser parser = new MultiFormatJsonNodeParser(Collections.emptyMap(),
-                mock(BootLogger.class));
-
-        assertEquals(ParserType.YAML, parser.parserTypeFromExtension(new URL("http://example.org/test.yml")));
-        assertEquals(ParserType.YAML, parser.parserTypeFromExtension(new URL("http://example.org/test.yaml")));
-        assertEquals(ParserType.JSON, parser.parserTypeFromExtension(new URL("http://example.org/test.json")));
-    }
-
-    @Test
-    public void testParserTypeFromExtension_IgnoreQuery() throws MalformedURLException {
-
-        MultiFormatJsonNodeParser parser = new MultiFormatJsonNodeParser(Collections.emptyMap(),
-                mock(BootLogger.class));
-        assertEquals(ParserType.JSON, parser.parserTypeFromExtension(new URL("http://example.org/test.json?a=b")));
-    }
-
-    @Test
-    public void testParserTypeFromExtension_FileUrl() throws MalformedURLException {
-
-        MultiFormatJsonNodeParser parser = new MultiFormatJsonNodeParser(Collections.emptyMap(),
-                mock(BootLogger.class));
-        assertEquals(ParserType.YAML, parser.parserTypeFromExtension(new URL("file://example.org/test.yml")));
+        assertNull(parser.parserForUrl(new URL("http://example.org/test"), ""));
     }
 }

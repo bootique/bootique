@@ -19,29 +19,31 @@
 
 package io.bootique.config.jackson.parser;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Test;
-
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.net.URL;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import com.fasterxml.jackson.databind.JsonNode;
 
-public class JsonNodeYamlParserTest {
+/**
+ * Interface for the specific configuration format parser.
+ *
+ * @since 2.0.B1
+ */
+public interface ConfigurationFormatParser {
 
-	@Test
-	public void testApply() {
+    /**
+     * Parse incoming configuration InputStream
+     *
+     * @param stream for the configuration resource, managed by the caller
+     * @return parsed configuration as {@link JsonNode}
+     */
+    JsonNode parse(InputStream stream);
 
-		InputStream in = new ByteArrayInputStream("a: b\nb: c".getBytes());
-		ObjectMapper mapper = new ObjectMapper();
-
-		JsonNode node = new JsonNodeYamlParser(mapper).apply(in);
-		assertNotNull(node);
-
-		assertEquals("b", node.get("a").asText());
-		assertEquals("c", node.get("b").asText());
-	}
+    /**
+     * @param url of the configuration resource
+     * @param contentType of the configuration resource or null if it's unavailable
+     * @return should this configuration resource be processed by this parser
+     */
+    boolean shouldParse(URL url, String contentType);
 
 }

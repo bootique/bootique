@@ -21,27 +21,37 @@ package io.bootique.config.jackson.parser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Test;
+import io.bootique.jackson.JacksonService;
 
-import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import javax.inject.Inject;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+/**
+ * @since 2.0.B1
+ */
+public class JsonConfigurationFormatParser implements ConfigurationFormatParser {
 
-public class JsonNodeJsonParserTest {
+	private final ObjectMapper mapper;
 
-	@Test
-	public void testApply() {
-
-		InputStream in = new ByteArrayInputStream("{\"a\":\"b\",\"b\": \"c\"}".getBytes());
-		ObjectMapper mapper = new ObjectMapper();
-
-		JsonNode node = new JsonNodeJsonParser(mapper).apply(in);
-		assertNotNull(node);
-
-		assertEquals("b", node.get("a").asText());
-		assertEquals("c", node.get("b").asText());
+	@Inject
+	public JsonConfigurationFormatParser(JacksonService jackson) {
+		this.mapper = jackson.newObjectMapper();
 	}
 
+	@Override
+	public JsonNode parse(InputStream stream) {
+		try {
+			return mapper.readTree(stream);
+		} catch (IOException e) {
+			throw new RuntimeException("Error reading config data", e);
+		}
+	}
+
+	@Override
+	public boolean shouldParse(URL url, String contentType) {
+		return "application/json".equals(contentType)
+				|| url.getPath().endsWith(".json");
+	}
 }

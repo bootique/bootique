@@ -25,6 +25,8 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import static io.bootique.value.BytesUnit.*;
 
 /**
@@ -126,6 +128,7 @@ public class Bytes implements Comparable<Bytes> {
     }
 
     @Override
+    @JsonValue
     public String toString() {
         return bytes.toString();
     }
