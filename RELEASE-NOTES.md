@@ -5,6 +5,7 @@
 * #300 Pluggable configuration loaders
 * #303 "-h" : application description doesn't fold to terminal width
 * #304 Update to bootique-modules-parent 2.0.5
+* #306 Injectable configuration format parsers
 
 ## 2.0.M1
 
