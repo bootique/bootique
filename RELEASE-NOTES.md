@@ -6,6 +6,7 @@
 * #303 "-h" : application description doesn't fold to terminal width
 * #304 Update to bootique-modules-parent 2.0.5
 * #306 Injectable configuration format parsers
+* #308 Update to bootique-modules-parent 2.0.6
 
 ## 2.0.M1
 
