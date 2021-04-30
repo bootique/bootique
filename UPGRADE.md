@@ -60,6 +60,10 @@ or `Table.get*` or `Table.select*` methods are missing, consider replacing your 
 (`Table.selectColumns(..)`) or a matcher (`Table.get*` are an indicator that you likely need a matcher to compare 
 values in DB instead of selecting them in Java).
 
+* [bootique-rabbitmq #8](https://github.com/bootique/bootique-rabbitmq/issues/8): There is a substantial refactoring of 
+  the `ChannelFactory` API. For one thing it was renamed to `io.bootique.rabbitmq.client.channel.RmqChannelFactory`. 
+  Second, if you want to create an RMQ Channel with a specific topology, you would use `RmqChannelFactory.newChannel(connectionName)`, and then use the available builder methods to describe the desired topology. You will need to
+  update your code accordingly.
 
 ## 2.0.M1 
 
