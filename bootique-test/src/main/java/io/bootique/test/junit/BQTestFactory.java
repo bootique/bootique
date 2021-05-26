@@ -40,8 +40,6 @@ import java.util.Collection;
  *   public BQTestFactory testFactory = new BQTestFactory();
  * }
  * </pre>
- *
- * @since 0.15
  */
 public class BQTestFactory extends ExternalResource {
 
@@ -72,7 +70,6 @@ public class BQTestFactory extends ExternalResource {
      * Sets the default policy for this factory to auto-load modules for each app.
      *
      * @return this factory instance.
-     * @since 0.25
      */
     public BQTestFactory autoLoadModules() {
         this.autoLoadModules = true;
@@ -82,7 +79,6 @@ public class BQTestFactory extends ExternalResource {
     /**
      * @param args a String vararg emulating shell arguments passed to a real app.
      * @return a new instance of builder for the test runtime stack.
-     * @since 0.20
      */
     public Builder app(String... args) {
         Builder builder = new Builder(runtimes, args);
@@ -119,7 +115,6 @@ public class BQTestFactory extends ExternalResource {
          * code is equivalent to <code>createRuntime().run()</code>.
          *
          * @return an outcome of the application command.
-         * @since 0.25
          */
         public CommandOutcome run() {
             return createRuntime().run();

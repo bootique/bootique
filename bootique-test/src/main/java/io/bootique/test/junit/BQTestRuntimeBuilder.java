@@ -30,9 +30,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @since 0.20
- */
 // parameterization is needed to enable covariant return types in subclasses
 public abstract class BQTestRuntimeBuilder<T extends BQTestRuntimeBuilder<T>> {
 
@@ -110,7 +107,6 @@ public abstract class BQTestRuntimeBuilder<T extends BQTestRuntimeBuilder<T>> {
     /**
      * @param bootLogger custom BootLogger to use for a given runtime.
      * @return this instance of test runtime builder.
-     * @since 0.23
      */
     public T bootLogger(BootLogger bootLogger) {
         bootique.bootLogger(bootLogger);

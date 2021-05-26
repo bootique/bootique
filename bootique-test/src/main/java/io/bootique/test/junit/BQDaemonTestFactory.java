@@ -43,8 +43,6 @@ import java.util.function.Function;
  * 	public BQDaemonTestFactory testFactory = new BQDaemonTestFactory();
  * }
  * </pre>
- *
- * @since 0.15
  */
 public class BQDaemonTestFactory extends ExternalResource {
 
@@ -75,7 +73,6 @@ public class BQDaemonTestFactory extends ExternalResource {
      * Sets the default policy for this factory to auto-load modules for each app.
      *
      * @return this factory instance.
-     * @since 0.25
      */
     public BQDaemonTestFactory autoLoadModules() {
         this.autoLoadModules = true;
@@ -92,7 +89,6 @@ public class BQDaemonTestFactory extends ExternalResource {
      * @param <T>  a covariant builder type.
      * @param args a String vararg emulating shell arguments passed to a real app.
      * @return a new instance of builder for the test runtime stack.
-     * @since 0.20
      */
     public <T extends Builder<T>> Builder<T> app(String... args) {
         Builder builder = new Builder(runtimes, args);
@@ -108,7 +104,6 @@ public class BQDaemonTestFactory extends ExternalResource {
      * @param runtime a runtime executing in the background.
      * @return an optional object wrapping the state of the runtime execution. If present, then the runtime
      * execution has finished.
-     * @since 0.22
      */
     public Optional<CommandOutcome> getOutcome(BQRuntime runtime) {
         return getDaemon(runtime).getOutcome();
@@ -120,7 +115,6 @@ public class BQDaemonTestFactory extends ExternalResource {
      * times out.
      *
      * @param runtime a runtime being tested. Must be the runtime produced and managed by this factory.
-     * @since 0.23
      */
     public void start(BQRuntime runtime) {
         getDaemon(runtime).start();
@@ -134,7 +128,6 @@ public class BQDaemonTestFactory extends ExternalResource {
      * Shuts down the specified runtime running on the background as well as the thread pool supporting its execution.
      *
      * @param runtime a runtime being tested. Must be the runtime produced and managed by this factory.
-     * @since 0.23
      */
     public void stop(BQRuntime runtime) {
         getDaemon(runtime).stop();
@@ -168,7 +161,6 @@ public class BQDaemonTestFactory extends ExternalResource {
          * Adds a startup check that waits till the runtime finishes, within the startup timeout bounds.
          *
          * @return this builder
-         * @since 0.16
          */
         public T startupAndWaitCheck() {
             this.startupCheck = runtime -> BQDaemonTestFactory.getDaemon(runtimes, runtime).getOutcome().isPresent();
@@ -185,7 +177,6 @@ public class BQDaemonTestFactory extends ExternalResource {
          * Creates runtime without starting it. Can be started via {@link BQDaemonTestFactory#start(BQRuntime)}.
          *
          * @return newly created managed runtime.
-         * @since 0.23
          */
         public BQRuntime createRuntime() {
             BQRuntime runtime = bootique.createRuntime();
@@ -202,7 +193,6 @@ public class BQDaemonTestFactory extends ExternalResource {
          * Starts the test app in a background thread, blocking the test thread until the startup checker succeeds.
          *
          * @return {@link BQRuntime} instance. The caller doesn't need to shut it down. JUnit lifecycle takes care of it.
-         * @since 0.23
          */
         public BQRuntime start() {
             BQRuntime runtime = createRuntime();

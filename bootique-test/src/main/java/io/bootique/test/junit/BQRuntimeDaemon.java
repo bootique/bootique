@@ -61,7 +61,6 @@ public class BQRuntimeDaemon {
 
     /**
      * @return an optional outcome, available if the test runtime has finished.
-     * @since 0.16
      */
     public Optional<CommandOutcome> getOutcome() {
         return Optional.ofNullable(outcome);

@@ -33,8 +33,6 @@ import static org.junit.Assert.assertThat;
 
 /**
  * A helper class for writing test assertions against a {@link BQRuntime}.
- *
- * @since 0.25
  */
 public class BQRuntimeChecker {
 

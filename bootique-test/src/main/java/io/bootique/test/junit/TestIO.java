@@ -24,8 +24,6 @@ import io.bootique.log.DefaultBootLogger;
 
 /**
  * Encapsulates tested process STDIN and STDERR streams.
- *
- * @since 0.23
  */
 public class TestIO {
 

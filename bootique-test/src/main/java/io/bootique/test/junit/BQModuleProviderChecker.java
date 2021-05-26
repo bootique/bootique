@@ -44,8 +44,6 @@ import static org.junit.Assert.fail;
  * 	   BQModuleProviderChecker.testAutoLoadable(MyModuleProvider.class);
  * }
  * </pre>
- *
- * @since 0.15
  */
 public class BQModuleProviderChecker {
 
@@ -59,7 +57,6 @@ public class BQModuleProviderChecker {
      * Verifies that the passed provider type is auto-loadable in a Bootique app.
      *
      * @param provider provider type being testing.
-     * @since 0.25
      */
     public static void testAutoLoadable(Class<? extends BQModuleProvider> provider) {
         new BQModuleProviderChecker(provider).testAutoLoadable();
@@ -70,7 +67,6 @@ public class BQModuleProviderChecker {
      * verify the actual metadata contents.
      *
      * @param provider provider type that we are testing.
-     * @since 0.21
      */
     public static void testMetadata(Class<? extends BQModuleProvider> provider) {
         new BQModuleProviderChecker(provider).testMetadata();
