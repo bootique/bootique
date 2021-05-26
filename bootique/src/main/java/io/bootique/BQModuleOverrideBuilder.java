@@ -30,8 +30,7 @@ public interface BQModuleOverrideBuilder<T> {
 
 	/**
 	 * @since 0.12
-	 * @param module
-	 *            overrding Module.
+	 * @param module overriding Module.
 	 * @return {@link Bootique} instance we are configuring.
 	 */
 	T with(BQModule module);
