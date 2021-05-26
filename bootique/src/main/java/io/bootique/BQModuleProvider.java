@@ -32,7 +32,6 @@ import java.util.Map;
  * the name of the provider.
  *
  * @see Bootique#autoLoadModules()
- * @since 0.8
  */
 public interface BQModuleProvider {
 
@@ -48,7 +47,6 @@ public interface BQModuleProvider {
      * Subclasses can invoke extra builder methods to provide metadata, etc.
      *
      * @return a new instance of {@link BQModuleMetadata} specific to this provider.
-     * @since 0.21
      */
     default BQModuleMetadata.Builder moduleBuilder() {
         return BQModuleMetadata
@@ -64,7 +62,6 @@ public interface BQModuleProvider {
      *
      * @return a potentially empty map of configuration types supported by this module, keyed by default configuration
      * prefix.
-     * @since 0.21
      */
     default Map<String, Type> configs() {
         return Collections.emptyMap();
@@ -76,7 +73,6 @@ public interface BQModuleProvider {
      *
      * @return a potentially empty collection of modules overridden by the
      * Module created by this provider.
-     * @since 0.10
      */
     default Collection<Class<? extends BQModule>> overrides() {
         return Collections.emptyList();
@@ -86,7 +82,6 @@ public interface BQModuleProvider {
      * Returns a human readable name of the provider.
      *
      * @return a human readable name of the provider. Equals to the "simple" class name by default.
-     * @since 0.12
      */
     default String name() {
         return getClass().getSimpleName();
@@ -98,7 +93,6 @@ public interface BQModuleProvider {
      * dependencies without relying on auto-loading.
      *
      * @return collection of bootique module providers on which the current module depends.
-     * @since 0.24
      */
     default Collection<BQModuleProvider> dependencies() {
         return Collections.emptyList();

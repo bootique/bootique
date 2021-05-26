@@ -26,8 +26,6 @@ import java.util.Map;
 
 /**
  * A helper class to determine the app main class and user-friendly name.
- *
- * @since 0.20
  */
 class ApplicationIntrospector {
 

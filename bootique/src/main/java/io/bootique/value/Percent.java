@@ -19,17 +19,15 @@
 
 package io.bootique.value;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonValue;
-
 /**
  * Represents a percent value. Used as a value object to deserialize percentages in application configurations.
- *
- * @since 1.0.RC1
  */
 public class Percent implements Comparable<Percent> {
 

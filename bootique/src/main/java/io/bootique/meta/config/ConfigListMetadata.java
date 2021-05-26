@@ -22,9 +22,6 @@ package io.bootique.meta.config;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * @since 0.21
- */
 public class ConfigListMetadata extends ConfigValueMetadata {
 
     private ConfigMetadataNode elementType;

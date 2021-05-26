@@ -25,8 +25,6 @@ import java.util.Objects;
 
 /**
  * A configurable strategy for converting Java class names to command names, configuration keys, etc.
- *
- * @since 0.21
  */
 public class ClassToName {
 

@@ -21,15 +21,11 @@ package io.bootique;
 
 import io.bootique.di.BQModule;
 
-/**
- * @since 0.10
- */
 public interface BQModuleOverrideBuilder<T> {
 
 	T with(Class<? extends BQModule> moduleType);
 
 	/**
-	 * @since 0.12
 	 * @param module overriding Module.
 	 * @return {@link Bootique} instance we are configuring.
 	 */

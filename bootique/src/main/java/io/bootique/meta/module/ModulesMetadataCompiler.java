@@ -29,9 +29,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-/**
- * @since 0.21
- */
 public class ModulesMetadataCompiler {
 
     private ConfigMetadataCompiler configCompiler;

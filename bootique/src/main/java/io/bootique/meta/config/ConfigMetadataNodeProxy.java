@@ -21,9 +21,6 @@ package io.bootique.meta.config;
 
 import java.lang.reflect.Type;
 
-/**
- * @since 0.21
- */
 class ConfigMetadataNodeProxy implements ConfigMetadataNode {
 
     private String name;

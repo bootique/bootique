@@ -27,8 +27,6 @@ import java.lang.reflect.Type;
  * type.
  * <p>
  * Inspired by the similar Guice and Jackson constructs that work around Java generics inference limitations.
- *
- * @since 0.10
  */
 public abstract class TypeRef<T> {
 

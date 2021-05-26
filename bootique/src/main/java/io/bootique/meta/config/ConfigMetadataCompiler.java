@@ -41,8 +41,6 @@ import java.util.stream.Stream;
 /**
  * A thread-safe caching compiler of configuration metadata for objects annotated with {@link BQConfig} and
  * {@link BQConfigProperty}.
- *
- * @since 0.21
  */
 public class ConfigMetadataCompiler {
 
@@ -62,9 +60,6 @@ public class ConfigMetadataCompiler {
         this.descriptorMap = Collections.emptyMap();
     }
 
-    /**
-     * @since 1.0.RC1
-     */
     public ConfigMetadataCompiler(Function<Class<?>, Stream<Class<?>>> subclassProvider, Map<Class<?>, ValueObjectDescriptor> descriptorMap) {
         this.subclassProvider = subclassProvider;
         this.seen = new ConcurrentHashMap<>();

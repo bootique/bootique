@@ -26,9 +26,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-/**
- * @since 0.25
- */
 public class CommandManagerBuilder<T extends CommandManagerBuilder<T>> {
 
     protected Collection<Command> commands;

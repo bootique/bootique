@@ -24,9 +24,6 @@ import io.bootique.log.BootLogger;
 import java.util.Collection;
 import java.util.Map;
 
-/**
- * @since 0.25
- */
 public class CommandManagerWithOverridesBuilder extends CommandManagerBuilder<CommandManagerWithOverridesBuilder> {
 
     private Collection<Command> commandOverrides;

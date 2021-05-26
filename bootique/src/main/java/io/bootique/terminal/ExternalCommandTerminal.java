@@ -29,8 +29,6 @@ import java.util.function.Function;
 
 /**
  * A superclass of {@link Terminal} implementations that need to run shell commands to query the terminal state.
- *
- * @since 0.20
  */
 public abstract class ExternalCommandTerminal implements Terminal {
 

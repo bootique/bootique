@@ -19,16 +19,16 @@
 
 package io.bootique.help;
 
-import javax.inject.Provider;
-
-import io.bootique.meta.application.CommandMetadata;
 import io.bootique.cli.Cli;
 import io.bootique.command.CommandOutcome;
 import io.bootique.command.CommandWithMetadata;
 import io.bootique.log.BootLogger;
+import io.bootique.meta.application.CommandMetadata;
+
+import javax.inject.Provider;
 
 /**
- * @since 0.21 moved to io.bootique.help
+ * A built-in command that prints dynamically-create application help in a format similar to UNIX man pages.
  */
 public class HelpCommand extends CommandWithMetadata {
 

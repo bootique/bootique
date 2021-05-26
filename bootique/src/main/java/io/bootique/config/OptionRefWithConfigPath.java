@@ -19,9 +19,6 @@
 
 package io.bootique.config;
 
-/**
- * @since 1.0.RC1
- */
 public class OptionRefWithConfigPath {
     private String optionName;
     private String configPath;

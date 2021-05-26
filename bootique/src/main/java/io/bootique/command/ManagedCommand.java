@@ -23,8 +23,6 @@ import java.util.Objects;
 
 /**
  * A wrapper around the command instance that provides contextual attributes for that command within Bootique.
- *
- * @since 0.25
  */
 public class ManagedCommand {
 

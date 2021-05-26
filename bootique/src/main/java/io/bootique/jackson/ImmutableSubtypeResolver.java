@@ -25,8 +25,6 @@ import com.fasterxml.jackson.databind.jsontype.impl.StdSubtypeResolver;
 
 /**
  * A hack that allows to prevent modifications to SubtypeResolver outside the initialization code.
- *
- * @since 0.21
  */
 class ImmutableSubtypeResolver extends StdSubtypeResolver {
 

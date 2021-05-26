@@ -26,8 +26,6 @@ import java.util.List;
 
 /**
  * A Cli instance over an empty argument list.
- *
- * @since 0.25
  */
 public final class NoArgsCli implements Cli {
 

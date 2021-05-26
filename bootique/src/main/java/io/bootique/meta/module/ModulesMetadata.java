@@ -26,8 +26,6 @@ import static java.util.Arrays.asList;
 
 /**
  * Metadata object representing
- *
- * @since 0.21
  */
 public class ModulesMetadata {
 

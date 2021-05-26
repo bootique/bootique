@@ -21,9 +21,6 @@ package io.bootique.config;
 
 import io.bootique.resource.ResourceFactory;
 
-/**
- * @since 0.25
- */
 public class OptionRefWithConfig {
 
     private String optionName;

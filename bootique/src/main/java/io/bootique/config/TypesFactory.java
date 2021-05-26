@@ -31,8 +31,6 @@ import java.util.Enumeration;
 
 /**
  * Provides access to a set of types loaded from a given META-INF/services/ descriptor.
- *
- * @since 0.21
  */
 public class TypesFactory<T> {
 

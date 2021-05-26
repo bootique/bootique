@@ -34,8 +34,6 @@ import java.util.Optional;
 
 /**
  * Metadata descriptor of a DI module.
- *
- * @since 0.21
  */
 public class ModuleMetadata implements MetadataNode {
 
@@ -103,7 +101,6 @@ public class ModuleMetadata implements MetadataNode {
      *
      * @param configPath a dot-separated path that presumably corresponds to a configuration node.
      * @return an optional result of a search for the node matching config path.
-     * @since 0.22
      */
     public Optional<ConfigMetadataNode> findConfig(String configPath) {
 

@@ -26,9 +26,6 @@ import io.bootique.names.ClassToName;
 import java.util.ArrayList;
 import java.util.Collection;
 
-/**
- * @since 0.20
- */
 public class CommandMetadata implements MetadataNode {
 
     private String name;
@@ -64,7 +61,6 @@ public class CommandMetadata implements MetadataNode {
      * in a CLI parser.
      *
      * @return option representation of this command.
-     * @since 0.21
      */
     public OptionMetadata asOption() {
         // TODO: cache the value?
@@ -80,7 +76,6 @@ public class CommandMetadata implements MetadataNode {
      * Returns the short name
      *
      * @return command short name.
-     * @since 0.21
      */
     public String getShortName() {
         return (shortName != null) ? shortName : name.substring(0, 1);
@@ -92,7 +87,6 @@ public class CommandMetadata implements MetadataNode {
      * command.
      *
      * @return whether the command should be hidden by default.
-     * @since 0.25
      */
     public boolean isHidden() {
         return hidden;
@@ -154,7 +148,6 @@ public class CommandMetadata implements MetadataNode {
 
         /**
          * @return this builder instance.
-         * @since 0.25
          */
         public Builder hidden() {
             this.command.hidden = true;

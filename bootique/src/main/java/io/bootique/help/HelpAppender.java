@@ -26,8 +26,6 @@ import static java.util.Arrays.asList;
 /*
  * A helper for building a text help document with consistent formatting. It will include line breaks to separate
  * sections, will provide consistent offsets, text wrapping, etc.
- *
- * @since 0.21
  */
 public class HelpAppender {
 

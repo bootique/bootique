@@ -30,8 +30,6 @@ import java.lang.annotation.Annotation;
 
 /**
  * An optional convenience superclass of Module extenders that defines a typical extender structure.
- *
- * @since 0.22
  */
 public abstract class ModuleExtender<T extends ModuleExtender<T>> {
 

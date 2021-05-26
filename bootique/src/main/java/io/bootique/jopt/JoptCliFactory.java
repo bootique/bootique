@@ -26,25 +26,16 @@ import io.bootique.cli.NoArgsCli;
 import io.bootique.command.CommandManager;
 import io.bootique.meta.application.ApplicationMetadata;
 import io.bootique.meta.application.OptionMetadata;
-import joptsimple.ArgumentAcceptingOptionSpec;
-import joptsimple.OptionException;
-import joptsimple.OptionParser;
-import joptsimple.OptionSet;
-import joptsimple.OptionSpecBuilder;
+import joptsimple.*;
 
+import javax.inject.Provider;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.inject.Provider;
-
 import static java.util.Arrays.asList;
 
-
-/**
- * @since 0.25
- */
 public class JoptCliFactory implements CliFactory {
 
     private final Object optionParserLock;

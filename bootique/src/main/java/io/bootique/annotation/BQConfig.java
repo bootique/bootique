@@ -26,8 +26,6 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation for documenting configuration type.
- *
- * @since 0.21
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)

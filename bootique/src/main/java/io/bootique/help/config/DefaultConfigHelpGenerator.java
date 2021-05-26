@@ -34,9 +34,6 @@ import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-/**
- * @since 0.21
- */
 public class DefaultConfigHelpGenerator implements ConfigHelpGenerator {
 
     static final int DEFAULT_OFFSET = 6;

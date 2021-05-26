@@ -23,8 +23,6 @@ package io.bootique.help;
  * Contains human-readable description of some Java type used as a value object in Bootique configuration. Value objects
  * are "atomic" configuration types that can be parsed from String representation, such as {@link io.bootique.value.Bytes},
  * {@link io.bootique.value.Duration}, etc.
- *
- * @since 1.0.RC1
  */
 public class ValueObjectDescriptor {
 

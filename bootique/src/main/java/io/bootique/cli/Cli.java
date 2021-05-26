@@ -24,10 +24,7 @@ import joptsimple.OptionSpec;
 import java.util.List;
 
 /**
- * An object that represents a set of command-line options passed to the
- * Bootique app.
- *
- * @since 0.12
+ * Represents a set of command-line options passed to the Bootique app.
  */
 public interface Cli {
 

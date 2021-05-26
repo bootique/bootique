@@ -38,9 +38,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * @since 0.21
- */
 class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
 
     static final int DEFAULT_OFFSET = DefaultConfigHelpGenerator.DEFAULT_OFFSET;

@@ -93,9 +93,7 @@ public class BQCoreModule implements BQModule {
     }
 
     /**
-     * @return a Builder instance to configure the module before using it to
-     * initialize DI container.
-     * @since 0.12
+     * @return a Builder instance to configure the module before using it to initialize DI container.
      */
     public static Builder builder() {
         return new Builder();
@@ -108,7 +106,6 @@ public class BQCoreModule implements BQModule {
      * @param binder DI binder passed to the Module that invokes this method.
      * @return an instance of {@link BQCoreModuleExtender} that can be used to load custom extensions to the Bootique
      * core.
-     * @since 0.22
      */
     public static BQCoreModuleExtender extend(Binder binder) {
         return new BQCoreModuleExtender(binder);
@@ -395,7 +392,6 @@ public class BQCoreModule implements BQModule {
          *
          * @param modulesSource a supplier of module collection.
          * @return this builder instance.
-         * @since 0.21
          */
         public Builder moduleSource(Supplier<Collection<BQModuleMetadata>> modulesSource) {
             module.modulesSource = modulesSource;

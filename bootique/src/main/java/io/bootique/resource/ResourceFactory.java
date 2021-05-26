@@ -45,8 +45,6 @@ import java.util.Objects;
  * source folder in an IDE.</li>
  * <li>resource as absolute or relative file path.</li>
  * </ul>
- *
- * @since 0.15
  */
 public class ResourceFactory {
 
@@ -97,7 +95,6 @@ public class ResourceFactory {
      * Returns resource ID string used to initialize this ResourceFactory.
      *
      * @return resource ID string used to initialize this ResourceFactory.
-     * @since 0.21
      */
     public String getResourceId() {
         return resourceId;

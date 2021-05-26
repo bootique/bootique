@@ -24,8 +24,6 @@ package io.bootique.config;
  * the implementing superclass or interface. The actual resolution mechanism is
  * based on java ServiceLoader mechanism. Subclasses should be declared in
  * {@code META-INF/services/PolymorphicConfiguration}.
- * 
- * @since 0.13
  */
 public interface PolymorphicConfiguration {
 

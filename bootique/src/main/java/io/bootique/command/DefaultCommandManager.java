@@ -22,9 +22,6 @@ package io.bootique.command;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @since 0.12
- */
 public class DefaultCommandManager implements CommandManager {
 
     private final Map<String, ManagedCommand> commands;

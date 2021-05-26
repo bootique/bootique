@@ -27,8 +27,6 @@ import java.lang.annotation.Target;
 /**
  * Annotation for documenting configuration property of a type annotated with {@link BQConfig}. Should be applied to
  * setters.
- *
- * @since 0.21
  */
 @Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
 @Retention(RetentionPolicy.RUNTIME)

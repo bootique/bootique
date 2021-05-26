@@ -19,9 +19,6 @@
 
 package io.bootique.cli;
 
-/**
- * @since 0.25
- */
 public interface CliFactory {
 
     /**

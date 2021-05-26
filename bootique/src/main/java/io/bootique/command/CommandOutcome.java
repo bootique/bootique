@@ -44,7 +44,6 @@ public class CommandOutcome {
      * Returns a successful outcome with an indicator that that a process was left running on the background.
      *
      * @return a successful {@link CommandOutcome}.
-     * @since 0.25
      */
     public static CommandOutcome succeededAndForkedToBackground() {
         return new CommandOutcome(SUCCESS_EXIT_CODE, true, null, null);
@@ -92,7 +91,6 @@ public class CommandOutcome {
      *
      * @return whether one or more tasks started by this command were still executing on threads other than the
      * command run thread as of {@link Command#run(Cli)} completion.
-     * @since 0.25
      */
     public boolean forkedToBackground() {
         return forkedToBackground;

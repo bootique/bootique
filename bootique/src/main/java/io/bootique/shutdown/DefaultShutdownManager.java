@@ -34,10 +34,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
- * A shutdown handler that performs a best-effort attempt to shutdown a set of
- * {@link AutoCloseable} objects, blocking no longer then the specified timeout.
- * 
- * @since 0.11
+ * A shutdown handler that performs a best-effort attempt to shutdown a set of {@link AutoCloseable} objects,
+ * blocking no longer then the specified timeout.
  */
 public class DefaultShutdownManager implements ShutdownManager {
 

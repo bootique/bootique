@@ -28,8 +28,6 @@ import java.util.regex.Pattern;
 
 /**
  * A terminal based on UNIX 'stty -a' command.
- *
- * @since 0.20
  */
 public class SttyTerminal extends ExternalCommandTerminal {
 

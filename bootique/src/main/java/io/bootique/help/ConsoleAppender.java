@@ -30,8 +30,6 @@ import java.util.regex.Pattern;
 
 /**
  * A helper for printing text to a fixed-width console that handles text folding and offsets.
- *
- * @since 0.21
  */
 public class ConsoleAppender {
 

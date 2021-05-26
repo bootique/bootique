@@ -28,8 +28,6 @@ import java.util.function.Function;
 
 /**
  * Overrides JsonNode object values from a map of properties.
- *
- * @since 0.17
  */
 public class InPlacePropertiesMerger implements Function<JsonNode, JsonNode> {
 

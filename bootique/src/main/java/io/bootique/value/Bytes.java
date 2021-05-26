@@ -19,20 +19,18 @@
 
 package io.bootique.value;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.fasterxml.jackson.annotation.JsonValue;
-
 import static io.bootique.value.BytesUnit.*;
 
 /**
  * Represents a data size value. Used as a value object to deserialize file sizes and such in application configurations.
- *
- * @since 1.0.RC1
  */
 public class Bytes implements Comparable<Bytes> {
 

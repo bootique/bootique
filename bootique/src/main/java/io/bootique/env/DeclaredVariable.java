@@ -23,8 +23,6 @@ import java.util.Objects;
 
 /**
  * An environment variable exposed in the app metadata that binds a value of certain configuration path.
- *
- * @since 0.22
  */
 public class DeclaredVariable {
 
@@ -46,9 +44,6 @@ public class DeclaredVariable {
         return configPath;
     }
 
-    /**
-     * @since 1.0.RC1
-     */
     public String getDescription() {
         return description;
     }

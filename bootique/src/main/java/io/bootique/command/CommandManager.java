@@ -24,8 +24,6 @@ import java.util.Optional;
 
 /**
  * A service interface that provides the rest of Bootique with access to available commands.
- *
- * @since 0.12
  */
 public interface CommandManager {
 
@@ -34,7 +32,6 @@ public interface CommandManager {
      * default, help.
      *
      * @return a map of {@link ManagedCommand} instances by command name.
-     * @since 0.25
      */
     Map<String, ManagedCommand> getAllCommands();
 
@@ -42,7 +39,6 @@ public interface CommandManager {
      * Returns a command matching the type. Throws an exception if the command type is not registered in the Bootique stack.
      *
      * @return a {@link ManagedCommand} matching the specified type.
-     * @since 0.25
      */
     ManagedCommand lookupByType(Class<? extends Command> commandType);
 
@@ -50,7 +46,6 @@ public interface CommandManager {
      * Returns a command matching the name. Throws an exception if the command type is not registered in the Bootique stack.
      *
      * @return a {@link ManagedCommand} matching the specified type.
-     * @since 0.25
      */
     default ManagedCommand lookupByName(String commandName) {
         ManagedCommand match = getAllCommands().get(commandName);
@@ -66,7 +61,6 @@ public interface CommandManager {
      * Returns optional public default command.
      *
      * @return optional public default command for this runtime.
-     * @since 0.25
      */
     default Optional<Command> getPublicDefaultCommand() {
 
@@ -83,7 +77,6 @@ public interface CommandManager {
      * Returns optional help command.
      *
      * @return optional help command for this runtime.
-     * @since 0.20
      */
     default Optional<Command> getPublicHelpCommand() {
         for (ManagedCommand mc : getAllCommands().values()) {

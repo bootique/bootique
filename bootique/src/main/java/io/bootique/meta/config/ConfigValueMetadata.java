@@ -23,8 +23,6 @@ import java.lang.reflect.Type;
 
 /**
  * Descriptor of a configuration value property.
- *
- * @since 0.21
  */
 public class ConfigValueMetadata implements ConfigMetadataNode {
 
@@ -54,9 +52,6 @@ public class ConfigValueMetadata implements ConfigMetadataNode {
         return description;
     }
 
-    /**
-     * @since 1.0.RC1
-     */
     public String getValueLabel() {
 
         if (valueLabel != null) {
@@ -70,9 +65,6 @@ public class ConfigValueMetadata implements ConfigMetadataNode {
         return getSampleValue(type);
     }
 
-    /**
-     * @since 1.0.RC1
-     */
     public String getSampleValue(Type type) {
 
         String typeName = type.getTypeName();

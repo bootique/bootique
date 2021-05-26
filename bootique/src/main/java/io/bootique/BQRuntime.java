@@ -27,8 +27,6 @@ import io.bootique.log.BootLogger;
 import io.bootique.run.Runner;
 import io.bootique.shutdown.ShutdownManager;
 
-import java.util.Objects;
-
 /**
  * A wrapper around launcher DI container.
  */
@@ -46,7 +44,6 @@ public class BQRuntime {
      * @param <T>  a type of the instance to return.
      * @param type a class or interface bound in DI.
      * @return a DI-bound instance of a given type.
-     * @since 0.12
      */
     public <T> T getInstance(Class<T> type) {
         return getInstance(Key.get(type));
@@ -58,7 +55,6 @@ public class BQRuntime {
      * @param <T>   a type of the instance to return.
      * @param diKey a DI key for a given instance.
      * @return a DI-bound instance of a given type.
-     * @since 0.23
      */
     public <T> T getInstance(Key<T> diKey) {
         if(!injector.hasProvider(diKey)) {
@@ -75,7 +71,6 @@ public class BQRuntime {
      * Locates internal {@link Runner} and calls its run method.
      *
      * @return outcome of the runner execution.
-     * @since 0.23
      */
     public CommandOutcome run() {
         return getInstance(Runner.class).run();
@@ -87,8 +82,6 @@ public class BQRuntime {
 
     /**
      * Executes Bootique runtime shutdown, allowing all interested DI services to perform cleanup.
-     *
-     * @since 0.12
      */
     public void shutdown() {
         ShutdownManager shutdownManager = injector.getInstance(ShutdownManager.class);

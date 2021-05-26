@@ -29,8 +29,6 @@ import java.util.Set;
 
 /**
  * Metadata object representing current application and its command-line interface.
- *
- * @since 0.20
  */
 public class ApplicationMetadata implements MetadataNode {
 
@@ -79,7 +77,6 @@ public class ApplicationMetadata implements MetadataNode {
     /**
      * Returns a collection of metadata objects representing publicly exposed environment variables.
      *
-     * @since 0.22
      * @return a collection of metadata objects representing publicly exposed environment variables.
      */
     public Collection<ConfigValueMetadata> getVariables() {

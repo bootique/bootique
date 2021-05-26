@@ -19,9 +19,6 @@
 
 package io.bootique.value;
 
-/**
- * @since 1.0.RC1
- */
 public enum BytesUnit {
     BYTES("Bytes", 1),
     KB("Kilobytes", 1024),

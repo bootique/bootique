@@ -33,7 +33,6 @@ public interface Command {
 	 * @return CommandOutcome object that indicates to the caller whether
 	 *         command was successful and whether the caller needs to continue
 	 *         with command chain.
-	 * @since 0.12
 	 */
 	CommandOutcome run(Cli cli);
 
@@ -42,7 +41,6 @@ public interface Command {
 	 * generates barebone metadata based on class name.
 	 * 
 	 * @return metadata object describing current command.
-	 * @since 0.12
 	 */
 	default CommandMetadata getMetadata() {
 		return CommandMetadata.builder(getClass()).build();

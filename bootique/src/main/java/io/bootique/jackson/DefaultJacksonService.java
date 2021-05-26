@@ -32,7 +32,6 @@ public class DefaultJacksonService implements JacksonService {
     /**
      * @param subtypes a collection of annotated classes to use in subclass resolution.
      * @param <T>      upper boundary of the subclass. Usually {@link io.bootique.config.PolymorphicConfiguration}.
-     * @since 0.21
      */
     public <T> DefaultJacksonService(Collection<Class<? extends T>> subtypes) {
         this(toArray(subtypes));
@@ -40,7 +39,6 @@ public class DefaultJacksonService implements JacksonService {
 
     /**
      * @param subtypes a collection of annotated classes to use in subclass resolution.
-     * @since 0.21
      */
     public DefaultJacksonService(Class<?>... subtypes) {
         this.subtypeResolver = new ImmutableSubtypeResolver(subtypes);

@@ -25,8 +25,6 @@ import java.util.Objects;
 
 /**
  * A wrapper for {@link OptionMetadata} that handles option sorting, short names and conflicts.
- *
- * @since 0.20
  */
 public class HelpOption implements Comparable<HelpOption> {
 

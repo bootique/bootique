@@ -27,8 +27,6 @@ import java.util.stream.Stream;
 
 /**
  * Provides API to look up subclasses of a given class within a predefined set of types.
- *
- * @since 0.21
  */
 public class ConfigHierarchyResolver {
 

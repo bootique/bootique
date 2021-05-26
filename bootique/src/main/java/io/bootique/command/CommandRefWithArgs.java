@@ -24,8 +24,6 @@ import java.util.Objects;
 /**
  * Stores a reference to a command and a set of invocation arguments. Used to capture auxiliary commands to be run with
  * the main command.
- *
- * @since 0.25
  */
 public abstract class CommandRefWithArgs {
 
@@ -119,8 +117,6 @@ public abstract class CommandRefWithArgs {
      * A builder of {@link CommandRefWithArgs} bound to a specific command. In this case the command doesn't have to be
      * registered in Bootique, and hence we can't parse the arguments. So any parameters need to be captured within the
      * command itself.
-     *
-     * @since 0.25
      */
     public static class NoArgsBuilder<T extends NoArgsBuilder<T>> {
 
@@ -144,9 +140,6 @@ public abstract class CommandRefWithArgs {
         }
     }
 
-    /**
-     * @since 0.25
-     */
     public static class ArgsBuilder {
 
         private static final String[] NO_ARGS = new String[0];

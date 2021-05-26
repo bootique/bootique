@@ -21,8 +21,6 @@ package io.bootique.help;
 
 /**
  * Formats and outputs help information for the current application.
- *
- * @since 0.20
  */
 public interface HelpGenerator {
 

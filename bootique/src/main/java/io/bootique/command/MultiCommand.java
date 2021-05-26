@@ -24,6 +24,7 @@ import io.bootique.cli.Cli;
 import io.bootique.cli.CliFactory;
 import io.bootique.log.BootLogger;
 
+import javax.inject.Provider;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -32,12 +33,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
-import javax.inject.Provider;
 
 /**
  * A composite command made of the main command and auxiliary commands run before the main command or in parallel with it.
- *
- * @since 0.25
  */
 class MultiCommand extends CommandWithMetadata {
 

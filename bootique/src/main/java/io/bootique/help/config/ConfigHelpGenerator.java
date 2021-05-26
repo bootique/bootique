@@ -23,9 +23,6 @@ import io.bootique.meta.MetadataNode;
 
 import java.util.function.Predicate;
 
-/**
- * @since 0.21
- */
 public interface ConfigHelpGenerator {
 
     /**

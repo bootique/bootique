@@ -32,9 +32,6 @@ public class DefaultBootLogger implements BootLogger {
 		this(trace, System.out, System.err);
 	}
 
-	/**
-	 * @since 0.12
-	 */
 	public DefaultBootLogger(boolean trace, PrintStream stdout, PrintStream stderr) {
 		this.trace = trace;
 		this.stderr = stderr;

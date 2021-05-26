@@ -86,7 +86,6 @@ public class Bootique {
      * care to customize their "main()".
      *
      * @param args app arguments passed by the shell.
-     * @since 0.17
      */
     public static void main(String[] args) {
         Bootique.app(args).autoLoadModules().exec().exit();
@@ -111,7 +110,6 @@ public class Bootique {
      *
      * @param args command-line arguments.
      * @return Bootique object that can be customized and then executed as an app via {@link #exec()} method.
-     * @since 0.17
      */
     public static Bootique app(Collection<String> args) {
         if (args == null) {
@@ -126,7 +124,6 @@ public class Bootique {
      *
      * @param bootLogger a custom BootLogger. Has to be non-null.
      * @return this instance of Bootique.
-     * @since 0.12
      */
     public Bootique bootLogger(BootLogger bootLogger) {
         this.bootLogger = Objects.requireNonNull(bootLogger);
@@ -138,7 +135,6 @@ public class Bootique {
      *
      * @param shutdownManager a custom {@link ShutdownManager} to use in this execution of Bootique. Has to be non-null.
      * @return this instance of Bootique.
-     * @since 0.23
      */
     public Bootique shutdownManager(ShutdownManager shutdownManager) {
         this.shutdownManager = Objects.requireNonNull(shutdownManager);
@@ -150,7 +146,6 @@ public class Bootique {
      *
      * @param args extra args to pass to Bootique.
      * @return this instance of Bootique
-     * @since 0.17
      */
     public Bootique args(String... args) {
         if (args != null) {
@@ -164,7 +159,6 @@ public class Bootique {
      *
      * @param args extra args to pass to Bootique.
      * @return this instance of Bootique
-     * @since 0.17
      */
     public Bootique args(Collection<String> args) {
         if (args != null) {
@@ -196,7 +190,6 @@ public class Bootique {
      * @param moduleType custom Module class to add to Bootique DI runtime.
      * @return this Bootique instance
      * @see #autoLoadModules()
-     * @since 0.8
      */
     public Bootique module(Class<? extends BQModule> moduleType) {
         Objects.requireNonNull(moduleType);
@@ -211,7 +204,6 @@ public class Bootique {
      * @param moduleTypes custom Module classes to add to Bootique DI runtime.
      * @return this Bootique instance
      * @see #autoLoadModules()
-     * @since 0.8
      */
     @SafeVarargs
     public final Bootique modules(Class<? extends BQModule>... moduleTypes) {
@@ -310,7 +302,6 @@ public class Bootique {
      * {@link #exec()} method instead of this method.
      *
      * @return a new {@link BQRuntime} instance that contains all Bootique services, commands, etc.
-     * @since 0.13
      */
     public BQRuntime createRuntime() {
         Injector injector = createInjector();
@@ -321,7 +312,6 @@ public class Bootique {
      * Executes this Bootique application, returning the outcome object.
      *
      * @return an outcome of the app command execution.
-     * @since 0.23
      */
     public CommandOutcome exec() {
 

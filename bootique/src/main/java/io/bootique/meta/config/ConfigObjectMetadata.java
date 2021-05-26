@@ -25,8 +25,6 @@ import java.util.stream.Stream;
 
 /**
  * Descriptor of a configuration object.
- *
- * @since 0.21
  */
 public class ConfigObjectMetadata extends ConfigValueMetadata {
 

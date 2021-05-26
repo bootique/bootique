@@ -23,9 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * A "recipe" for decorating some unspecified command with extra serial and parallel commands.
- *
- * @since 0.25
+ * A recipe for decorating some unspecified command with extra serial and parallel commands.
  */
 public class CommandDecorator {
 
@@ -81,8 +79,6 @@ public class CommandDecorator {
 
     /**
      * Provides a convenient DSL for building command decorators
-     *
-     * @since 0.25
      */
     public static class Builder {
 

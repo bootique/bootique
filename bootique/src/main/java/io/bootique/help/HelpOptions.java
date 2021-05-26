@@ -30,8 +30,6 @@ import java.util.stream.Stream;
 
 /**
  * Helper class to collect CLI options from various models, sort them and resolve conflicts before including them in help.
- *
- * @since 0.20
  */
 // TODO: this is in no way synchronized with JOpt parser, so we need extensive unit tests to verify that help behavior
 // matches the actual runtime behavior.

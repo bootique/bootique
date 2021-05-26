@@ -34,7 +34,6 @@ import java.util.Objects;
  * {@link #config(Class, ConfigurationFactory)}.
  *
  * @see BaseModule
- * @since 0.9
  */
 public abstract class ConfigModule implements BQModule {
 

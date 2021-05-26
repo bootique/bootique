@@ -19,6 +19,8 @@
 
 package io.bootique.value;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 import java.util.HashMap;
@@ -27,12 +29,8 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.fasterxml.jackson.annotation.JsonValue;
-
 /**
  * Represents a time duration value. Used as a value object to deserialize durations in application configurations.
- *
- * @since 1.0.RC1
  */
 public class Duration implements Comparable<Duration> {
 

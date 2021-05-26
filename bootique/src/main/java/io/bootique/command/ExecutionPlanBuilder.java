@@ -22,18 +22,16 @@ package io.bootique.command;
 import io.bootique.cli.CliFactory;
 import io.bootique.log.BootLogger;
 
+import javax.inject.Provider;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
-import javax.inject.Provider;
 
 /**
  * Optionally decorates commands with the code to execute additional auxiliary commands if those are configured for
  * a given type of command.
- *
- * @since 0.25
  */
 public class ExecutionPlanBuilder {
 

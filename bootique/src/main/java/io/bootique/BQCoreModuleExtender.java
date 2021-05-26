@@ -43,8 +43,6 @@ import static java.util.Arrays.asList;
 /**
  * Provides API to contribute custom extensions to BQCoreModule.
  * This class is a syntactic sugar for Bootique DI MapBuilder and SetBuilder.
- *
- * @since 0.22
  */
 public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
 
@@ -167,7 +165,6 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @param name        public name of the variable.
      * @param description the description for variable.
      * @return this extender instance.
-     * @since 1.0.RC1
      * Declares a configuration variable for the given config path, given name and given description.
      */
     public BQCoreModuleExtender declareVar(String configPath, String name, String description) {
@@ -188,7 +185,6 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @param configResourceId a resource path compatible with {@link io.bootique.resource.ResourceFactory} denoting
      *                         a configuration source. E.g. "a/b/my.yml", or "classpath:com/foo/another.yml".
      * @return this extender instance.
-     * @since 0.25
      */
     public BQCoreModuleExtender addConfig(String configResourceId) {
         contributeConfigs().addInstance(configResourceId);
@@ -206,8 +202,6 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @param configResourceId a resource path compatible with {@link io.bootique.resource.ResourceFactory} denoting
      *                         a configuration source. E.g. "a/b/my.yml", or "classpath:com/foo/another.yml".
      * @return this extender instance.
-     * @since 0.25
-     * @since 1.0.RC1 renamed from addConfigOnOption to mapConfigResource
      */
     public BQCoreModuleExtender mapConfigResource(String optionName, String configResourceId) {
         // using Multibinder to support multiple decorators for the same option
@@ -224,7 +218,6 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @param configPath a dot-separated "path" that navigates configuration tree to the desired property.
      *                   E.g. "jdbc.myds.password".
      * @return this extender instance
-     * @since 1.0.RC1
      */
     public BQCoreModuleExtender mapConfigPath(String optionName, String configPath) {
         contributeOptionPathDecorators().addInstance(new OptionRefWithConfigPath(optionName, configPath));
@@ -273,7 +266,6 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @param commandType      "Raw" command type
      * @param commandDecorator command decorator.
      * @return this extender instance
-     * @since 0.25
      */
     public BQCoreModuleExtender decorateCommand(Class<? extends Command> commandType, CommandDecorator commandDecorator) {
         contributeCommandDecorators().addInstance(new CommandRefDecorated(commandType, commandDecorator));
@@ -286,7 +278,6 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      *
      * @param valueObjectsDescriptors - map of descriptors by described value type
      * @return this extender instance
-     * @since 1.0.RC1
      */
     public BQCoreModuleExtender addValueObjectsDescriptors(Map<Class<?>, ValueObjectDescriptor> valueObjectsDescriptors) {
         MapBuilder<Class<?>, ValueObjectDescriptor> binder = contributeValueObjectsDescriptors();
@@ -300,7 +291,6 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @param object                 - the value object
      * @param valueObjectsDescriptor - descriptor for value object.
      * @return this extender instance
-     * @since 1.0.RC1
      */
     public BQCoreModuleExtender addValueObjectDescriptor(Class<?> object, ValueObjectDescriptor valueObjectsDescriptor) {
         contributeValueObjectsDescriptors().putInstance(object, valueObjectsDescriptor);

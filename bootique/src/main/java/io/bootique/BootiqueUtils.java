@@ -24,9 +24,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Utils methods serving {@link Bootique} class.
- *
- * @since 0.24
+ * Non-public utils methods serving {@link Bootique} class.
  */
 final class BootiqueUtils {
 
@@ -44,7 +42,7 @@ final class BootiqueUtils {
 
         for (BQModuleProvider moduleProvider : rootSet) {
             BQModuleMetadata next = moduleProvider.moduleBuilder().build();
-            if(metadata.add(next)) {
+            if (metadata.add(next)) {
                 Collection<BQModuleProvider> dependencies = moduleProvider.dependencies();
                 if (!dependencies.isEmpty()) {
                     metadata.addAll(moduleProviderDependencies(dependencies, metadata));

@@ -23,8 +23,6 @@ import io.bootique.meta.MetadataNode;
 
 /**
  * A descriptor of a command-line option.
- *
- * @since 0.20
  */
 public class OptionMetadata implements MetadataNode {
 
@@ -55,7 +53,6 @@ public class OptionMetadata implements MetadataNode {
 
     /**
      * @return option short name.
-     * @since 0.21
      */
     public String getShortName() {
         return (shortName != null) ? shortName : name.substring(0, 1);
@@ -74,7 +71,6 @@ public class OptionMetadata implements MetadataNode {
      * command line without an explicit value.
      *
      * @return the default value for this option.
-     * @since 0.24
      */
     public String getDefaultValue() {
         return defaultValue;
@@ -135,7 +131,6 @@ public class OptionMetadata implements MetadataNode {
          *
          * @param defaultValue a default value for the option.
          * @return this builder instance
-         * @since 1.0.RC1
          */
         public Builder valueOptionalWithDefault(String defaultValue) {
             return valueOptionalWithDefault("", defaultValue);
@@ -148,7 +143,6 @@ public class OptionMetadata implements MetadataNode {
          * @param valueName a description of value
          * @param defaultValue a default value for the option.
          * @return this builder instance
-         * @since 1.0.RC1
          */
         public Builder valueOptionalWithDefault(String valueName, String defaultValue) {
             this.option.defaultValue = defaultValue;

@@ -24,10 +24,8 @@ import java.net.URL;
 import java.util.Objects;
 
 /**
- * A {@link ResourceFactory} that corresponds to a "folder". Cleans up the
- * resource ID to correct missing trailing slashes.
- *
- * @since 0.15
+ * A {@link ResourceFactory} that corresponds to a "folder". Cleans up the resource ID to correct missing trailing
+ * slashes.
  */
 public class FolderResourceFactory extends ResourceFactory {
 
@@ -87,7 +85,6 @@ public class FolderResourceFactory extends ResourceFactory {
      *
      * @param subResourcePath a path relative to this folder that points to a resource.
      * @return a URL of the specified resource located within the folder.
-     * @since 0.17
      */
     public URL getUrl(String subResourcePath) {
 

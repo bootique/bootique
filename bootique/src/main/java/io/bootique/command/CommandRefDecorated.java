@@ -21,8 +21,6 @@ package io.bootique.command;
 
 /**
  * An internal data structure that denotes a reference to a command combined with that command decorator.
- *
- * @since 0.25
  */
 public class CommandRefDecorated {
 

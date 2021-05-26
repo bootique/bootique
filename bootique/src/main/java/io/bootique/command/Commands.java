@@ -19,30 +19,19 @@
 
 package io.bootique.command;
 
-import io.bootique.annotation.DefaultCommand;
 import io.bootique.BQCoreModule;
 import io.bootique.BQModuleProvider;
-import io.bootique.di.Binder;
-import io.bootique.di.Injector;
-import io.bootique.di.Key;
-import io.bootique.di.BQModule;
-import io.bootique.di.Provides;
-import io.bootique.di.SetBuilder;
+import io.bootique.annotation.DefaultCommand;
+import io.bootique.di.*;
 import io.bootique.help.HelpCommand;
 import io.bootique.log.BootLogger;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
 import javax.inject.Provider;
 import javax.inject.Singleton;
+import java.util.*;
 
 /**
  * A helper to build a non-standard command set in an app.
- *
- * @since 0.12
  */
 public class Commands implements BQModule {
 
