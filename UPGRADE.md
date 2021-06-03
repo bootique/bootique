@@ -20,6 +20,14 @@
 
 # UPGRADE INSTRUCTIONS
 
+## 2.0.RC1
+
+* [bootique-jetty #109](https://github.com/bootique/bootique-jetty/issues/109): To fix `JettyTester` initialization 
+  sequence we had to make a subtle change in its lifecycle. Now you can only call `JettyTester.getUrl()` or 
+  `JettyTester.getPort()` when the test app is already started with `--server` command. Previously these methods 
+  worked on test runtimes even before they were started. The new behavior is correct, and the old one was not, 
+  so hopefully this change should not affect normal uses.
+
 ## 2.0.B1
 
 * [bootique #300](https://github.com/bootique/bootique/issues/300): The new API allows to register configuration-loading
