@@ -25,8 +25,16 @@
 * [bootique-jetty #109](https://github.com/bootique/bootique-jetty/issues/109): To fix `JettyTester` initialization 
   sequence we had to make a subtle change in its lifecycle. Now you can only call `JettyTester.getUrl()` or 
   `JettyTester.getPort()` when the test app is already started with `--server` command. Previously these methods 
-  worked on test runtimes even before they were started. The new behavior is correct, and the old one was not, 
-  so hopefully this change should not affect normal uses.
+  worked on test runtimes even before they were started. The most typical affected scenario is when a test
+  class caches its client "target" object:
+
+```java
+static final JettyTester jetty = JettyTester.create();
+...
+static final WebTarget target = jetty.getTarget();
+```
+  Instead you should call `jetty.getTarget()` on the spot inside the unit test.
+
 
 ## 2.0.B1
 
