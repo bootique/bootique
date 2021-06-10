@@ -154,7 +154,6 @@ public class Bootique_DeclareVarsIT {
     }
 
     @Test
-    @Disabled("Declared vars with array indices are excluded from help #292")
     public void testInHelpWithList() {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
