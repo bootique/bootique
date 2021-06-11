@@ -1,3 +1,7 @@
+## 2.0.RC1
+
+* #292 Declared vars with array indices are excluded from help 
+
 ## 2.0.B1
 
 * #297 Upgrade to Jackson 2.11.3
