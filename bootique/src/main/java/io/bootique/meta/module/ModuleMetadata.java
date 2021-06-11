@@ -20,12 +20,7 @@
 package io.bootique.meta.module;
 
 import io.bootique.meta.MetadataNode;
-import io.bootique.meta.config.ConfigListMetadata;
-import io.bootique.meta.config.ConfigMapMetadata;
-import io.bootique.meta.config.ConfigMetadataNode;
-import io.bootique.meta.config.ConfigMetadataVisitor;
-import io.bootique.meta.config.ConfigObjectMetadata;
-import io.bootique.meta.config.ConfigValueMetadata;
+import io.bootique.meta.config.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -161,10 +156,16 @@ public class ModuleMetadata implements MetadataNode {
     private String[] splitFirstComponent(String configPath) {
         int dot = configPath.indexOf('.');
 
-        return dot < 0 ? new String[]{configPath, ""} : new String[]{
-                configPath.substring(0, dot),
-                configPath.substring(dot + 1)
-        };
+        if (dot < 0) {
+            int openBranchIndex = configPath.indexOf("[");
+            return openBranchIndex < 0 ? new String[]{configPath, ""}
+                    : new String[]{configPath.substring(0, openBranchIndex), ""};
+        } else {
+            return new String[]{
+                    configPath.substring(0, dot),
+                    configPath.substring(dot + 1)
+            };
+        }
     }
 
     public static class Builder {
