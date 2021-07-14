@@ -52,7 +52,7 @@ To start using Bootique test extensions, import the following module in the "tes
 [source,groovy]
 ----
 {
-  testImplementation: 'io.bootique:bootique-junit5:test'
+  testImplementation: 'io.bootique:bootique-junit5'
 }
 ----
 ====
