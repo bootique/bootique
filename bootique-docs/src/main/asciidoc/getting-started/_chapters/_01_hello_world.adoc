@@ -45,7 +45,7 @@ Your `pom.xml` in addition to the required project information tags will need to
 [source,groovy,subs="attributes"]
 ----
 dependencies {
-    implementation platform('io.bootique.bom:bootique-bom:{bootique_version}')
+    implementation platform("io.bootique.bom:bootique-bom:$bootique_version")
 }
 ----
 ====
@@ -79,8 +79,8 @@ So let's create this section and import a few modules:
 [source,groovy]
 ----
 dependencies {
-    implementation 'io.bootique.jersey:bootique-jersey:compile'
-    implementation 'io.bootique.logback:bootique-logback:compile'
+    implementation 'io.bootique.jersey:bootique-jersey'
+    implementation 'io.bootique.logback:bootique-logback'
 }
 ----
 ====
