@@ -20,6 +20,15 @@
 
 # UPGRADE INSTRUCTIONS
 
+## 3.0.M1
+
+* [bootique-kafka #30](https://github.com/bootique/bootique-jetty/issues/109):  There is a breaking change in 
+  `KafkaConsumerFactory` API. `KafkaConsumerFactory.consumer()` will now return a builder of `Consumer` instead of 
+  `KafkaConsumerRunner`. While we encourage to switch the applications to the new approach (i.e., using `Consumer`) as 
+  more powerful and less error-prone, if you need to continue using `KafkaConsumerRunner`, you should call 
+  `KafkaConsumerFactory.consumerRunner()`, that returns a backwards-compatible builder. Also `KafkaConsumerRunner` 
+  is no longer allowed when `kafka.consumer.autoCommit` is "false", so app configuration may need to be adjusted.
+
 ## 2.0.RC1
 
 * [bootique-jetty #109](https://github.com/bootique/bootique-jetty/issues/109): To fix `JettyTester` initialization 
