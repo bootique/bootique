@@ -22,7 +22,7 @@
 
 ## 3.0.M1
 
-* [bootique-kafka #30](https://github.com/bootique/bootique-jetty/issues/109):  If you were using `KafkaConsumerFactory`,
+* [bootique-kafka #30](https://github.com/bootique/bootique-jetty/issues/109):  If you were using `KafkaConsumerRunner`,
   you will have to switch to `consume(KafkaConsumerCallback,Duration)`. The callback is invoked on a batch of data after 
   each poll.
 
