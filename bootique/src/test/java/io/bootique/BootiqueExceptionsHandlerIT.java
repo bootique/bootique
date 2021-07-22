@@ -44,9 +44,7 @@ public class BootiqueExceptionsHandlerIT {
     public void testCli_BadOption() {
         CommandOutcome out = Bootique.app("-x").exec();
 
-        assertEquals(1, out.getExitCode());
-        assertNull(out.getException());
-        assertEquals("x is not a recognized option", out.getMessage());
+        this.assertErrorOutcome(out, "x is not a recognized option");
     }
 
     @Test
@@ -80,9 +78,7 @@ public class BootiqueExceptionsHandlerIT {
                 )
                 .exec();
 
-        assertEquals(1, out.getExitCode());
-        assertNull(out.getException());
-        assertEquals("CLI options match multiple commands: xcommand, ycommand.", out.getMessage());
+        this.assertErrorOutcome(out, "CLI options match multiple commands: xcommand, ycommand.");
     }
 
     @Test
@@ -105,9 +101,7 @@ public class BootiqueExceptionsHandlerIT {
                 .module(b -> BQCoreModule.extend(b).addCommand(TestCommand.class))
                 .exec();
 
-        assertEquals(1, out.getExitCode());
-        assertNull(out.getException());
-        assertEquals("Invalid config resource url: nosuchprotocol://myconfig", out.getMessage());
+        this.assertErrorOutcome(out, "Invalid config resource url: nosuchprotocol://myconfig");
     }
 
     @Test
@@ -118,9 +112,7 @@ public class BootiqueExceptionsHandlerIT {
                 .module(b -> BQCoreModule.extend(b).addCommand(TestCommand.class))
                 .exec();
 
-        assertEquals(1, out.getExitCode());
-        assertNull(out.getException());
-        assertEquals("Invalid config resource url: no_such_protocol://myconfig", out.getMessage());
+        this.assertErrorOutcome(out, "Invalid config resource url: no_such_protocol://myconfig");
     }
 
     @Test
@@ -129,9 +121,7 @@ public class BootiqueExceptionsHandlerIT {
                 .module(new ModuleWithProviderMethodBqException())
                 .exec();
 
-        assertEquals(1, out.getExitCode());
-        assertNull(out.getException());
-        assertEquals("test provider exception", out.getMessage());
+        this.assertErrorOutcome(out, "test provider exception");
     }
 
     @Test
@@ -358,5 +348,11 @@ public class BootiqueExceptionsHandlerIT {
         public Collection<Class<? extends BQModule>> overrides() {
             return Collections.singleton(BQCoreModule.class);
         }
+    }
+
+    public void assertErrorOutcome(CommandOutcome out, String outMessage) {
+        assertEquals(1, out.getExitCode());
+        assertNull(out.getException());
+        assertEquals(outMessage, out.getMessage());
     }
 }

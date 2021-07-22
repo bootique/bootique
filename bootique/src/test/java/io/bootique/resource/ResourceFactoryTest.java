@@ -97,17 +97,19 @@ public class ResourceFactoryTest {
 
 	@Test
 	public void testGetUrls_ClasspathUrl() {
-		Collection<URL> urls = new ResourceFactory("classpath:io/bootique/config/test2.yml").getUrls();
-		assertEquals(1, urls.size());
-		String u1 = urls.iterator().next().toString();
-		assertTrue(u1.endsWith("io/bootique/config/test2.yml"), u1);
+		this.testGetUrlsTemplate("classpath:io/bootique/config/test2.yml", 1, "io/bootique/config/test2.yml");
 	}
 
 	@Test
 	public void testGetUrls_File() {
-		Collection<URL> urls = new ResourceFactory("src/test/resources/io/bootique/config/test1.yml").getUrls();
-		assertEquals(1, urls.size());
+		this.testGetUrlsTemplate("src/test/resources/io/bootique/config/test1.yml", 1,
+				"src/test/resources/io/bootique/config/test1.yml");
+	}
+
+	public void testGetUrlsTemplate(String location, int numOfUrls, String firstUrlEnding) {
+		Collection<URL> urls = new ResourceFactory(location).getUrls();
+		assertEquals(numOfUrls, urls.size());
 		String u1 = urls.iterator().next().toString();
-		assertTrue(u1.endsWith("src/test/resources/io/bootique/config/test1.yml"), u1);
+		assertTrue(u1.endsWith(firstUrlEnding), u1);
 	}
 }

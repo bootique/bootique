@@ -115,30 +115,18 @@ public class PathSegmentTest {
     public void testLastPathComponent_ArrayRootValue() {
         JsonNode node = YamlReader.read("- 1\n- 2");
 
-        Optional<PathSegment<?>> last0 = PathSegment.create(node, "[0]").lastPathComponent();
-        assertTrue(last0.isPresent(), "Couldn't resolve '[0]' path");
-        assertNotNull(last0.get().getNode(), "Couldn't resolve '[0]' path");
-        assertEquals(1, last0.get().getNode().asInt());
+        this.assertCanCreateValidPathSegment(node, "[0]", 1);
 
-        Optional<PathSegment<?>> last1 = PathSegment.create(node, "[1]").lastPathComponent();
-        assertTrue(last1.isPresent(), "Couldn't resolve '[1]' path");
-        assertNotNull(last1.get().getNode(), "Couldn't resolve '[1]' path");
-        assertEquals(2, last1.get().getNode().asInt());
+        this.assertCanCreateValidPathSegment(node, "[1]", 2);
     }
 
     @Test
     public void testLastPathComponent_ArrayValue() {
         JsonNode node = YamlReader.read("a:\n  - 1\n  - 2");
 
-        Optional<PathSegment<?>> last0 = PathSegment.create(node, "a[0]").lastPathComponent();
-        assertTrue(last0.isPresent(), "Couldn't resolve 'a[0]' path");
-        assertNotNull(last0.get().getNode(), "Couldn't resolve 'a[0]' path");
-        assertEquals(1, last0.get().getNode().asInt());
+        this.assertCanCreateValidPathSegment(node, "a[0]", 1);
 
-        Optional<PathSegment<?>> last1 = PathSegment.create(node, "a[1]").lastPathComponent();
-        assertTrue(last1.isPresent(), "Couldn't resolve 'a[1]' path");
-        assertNotNull(last1.get().getNode(), "Couldn't resolve 'a[1]' path");
-        assertEquals(2, last1.get().getNode().asInt());
+        this.assertCanCreateValidPathSegment(node, "a[1]", 2);
     }
 
     @Test
@@ -162,10 +150,14 @@ public class PathSegmentTest {
     @Test
     public void testLastPathComponent_ArrayObject() {
         JsonNode node = YamlReader.read("a:\n  - b: 1\n  - b: 2");
-        Optional<PathSegment<?>> last = PathSegment.create(node, "a[1].b").lastPathComponent();
 
-        assertTrue(last.isPresent(), "Couldn't resolve 'a[1].b' path");
-        assertNotNull(last.get().getNode(), "Couldn't resolve 'a[1].b' path");
-        assertEquals(2, last.get().getNode().asInt());
+        this.assertCanCreateValidPathSegment(node, "a[1].b", 2);
+    }
+
+    public void assertCanCreateValidPathSegment(JsonNode t, String path, int expectedValue) {
+        Optional<PathSegment<?>> last = PathSegment.create(t, path).lastPathComponent();
+        assertTrue(last.isPresent(), "Couldn't resolve '" + path + "' path");
+        assertNotNull(last.get().getNode(), "Couldn't resolve '" + path + "' path");
+        assertEquals(expectedValue, last.get().getNode().asInt());
     }
 }

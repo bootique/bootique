@@ -27,6 +27,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Arrays;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -82,38 +84,22 @@ public class InPlacePropertiesMergerTest {
 
     @Test
     public void testApply_ObjectArray() {
-
-        Map<String, String> props = Collections.singletonMap("a[1]", "50");
-        InPlacePropertiesMerger overrider = new InPlacePropertiesMerger(props);
-
-        JsonNode node = YamlReader.read("a:\n" +
-                "  - 1\n" +
-                "  - 5\n" +
-                "  - 10");
-        overrider.apply(node);
-
-        ArrayNode array = (ArrayNode) node.get("a");
-        assertEquals(3, array.size());
-        assertEquals(1, array.get(0).asInt());
-        assertEquals(50, array.get(1).asInt());
-        assertEquals(10, array.get(2).asInt());
+        this.testApply_ObjectArrayTemplate(new ArrayList<Integer>(Arrays.asList(1, 50, 10)), "a[1]", "50", "a:\n" + "  - 1\n" + "  - 5\n" + "  - 10", "a");
     }
 
     @Test
     public void testApply_ObjectArray_PastEnd() {
+        this.testApply_ObjectArrayTemplate(new ArrayList<Integer>(Arrays.asList(1, 5, 50)), "a[2]", "50", "a:\n" + "  - 1\n" + "  - 5", "a");
+    }
 
-        Map<String, String> props = Collections.singletonMap("a[2]", "50");
+    public void testApply_ObjectArrayTemplate(ArrayList<Integer> expectedArray, String key, String value, String arrayContent, String arrayName) {
+        Map<String, String> props = Collections.singletonMap(key, value);
         InPlacePropertiesMerger overrider = new InPlacePropertiesMerger(props);
-
-        JsonNode node = YamlReader.read("a:\n" +
-                "  - 1\n" +
-                "  - 5");
+        JsonNode node = YamlReader.read(arrayContent);
         overrider.apply(node);
-
-        ArrayNode array = (ArrayNode) node.get("a");
-        assertEquals(3, array.size());
-        assertEquals(1, array.get(0).asInt());
-        assertEquals(5, array.get(1).asInt());
-        assertEquals(50, array.get(2).asInt());
+        ArrayNode array = (ArrayNode) node.get(arrayName);
+        ArrayList<Integer> actualArray = new ArrayList<Integer>();
+        array.elements().forEachRemaining(i -> actualArray.add(i.asInt()));
+        assertEquals(expectedArray, actualArray);
     }
 }
