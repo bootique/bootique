@@ -23,6 +23,7 @@ import io.bootique.di.BQModule;
 import io.bootique.meta.module.ModuleMetadata;
 import io.bootique.meta.module.ModulesMetadata;
 
+import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -46,11 +47,11 @@ public class BQRuntimeChecker {
 
         ModulesMetadata modulesMetadata = runtime.getInstance(ModulesMetadata.class);
 
-        List<String> actualModules = modulesMetadata
+        HashSet<String> actualModules = new HashSet<>(modulesMetadata
                 .getModules()
                 .stream()
                 .map(ModuleMetadata::getName)
-                .collect(toList());
+                .collect(toList()));
 
         List<String> missingModules = new ArrayList<>();
         Stream.of(expectedModules)
