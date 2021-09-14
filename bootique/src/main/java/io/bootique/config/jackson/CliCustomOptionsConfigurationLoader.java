@@ -32,6 +32,7 @@ import javax.inject.Inject;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.HashSet;
 
 /**
  * Loads and merges configuration passed via custom CLI options other than "--config". Custom CLI options can
@@ -114,10 +115,7 @@ public class CliCustomOptionsConfigurationLoader implements JsonConfigurationLoa
 
     private OptionMetadata findMetadata(OptionSpec<?> option) {
 
-        List<String> optionNames = option.options();
-
-        // TODO: allow lookup of option metadata by name to avoid linear scans...
-        // Though we are dealing with small collection, so shouldn't be too horrible.
+        Set<String> optionNames = new HashSet<>(option.options());
 
         for (OptionMetadata omd : optionMetadata) {
             if (optionNames.contains(omd.getName())) {
