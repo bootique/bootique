@@ -29,6 +29,8 @@ import io.bootique.command.CommandWithMetadata;
 import io.bootique.log.BootLogger;
 
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.function.Predicate;
 
 public class HelpConfigCommand extends CommandWithMetadata {
@@ -48,7 +50,7 @@ public class HelpConfigCommand extends CommandWithMetadata {
 
     @Override
     public CommandOutcome run(Cli cli) {
-        List<String> arguments = cli.standaloneArguments();
+        Set<String> arguments = new HashSet<>(cli.standaloneArguments());
 
         Predicate<MetadataNode> predicate = (arguments.size() == 0)
                 ? o -> true
