@@ -110,11 +110,12 @@ class ModuleGraph {
             );
         }
 
+        Set<BQModuleMetadata> resultSet = new HashSet<>(result);
         // Check that we have used the entire graph (if not, there was a cycle)
         if (result.size() != neighbors.size()) {
             Set<BQModuleMetadata> remainingKeys = new HashSet<>(neighbors.keySet());
             String cycleString = remainingKeys.stream()
-                    .filter(o -> !result.contains(o))
+                    .filter(o -> !resultSet.contains(o))
                     .map(BQModuleMetadata::getName)
                     .collect(Collectors.joining(" -> "));
             throw new BootiqueException(1, "Circular override dependency between DI modules: " + cycleString);
