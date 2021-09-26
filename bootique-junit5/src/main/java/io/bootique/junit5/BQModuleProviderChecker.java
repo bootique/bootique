@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestInstances;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
@@ -208,6 +209,12 @@ public class BQModuleProviderChecker {
         @Override
         public <T> Optional<T> getConfigurationParameter(String key, Function<String, T> transformer) {
             return Optional.empty();
+        }
+
+        @Override
+        public ExecutionMode getExecutionMode() {
+            // TODO: should this ever be "concurrent" ?
+            return ExecutionMode.SAME_THREAD;
         }
     }
 }

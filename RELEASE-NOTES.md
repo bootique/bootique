@@ -1,3 +1,7 @@
+## 3.0.M1
+
+* #313 Upgrade JUnit 5 to 5.8.1
+
 ## 2.0.RC1
 
 * #292 Declared vars with array indices are excluded from help 
