@@ -27,7 +27,8 @@
   each poll.
 
 * [bootique-job #32](https://github.com/bootique/bootique-job/issues/92):  The logger name in the logs for 
-  "job started" / "job finished" / "job exception" events was changed from `JobLogListener` to `JobLogDecorator`.
+  "job started" / "job finished" / "job exception" events was changed from `JobLogListener` to 
+  either `JobLogDecorator` or `InstrumentedJobLogDecorator`.
 
 ## 2.0.RC1
 
