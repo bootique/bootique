@@ -22,9 +22,12 @@
 
 ## 3.0.M1
 
-* [bootique-kafka #30](https://github.com/bootique/bootique-jetty/issues/109):  If you were using `KafkaConsumerRunner`,
+* [bootique-kafka #30](https://github.com/bootique/bootique-kafka/issues/30):  If you were using `KafkaConsumerRunner`,
   you will have to switch to `consume(KafkaConsumerCallback,Duration)`. The callback is invoked on a batch of data after 
   each poll.
+
+* [bootique-job #32](https://github.com/bootique/bootique-job/issues/92):  The logger name in the logs for 
+  "job started" / "job finished" / "job exception" events was changed from `JobLogListener` to `JobLogDecorator`.
 
 ## 2.0.RC1
 
