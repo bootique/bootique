@@ -1,6 +1,7 @@
 ## 2.0.RC1
 
 * #292 Declared vars with array indices are excluded from help 
+* #314 Module override log message mixes overridden module and overrider
 
 ## 2.0.B1
 

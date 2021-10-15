@@ -19,14 +19,10 @@
 
 package io.bootique;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import io.bootique.di.BQModule;
 import io.bootique.log.BootLogger;
+
+import java.util.*;
 
 class RuntimeModuleMerger {
 
@@ -59,7 +55,7 @@ class RuntimeModuleMerger {
         return modules;
     }
 
-    private String traceMessage(BQModuleMetadata module, BQModuleMetadata overriddenBy) {
+    private String traceMessage(BQModuleMetadata module, BQModuleMetadata overriddes) {
         StringBuilder message = new StringBuilder("Loading module '")
                 .append(module.getName())
                 .append("'");
@@ -70,12 +66,12 @@ class RuntimeModuleMerger {
             message.append(" provided by '").append(providerName).append("'");
         }
 
-        if (overriddenBy != null) {
+        if (overriddes != null) {
             if (hasProvider) {
                 message.append(",");
             }
 
-            message.append(" overridden by '").append(overriddenBy.getName()).append("'");
+            message.append(" overrides '").append(overriddes.getName()).append("'");
         }
 
         return message.toString();
