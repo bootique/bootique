@@ -45,11 +45,11 @@ public abstract class ConfigModule implements BQModule {
 
     protected String configPrefix;
 
-    public ConfigModule() {
+    protected ConfigModule() {
         init(defaultConfigPrefix());
     }
 
-    public ConfigModule(String configPrefix) {
+    protected ConfigModule(String configPrefix) {
         init(configPrefix);
     }
 

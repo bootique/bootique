@@ -1,6 +1,7 @@
 ## 3.0.M1
 
 * #313 Upgrade JUnit 5 to 5.8.1
+* #315 Standard Modules should not have multiple constructors
 
 ## 2.0.RC1
 
