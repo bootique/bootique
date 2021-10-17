@@ -36,7 +36,10 @@ import java.util.function.Function;
 
 /**
  * A wrapper around {@link BQRuntime} that runs it on the background and handles startup and shutdown sequence.
+ *
+ * @deprecated since 3.0.M1, as we are we phasing out JUnit 4 support in favor of JUnit 5
  */
+@Deprecated
 public class BQRuntimeDaemon {
 
     private BootLogger logger;

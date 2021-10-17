@@ -18,7 +18,8 @@
   under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -30,10 +31,9 @@
     <artifactId>bootique-test</artifactId>
     <packaging>jar</packaging>
 
-    <name>bootique-test: unit/integration test framework for Bootique apps</name>
-    <description>
-        Provides a test framework on top of Bootique.
-    </description>
+    <!-- deprecated since 3.0.M1 -->
+    <name>bootique-test (deprecated): unit/integration test framework for Bootique apps</name>
+    <description>Provides a test framework on top of Bootique. Deprecated since BQ 3.0.M1, as we are we phasing out JUnit 4 support</description>
 
     <dependencies>
         <!-- Compile dependencies -->

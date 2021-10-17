@@ -42,7 +42,9 @@ import static org.junit.Assert.fail;
  * A helper to test {@link PolymorphicConfiguration} hierarchies.
  *
  * @param <T> the type of the root of configuration.
+ * @deprecated since 3.0.M1, as we are we phasing out JUnit 4 support in favor of JUnit 5
  */
+@Deprecated
 public class PolymorphicConfigurationChecker<T extends PolymorphicConfiguration> {
 
     private Class<T> expectedRoot;
