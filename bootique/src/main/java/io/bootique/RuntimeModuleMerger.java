@@ -26,24 +26,24 @@ import java.util.*;
 
 class RuntimeModuleMerger {
 
-    private BootLogger bootLogger;
+    private final BootLogger bootLogger;
 
     RuntimeModuleMerger(BootLogger bootLogger) {
         this.bootLogger = bootLogger;
     }
 
-    Collection<BQModule> toDIModules(Collection<BQModuleMetadata> bqModulesMetadata) {
-        ModuleGraph moduleGraph = new ModuleGraph(bqModulesMetadata.size());
+    Collection<BQModule> toDIModules(Collection<BQModuleMetadata> modulesMetadata) {
+        ModuleGraph moduleGraph = new ModuleGraph(modulesMetadata.size());
         Map<Class<? extends BQModule>, BQModuleMetadata> moduleByClass = new HashMap<>();
-        bqModulesMetadata.forEach(metadata -> {
+        modulesMetadata.forEach(metadata -> {
             Class<? extends BQModule> moduleClass = metadata.getModule().getClass();
             moduleByClass.putIfAbsent(moduleClass, metadata);
             moduleGraph.add(metadata);
-            if(metadata.getOverrides().isEmpty()) {
+            if (metadata.getOverrides().isEmpty()) {
                 bootLogger.trace(() -> traceMessage(metadata, null));
             }
         });
-        bqModulesMetadata.forEach(metadata -> metadata.getOverrides()
+        modulesMetadata.forEach(metadata -> metadata.getOverrides()
                 .forEach(override -> {
                     BQModuleMetadata overrideModule = moduleByClass.get(override);
                     moduleGraph.add(metadata, overrideModule);

@@ -78,25 +78,33 @@ public class BQCoreModule implements BQModule {
     // TODO: duplicate of FormattedAppender.MIN_LINE_WIDTH
     private static final int TTY_MIN_COLUMNS = 40;
     private static final int TTY_DEFAULT_COLUMNS = 80;
-    /**
-     * Properties are used to exclude system env vars and properties.
-     * It's a duplicate of constants in io.bootique.test.junit.BQTestRuntimeBuilder
-     */
+
+    // Properties are used to exclude system env vars and properties.
+    // It's a duplicate of constants in io.bootique.test.junit.BQTestRuntimeBuilder
     private static final String EXCLUDE_SYSTEM_VARIABLES = "bq.core.excludeSystemVariables";
     private static final String EXCLUDE_SYSTEM_PROPERTIES = "bq.core.excludeSystemProperties";
-    private String[] args;
-    private ShutdownManager shutdownManager;
-    private BootLogger bootLogger;
-    private Supplier<Collection<BQModuleMetadata>> modulesSource;
 
-    private BQCoreModule() {
-    }
+    private final String[] args;
+    private final BootLogger bootLogger;
+    private final ShutdownManager shutdownManager;
+    private final Supplier<Collection<BQModuleMetadata>> modulesSource;
 
     /**
-     * @return a Builder instance to configure the module before using it to initialize DI container.
+     * Creates a BQCoreModule, initializing it with a few expliicit core objects that are defined outside the
+     * dependency injection engine.
+     *
+     * @since 3.0
      */
-    public static Builder builder() {
-        return new Builder();
+    public BQCoreModule(
+            String[] args,
+            BootLogger bootLogger,
+            ShutdownManager shutdownManager,
+            Supplier<Collection<BQModuleMetadata>> modulesSource) {
+
+        this.args = Objects.requireNonNull(args);
+        this.bootLogger = Objects.requireNonNull(bootLogger);
+        this.shutdownManager = Objects.requireNonNull(shutdownManager);
+        this.modulesSource = Objects.requireNonNull(modulesSource);
     }
 
     /**
@@ -141,9 +149,9 @@ public class BQCoreModule implements BQModule {
                 .addConfigLoader(PropertiesConfigurationLoader.class);
 
         // bind instances
-        binder.bind(BootLogger.class).toInstance(Objects.requireNonNull(bootLogger));
-        binder.bind(ShutdownManager.class).toInstance(Objects.requireNonNull(shutdownManager));
-        binder.bind(String[].class, Args.class).toInstance(Objects.requireNonNull(args));
+        binder.bind(BootLogger.class).toInstance(bootLogger);
+        binder.bind(ShutdownManager.class).toInstance(shutdownManager);
+        binder.bind(String[].class, Args.class).toInstance(args);
     }
 
     OptionMetadata createConfigOption() {
@@ -289,9 +297,7 @@ public class BQCoreModule implements BQModule {
 
         ConfigMetadataCompiler configCompiler =
                 new ConfigMetadataCompiler(hierarchyResolver::directSubclasses, valueObjectDescriptors);
-        Collection<BQModuleMetadata> modules = this.modulesSource != null
-                ? modulesSource.get()
-                : Collections.emptyList();
+        Collection<BQModuleMetadata> modules = modulesSource.get();
         return new ModulesMetadataCompiler(configCompiler).compile(modules);
     }
 
@@ -364,44 +370,4 @@ public class BQCoreModule implements BQModule {
 
         return descriptors;
     }
-
-    public static class Builder {
-        private BQCoreModule module;
-
-        private Builder() {
-            this.module = new BQCoreModule();
-        }
-
-        public BQCoreModule build() {
-            return module;
-        }
-
-        public Builder bootLogger(BootLogger bootLogger) {
-            module.bootLogger = bootLogger;
-            return this;
-        }
-
-        public Builder shutdownManager(ShutdownManager shutdownManager) {
-            module.shutdownManager = shutdownManager;
-            return this;
-        }
-
-        /**
-         * Sets a supplier of the app modules collection. It has to be provided externally by Bootique code that
-         * assembles the stack. We have no way of discovering this information when inside the DI container.
-         *
-         * @param modulesSource a supplier of module collection.
-         * @return this builder instance.
-         */
-        public Builder moduleSource(Supplier<Collection<BQModuleMetadata>> modulesSource) {
-            module.modulesSource = modulesSource;
-            return this;
-        }
-
-        public Builder args(String[] args) {
-            module.args = args;
-            return this;
-        }
-    }
-
 }

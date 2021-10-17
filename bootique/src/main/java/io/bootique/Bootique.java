@@ -20,10 +20,10 @@
 package io.bootique;
 
 import io.bootique.command.CommandOutcome;
+import io.bootique.di.BQModule;
 import io.bootique.di.DIBootstrap;
 import io.bootique.di.DIRuntimeException;
 import io.bootique.di.Injector;
-import io.bootique.di.BQModule;
 import io.bootique.env.DefaultEnvironment;
 import io.bootique.log.BootLogger;
 import io.bootique.log.DefaultBootLogger;
@@ -32,14 +32,7 @@ import io.bootique.shutdown.ShutdownManager;
 
 import java.lang.reflect.InvocationTargetException;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.ServiceLoader;
-import java.util.function.Supplier;
+import java.util.*;
 
 /**
  * A main launcher class of Bootique. You may use this class as the main class to start the app. Or you may write your
@@ -415,53 +408,32 @@ public class Bootique {
     Injector createInjector() {
 
         DeferredModulesSource modulesSource = new DeferredModulesSource();
+        Collection<BQModuleMetadata> modulesMetadata = new HashSet<>();
 
-        Collection<BQModuleMetadata> bqModulesMetadata = new HashSet<>();
+        BQCoreModule coreModule = new BQCoreModule(args,
+                bootLogger,
+                shutdownManager,
+                modulesSource);
 
         // note that 'moduleMetadata' is invalid at this point; it will be initialized later in this method, which
         // is safe to do, as it won't be used until the Injector is created by the method caller.
-        bqModulesMetadata.add(coreModuleProvider(modulesSource).moduleBuilder().build());
+        modulesMetadata.add(new BQCoreModuleProvider(coreModule).moduleBuilder().build());
 
-        bqModulesMetadata.addAll(BootiqueUtils.moduleProviderDependencies(builderProviders()));
+        modulesMetadata.addAll(BootiqueUtils.moduleProviderDependencies(builderProviders()));
         if (autoLoadModules) {
-            autoLoadedProviders().forEach(p -> bqModulesMetadata.add(p.moduleBuilder().build()));
+            autoLoadedProviders().forEach(p -> modulesMetadata.add(p.moduleBuilder().build()));
         }
 
         // now that all modules are collected, finish 'moduleMetadata' initialization
-        modulesSource.init(bqModulesMetadata);
+        modulesSource.init(modulesMetadata);
 
         // convert to DI modules respecting overrides, etc.
-        Collection<BQModule> modules = new RuntimeModuleMerger(bootLogger).toDIModules(bqModulesMetadata);
+        Collection<BQModule> modules = new RuntimeModuleMerger(bootLogger).toDIModules(modulesMetadata);
         return DIBootstrap.injectorBuilder(modules).build();
     }
 
     private Collection<BQModuleProvider> builderProviders() {
         return providers;
-    }
-
-    private BQModuleProvider coreModuleProvider(Supplier<Collection<BQModuleMetadata>> moduleSource) {
-        return new BQModuleProvider() {
-
-            @Override
-            public BQModule module() {
-                return BQCoreModule.builder().args(args)
-                        .bootLogger(bootLogger)
-                        .shutdownManager(shutdownManager)
-                        .moduleSource(moduleSource).build();
-            }
-
-            @Override
-            public String name() {
-                return "Bootique";
-            }
-
-            @Override
-            public BQModuleMetadata.Builder moduleBuilder() {
-                return BQModuleProvider.super
-                        .moduleBuilder()
-                        .description("The core of Bootique runtime.");
-            }
-        };
     }
 
     Collection<BQModuleProvider> autoLoadedProviders() {
