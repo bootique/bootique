@@ -26,9 +26,13 @@
   you will have to switch to `consume(KafkaConsumerCallback,Duration)`. The callback is invoked on a batch of data after 
   each poll.
 
-* [bootique-job #32](https://github.com/bootique/bootique-job/issues/92):  The logger name in the logs for 
+* [bootique-job #92](https://github.com/bootique/bootique-job/issues/92):  The logger name in the logs for 
   "job started" / "job finished" / "job exception" events was changed from `JobLogListener` to 
-  either `JobLogger`.
+  either `JobLogger`
+
+* [bootique-job #93](https://github.com/bootique/bootique-job/issues/93): If you define your own LockHandler 
+  implementation, do not override JobModule, and do not redefine LockHandler injection point . Instead call the extender 
+  like this: `JobModule.extend(binder).addLockHandler("my-lock", MyLockHandler.class)`
 
 ## 2.0.RC1
 
