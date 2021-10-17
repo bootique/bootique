@@ -38,8 +38,8 @@ public class ConsoleAppender {
     static final int MIN_LINE_WIDTH = 10;
     private static final Pattern SPACE = Pattern.compile("\\s+");
 
-    private Appendable out;
-    private int lineWidth;
+    private final Appendable out;
+    private final int lineWidth;
     private String offset;
 
     public ConsoleAppender(Appendable out, int lineWidth) {
@@ -49,7 +49,7 @@ public class ConsoleAppender {
         }
 
         this.offset = "";
-        this.out = out;
+        this.out = Objects.requireNonNull(out);
         this.lineWidth = lineWidth;
     }
 
@@ -134,7 +134,7 @@ public class ConsoleAppender {
         int offset = this.offset.length();
 
         // refuse to fold lines to columns shorter than MIN_WIDTH
-        int maxLength = lineWidth - offset > MIN_LINE_WIDTH ? lineWidth - offset : MIN_LINE_WIDTH;
+        int maxLength = Math.max(lineWidth - offset, MIN_LINE_WIDTH);
 
         List<String> folded = new ArrayList<>();
         StringBuilder line = new StringBuilder();
@@ -160,7 +160,7 @@ public class ConsoleAppender {
                     // append head to existing line
                     int head = maxLength - separator.length() - line.length();
                     if (head > 0) {
-                        line.append(separator).append(word.substring(0, head));
+                        line.append(separator).append(word, 0, head);
                         folded.add(line.toString());
                         line.setLength(0);
                     }
@@ -172,17 +172,17 @@ public class ConsoleAppender {
                     int len = word.length();
                     int start = head;
 
-                    int end = -1;
+                    int end;
                     while (start < len) {
 
                         end = start + maxLength;
                         if (end > len) {
                             // don't fold yet, there may be more words...
                             end = len;
-                            line.append(word.substring(start, end));
+                            line.append(word, start, end);
                         } else {
 
-                            line.append(word.substring(start, end));
+                            line.append(word, start, end);
                             folded.add(line.toString());
                             line.setLength(0);
                         }

@@ -204,7 +204,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @return this extender instance.
      */
     public BQCoreModuleExtender mapConfigResource(String optionName, String configResourceId) {
-        // using Multibinder to support multiple decorators for the same option
+        // using SetBuilder to support multiple decorators for the same option
         contributeOptionDecorators().addInstance(new OptionRefWithConfig(optionName, configResourceId));
         return this;
     }

@@ -33,8 +33,8 @@ import java.util.Objects;
  */
 public class DefaultHelpGenerator implements HelpGenerator {
 
-    private ApplicationMetadata application;
-    private int lineWidth;
+    private final ApplicationMetadata application;
+    private final int lineWidth;
 
     public DefaultHelpGenerator(ApplicationMetadata application, int lineWidth) {
         this.application = application;
@@ -68,10 +68,10 @@ public class DefaultHelpGenerator implements HelpGenerator {
 
             // for now expose commands as simply options (commands are options in a default CLI parser)
             helpOptions.add(c.asOption());
-            c.getOptions().forEach(o -> helpOptions.add(o));
+            c.getOptions().forEach(helpOptions::add);
         });
 
-        application.getOptions().forEach(o -> helpOptions.add(o));
+        application.getOptions().forEach(helpOptions::add);
         return helpOptions.getOptions();
     }
 

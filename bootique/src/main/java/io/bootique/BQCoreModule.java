@@ -69,18 +69,16 @@ import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 
 /**
- * The main {@link BQModule} of Bootique DI runtime. Declares a minimal set of
- * services needed for a Bootique app to start: services for parsing command
- * line, reading configuration, selectign and running a Command.
+ * The main {@link BQModule} of Bootique DI runtime. Declares a minimal set of services needed for a Bootique app to
+ * start: parsing command line, reading configuration, findings and running a Command.
  */
 public class BQCoreModule implements BQModule {
 
-    // TODO: duplicate of FormattedAppender.MIN_LINE_WIDTH
     private static final int TTY_MIN_COLUMNS = 40;
     private static final int TTY_DEFAULT_COLUMNS = 80;
 
-    // Properties are used to exclude system env vars and properties.
-    // It's a duplicate of constants in io.bootique.test.junit.BQTestRuntimeBuilder
+    // Internal properties used to exclude system env vars and properties by BQTestRuntimeBuilder (JUnit 4) and
+    //  TestRuntumeBuilder (JUnit 5)
     private static final String EXCLUDE_SYSTEM_VARIABLES = "bq.core.excludeSystemVariables";
     private static final String EXCLUDE_SYSTEM_PROPERTIES = "bq.core.excludeSystemProperties";
 
@@ -90,7 +88,7 @@ public class BQCoreModule implements BQModule {
     private final Supplier<Collection<BQModuleMetadata>> modulesSource;
 
     /**
-     * Creates a BQCoreModule, initializing it with a few expliicit core objects that are defined outside the
+     * Creates a BQCoreModule, initializing it with a few explicit core objects that are defined outside the
      * dependency injection engine.
      *
      * @since 3.0
@@ -254,7 +252,7 @@ public class BQCoreModule implements BQModule {
             HelpCommand helpCommand,
             Injector injector) {
 
-        return new CommandManagerBuilder(commands)
+        return new CommandManagerBuilder<>(commands)
                 .defaultCommand(defaultCommand(injector))
                 .helpCommand(helpCommand)
                 .build();

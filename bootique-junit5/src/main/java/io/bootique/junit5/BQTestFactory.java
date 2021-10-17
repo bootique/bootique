@@ -46,7 +46,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  */
 public class BQTestFactory implements BQBeforeScopeCallback, BQAfterScopeCallback {
 
-    private TestRuntimesManager runtimes;
+    private final TestRuntimesManager runtimes;
     private boolean autoLoadModules;
 
     public BQTestFactory() {

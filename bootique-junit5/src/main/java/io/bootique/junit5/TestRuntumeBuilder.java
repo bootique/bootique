@@ -36,12 +36,8 @@ import java.util.Map;
  */
 public class TestRuntumeBuilder {
 
-    /**
-     * Properties are used to make test stack independent from a shell environment.
-     * It allows us be sure that all the vars are controlled within the test and there are no outside influences.
-     * <p>
-     * The properties take part on {@link io.bootique.env.Environment} provision in {@link io.bootique.BQCoreModule}.
-     */
+    // These two properties are used to make the test stack independent of the shell environment.
+    // The properties are used for configuring of "io.bootique.env.Environment" inside BQCoreModule.
     private static final String EXCLUDE_SYSTEM_VARIABLES = "bq.core.excludeSystemVariables";
     private static final String EXCLUDE_SYSTEM_PROPERTIES = "bq.core.excludeSystemProperties";
 
@@ -50,14 +46,12 @@ public class TestRuntumeBuilder {
     private TestRuntimesManager runtimes;
 
     TestRuntumeBuilder(TestRuntimesManager runtimes, String[] args) {
-        // exclude system variables and properties by setting the properties
-        Map<String, String> properties = new HashMap<>();
-        properties.put(EXCLUDE_SYSTEM_PROPERTIES, "true");
-        properties.put(EXCLUDE_SYSTEM_VARIABLES, "true");
 
-        this.properties = properties;
+        this.properties = new HashMap<>();
         this.bootique = Bootique.app(args).moduleProvider(createPropertiesProvider());
         this.runtimes = runtimes;
+
+        property(EXCLUDE_SYSTEM_PROPERTIES, "true").property(EXCLUDE_SYSTEM_VARIABLES, "true");
     }
 
     /**
