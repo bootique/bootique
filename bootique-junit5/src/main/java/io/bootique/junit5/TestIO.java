@@ -29,9 +29,9 @@ import io.bootique.log.DefaultBootLogger;
  */
 public class TestIO {
 
-    private InMemoryPrintStream stdout;
-    private InMemoryPrintStream stderr;
-    private boolean trace;
+    private final InMemoryPrintStream stdout;
+    private final InMemoryPrintStream stderr;
+    private final boolean trace;
 
     public static TestIO noTrace() {
         return create(false);
