@@ -32,7 +32,7 @@ public class CommandMetadata implements MetadataNode {
     private String description;
     private String shortName;
     private boolean hidden;
-    private Collection<OptionMetadata> options;
+    private final Collection<OptionMetadata> options;
 
     public CommandMetadata() {
         this.options = new ArrayList<>();
@@ -94,51 +94,51 @@ public class CommandMetadata implements MetadataNode {
 
     public static class Builder {
 
-        private static ClassToName NAME_BUILDER = ClassToName
+        private static final ClassToName NAME_BUILDER = ClassToName
                 .builder()
                 .convertToLowerCase()
                 .partsSeparator("-")
                 .stripSuffix("Command")
                 .build();
 
-        private CommandMetadata command;
+        private final CommandMetadata metadata;
 
         private Builder() {
-            this.command = new CommandMetadata();
+            this.metadata = new CommandMetadata();
         }
 
         public CommandMetadata build() {
-            validateName(command.name);
-            return command;
+            validateName(metadata.name);
+            return metadata;
         }
 
         public Builder commandType(Class<? extends Command> commandType) {
-            command.name = NAME_BUILDER.toName(commandType);
+            metadata.name = NAME_BUILDER.toName(commandType);
             return this;
         }
 
         public Builder name(String name) {
-            command.name = validateName(name);
+            metadata.name = validateName(name);
             return this;
         }
 
         public Builder shortName(char shortName) {
-            command.shortName = String.valueOf(shortName);
+            metadata.shortName = String.valueOf(shortName);
             return this;
         }
 
         public Builder description(String description) {
-            this.command.description = description;
+            this.metadata.description = description;
             return this;
         }
 
         public Builder addOption(OptionMetadata option) {
-            this.command.options.add(option);
+            this.metadata.options.add(option);
             return this;
         }
 
         public Builder addOptions(Collection<OptionMetadata> options) {
-            this.command.options.addAll(options);
+            this.metadata.options.addAll(options);
             return this;
         }
 
@@ -150,7 +150,7 @@ public class CommandMetadata implements MetadataNode {
          * @return this builder instance.
          */
         public Builder hidden() {
-            this.command.hidden = true;
+            this.metadata.hidden = true;
             return this;
         }
 

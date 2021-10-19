@@ -22,27 +22,26 @@ package io.bootique.command;
 import io.bootique.meta.application.CommandMetadata;
 import io.bootique.cli.Cli;
 
+/**
+ * Represents an execution path of an application. Application can have one or more commands, each tied to a CLI option.
+ */
 @FunctionalInterface
 public interface Command {
 
-	/**
-	 * Executes a command.
-	 * 
-	 * @param cli
-	 *            command-line options object.
-	 * @return CommandOutcome object that indicates to the caller whether
-	 *         command was successful and whether the caller needs to continue
-	 *         with command chain.
-	 */
-	CommandOutcome run(Cli cli);
+    /**
+     * Executes a command.
+     *
+     * @param cli command-line options object.
+     * @return an object the status of command execution.
+     */
+    CommandOutcome run(Cli cli);
 
-	/**
-	 * Returns a metadata object for this command. Default implementation
-	 * generates barebone metadata based on class name.
-	 * 
-	 * @return metadata object describing current command.
-	 */
-	default CommandMetadata getMetadata() {
-		return CommandMetadata.builder(getClass()).build();
-	}
+    /**
+     * Returns a metadata object for this command. Default implementation generates basic metadata based on class name.
+     *
+     * @return metadata object describing the current command
+     */
+    default CommandMetadata getMetadata() {
+        return CommandMetadata.builder(getClass()).build();
+    }
 }

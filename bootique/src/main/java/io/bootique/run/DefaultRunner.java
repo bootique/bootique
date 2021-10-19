@@ -28,9 +28,9 @@ import io.bootique.command.ManagedCommand;
 
 public class DefaultRunner implements Runner {
 
-    private Cli cli;
-    private CommandManager commandManager;
-    private ExecutionPlanBuilder executionPlanBuilder;
+    private final Cli cli;
+    private final CommandManager commandManager;
+    private final ExecutionPlanBuilder executionPlanBuilder;
 
     public DefaultRunner(Cli cli, CommandManager commandManager, ExecutionPlanBuilder executionPlanBuilder) {
         this.cli = cli;

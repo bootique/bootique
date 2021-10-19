@@ -35,11 +35,11 @@ import java.util.concurrent.ExecutorService;
  */
 public class ExecutionPlanBuilder {
 
-    private BootLogger logger;
-    private Provider<CliFactory> cliFactoryProvider;
-    private Provider<CommandManager> commandManagerProvider;
-    private Provider<ExecutorService> executorProvider;
-    private Map<Class<? extends Command>, CommandDecorator> decorators;
+    private final BootLogger logger;
+    private final Provider<CliFactory> cliFactoryProvider;
+    private final Provider<CommandManager> commandManagerProvider;
+    private final Provider<ExecutorService> executorProvider;
+    private final Map<Class<? extends Command>, CommandDecorator> decorators;
 
     public ExecutionPlanBuilder(
             Provider<CliFactory> cliFactoryProvider,
@@ -66,10 +66,8 @@ public class ExecutionPlanBuilder {
         Map<Class<? extends Command>, CommandDecorator.Builder> mergedMutable
                 = new HashMap<>((int) (decoratorSet.size() / 0.75));
 
-        decoratorSet.forEach(ref -> {
-            mergedMutable.computeIfAbsent(ref.getCommandType(), c -> CommandDecorator.builder())
-                    .copyFrom(ref.getDecorator());
-        });
+        decoratorSet.forEach(ref -> mergedMutable.computeIfAbsent(ref.getCommandType(), c -> CommandDecorator.builder())
+                .copyFrom(ref.getDecorator()));
 
         Map<Class<? extends Command>, CommandDecorator> merged = new HashMap<>();
         mergedMutable.forEach((k, v) -> merged.put(k, v.build()));

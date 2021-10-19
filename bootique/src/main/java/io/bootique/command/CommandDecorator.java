@@ -82,7 +82,7 @@ public class CommandDecorator {
      */
     public static class Builder {
 
-        private CommandDecorator decorator;
+        private final CommandDecorator decorator;
 
         private Builder() {
             this.decorator = new CommandDecorator();
@@ -91,7 +91,7 @@ public class CommandDecorator {
         /**
          * Define a command to run before the decorated command. The command to run in deduced from the passed CLI
          * arguments. The decorated command will not be run, if the "before" command fails.  When the "before" command is
-         * run, it will receive all of the arguments passed to this method as {@link io.bootique.cli.Cli} instance.
+         * run, it will receive all the arguments passed to this method as {@link io.bootique.cli.Cli} instance.
          *
          * @param fullCommandName a full un-abbreviated command name for the "also" command. The command must be known
          *                        to Bootique.
@@ -108,14 +108,14 @@ public class CommandDecorator {
         }
 
         public Builder copyFrom(CommandDecorator decorator) {
-            decorator.getBefore().forEach(this.decorator.before::add);
-            decorator.getParallel().forEach(this.decorator.parallel::add);
+            this.decorator.before.addAll(decorator.getBefore());
+            this.decorator.parallel.addAll(decorator.getParallel());
             return this;
         }
 
         /**
          * Define a command to run before the decorated command. The decorated command will not be run, if "before"
-         * command fails.  When the "before" command is run, it will receive all of the arguments passed to
+         * command fails.  When the "before" command is run, it will receive all the arguments passed to
          * this method as {@link io.bootique.cli.Cli} instance.
          *
          * @param commandType "before" command type. Must be a command known to Bootique.
@@ -134,7 +134,7 @@ public class CommandDecorator {
 
         /**
          * Define an "also" command to run in parallel with the decorated command. The "also" Command class is deduced
-         * from the passed CLI arguments. When the "also" command is run, it will receive all of the arguments passed to
+         * from the passed CLI arguments. When the "also" command is run, it will receive all the arguments passed to
          * this method as {@link io.bootique.cli.Cli} instance.
          *
          * @param fullCommandName a full un-abbreviated command name for the "also" command. The command must be known
@@ -151,9 +151,8 @@ public class CommandDecorator {
         }
 
         /**
-         * Add a hook to run in parallel with the original command.
-         * <p>
-         * When the hook is run, it will receive all of the provided arguments in its' own {@link io.bootique.cli.Cli} instance.
+         * Add a hook to run in parallel with the original command. When the hook is run, it will receive all the
+         * provided arguments in its own {@link io.bootique.cli.Cli} instance.
          *
          * @param commandType "also" command type. Must be a command known to Bootique.
          * @param args        arguments to pass to the "also" command.
