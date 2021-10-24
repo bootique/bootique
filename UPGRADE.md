@@ -22,6 +22,13 @@
 
 ## 3.0.M1
 
+* [bootique #317](https://github.com/bootique/bootique/issues/317): Minimal Java version required by Bootique is now
+  Java 11. If you are still on Java 8, you will need to upgrade your environment.
+
+* [bootique-tapestry #24](https://github.com/bootique/bootique-tapestry/issues/24): Since Tapestry 5.4 does not support
+  Java 11, `bootique-tapestry` module (based on T5.4) was removed. You will need to replace it with `bootique-tapestry55`
+  or newer.
+
 * [bootique-kafka #30](https://github.com/bootique/bootique-kafka/issues/30):  If you were using `KafkaConsumerRunner`,
   you will have to switch to `consume(KafkaConsumerCallback,Duration)`. The callback is invoked on a batch of data after 
   each poll.
