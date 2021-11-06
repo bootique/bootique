@@ -39,9 +39,6 @@
 	<properties>
 		<jopt.version>5.0.3</jopt.version>
 		<bootique.version>${project.version}</bootique.version>
-
-		<!-- Used in tests only -->
-		<jetty.version>11.0.4</jetty.version>
 	</properties>
 
 	<dependencyManagement>
@@ -57,15 +54,17 @@
 				<artifactId>jopt-simple</artifactId>
 				<version>${jopt.version}</version>
 			</dependency>
+
+			<!-- Jetty is used in tests to emulate a webserver -->
 			<dependency>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-server</artifactId>
-				<version>${jetty.version}</version>
+				<version>${jetty11.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-servlet</artifactId>
-				<version>${jetty.version}</version>
+				<version>${jetty11.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
