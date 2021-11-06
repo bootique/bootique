@@ -23,11 +23,11 @@ import io.bootique.di.BQModule;
 import io.bootique.meta.module.ModuleMetadata;
 import io.bootique.meta.module.ModulesMetadata;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
@@ -46,23 +46,17 @@ public class BQRuntimeChecker {
 
         ModulesMetadata modulesMetadata = runtime.getInstance(ModulesMetadata.class);
 
-        List<String> actualModules = modulesMetadata
+        Set<String> actualModules = modulesMetadata
                 .getModules()
                 .stream()
                 .map(ModuleMetadata::getName)
-                .collect(toList());
+                .collect(Collectors.toSet());
 
-        List<String> missingModules = new ArrayList<>();
-        Stream.of(expectedModules)
+        List<String> missingModules = Stream.of(expectedModules)
                 .map(Class::getSimpleName)
-                .forEach(n -> {
-
-                    // Using class names for checking module existing - weak.
-                    if (!actualModules.contains(n)) {
-                        missingModules.add(n);
-                    }
-                });
-
+                // Using class names for checking whether modules exist - weak.
+                .filter(n -> !actualModules.contains(n))
+                .collect(Collectors.toList());
 
         if(!missingModules.isEmpty()) {
             fail("The following expected modules are missing: " + missingModules);
