@@ -39,6 +39,9 @@
 	<properties>
 		<jopt.version>5.0.3</jopt.version>
 		<bootique.version>${project.version}</bootique.version>
+
+		<!-- Used in tests only -->
+		<jetty.version>11.0.4</jetty.version>
 	</properties>
 
 	<dependencyManagement>
@@ -53,6 +56,16 @@
 				<groupId>net.sf.jopt-simple</groupId>
 				<artifactId>jopt-simple</artifactId>
 				<version>${jopt.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-server</artifactId>
+				<version>${jetty.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-servlet</artifactId>
+				<version>${jetty.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
