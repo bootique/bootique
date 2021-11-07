@@ -370,7 +370,8 @@ public class Bootique {
     private void shutdown(ShutdownManager shutdownManager, BootLogger logger) {
         shutdownManager.shutdown().forEach((s, th) ->
                 logger.stderr(String.format("Error performing shutdown of '%s': %s",
-                        s.getClass().getSimpleName(), th.getMessage())));
+                        s.getClass().getSimpleName(),
+                        th.getMessage() != null ? th.getMessage() : th.getClass().getName())));
     }
 
     private CommandOutcome processExceptions(Throwable th, Throwable parentTh) {

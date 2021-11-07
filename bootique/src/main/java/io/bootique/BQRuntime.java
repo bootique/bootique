@@ -91,9 +91,9 @@ public class BQRuntime {
     }
 
     protected void shutdown(ShutdownManager shutdownManager, BootLogger logger) {
-        shutdownManager.shutdown().forEach((s, th) -> {
-            logger.stderr(String.format("Error performing shutdown of '%s': %s", s.getClass().getSimpleName(),
-                    th.getMessage()));
-        });
+        shutdownManager.shutdown().forEach((s, th) ->
+            logger.stderr(String.format("Error performing shutdown of '%s': %s",
+                    s.getClass().getSimpleName(),
+                    th.getMessage() != null ? th.getMessage() : th.getClass().getName())));
     }
 }
