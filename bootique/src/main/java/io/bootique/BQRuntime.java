@@ -32,7 +32,7 @@ import io.bootique.shutdown.ShutdownManager;
  */
 public class BQRuntime {
 
-    private Injector injector;
+    private final Injector injector;
 
     public BQRuntime(Injector injector) {
         this.injector = injector;
