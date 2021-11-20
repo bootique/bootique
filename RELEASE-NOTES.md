@@ -2,6 +2,7 @@
 
 * #292 Declared vars with array indices are excluded from help 
 * #314 Module override log message mixes overridden module and overrider
+* #319 2.x : upgrade to bootique-modules-parent to 2.0.8
 
 ## 2.0.B1
 
