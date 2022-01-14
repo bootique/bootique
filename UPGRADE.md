@@ -41,11 +41,19 @@
   implementation, do not override JobModule, and do not redefine LockHandler injection point . Instead call the extender 
   like this: `JobModule.extend(binder).addLockHandler("my-lock", MyLockHandler.class)`
 
-* [bootique-agrest #62](https://github.com/bootique/bootique-agrest/issues/62): Cayenne 4.0 is no longer supported.
-  If you import `io.bootique.agrest:bootique-agrest` in your project, it will not be available. So change the import to
-  `io.bootique.agrest:bootique-agrest-cayenne41` or `io.bootique.agrest:bootique-agrest-cayenne42`.
+* [bootique-cayenne #97](https://github.com/bootique/bootique-agrest/issues/97): Cayenne 4.0 is no longer supported.
+  If you import `io.bootique.cayenne:bootique-cayenne` in your project (as well as `io.bootique.cayenne:bootique-jcache`,
+  `io.bootique.cayenne:bootique-cayenne-test` and `io.bootique.cayenne:bootique-cayenne-junit5`) they will not be 
+  available. You will need to change the import to `io.bootique.cayenne:bootique-cayenne41` or
+  `io.bootique.cayenne:bootique-cayenne42` (depending on which version you are uprading to). Same goes for `-jcache`,
+  `-test` and `-junit5` modules.
 
-* [bootique-linkmove #49](https://github.com/bootique/bootique-linkmove/issues/49): Cayenne 4.0 is no longer supported.
+* [bootique-agrest #62](https://github.com/bootique/bootique-agrest/issues/62): As mentioned above, Cayenne 4.0 is no 
+  longer supported. If you import `io.bootique.agrest:bootique-agrest` in your project, it will not be available. You
+  will need to change the import to `io.bootique.agrest:bootique-agrest-cayenne41` or 
+  `io.bootique.agrest:bootique-agrest-cayenne42`.
+
+* [bootique-linkmove #49](https://github.com/bootique/bootique-linkmove/issues/49): As mentioned above, Cayenne 4.0 is no longer supported.
   If you import `io.bootique.linkmove:bootique-linkmove` (and `io.bootique.linkmove:bootique-linkmove-json` and
   `io.bootique.linkmove:bootique-linkmove-rest`) in your project, they will not be available. You need to change the 
   imports to `io.bootique.linkmove:bootique-linkmove-cayenne41` or `io.bootique.linkmove:bootique-linkmove-cayenne42`
