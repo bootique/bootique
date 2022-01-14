@@ -41,6 +41,11 @@
   implementation, do not override JobModule, and do not redefine LockHandler injection point . Instead call the extender 
   like this: `JobModule.extend(binder).addLockHandler("my-lock", MyLockHandler.class)`
 
+* [bootique-agrest #62](https://github.com/bootique/bootique-agrest/issues/62): Cayenne 4.0 is no longer supported.
+  If you import `io.bootique.agrest:bootique-agrest` in your project, it will not be available. So change the import to
+  `io.bootique.agrest:bootique-agrest-cayenne41` or `io.bootique.agrest:bootique-agrest-cayenne42`.
+
+
 ## 2.0.RC1
 
 * [bootique-jetty #109](https://github.com/bootique/bootique-jetty/issues/109): To fix `JettyTester` initialization 
