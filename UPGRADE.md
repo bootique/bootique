@@ -45,6 +45,12 @@
   If you import `io.bootique.agrest:bootique-agrest` in your project, it will not be available. So change the import to
   `io.bootique.agrest:bootique-agrest-cayenne41` or `io.bootique.agrest:bootique-agrest-cayenne42`.
 
+* [bootique-linkmove #49](https://github.com/bootique/bootique-linkmove/issues/49): Cayenne 4.0 is no longer supported.
+  If you import `io.bootique.linkmove:bootique-linkmove` (and `io.bootique.linkmove:bootique-linkmove-json` and
+  `io.bootique.linkmove:bootique-linkmove-rest`) in your project, they will not be available. You need to change the 
+  imports to `io.bootique.linkmove:bootique-linkmove-cayenne41` or `io.bootique.linkmove:bootique-linkmove-cayenne42`
+  (and the matching `-json-` and `-rest-` modules).
+
 
 ## 2.0.RC1
 
