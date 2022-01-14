@@ -52,6 +52,13 @@
   (and the matching `-json-` and `-rest-` modules).
 
 
+## 2.0 (final)
+
+* [bootique-cayenne #97](https://github.com/bootique/bootique-cayenne/issues/97): `maps` configuration option is changed
+  from **list** to **map** for Cayenne 4.1 and 4.2 to align it with Cayenne 4.0 behavior that was implemented earlier
+  per [bootique-cayenne #68](https://github.com/bootique/bootique-cayenne/issues/68). You need to upgrade your yml 
+  configs accordingly.
+
 ## 2.0.RC1
 
 * [bootique-jetty #109](https://github.com/bootique/bootique-jetty/issues/109): To fix `JettyTester` initialization 
