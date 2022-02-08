@@ -30,7 +30,6 @@ import java.util.Objects;
 /**
  * A thin wrapper around Bootique DI module that helps Bootique to extract module metadata and override dependencies.
  *
- * @since 0.21
  * @since 2.0 renamed from BQModule to BQModuleMetadata
  */
 public class BQModuleMetadata {

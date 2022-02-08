@@ -83,9 +83,9 @@ public interface BQModuleProvider {
     }
 
     /**
-     * Returns a human readable name of the provider.
+     * Returns a human-readable name of the provider.
      *
-     * @return a human readable name of the provider. Equals to the "simple" class name by default.
+     * @return a human-readable name of the provider. Equals to the "simple" class name by default.
      * @since 0.12
      */
     default String name() {
