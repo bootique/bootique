@@ -1,3 +1,7 @@
+## 2.0
+
+* #320 Deprecate "bootique-parent"
+
 ## 2.0.RC1
 
 * #292 Declared vars with array indices are excluded from help 
