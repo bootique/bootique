@@ -35,7 +35,6 @@
         <asciidoctor.maven.plugin.version>2.0.0-RC.1</asciidoctor.maven.plugin.version>
         <jruby.version>9.2.8.0</jruby.version>
         <bootique.version>${project.version}</bootique.version>
-        <bootique.parent.version>0.14</bootique.parent.version>
     </properties>
 
     <pluginRepositories>
