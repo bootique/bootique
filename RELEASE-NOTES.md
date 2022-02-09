@@ -6,6 +6,10 @@
 * #316 JUnit 4 support deprecation
 * #317 Java 11 as a minimal requirement for Bootique
 
+## 2.0
+
+* #320 Deprecate "bootique-parent"
+
 ## 2.0.RC1
 
 * #292 Declared vars with array indices are excluded from help 
