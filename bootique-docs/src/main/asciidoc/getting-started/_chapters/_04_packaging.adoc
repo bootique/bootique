@@ -17,21 +17,60 @@
 
 == Packaging
 
-Till now we've been running our app from IDE (which also happened to be much easier than running typical container-aware apps).
-Now let's package our app as a runnable "fat" jar to be able to run it from command line (e.g. in deployment environment).
-Assembling "fat" jar requires a bit of configuration of the Maven `maven-shade-plugin`.
-To simplify it, you can set a parent of your `pom.xml` to be a standard Bootique parent:
+Till now we've been running our app from IDE. Now let's package it as a runnable "fat" jar to be able to start it
+from command line (and potentially deploy to a remote server). This requires a bit of configuration of the Maven
+`maven-shade-plugin`:
 
 [source,xml,subs="attributes+"]
 ----
-<parent>
-    <groupId>io.bootique.parent</groupId>
-    <artifactId>bootique-parent</artifactId>
-    <version>{bootique_parent_version}</version>
-</parent>
+<build>
+    <pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.4</version>
+                <configuration>
+                    <createDependencyReducedPom>true</createDependencyReducedPom>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/*.SF</exclude>
+                                <exclude>META-INF/*.DSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>${main.class}</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </pluginManagement>
+    <plugins>
+        <plugin>
+            <artifactId>maven-shade-plugin</artifactId>
+        </plugin>
+    </plugins>
+</build>
 ----
 
-Other required `pom.xml` additions:
+Now you should set the name of the main class as property:
 
 [source,xml]
 ----
@@ -40,20 +79,7 @@ Other required `pom.xml` additions:
 </properties>
 ----
 
-[source,xml]
-----
-<build>
-    <plugins>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-shade-plugin</artifactId>
-        </plugin>
-    </plugins>
-</build>
-----
-
-Once this is setup you can build and run the app:
-
+Once this is done, you can build and run the app:
 [source,bash]
 ----
 mvn clean package
@@ -62,9 +88,7 @@ mvn clean package
 java -jar target/myapp-1.0.jar --server --config=myconfig.yml
 ----
 
-The result should be the same as running from the IDE,
-and the app should be still accessible at http://localhost:10001/hello[http://localhost:10001/hello].
-Now your jar can be deployed in any environment that has Java 8.
+The result should be the same as running from the IDE, and the app should be still accessible at
+http://localhost:10001/hello[http://localhost:10001/hello]. But now your jar can also be deployed in any Java environment.
 
-This concludes our simple tutorial.
-Now you can explore our http://bootique.io/docs/[documentation] to read more about Bootique core and individual modules.
+This concludes our simple tutorial. You can further explore our documentation http://bootique.io/docs/[here].
