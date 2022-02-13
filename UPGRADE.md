@@ -38,8 +38,13 @@
   either `JobLogger`
 
 * [bootique-job #93](https://github.com/bootique/bootique-job/issues/93): If you define your own LockHandler 
-  implementation, do not override JobModule, and do not redefine LockHandler injection point . Instead call the extender 
+  implementation, do not override JobModule, and do not redefine LockHandler injection point. Instead, call the extender 
   like this: `JobModule.extend(binder).addLockHandler("my-lock", MyLockHandler.class)`
+
+* [bootique-job #95](https://github.com/bootique/bootique-job/issues/95):  Previously exceptions in JobListeners were
+  logged and ignored. From now on an exception in the start or finish method of the listener will fail the job. So if
+  your jobs suddenly start failing, there is a chance that there was an unhandled listener exception that is no longer
+  ignored.
 
 * [bootique-cayenne #97](https://github.com/bootique/bootique-agrest/issues/97): Cayenne 4.0 is no longer supported.
   If you import `io.bootique.cayenne:bootique-cayenne` in your project (as well as `io.bootique.cayenne:bootique-jcache`,
