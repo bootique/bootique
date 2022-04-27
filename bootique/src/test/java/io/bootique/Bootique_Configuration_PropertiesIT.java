@@ -26,7 +26,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class Bootique_Configuration_PropertiesIT {
 
@@ -51,6 +51,20 @@ public class Bootique_Configuration_PropertiesIT {
         assertEquals("D", b.c);
     }
 
+    @Test
+    public void testOverride_EmptyString() {
+        BQRuntime runtime = app()
+                .property("bq.testOverride.c", "")
+                .createRuntime();
+
+        TestOverrideBean b = runtime
+                .getInstance(ConfigurationFactory.class)
+                .config(TestOverrideBean.class, "testOverride");
+
+        assertEquals("b", b.a);
+        assertEquals("", b.c);
+    }
+    
     @Test
     public void testOverrideNested() {
         BQRuntime runtime = app()
