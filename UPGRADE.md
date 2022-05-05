@@ -32,7 +32,7 @@
 * [bootique-rabbitmq #20](https://github.com/bootique/bootique-rabbitmq/issues/20) , 
   [bootique-rabbitmq #21](https://github.com/bootique/bootique-rabbitmq/issues/21): `rabbitmq.exchanges` and `rabbitmq.queues`
   are no longer directly mapped to the physical exchanges and queues. Rather those are configuration templates used to 
-  create the exchanges/queues by the endpoints API and the user code. This resulted in a few incompatible changes in
+  create exchanges/queues by the endpoints API or the user code. This resulted in a few incompatible changes in
   the configuration:
   * For sub endpoints, `rabbitmq.sub.[endpoint].exchange` and `rabbitmq.sub.[endpoint].queue` properties are removed.
   They are replaced with `rabbitmq.sub.[endpoint].exchangeConfig`, `rabbitmq.sub.[endpoint].exchangeName`,
