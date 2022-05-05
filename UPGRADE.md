@@ -36,8 +36,8 @@
   the configuration:
   * For sub endpoints, `rabbitmq.sub.[endpoint].exchange` and `rabbitmq.sub.[endpoint].queue` properties are removed.
   They are replaced with `rabbitmq.sub.[endpoint].exchangeConfig`, `rabbitmq.sub.[endpoint].exchangeName`,
-  `rabbitmq.sub.[endpoint].queueConfig`, `rabbitmq.sub.[endpoint].queueName`, where the "*Config" property is an optional 
-  reference to the corresponding exchange/queue "template" configuration. And the optional "*Name" is the RabbitMQ 
+  `rabbitmq.sub.[endpoint].queueConfig`, `rabbitmq.sub.[endpoint].queueName`, where the `*Config` property is an optional 
+  reference to the corresponding exchange/queue "template" configuration. And the optional `*Name` is the RabbitMQ 
   object name. Names can be further changed using subscription builder API, without changing configuration.
   * Similarly, for pub endpoints, `rabbitmq.pub.[endpoint].exchange` property is removed.
   It is replaced with `rabbitmq.pub.[endpoint].exchangeConfig`, `rabbitmq.pub.[endpoint].exchangeName`, where 
