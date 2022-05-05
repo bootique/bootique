@@ -30,15 +30,16 @@
   or newer.
 
 * [bootique-rabbitmq #20](https://github.com/bootique/bootique-rabbitmq/issues/20): The logic of subscription endpoint
-  queue redefining (`RmqSubEndpoint.newSubscription().queue(name)`) has changed to allow existing configurations as 
-  templates for differently named queues.
+  queue naming (`RmqSubEndpoint.newSubscription().queue(name)`) and configuration has changed to allow existing 
+  configurations as templates for differently named queues.
   
-  ** If you used `RmqSubEndpoint.newSubscription().queue(name)` to point to a queue configuration different from the 
-     one for the endpoint, or to create a queue with an implicit default configuration, you will need to revisit this 
-     code, and make sure the sub endpoints are setup as templates for any queues created from them. 
-  ** If you assigned queue names to the endpoints via configs (under `rabbitmq.sub.[endpoint].queue`) that do not 
-     point to queue configurations (under `rabbitmq.queues.[queue_name]`), this would previously create a default 
-     config implicitly. In the new version an exception will be thrown. So make sure to add those missing queue configurations.
+  * `rabbitmq.queues` configuration property got renamed to `rabbitmq.queueTemplates` to indicate that this config does
+  not correspond to any physical queues.
+  * `rabbitmq.sub.[endpoint].queue` configuration property is no longer a reference to the queue configurations. It is 
+  simply an (optional) default queue name for this endpoint. A property referencing a template is 
+  `rabbitmq.sub.[endpoint].queueTemplate`. So you need to pick a template if you need a specific configuration. 
+  * Same goes for explicitly renamed queues (`RmqSubEndpoint.newSubscription().queue(name)`). Renaming will not
+  reference a new configuration. You still need to set the correct template for the endpoint.
 
 * [bootique-kafka #30](https://github.com/bootique/bootique-kafka/issues/30):  If you were using `KafkaConsumerRunner`,
   you will have to switch to `consume(KafkaConsumerCallback,Duration)`. The callback is invoked on a batch of data after 
