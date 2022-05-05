@@ -29,17 +29,21 @@
   Java 11, `bootique-tapestry` module (based on T5.4) was removed. You will need to replace it with `bootique-tapestry55`
   or newer.
 
-* [bootique-rabbitmq #20](https://github.com/bootique/bootique-rabbitmq/issues/20): The logic of subscription endpoint
-  queue naming (`RmqSubEndpoint.newSubscription().queue(name)`) and configuration has changed to allow existing 
-  configurations as templates for differently named queues.
-  
-  * `rabbitmq.queues` configuration property got renamed to `rabbitmq.queueTemplates` to indicate that this config does
-  not correspond to any physical queues.
-  * `rabbitmq.sub.[endpoint].queue` configuration property is no longer a reference to the queue configurations. It is 
-  simply an (optional) default queue name for this endpoint. A property referencing a template is 
-  `rabbitmq.sub.[endpoint].queueTemplate`. So you need to pick a template if you need a specific configuration. 
-  * Same goes for explicitly renamed queues (`RmqSubEndpoint.newSubscription().queue(name)`). Renaming will not
-  reference a new configuration. You still need to set the correct template for the endpoint.
+* [bootique-rabbitmq #20](https://github.com/bootique/bootique-rabbitmq/issues/20) , 
+  [bootique-rabbitmq #21](https://github.com/bootique/bootique-rabbitmq/issues/21): `rabbitmq.exchanges` and `rabbitmq.queues`
+  are no longer directly mapped to the physical exchanges and queues. Rather those are configuration templates used to 
+  create the exchanges/queues by the endpoints API and the user code. This resulted in a few incompatible changes in
+  the configuration:
+  * For sub endpoints, `rabbitmq.sub.[endpoint].exchange` and `rabbitmq.sub.[endpoint].queue` properties are removed.
+  They are replaced with `rabbitmq.sub.[endpoint].exchangeConfig`, `rabbitmq.sub.[endpoint].exchangeName`,
+  `rabbitmq.sub.[endpoint].queueConfig`, `rabbitmq.sub.[endpoint].queueName`, where the "*Config" property is an optional 
+  reference to the corresponding exchange/queue "template" configuration. And the optional "*Name" is the RabbitMQ 
+  object name. Names can be further changed using subscription builder API, without changing configuration.
+  * Similarly, for pub endpoints, `rabbitmq.pub.[endpoint].exchange` property is removed.
+  It is replaced with `rabbitmq.pub.[endpoint].exchangeConfig`, `rabbitmq.pub.[endpoint].exchangeName`, where 
+  "exchangeConfig" property is an optional reference to the corresponding exchange "template" configuration. And the 
+  optional "exchangeName" is the RabbitMQ object name. The name can be further changed using publisher builder API, 
+  without changing configuration.
 
 * [bootique-kafka #30](https://github.com/bootique/bootique-kafka/issues/30):  If you were using `KafkaConsumerRunner`,
   you will have to switch to `consume(KafkaConsumerCallback,Duration)`. The callback is invoked on a batch of data after 
