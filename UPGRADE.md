@@ -44,6 +44,29 @@
   "exchangeConfig" property is an optional reference to the corresponding exchange "template" configuration. And the 
   optional "exchangeName" is the RabbitMQ object name. The name can be further changed using publisher builder API, 
   without changing configuration.
+  * `RmqChannelFactory` class was removed. Instead you should use the `RmqEndpoints` API. If it is too high-level,
+  and you would like to work with channels and topologies directly, you can also use injectable `RmqChannelManager` / 
+  `RmqTopologyManager` combo:
+
+```java
+// old code, no longer available
+// @Inject
+// RmqChannelFactory channelFactory;
+// Channel c = channelFactory.newChannel("c1").ensureExchange("e1").open();
+
+// new code
+@Inject
+RmqChannelManager channelManager;
+@Inject
+RmqTopologyManager topologyManager;
+
+Channel c = channelManager.createChannel("c1");
+new RmqTopologyBuilder()
+    // in the new API config name is purely symbolic
+    // in the old it matched the exchange name
+    .ensureExchange("e1", topologyManager.getExchangeConfig("e1"))
+    .build(c);
+```
 
 * [bootique-kafka #30](https://github.com/bootique/bootique-kafka/issues/30):  If you were using `KafkaConsumerRunner`,
   you will have to switch to `consume(KafkaConsumerCallback,Duration)`. The callback is invoked on a batch of data after 
