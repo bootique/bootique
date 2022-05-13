@@ -92,9 +92,9 @@ new RmqTopologyBuilder()
   `io.bootique.cayenne:bootique-cayenne42` (depending on which version you are upgrading to). Same goes for `-jcache`,
   `-test` and `-junit5` modules.
 
-* [bootique-cayenne #100](https://github.com/bootique/bootique-agrest/issues/100): `CayenneTester` for Cayenne 4.2 
-  was made much more robust by getting rid of eager initialization of Cayenne stack. But any existing code that 
-  implicitly relied on eager initialization would fail of course. One example is when `CayenneTester` is used for DB
+* [bootique-cayenne #100](https://github.com/bootique/bootique-agrest/issues/100): `CayenneTester` 
+  was made much more robust by getting rid of eager initialization of Cayenne stack. But any existing code that
+  implicitly relied on eager initialization would now be expected to fail. One example is when `CayenneTester` is used for DB
   schema creation. Schema creation action would only run upon `ServerRuntime` instantiation. But you may have a 
   `DbTester` (that knows nothing about `CayenneTester`) accessing the DB prior to that. As a result all its operations 
   would fail until ServerRuntime is resolved. The best solution would be to refactor the code and avoid such conditions,
