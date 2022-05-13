@@ -60,6 +60,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     private SetBuilder<OptionRefWithConfigPath> optionPathDecorators;
     private SetBuilder<ConfigurationFormatParser> configurationFormatParsers;
     private SetBuilder<JsonConfigurationLoader> configurationLoaders;
+    private SetBuilder<BQRuntimeListener> runtimeListeners;
 
     protected BQCoreModuleExtender(Binder binder) {
         super(binder);
@@ -80,6 +81,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
         contributeOptionPathDecorators();
         contributeConfigurationLoaders();
         contributeConfigurationFormatParsers();
+        contributeRuntimeListeners();
 
         return this;
     }
@@ -332,6 +334,28 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
         return this;
     }
 
+    /**
+     * Adds a callback that is invoked once BQRuntime is created, but before any commands are run. Used primarily by
+     * the test tools and such to manage lifecycles external to Bootique. Most regular apps do not require this callback.
+     *
+     * @since 3.0.M1
+     */
+    public BQCoreModuleExtender addRuntimeListener(BQRuntimeListener listener) {
+        contributeRuntimeListeners().addInstance(listener);
+        return this;
+    }
+
+    /**
+     * Adds a callback that is invoked once BQRuntime is created, but before any commands are run. Used primarily by
+     * the test tools and such to manage lifecycles external to Bootique. Most regular apps do not require this callback.
+     *
+     * @since 3.0.M1
+     */
+    public BQCoreModuleExtender addRuntimeListener(Class<? extends BQRuntimeListener> listenerTypes) {
+        contributeRuntimeListeners().add(listenerTypes).inSingletonScope();
+        return this;
+    }
+
     protected MapBuilder<Class<?>, ValueObjectDescriptor> contributeValueObjectsDescriptors() {
         return valueObjectsDescriptors != null
                 ? valueObjectsDescriptors
@@ -388,5 +412,9 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
 
     protected SetBuilder<ConfigurationFormatParser> contributeConfigurationFormatParsers() {
         return configurationFormatParsers != null ? configurationFormatParsers : (configurationFormatParsers = newSet(ConfigurationFormatParser.class));
+    }
+
+    protected SetBuilder<BQRuntimeListener> contributeRuntimeListeners() {
+        return runtimeListeners != null ? runtimeListeners : (runtimeListeners = newSet(BQRuntimeListener.class));
     }
 }

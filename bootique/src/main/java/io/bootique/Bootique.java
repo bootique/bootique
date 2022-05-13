@@ -20,10 +20,7 @@
 package io.bootique;
 
 import io.bootique.command.CommandOutcome;
-import io.bootique.di.BQModule;
-import io.bootique.di.DIBootstrap;
-import io.bootique.di.DIRuntimeException;
-import io.bootique.di.Injector;
+import io.bootique.di.*;
 import io.bootique.env.DefaultEnvironment;
 import io.bootique.log.BootLogger;
 import io.bootique.log.DefaultBootLogger;
@@ -298,7 +295,11 @@ public class Bootique {
      */
     public BQRuntime createRuntime() {
         Injector injector = createInjector();
-        return createRuntime(injector);
+        BQRuntime runtime = createRuntime(injector);
+
+        runtime.getInstance(Key.getSetOf(BQRuntimeListener.class)).forEach(sl -> sl.onRuntimeCreated(runtime));
+
+        return runtime;
     }
 
     /**
