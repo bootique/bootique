@@ -24,13 +24,8 @@ import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.help.ValueObjectDescriptor;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -49,16 +44,6 @@ public class ConfigMetadataCompiler {
     private Function<Class<?>, Stream<Class<?>>> subclassProvider;
     private Map<Type, ConfigObjectMetadata> seen;
     private Map<Class<?>, ValueObjectDescriptor> descriptorMap;
-
-    /**
-     * @deprecated since 1.0.RC1 use {@link #ConfigMetadataCompiler(Function, Map)}
-     */
-    @Deprecated
-    public ConfigMetadataCompiler(Function<Class<?>, Stream<Class<?>>> subclassProvider) {
-        this.subclassProvider = subclassProvider;
-        this.seen = new ConcurrentHashMap<>();
-        this.descriptorMap = Collections.emptyMap();
-    }
 
     public ConfigMetadataCompiler(Function<Class<?>, Stream<Class<?>>> subclassProvider, Map<Class<?>, ValueObjectDescriptor> descriptorMap) {
         this.subclassProvider = subclassProvider;
