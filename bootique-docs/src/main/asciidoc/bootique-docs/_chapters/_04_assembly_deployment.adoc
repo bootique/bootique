@@ -148,6 +148,10 @@ First let's create the folder structure:
         </plugin>
         <plugin>
             <artifactId>maven-dependency-plugin</artifactId>
+            <configuration>
+                <includeScope>runtime</includeScope>
+                <outputDirectory>${project.build.directory}/lib</outputDirectory>
+            </configuration>
             <executions>
                 <execution>
                     <id>assembly</id>
@@ -155,14 +159,8 @@ First let's create the folder structure:
                     <goals>
                         <goal>copy-dependencies</goal>
                     </goals>
-                    <configuration>
-                        <includeScope>runtime</includeScope>
-                    </configuration>
                 </execution>
             </executions>
-            <configuration>
-                <outputDirectory>${project.build.directory}/lib</outputDirectory>
-            </configuration>
         </plugin>
     </plugins>
 </build>
