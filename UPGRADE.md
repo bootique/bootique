@@ -104,10 +104,12 @@ new RmqTopologyBuilder()
   would fail until ServerRuntime is resolved. The best solution would be to refactor the code and avoid such conditions,
   but alternatively you can call `CayenneyTester.getRuntime()` manually before using the `DbTester`.
 
-* [bootique-agrest #62](https://github.com/bootique/bootique-agrest/issues/62): As mentioned above, Cayenne 4.0 is no 
-  longer supported. If you import `io.bootique.agrest:bootique-agrest` in your project, it will not be available. You
-  will need to change the import to `io.bootique.agrest:bootique-agrest-cayenne41` or 
-  `io.bootique.agrest:bootique-agrest-cayenne42`.
+* [bootique-agrest #62](https://github.com/bootique/bootique-agrest/issues/62), 
+  [bootique-agrest #68](https://github.com/bootique/bootique-agrest/issues/68): Agrest modules are reorganized around
+  versions of Agrest instead of versions of Cayenne. We now support Agrest 4.x and 5.x (both are currently on Cayenne 4.2).
+  So there's no more `bootique-agrest`, `bootique-agrest-cayenne41`, `bootique-agrest-cayenne42`. Instead, there are 
+  modules like `bootique-agrest4`, `bootique-agrest5` and their Jakarta doubles. You project needs to be switched to 
+  Cayenne 4.2 from 4.1 or 4.0 to work with either of them.
 
 * [bootique-linkmove #49](https://github.com/bootique/bootique-linkmove/issues/49): As mentioned above, Cayenne 4.0 is no longer supported.
   If you import `io.bootique.linkmove:bootique-linkmove` (and `io.bootique.linkmove:bootique-linkmove-json` and
