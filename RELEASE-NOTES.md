@@ -6,6 +6,7 @@
 * #316 JUnit 4 support deprecation
 * #317 Java 11 as a minimal requirement for Bootique
 * #322 "BQRuntimeListener" to receive notifications on runtime startup
+* #323 Upgrade to jackson 2.13.3
 
 ## 2.0
 

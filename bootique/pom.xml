@@ -74,12 +74,10 @@
 		<dependency>
 			<groupId>io.bootique.di</groupId>
 			<artifactId>bootique-di</artifactId>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<scope>compile</scope>
 		</dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -88,17 +86,14 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
 			<artifactId>jackson-dataformat-yaml</artifactId>
-			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.jopt-simple</groupId>
 			<artifactId>jopt-simple</artifactId>
-			<scope>compile</scope>
 		</dependency>
 
 		<!-- Unit test dependencies -->
