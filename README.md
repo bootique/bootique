@@ -94,7 +94,7 @@ public class Application {
 ```
 It has ```main()``` method, so you can run it! 
 
-*For a more detailed tutorial proceed to [this link](http://bootique.io/docs/0/getting-started/).*
+*For a more detailed tutorial proceed to [this link](https://bootique.io/docs/2.x/getting-started/).*
 
 ## Upgrading
 
