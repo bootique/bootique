@@ -85,9 +85,15 @@ new RmqTopologyBuilder()
   your jobs suddenly start failing, there is a chance that there was an unhandled listener exception that is no longer
   ignored.
 
-* [bootique-job #107](https://github.com/bootique/bootique-job/issues/107):  To standardize `bootique-job` module layout,
-  `JobModule` was moved from `io.bootique.job.runtime` to `io.bootique.job` package. If you get related compilation 
-  errors, just update the import package.
+* [bootique-job #107](https://github.com/bootique/bootique-job/issues/107), 
+  [bootique-job #110](https://github.com/bootique/bootique-job/issues/110):  To standardize `bootique-job` module layout,
+  classes that the user may reference directly were moved to `io.bootique.job` package from various subpackages. To resolve
+  the resulting compilation errors, update the import package. Here are the classes that you are most likely to 
+  encounter in the app code:
+  * `JobResult` was moved from `io.bootique.job.runnable` to `io.bootique.job` (a deprecated version of JobResult is still present in the old location, but still consider switching the import)
+  * `JobOutcome` was moved from `io.bootique.job.runnable` to `io.bootique.job`
+  * `Scheduler` was moved from `io.bootique.job.scheduler` to `io.bootique.job`
+  * `JobModule` was moved from `io.bootique.job.runtime` to `io.bootique.job`
 
 * [bootique-cayenne #97](https://github.com/bootique/bootique-agrest/issues/97): Cayenne 4.0 is no longer supported.
   If you import `io.bootique.cayenne:bootique-cayenne` in your project (as well as `io.bootique.cayenne:bootique-jcache`,
