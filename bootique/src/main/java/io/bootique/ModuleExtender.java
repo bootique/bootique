@@ -62,6 +62,13 @@ public abstract class ModuleExtender<T extends ModuleExtender<T>> {
         return binder.bindSet(elementType, bindingName);
     }
 
+    /**
+     * @since 3.0
+     */
+    protected <V> SetBuilder<V> newSet(TypeLiteral<V> elementType) {
+        return binder.bindSet(elementType);
+    }
+
     protected <V> SetBuilder<V> newSet(Key<V> diKey) {
         if(diKey.getBindingAnnotation() != null) {
             return binder.bindSet(diKey.getType(), diKey.getBindingAnnotation());
