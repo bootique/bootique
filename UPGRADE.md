@@ -78,7 +78,7 @@ new RmqTopologyBuilder()
 
 * [bootique-job #93](https://github.com/bootique/bootique-job/issues/93): If you define your own LockHandler 
   implementation, do not override JobModule, and do not redefine LockHandler injection point. Instead, call the extender 
-  like this: `JobModule.extend(binder).addLockHandler(MyLockHandler.class)`
+  like this: `JobModule.extend(binder).setLockHandler(MyLockHandler.class)`
 
 * [bootique-job #95](https://github.com/bootique/bootique-job/issues/95):  Previously exceptions in JobListeners were
   logged and ignored. From now on an exception in the start or finish method of the listener will fail the job. So if
