@@ -22,9 +22,9 @@ package io.bootique.config;
 import io.bootique.type.TypeRef;
 
 /**
- * An injectable object that provides access to a tree of configuration data. The whole configuration tree or its
- * subtrees of can be read as objects of a specified type. More often than not returned configuration objects are
- * themselves "factories" of various services. So ConfigurationFactory can be thought as a "factory of factories".
+ * An injectable object that provides access to a tree of configuration data. The main tree or its subtrees of can be
+ * read as objects of a specified type. More often than not those objects are "factories" for various services.
+ * So ConfigurationFactory can be thought as a "factory of factories".
  */
 public interface ConfigurationFactory {
 
