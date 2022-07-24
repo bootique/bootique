@@ -36,9 +36,7 @@ import java.util.Map;
 public interface BQModuleProvider {
 
     /**
-     * Returns a DI module specific to this provider.
-     *
-     * @return an instance of a DI Module specific to this provider.
+     * Creates and returns a DI module specific to this provider.
      */
     BQModule module();
 

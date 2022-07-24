@@ -290,8 +290,9 @@ public class BQCoreModule implements BQModule {
 
     @Provides
     @Singleton
-    ModulesMetadata provideModulesMetadata(ConfigHierarchyResolver hierarchyResolver, Map<Class<?>,
-            ValueObjectDescriptor> valueObjectDescriptors) {
+    ModulesMetadata provideModulesMetadata(
+            ConfigHierarchyResolver hierarchyResolver,
+            Map<Class<?>, ValueObjectDescriptor> valueObjectDescriptors) {
 
         ConfigMetadataCompiler configCompiler =
                 new ConfigMetadataCompiler(hierarchyResolver::directSubclasses, valueObjectDescriptors);

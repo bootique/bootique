@@ -30,8 +30,10 @@ import java.util.Objects;
 /**
  * A thin wrapper around Bootique DI module that helps Bootique to extract module metadata and override dependencies.
  *
- * @since 2.0 renamed from BQModule to BQModuleMetadata
+ * @since 2.0
  */
+// TODO: this is an unfortunate name, as the true module metadata is represented by io.bootique.meta.module.ModuleMetadata,
+//   and this object is only used on bootstrap of a module, and actually has a direct reference to the Module object
 public class BQModuleMetadata {
 
     // for now module names are simple class names... maybe change this to use Maven module names?
