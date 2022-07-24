@@ -45,7 +45,7 @@ Your `pom.xml` in addition to the required project information tags will need to
 [source,groovy,subs="attributes"]
 ----
 dependencies {
-    implementation platform("io.bootique.bom:bootique-bom:$bootique_version")
+    implementation platform("io.bootique.bom:bootique-bom:{bootique_version}")
 }
 ----
 ====

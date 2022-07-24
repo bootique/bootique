@@ -41,7 +41,7 @@ to your liking.
 
 === Java Version
 
-Java 8 or newer is required.
+Java 11 or newer is required.
 
 === Build System
 
