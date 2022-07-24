@@ -133,7 +133,7 @@
                                 <sectnums />
                                 <icons>font</icons>
                                 <toc>auto</toc>
-                                <bootique_version>2.0.RC1</bootique_version>
+                                <bootique_version>3.0.M1</bootique_version>
                             </attributes>
                         </configuration>
                     </execution>
