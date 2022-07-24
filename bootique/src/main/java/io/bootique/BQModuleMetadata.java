@@ -33,7 +33,7 @@ import java.util.Objects;
  * @since 2.0
  */
 // TODO: this is an unfortunate name, as the true module metadata is represented by io.bootique.meta.module.ModuleMetadata,
-//   and this object is only used on bootstrap of a module, and actually has a direct reference to the Module object
+//   and this object is only used during bootstrap, and holds a direct reference to the Module object
 public class BQModuleMetadata {
 
     // for now module names are simple class names... maybe change this to use Maven module names?
@@ -41,15 +41,28 @@ public class BQModuleMetadata {
 
     private final BQModule module;
     private final BQModuleId moduleId;
-    private String name;
-    private String description;
-    private String providerName;
-    private Collection<Class<? extends BQModule>> overrides;
-    private Map<String, Type> configs;
+    private final String name;
+    private final String description;
+    private final String providerName;
+    private final Collection<Class<? extends BQModule>> overrides;
+    private final Map<String, Type> configs;
 
-    private BQModuleMetadata(BQModule module, BQModuleId moduleId) {
+    private BQModuleMetadata(
+            BQModule module,
+            BQModuleId moduleId,
+            String name,
+            String description,
+            String providerName,
+            Collection<Class<? extends BQModule>> overrides,
+            Map<String, Type> configs) {
+
         this.module = Objects.requireNonNull(module);
         this.moduleId = Objects.requireNonNull(moduleId);
+        this.name = name;
+        this.description = description;
+        this.providerName = providerName;
+        this.overrides = overrides;
+        this.configs = configs;
     }
 
     public static Builder builder(BQModule module) {
@@ -97,43 +110,52 @@ public class BQModuleMetadata {
 
     public static class Builder {
 
-        private final BQModuleMetadata md;
+        private final BQModule module;
+        private String name;
+        private String description;
+        private String providerName;
+        private Collection<Class<? extends BQModule>> overrides;
+        private Map<String, Type> configs;
 
         private Builder(BQModule module) {
-            this.md = new BQModuleMetadata(module, BQModuleId.of(module));
+            this.module = Objects.requireNonNull(module);
         }
 
         public BQModuleMetadata build() {
 
-            if (md.name == null) {
-                md.name = MODULE_NAME_BUILDER.toName(md.module.getClass());
-            }
-
-            return md;
+            return new BQModuleMetadata(
+                    module,
+                    BQModuleId.of(module),
+                    name != null ? name : MODULE_NAME_BUILDER.toName(module.getClass()),
+                    description,
+                    providerName,
+                    overrides,
+                    configs
+            );
         }
 
         public Builder name(String name) {
-            md.name = name;
+            this.name = name;
             return this;
         }
 
         public Builder description(String descrption) {
-            md.description = descrption;
+            this.description = descrption;
             return this;
         }
 
         public Builder providerName(String name) {
-            md.providerName = name;
+            this.providerName = name;
             return this;
         }
 
         public Builder overrides(Collection<Class<? extends BQModule>> overrides) {
-            md.overrides = overrides;
+            this.overrides = overrides;
             return this;
         }
 
         public Builder configs(Map<String, Type> configs) {
-            md.configs = configs;
+            this.configs = configs;
             return this;
         }
     }
