@@ -41,9 +41,9 @@ public class ConfigMetadataCompiler {
 
     private static final Pattern SETTER = Pattern.compile("^set([A-Z].*)$");
 
-    private Function<Class<?>, Stream<Class<?>>> subclassProvider;
-    private Map<Type, ConfigObjectMetadata> seen;
-    private Map<Class<?>, ValueObjectDescriptor> descriptorMap;
+    private final Function<Class<?>, Stream<Class<?>>> subclassProvider;
+    private final Map<Type, ConfigObjectMetadata> seen;
+    private final Map<Class<?>, ValueObjectDescriptor> descriptorMap;
 
     public ConfigMetadataCompiler(Function<Class<?>, Stream<Class<?>>> subclassProvider, Map<Class<?>, ValueObjectDescriptor> descriptorMap) {
         this.subclassProvider = subclassProvider;
@@ -107,15 +107,20 @@ public class ConfigMetadataCompiler {
 
     protected ConfigMetadataNode compileObjectMetadata(Descriptor descriptor) {
 
-        // see if there's already a metadata object for this type... proxy it to avoid compile cycles...
-        ConfigMetadataNode seenNode = seen.get(descriptor.getType());
+        // to avoid compile cycles, track seen types and prevent any further descent into child properties for them.
+        // Still use the name and description from the given Descriptor.
+        ConfigObjectMetadata seenNode = seen.get(descriptor.getType());
         if (seenNode != null) {
-            return new ConfigMetadataNodeProxy(descriptor.getName(), descriptor.getDescription(), seenNode);
+            return ConfigObjectMetadata
+                    .builder(new ConfigObjectMetadata())
+                    .from(seenNode)
+                    .name(descriptor.getName())
+                    .description(descriptor.getDescription())
+                    .build();
         }
 
-        // create an empty object ourselves, as we need to cache it before we descend down the stack to prevent
-        // endless cycles during compilation... note that we are only caching inside 'compileObjectMetadata'...
-        // That's the place to break the cycles..
+        // Cache the metadata object before we descend the stack to prevent endless cycles during compilation.
+        // We are only caching inside 'compileObjectMetadata'. This is a designated place to break cycles.
 
         ConfigObjectMetadata baseObject = new ConfigObjectMetadata();
         seen.put(descriptor.getType(), baseObject);
@@ -126,8 +131,8 @@ public class ConfigMetadataCompiler {
                 .abstractType(isAbstract(descriptor.getTypeClass()))
                 .typeLabel(extractTypeLabel(descriptor.getTypeClass()));
 
-        // note that root config object known to Bootique doesn't require BQConfig annotation (though it would help in
-        // determining description). Objects nested within the root config do. Otherwise they will be treated as
+        // The root config object known to Bootique doesn't require BQConfig annotation (though it would help in
+        // determining description). Objects nested within the root config do. Otherwise, they will be treated as
         // "value" properties.
         BQConfig typeAnnotation = descriptor.getTypeClass().getAnnotation(BQConfig.class);
         if (typeAnnotation != null) {

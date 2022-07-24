@@ -60,6 +60,14 @@ public class ConfigMapMetadata extends ConfigValueMetadata {
             return super.build();
         }
 
+        @Override
+        public Builder from(ConfigMapMetadata copyFrom) {
+            super.from(copyFrom);
+            toBuild.keysType = copyFrom.keysType;
+            toBuild.valuesType = copyFrom.valuesType;
+            return this;
+        }
+
         public Builder keysType(Class<?> keysType) {
             toBuild.keysType = keysType;
             return this;

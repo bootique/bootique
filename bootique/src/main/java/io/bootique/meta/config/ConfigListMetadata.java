@@ -55,6 +55,13 @@ public class ConfigListMetadata extends ConfigValueMetadata {
             return super.build();
         }
 
+        @Override
+        public Builder from(ConfigListMetadata copyFrom) {
+            super.from(copyFrom);
+            toBuild.elementType = copyFrom.elementType;
+            return this;
+        }
+
         public Builder elementType(ConfigMetadataNode elementType) {
             toBuild.elementType = elementType;
             return this;

@@ -267,16 +267,11 @@ public class ConfigMetadataIT {
     @BQConfig
     public static class TestConfig {
 
-        private String p1;
-        private String p2;
-
         @BQConfigProperty("(p1 desc)")
         public void setP1(String p1) {
-            this.p1 = p1;
         }
 
         public void setP2(String p2) {
-            this.p2 = p2;
         }
     }
 
@@ -295,13 +290,9 @@ public class ConfigMetadataIT {
     @BQConfig
     public static class TestValueObjectConfig {
 
-        private TestVO p1;
-
         @BQConfigProperty("(p1 desc)")
         public void setP1(TestVO p1) {
-            this.p1 = p1;
         }
-
     }
 
 }

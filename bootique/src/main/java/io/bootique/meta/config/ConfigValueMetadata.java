@@ -146,13 +146,26 @@ public class ConfigValueMetadata implements ConfigMetadataNode {
             return toBuild;
         }
 
+        /**
+         * @since 3.0
+         */
+        public B from(T copyFrom) {
+
+            toBuild.name = copyFrom.name;
+            toBuild.description = copyFrom.description;
+            toBuild.valueLabel = copyFrom.valueLabel;
+            toBuild.type = copyFrom.type;
+
+            return (B) this;
+        }
+
         public B name(String name) {
             toBuild.name = name;
             return (B) this;
         }
 
         public B valueLabel(String valueLabel) {
-            if(valueLabel != null && valueLabel.length() == 0) {
+            if (valueLabel != null && valueLabel.length() == 0) {
                 valueLabel = null;
             }
 

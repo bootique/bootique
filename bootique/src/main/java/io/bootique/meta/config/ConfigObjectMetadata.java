@@ -29,7 +29,7 @@ import java.util.stream.Stream;
 public class ConfigObjectMetadata extends ConfigValueMetadata {
 
     private static final ConfigMetadataVisitor<Stream<ConfigMetadataNode>> SUB_CONFIGS_EXTRACTOR =
-            new ConfigMetadataVisitor<Stream<ConfigMetadataNode>>() {
+            new ConfigMetadataVisitor<>() {
                 @Override
                 public Stream<ConfigMetadataNode> visitObjectMetadata(ConfigObjectMetadata metadata) {
                     return metadata.getAllSubConfigs();
@@ -132,6 +132,17 @@ public class ConfigObjectMetadata extends ConfigValueMetadata {
 
         public Builder(ConfigObjectMetadata toBuild) {
             super(toBuild);
+        }
+
+        @Override
+        public Builder from(ConfigObjectMetadata copyFrom) {
+            super.from(copyFrom);
+
+            toBuild.properties = new ArrayList<>(copyFrom.properties);
+            toBuild.subConfigs = new ArrayList<>(copyFrom.subConfigs);
+            toBuild.abstractType = copyFrom.abstractType;
+            toBuild.typeLabel = copyFrom.typeLabel;
+            return this;
         }
 
         public Builder addProperty(ConfigMetadataNode property) {
