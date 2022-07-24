@@ -35,19 +35,19 @@ import java.util.Objects;
 public class BQModuleMetadata {
 
     // for now module names are simple class names... maybe change this to use Maven module names?
-    protected static ClassToName MODULE_NAME_BUILDER = ClassToName
-            .builder()
-            .build();
+    protected static final ClassToName MODULE_NAME_BUILDER = ClassToName.builder().build();
 
-    private BQModule module;
-    private BQModuleId moduleId;
+    private final BQModule module;
+    private final BQModuleId moduleId;
     private String name;
     private String description;
     private String providerName;
     private Collection<Class<? extends BQModule>> overrides;
     private Map<String, Type> configs;
 
-    private BQModuleMetadata() {
+    private BQModuleMetadata(BQModule module, BQModuleId moduleId) {
+        this.module = Objects.requireNonNull(module);
+        this.moduleId = Objects.requireNonNull(moduleId);
     }
 
     public static Builder builder(BQModule module) {
@@ -94,45 +94,44 @@ public class BQModuleMetadata {
     }
 
     public static class Builder {
-        private BQModuleMetadata module;
+
+        private final BQModuleMetadata md;
 
         private Builder(BQModule module) {
-            this.module = new BQModuleMetadata();
-            this.module.module = Objects.requireNonNull(module);
-            this.module.moduleId = BQModuleId.of(module);
+            this.md = new BQModuleMetadata(module, BQModuleId.of(module));
         }
 
         public BQModuleMetadata build() {
 
-            if(module.name == null) {
-                module.name = MODULE_NAME_BUILDER.toName(module.module.getClass());
+            if (md.name == null) {
+                md.name = MODULE_NAME_BUILDER.toName(md.module.getClass());
             }
 
-            return module;
+            return md;
         }
 
         public Builder name(String name) {
-            module.name = name;
+            md.name = name;
             return this;
         }
 
         public Builder description(String descrption) {
-            module.description = descrption;
+            md.description = descrption;
             return this;
         }
 
         public Builder providerName(String name) {
-            module.providerName = name;
+            md.providerName = name;
             return this;
         }
 
         public Builder overrides(Collection<Class<? extends BQModule>> overrides) {
-            module.overrides = overrides;
+            md.overrides = overrides;
             return this;
         }
 
         public Builder configs(Map<String, Type> configs) {
-            module.configs = configs;
+            md.configs = configs;
             return this;
         }
     }
