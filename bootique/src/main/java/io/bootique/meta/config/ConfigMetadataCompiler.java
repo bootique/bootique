@@ -66,7 +66,7 @@ public class ConfigMetadataCompiler {
     private static Type propertyTypeFromConstructor(Constructor maybeConstructor) {
         Type[] paramTypes = maybeConstructor.getGenericParameterTypes();
         if (paramTypes.length != 1) {
-            throw new IllegalStateException("Constructor '" + maybeConstructor.toString()
+            throw new IllegalStateException("Constructor '" + maybeConstructor
                     + "' is annotated with @BQConfigProperty, but does not match expected signature."
                     + " It must take exactly one parameter");
         }
@@ -87,7 +87,7 @@ public class ConfigMetadataCompiler {
     }
 
     public ConfigMetadataNode compile(String name, Type type) {
-        return compile(new Descriptor(name, type));
+        return compile(Descriptor.forRootConfig(name, type));
     }
 
     protected ConfigMetadataNode compile(Descriptor descriptor) {
@@ -143,7 +143,7 @@ public class ConfigMetadataCompiler {
             BQConfigProperty configProperty = m.getAnnotation(BQConfigProperty.class);
             if (configProperty != null) {
                 Type propType = propertyTypeFromSetter(m);
-                builder.addProperty(compile(new Descriptor(propertyNameFromSetter(m), configProperty, propType)));
+                builder.addProperty(compile(Descriptor.forNestedConfig(propertyNameFromSetter(m), configProperty, propType)));
             }
         }
 
@@ -151,13 +151,13 @@ public class ConfigMetadataCompiler {
             BQConfigProperty configProperty = c.getAnnotation(BQConfigProperty.class);
             if (configProperty != null) {
                 Type propType = propertyTypeFromConstructor(c);
-                builder.addProperty(compile(new Descriptor(descriptor.getTypeClass().getSimpleName().toLowerCase(), configProperty, propType)));
+                builder.addProperty(compile(Descriptor.forNestedConfig(descriptor.getTypeClass().getSimpleName().toLowerCase(), configProperty, propType)));
             }
         }
 
         // compile subconfigs...
         subclassProvider.apply(descriptor.getTypeClass())
-                .map(sc -> new Descriptor(null, sc))
+                .map(sc -> Descriptor.forRootConfig(null, sc))
                 .map(this::compileObjectMetadata)
                 .forEach(builder::addSubConfig);
 
@@ -207,7 +207,7 @@ public class ConfigMetadataCompiler {
             }
         }
 
-        ConfigMetadataNode valueMetadata = compile(new Descriptor(null, valuesType));
+        ConfigMetadataNode valueMetadata = compile(Descriptor.forRootConfig(null, valuesType));
 
         return ConfigMapMetadata
                 .builder(descriptor.getName())
@@ -232,7 +232,7 @@ public class ConfigMetadataCompiler {
             }
         }
 
-        ConfigMetadataNode elementMetadata = compile(new Descriptor(null, elementType));
+        ConfigMetadataNode elementMetadata = compile(Descriptor.forRootConfig(null, elementType));
         return ConfigListMetadata
                 .builder(descriptor.getName())
                 .type(type)
@@ -243,32 +243,37 @@ public class ConfigMetadataCompiler {
 
     protected static class Descriptor {
 
-        private String name;
-        private String description;
-        private Class<?> typeClass;
-        private Type type;
+        private final String name;
+        private final String description;
+        private final Class<?> typeClass;
+        private final Type type;
 
-        // describe type that is another type's property using property descriptor
-        public Descriptor(String name, BQConfigProperty description, Type type) {
-            this.type = type;
-            this.typeClass = typeClass(type);
+        public static Descriptor forRootConfig(String name, Type type) {
+            Class<?> typeClass = typeClass(type);
+            BQConfig config = typeClass.getAnnotation(BQConfig.class);
 
-            this.name = name;
-            if (description != null) {
-                this.description = description.value();
-            }
+            return new Descriptor(
+                    name,
+                    config != null ? config.value() : null,
+                    typeClass,
+                    type
+            );
         }
 
-        // describe root type that using type descriptor
-        public Descriptor(String name, Type type) {
-            this.type = type;
-            this.typeClass = typeClass(type);
-            this.name = name;
+        public static Descriptor forNestedConfig(String name, BQConfigProperty description, Type type) {
+            return new Descriptor(
+                    name,
+                    description != null ? description.value() : null,
+                    typeClass(type),
+                    type
+            );
+        }
 
-            BQConfig config = typeClass.getAnnotation(BQConfig.class);
-            if (config != null) {
-                this.description = config.value();
-            }
+        protected Descriptor(String name, String description, Class<?> typeClass, Type type) {
+            this.name = name;
+            this.description = description;
+            this.typeClass = typeClass;
+            this.type = type;
         }
 
         private static Class<?> typeClass(Type type) {

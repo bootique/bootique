@@ -31,7 +31,7 @@ import java.util.Map;
 
 public class ModulesMetadataCompiler {
 
-    private ConfigMetadataCompiler configCompiler;
+    private final ConfigMetadataCompiler configCompiler;
 
     public ModulesMetadataCompiler(ConfigMetadataCompiler configCompiler) {
         this.configCompiler = configCompiler;
@@ -61,9 +61,9 @@ public class ModulesMetadataCompiler {
 
         Collection<ConfigMetadataNode> configs = new ArrayList<>();
 
-        configTypes.forEach((prefix, type) -> {
-            configs.add(configCompiler.compile(prefix, type));
-        });
+        configTypes.forEach((prefix, type) ->
+                configs.add(configCompiler.compile(prefix, type))
+        );
 
         return configs;
     }
