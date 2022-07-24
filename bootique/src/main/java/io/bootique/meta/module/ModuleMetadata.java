@@ -34,13 +34,13 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Metadata descriptor of a DI module.
+ * Metadata descriptor of a single DI module.
  */
 public class ModuleMetadata implements MetadataNode {
 
     // unwraps ConfigObjectMetadata decorated with ConfigMetadataNodeProxy
     private static final ConfigMetadataVisitor<Optional<ConfigObjectMetadata>> OBJECT_CONFIG_RESOLVER =
-            new ConfigMetadataVisitor<Optional<ConfigObjectMetadata>>() {
+            new ConfigMetadataVisitor<>() {
                 @Override
                 public Optional<ConfigObjectMetadata> visitObjectMetadata(ConfigObjectMetadata metadata) {
                     return Optional.of(metadata);

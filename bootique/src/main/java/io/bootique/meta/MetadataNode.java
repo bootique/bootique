@@ -20,10 +20,11 @@
 package io.bootique.meta;
 
 /**
- * A base superclass of metadata tree nodes.
+ * A base interface of various types of metadata objects.
  */
 public interface MetadataNode {
 
     String getName();
+
     String getDescription();
 }

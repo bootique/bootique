@@ -25,7 +25,7 @@ import java.util.Collection;
 import static java.util.Arrays.asList;
 
 /**
- * Metadata object representing
+ * Injectable object that holds metadata of each DI module present in the app runtime.
  */
 public class ModulesMetadata {
 
