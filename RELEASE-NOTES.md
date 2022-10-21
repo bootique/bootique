@@ -1,3 +1,7 @@
+## 2.0.2
+
+* #325 2.x: Upgrade to Jackson 2.13.4 / 2.13.4.2
+
 ## 2.0
 
 * #320 Deprecate "bootique-parent"
