@@ -1,6 +1,7 @@
 ## 2.0.2
 
 * #325 2.x: Upgrade to Jackson 2.13.4 / 2.13.4.2
+* #326 2.x: Upgrade JUnit 5 to 5.8.1
 
 ## 2.0
 
