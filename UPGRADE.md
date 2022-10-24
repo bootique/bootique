@@ -119,9 +119,9 @@ new RmqTopologyBuilder()
 
 * [bootique-linkmove #49](https://github.com/bootique/bootique-linkmove/issues/49), 
   [bootique-linkmove #50](https://github.com/bootique/bootique-linkmove/issues/50): Only Cayenne 4.2 is supported in
-  combination with LinkMove, and there modules for LinkMove 2 and LinkMove 3. You will need to upgrade your Cayenne
-  mappings to 4.2 if you are still on 4.1 or 4.0. Also, regardless of the version of Cayenne you are using (even if 
-  you are already on 4.2), you will need to change the coordinates of your dependencies:
+  combination with LinkMove. And it can work either with LinkMove 2 or 3. You will need to upgrade your Cayenne
+  model to 4.2 if you are still on 4.1 or 4.0. Next, regardless of the version of Cayenne you were on (even if 
+  you were already on 4.2), you will need to change the coordinates of your dependencies:
   * Either of `bootique-linkmove`,`bootique-linkmove-cayenne41`,`bootique-linkmove-cayenne42` should be replaced with 
    `bootique-linkmove2` or `bootique-linkmove3`
   * Either of `bootique-linkmove-json`,`bootique-linkmove-json-cayenne41`,`bootique-linkmove-json-cayenne42` should be replaced with
