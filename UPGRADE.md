@@ -117,11 +117,17 @@ new RmqTopologyBuilder()
   modules like `bootique-agrest4`, `bootique-agrest5` and their Jakarta doubles. You project needs to be switched to 
   Cayenne 4.2 from 4.1 or 4.0 to work with either of them.
 
-* [bootique-linkmove #49](https://github.com/bootique/bootique-linkmove/issues/49): As mentioned above, Cayenne 4.0 is no longer supported.
-  If you import `io.bootique.linkmove:bootique-linkmove` (and `io.bootique.linkmove:bootique-linkmove-json` and
-  `io.bootique.linkmove:bootique-linkmove-rest`) in your project, they will not be available. You need to change the 
-  imports to `io.bootique.linkmove:bootique-linkmove-cayenne41` or `io.bootique.linkmove:bootique-linkmove-cayenne42`
-  (and the matching `-json-` and `-rest-` modules).
+* [bootique-linkmove #49](https://github.com/bootique/bootique-linkmove/issues/49), 
+  [bootique-linkmove #50](https://github.com/bootique/bootique-linkmove/issues/50): Only Cayenne 4.2 is supported in
+  combination with LinkMove, and there modules for LinkMove 2 and LinkMove 3. You will need to upgrade your Cayenne
+  mappings to 4.2 if you are still on 4.1 or 4.0. Also, regardless of the version of Cayenne you are using (even if 
+  you are already on 4.2), you will need to change the coordinates of your dependencies:
+  * Either of `bootique-linkmove`,`bootique-linkmove-cayenne41`,`bootique-linkmove-cayenne42` should be replaced with 
+   `bootique-linkmove2` or `bootique-linkmove3`
+  * Either of `bootique-linkmove-json`,`bootique-linkmove-json-cayenne41`,`bootique-linkmove-json-cayenne42` should be replaced with
+    `bootique-linkmove2-json` or `bootique-linkmove3-json`
+  * Either of `bootique-linkmove-rest`,`bootique-linkmove-rest-cayenne41`,`bootique-linkmove-rest-cayenne42` should be replaced with
+    `bootique-linkmove2-rest` or `bootique-linkmove3-rest`
 
 
 ## 2.0 (final)
