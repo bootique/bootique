@@ -24,6 +24,7 @@ import io.bootique.meta.module.ModuleMetadata;
 import io.bootique.meta.module.ModulesMetadata;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.ExecutableInvoker;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestInstances;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -195,6 +196,11 @@ public class BQModuleProviderChecker {
         @Override
         public Optional<String> getConfigurationParameter(String s) {
             return Optional.empty();
+        }
+
+        @Override
+        public ExecutableInvoker getExecutableInvoker() {
+            return null;
         }
 
         @Override

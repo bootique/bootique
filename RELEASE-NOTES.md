@@ -1,3 +1,7 @@
+## 3.0.M2
+
+* #327 Upgrade to bootique-module-parents 3.0.16
+
 ## 3.0.M1
 
 * #312 An Inefficient Usage of Java Collections
