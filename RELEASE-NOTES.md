@@ -1,6 +1,6 @@
 ## 3.0.M2
 
-* #327 Upgrade to bootique-module-parents 3.0.16
+* #327 Upgrade to bootique-module-parents 3.0.17
 
 ## 3.0.M1
 
