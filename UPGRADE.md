@@ -22,23 +22,22 @@
 
 ## 3.0.M2
 
-* [bootique-linkmove #54](https://github.com/bootique/bootique-linkmove/issues/54): LinkMove 3.0 simplified its previously
-  confusing way of handling connector factories. So we no longer need to worry about inter-factory conflicts and such.
+* [bootique-linkmove #54](https://github.com/bootique/bootique-linkmove/issues/54): LinkMove 3.0 simplified its earlier
+  confusing approach of handling connector factories. So we no longer need to worry about inter-factory conflicts and such.
   This allowed us to streamline `bootique-linkmove3` integration, making `IConnectorFactory` an injectable set. Most 
   existing BQ LinkMove projects should continue to work out of the box. A couple of things to pay attention to (these 
   only affect LinkMove 3 apps) :
 
   * If you have `linkmove.connectorFactories` in your configuration, it will be ignored now, and you can safely remove it.
-  * If you have an explicit configuration of a connector factory of type "uri", you will need to migrate it to a "jerseyclient"
-    based configuration. For this you will need to add `bootique-linkmove3-rest` as a dependency and change config following
-    the example below:
-    
+  * If you have an explicit configuration of a connector factory of type "uri", you will need to migrate it to a 
+    jerseyclient-based configuration. For this you will need to add `bootique-linkmove3-rest` as a dependency and 
+    change your configuration following the example below:
 ```yaml
 # Before
 linkmove:
   extractorsDir: "classpath:extractors"
   connectorFactories:
-    - type: "uri" # <- if you have this type of connector, you need upgrade
+    - type: "uri" # <- if you have this type of connector, you need to change it
       connectors:
         name1: "http://example.org/f1.json"
         name2: "http://example.org/f2.json"
