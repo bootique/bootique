@@ -59,7 +59,7 @@ jerseyclient:
 
 * [bootique-jetty #117](https://github.com/bootique/bootique-jetty/issues/117): JettyTester's ResponseMatcher will no 
 longer allow to read the response content twice, nor will it allow reading the content after "assertContent" was called.
-So after the upgrade you start getting Jersey client exceptions, you will need to review your test code and make sure 
+So after the upgrade you start getting "Response data is already read" exceptions, you will need to review your test code and make sure 
 you call "getContentXyz()" or "assertContent(..)" only once for a gievn response.
 
 ## 3.0.M1
