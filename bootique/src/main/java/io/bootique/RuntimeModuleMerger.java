@@ -57,8 +57,8 @@ class RuntimeModuleMerger {
 
     private String traceMessage(BQModuleMetadata module, BQModuleMetadata overriddes){
 
-        ModuleGraph h = new ModuleGraph(0);
+        ModuleGraph moduleGraph = new ModuleGraph(0);
 
-        return h.traceModuleMessage(module,overriddes);
+        return moduleGraph.traceModuleMessage(module,overriddes);
     }
 }
