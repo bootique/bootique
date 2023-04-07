@@ -35,6 +35,7 @@ import io.bootique.env.DeclaredVariable;
 import io.bootique.help.ValueObjectDescriptor;
 import io.bootique.meta.application.OptionMetadata;
 
+import java.lang.annotation.Annotation;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -175,11 +176,6 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
         return this;
     }
 
-    public BQCoreModuleExtender declareVars(Map<String, String> varsByConfigPaths) {
-        varsByConfigPaths.forEach(this::declareVar);
-        return this;
-    }
-
     /**
      * Registers a URL of a configuration resource to be loaded by the app unconditionally and prior to any explicitly
      * specified configs. Can be called multiple times for multiple resources.
@@ -306,18 +302,6 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      *
      * @since 2.0.B1
      */
-    public BQCoreModuleExtender addConfigLoader(JsonConfigurationLoader loader) {
-        contributeConfigurationLoaders().addInstance(loader);
-        return this;
-    }
-
-    /**
-     * Adds an internal strategy for loading configurations. Note that Bootique already comes preconfigured with a
-     * comprehensive set of strategies to load configuration from config files and URLs, so you'd rarely need to
-     * specify your own strategy.
-     *
-     * @since 2.0.B1
-     */
     public BQCoreModuleExtender addConfigLoader(Class<? extends JsonConfigurationLoader> loaderType) {
         contributeConfigurationLoaders().add(loaderType);
         return this;
@@ -342,17 +326,6 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      */
     public BQCoreModuleExtender addRuntimeListener(BQRuntimeListener listener) {
         contributeRuntimeListeners().addInstance(listener);
-        return this;
-    }
-
-    /**
-     * Adds a callback that is invoked once BQRuntime is created, but before any commands are run. Used primarily by
-     * the test tools and such to manage lifecycles external to Bootique. Most regular apps do not require this callback.
-     *
-     * @since 3.0.M1
-     */
-    public BQCoreModuleExtender addRuntimeListener(Class<? extends BQRuntimeListener> listenerTypes) {
-        contributeRuntimeListeners().add(listenerTypes).inSingletonScope();
         return this;
     }
 
@@ -400,6 +373,10 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
 
     protected MapBuilder<String, String> contributeVariables() {
         return variables != null ? variables : (variables = newMap(String.class, String.class, EnvironmentVariables.class));
+    }
+
+    protected <V> SetBuilder<V> newSet(Class<V> elementType, Class<? extends Annotation> annotatedWith) {
+        return binder.bindSet(elementType, annotatedWith);
     }
 
     protected SetBuilder<String> contributeConfigs() {

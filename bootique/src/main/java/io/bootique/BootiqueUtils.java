@@ -53,14 +53,17 @@ final class BootiqueUtils {
         return metadata;
     }
 
-    static String[] mergeArrays(String[] a1, String[] a2) {
-        if (a1.length == 0) {
+    static String[] checkArraysLength(String[] a1, String[] a2) {
+        if (a1.length == 0)
             return a2;
-        }
 
-        if (a2.length == 0) {
+        else
             return a1;
-        }
+    }
+
+    static String[] mergeArrays(String[] a1, String[] a2) {
+
+        checkArraysLength(a1,a2);
 
         String[] merged = new String[a1.length + a2.length];
         System.arraycopy(a1, 0, merged, 0, a1.length);
@@ -73,4 +76,3 @@ final class BootiqueUtils {
         return collection.toArray(new String[0]);
     }
 }
-

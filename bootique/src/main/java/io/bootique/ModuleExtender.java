@@ -51,10 +51,6 @@ public abstract class ModuleExtender<T extends ModuleExtender<T>> {
         return binder.bindSet(elementType);
     }
 
-    protected <V> SetBuilder<V> newSet(Class<V> elementType, Class<? extends Annotation> annotatedWith) {
-        return binder.bindSet(elementType, annotatedWith);
-    }
-
     /**
      * @since 2.0
      */

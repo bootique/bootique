@@ -52,9 +52,13 @@ public class InPlaceLeftHandMerger implements JsonConfigurationMerger {
             return target;
         }
 
-        if (source.getNodeType() != target.getNodeType()
-                && (source.getNodeType() != JsonNodeType.NULL)
-                && (target.getNodeType() != JsonNodeType.NULL)) {
+        JsonNodeType sourceNodeType = source.getNodeType();
+        JsonNodeType targetNodeType = target.getNodeType();
+        boolean differentNodeType = sourceNodeType != targetNodeType &&
+                sourceNodeType != JsonNodeType.NULL &&
+                targetNodeType != JsonNodeType.NULL;
+
+        if (differentNodeType) {
             throw new RuntimeException(
                     "Can't merge incompatible node types: " + target.getNodeType() + " vs. " + source.getNodeType());
         }

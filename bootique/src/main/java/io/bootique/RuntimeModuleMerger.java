@@ -55,25 +55,10 @@ class RuntimeModuleMerger {
         return modules;
     }
 
-    private String traceMessage(BQModuleMetadata module, BQModuleMetadata overriddes) {
-        StringBuilder message = new StringBuilder("Loading module '")
-                .append(module.getName())
-                .append("'");
+    private String traceMessage(BQModuleMetadata module, BQModuleMetadata overriddes){
 
-        String providerName = module.getProviderName();
-        boolean hasProvider = providerName != null && providerName.length() > 0;
-        if (hasProvider) {
-            message.append(" provided by '").append(providerName).append("'");
-        }
+        ModuleGraph h = new ModuleGraph(0);
 
-        if (overriddes != null) {
-            if (hasProvider) {
-                message.append(",");
-            }
-
-            message.append(" overrides '").append(overriddes.getName()).append("'");
-        }
-
-        return message.toString();
+        return h.traceModuleMessage(module,overriddes);
     }
 }

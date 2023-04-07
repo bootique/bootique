@@ -49,13 +49,13 @@ public abstract class ConfigModule implements BQModule {
         init(defaultConfigPrefix());
     }
 
-    protected ConfigModule(String configPrefix) {
-        init(configPrefix);
+    protected ConfigModule(String modulePrefix) {
+        init(modulePrefix);
     }
 
-    private void init(String configPrefix) {
-        Objects.requireNonNull(configPrefix);
-        this.configPrefix = configPrefix;
+    private void init(String modulePrefix) {
+        Objects.requireNonNull(modulePrefix);
+        this.configPrefix = modulePrefix;
     }
 
     /**

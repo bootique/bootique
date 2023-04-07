@@ -123,4 +123,26 @@ class ModuleGraph {
         Collections.reverse(result);
         return result;
     }
+
+    public String traceModuleMessage(BQModuleMetadata module, BQModuleMetadata overriddes) {
+        StringBuilder message = new StringBuilder("Loading module '")
+                .append(module.getName())
+                .append("'");
+
+        String providerName = module.getProviderName();
+        boolean hasProvider = providerName != null && providerName.length() > 0;
+        if (hasProvider) {
+            message.append(" provided by '").append(providerName).append("'");
+        }
+
+        if (overriddes != null) {
+            if (hasProvider) {
+                message.append(",");
+            }
+
+            message.append(" overrides '").append(overriddes.getName()).append("'");
+        }
+
+        return message.toString();
+    }
 }

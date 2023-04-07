@@ -52,8 +52,11 @@ public class DefaultRunner implements Runner {
     }
 
     private Command bareCommand() {
+
         if (cli.commandName() != null) {
+
             ManagedCommand explicitCommand = commandManager.getAllCommands().get(cli.commandName());
+
             if (explicitCommand == null || explicitCommand.isHidden() || explicitCommand.isDefault()) {
                 throw new IllegalStateException("Not a valid command: " + cli.commandName());
             }
@@ -67,5 +70,4 @@ public class DefaultRunner implements Runner {
                 .orElse(commandManager.getPublicHelpCommand() // 2. help command
                         .orElse(cli -> CommandOutcome.succeeded())); // 3. placeholder noop command
     }
-
 }
