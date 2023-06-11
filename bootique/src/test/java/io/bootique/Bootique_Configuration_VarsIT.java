@@ -89,6 +89,20 @@ public class Bootique_Configuration_VarsIT {
         assertNull(b4.m);
     }
 
+    @Test
+    public void testDeclareVar_SameVarTwoPaths() {
+        BQRuntime runtime = app(b -> BQCoreModule.extend(b)
+                .declareVar("p1", "MY_VAR")
+                .declareVar("p3", "MY_VAR")
+                .setVar("MY_VAR", "myValue"));
+
+        O6 o6 = runtime.getInstance(ConfigurationFactory.class).config(O6.class, "");
+
+        assertEquals("myValue", o6.p1);
+        assertNull(o6.p2);
+        assertEquals("myValue", o6.p3);
+    }
+
     static class O1 {
         private String a;
         private O2 c;
@@ -141,6 +155,28 @@ public class Bootique_Configuration_VarsIT {
 
         public void setH(List<String> h) {
             this.h = h;
+        }
+    }
+
+    static class O6 {
+        private String p1;
+        private String p2;
+        private String p3;
+
+
+        public O6 setP1(String p1) {
+            this.p1 = p1;
+            return this;
+        }
+
+        public O6 setP2(String p2) {
+            this.p2 = p2;
+            return this;
+        }
+
+        public O6 setP3(String p3) {
+            this.p3 = p3;
+            return this;
         }
     }
 }

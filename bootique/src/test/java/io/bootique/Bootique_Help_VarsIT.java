@@ -40,13 +40,13 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class Bootique_DeclareVarsIT {
+public class Bootique_Help_VarsIT {
 
     @RegisterExtension
     final TestAppManager appManager = new TestAppManager();
 
     @Test
-    public void testInHelp() {
+    public void test() {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ByteArrayOutputStream err = new ByteArrayOutputStream();
@@ -61,7 +61,7 @@ public class Bootique_DeclareVarsIT {
 
             @Override
             public Map<String, Type> configs() {
-                return Collections.singletonMap("x", Bean5.class);
+                return Collections.singletonMap("x", O2.class);
             }
         };
 
@@ -83,7 +83,7 @@ public class Bootique_DeclareVarsIT {
     }
 
     @Test
-    public void testInHelpDescription() {
+    public void testDescription() {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ByteArrayOutputStream err = new ByteArrayOutputStream();
@@ -98,7 +98,7 @@ public class Bootique_DeclareVarsIT {
 
             @Override
             public Map<String, Type> configs() {
-                return Collections.singletonMap("x", Bean5.class);
+                return Collections.singletonMap("x", O2.class);
             }
         };
 
@@ -117,7 +117,7 @@ public class Bootique_DeclareVarsIT {
     }
 
     @Test
-    public void testInHelpWithMap() {
+    public void testWithMap() {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ByteArrayOutputStream err = new ByteArrayOutputStream();
@@ -132,7 +132,7 @@ public class Bootique_DeclareVarsIT {
 
             @Override
             public Map<String, Type> configs() {
-                return Collections.singletonMap("x", Bean4.class);
+                return Collections.singletonMap("x", O1.class);
             }
         };
 
@@ -153,7 +153,7 @@ public class Bootique_DeclareVarsIT {
     }
 
     @Test
-    public void testInHelpWithList() {
+    public void testWithList() {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ByteArrayOutputStream err = new ByteArrayOutputStream();
@@ -168,7 +168,7 @@ public class Bootique_DeclareVarsIT {
 
             @Override
             public Map<String, Type> configs() {
-                return Collections.singletonMap("x", Bean6.class);
+                return Collections.singletonMap("x", O3.class);
             }
         };
 
@@ -189,7 +189,7 @@ public class Bootique_DeclareVarsIT {
     }
 
     @BQConfig
-    static class Bean4 {
+    static class O1 {
         private Map<String, String> m;
 
         @BQConfigProperty
@@ -199,7 +199,7 @@ public class Bootique_DeclareVarsIT {
     }
 
     @BQConfig
-    static class Bean5 {
+    static class O2 {
         private String m;
 
         @BQConfigProperty("Origin description")
@@ -209,7 +209,7 @@ public class Bootique_DeclareVarsIT {
     }
 
     @BQConfig
-    static class Bean6 {
+    static class O3 {
         private List<String> a;
 
         @BQConfigProperty
