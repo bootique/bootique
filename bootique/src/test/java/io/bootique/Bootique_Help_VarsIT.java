@@ -21,10 +21,8 @@ package io.bootique;
 
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
-import io.bootique.cli.Cli;
 import io.bootique.command.CommandOutcome;
 import io.bootique.di.BQModule;
-import io.bootique.help.HelpCommand;
 import io.bootique.log.BootLogger;
 import io.bootique.log.DefaultBootLogger;
 import io.bootique.unit.TestAppManager;
@@ -49,8 +47,7 @@ public class Bootique_Help_VarsIT {
     public void test() {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ByteArrayOutputStream err = new ByteArrayOutputStream();
-        BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(err));
+        BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(System.err));
 
         BQModuleProvider configurableProvider = new BQModuleProvider() {
             @Override
@@ -65,16 +62,13 @@ public class Bootique_Help_VarsIT {
             }
         };
 
-        BQRuntime runtime = appManager.runtime(Bootique.app()
+        CommandOutcome run = appManager.run(Bootique.app("--help")
                 .moduleProvider(configurableProvider)
                 .bootLogger(logger)
                 .module(b -> BQCoreModule.extend(b)
                         .declareVar("x.m", "X_VALID_VAR")
                         .declareVar("x.y.prop", "X_INVALID_VAR")
                 ));
-
-        Cli cli = runtime.getInstance(Cli.class);
-        runtime.getInstance(HelpCommand.class).run(cli);
 
         String help = out.toString();
         assertTrue(help.contains("ENVIRONMENT"), "No ENVIRONMENT section:\n" + help);
@@ -86,8 +80,7 @@ public class Bootique_Help_VarsIT {
     public void test_SameVarTwoPaths() {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ByteArrayOutputStream err = new ByteArrayOutputStream();
-        BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(err));
+        BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(System.err));
 
         BQModuleProvider configMetadataProvider = new BQModuleProvider() {
             @Override
@@ -121,8 +114,7 @@ public class Bootique_Help_VarsIT {
     public void test_SameVarTwoPaths_Descriptions() {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ByteArrayOutputStream err = new ByteArrayOutputStream();
-        BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(err));
+        BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(System.err));
 
         BQModuleProvider configMetadataProvider = new BQModuleProvider() {
             @Override
@@ -158,8 +150,7 @@ public class Bootique_Help_VarsIT {
     public void test_SameVarTwoIdenticalPaths_Descriptions() {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ByteArrayOutputStream err = new ByteArrayOutputStream();
-        BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(err));
+        BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(System.err));
 
         BQModuleProvider configMetadataProvider = new BQModuleProvider() {
             @Override
@@ -195,8 +186,7 @@ public class Bootique_Help_VarsIT {
     public void testDescription() {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ByteArrayOutputStream err = new ByteArrayOutputStream();
-        BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(err));
+        BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(System.err));
 
         BQModuleProvider configurableProvider = new BQModuleProvider() {
             @Override
@@ -211,13 +201,12 @@ public class Bootique_Help_VarsIT {
             }
         };
 
-        BQRuntime runtime = appManager.runtime(Bootique.app()
+        CommandOutcome run = appManager.run(Bootique.app("--help")
                 .moduleProvider(configurableProvider)
                 .bootLogger(logger)
                 .module(b -> BQCoreModule.extend(b).declareVar("x.m", "s", "New description")));
 
-        Cli cli = runtime.getInstance(Cli.class);
-        runtime.getInstance(HelpCommand.class).run(cli);
+        assertTrue(run.isSuccess());
 
         String help = out.toString();
         assertTrue(help.contains("ENVIRONMENT"), "No ENVIRONMENT section:\n" + help);
@@ -229,8 +218,7 @@ public class Bootique_Help_VarsIT {
     public void testWithMap() {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ByteArrayOutputStream err = new ByteArrayOutputStream();
-        BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(err));
+        BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(System.err));
 
         BQModuleProvider configurableProvider = new BQModuleProvider() {
             @Override
@@ -245,15 +233,14 @@ public class Bootique_Help_VarsIT {
             }
         };
 
-        BQRuntime runtime = appManager.runtime(Bootique.app()
+        CommandOutcome run = appManager.run(Bootique.app("--help")
                 .bootLogger(logger)
                 .moduleProvider(configurableProvider)
                 .module(b -> BQCoreModule.extend(b)
                         .declareVar("x.m.prop", "X_VALID_VAR")
                         .declareVar("x.m.prop.x", "X_INVALID_VAR")));
 
-        Cli cli = runtime.getInstance(Cli.class);
-        runtime.getInstance(HelpCommand.class).run(cli);
+        assertTrue(run.isSuccess());
 
         String help = out.toString();
         assertTrue(help.contains("ENVIRONMENT"), "No ENVIRONMENT section:\n" + help);
@@ -265,8 +252,7 @@ public class Bootique_Help_VarsIT {
     public void testWithList() {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ByteArrayOutputStream err = new ByteArrayOutputStream();
-        BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(err));
+        BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(System.err));
 
         BQModuleProvider configurableProvider = new BQModuleProvider() {
             @Override
@@ -281,15 +267,14 @@ public class Bootique_Help_VarsIT {
             }
         };
 
-        BQRuntime runtime = appManager.runtime(Bootique.app()
+        CommandOutcome run = appManager.run(Bootique.app("--help")
                 .moduleProvider(configurableProvider)
                 .bootLogger(logger)
                 .module(b -> BQCoreModule.extend(b)
                         .declareVar("x.a[0]", "X_VALID_VAR")
                         .declareVar("x.a[0].x", "X_INVALID_VAR")));
 
-        Cli cli = runtime.getInstance(Cli.class);
-        runtime.getInstance(HelpCommand.class).run(cli);
+        assertTrue(run.isSuccess());
 
         String help = out.toString();
         assertTrue(help.contains("ENVIRONMENT"), "No ENVIRONMENT section:\n" + help);

@@ -35,20 +35,17 @@ import org.junit.jupiter.api.Test;
 import javax.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.nio.charset.Charset;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DefaultRunnerIT {
 
-    private InMemoryPrintStream out;
-    private BootLogger logger;
+    private ByteArrayOutputStream out;
 
     @BeforeEach
     public void before() {
-        this.out = new InMemoryPrintStream(System.out);
-        this.logger = new DefaultBootLogger(true, out, System.err);
+        this.out = new ByteArrayOutputStream();
     }
 
     @Test
@@ -56,7 +53,7 @@ public class DefaultRunnerIT {
 
         Bootique.app("-x")
                 .module(b -> BQCoreModule.extend(b).addCommand(XCommand.class))
-                .bootLogger(logger)
+                .bootLogger(new DefaultBootLogger(true, new PrintStream(out), System.err))
                 .createRuntime()
                 .run();
 
@@ -66,11 +63,9 @@ public class DefaultRunnerIT {
     @Test
     public void testRun_Implicit_Default() {
 
-        BootLogger logger = new DefaultBootLogger(false, out, System.err);
-
         Bootique.app()
                 .module(b -> BQCoreModule.extend(b).setDefaultCommand(XCommand.class))
-                .bootLogger(logger)
+                .bootLogger(new DefaultBootLogger(false, new PrintStream(out), System.err))
                 .createRuntime()
                 .run();
 
@@ -82,7 +77,7 @@ public class DefaultRunnerIT {
 
         Bootique.app()
                 .module(b -> BQCoreModule.extend(b).addCommand(XCommand.class))
-                .bootLogger(logger)
+                .bootLogger(new DefaultBootLogger(true, new PrintStream(out), System.err))
                 .createRuntime()
                 .run();
 
@@ -99,7 +94,7 @@ public class DefaultRunnerIT {
         Bootique.app()
                 .module(b -> BQCoreModule.extend(b).addCommand(XCommand.class))
                 .moduleProvider(Commands.builder(YCommand.class).noModuleCommands().build())
-                .bootLogger(logger)
+                .bootLogger(new DefaultBootLogger(true, new PrintStream(out), System.err))
                 .createRuntime()
                 .run();
 
@@ -112,7 +107,7 @@ public class DefaultRunnerIT {
         Bootique.app()
                 .module(b -> BQCoreModule.extend(b).addCommand(XCommand.class))
                 .moduleProvider(Commands.builder(YCommand.class, HelpCommand.class).noModuleCommands().build())
-                .bootLogger(logger)
+                .bootLogger(new DefaultBootLogger(true, new PrintStream(out), System.err))
                 .createRuntime()
                 .run();
 
@@ -133,7 +128,7 @@ public class DefaultRunnerIT {
         Bootique.app()
                 .module(b -> BQCoreModule.extend(b).addCommand(XCommand.class))
                 .moduleProvider(Commands.builder(XHelpCommand.class).noModuleCommands().build())
-                .bootLogger(logger)
+                .bootLogger(new DefaultBootLogger(true, new PrintStream(out), System.err))
                 .createRuntime()
                 .run();
 
@@ -149,7 +144,7 @@ public class DefaultRunnerIT {
         Bootique.app()
                 .module(b -> BQCoreModule.extend(b).setDefaultCommand(XCommand.class))
                 .moduleProvider(Commands.builder(X1Command.class).noModuleCommands().build())
-                .bootLogger(logger)
+                .bootLogger(new DefaultBootLogger(true, new PrintStream(out), System.err))
                 .createRuntime()
                 .run();
 
@@ -228,32 +223,4 @@ public class DefaultRunnerIT {
             return CommandOutcome.succeeded();
         }
     }
-
-    static class InMemoryPrintStream extends PrintStream {
-
-        private final PrintStream splitOut;
-
-        public InMemoryPrintStream(PrintStream splitOut) {
-            super(new ByteArrayOutputStream(), true);
-            this.splitOut = splitOut;
-        }
-
-        @Override
-        public void println(String x) {
-            splitOut.println(x);
-            super.println(x);
-        }
-
-        @Override
-        public void println(Object x) {
-            splitOut.println(x);
-            super.println(x);
-        }
-
-        public String toString() {
-            return new String(((ByteArrayOutputStream) out).toByteArray(), Charset.forName("UTF-8"));
-        }
-    }
-
-
 }
