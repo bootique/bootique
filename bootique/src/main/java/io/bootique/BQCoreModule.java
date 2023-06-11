@@ -328,7 +328,12 @@ public class BQCoreModule implements BQModule {
         declaredVars.forEach(dv -> {
             ConfigValueMetadata varMd = DeclaredVariableMetaCompiler.compile(dv, modulesMetadata);
             if (varMd.isUnbound()) {
-                bootLogger.trace(() -> "Declared env variable '" + varMd.getName() + "' is not bound to a known app configuration and may be ignored.");
+                bootLogger.trace(() ->
+                        "Can't reliably determine whether the path '"
+                                + dv.getConfigPath()
+                                + "' linked to the env var '"
+                                + varMd.getName()
+                                + "' is valid. This is likely not an error.");
             }
             builder.addVariable(varMd);
         });

@@ -218,7 +218,7 @@ public class Bootique_Help_VarsIT {
     public void testWithMap() {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(System.err));
+        BootLogger logger = new DefaultBootLogger(true, new PrintStream(out), new PrintStream(System.err));
 
         BQModuleProvider configurableProvider = new BQModuleProvider() {
             @Override
