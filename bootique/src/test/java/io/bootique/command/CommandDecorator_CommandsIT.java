@@ -22,7 +22,8 @@ package io.bootique.command;
 import io.bootique.BQCoreModule;
 import io.bootique.BQModuleProvider;
 import io.bootique.BQRuntime;
-import io.bootique.unit.BQInternalTestFactory;
+import io.bootique.Bootique;
+import io.bootique.unit.TestAppManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -31,7 +32,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class CommandDecorator_CommandsIT {
 
     @RegisterExtension
-    public BQInternalTestFactory testFactory = new BQInternalTestFactory();
+    final TestAppManager appManager = new TestAppManager();
+
+    private BQRuntime createRuntime(BQModuleProvider commandsOverride, CommandDecorator decorator) {
+        return appManager.runtime(Bootique
+                .app("--a")
+                .module(b -> BQCoreModule.extend(b)
+                        .addCommand(MainCommand.class)
+                        .addCommand(SuccessfulCommand.class)
+                        .decorateCommand(MainCommand.class, decorator))
+                .moduleProvider(commandsOverride));
+    }
 
     @Test
     public void testAlsoRun_DecorateWithPrivate() {
@@ -63,17 +74,6 @@ public class CommandDecorator_CommandsIT {
         assertTrue(outcome.isSuccess());
         assertTrue(getCommand(runtime, MainCommand.class).isExecuted());
         assertTrue(getCommand(runtime, SuccessfulCommand.class).isExecuted());
-    }
-
-    private BQRuntime createRuntime(BQModuleProvider commandsOverride, CommandDecorator decorator) {
-        return testFactory
-                .app("--a")
-                .module(b -> BQCoreModule.extend(b)
-                        .addCommand(MainCommand.class)
-                        .addCommand(SuccessfulCommand.class)
-                        .decorateCommand(MainCommand.class, decorator))
-                .moduleProvider(commandsOverride)
-                .createRuntime();
     }
 
     private <T extends Command> T getCommand(BQRuntime runtime, Class<T> type) {

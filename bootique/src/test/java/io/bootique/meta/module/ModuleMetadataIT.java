@@ -22,9 +22,10 @@ package io.bootique.meta.module;
 import io.bootique.BQModuleMetadata;
 import io.bootique.BQModuleProvider;
 import io.bootique.BQRuntime;
+import io.bootique.Bootique;
 import io.bootique.di.BQModule;
 import io.bootique.di.Binder;
-import io.bootique.unit.BQInternalTestFactory;
+import io.bootique.unit.TestAppManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -36,13 +37,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ModuleMetadataIT {
 
     @RegisterExtension
-    public BQInternalTestFactory runtimeFactory = new BQInternalTestFactory();
+    final TestAppManager appManager = new TestAppManager();
 
     @Test
     public void testDefault() {
-        ModulesMetadata md = runtimeFactory.app().createRuntime().getInstance(ModulesMetadata.class);
+        ModulesMetadata md = appManager.runtime(Bootique.app()).getInstance(ModulesMetadata.class);
 
-        assertEquals(3, md.getModules().size(), "Expected BQCoreModule + 2 test modules");
+        assertEquals(1, md.getModules().size(), "Expected BQCoreModule");
 
         Optional<ModuleMetadata> coreMd = md.getModules()
                 .stream()
@@ -54,18 +55,17 @@ public class ModuleMetadataIT {
 
     @Test
     public void testCustomModule() {
-        ModulesMetadata md = runtimeFactory.app()
-                .module(b -> {
-                })
-                .createRuntime()
+        ModulesMetadata md = appManager.runtime(Bootique.app()
+                        .module(b -> {
+                        }))
                 .getInstance(ModulesMetadata.class);
 
-        assertEquals(4, md.getModules().size(), "Expected BQCoreModule + 2 test modules + custom module");
+        assertEquals(2, md.getModules().size(), "Expected BQCoreModule + custom module");
     }
 
     @Test
     public void testCustomNamedModule() {
-        BQRuntime runtime = runtimeFactory.app().moduleProvider(new BQModuleProvider() {
+        BQRuntime runtime = appManager.runtime(Bootique.app().moduleProvider(new BQModuleProvider() {
             @Override
             public BQModule module() {
                 return b -> {
@@ -78,10 +78,10 @@ public class ModuleMetadataIT {
                         .moduleBuilder()
                         .name("mymodule");
             }
-        }).createRuntime();
+        }));
 
         ModulesMetadata md = runtime.getInstance(ModulesMetadata.class);
-        assertEquals(4, md.getModules().size(), "Expected BQCoreModule + 2 test modules + custom module");
+        assertEquals(2, md.getModules().size(), "Expected BQCoreModule + custom module");
 
         Optional<ModuleMetadata> myMd = md.getModules()
                 .stream()
@@ -92,11 +92,10 @@ public class ModuleMetadataIT {
 
     @Test
     public void testProvider() {
-        ModulesMetadata md = runtimeFactory.app()
-                .moduleProvider(new M1Provider())
-                .createRuntime().getInstance(ModulesMetadata.class);
+        ModulesMetadata md = appManager.runtime(Bootique.app()
+                .moduleProvider(new M1Provider())).getInstance(ModulesMetadata.class);
 
-        assertEquals(4, md.getModules().size(), "Expected BQCoreModule + 2 test modules + custom module");
+        assertEquals(2, md.getModules().size(), "Expected BQCoreModule + custom module");
 
         Optional<ModuleMetadata> m1Md = md.getModules()
                 .stream()

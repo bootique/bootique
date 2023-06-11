@@ -20,6 +20,7 @@
 package io.bootique.run;
 
 import io.bootique.BQCoreModule;
+import io.bootique.Bootique;
 import io.bootique.cli.Cli;
 import io.bootique.command.CommandOutcome;
 import io.bootique.command.CommandWithMetadata;
@@ -29,10 +30,8 @@ import io.bootique.log.BootLogger;
 import io.bootique.log.DefaultBootLogger;
 import io.bootique.meta.application.CommandMetadata;
 import io.bootique.unit.BQInternalInMemoryPrintStream;
-import io.bootique.unit.BQInternalTestFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import javax.inject.Inject;
 
@@ -40,9 +39,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DefaultRunnerIT {
-
-    @RegisterExtension
-    public BQInternalTestFactory testFactory = new BQInternalTestFactory();
 
     private BQInternalInMemoryPrintStream out;
     private BootLogger logger;
@@ -56,7 +52,7 @@ public class DefaultRunnerIT {
     @Test
     public void testRun_Explicit() {
 
-        testFactory.app("-x")
+        Bootique.app("-x")
                 .module(b -> BQCoreModule.extend(b).addCommand(XCommand.class))
                 .bootLogger(logger)
                 .createRuntime()
@@ -71,7 +67,7 @@ public class DefaultRunnerIT {
         BQInternalInMemoryPrintStream out = new BQInternalInMemoryPrintStream(System.out);
         BootLogger logger = new DefaultBootLogger(false, out, System.err);
 
-        testFactory.app()
+        Bootique.app()
                 .module(b -> BQCoreModule.extend(b).setDefaultCommand(XCommand.class))
                 .bootLogger(logger)
                 .createRuntime()
@@ -83,7 +79,7 @@ public class DefaultRunnerIT {
     @Test
     public void testRun_Implicit_Help() {
 
-        testFactory.app()
+        Bootique.app()
                 .module(b -> BQCoreModule.extend(b).addCommand(XCommand.class))
                 .bootLogger(logger)
                 .createRuntime()
@@ -99,7 +95,7 @@ public class DefaultRunnerIT {
     @Test
     public void testRun_Implicit_NoModuleCommands_NoHelp() {
 
-        testFactory.app()
+        Bootique.app()
                 .module(b -> BQCoreModule.extend(b).addCommand(XCommand.class))
                 .moduleProvider(Commands.builder(YCommand.class).noModuleCommands().build())
                 .bootLogger(logger)
@@ -112,7 +108,7 @@ public class DefaultRunnerIT {
     @Test
     public void testRun_Implicit_NoModuleCommands_HelpAllowed() {
 
-        testFactory.app()
+        Bootique.app()
                 .module(b -> BQCoreModule.extend(b).addCommand(XCommand.class))
                 .moduleProvider(Commands.builder(YCommand.class, HelpCommand.class).noModuleCommands().build())
                 .bootLogger(logger)
@@ -133,7 +129,7 @@ public class DefaultRunnerIT {
     @Test
     public void testRun_Implicit_HelpRedefined() {
 
-        testFactory.app()
+        Bootique.app()
                 .module(b -> BQCoreModule.extend(b).addCommand(XCommand.class))
                 .moduleProvider(Commands.builder(XHelpCommand.class).noModuleCommands().build())
                 .bootLogger(logger)
@@ -149,7 +145,7 @@ public class DefaultRunnerIT {
     @Test
     public void testRun_Implicit_Default_NoModuleCommands() {
 
-        testFactory.app()
+        Bootique.app()
                 .module(b -> BQCoreModule.extend(b).setDefaultCommand(XCommand.class))
                 .moduleProvider(Commands.builder(X1Command.class).noModuleCommands().build())
                 .bootLogger(logger)

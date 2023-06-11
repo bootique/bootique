@@ -20,28 +20,31 @@
 package io.bootique;
 
 import io.bootique.config.ConfigurationFactory;
-import io.bootique.unit.BQInternalTestFactory;
+import io.bootique.di.Binder;
+import io.bootique.unit.TestAppManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.util.List;
+import java.util.function.Consumer;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Bootique_Configuration_PropertiesIT {
 
     @RegisterExtension
-    public BQInternalTestFactory testFactory = new BQInternalTestFactory();
+    final TestAppManager appManager = new TestAppManager();
 
-    private BQInternalTestFactory.Builder app() {
-        return testFactory.app("--config=classpath:io/bootique/Bootique_Configuration_PropertiesIT.yml");
+    private BQRuntime app(Consumer<Binder> customizer) {
+        Bootique app = Bootique.app("--config=classpath:io/bootique/Bootique_Configuration_PropertiesIT.yml")
+                .autoLoadModules()
+                .module(customizer::accept);
+        return appManager.runtime(app);
     }
 
     @Test
     public void testOverride() {
-        BQRuntime runtime = app()
-                .property("bq.testOverride.c", "D")
-                .createRuntime();
+        BQRuntime runtime = app(b -> BQCoreModule.extend(b).setProperty("bq.testOverride.c", "D"));
 
         TestOverrideBean b = runtime
                 .getInstance(ConfigurationFactory.class)
@@ -53,9 +56,7 @@ public class Bootique_Configuration_PropertiesIT {
 
     @Test
     public void testOverride_EmptyString() {
-        BQRuntime runtime = app()
-                .property("bq.testOverride.c", "")
-                .createRuntime();
+        BQRuntime runtime = app(b -> BQCoreModule.extend(b).setProperty("bq.testOverride.c", ""));
 
         TestOverrideBean b = runtime
                 .getInstance(ConfigurationFactory.class)
@@ -64,12 +65,10 @@ public class Bootique_Configuration_PropertiesIT {
         assertEquals("b", b.a);
         assertEquals("", b.c);
     }
-    
+
     @Test
     public void testOverrideNested() {
-        BQRuntime runtime = app()
-                .property("bq.testOverrideNested.m.z", "2")
-                .createRuntime();
+        BQRuntime runtime = app(b -> BQCoreModule.extend(b).setProperty("bq.testOverrideNested.m.z", "2"));
 
         TestOverrideNestedBean b = runtime.getInstance(ConfigurationFactory.class)
                 .config(TestOverrideNestedBean.class, "testOverrideNested");
@@ -80,9 +79,7 @@ public class Bootique_Configuration_PropertiesIT {
 
     @Test
     public void testOverrideValueArray() {
-        BQRuntime runtime = app()
-                .property("bq.testOverrideValueArray.h[1]", "J")
-                .createRuntime();
+        BQRuntime runtime = app(b -> BQCoreModule.extend(b).setProperty("bq.testOverrideValueArray.h[1]", "J"));
 
         TestOverrideValueArrayBean b = runtime.getInstance(ConfigurationFactory.class)
                 .config(TestOverrideValueArrayBean.class, "testOverrideValueArray");
@@ -94,14 +91,10 @@ public class Bootique_Configuration_PropertiesIT {
 
     @Test
     public void testOverrideValueArray_Empty() {
-        BQRuntime runtime = app()
-                .module(b -> BQCoreModule.extend(b)
-                        // calling 'setProperty' on BQCOreModule instead of BQInternalTestFactory,
-                        // as the real ordering is important
-                        .setProperty("bq.testOverrideValueArrayEmpty.h[0]", "J")
-                        .setProperty("bq.testOverrideValueArrayEmpty.h[1]", "A")
-                        .setProperty("bq.testOverrideValueArrayEmpty.h[2]", "Z"))
-                .createRuntime();
+        BQRuntime runtime = app(b -> BQCoreModule.extend(b)
+                .setProperty("bq.testOverrideValueArrayEmpty.h[0]", "J")
+                .setProperty("bq.testOverrideValueArrayEmpty.h[1]", "A")
+                .setProperty("bq.testOverrideValueArrayEmpty.h[2]", "Z"));
 
         TestOverrideValueArrayBean b = runtime.getInstance(ConfigurationFactory.class)
                 .config(TestOverrideValueArrayBean.class, "testOverrideValueArrayEmpty");
@@ -114,9 +107,7 @@ public class Bootique_Configuration_PropertiesIT {
 
     @Test
     public void testOverrideObjectArray() {
-        BQRuntime runtime = app()
-                .property("bq.testOverrideObjectArray.d[1].e", "20")
-                .createRuntime();
+        BQRuntime runtime = app(b -> BQCoreModule.extend(b).setProperty("bq.testOverrideObjectArray.d[1].e", "20"));
 
         TestOverrideObjectArrayBean b = runtime.getInstance(ConfigurationFactory.class)
                 .config(TestOverrideObjectArrayBean.class, "testOverrideObjectArray");
@@ -127,10 +118,8 @@ public class Bootique_Configuration_PropertiesIT {
 
     @Test
     public void testOverrideObjectArray_AddValue() {
-        BQRuntime runtime = app()
-                // appending value at the end...
-                .property("bq.testOverrideObjectArray.d[2].e", "3")
-                .createRuntime();
+        // appending value at the end...
+        BQRuntime runtime = app(b -> BQCoreModule.extend(b).setProperty("bq.testOverrideObjectArray.d[2].e", "3"));
 
         TestOverrideObjectArrayBean b = runtime.getInstance(ConfigurationFactory.class)
                 .config(TestOverrideObjectArrayBean.class, "testOverrideObjectArray");

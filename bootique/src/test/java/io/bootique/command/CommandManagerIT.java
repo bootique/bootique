@@ -21,14 +21,14 @@ package io.bootique.command;
 
 import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
+import io.bootique.Bootique;
 import io.bootique.cli.Cli;
 import io.bootique.di.BQModule;
 import io.bootique.di.Binder;
 import io.bootique.di.Provides;
 import io.bootique.help.HelpCommand;
 import io.bootique.meta.application.CommandMetadata;
-import io.bootique.unit.BQInternalTestFactory;
-
+import io.bootique.unit.TestAppManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -41,11 +41,11 @@ import static org.mockito.Mockito.when;
 public class CommandManagerIT {
 
     @RegisterExtension
-    public BQInternalTestFactory runtimeFactory = new BQInternalTestFactory();
+    final TestAppManager appManager = new TestAppManager();
 
     @Test
     public void testHelpAndModuleCommands() {
-        BQRuntime runtime = runtimeFactory.app().modules(M0.class, M1.class).createRuntime();
+        BQRuntime runtime = appManager.runtime(Bootique.app().modules(M0.class, M1.class));
 
         CommandManager commandManager = runtime.getInstance(CommandManager.class);
         assertEquals(4, commandManager.getAllCommands().size(), "help, helpconfig and module commands must be present");
@@ -63,7 +63,7 @@ public class CommandManagerIT {
         Command defaultCommand = cli -> CommandOutcome.succeeded();
         BQModule defaultCommandModule = binder -> BQCoreModule.extend(binder).setDefaultCommand(defaultCommand);
 
-        BQRuntime runtime = runtimeFactory.app().modules(M0.class, M1.class).module(defaultCommandModule).createRuntime();
+        BQRuntime runtime = appManager.runtime(Bootique.app().modules(M0.class, M1.class).module(defaultCommandModule));
 
         CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
@@ -89,9 +89,8 @@ public class CommandManagerIT {
             }
         };
 
-        BQRuntime runtime = runtimeFactory.app()
-                .module(binder -> BQCoreModule.extend(binder).addCommand(hiddenCommand))
-                .createRuntime();
+        BQRuntime runtime = appManager.runtime(Bootique.app()
+                .module(b -> BQCoreModule.extend(b).addCommand(hiddenCommand)));
 
         CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
@@ -120,10 +119,9 @@ public class CommandManagerIT {
 
         BQModule defaultCommandModule = binder -> BQCoreModule.extend(binder).setDefaultCommand(defaultCommand);
 
-        BQRuntime runtime = runtimeFactory.app()
+        BQRuntime runtime = appManager.runtime(Bootique.app()
                 .modules(M0.class, M1.class)
-                .module(defaultCommandModule)
-                .createRuntime();
+                .module(defaultCommandModule));
 
         CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
@@ -141,12 +139,7 @@ public class CommandManagerIT {
 
     @Test
     public void testDefaultCommandViaProvidesMethod() {
-
-        BQRuntime runtime = runtimeFactory.app()
-                .modules(M2.class)
-                .createRuntime();
-
-        CommandOutcome o = runtime.run();
+        CommandOutcome o = appManager.run(Bootique.app().modules(M2.class));
         assertFalse(o.isSuccess());
         assertEquals("m2-command-label", o.getMessage());
     }

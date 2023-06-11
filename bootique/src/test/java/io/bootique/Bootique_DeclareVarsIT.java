@@ -26,8 +26,7 @@ import io.bootique.di.BQModule;
 import io.bootique.help.HelpCommand;
 import io.bootique.log.BootLogger;
 import io.bootique.log.DefaultBootLogger;
-import io.bootique.unit.BQInternalTestFactory;
-import org.junit.jupiter.api.Disabled;
+import io.bootique.unit.TestAppManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -44,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class Bootique_DeclareVarsIT {
 
     @RegisterExtension
-    public BQInternalTestFactory testFactory = new BQInternalTestFactory();
+    final TestAppManager appManager = new TestAppManager();
 
     @Test
     public void testInHelp() {
@@ -66,17 +65,18 @@ public class Bootique_DeclareVarsIT {
             }
         };
 
-        BQRuntime runtime = testFactory.app()
+        BQRuntime runtime = appManager.runtime(Bootique.app()
                 .moduleProvider(configurableProvider)
-                .declareVar("x.m", "X_VALID_VAR")
-                .declareVar("x.y.prop", "X_INVALID_VAR")
                 .bootLogger(logger)
-                .createRuntime();
+                .module(b -> BQCoreModule.extend(b)
+                        .declareVar("x.m", "X_VALID_VAR")
+                        .declareVar("x.y.prop", "X_INVALID_VAR")
+                ));
 
         Cli cli = runtime.getInstance(Cli.class);
         runtime.getInstance(HelpCommand.class).run(cli);
 
-        String help = new String(out.toByteArray());
+        String help = out.toString();
         assertTrue(help.contains("ENVIRONMENT"), "No ENVIRONMENT section:\n" + help);
         assertTrue(help.contains("X_VALID_VAR"));
         assertFalse(help.contains("X_INVALID_VAR"));
@@ -102,16 +102,15 @@ public class Bootique_DeclareVarsIT {
             }
         };
 
-        BQRuntime runtime = testFactory.app()
+        BQRuntime runtime = appManager.runtime(Bootique.app()
                 .moduleProvider(configurableProvider)
-                .declareVar("x.m", "s", "New description")
                 .bootLogger(logger)
-                .createRuntime();
+                .module(b -> BQCoreModule.extend(b).declareVar("x.m", "s", "New description")));
 
         Cli cli = runtime.getInstance(Cli.class);
         runtime.getInstance(HelpCommand.class).run(cli);
 
-        String help = new String(out.toByteArray());
+        String help = out.toString();
         assertTrue(help.contains("ENVIRONMENT"), "No ENVIRONMENT section:\n" + help);
         assertTrue(help.contains("New description"));
         assertFalse(help.contains("Origin description"));
@@ -137,17 +136,17 @@ public class Bootique_DeclareVarsIT {
             }
         };
 
-        BQRuntime runtime = testFactory.app()
-                .moduleProvider(configurableProvider)
-                .declareVar("x.m.prop", "X_VALID_VAR")
-                .declareVar("x.m.prop.x", "X_INVALID_VAR")
+        BQRuntime runtime = appManager.runtime(Bootique.app()
                 .bootLogger(logger)
-                .createRuntime();
+                .moduleProvider(configurableProvider)
+                .module(b -> BQCoreModule.extend(b)
+                        .declareVar("x.m.prop", "X_VALID_VAR")
+                        .declareVar("x.m.prop.x", "X_INVALID_VAR")));
 
         Cli cli = runtime.getInstance(Cli.class);
         runtime.getInstance(HelpCommand.class).run(cli);
 
-        String help = new String(out.toByteArray());
+        String help = out.toString();
         assertTrue(help.contains("ENVIRONMENT"), "No ENVIRONMENT section:\n" + help);
         assertTrue(help.contains("X_VALID_VAR"));
         assertFalse(help.contains("X_INVALID_VAR"));
@@ -173,17 +172,17 @@ public class Bootique_DeclareVarsIT {
             }
         };
 
-        BQRuntime runtime = testFactory.app()
+        BQRuntime runtime = appManager.runtime(Bootique.app()
                 .moduleProvider(configurableProvider)
-                .declareVar("x.a[0]", "X_VALID_VAR")
-                .declareVar("x.a[0].x", "X_INVALID_VAR")
                 .bootLogger(logger)
-                .createRuntime();
+                .module(b -> BQCoreModule.extend(b)
+                        .declareVar("x.a[0]", "X_VALID_VAR")
+                        .declareVar("x.a[0].x", "X_INVALID_VAR")));
 
         Cli cli = runtime.getInstance(Cli.class);
         runtime.getInstance(HelpCommand.class).run(cli);
 
-        String help = new String(out.toByteArray());
+        String help = out.toString();
         assertTrue(help.contains("ENVIRONMENT"), "No ENVIRONMENT section:\n" + help);
         assertTrue(help.contains("X_VALID_VAR"));
         assertFalse(help.contains("X_INVALID_VAR"));

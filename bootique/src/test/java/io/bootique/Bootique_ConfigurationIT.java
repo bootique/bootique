@@ -22,7 +22,7 @@ package io.bootique;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.meta.application.OptionMetadata;
 import io.bootique.type.TypeRef;
-import io.bootique.unit.BQInternalTestFactory;
+import io.bootique.unit.TestAppManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -35,25 +35,24 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class Bootique_ConfigurationIT {
 
     @RegisterExtension
-    public BQInternalTestFactory testFactory = new BQInternalTestFactory();
+    final TestAppManager appManager = new TestAppManager();
 
     @Test
     public void testEmptyConfig() {
-        BQRuntime runtime = testFactory.app("--config=src/test/resources/io/bootique/empty.yml").createRuntime();
+        BQRuntime runtime = appManager.runtime(
+                Bootique.app("--config=src/test/resources/io/bootique/empty.yml"));
 
         Map<String, String> config = runtime
                 .getInstance(ConfigurationFactory.class)
-                .config(new TypeRef<Map<String, String>>() {
+                .config(new TypeRef<>() {
                 }, "");
         assertTrue(config.isEmpty());
     }
 
     @Test
     public void testConfigBoundToString() {
-        BQRuntime runtime = testFactory
-                .app()
-                .module(b -> BQCoreModule.extend(b).setProperty("bq.x", "val"))
-                .createRuntime();
+        BQRuntime runtime = appManager.runtime(
+                Bootique.app().module(b -> BQCoreModule.extend(b).setProperty("bq.x", "val")));
 
         String val = runtime.getInstance(ConfigurationFactory.class).config(String.class, "x");
         assertEquals("val", val);
@@ -61,13 +60,12 @@ public class Bootique_ConfigurationIT {
 
     @Test
     public void testCombineConfigAndEmptyConfig() {
-        BQRuntime runtime = testFactory
-                .app("--config=classpath:io/bootique/test1.yml", "--config=classpath:io/bootique/empty.yml")
-                .createRuntime();
+        BQRuntime runtime = appManager.runtime(
+                Bootique.app("--config=classpath:io/bootique/test1.yml", "--config=classpath:io/bootique/empty.yml"));
 
         Map<String, String> config = runtime.
                 getInstance(ConfigurationFactory.class)
-                .config(new TypeRef<Map<String, String>>() {
+                .config(new TypeRef<>() {
                 }, "");
         assertEquals(1, config.size());
         assertEquals("b", config.get("a"));
@@ -75,13 +73,12 @@ public class Bootique_ConfigurationIT {
 
     @Test
     public void testCombineConfigs() {
-        BQRuntime runtime = testFactory
-                .app("--config=classpath:io/bootique/test1.yml", "--config=classpath:io/bootique/test2.yml")
-                .createRuntime();
+        BQRuntime runtime = appManager.runtime(
+                Bootique.app("--config=classpath:io/bootique/test1.yml", "--config=classpath:io/bootique/test2.yml"));
 
         Map<String, String> config = runtime
                 .getInstance(ConfigurationFactory.class)
-                .config(new TypeRef<Map<String, String>>() {
+                .config(new TypeRef<>() {
                 }, "");
         assertEquals(2, config.size());
         assertEquals("e", config.get("a"));
@@ -90,13 +87,12 @@ public class Bootique_ConfigurationIT {
 
     @Test
     public void testCombineConfigs_ReverseOrder() {
-        BQRuntime runtime = testFactory
-                .app("--config=classpath:io/bootique/test2.yml", "--config=classpath:io/bootique/test1.yml")
-                .createRuntime();
+        BQRuntime runtime = appManager.runtime(
+                Bootique.app("--config=classpath:io/bootique/test2.yml", "--config=classpath:io/bootique/test1.yml"));
 
         Map<String, String> config = runtime
                 .getInstance(ConfigurationFactory.class)
-                .config(new TypeRef<Map<String, String>>() {
+                .config(new TypeRef<>() {
                 }, "");
         assertEquals(2, config.size());
         assertEquals("b", config.get("a"));
@@ -106,14 +102,13 @@ public class Bootique_ConfigurationIT {
     @Test
     public void testDIConfig() {
 
-        BQRuntime runtime = testFactory.app()
-                .module(b -> BQCoreModule.extend(b)
+        BQRuntime runtime = appManager.runtime(
+                Bootique.app().module(b -> BQCoreModule.extend(b)
                         .addConfig("classpath:io/bootique/diconfig1.yml")
-                        .addConfig("classpath:io/bootique/diconfig2.yml"))
-                .createRuntime();
+                        .addConfig("classpath:io/bootique/diconfig2.yml")));
 
         Map<String, String> config = runtime.getInstance(ConfigurationFactory.class)
-                .config(new TypeRef<Map<String, String>>() {
+                .config(new TypeRef<>() {
                 }, "");
         assertEquals(3, config.size());
         assertEquals("1", config.get("a"));
@@ -124,14 +119,13 @@ public class Bootique_ConfigurationIT {
     @Test
     public void testDIConfig_VsCliOrder() {
 
-        BQRuntime runtime = testFactory.app("-c", "classpath:io/bootique/cliconfig.yml")
-                .module(b -> BQCoreModule.extend(b)
+        BQRuntime runtime = appManager.runtime(
+                Bootique.app("-c", "classpath:io/bootique/cliconfig.yml").module(b -> BQCoreModule.extend(b)
                         .addConfig("classpath:io/bootique/diconfig1.yml")
-                        .addConfig("classpath:io/bootique/diconfig2.yml"))
-                .createRuntime();
+                        .addConfig("classpath:io/bootique/diconfig2.yml")));
 
         Map<String, Integer> config = runtime.getInstance(ConfigurationFactory.class)
-                .config(new TypeRef<Map<String, Integer>>() {
+                .config(new TypeRef<>() {
                 }, "");
         assertEquals(3, config.size());
         assertEquals(Integer.valueOf(5), config.get("a"));
@@ -144,12 +138,11 @@ public class Bootique_ConfigurationIT {
 
         Function<String, Map<String, Integer>> configReader =
                 arg -> {
-                    BQRuntime runtime = testFactory.app(arg)
+                    BQRuntime runtime = appManager.runtime(Bootique.app(arg)
                             .module(b -> BQCoreModule.extend(b)
                                     .mapConfigResource("opt", "classpath:io/bootique/diconfig1.yml")
                                     .mapConfigResource("opt", "classpath:io/bootique/diconfig2.yml")
-                                    .addOption(OptionMetadata.builder("opt").build()))
-                            .createRuntime();
+                                    .addOption(OptionMetadata.builder("opt").build())));
 
                     return runtime.getInstance(ConfigurationFactory.class)
                             .config(new TypeRef<Map<String, Integer>>() {
@@ -171,13 +164,12 @@ public class Bootique_ConfigurationIT {
 
         Function<String, Map<String, Integer>> configReader =
                 arg -> {
-                    BQRuntime runtime = testFactory.app(arg)
+                    BQRuntime runtime = appManager.runtime(Bootique.app(arg)
                             .module(b -> BQCoreModule.extend(b)
                                     .mapConfigResource("opt", "classpath:io/bootique/diconfig1.yml")
                                     .mapConfigResource("opt", "classpath:io/bootique/diconfig2.yml")
                                     .addOption(OptionMetadata.builder("opt").valueOptional().build())
-                                    .mapConfigPath("opt", "a"))
-                            .createRuntime();
+                                    .mapConfigPath("opt", "a")));
 
                     return runtime.getInstance(ConfigurationFactory.class)
                             .config(new TypeRef<Map<String, Integer>>() {
@@ -195,16 +187,16 @@ public class Bootique_ConfigurationIT {
 
     @Test
     public void testConfigEnvOverrides_Alias() {
-        BQRuntime runtime = testFactory.app("--config=src/test/resources/io/bootique/test3.yml")
-                .declareVar("a", "V1")
-                .declareVar("c.m.f", "V2")
-                .declareVar("c.m.k", "V3")
-                .var("V1", "K")
-                .var("V2", "K1")
-                .var("V3", "4")
-                .createRuntime();
+        BQRuntime runtime = appManager.runtime(
+                Bootique.app("--config=src/test/resources/io/bootique/test3.yml")
+                        .module(b -> BQCoreModule.extend(b).declareVar("a", "V1")
+                                .declareVar("c.m.f", "V2")
+                                .declareVar("c.m.k", "V3")
+                                .setVar("V1", "K")
+                                .setVar("V2", "K1")
+                                .setVar("V3", "4")));
 
-        Bean1 b1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
+        O1 b1 = runtime.getInstance(ConfigurationFactory.class).config(O1.class, "");
 
         assertEquals("K", b1.a);
         assertEquals(4, b1.c.m.k);
@@ -212,29 +204,29 @@ public class Bootique_ConfigurationIT {
         assertEquals("K1", b1.c.m.f);
     }
 
-    static class Bean1 {
+    static class O1 {
         private String a;
-        private Bean2 c;
+        private O2 c;
 
         public void setA(String a) {
             this.a = a;
         }
 
-        public void setC(Bean2 c) {
+        public void setC(O2 c) {
             this.c = c;
         }
     }
 
-    static class Bean2 {
+    static class O2 {
 
-        private Bean3 m;
+        private O3 m;
 
-        public void setM(Bean3 m) {
+        public void setM(O3 m) {
             this.m = m;
         }
     }
 
-    static class Bean3 {
+    static class O3 {
         private int k;
         private String f;
         private String l;

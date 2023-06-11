@@ -21,10 +21,11 @@ package io.bootique.config.jackson;
 
 import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
+import io.bootique.Bootique;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.resource.ResourceFactory;
-import io.bootique.unit.BQInternalTestFactory;
 import io.bootique.unit.BQInternalWebServerTestFactory;
+import io.bootique.unit.TestAppManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -37,7 +38,7 @@ public class JsonConfigurationFactoryIT {
     public BQInternalWebServerTestFactory wsTestFactory = new BQInternalWebServerTestFactory();
 
     @RegisterExtension
-    public BQInternalTestFactory testFactory = new BQInternalTestFactory();
+    final TestAppManager appManager = new TestAppManager();
 
     @BeforeEach
     public void startWebserver() {
@@ -46,21 +47,21 @@ public class JsonConfigurationFactoryIT {
 
     @Test
     public void test_NoConfig() {
-        BQRuntime runtime = testFactory.app().createRuntime();
+        BQRuntime runtime = appManager.runtime(Bootique.app());
         JsonConfigurationFactory configFactory = (JsonConfigurationFactory) runtime.getInstance(ConfigurationFactory.class);
         assertEquals("{}", configFactory.rootNode.toString());
     }
 
     @Test
     public void test_Yaml() {
-        BQRuntime runtime = testFactory.app("--config=http://127.0.0.1:12025/test1.yml").createRuntime();
+        BQRuntime runtime = appManager.runtime(Bootique.app("--config=http://127.0.0.1:12025/test1.yml"));
         JsonConfigurationFactory configFactory = (JsonConfigurationFactory) runtime.getInstance(ConfigurationFactory.class);
         assertEquals("{\"a\":\"b\"}", configFactory.rootNode.toString());
     }
 
     @Test
     public void test_Json() {
-        BQRuntime runtime = testFactory.app("--config=http://127.0.0.1:12025/test1.json").createRuntime();
+        BQRuntime runtime = appManager.runtime(Bootique.app("--config=http://127.0.0.1:12025/test1.json"));
         JsonConfigurationFactory configFactory = (JsonConfigurationFactory) runtime.getInstance(ConfigurationFactory.class);
         assertEquals("{\"x\":1}", configFactory.rootNode.toString());
     }
@@ -68,8 +69,9 @@ public class JsonConfigurationFactoryIT {
     @Test
     public void test_JsonYaml() {
 
-        BQRuntime runtime = testFactory.app("--config=http://127.0.0.1:12025/test1.json",
-                "--config=http://127.0.0.1:12025/test1.yml").createRuntime();
+        BQRuntime runtime = appManager.runtime(Bootique.app(
+                "--config=http://127.0.0.1:12025/test1.json",
+                "--config=http://127.0.0.1:12025/test1.yml"));
 
         JsonConfigurationFactory configFactory = (JsonConfigurationFactory) runtime.getInstance(ConfigurationFactory.class);
         assertEquals("{\"x\":1,\"a\":\"b\"}", configFactory.rootNode.toString());
@@ -77,18 +79,16 @@ public class JsonConfigurationFactoryIT {
 
     @Test
     public void test_YamlProps() {
-        BQRuntime runtime = testFactory.app("--config=http://127.0.0.1:12025/test1.yml")
-                .module(b -> BQCoreModule.extend(b).setProperty("bq.a", "B"))
-                .createRuntime();
+        BQRuntime runtime = appManager.runtime(Bootique.app("--config=http://127.0.0.1:12025/test1.yml")
+                .module(b -> BQCoreModule.extend(b).setProperty("bq.a", "B")));
         JsonConfigurationFactory configFactory = (JsonConfigurationFactory) runtime.getInstance(ConfigurationFactory.class);
         assertEquals("{\"a\":\"B\"}", configFactory.rootNode.toString());
     }
 
     @Test
     public void test_YamlNestedProps() {
-        BQRuntime runtime = testFactory.app("--config=http://127.0.0.1:12025/test3.yml")
-                .module(b -> BQCoreModule.extend(b).setProperty("bq.c.m.k", "67"))
-                .createRuntime();
+        BQRuntime runtime = appManager.runtime(Bootique.app("--config=http://127.0.0.1:12025/test3.yml")
+                .module(b -> BQCoreModule.extend(b).setProperty("bq.c.m.k", "67")));
         JsonConfigurationFactory configFactory = (JsonConfigurationFactory) runtime.getInstance(ConfigurationFactory.class);
         assertEquals("{\"a\":\"e\",\"c\":{\"m\":{\"k\":\"67\",\"l\":\"n\"}}}", configFactory.rootNode.toString());
     }

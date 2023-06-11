@@ -19,49 +19,49 @@
 
 package io.bootique;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import io.bootique.annotation.BQConfig;
-import io.bootique.annotation.BQConfigProperty;
 import io.bootique.config.ConfigurationFactory;
-import io.bootique.unit.BQInternalTestFactory;
+import io.bootique.di.Binder;
+import io.bootique.unit.TestAppManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class Bootique_Configuration_VarsIT {
 
     @RegisterExtension
-    public BQInternalTestFactory testFactory = new BQInternalTestFactory();
+    final TestAppManager appManager = new TestAppManager();
 
-    private BQInternalTestFactory.Builder app() {
-        return testFactory.app("--config=classpath:io/bootique/Bootique_Configuration_VarsIT.yml");
+    private BQRuntime app(Consumer<Binder> customizer) {
+        Bootique app = Bootique.app()
+                .autoLoadModules()
+                .module(customizer::accept);
+        return appManager.runtime(app);
     }
 
     @Test
     public void testOverrideValue() {
-        BQRuntime runtime = app()
-                .var("MY_VAR", "myValue")
+        BQRuntime runtime = app(b -> BQCoreModule.extend(b)
+                .addConfig("classpath:io/bootique/Bootique_Configuration_VarsIT.yml")
                 .declareVar("testOverrideValue.c.m.l", "MY_VAR")
-                .createRuntime();
+                .setVar("MY_VAR", "myValue"));
 
-        Bean1 b1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "testOverrideValue");
-
+        O1 b1 = runtime.getInstance(ConfigurationFactory.class).config(O1.class, "testOverrideValue");
         assertEquals("myValue", b1.c.m.l);
     }
 
     @Test
     public void testOverrideValueArray() {
-        BQRuntime runtime = app()
-                .var("MY_VAR", "J")
+        BQRuntime runtime = app(b -> BQCoreModule.extend(b)
+                .addConfig("classpath:io/bootique/Bootique_Configuration_VarsIT.yml")
                 .declareVar("testOverrideValueArray.h[1]", "MY_VAR")
-                .createRuntime();
+                .setVar("MY_VAR", "J"));
 
-        TestOverrideValueArrayBean b = runtime.getInstance(ConfigurationFactory.class)
-                .config(TestOverrideValueArrayBean.class, "testOverrideValueArray");
+        O5 b = runtime.getInstance(ConfigurationFactory.class).config(O5.class, "testOverrideValueArray");
 
         assertEquals("i", b.h.get(0));
         assertEquals("J", b.h.get(1));
@@ -70,50 +70,47 @@ public class Bootique_Configuration_VarsIT {
 
     @Test
     public void testDeclareVar_ConfigPathCaseSensitivity() {
-        BQRuntime runtime = testFactory.app()
+        BQRuntime runtime = app(b -> BQCoreModule.extend(b)
                 .declareVar("m.propCamelCase", "MY_VAR")
-                .var("MY_VAR", "myValue")
-                .createRuntime();
+                .setVar("MY_VAR", "myValue"));
 
-        Bean4 b4 = runtime.getInstance(ConfigurationFactory.class).config(Bean4.class, "");
+        O4 b4 = runtime.getInstance(ConfigurationFactory.class).config(O4.class, "");
         assertNotNull(b4.m, "Map did not resolve");
         assertEquals("myValue", b4.m.get("propCamelCase"), "Unexpected map contents: " + b4.m);
     }
 
     @Test
     public void testDeclareVar_NameCaseSensitivity() {
-        BQRuntime runtime = testFactory.app()
+        BQRuntime runtime = app(b -> BQCoreModule.extend(b)
                 .declareVar("m.propCamelCase", "MY_VAR")
-                .var("my_var", "myValue")
-                .createRuntime();
+                .setVar("my_var", "myValue"));
 
-        Bean4 b4 = runtime.getInstance(ConfigurationFactory.class).config(Bean4.class, "");
+        O4 b4 = runtime.getInstance(ConfigurationFactory.class).config(O4.class, "");
         assertNull(b4.m);
     }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    static class Bean1 {
+    static class O1 {
         private String a;
-        private Bean2 c;
+        private O2 c;
 
         public void setA(String a) {
             this.a = a;
         }
 
-        public void setC(Bean2 c) {
+        public void setC(O2 c) {
             this.c = c;
         }
     }
 
-    static class Bean2 {
-        private Bean3 m;
+    static class O2 {
+        private O3 m;
 
-        public void setM(Bean3 m) {
+        public void setM(O3 m) {
             this.m = m;
         }
     }
 
-    static class Bean3 {
+    static class O3 {
         private String k;
         private String f;
         private String l;
@@ -131,22 +128,19 @@ public class Bootique_Configuration_VarsIT {
         }
     }
 
-    @BQConfig
-    static class Bean4 {
+    static class O4 {
         private Map<String, String> m;
 
-        @BQConfigProperty
         public void setM(Map<String, String> m) {
             this.m = m;
         }
     }
 
-    static class TestOverrideValueArrayBean {
+    static class O5 {
         private List<String> h;
 
         public void setH(List<String> h) {
             this.h = h;
         }
     }
-
 }

@@ -21,10 +21,11 @@ package io.bootique.command;
 
 import io.bootique.BQCoreModule;
 import io.bootique.BQModuleProvider;
+import io.bootique.Bootique;
 import io.bootique.cli.Cli;
 import io.bootique.meta.application.CommandMetadata;
 import io.bootique.meta.application.OptionMetadata;
-import io.bootique.unit.BQInternalTestFactory;
+import io.bootique.unit.TestAppManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -43,8 +44,8 @@ public class CommandDecoratorIT {
     private final ThreadTester threadTester = new ThreadTester();
 
     @RegisterExtension
-    public BQInternalTestFactory testFactory = new BQInternalTestFactory();
-    
+    final TestAppManager appManager = new TestAppManager();
+
     private MainCommand mainCommand;
     private SuccessfulCommand successfulCommand;
     private FailingCommand failingCommand;
@@ -194,13 +195,11 @@ public class CommandDecoratorIT {
         Command c2 = mock(Command.class);
         when(c2.run(any())).thenReturn(CommandOutcome.succeeded());
 
-        testFactory.app("--a")
+        appManager.run(Bootique.app("--a")
                 .module(b -> BQCoreModule.extend(b)
                         .addCommand(mainCommand)
                         .decorateCommand(mainCommand.getClass(), CommandDecorator.beforeRun(c1))
-                        .decorateCommand(mainCommand.getClass(), CommandDecorator.beforeRun(c2)))
-                .createRuntime()
-                .run();
+                        .decorateCommand(mainCommand.getClass(), CommandDecorator.beforeRun(c2))));
 
         verify(c1).run(any(Cli.class));
         verify(c2).run(any(Cli.class));
@@ -353,7 +352,7 @@ public class CommandDecoratorIT {
         }
 
         private CommandOutcome run() {
-            BQInternalTestFactory.Builder builder = testFactory
+            Bootique app = Bootique
                     .app("--a")
                     .module(b -> BQCoreModule.extend(b)
                             .addCommand(mainCommand)
@@ -362,10 +361,10 @@ public class CommandDecoratorIT {
                             .decorateCommand(mainCommand.getClass(), decorator));
 
             if (moduleProvider != null) {
-                builder.moduleProvider(moduleProvider);
+                app.moduleProvider(moduleProvider);
             }
 
-            return builder.createRuntime().run();
+            return appManager.run(app);
         }
 
         private CommandOutcome runAndWait() {

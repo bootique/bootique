@@ -19,10 +19,7 @@
 
 package io.bootique.meta.config;
 
-import io.bootique.BQModuleMetadata;
-import io.bootique.BQModuleProvider;
-import io.bootique.BQRuntime;
-import io.bootique.Bootique;
+import io.bootique.*;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.di.BQModule;
@@ -32,30 +29,24 @@ import io.bootique.help.config.ConfigSectionMapGenerator;
 import io.bootique.meta.module.ModulesMetadata;
 import io.bootique.resource.FolderResourceFactory;
 import io.bootique.resource.ResourceFactory;
-import io.bootique.unit.BQInternalTestFactory;
+import io.bootique.unit.TestAppManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.Mockito;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ConfigMetadataIT {
 
     @RegisterExtension
-    public BQInternalTestFactory runtimeFactory = new BQInternalTestFactory();
+    final TestAppManager appManager = new TestAppManager();
 
     @Test
     public void testSingleConfig() {
-        BQRuntime runtime = runtimeFactory.app().moduleProvider(new BQModuleProvider() {
+        BQRuntime runtime = appManager.runtime(Bootique.app().moduleProvider(new BQModuleProvider() {
             @Override
             public BQModule module() {
                 return Mockito.mock(BQModule.class);
@@ -72,7 +63,7 @@ public class ConfigMetadataIT {
                         .moduleBuilder()
                         .name("my");
             }
-        }).createRuntime();
+        }));
 
         Collection<ConfigMetadataNode> configs = runtime
                 .getInstance(ModulesMetadata.class)
@@ -86,9 +77,9 @@ public class ConfigMetadataIT {
         assertEquals(1, configs.size());
 
         ConfigValueMetadata cm = (ConfigValueMetadata) configs.iterator().next();
-        assertTrue("pf".equals(cm.getName()));
+        assertEquals("pf", cm.getName());
 
-        String walkThrough = cm.accept(new ConfigMetadataVisitor<String>() {
+        String walkThrough = cm.accept(new ConfigMetadataVisitor<>() {
 
             @Override
             public String visitObjectMetadata(ConfigObjectMetadata metadata) {
@@ -109,7 +100,7 @@ public class ConfigMetadataIT {
 
     @Test
     public void testRecursiveConfig() {
-        BQRuntime runtime = runtimeFactory.app().moduleProvider(new BQModuleProvider() {
+        BQRuntime runtime = appManager.runtime(Bootique.app().moduleProvider(new BQModuleProvider() {
             @Override
             public BQModule module() {
                 return Mockito.mock(BQModule.class);
@@ -126,7 +117,7 @@ public class ConfigMetadataIT {
                         .moduleBuilder()
                         .name("my");
             }
-        }).createRuntime();
+        }));
 
         Collection<ConfigMetadataNode> configs = runtime
                 .getInstance(ModulesMetadata.class)
@@ -140,7 +131,7 @@ public class ConfigMetadataIT {
         assertEquals(1, configs.size());
 
         ConfigValueMetadata cm = (ConfigValueMetadata) configs.iterator().next();
-        assertTrue("pf".equals(cm.getName()));
+        assertEquals("pf", cm.getName());
 
         StringBuilder buffer = new StringBuilder();
         ConsoleAppender out = new ConsoleAppender(buffer, 300);
@@ -171,8 +162,8 @@ public class ConfigMetadataIT {
 
     @Test
     public void testValueObjectConfig() {
-        BQRuntime runtime = runtimeFactory.app()
-                .addValueObjectsDescriptor(TestVO.class, new ValueObjectDescriptor("Test Value Object"))
+        BQRuntime runtime = appManager.runtime(Bootique.app()
+                .module(b -> BQCoreModule.extend(b).addValueObjectDescriptor(TestVO.class, new ValueObjectDescriptor("Test Value Object")))
                 .moduleProvider(new BQModuleProvider() {
                     @Override
                     public BQModule module() {
@@ -190,7 +181,7 @@ public class ConfigMetadataIT {
                                 .moduleBuilder()
                                 .name("my");
                     }
-                }).createRuntime();
+                }));
 
         Collection<ConfigMetadataNode> configs = runtime
                 .getInstance(ModulesMetadata.class)
@@ -240,7 +231,7 @@ public class ConfigMetadataIT {
     }
 
     @Test
-    public void testGetValueLabel() throws NoSuchFieldException {
+    public void testGetValueLabel() {
         ConfigValueMetadata valueMetadata = ConfigValueMetadata.builder().valueLabel("Test Label").build();
         assertEquals("<Test Label>", valueMetadata.getValueLabel());
     }
@@ -252,7 +243,7 @@ public class ConfigMetadataIT {
     }
 
     @Test
-    public void testTypeValueLabel() throws NoSuchFieldException {
+    public void testTypeValueLabel() {
         ConfigValueMetadata valueMetadata = ConfigValueMetadata.builder().type(E.class).build();
         assertEquals("<a|B|Cd>", valueMetadata.getValueLabel());
     }

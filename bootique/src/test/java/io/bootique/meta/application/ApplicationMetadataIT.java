@@ -21,7 +21,8 @@ package io.bootique.meta.application;
 
 import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
-import io.bootique.unit.BQInternalTestFactory;
+import io.bootique.Bootique;
+import io.bootique.unit.TestAppManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -30,11 +31,11 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ApplicationMetadataIT {
 
     @RegisterExtension
-    public BQInternalTestFactory runtimeFactory = new BQInternalTestFactory();
+    final TestAppManager appManager = new TestAppManager();
 
     @Test
     public void testDefault() {
-        BQRuntime runtime = runtimeFactory.app().createRuntime();
+        BQRuntime runtime = appManager.runtime(Bootique.app());
 
         ApplicationMetadata md = runtime.getInstance(ApplicationMetadata.class);
 
@@ -47,9 +48,8 @@ public class ApplicationMetadataIT {
 
     @Test
     public void testCustomDescription() {
-        BQRuntime runtime = runtimeFactory.app()
-                .module(b -> BQCoreModule.extend(b).setApplicationDescription("app desc"))
-                .createRuntime();
+        BQRuntime runtime = appManager.runtime(Bootique.app()
+                .module(b -> BQCoreModule.extend(b).setApplicationDescription("app desc")));
 
         ApplicationMetadata md = runtime.getInstance(ApplicationMetadata.class);
 

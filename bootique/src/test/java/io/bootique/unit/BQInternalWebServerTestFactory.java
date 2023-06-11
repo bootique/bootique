@@ -24,8 +24,8 @@ import io.bootique.BQRuntime;
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandOutcome;
-import io.bootique.di.Binder;
 import io.bootique.di.BQModule;
+import io.bootique.di.Binder;
 import io.bootique.di.Provides;
 import io.bootique.env.Environment;
 import io.bootique.resource.ResourceFactory;
@@ -36,12 +36,12 @@ import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
-import java.util.Collection;
-import java.util.concurrent.ExecutorService;
-import java.util.function.Function;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
+import java.util.Collection;
+import java.util.concurrent.ExecutorService;
+import java.util.function.Function;
 
 /**
  * A test factory that serves static resources out of "target"
@@ -104,9 +104,7 @@ public class BQInternalWebServerTestFactory extends BQInternalDaemonTestFactory 
 
             server.setHandler(handler);
 
-            shutdownManager.addShutdownHook(() -> {
-                server.stop();
-            });
+            shutdownManager.addShutdownHook(server::stop);
 
             return server;
         }
