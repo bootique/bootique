@@ -16,18 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package io.bootique.unit;
 
 import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
+import io.bootique.Bootique;
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandOutcome;
 import io.bootique.di.BQModule;
 import io.bootique.di.Binder;
 import io.bootique.di.Provides;
-import io.bootique.env.Environment;
 import io.bootique.resource.ResourceFactory;
 import io.bootique.shutdown.ShutdownManager;
 import org.eclipse.jetty.server.Server;
@@ -35,49 +34,46 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.junit.jupiter.api.extension.AfterAllCallback;
+import org.junit.jupiter.api.extension.BeforeAllCallback;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
-import java.util.Collection;
-import java.util.concurrent.ExecutorService;
-import java.util.function.Function;
 
-/**
- * A test factory that serves static resources out of "target"
- */
-public class BQInternalWebServerTestFactory extends BQInternalDaemonTestFactory {
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class TestWebServer implements BeforeAllCallback, AfterAllCallback {
+
+    private final BQRuntime webServer;
+
+    public TestWebServer(String resourceBase) {
+        this.webServer = Bootique.app("--server")
+                .module(new WebServerModule(resourceBase))
+                .createRuntime();
+    }
 
     @Override
-    public Builder app(String... args) {
-        Function<BQRuntime, Boolean> startupCheck = r -> r.getInstance(Server.class).isStarted();
-        return new Builder(runtimes, executor, args)
-                .startupCheck(startupCheck)
-                .module(new InternalJettyModule());
+    public void beforeAll(ExtensionContext context) {
+        CommandOutcome run = webServer.run();
+        assertTrue(run.isSuccess());
+        assertTrue(run.forkedToBackground());
+        assertTrue(webServer.getInstance(Server.class).isStarted());
     }
 
-    public static class Builder extends BQInternalDaemonTestFactory.Builder<Builder> {
-
-        private ResourceFactory resourceUrl;
-
-        Builder(Collection<BQRuntime> runtimes, ExecutorService executor, String[] args) {
-            super(runtimes, executor, args);
-            this.resourceUrl = new ResourceFactory("classpath:");
-        }
-
-        public Builder resourceUrl(ResourceFactory resourceUrl) {
-            this.resourceUrl = resourceUrl;
-            return this;
-        }
-
-        @Override
-        public BQRuntime createRuntime() {
-            property("bq.internaljetty.base", resourceUrl.getUrl().toExternalForm());
-            return super.createRuntime();
-        }
+    @Override
+    public void afterAll(ExtensionContext context) {
+        webServer.shutdown();
     }
 
-    static class InternalJettyModule implements BQModule {
+    static class WebServerModule implements BQModule {
+
+        final String resourceBase;
+
+        WebServerModule(String resourceBase) {
+            this.resourceBase = resourceBase;
+        }
 
         @Override
         public void configure(Binder binder) {
@@ -86,10 +82,12 @@ public class BQInternalWebServerTestFactory extends BQInternalDaemonTestFactory 
 
         @Provides
         @Singleton
-        Server provideServer(Environment env, ShutdownManager shutdownManager) {
+        Server provideServer(ShutdownManager shutdownManager) {
             Server server = new Server();
 
             ServerConnector connector = new ServerConnector(server);
+
+            // TODO: dynamic port
             connector.setPort(12025);
             server.addConnector(connector);
 
@@ -100,7 +98,7 @@ public class BQInternalWebServerTestFactory extends BQInternalDaemonTestFactory 
 
             ServletHolder holder = new ServletHolder(servlet);
             handler.addServlet(holder, "/*");
-            handler.setResourceBase(env.getProperty("bq.internaljetty.base"));
+            handler.setResourceBase(new ResourceFactory(resourceBase).getUrl().toExternalForm());
 
             server.setHandler(handler);
 
@@ -108,29 +106,23 @@ public class BQInternalWebServerTestFactory extends BQInternalDaemonTestFactory 
 
             return server;
         }
-    }
 
-    static class ServerCommand implements Command {
+        static class ServerCommand implements Command {
 
-        @Inject
-        private Provider<Server> serverProvider;
+            @Inject
+            private Provider<Server> serverProvider;
 
-        @Override
-        public CommandOutcome run(Cli cli) {
-            Server server = serverProvider.get();
-            try {
-                server.start();
-            } catch (Exception e) {
-                return CommandOutcome.failed(1, e);
+            @Override
+            public CommandOutcome run(Cli cli) {
+                Server server = serverProvider.get();
+                try {
+                    server.start();
+                } catch (Exception e) {
+                    return CommandOutcome.failed(1, e);
+                }
+
+                return CommandOutcome.succeededAndForkedToBackground();
             }
-
-            try {
-                Thread.currentThread().join();
-            } catch (InterruptedException e) {
-                return CommandOutcome.failed(1, e);
-            }
-
-            return CommandOutcome.succeeded();
         }
     }
 }

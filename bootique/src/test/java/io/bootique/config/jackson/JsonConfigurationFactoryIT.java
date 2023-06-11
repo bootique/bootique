@@ -23,10 +23,8 @@ import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
 import io.bootique.config.ConfigurationFactory;
-import io.bootique.resource.ResourceFactory;
-import io.bootique.unit.BQInternalWebServerTestFactory;
 import io.bootique.unit.TestAppManager;
-import org.junit.jupiter.api.BeforeEach;
+import io.bootique.unit.TestWebServer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -35,15 +33,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class JsonConfigurationFactoryIT {
 
     @RegisterExtension
-    public BQInternalWebServerTestFactory wsTestFactory = new BQInternalWebServerTestFactory();
+    static final TestWebServer webServer = new TestWebServer("classpath:io/bootique");
 
     @RegisterExtension
     final TestAppManager appManager = new TestAppManager();
-
-    @BeforeEach
-    public void startWebserver() {
-        wsTestFactory.app("--server").resourceUrl(new ResourceFactory("classpath:io/bootique")).createRuntime();
-    }
 
     @Test
     public void test_NoConfig() {
