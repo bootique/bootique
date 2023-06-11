@@ -103,6 +103,21 @@ public class Bootique_Configuration_VarsIT {
         assertEquals("myValue", o6.p3);
     }
 
+    @Test
+    public void testDeclareVar_SameVarTwoIdenticalPaths() {
+        BQRuntime runtime = app(b -> BQCoreModule.extend(b)
+                .declareVar("p1", "MY_VAR")
+                .declareVar("p1", "MY_VAR")
+                .setVar("MY_VAR", "myValue"));
+
+        O6 o6 = runtime.getInstance(ConfigurationFactory.class).config(O6.class, "");
+
+        assertEquals("myValue", o6.p1);
+        assertNull(o6.p2);
+        assertNull(o6.p3);
+    }
+
+
     static class O1 {
         private String a;
         private O2 c;

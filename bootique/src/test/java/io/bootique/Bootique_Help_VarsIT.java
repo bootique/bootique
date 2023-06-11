@@ -22,6 +22,7 @@ package io.bootique;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.cli.Cli;
+import io.bootique.command.CommandOutcome;
 import io.bootique.di.BQModule;
 import io.bootique.help.HelpCommand;
 import io.bootique.log.BootLogger;
@@ -37,8 +38,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class Bootique_Help_VarsIT {
 
@@ -80,6 +80,115 @@ public class Bootique_Help_VarsIT {
         assertTrue(help.contains("ENVIRONMENT"), "No ENVIRONMENT section:\n" + help);
         assertTrue(help.contains("X_VALID_VAR"));
         assertFalse(help.contains("X_INVALID_VAR"));
+    }
+
+    @Test
+    public void test_SameVarTwoPaths() {
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ByteArrayOutputStream err = new ByteArrayOutputStream();
+        BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(err));
+
+        BQModuleProvider configMetadataProvider = new BQModuleProvider() {
+            @Override
+            public BQModule module() {
+                return b -> {
+                };
+            }
+
+            @Override
+            public Map<String, Type> configs() {
+                return Collections.singletonMap("x", O4.class);
+            }
+        };
+
+        CommandOutcome run = appManager.run(Bootique.app("--help")
+                .bootLogger(logger)
+                .moduleProvider(configMetadataProvider)
+                .module(b -> BQCoreModule.extend(b)
+                        .declareVar("x.p1", "VAR1")
+                        .declareVar("x.p2", "VAR1")
+                ));
+
+        assertTrue(run.isSuccess());
+
+        String help = out.toString();
+        assertTrue(help.contains("ENVIRONMENT"), "No ENVIRONMENT section:\n" + help);
+        assertEquals(1, countSubstring(help, "VAR1"), () -> "Unexpected number of VAR1 mentions in help:\n" + help);
+    }
+
+    @Test
+    public void test_SameVarTwoPaths_Descriptions() {
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ByteArrayOutputStream err = new ByteArrayOutputStream();
+        BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(err));
+
+        BQModuleProvider configMetadataProvider = new BQModuleProvider() {
+            @Override
+            public BQModule module() {
+                return b -> {
+                };
+            }
+
+            @Override
+            public Map<String, Type> configs() {
+                return Collections.singletonMap("x", O4.class);
+            }
+        };
+
+        CommandOutcome run = appManager.run(Bootique.app("--help")
+                .bootLogger(logger)
+                .moduleProvider(configMetadataProvider)
+                .module(b -> BQCoreModule.extend(b)
+                        .declareVar("x.p1", "VAR1", "DP1")
+                        .declareVar("x.p2", "VAR1", "DP2")
+                ));
+
+        assertTrue(run.isSuccess());
+
+        String help = out.toString();
+        assertTrue(help.contains("ENVIRONMENT"), "No ENVIRONMENT section:\n" + help);
+
+        assertEquals(1, countSubstring(help, "DP1"), () -> "No 'DP1' description:\n" + help);
+        assertEquals(1, countSubstring(help, "DP2"), () -> "No 'DP2' description:\n" + help);
+    }
+
+    @Test
+    public void test_SameVarTwoIdenticalPaths_Descriptions() {
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ByteArrayOutputStream err = new ByteArrayOutputStream();
+        BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(err));
+
+        BQModuleProvider configMetadataProvider = new BQModuleProvider() {
+            @Override
+            public BQModule module() {
+                return b -> {
+                };
+            }
+
+            @Override
+            public Map<String, Type> configs() {
+                return Collections.singletonMap("x", O4.class);
+            }
+        };
+
+        CommandOutcome run = appManager.run(Bootique.app("--help")
+                .bootLogger(logger)
+                .moduleProvider(configMetadataProvider)
+                .module(b -> BQCoreModule.extend(b)
+                        .declareVar("x.p1", "VAR1", "DP1")
+                        .declareVar("x.p1", "VAR1", "DP1")
+                ));
+
+        assertTrue(run.isSuccess());
+
+        String help = out.toString();
+        assertTrue(help.contains("ENVIRONMENT"), "No ENVIRONMENT section:\n" + help);
+
+        assertEquals(1, countSubstring(help, "VAR1"), () -> "Unexpected number of VAR1 mentions in help:\n" + help);
+        assertEquals(1, countSubstring(help, "DP1"), () -> "Only one 'DP1' description is expected:\n" + help);
     }
 
     @Test
@@ -188,6 +297,19 @@ public class Bootique_Help_VarsIT {
         assertFalse(help.contains("X_INVALID_VAR"));
     }
 
+    private static int countSubstring(String s, String ss) {
+        int count = 0, pos = 0;
+        while (pos >= 0) {
+            pos = s.indexOf(ss, pos);
+            if (pos >= 0) {
+                count++;
+                pos = pos + 4;
+            }
+        }
+
+        return count;
+    }
+
     @BQConfig
     static class O1 {
         private Map<String, String> m;
@@ -215,6 +337,31 @@ public class Bootique_Help_VarsIT {
         @BQConfigProperty
         public void setA(List<String> a) {
             this.a = a;
+        }
+    }
+
+    @BQConfig
+    static class O4 {
+        private String p1;
+        private String p2;
+        private String p3;
+
+        @BQConfigProperty
+        public O4 setP1(String p1) {
+            this.p1 = p1;
+            return this;
+        }
+
+        @BQConfigProperty
+        public O4 setP2(String p2) {
+            this.p2 = p2;
+            return this;
+        }
+
+        @BQConfigProperty
+        public O4 setP3(String p3) {
+            this.p3 = p3;
+            return this;
         }
     }
 }

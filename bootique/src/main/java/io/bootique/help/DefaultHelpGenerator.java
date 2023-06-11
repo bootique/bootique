@@ -22,11 +22,8 @@ package io.bootique.help;
 import io.bootique.meta.application.ApplicationMetadata;
 import io.bootique.meta.config.ConfigValueMetadata;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Default {@link HelpGenerator} implementation.
@@ -82,7 +79,7 @@ public class DefaultHelpGenerator implements HelpGenerator {
         Objects.requireNonNull(name);
 
         out.printText(name);
-        if(description != null) {
+        if (description != null) {
             out.printDescription(description);
         }
     }
@@ -93,13 +90,48 @@ public class DefaultHelpGenerator implements HelpGenerator {
         }
 
         out.printSectionName("ENVIRONMENT");
-        variables.stream().sorted(Comparator.comparing(ConfigValueMetadata::getName)).forEach(v -> {
-            out.printSubsectionHeader(v.getName());
-            String description = v.getDescription();
-            if (description != null) {
-                out.printDescription(description);
-            }
-        });
+
+        Map<String, List<ConfigValueMetadata>> byName = variables.stream()
+
+                // group repeating vars that map to different paths
+                .collect(Collectors.groupingBy(ConfigValueMetadata::getName));
+
+        byName.keySet().stream().sorted().forEach(k -> printVar(out, k, byName.get(k)));
+    }
+
+    protected void printVar(HelpAppender out, String varName, List<ConfigValueMetadata> varLinks) {
+        out.printSubsectionHeader(varName);
+
+        switch (varLinks.size()) {
+            case 0: // unexpected
+                break;
+            case 1:
+                String description = varLinks.get(0).getDescription();
+                if (description != null) {
+                    out.printDescription(description);
+                }
+                break;
+            default:
+
+                // print unique descriptions
+
+                Set<String> descriptions = new LinkedHashSet<>();
+                varLinks.forEach(v -> {
+                    if (v.getDescription() != null) {
+                        descriptions.add(v.getDescription());
+                    }
+                });
+
+                boolean onePlus = false;
+                for (String d : descriptions) {
+                    if (onePlus) {
+                        out.println();
+                    }
+                    
+                    onePlus = true;
+                    out.printDescription(d);
+                }
+        }
     }
 
     protected void printOptions(HelpAppender out, Collection<HelpOption> options) {
