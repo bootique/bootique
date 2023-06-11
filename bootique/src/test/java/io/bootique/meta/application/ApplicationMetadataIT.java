@@ -20,11 +20,21 @@
 package io.bootique.meta.application;
 
 import io.bootique.BQCoreModule;
+import io.bootique.BQModuleProvider;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
+import io.bootique.annotation.BQConfig;
+import io.bootique.annotation.BQConfigProperty;
+import io.bootique.di.BQModule;
+import io.bootique.meta.config.ConfigValueMetadata;
 import io.bootique.unit.TestAppManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+
+import java.lang.reflect.Type;
+import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -58,5 +68,56 @@ public class ApplicationMetadataIT {
         assertEquals("app desc", md.getDescription());
         assertEquals(2, md.getCommands().size());
         assertEquals(1, md.getOptions().size());
+    }
+
+    @Test
+    public void testUnboundVar() {
+        BQRuntime runtime = appManager.runtime(Bootique.app()
+                .module(b -> BQCoreModule.extend(b).declareVar("x.p1", "UNBOUND_VAR")));
+
+        ApplicationMetadata md = runtime.getInstance(ApplicationMetadata.class);
+
+        assertEquals(1, md.getVariables().size());
+        ConfigValueMetadata varMd = md.getVariables().iterator().next();
+        assertEquals("UNBOUND_VAR", varMd.getName());
+        assertTrue(varMd.isUnbound());
+    }
+
+    @Test
+    public void testBoundVar() {
+        BQModuleProvider provider = new BQModuleProvider() {
+            @Override
+            public BQModule module() {
+                return b -> {
+                };
+            }
+
+            @Override
+            public Map<String, Type> configs() {
+                return Collections.singletonMap("x", O1.class);
+            }
+        };
+
+        BQRuntime runtime = appManager.runtime(Bootique.app()
+                .moduleProvider(provider)
+                .module(b -> BQCoreModule.extend(b).declareVar("x.p1", "BOUND_VAR")));
+
+        ApplicationMetadata md = runtime.getInstance(ApplicationMetadata.class);
+
+        assertEquals(1, md.getVariables().size());
+        ConfigValueMetadata varMd = md.getVariables().iterator().next();
+        assertEquals("BOUND_VAR", varMd.getName());
+        assertFalse(varMd.isUnbound());
+    }
+
+    @BQConfig
+    static class O1 {
+        private BigDecimal p1;
+
+        @BQConfigProperty
+        public O1 setP1(BigDecimal p1) {
+            this.p1 = p1;
+            return this;
+        }
     }
 }

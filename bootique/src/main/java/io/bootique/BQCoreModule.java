@@ -49,6 +49,7 @@ import io.bootique.meta.application.ApplicationMetadata;
 import io.bootique.meta.application.OptionMetadata;
 import io.bootique.meta.config.ConfigHierarchyResolver;
 import io.bootique.meta.config.ConfigMetadataCompiler;
+import io.bootique.meta.config.ConfigValueMetadata;
 import io.bootique.meta.module.ModulesMetadata;
 import io.bootique.meta.module.ModulesMetadataCompiler;
 import io.bootique.run.DefaultRunner;
@@ -303,6 +304,7 @@ public class BQCoreModule implements BQModule {
     @Provides
     @Singleton
     ApplicationMetadata provideApplicationMetadata(
+            BootLogger logger,
             ApplicationDescription descriptionHolder,
             CommandManager commandManager,
             Set<OptionMetadata> options,
@@ -323,9 +325,13 @@ public class BQCoreModule implements BQModule {
         // merge default command options with top-level app options
         commandManager.getPublicDefaultCommand().ifPresent(c -> builder.addOptions(c.getMetadata().getOptions()));
 
-        declaredVars.forEach(dv -> DeclaredVariableMetaCompiler
-                .compileIfValid(dv, modulesMetadata)
-                .ifPresent(builder::addVariable));
+        declaredVars.forEach(dv -> {
+            ConfigValueMetadata varMd = DeclaredVariableMetaCompiler.compile(dv, modulesMetadata);
+            if (varMd.isUnbound()) {
+                bootLogger.trace(() -> "Declared env variable '" + varMd.getName() + "' is not bound to a known app configuration and may be ignored.");
+            }
+            builder.addVariable(varMd);
+        });
 
         return builder.build();
     }

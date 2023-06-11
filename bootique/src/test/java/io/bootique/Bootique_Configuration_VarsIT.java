@@ -117,7 +117,6 @@ public class Bootique_Configuration_VarsIT {
         assertNull(o6.p3);
     }
 
-
     static class O1 {
         private String a;
         private O2 c;

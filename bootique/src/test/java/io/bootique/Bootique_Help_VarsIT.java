@@ -73,7 +73,7 @@ public class Bootique_Help_VarsIT {
         String help = out.toString();
         assertTrue(help.contains("ENVIRONMENT"), "No ENVIRONMENT section:\n" + help);
         assertTrue(help.contains("X_VALID_VAR"));
-        assertFalse(help.contains("X_INVALID_VAR"));
+        assertTrue(help.contains("X_INVALID_VAR"));
     }
 
     @Test
@@ -237,15 +237,15 @@ public class Bootique_Help_VarsIT {
                 .bootLogger(logger)
                 .moduleProvider(configurableProvider)
                 .module(b -> BQCoreModule.extend(b)
-                        .declareVar("x.m.prop", "X_VALID_VAR")
-                        .declareVar("x.m.prop.x", "X_INVALID_VAR")));
+                        .declareVar("x.m.prop", "X_BOUND_VAR")
+                        .declareVar("x.m.prop.x", "X_UNBOUND_VAR")));
 
         assertTrue(run.isSuccess());
 
         String help = out.toString();
         assertTrue(help.contains("ENVIRONMENT"), "No ENVIRONMENT section:\n" + help);
-        assertTrue(help.contains("X_VALID_VAR"));
-        assertFalse(help.contains("X_INVALID_VAR"));
+        assertTrue(help.contains("X_BOUND_VAR"));
+        assertTrue(help.contains("X_UNBOUND_VAR"));
     }
 
     @Test
@@ -271,15 +271,33 @@ public class Bootique_Help_VarsIT {
                 .moduleProvider(configurableProvider)
                 .bootLogger(logger)
                 .module(b -> BQCoreModule.extend(b)
-                        .declareVar("x.a[0]", "X_VALID_VAR")
-                        .declareVar("x.a[0].x", "X_INVALID_VAR")));
+                        .declareVar("x.a[0]", "X_BOUND_VAR")
+                        .declareVar("x.a[0].x", "X_UNBOUND_VAR")));
 
         assertTrue(run.isSuccess());
 
         String help = out.toString();
         assertTrue(help.contains("ENVIRONMENT"), "No ENVIRONMENT section:\n" + help);
-        assertTrue(help.contains("X_VALID_VAR"));
-        assertFalse(help.contains("X_INVALID_VAR"));
+        assertTrue(help.contains("X_BOUND_VAR"));
+        assertTrue(help.contains("X_UNBOUND_VAR"));
+    }
+
+    @Test
+    public void testUnboundVar() {
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        BootLogger logger = new DefaultBootLogger(true, new PrintStream(out), new PrintStream(System.err));
+
+        CommandOutcome run = appManager.run(Bootique.app("--help")
+                .bootLogger(logger)
+                .module(b -> BQCoreModule.extend(b).declareVar("noSuchProperty.p1", "X_UNBOUND_VAR", "UVD")));
+
+        assertTrue(run.isSuccess());
+
+        String help = out.toString();
+        assertTrue(help.contains("ENVIRONMENT"), "No ENVIRONMENT section:\n" + help);
+        assertTrue(help.contains("X_UNBOUND_VAR"), "No X_UNBOUND_VAR:\n" + help);
+        assertTrue(help.contains("UVD"), "No X_UNBOUND_VAR description:\n" + help);
     }
 
     private static int countSubstring(String s, String ss) {

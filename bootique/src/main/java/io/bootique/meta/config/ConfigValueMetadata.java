@@ -30,6 +30,7 @@ public class ConfigValueMetadata implements ConfigMetadataNode {
     protected String name;
     protected String description;
     protected String valueLabel;
+    protected boolean unbound;
 
     protected ConfigValueMetadata() {
     }
@@ -45,6 +46,10 @@ public class ConfigValueMetadata implements ConfigMetadataNode {
     @Override
     public String getName() {
         return name;
+    }
+
+    public boolean isUnbound() {
+        return unbound;
     }
 
     @Override
@@ -185,6 +190,11 @@ public class ConfigValueMetadata implements ConfigMetadataNode {
 
         public B type(Type type) {
             toBuild.type = type;
+            return (B) this;
+        }
+
+        public B unbound() {
+            toBuild.unbound = true;
             return (B) this;
         }
     }

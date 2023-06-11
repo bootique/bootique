@@ -29,18 +29,26 @@ import java.util.Optional;
 
 class DeclaredVariableMetaCompiler {
 
-    static Optional<ConfigValueMetadata> compileIfValid(DeclaredVariable var, ModulesMetadata modulesMetadata) {
+    static ConfigValueMetadata compile(DeclaredVariable var, ModulesMetadata modulesMetadata) {
 
         for (ModuleMetadata mm : modulesMetadata.getModules()) {
             // TODO: 'findConfig' does a String split over and over again as we iterate through the loop.
             //  Precalculate this once.
             Optional<ConfigMetadataNode> cmn = mm.findConfig(var.getConfigPath());
             if (cmn.isPresent()) {
-                return cmn.map(n -> compileMetadata(var, n));
+                return compileMetadata(var, cmn.get());
             }
         }
 
-        return Optional.empty();
+        return compileUnboundMetadata(var);
+    }
+
+    private static ConfigValueMetadata compileUnboundMetadata(DeclaredVariable variable) {
+        return ConfigValueMetadata
+                .builder(variable.getName())
+                .unbound()
+                .description(variable.getDescription() != null ? variable.getDescription() : null)
+                .build();
     }
 
     private static ConfigValueMetadata compileMetadata(DeclaredVariable variable, ConfigMetadataNode configMetadata) {
@@ -50,6 +58,7 @@ class DeclaredVariableMetaCompiler {
         return ConfigValueMetadata
                 .builder(variable.getName())
                 .description(variable.getDescription() != null ? variable.getDescription() : configMetadata.getDescription())
-                .type(configMetadata.getType()).build();
+                .type(configMetadata.getType())
+                .build();
     }
 }

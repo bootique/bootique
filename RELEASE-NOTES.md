@@ -1,5 +1,6 @@
 ## 3.0.M2
 
+* #318 Declared vars not matching an existing config path are excluded from help
 * #327 Upgrade to bootique-module-parents 3.0.17
 * #328 Upgrade to bootique-module-parents 3.0.18
 * #330 Binding env var to more than one config results in multiple entries in help
