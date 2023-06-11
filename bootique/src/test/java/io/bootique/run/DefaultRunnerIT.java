@@ -29,23 +29,25 @@ import io.bootique.help.HelpCommand;
 import io.bootique.log.BootLogger;
 import io.bootique.log.DefaultBootLogger;
 import io.bootique.meta.application.CommandMetadata;
-import io.bootique.unit.BQInternalInMemoryPrintStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.nio.charset.Charset;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DefaultRunnerIT {
 
-    private BQInternalInMemoryPrintStream out;
+    private InMemoryPrintStream out;
     private BootLogger logger;
 
     @BeforeEach
     public void before() {
-        this.out = new BQInternalInMemoryPrintStream(System.out);
+        this.out = new InMemoryPrintStream(System.out);
         this.logger = new DefaultBootLogger(true, out, System.err);
     }
 
@@ -64,7 +66,6 @@ public class DefaultRunnerIT {
     @Test
     public void testRun_Implicit_Default() {
 
-        BQInternalInMemoryPrintStream out = new BQInternalInMemoryPrintStream(System.out);
         BootLogger logger = new DefaultBootLogger(false, out, System.err);
 
         Bootique.app()
@@ -227,4 +228,32 @@ public class DefaultRunnerIT {
             return CommandOutcome.succeeded();
         }
     }
+
+    static class InMemoryPrintStream extends PrintStream {
+
+        private final PrintStream splitOut;
+
+        public InMemoryPrintStream(PrintStream splitOut) {
+            super(new ByteArrayOutputStream(), true);
+            this.splitOut = splitOut;
+        }
+
+        @Override
+        public void println(String x) {
+            splitOut.println(x);
+            super.println(x);
+        }
+
+        @Override
+        public void println(Object x) {
+            splitOut.println(x);
+            super.println(x);
+        }
+
+        public String toString() {
+            return new String(((ByteArrayOutputStream) out).toByteArray(), Charset.forName("UTF-8"));
+        }
+    }
+
+
 }
