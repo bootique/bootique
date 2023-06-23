@@ -60,7 +60,13 @@ jerseyclient:
 * [bootique-jetty #117](https://github.com/bootique/bootique-jetty/issues/117): JettyTester's ResponseMatcher will no 
 longer allow to read the response content twice, nor will it allow reading the content after "assertContent" was called.
 So after the upgrade you start getting "Response data is already read" exceptions, you will need to review your test code and make sure 
-you call "getContentXyz()" or "assertContent(..)" only once for a gievn response.
+you call "getContentXyz()" or "assertContent(..)" only once for a given response.
+
+* [bootique-mvc #25](https://github.com/bootique/bootique-mvc/issues/25): A unified templates / sub-templates resolving
+mechanism was implemented with a strict same-origin policy. A backwards-incompatible part of the new algorithm is 
+handling of the absolute URLs of the "root" templates. If you specify a template name with a starting "/" in your view, 
+it will be interpreted as relative to the app "templateBase" and the view class package name will not be prepended to
+the template path. To fix it, you will need to remove the leading slash.
 
 ## 3.0.M1
 
