@@ -22,7 +22,6 @@ package io.bootique.config.jackson.merger;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.bootique.config.jackson.path.PathSegment;
 
-import java.util.Comparator;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -31,7 +30,7 @@ import java.util.function.Function;
  */
 public class InPlacePropertiesMerger implements Function<JsonNode, JsonNode> {
 
-    private Map<String, String> properties;
+    private final Map<String, String> properties;
 
     public InPlacePropertiesMerger(Map<String, String> properties) {
         this.properties = properties;
@@ -44,9 +43,9 @@ public class InPlacePropertiesMerger implements Function<JsonNode, JsonNode> {
         // array, and internally they are out of order, ArrayIndexOutOfBoundsException occurs
 
         // TODO: ordering is a hack. Sorting is done lexicographically, this will only work for the first 10 entries.
-        properties.entrySet().stream().sorted(Comparator.comparing(Map.Entry::getKey)).forEach(e -> {
+        properties.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach(e -> {
 
-            PathSegment target = lastPathComponent(t, e.getKey());
+            PathSegment<?> target = lastPathComponent(t, e.getKey());
             target.fillMissingParents();
 
             if (target.getParent() == null) {

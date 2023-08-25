@@ -33,13 +33,14 @@ public class DefaultEnvironment implements Environment {
      */
     public static final String TRACE_PROPERTY = "bq.trace";
 
-    private Map<String, String> properties;
+    private final Map<String, String> properties;
 
     public static Builder builder() {
         return new Builder();
     }
 
-    protected DefaultEnvironment() {
+    protected DefaultEnvironment(Map<String, String> properties) {
+        this.properties = properties;
     }
 
     @Override
@@ -57,8 +58,8 @@ public class DefaultEnvironment implements Environment {
         int len = lPrefix.length();
 
         Map<String, String> filtered = new HashMap<>();
-        for(Map.Entry<String, String> e : unfiltered.entrySet()) {
-            if(e.getKey().startsWith(lPrefix)) {
+        for (Map.Entry<String, String> e : unfiltered.entrySet()) {
+            if (e.getKey().startsWith(lPrefix)) {
                 filtered.put(e.getKey().substring(len), e.getValue());
             }
         }
@@ -77,9 +78,7 @@ public class DefaultEnvironment implements Environment {
         }
 
         public DefaultEnvironment build() {
-            DefaultEnvironment env = new DefaultEnvironment();
-            env.properties = buildProperties();
-            return env;
+            return new DefaultEnvironment(buildProperties());
         }
 
         public Builder excludeSystemProperties() {
