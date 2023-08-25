@@ -69,6 +69,24 @@ public class Bootique_Configuration_VarsIT {
     }
 
     @Test
+    public void testOverrideValueDotsInKey() {
+        BQRuntime runtime = app(b -> BQCoreModule.extend(b)
+                .addConfig("classpath:io/bootique/Bootique_Configuration_VarsIT.yml")
+                .declareVar("testOverrideValueDotsInKey.a\\.b\\.c.f\\.g", "MY_VAR")
+                .setVar("MY_VAR", "Z"));
+
+        Map<String, Object> m1 = runtime
+                .getInstance(ConfigurationFactory.class)
+                .config(Map.class, "testOverrideValueDotsInKey");
+
+        assertEquals(Map.of("a.b.c", Map.of(
+                        "d", "e",
+                        "f.g", "Z"
+                )
+        ), m1);
+    }
+
+    @Test
     public void testDeclareVar_ConfigPathCaseSensitivity() {
         BQRuntime runtime = app(b -> BQCoreModule.extend(b)
                 .declareVar("m.propCamelCase", "MY_VAR")

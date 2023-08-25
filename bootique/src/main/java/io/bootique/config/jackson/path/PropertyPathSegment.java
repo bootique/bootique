@@ -51,13 +51,13 @@ public class PropertyPathSegment extends PathSegment<ObjectNode> {
         // Start at index 1, assuming at least one leading char is the property name.
         // Look for either '.' or '['.
         for (int i = 1; i < len; i++) {
-            char c = path.charAt(i);
-            if (c == DOT) {
+
+            if (isSegmentSeparator(path, i)) {
                 // split ppp.ppp into "ppp" and "ppp"
                 return createPropertyChild(path.substring(0, i), path.substring(i + 1));
             }
 
-            if (c == ARRAY_INDEX_START) {
+            if (isArrayIndexStart(path, i)) {
                 // split ppp[nnn].ppp into "ppp" and "[nnn].ppp"
                 return createIndexedChild(path.substring(0, i), path.substring(i));
             }

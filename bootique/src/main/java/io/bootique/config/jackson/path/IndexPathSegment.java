@@ -39,7 +39,7 @@ public class IndexPathSegment extends PathSegment<ArrayNode> {
                 throw new IllegalArgumentException("The path must start with array index [NNN]. Instead got: " + remainingPath);
             }
 
-            if (remainingPath.charAt(0) != ARRAY_INDEX_START) {
+            if (!isArrayIndexStart(remainingPath, 0)) {
                 throw new IllegalArgumentException("The path must start with array index [NNN]. Instead got: " + remainingPath);
             }
         }
@@ -52,16 +52,14 @@ public class IndexPathSegment extends PathSegment<ArrayNode> {
         // looking for ']' or '].'
         // start at index 1. The first char is known to be '['
         for (int i = 1; i < len; i++) {
-            char c = path.charAt(i);
-
-            if (c == IndexPathSegment.ARRAY_INDEX_END) {
+            if (isArrayIndexEnd(path, i)) {
 
                 // 1. [NNN]
                 if (i == len - 1) {
                     return createValueChild(path.substring(0, i + 1));
                 }
                 // 2. [NNN].aaaa (i.e. in the second case the dot must follow closing paren)
-                else if (path.charAt(i + 1) == PathSegment.DOT) {
+                else if (isSegmentSeparator(path, i + 1)) {
                     return createPropertyChild(path.substring(0, i + 1), path.substring(i + 2));
                 }
                 // 3. [NNN][MMM] TODO => createIndexedChild

@@ -82,6 +82,16 @@ public class PathSegmentTest {
     }
 
     @Test
+    public void testLastPathComponent_DotsInPath() {
+        JsonNode node = YamlReader.read("a:\n  b.c: 6");
+
+        Optional<PathSegment<?>> last0 = PathSegment.create(node, "a.b\\.c").lastPathComponent();
+        assertTrue(last0.isPresent(), "Couldn't resolve 'a.b\\.c\"' path");
+        assertNotNull(last0.get().getNode(), "Couldn't resolve 'a.b\\.c\"' path");
+        assertEquals(6, last0.get().getNode().asInt());
+    }
+
+    @Test
     public void testLastPathComponent_ArrayOutOfBounds() {
         JsonNode node = YamlReader.read("a:\n  - b: 1\n  - b: 2");
         assertThrows(ArrayIndexOutOfBoundsException.class, () -> PathSegment.create(node, "a[-1]").lastPathComponent());

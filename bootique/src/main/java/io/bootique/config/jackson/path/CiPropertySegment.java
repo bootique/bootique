@@ -37,7 +37,7 @@ public class CiPropertySegment extends PropertyPathSegment {
             return new LastPathSegment(node, null, null);
         }
 
-        if (path.charAt(0) == ARRAY_INDEX_START) {
+        if (isArrayIndexStart(path, 0)) {
             return new IndexPathSegment(toArrayNode(node), null, null, path);
         }
 

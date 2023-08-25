@@ -18,3 +18,8 @@ testOverrideValueArray:
     - i
     - j
     - k
+
+testOverrideValueDotsInKey:
+  a.b.c:
+    d : e
+    f.g: h

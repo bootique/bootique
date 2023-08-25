@@ -36,14 +36,27 @@ public abstract class PathSegment<T extends JsonNode> implements Iterable<PathSe
 
     protected static final JsonNodeFactory NODE_FACTORY = new JsonNodeFactory(true);
 
-    static final char DOT = '.';
-    static final char ARRAY_INDEX_START = '[';
-    static final char ARRAY_INDEX_END = ']';
-
     protected T node;
     protected String incomingPath;
     protected String path;
     protected PathSegment<?> parent;
+
+    protected static boolean isSegmentSeparator(String string, int i) {
+        // do not treat escaped dots as path separators
+        return string.charAt(i) == '.' && (i == 0 || string.charAt(i - 1) != '\\');
+    }
+
+    protected static boolean isArrayIndexStart(String string, int i) {
+        return string.charAt(i) == '[';
+    }
+
+    protected static boolean isArrayIndexEnd(String string, int i) {
+        return string.charAt(i) == ']';
+    }
+
+    protected static String unescapeSegmentName(String name) {
+        return name.replace("\\.", ".");
+    }
 
     protected PathSegment(T node, PathSegment<?> parent, String incomingPath, String path) {
         this.node = node;
@@ -58,7 +71,7 @@ public abstract class PathSegment<T extends JsonNode> implements Iterable<PathSe
             return new LastPathSegment(node, null, null);
         }
 
-        if (path.charAt(0) == ARRAY_INDEX_START) {
+        if (isArrayIndexStart(path, 0)) {
             return new IndexPathSegment(toArrayNode(node), null, null, path);
         }
 
@@ -136,18 +149,21 @@ public abstract class PathSegment<T extends JsonNode> implements Iterable<PathSe
     public abstract void writeChildValue(String childName, String value);
 
     protected PathSegment<JsonNode> createValueChild(String childName) {
-        JsonNode child = readChild(childName);
-        return new LastPathSegment(child, this, childName);
+        String unescaped = unescapeSegmentName(childName);
+        JsonNode child = readChild(unescaped);
+        return new LastPathSegment(child, this, unescaped);
     }
 
     protected PathSegment<ObjectNode> createPropertyChild(String childName, String remainingPath) {
-        ObjectNode on = toObjectNode(readChild(childName));
-        return new PropertyPathSegment(on, this, childName, remainingPath);
+        String unescaped = unescapeSegmentName(childName);
+        ObjectNode on = toObjectNode(readChild(unescaped));
+        return new PropertyPathSegment(on, this, unescaped, remainingPath);
     }
 
     protected PathSegment<ArrayNode> createIndexedChild(String childName, String remainingPath) {
-        ArrayNode an = toArrayNode(readChild(childName));
-        return new IndexPathSegment(an, this, childName, remainingPath);
+        String unescaped = unescapeSegmentName(childName);
+        ArrayNode an = toArrayNode(readChild(unescaped));
+        return new IndexPathSegment(an, this, unescaped, remainingPath);
     }
 
     public void fillMissingParents() {
