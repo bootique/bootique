@@ -44,7 +44,7 @@ public class CiPropertySegment extends PropertyPathSegment {
         return new CiPropertySegment(toObjectNode(node), null, null, path);
     }
 
-    protected CiPropertySegment(ObjectNode node, PathSegment parent, String incomingPath, String remainingPath) {
+    protected CiPropertySegment(ObjectNode node, PathSegment<?> parent, String incomingPath, String remainingPath) {
         super(node, parent, incomingPath, remainingPath);
     }
 

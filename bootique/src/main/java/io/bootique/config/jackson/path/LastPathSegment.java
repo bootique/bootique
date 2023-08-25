@@ -23,12 +23,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 public class LastPathSegment extends PathSegment<JsonNode> {
 
-    LastPathSegment(JsonNode node, PathSegment parent, String incomingPath) {
+    LastPathSegment(JsonNode node, PathSegment<?> parent, String incomingPath) {
         super(node, parent, incomingPath, null);
     }
 
     @Override
-    protected PathSegment parseNextNotEmpty(String path) {
+    protected PathSegment<?> parseNextNotEmpty(String path) {
         throw new UnsupportedOperationException("No more children");
     }
 

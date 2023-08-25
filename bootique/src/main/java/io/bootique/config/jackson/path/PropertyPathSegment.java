@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class PropertyPathSegment extends PathSegment<ObjectNode> {
 
-    PropertyPathSegment(ObjectNode node, PathSegment parent, String incomingPath, String remainingPath) {
+    PropertyPathSegment(ObjectNode node, PathSegment<?> parent, String incomingPath, String remainingPath) {
         super(node, parent, incomingPath, remainingPath);
     }
 
@@ -44,7 +44,7 @@ public class PropertyPathSegment extends PathSegment<ObjectNode> {
     }
 
     @Override
-    protected PathSegment parseNextNotEmpty(String path) {
+    protected PathSegment<?> parseNextNotEmpty(String path) {
 
         int len = path.length();
 

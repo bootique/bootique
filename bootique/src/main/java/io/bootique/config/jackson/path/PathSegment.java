@@ -43,9 +43,9 @@ public abstract class PathSegment<T extends JsonNode> implements Iterable<PathSe
     protected T node;
     protected String incomingPath;
     protected String path;
-    protected PathSegment parent;
+    protected PathSegment<?> parent;
 
-    protected PathSegment(T node, PathSegment parent, String incomingPath, String path) {
+    protected PathSegment(T node, PathSegment<?> parent, String incomingPath, String path) {
         this.node = node;
         this.parent = parent;
         this.incomingPath = incomingPath;
@@ -102,11 +102,11 @@ public abstract class PathSegment<T extends JsonNode> implements Iterable<PathSe
         return StreamSupport.stream(spliterator(), false).reduce((a, b) -> b);
     }
 
-    public  JsonNode getNode() {
+    public JsonNode getNode() {
         return node;
     }
 
-    public PathSegment getParent() {
+    public PathSegment<?> getParent() {
         return parent;
     }
 
@@ -127,7 +127,7 @@ public abstract class PathSegment<T extends JsonNode> implements Iterable<PathSe
         return parseNextNotEmpty(path);
     }
 
-    protected abstract PathSegment parseNextNotEmpty(String path);
+    protected abstract PathSegment<?> parseNextNotEmpty(String path);
 
     protected abstract JsonNode readChild(String childName);
 
@@ -170,10 +170,10 @@ public abstract class PathSegment<T extends JsonNode> implements Iterable<PathSe
 
     @Override
     public Iterator<PathSegment<?>> iterator() {
-        return new Iterator<PathSegment<?>>() {
+        return new Iterator<>() {
 
-            private PathSegment current = PathSegment.this;
-            private PathSegment next = current.parseNext();
+            private PathSegment<?> current = PathSegment.this;
+            private PathSegment<?> next = current.parseNext();
 
             @Override
             public boolean hasNext() {

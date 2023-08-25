@@ -30,7 +30,7 @@ public class IndexPathSegment extends PathSegment<ArrayNode> {
     // a symbolic index that allows to append values to array without knowing the length
     private static final String PAST_END_INDEX = ".length";
 
-    protected IndexPathSegment(ArrayNode node, PathSegment parent, String incomingPath, String remainingPath) {
+    protected IndexPathSegment(ArrayNode node, PathSegment<?> parent, String incomingPath, String remainingPath) {
         super(node, parent, incomingPath, remainingPath);
 
         if (remainingPath != null) {
@@ -46,11 +46,11 @@ public class IndexPathSegment extends PathSegment<ArrayNode> {
     }
 
     @Override
-    protected PathSegment parseNextNotEmpty(String path) {
+    protected PathSegment<?> parseNextNotEmpty(String path) {
         int len = path.length();
 
         // looking for ']' or '].'
-        // start at index 1.. The first char is known to be '['
+        // start at index 1. The first char is known to be '['
         for (int i = 1; i < len; i++) {
             char c = path.charAt(i);
 
