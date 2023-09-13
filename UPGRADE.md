@@ -68,6 +68,25 @@ handling of the absolute URLs of the "root" templates. If you specify a template
 it will be interpreted as relative to the app "templateBase" and the view class package name will not be prepended to
 the template path. To fix it, you will need to remove the leading slash.
 
+* [bootique-jersey #80](https://github.com/bootique/bootique-jersey/issues/80): If you are using Jersey client
+instrumentation, note that a metric name reported in the healthcheck was changed from `bq.JerseyClient.Threshold.Requests` 
+to `bq.JerseyClient.Requests.Rate`. Also, healthcheck thresholds configuration was restructured and requires an update:
+
+```yaml
+# The old structure looked like this:
+#jerseyclientinstrumented:
+#  timeRequestsThresholds:
+#    warning: 1
+#    critical: 5
+
+# The new should look like this:
+jerseyclient:
+  health:
+    requestsPerMin:
+      warning: 1
+      critical: 5
+```
+
 ## 3.0.M1
 
 * [bootique #317](https://github.com/bootique/bootique/issues/317): Minimal Java version required by Bootique is now
