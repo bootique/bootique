@@ -70,7 +70,8 @@ the template path. To fix it, you will need to remove the leading slash.
 
 * [bootique-jersey #80](https://github.com/bootique/bootique-jersey/issues/80): If you are using Jersey client
 instrumentation, note that a metric name reported in the healthcheck was changed from `bq.JerseyClient.Threshold.Requests` 
-to `bq.JerseyClient.Requests.PerMin`. Also, healthcheck thresholds configuration was restructured and requires an update:
+to `bq.JerseyClient.Requests.PerMin`, and default `warning/critical` thresholds changed from `3/15` to `60/120`. Also, 
+healthcheck thresholds configuration was restructured and requires an update:
 
 ```yaml
 # The old structure looked like this:
