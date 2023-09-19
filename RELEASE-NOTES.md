@@ -5,6 +5,7 @@
 * #328 Upgrade to bootique-module-parents 3.0.18
 * #330 Binding env var to more than one config results in multiple entries in help
 * #331 Support dots in property names for var declarations
+* #332 Upgrade to bootique-modules-parent 3.0.19
 
 ## 3.0.M1
 
