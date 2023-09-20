@@ -38,8 +38,8 @@ public class DefaultConfigHelpGenerator implements ConfigHelpGenerator {
 
     static final int DEFAULT_OFFSET = 6;
 
-    private ModulesMetadata modulesMetadata;
-    private int lineWidth;
+    private final ModulesMetadata modulesMetadata;
+    private final int lineWidth;
 
     public DefaultConfigHelpGenerator(ModulesMetadata modulesMetadata, int lineWidth) {
         this.lineWidth = lineWidth;
@@ -105,13 +105,13 @@ public class DefaultConfigHelpGenerator implements ConfigHelpGenerator {
         ConfigSectionGenerator generator = new ConfigSectionGenerator(out.getAppender().withOffset(DEFAULT_OFFSET), new HashSet<>());
         ConfigMetadataNode last = configs.get(configs.size() - 1);
 
-        configs.forEach(c -> {
+        for(ConfigMetadataNode c : configs) {
             printConfiguration(generator, c);
 
             if (c != last) {
                 out.println();
             }
-        });
+        }
     }
 
     protected void printModuleName(HelpAppender out, String moduleName, String description) {

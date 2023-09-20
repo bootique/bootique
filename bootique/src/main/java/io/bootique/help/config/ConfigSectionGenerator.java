@@ -21,21 +21,11 @@ package io.bootique.help.config;
 
 import io.bootique.help.ConsoleAppender;
 import io.bootique.meta.MetadataNode;
-import io.bootique.meta.config.ConfigListMetadata;
-import io.bootique.meta.config.ConfigMapMetadata;
-import io.bootique.meta.config.ConfigMetadataNode;
-import io.bootique.meta.config.ConfigMetadataVisitor;
-import io.bootique.meta.config.ConfigObjectMetadata;
-import io.bootique.meta.config.ConfigValueMetadata;
+import io.bootique.meta.config.*;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
@@ -45,9 +35,8 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
     /**
      * Set to trace already printed types. It is used to break a possible recursion.
      */
-    private Set<Type> seenMetadataTypes;
-
-    protected ConsoleAppender out;
+    private final Set<Type> seenMetadataTypes;
+    protected final ConsoleAppender out;
 
     public ConfigSectionGenerator(ConsoleAppender out, Set<Type> seenMetadataTypes) {
         this.out = Objects.requireNonNull(out);
@@ -65,7 +54,7 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
                     public ConfigObjectMetadata visitObjectMetadata(ConfigObjectMetadata visited) {
 
                         // Include the root type even if it has no properties.
-                        // This ensure its header is printed in maps and lists
+                        // This ensures its header is printed in maps and lists
                         if (metadata == visited) {
                             return visited;
                         }
@@ -155,37 +144,6 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
         out.println("#");
         printValueHeader(metadata);
         out.println("#");
-    }
-
-    protected void printMapHeader(ConfigMetadataNode metadata, boolean padded) {
-
-        if (padded) {
-            out.println("#");
-        }
-
-        String typeLabel = metadata.accept(new ConfigMetadataVisitor<String>() {
-            @Override
-            public String visitObjectMetadata(ConfigObjectMetadata metadata) {
-                return metadata.getTypeLabel();
-            }
-        });
-
-        if (typeLabel != null) {
-            out.println("# Type option: ", typeLabel);
-        }
-
-        if (metadata.getDescription() != null) {
-            out.println("# ", metadata.getDescription());
-        }
-
-        Type valueType = metadata.getType();
-        if (valueType != null && !isImpliedType(valueType)) {
-            out.println("# Resolved as '", typeLabel(valueType), "'.");
-        }
-
-        if (padded) {
-            out.println("#");
-        }
     }
 
     protected void printObjectNoSubclasses(ConfigObjectMetadata metadata) {
