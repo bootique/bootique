@@ -10,7 +10,7 @@ jobs:
     name: JDK ${{ matrix.java }}
     strategy:
       matrix:
-        java: [ 11, 17 ]
+        java: [ 11, 17, 21 ]
 
     steps:
       - name: Checkout...
