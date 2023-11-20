@@ -24,7 +24,7 @@
 	<parent>
 		<groupId>io.bootique</groupId>
 		<artifactId>bootique-framework-parent</artifactId>
-		<version>3.0.M2</version>
+		<version>3.0.M3-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>bootique</artifactId>
