@@ -22,7 +22,7 @@
     <parent>
         <artifactId>bootique-framework-parent</artifactId>
         <groupId>io.bootique</groupId>
-        <version>3.0.M2-SNAPSHOT</version>
+        <version>3.0.M2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
