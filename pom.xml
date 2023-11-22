@@ -44,6 +44,7 @@
         <module>bootique-docs</module>
     </modules>
 
+    <!-- TODO: this section will be obsolete once we upgrade to bootique-modules-parent:3.0.21 -->
     <scm>
         <developerConnection>scm:git:ssh://git@github.com/bootique/bootique</developerConnection>
         <url>https://github.com/bootique/bootique</url>
