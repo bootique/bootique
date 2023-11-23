@@ -182,8 +182,13 @@ public class BuiltModule {
         }
 
         public Builder configs(Map<String, Type> configs) {
-            if (configs == null) {
-                configs = new HashMap<>();
+
+            if (configs == null || configs.isEmpty()) {
+                return this;
+            }
+
+            if (this.configs == null) {
+                this.configs = new HashMap<>();
             }
             this.configs.putAll(configs);
             return this;
