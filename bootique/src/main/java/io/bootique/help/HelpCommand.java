@@ -32,8 +32,8 @@ import javax.inject.Provider;
  */
 public class HelpCommand extends CommandWithMetadata {
 
-    private BootLogger bootLogger;
-    private Provider<HelpGenerator> helpGeneratorProvider;
+    private final BootLogger bootLogger;
+    private final Provider<HelpGenerator> helpGeneratorProvider;
 
     public HelpCommand(BootLogger bootLogger, Provider<HelpGenerator> helpGeneratorProvider) {
         super(CommandMetadata.builder(HelpCommand.class).description("Prints this message.").build());

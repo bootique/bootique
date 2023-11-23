@@ -71,13 +71,7 @@ public class ConsoleAppender {
      * @return a new appender with the specified base offset.
      */
     public ConsoleAppender withOffset(int offset) {
-
-        StringBuilder padding = new StringBuilder();
-        for (int i = 0; i < offset; i++) {
-            padding.append(" ");
-        }
-
-        return withOffset(padding.toString());
+        return withOffset(" ".repeat(Math.max(0, offset)));
     }
 
     public ConsoleAppender withOffset(String offset) {

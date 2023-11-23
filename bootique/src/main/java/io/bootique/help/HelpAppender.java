@@ -29,7 +29,7 @@ import static java.util.Arrays.asList;
  */
 public class HelpAppender {
 
-    private ConsoleAppender rootAppender;
+    private final ConsoleAppender rootAppender;
     private ConsoleAppender offsetAppender;
     private ConsoleAppender doubleOffsetAppender;
 

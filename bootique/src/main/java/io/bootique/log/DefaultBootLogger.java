@@ -24,9 +24,9 @@ import java.util.function.Supplier;
 
 public class DefaultBootLogger implements BootLogger {
 
-	private boolean trace;
-	private PrintStream stdout;
-	private PrintStream stderr;
+	private final boolean trace;
+	private final PrintStream stdout;
+	private final PrintStream stderr;
 
 	public DefaultBootLogger(boolean trace) {
 		this(trace, System.out, System.err);

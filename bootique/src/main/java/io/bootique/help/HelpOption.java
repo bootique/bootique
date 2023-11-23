@@ -28,9 +28,9 @@ import java.util.Objects;
  */
 public class HelpOption implements Comparable<HelpOption> {
 
-    private OptionMetadata option;
+    private final OptionMetadata option;
     private boolean shortNameAllowed;
-    private boolean longNameAllowed;
+    private final boolean longNameAllowed;
 
     public HelpOption(OptionMetadata option) {
         this.option = Objects.requireNonNull(option);

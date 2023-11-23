@@ -39,8 +39,8 @@ import static java.util.Arrays.asList;
 public class JoptCliFactory implements CliFactory {
 
     private final Object optionParserLock;
-    private Provider<CommandManager> commandManagerProvider;
-    private ApplicationMetadata application;
+    private final Provider<CommandManager> commandManagerProvider;
+    private final ApplicationMetadata application;
 
     private volatile OptionParser optionParser;
 

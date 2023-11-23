@@ -33,8 +33,8 @@ import static java.util.stream.Collectors.toList;
  */
 public class JoptCli implements Cli {
 
-	private OptionSet optionSet;
-	private String commandName;
+	private final OptionSet optionSet;
+	private final String commandName;
 
 	public JoptCli(OptionSet parsed, String commandName) {
 		this.optionSet = parsed;

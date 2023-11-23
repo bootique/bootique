@@ -144,7 +144,7 @@ public class DefaultHelpGenerator implements HelpGenerator {
         options.forEach(o -> {
 
             String valueName = o.getOption().getValueName();
-            if (valueName == null || valueName.length() == 0) {
+            if (valueName == null || valueName.isEmpty()) {
                 valueName = "val";
             }
 
