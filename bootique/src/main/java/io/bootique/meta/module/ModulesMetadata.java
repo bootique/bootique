@@ -29,10 +29,10 @@ import static java.util.Arrays.asList;
  */
 public class ModulesMetadata {
 
-    private Collection<ModuleMetadata> modules;
+    private final Collection<ModuleMetadata> modules;
 
-    private ModulesMetadata() {
-        this.modules = new ArrayList<>();
+    ModulesMetadata(Collection<ModuleMetadata> modules) {
+        this.modules = modules;
     }
 
     public static Builder builder() {
@@ -60,23 +60,23 @@ public class ModulesMetadata {
 
     public static class Builder {
 
-        private ModulesMetadata modules;
+        private final Collection<ModuleMetadata> modules;
 
         private Builder() {
-            this.modules = new ModulesMetadata();
+            this.modules = new ArrayList<>();
         }
 
         public ModulesMetadata build() {
-            return modules;
+            return new ModulesMetadata(modules);
         }
 
         public Builder addModule(ModuleMetadata moduleMetadata) {
-            modules.modules.add(moduleMetadata);
+            modules.add(moduleMetadata);
             return this;
         }
 
         public Builder addModules(Collection<ModuleMetadata> moduleMetadata) {
-            modules.modules.addAll(moduleMetadata);
+            modules.addAll(moduleMetadata);
             return this;
         }
     }
