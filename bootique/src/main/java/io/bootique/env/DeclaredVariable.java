@@ -26,9 +26,9 @@ import java.util.Objects;
  */
 public class DeclaredVariable {
 
-    private String configPath;
-    private String name;
-    private String description;
+    private final String configPath;
+    private final String name;
+    private final String description;
 
     public DeclaredVariable(String configPath, String name, String description) {
         this.configPath = Objects.requireNonNull(configPath);

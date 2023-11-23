@@ -48,7 +48,7 @@ public class BQRuntimeChecker {
     @SafeVarargs
     public static void testModulesLoaded(BQRuntime runtime, Class<? extends BQModule>... expectedModules) {
 
-        final ModulesMetadata modulesMetadata = runtime.getInstance(ModulesMetadata.class);
+        ModulesMetadata modulesMetadata = runtime.getModulesMetadata();
 
         final List<String> actualModules = modulesMetadata
                 .getModules()

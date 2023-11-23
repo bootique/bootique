@@ -23,7 +23,10 @@ import io.bootique.annotation.Args;
 import io.bootique.command.CommandOutcome;
 import io.bootique.di.Injector;
 import io.bootique.di.Key;
+import io.bootique.env.Environment;
 import io.bootique.log.BootLogger;
+import io.bootique.meta.application.ApplicationMetadata;
+import io.bootique.meta.module.ModulesMetadata;
 import io.bootique.run.Runner;
 import io.bootique.shutdown.ShutdownManager;
 
@@ -57,7 +60,7 @@ public class BQRuntime {
      * @return a DI-bound instance of a given type.
      */
     public <T> T getInstance(Key<T> diKey) {
-        if(!injector.hasProvider(diKey)) {
+        if (!injector.hasProvider(diKey)) {
             throw new NullPointerException("No binding for key: " + diKey);
         }
         return injector.getProvider(diKey).get();
@@ -81,6 +84,33 @@ public class BQRuntime {
     }
 
     /**
+     * Returns a metadata object with meta-information about the application, commands, CLI options, known variables, etc.
+     *
+     * @since 3.0
+     */
+    public ApplicationMetadata getAppMetadata() {
+        return injector.getInstance(ApplicationMetadata.class);
+    }
+
+    /**
+     * Returns a metadata object with the information about runtime modules.
+     *
+     * @since 3.0
+     */
+    public ModulesMetadata getModulesMetadata() {
+        return injector.getInstance(ModulesMetadata.class);
+    }
+
+    /**
+     * Returns application environment object.
+     *
+     * @since 3.0
+     */
+    public Environment getEnvironment() {
+        return injector.getInstance(Environment.class);
+    }
+
+    /**
      * Executes Bootique runtime shutdown, allowing all interested DI services to perform cleanup.
      */
     public void shutdown() {
@@ -92,8 +122,8 @@ public class BQRuntime {
 
     protected void shutdown(ShutdownManager shutdownManager, BootLogger logger) {
         shutdownManager.shutdown().forEach((s, th) ->
-            logger.stderr(String.format("Error performing shutdown of '%s': %s",
-                    s.getClass().getSimpleName(),
-                    th.getMessage() != null ? th.getMessage() : th.getClass().getName())));
+                logger.stderr(String.format("Error performing shutdown of '%s': %s",
+                        s.getClass().getSimpleName(),
+                        th.getMessage() != null ? th.getMessage() : th.getClass().getName())));
     }
 }

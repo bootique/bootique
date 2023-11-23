@@ -170,7 +170,7 @@ public class ConfigValueMetadata implements ConfigMetadataNode {
         }
 
         public B valueLabel(String valueLabel) {
-            if (valueLabel != null && valueLabel.length() == 0) {
+            if (valueLabel != null && valueLabel.isEmpty()) {
                 valueLabel = null;
             }
 
@@ -180,7 +180,7 @@ public class ConfigValueMetadata implements ConfigMetadataNode {
         }
 
         public B description(String description) {
-            if (description != null && description.length() == 0) {
+            if (description != null && description.isEmpty()) {
                 description = null;
             }
 

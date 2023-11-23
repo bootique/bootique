@@ -20,6 +20,7 @@
 package io.bootique.env;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +28,8 @@ import java.util.Map;
  * An {@link Environment} implementation that reads properties and variables from the Map passed in constructor.
  */
 public class DefaultEnvironment implements Environment {
+
+    static final String FRAMEWORK_PROPERTIES_PREFIX = "bq";
 
     /**
      * If present, enables boot sequence tracing to STDERR.
@@ -48,12 +51,23 @@ public class DefaultEnvironment implements Environment {
         return properties.get(name);
     }
 
+    @Deprecated
     @Override
     public Map<String, String> subproperties(String prefix) {
         return filterByPrefix(properties, prefix, ".");
     }
 
-    protected Map<String, String> filterByPrefix(Map<String, String> unfiltered, String prefix, String separator) {
+    @Override
+    public Map<String, String> properties() {
+        return Collections.unmodifiableMap(properties);
+    }
+
+    @Override
+    public Map<String, String> frameworkProperties() {
+        return filterByPrefix(properties, FRAMEWORK_PROPERTIES_PREFIX, ".");
+    }
+
+    protected static Map<String, String> filterByPrefix(Map<String, String> unfiltered, String prefix, String separator) {
         String lPrefix = prefix.endsWith(separator) ? prefix : prefix + separator;
         int len = lPrefix.length();
 
@@ -138,7 +152,7 @@ public class DefaultEnvironment implements Environment {
         private void mergeValue(DeclaredVariable dv, Map<String, String> properties, Map<String, String> vars) {
             String value = vars.get(dv.getName());
             if (value != null) {
-                String canonicalProperty = Environment.FRAMEWORK_PROPERTIES_PREFIX + "." + dv.getConfigPath();
+                String canonicalProperty = FRAMEWORK_PROPERTIES_PREFIX + "." + dv.getConfigPath();
                 properties.put(canonicalProperty, value);
             }
         }

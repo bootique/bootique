@@ -45,7 +45,7 @@ public class BootiqueTest {
     @Test
     public void createInjector_Modules_Instances() {
         Injector i = bootique.modules(new TestModule1(), new TestModule2()).createInjector();
-        Set<String> strings = i.getInstance(Key.get(new TypeLiteral<Set<String>>(){}));
+        Set<String> strings = i.getInstance(Key.get(new TypeLiteral<>(){}));
 
         assertEquals(2, strings.size());
         assertTrue(strings.contains("tm1"));
@@ -55,7 +55,7 @@ public class BootiqueTest {
     @Test
     public void createInjector_Modules_Types() {
         Injector i = bootique.modules(TestModule1.class, TestModule2.class).createInjector();
-        Set<String> strings = i.getInstance(Key.get(new TypeLiteral<Set<String>>(){}));
+        Set<String> strings = i.getInstance(Key.get(new TypeLiteral<>(){}));
 
         assertEquals(2, strings.size());
         assertTrue(strings.contains("tm1"));

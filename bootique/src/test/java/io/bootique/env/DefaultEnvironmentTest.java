@@ -16,23 +16,31 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package io.bootique.env;
 
-package io.bootique;
+import org.junit.jupiter.api.Test;
 
-class ApplicationDescription {
+import java.util.Map;
 
-    private final String description;
+import static org.junit.jupiter.api.Assertions.*;
 
-    // need this constructor for default DI binding
-    public ApplicationDescription() {
-        this(null);
+public class DefaultEnvironmentTest {
+
+    @Test
+    public void testProperties() {
+        Map<String, String> props = Map.of("a", "b", "bq.c", "d");
+        DefaultEnvironment env = new DefaultEnvironment(props);
+        assertEquals(props, env.properties());
     }
 
-    public ApplicationDescription(String description) {
-        this.description = description;
-    }
+    @Test
+    public void testFrameworkProperties() {
+        DefaultEnvironment env = new DefaultEnvironment(Map.of(
+                "a", "b",
+                "bq.c", "d",
+                "c", "e",
+                "bq.x", "y"));
 
-    public String getDescription() {
-        return description;
+        assertEquals(Map.of("c", "d", "x", "y"), env.frameworkProperties());
     }
 }

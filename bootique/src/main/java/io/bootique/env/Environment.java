@@ -22,33 +22,44 @@ package io.bootique.env;
 import java.util.Map;
 
 /**
- * Provides access to system properties and environment variables for the app.
- * Allows to filter properties by prefix to separate Bootique-specific values.
+ * Provides access to runtime properties, all and Bootique-specific. Bootique-specific properties are those that start
+ * with "bq.". By default, Environment properties are the same as JVM system properties.
  */
 public interface Environment {
 
+    /**
+     * @deprecated unused
+     */
+    @Deprecated(since = "3.0", forRemoval = true)
     String FRAMEWORK_PROPERTIES_PREFIX = "bq";
 
+    /**
+     * Return a value for the named property or null if not present.
+     */
     String getProperty(String name);
 
     /**
-     * Returns all properties in this environment that start with a given prefix
-     * plus a dot separator. The prefix is stripped from the property name in
-     * the Map.
+     * Returns all properties in this Environment.
+     *
+     * @since 3.0
+     */
+    Map<String, String> properties();
+
+    /**
+     * Returns all properties in this environment that start with a given prefix plus a dot separator. The prefix is
+     * stripped from the property name in the Map.
      *
      * @param prefix a prefix to qualify properties with.
      * @return all properties in this environment that start with a given prefix
      * plus a dot separator.
+     * @deprecated unused. To retrieve Bootique-specific properties use {@link #frameworkProperties()}
      */
+    @Deprecated(since = "3.0", forRemoval = true)
     Map<String, String> subproperties(String prefix);
 
     /**
-     * An equivalent to calling {@link #subproperties(String)} with "bq" prefix
-     * argument.
-     *
-     * @return a map of all properties that start with "bq." prefix.
+     * Returns a subset of properties in this Environment that start with "bq." prefix. The prefix is stripped from the
+     * properties in the returned map.
      */
-    default Map<String, String> frameworkProperties() {
-        return subproperties(FRAMEWORK_PROPERTIES_PREFIX);
-    }
+    Map<String, String> frameworkProperties();
 }
