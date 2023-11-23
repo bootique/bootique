@@ -43,14 +43,14 @@ public class BQTestFactory_PerClass_IT {
 
     @Test
     @DisplayName("Args passed")
-    public void testArgsPassed() {
+    public void argsPassed() {
         BQRuntime rt = testFactory.app("-x").args("-y").args(Collections.singleton("-z")).autoLoadModules().createRuntime();
         assertArrayEquals(new String[]{"-x", "-y", "-z"}, rt.getArgs());
     }
 
     @Test
     @DisplayName("Custom BootLogger")
-    public void testBootLogger() {
+    public void bootLogger() {
 
         TestIO io = TestIO.noTrace();
 
@@ -68,7 +68,7 @@ public class BQTestFactory_PerClass_IT {
 
     @Test
     @DisplayName("System props don't leak to test")
-    public void testConfigEnvExcludes_System() {
+    public void configEnvExcludes_System() {
         System.setProperty("bq.a", "bq_a");
         System.setProperty("bq.c.m.k", "bq_c_m_k");
         System.setProperty("bq.c.m.l", "bq_c_m_l");

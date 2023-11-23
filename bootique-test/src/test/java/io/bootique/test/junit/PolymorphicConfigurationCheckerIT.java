@@ -27,7 +27,7 @@ import org.junit.Test;
 public class PolymorphicConfigurationCheckerIT {
 
     @Test(expected = AssertionError.class)
-    public void test_NotInServiceLoader() {
+    public void notInServiceLoader() {
 
         // intentionally tricking Java type boundary checks
         Class c1 = C1.class;
@@ -36,7 +36,7 @@ public class PolymorphicConfigurationCheckerIT {
     }
 
     @Test(expected = AssertionError.class)
-    public void testNoDefault_NotInServiceLoader() {
+    public void noDefault_NotInServiceLoader() {
 
         // intentionally tricking Java type boundary checks
         Class c1 = C1.class;
@@ -60,7 +60,7 @@ public class PolymorphicConfigurationCheckerIT {
     }
 
     @Test(expected = AssertionError.class)
-    public void testNoDefault_BadDefault() {
+    public void noDefault_BadDefault() {
         PolymorphicConfigurationChecker.testNoDefault(C9.class, C11.class);
     }
 

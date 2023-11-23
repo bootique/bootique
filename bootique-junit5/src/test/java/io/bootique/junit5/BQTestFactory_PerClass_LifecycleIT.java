@@ -41,7 +41,7 @@ public class BQTestFactory_PerClass_LifecycleIT {
     static final BQTestFactory testFactory = new BQTestFactory();
 
     @RepeatedTest(value = 3, name = "Check shutdowns ... {currentRepetition}")
-    public void testShutdowns() {
+    public void shutdowns() {
         tester.run();
     }
 
