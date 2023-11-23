@@ -48,7 +48,7 @@ import java.util.*;
  */
 public class Bootique {
 
-    private Collection<BQModuleProvider> providers;
+    private final Collection<BQModuleProvider> providers;
     private String[] args;
     private boolean autoLoadModules;
     private BootLogger bootLogger;
@@ -66,13 +66,13 @@ public class Bootique {
         try {
             return moduleType.getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException |
-                NoSuchMethodException | InvocationTargetException e) {
+                 NoSuchMethodException | InvocationTargetException e) {
             throw new RuntimeException("Error instantiating Module of type: " + moduleType.getName(), e);
         }
     }
 
     /**
-     * A generic main method that auto-loads available modules and runs Bootique stack. Useful for apps that don't
+     * A generic main method that autoloads available modules and runs Bootique stack. Useful for apps that don't
      * care to customize their "main()".
      *
      * @param args app arguments passed by the shell.
@@ -158,15 +158,9 @@ public class Bootique {
     }
 
     /**
-     * Instructs Bootique to load any modules available on class-path that
-     * expose {@link BQModuleProvider} provider. Auto-loaded modules will be
-     * used in default configuration. Factories within modules will of course be
+     * Instructs Bootique to load any modules available on classpath that expose {@link BQModuleProvider} provider.
+     * Autoloaded modules will be used in default configuration. Factories within modules will of course be
      * configured dynamically from YAML.
-     *
-     * <i>Use with caution, you may load more modules than you expected. Make
-     * sure only needed Bootique dependencies are included on class-path. If in
-     * doubt, switch to explicit Module loading via
-     * {@link #modules(Class...)}</i>.
      *
      * @return this Bootique instance
      * @see BQModuleProvider
@@ -245,7 +239,7 @@ public class Bootique {
      */
     @SafeVarargs
     public final BQModuleOverrideBuilder<Bootique> override(Class<? extends BQModule>... overriddenTypes) {
-        return new BQModuleOverrideBuilder<Bootique>() {
+        return new BQModuleOverrideBuilder<>() {
 
             @Override
             public Bootique with(Class<? extends BQModule> moduleType) {
