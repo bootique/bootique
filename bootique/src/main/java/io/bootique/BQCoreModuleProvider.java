@@ -19,18 +19,27 @@
 package io.bootique;
 
 import io.bootique.di.BQModule;
+import io.bootique.log.BootLogger;
+import io.bootique.shutdown.ShutdownManager;
 
-import java.util.Objects;
+import java.util.Collection;
+import java.util.function.Supplier;
 
 /**
- * @since 3.0.M1
+ * @since 3.0
  */
 public class BQCoreModuleProvider implements BQModuleProvider {
 
     private final BQCoreModule module;
 
-    public BQCoreModuleProvider(BQCoreModule module) {
-        this.module = Objects.requireNonNull(module);
+    public BQCoreModuleProvider(
+            String[] args,
+            BootLogger bootLogger,
+            ShutdownManager shutdownManager,
+            Supplier<Collection<BQModuleMetadata>> modulesSource) {
+
+        // BQCoreModule requires a couple of explicit services that can not be initialized within the module itself
+        this.module = new BQCoreModule(args, bootLogger, shutdownManager, modulesSource);
     }
 
     @Override

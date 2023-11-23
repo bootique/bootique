@@ -380,17 +380,14 @@ public class Bootique {
 
     Injector createInjector() {
 
-        DeferredModulesSource modulesSource = new DeferredModulesSource();
         Collection<BQModuleMetadata> modulesMetadata = new HashSet<>();
+        DeferredModulesSource modulesSource = new DeferredModulesSource();
 
-        BQCoreModule coreModule = new BQCoreModule(args,
-                bootLogger,
-                shutdownManager,
-                modulesSource);
+        BQModuleProvider coreProvider = new BQCoreModuleProvider(args, bootLogger, shutdownManager, modulesSource);
 
         // note that 'moduleMetadata' is invalid at this point; it will be initialized later in this method, which
         // is safe to do, as it won't be used until the Injector is created by the method caller.
-        modulesMetadata.add(new BQCoreModuleProvider(coreModule).moduleBuilder().build());
+        modulesMetadata.add(coreProvider.moduleBuilder().build());
 
         modulesMetadata.addAll(moduleProviderDependencies(providers));
         if (autoLoadModules) {

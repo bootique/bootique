@@ -88,13 +88,7 @@ public class BQCoreModule implements BQModule {
     private final ShutdownManager shutdownManager;
     private final Supplier<Collection<BQModuleMetadata>> modulesSource;
 
-    /**
-     * Creates a BQCoreModule, initializing it with a few explicit core objects that are defined outside the
-     * dependency injection engine.
-     *
-     * @since 3.0
-     */
-    public BQCoreModule(
+    protected BQCoreModule(
             String[] args,
             BootLogger bootLogger,
             ShutdownManager shutdownManager,
