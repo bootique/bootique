@@ -1,5 +1,6 @@
 ## 3.0-M3
 
+* #334 Explicit support for module deprecation
 * #335 Simple API for creating command metadata
 
 ## 3.0.M2
