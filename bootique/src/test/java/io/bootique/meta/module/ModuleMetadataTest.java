@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ModuleMetadataTest {
 
     @Test
-    public void testFindConfig_NotFound() {
+    public void findConfig_NotFound() {
 
         ConfigValueMetadata c1 = ConfigValueMetadata
                 .builder("r1_p1")
@@ -62,7 +62,7 @@ public class ModuleMetadataTest {
     }
 
     @Test
-    public void testFindConfig() {
+    public void findConfig() {
 
         ConfigObjectMetadata c1 = ConfigObjectMetadata.builder("r1")
                 .description("r1 desc")
@@ -100,7 +100,7 @@ public class ModuleMetadataTest {
     }
 
     @Test
-    public void testFindConfig_Inheritance() {
+    public void findConfig_Inheritance() {
 
         ConfigObjectMetadata sub1 = ConfigObjectMetadata.builder()
                 .description("sub1 desc")

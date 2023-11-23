@@ -18,7 +18,7 @@ public class CommandTest {
 
     // tag::Testing[]
     @Test
-    public void testCommand() {
+    public void command() {
 
         TestIO io = TestIO.noTrace();
         CommandOutcome outcome = testFactory

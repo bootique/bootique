@@ -43,7 +43,7 @@ public class Bootique_Configuration_PropertiesIT {
     }
 
     @Test
-    public void testOverride() {
+    public void override() {
         BQRuntime runtime = app(b -> BQCoreModule.extend(b).setProperty("bq.testOverride.c", "D"));
 
         TestOverrideBean b = runtime
@@ -55,7 +55,7 @@ public class Bootique_Configuration_PropertiesIT {
     }
 
     @Test
-    public void testOverride_EmptyString() {
+    public void override_EmptyString() {
         BQRuntime runtime = app(b -> BQCoreModule.extend(b).setProperty("bq.testOverride.c", ""));
 
         TestOverrideBean b = runtime
@@ -67,7 +67,7 @@ public class Bootique_Configuration_PropertiesIT {
     }
 
     @Test
-    public void testOverrideNested() {
+    public void overrideNested() {
         BQRuntime runtime = app(b -> BQCoreModule.extend(b).setProperty("bq.testOverrideNested.m.z", "2"));
 
         TestOverrideNestedBean b = runtime.getInstance(ConfigurationFactory.class)
@@ -78,7 +78,7 @@ public class Bootique_Configuration_PropertiesIT {
     }
 
     @Test
-    public void testOverrideValueArray() {
+    public void overrideValueArray() {
         BQRuntime runtime = app(b -> BQCoreModule.extend(b).setProperty("bq.testOverrideValueArray.h[1]", "J"));
 
         TestOverrideValueArrayBean b = runtime.getInstance(ConfigurationFactory.class)
@@ -90,7 +90,7 @@ public class Bootique_Configuration_PropertiesIT {
     }
 
     @Test
-    public void testOverrideValueArray_Empty() {
+    public void overrideValueArray_Empty() {
         BQRuntime runtime = app(b -> BQCoreModule.extend(b)
                 .setProperty("bq.testOverrideValueArrayEmpty.h[0]", "J")
                 .setProperty("bq.testOverrideValueArrayEmpty.h[1]", "A")
@@ -106,7 +106,7 @@ public class Bootique_Configuration_PropertiesIT {
     }
 
     @Test
-    public void testOverrideObjectArray() {
+    public void overrideObjectArray() {
         BQRuntime runtime = app(b -> BQCoreModule.extend(b).setProperty("bq.testOverrideObjectArray.d[1].e", "20"));
 
         TestOverrideObjectArrayBean b = runtime.getInstance(ConfigurationFactory.class)
@@ -117,7 +117,7 @@ public class Bootique_Configuration_PropertiesIT {
     }
 
     @Test
-    public void testOverrideObjectArray_AddValue() {
+    public void overrideObjectArray_AddValue() {
         // appending value at the end...
         BQRuntime runtime = app(b -> BQCoreModule.extend(b).setProperty("bq.testOverrideObjectArray.d[2].e", "3"));
 

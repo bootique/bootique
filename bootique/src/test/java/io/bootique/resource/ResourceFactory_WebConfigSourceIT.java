@@ -63,7 +63,7 @@ public class ResourceFactory_WebConfigSourceIT {
     }
 
     @Test
-    public void testReadConfig_HttpUrl() throws IOException {
+    public void readConfig_HttpUrl() throws IOException {
         String url = "http://localhost:12025/";
         assertEquals("g: h", ResourceFactoryTest.resourceContents(url));
     }

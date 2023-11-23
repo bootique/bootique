@@ -77,7 +77,7 @@ public class Bootique_Help_VarsIT {
     }
 
     @Test
-    public void test_SameVarTwoPaths() {
+    public void sameVarTwoPaths() {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(System.err));
@@ -111,7 +111,7 @@ public class Bootique_Help_VarsIT {
     }
 
     @Test
-    public void test_SameVarTwoPaths_Descriptions() {
+    public void sameVarTwoPaths_Descriptions() {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(System.err));
@@ -147,7 +147,7 @@ public class Bootique_Help_VarsIT {
     }
 
     @Test
-    public void test_SameVarTwoIdenticalPaths_Descriptions() {
+    public void sameVarTwoIdenticalPaths_Descriptions() {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(System.err));
@@ -183,7 +183,7 @@ public class Bootique_Help_VarsIT {
     }
 
     @Test
-    public void testDescription() {
+    public void description() {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(System.err));
@@ -215,7 +215,7 @@ public class Bootique_Help_VarsIT {
     }
 
     @Test
-    public void testWithMap() {
+    public void withMap() {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         BootLogger logger = new DefaultBootLogger(true, new PrintStream(out), new PrintStream(System.err));
@@ -249,7 +249,7 @@ public class Bootique_Help_VarsIT {
     }
 
     @Test
-    public void testWithList() {
+    public void withList() {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(System.err));
@@ -283,7 +283,7 @@ public class Bootique_Help_VarsIT {
     }
 
     @Test
-    public void testUnboundVar() {
+    public void unboundVar() {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         BootLogger logger = new DefaultBootLogger(true, new PrintStream(out), new PrintStream(System.err));

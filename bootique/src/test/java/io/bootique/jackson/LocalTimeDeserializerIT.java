@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class LocalTimeDeserializerIT extends DeserializerTestBase {
 
     @Test
-    public void testDeserialization() throws Exception {
+    public void deserialization() throws Exception {
         Bean o = deserialize(Bean.class, "localTime: \"09:22:00.000000057\"");
         assertEquals(LocalTime.of(9, 22, 0, 57), o.localTime);
     }

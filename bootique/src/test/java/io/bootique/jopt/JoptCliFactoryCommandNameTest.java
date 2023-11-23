@@ -48,7 +48,7 @@ public class JoptCliFactoryCommandNameTest {
     }
 
     @Test
-    public void testCommandName_NoMatch() {
+    public void commandName_NoMatch() {
 
         addMockCommand("c1", "me", "them");
 
@@ -57,7 +57,7 @@ public class JoptCliFactoryCommandNameTest {
     }
 
     @Test
-    public void testCommandName_Match() {
+    public void commandName_Match() {
 
         addMockCommand("c1", "me", "them");
         addMockCommand("c2", "us", "others");
@@ -67,7 +67,7 @@ public class JoptCliFactoryCommandNameTest {
     }
 
     @Test
-    public void testCommandName_MultipleMatches() {
+    public void commandName_MultipleMatches() {
 
         addMockCommand("c1", "me", "them");
         addMockCommand("c2", "us", "others");

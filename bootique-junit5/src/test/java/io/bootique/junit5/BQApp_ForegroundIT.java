@@ -47,7 +47,7 @@ public class BQApp_ForegroundIT {
             .createRuntime();
 
     @Test
-    public void testDidRun() {
+    public void didRun() {
         assertEquals(1, XCommand.runCount);
         assertDoesNotThrow(() -> app.getInstance(XCommand.class));
     }

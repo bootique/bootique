@@ -41,38 +41,38 @@ public class FolderResourceFactoryTest {
     }
 
     @Test
-    public void testGetUrl_RootClasspathUrl_Slash() throws IOException {
+    public void getUrl_RootClasspathUrl_Slash() throws IOException {
         String url = new FolderResourceFactory("classpath:/").getUrl().toExternalForm();
         assertNotNull(url);
         assertTrue(url.endsWith("/"));
     }
 
     @Test
-    public void testGetUrl_RootClasspathUrl_NoSlash() throws IOException {
+    public void getUrl_RootClasspathUrl_NoSlash() throws IOException {
         String url = new FolderResourceFactory("classpath:").getUrl().toExternalForm();
         assertNotNull(url);
         assertTrue(url.endsWith("/"));
     }
 
     @Test
-    public void testGetUrl_Subresource_RootClasspathUrl() throws IOException {
+    public void getUrl_Subresource_RootClasspathUrl() throws IOException {
         assertEquals("c: d", resourceContents("classpath:", "io/bootique/config/test2.yml"));
     }
 
     @Test
-    public void testGetUrl_Subresource_ClasspathUrl() throws IOException {
+    public void getUrl_Subresource_ClasspathUrl() throws IOException {
         assertEquals("c: d", resourceContents("classpath:io/bootique/config", "test2.yml"));
     }
 
     @Test
-    public void testGetUrl_Subresource_FileProtocolUrl() throws IOException {
+    public void getUrl_Subresource_FileProtocolUrl() throws IOException {
         String folder = FolderResourceFactoryTest.class.getResource("/io/bootique/config").getPath();
         assertEquals("c: d", resourceContents("file:" + folder, "test2.yml"));
         assertEquals("c: d", resourceContents("file://" + folder, "test2.yml"));
     }
 
     @Test
-    public void testGetUrl_Exception_InvalidScheme() throws IOException {
+    public void getUrl_Exception_InvalidScheme() throws IOException {
         try {
             resourceContents("Z:/a/b/c", "test2.yml");
             fail("Expected exception was not thrown.");
@@ -83,7 +83,7 @@ public class FolderResourceFactoryTest {
     }
 
     @Test
-    public void testGetUrl_Subresource_ReverseSlashes() throws IOException {
+    public void getUrl_Subresource_ReverseSlashes() throws IOException {
         try {
             resourceContents("\\a\\b\\c", "test2.yml");
             fail("Expected exception was not thrown.");

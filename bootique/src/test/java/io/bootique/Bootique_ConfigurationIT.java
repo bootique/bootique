@@ -38,7 +38,7 @@ public class Bootique_ConfigurationIT {
     final TestAppManager appManager = new TestAppManager();
 
     @Test
-    public void testEmptyConfig() {
+    public void emptyConfig() {
         BQRuntime runtime = appManager.runtime(
                 Bootique.app("--config=src/test/resources/io/bootique/empty.yml"));
 
@@ -50,7 +50,7 @@ public class Bootique_ConfigurationIT {
     }
 
     @Test
-    public void testConfigBoundToString() {
+    public void configBoundToString() {
         BQRuntime runtime = appManager.runtime(
                 Bootique.app().module(b -> BQCoreModule.extend(b).setProperty("bq.x", "val")));
 
@@ -59,7 +59,7 @@ public class Bootique_ConfigurationIT {
     }
 
     @Test
-    public void testCombineConfigAndEmptyConfig() {
+    public void combineConfigAndEmptyConfig() {
         BQRuntime runtime = appManager.runtime(
                 Bootique.app("--config=classpath:io/bootique/test1.yml", "--config=classpath:io/bootique/empty.yml"));
 
@@ -72,7 +72,7 @@ public class Bootique_ConfigurationIT {
     }
 
     @Test
-    public void testCombineConfigs() {
+    public void combineConfigs() {
         BQRuntime runtime = appManager.runtime(
                 Bootique.app("--config=classpath:io/bootique/test1.yml", "--config=classpath:io/bootique/test2.yml"));
 
@@ -86,7 +86,7 @@ public class Bootique_ConfigurationIT {
     }
 
     @Test
-    public void testCombineConfigs_ReverseOrder() {
+    public void combineConfigs_ReverseOrder() {
         BQRuntime runtime = appManager.runtime(
                 Bootique.app("--config=classpath:io/bootique/test2.yml", "--config=classpath:io/bootique/test1.yml"));
 
@@ -100,7 +100,7 @@ public class Bootique_ConfigurationIT {
     }
 
     @Test
-    public void testDIConfig() {
+    public void dIConfig() {
 
         BQRuntime runtime = appManager.runtime(
                 Bootique.app().module(b -> BQCoreModule.extend(b)
@@ -117,7 +117,7 @@ public class Bootique_ConfigurationIT {
     }
 
     @Test
-    public void testDIConfig_VsCliOrder() {
+    public void dIConfig_VsCliOrder() {
 
         BQRuntime runtime = appManager.runtime(
                 Bootique.app("-c", "classpath:io/bootique/cliconfig.yml").module(b -> BQCoreModule.extend(b)
@@ -134,7 +134,7 @@ public class Bootique_ConfigurationIT {
     }
 
     @Test
-    public void testDIOnOptionConfig() {
+    public void dIOnOptionConfig() {
 
         Function<String, Map<String, Integer>> configReader =
                 arg -> {
@@ -160,7 +160,7 @@ public class Bootique_ConfigurationIT {
     }
 
     @Test
-    public void testDIOnOptionConfig_OverrideWithOption() {
+    public void dIOnOptionConfig_OverrideWithOption() {
 
         Function<String, Map<String, Integer>> configReader =
                 arg -> {
@@ -186,7 +186,7 @@ public class Bootique_ConfigurationIT {
     }
 
     @Test
-    public void testConfigEnvOverrides_Alias() {
+    public void configEnvOverrides_Alias() {
         BQRuntime runtime = appManager.runtime(
                 Bootique.app("--config=src/test/resources/io/bootique/test3.yml")
                         .module(b -> BQCoreModule.extend(b).declareVar("a", "V1")

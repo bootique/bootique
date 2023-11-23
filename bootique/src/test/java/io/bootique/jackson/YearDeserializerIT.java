@@ -29,13 +29,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class YearDeserializerIT extends DeserializerTestBase {
 
     @Test
-    public void testDeserialization_Value() throws Exception {
+    public void deserialization_Value() throws Exception {
         Year value = deserialize(Year.class, "1986");
         assertEquals(Year.of(1986), value);
     }
 
     @Test
-    public void testDeserialization_Object() throws Exception {
+    public void deserialization_Object() throws Exception {
         Bean o = deserialize(Bean.class, "year: 2017");
         assertEquals(Year.of(2017), o.year);
     }

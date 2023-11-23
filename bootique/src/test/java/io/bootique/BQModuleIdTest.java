@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class BQModuleIdTest {
 
     @Test
-    public void testStaticClass() {
+    public void innerStaticClass() {
         BQModuleId moduleId1 = BQModuleId.of(new MyStaticModule());
         BQModuleId moduleId2 = BQModuleId.of(new MyStaticModule());
         BQModuleId moduleId3 = BQModuleId.of(new MyStaticModule2());
@@ -49,7 +49,7 @@ public class BQModuleIdTest {
     }
 
     @Test
-    public void testClass() {
+    public void innerClass() {
         BQModuleId moduleId1 = BQModuleId.of(new MyModule());
         BQModuleId moduleId2 = BQModuleId.of(new MyModule());
         BQModuleId moduleId3 = BQModuleId.of(new MyModule2());
@@ -71,7 +71,7 @@ public class BQModuleIdTest {
     }
 
     @Test
-    public void testMethodRef() {
+    public void methodRef() {
         BQModuleId moduleId1 = BQModuleId.of(BQModuleIdTest::configure);
         BQModuleId moduleId2 = BQModuleId.of(BQModuleIdTest::configure);
         BQModuleId moduleId3 = BQModuleId.of(BQModuleIdTest::configure2);
@@ -92,7 +92,7 @@ public class BQModuleIdTest {
     }
 
     @Test
-    public void testLambda() {
+    public void lambda() {
         BQModuleId moduleId1 = BQModuleId.of(binder -> binder.bindSet(String.class).addInstance("lambda"));
         BQModuleId moduleId2 = BQModuleId.of(binder -> binder.bindSet(String.class).addInstance("lambda 2"));
 
@@ -106,7 +106,7 @@ public class BQModuleIdTest {
     }
 
     @Test
-    public void testLambdaFactory() {
+    public void lambdaFactory() {
         BQModuleId moduleId1 = BQModuleId.of(createModule("lambda factory"));
         BQModuleId moduleId2 = BQModuleId.of(createModule("lambda factory 2"));
 
@@ -121,7 +121,7 @@ public class BQModuleIdTest {
     }
 
     @Test
-    public void testMix() {
+    public void mix() {
         BQModuleId moduleId1 = BQModuleId.of(new MyModule());
         BQModuleId moduleId2 = BQModuleId.of(BQModuleIdTest::configure);
         BQModuleId moduleId3 = BQModuleId.of(createModule("lambda factory"));

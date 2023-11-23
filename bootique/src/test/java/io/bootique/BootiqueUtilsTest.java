@@ -32,13 +32,13 @@ import static org.mockito.Mockito.*;
 public class BootiqueUtilsTest {
 
     @Test
-    public void testToArray() {
+    public void toArray() {
         assertArrayEquals(new String[]{}, BootiqueUtils.toArray(Collections.emptyList()));
         assertArrayEquals(new String[]{"a", "b", "c"}, BootiqueUtils.toArray(asList("a", "b", "c")));
     }
 
     @Test
-    public void testMergeArrays() {
+    public void mergeArrays() {
         assertArrayEquals(new String[]{}, BootiqueUtils.mergeArrays(new String[0], new String[0]));
         assertArrayEquals(new String[]{"a"}, BootiqueUtils.mergeArrays(new String[]{"a"}, new String[0]));
         assertArrayEquals(new String[]{"b"}, BootiqueUtils.mergeArrays(new String[0], new String[]{"b"}));

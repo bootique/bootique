@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class BQModuleProviderCheckerTest {
 
     @Test
-    public void testMatchingProvider() {
+    public void matchingProvider() {
         BQModuleProvider p = new BQModuleProviderChecker(P1.class).matchingProvider();
 
         assertNotNull(p);
@@ -37,7 +37,7 @@ public class BQModuleProviderCheckerTest {
     }
 
     @Test
-    public void testTestMetadata() {
+    public void metadata() {
         new BQModuleProviderChecker(P1.class).testMetadata();
     }
 

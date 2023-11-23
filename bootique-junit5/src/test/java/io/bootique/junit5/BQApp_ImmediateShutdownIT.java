@@ -30,7 +30,7 @@ public class BQApp_ImmediateShutdownIT {
             .createRuntime();
 
     @Test
-    public void testDidRun() {
+    public void didRun() {
         assertEquals(1, XCommand.runCount);
         assertTrue(app.getInstance(XCommand.class).isStopped());
     }

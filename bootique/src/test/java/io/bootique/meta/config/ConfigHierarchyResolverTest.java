@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ConfigHierarchyResolverTest {
 
     @Test
-    public void testCreate_Classes() {
+    public void create_Classes() {
         ConfigHierarchyResolver resolver = ConfigHierarchyResolver
                 .create(asList(Config4.class, Config3.class, Config2.class, Config1.class));
 
@@ -42,7 +42,7 @@ public class ConfigHierarchyResolverTest {
     }
 
     @Test
-    public void testCreate_BaseInterface() {
+    public void create_BaseInterface() {
         ConfigHierarchyResolver resolver = ConfigHierarchyResolver
                 .create(asList(Config5.class, Config6.class, IConfig1.class));
 

@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ConfigObjectMetadataTest {
 
     @Test
-    public void testGetAllSubconfigs() {
+    public void getAllSubconfigs() {
 
         ConfigObjectMetadata o1 = ConfigObjectMetadata.builder().build();
         ConfigObjectMetadata o2 = ConfigObjectMetadata.builder().build();

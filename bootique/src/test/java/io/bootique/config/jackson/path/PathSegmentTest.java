@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class PathSegmentTest {
 
     @Test
-    public void testLastPathComponent_Value() {
+    public void lastPathComponent_Value() {
         JsonNode node = YamlReader.read("a");
         Optional<PathSegment<?>> last = PathSegment.create(node, "").lastPathComponent();
 
@@ -39,13 +39,13 @@ public class PathSegmentTest {
     }
 
     @Test
-    public void testLastPathComponent_Value_PastEnd() {
+    public void lastPathComponent_Value_PastEnd() {
         JsonNode node = YamlReader.read("a");
         assertThrows(IllegalArgumentException.class, () -> PathSegment.create(node, "x").lastPathComponent());
     }
 
     @Test
-    public void testLastPathComponent_Root() {
+    public void lastPathComponent_Root() {
         JsonNode node = YamlReader.read("a: b\nc: d");
         Optional<PathSegment<?>> last = PathSegment.create(node, "").lastPathComponent();
 
@@ -55,7 +55,7 @@ public class PathSegmentTest {
     }
 
     @Test
-    public void testLastPathComponent_Object_NullValue() {
+    public void lastPathComponent_Object_NullValue() {
         JsonNode node = YamlReader.read("a: null");
         Optional<PathSegment<?>> last = PathSegment.create(node, "").lastPathComponent();
 
@@ -64,7 +64,7 @@ public class PathSegmentTest {
     }
 
     @Test
-    public void testLastPathComponent_Object() {
+    public void lastPathComponent_Object() {
         JsonNode node = YamlReader.read("a: b\nc: d");
         Optional<PathSegment<?>> last = PathSegment.create(node, "a").lastPathComponent();
 
@@ -73,7 +73,7 @@ public class PathSegmentTest {
     }
 
     @Test
-    public void testLastPathComponent_ObjectNested() {
+    public void lastPathComponent_ObjectNested() {
         JsonNode node = YamlReader.read("a: b\nc:\n  d: e");
         Optional<PathSegment<?>> last = PathSegment.create(node, "c.d").lastPathComponent();
 
@@ -82,7 +82,7 @@ public class PathSegmentTest {
     }
 
     @Test
-    public void testLastPathComponent_DotsInPath() {
+    public void lastPathComponent_DotsInPath() {
         JsonNode node = YamlReader.read("a:\n  b.c: 6");
 
         Optional<PathSegment<?>> last0 = PathSegment.create(node, "a.b\\.c").lastPathComponent();
@@ -92,37 +92,37 @@ public class PathSegmentTest {
     }
 
     @Test
-    public void testLastPathComponent_ArrayOutOfBounds() {
+    public void lastPathComponent_ArrayOutOfBounds() {
         JsonNode node = YamlReader.read("a:\n  - b: 1\n  - b: 2");
         assertThrows(ArrayIndexOutOfBoundsException.class, () -> PathSegment.create(node, "a[-1]").lastPathComponent());
     }
 
     @Test
-    public void testLastPathComponent_Array_NonNumericIndex() {
+    public void lastPathComponent_Array_NonNumericIndex() {
         JsonNode node = YamlReader.read("a:\n  - b: 1\n  - b: 2");
         assertThrows(IllegalArgumentException.class, () -> PathSegment.create(node, "a[a]").lastPathComponent());
     }
 
     @Test
-    public void testLastPathComponent_Array_MissingClosingParen1() {
+    public void lastPathComponent_Array_MissingClosingParen1() {
         JsonNode node = YamlReader.read("a:\n  - b: 1\n  - b: 2");
         assertThrows(IllegalStateException.class, () -> PathSegment.create(node, "a[1.").lastPathComponent());
     }
 
     @Test
-    public void testLastPathComponent_Array_MissingClosingParen2() {
+    public void lastPathComponent_Array_MissingClosingParen2() {
         JsonNode node = YamlReader.read("a:\n  - b: 1\n  - b: 2");
         assertThrows(IllegalStateException.class, () -> PathSegment.create(node, "a[12").lastPathComponent());
     }
 
     @Test
-    public void testLastPathComponent_Array_Nested_PropertyMissingDot() {
+    public void lastPathComponent_Array_Nested_PropertyMissingDot() {
         JsonNode node = YamlReader.read("a:\n  - b: 1\n  - b: 2");
         assertThrows(IllegalStateException.class, () -> PathSegment.create(node, "a[1]b").lastPathComponent());
     }
 
     @Test
-    public void testLastPathComponent_ArrayRootValue() {
+    public void lastPathComponent_ArrayRootValue() {
         JsonNode node = YamlReader.read("- 1\n- 2");
 
         Optional<PathSegment<?>> last0 = PathSegment.create(node, "[0]").lastPathComponent();
@@ -137,7 +137,7 @@ public class PathSegmentTest {
     }
 
     @Test
-    public void testLastPathComponent_ArrayValue() {
+    public void lastPathComponent_ArrayValue() {
         JsonNode node = YamlReader.read("a:\n  - 1\n  - 2");
 
         Optional<PathSegment<?>> last0 = PathSegment.create(node, "a[0]").lastPathComponent();
@@ -152,7 +152,7 @@ public class PathSegmentTest {
     }
 
     @Test
-    public void testLastPathComponent_Array_PastEnd() {
+    public void lastPathComponent_Array_PastEnd() {
         JsonNode node = YamlReader.read("a:\n  - 1\n  - 2");
 
         Optional<PathSegment<?>> last = PathSegment.create(node, "a[2]").lastPathComponent();
@@ -161,7 +161,7 @@ public class PathSegmentTest {
     }
 
     @Test
-    public void testLastPathComponent_Array_PastEnd_Symbolic() {
+    public void lastPathComponent_Array_PastEnd_Symbolic() {
         JsonNode node = YamlReader.read("a:\n  - 1\n  - 2");
 
         Optional<PathSegment<?>> last = PathSegment.create(node, "a[.length]").lastPathComponent();
@@ -170,7 +170,7 @@ public class PathSegmentTest {
     }
 
     @Test
-    public void testLastPathComponent_ArrayObject() {
+    public void lastPathComponent_ArrayObject() {
         JsonNode node = YamlReader.read("a:\n  - b: 1\n  - b: 2");
         Optional<PathSegment<?>> last = PathSegment.create(node, "a[1].b").lastPathComponent();
 

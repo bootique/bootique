@@ -57,7 +57,7 @@ public class DefaultJacksonServiceIT {
     }
 
     @Test
-    public void testNewObjectMapper_Inheritance() throws IOException {
+    public void newObjectMapper_Inheritance() throws IOException {
         ObjectMapper mapper = new DefaultJacksonService(typesFactory.getTypes()).newObjectMapper();
 
         Sup1 su1 = readValue(Sup1.class, mapper, "{\"type\":\"sub1\",\"p1\":\"p1111\"}");

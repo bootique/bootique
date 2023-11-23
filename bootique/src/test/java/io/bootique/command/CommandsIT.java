@@ -53,7 +53,7 @@ public class CommandsIT {
     }
 
     @Test
-    public void testModuleCommands() {
+    public void moduleCommands() {
         BQModuleProvider provider = Commands.builder().build();
         BQRuntime runtime = appManager.runtime(Bootique.app(args).moduleProvider(provider));
         CommandManager commandManager = runtime.getInstance(CommandManager.class);
@@ -70,7 +70,7 @@ public class CommandsIT {
     }
 
     @Test
-    public void testNoModuleCommands() {
+    public void noModuleCommands() {
         BQModuleProvider provider = Commands.builder().noModuleCommands().build();
         BQRuntime runtime = appManager.runtime(Bootique.app(args).moduleProvider(provider));
         CommandManager commandManager = runtime.getInstance(CommandManager.class);
@@ -87,7 +87,7 @@ public class CommandsIT {
     }
 
     @Test
-    public void testModule_ExtraCommandAsType() {
+    public void module_ExtraCommandAsType() {
         BQModuleProvider provider = Commands.builder(C1.class).build();
         BQRuntime runtime = appManager.runtime(Bootique.app(args).moduleProvider(provider));
         CommandManager commandManager = runtime.getInstance(CommandManager.class);
@@ -107,7 +107,7 @@ public class CommandsIT {
     }
 
     @Test
-    public void testModule_ExtraCommandAsInstance() {
+    public void module_ExtraCommandAsInstance() {
         BQModuleProvider provider = Commands.builder().add(new C1()).build();
         BQRuntime runtime = appManager.runtime(Bootique.app(args).moduleProvider(provider));
         CommandManager commandManager = runtime.getInstance(CommandManager.class);
@@ -117,7 +117,7 @@ public class CommandsIT {
     }
 
     @Test
-    public void testModule_ExtraCommandOverride() {
+    public void module_ExtraCommandOverride() {
         BQModuleProvider provider = Commands.builder().add(C2_Help.class).build();
         BQRuntime runtime = appManager.runtime(Bootique.app(args).moduleProvider(provider));
         CommandManager commandManager = runtime.getInstance(CommandManager.class);

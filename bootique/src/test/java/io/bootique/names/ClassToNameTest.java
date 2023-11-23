@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ClassToNameTest {
 
     @Test
-    public void testStripSuffux() {
+    public void stripSuffux() {
 
         ClassToName classToName = ClassToName.builder().convertToLowerCase().stripSuffix("Suffix").build();
         assertEquals("c1", classToName.toName(C1.class));
@@ -36,25 +36,25 @@ public class ClassToNameTest {
     }
 
     @Test
-    public void testLowerCase() {
+    public void lowerCase() {
         ClassToName classToName = ClassToName.builder().convertToLowerCase().build();
         assertEquals("c1", classToName.toName(C1.class));
     }
 
     @Test
-    public void testPreserveCase() {
+    public void preserveCase() {
         ClassToName classToName = ClassToName.builder().build();
         assertEquals("C1", classToName.toName(C1.class));
     }
 
     @Test
-    public void testSeparator() {
+    public void separator() {
         ClassToName classToName = ClassToName.builder().partsSeparator("-").build();
         assertEquals("C3-Camel-Case", classToName.toName(C3CamelCase.class));
     }
 
     @Test
-    public void testSeparatorAbbrevs() {
+    public void separatorAbbrevs() {
         ClassToName classToName = ClassToName.builder().partsSeparator("-").build();
         assertEquals("Cx-ABC", classToName.toName(CxABC.class));
         assertEquals("ABCCx", classToName.toName(ABCCx.class));

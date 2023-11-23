@@ -45,7 +45,7 @@ public class ConfigMetadataIT {
     final TestAppManager appManager = new TestAppManager();
 
     @Test
-    public void testSingleConfig() {
+    public void singleConfig() {
         BQRuntime runtime = appManager.runtime(Bootique.app().moduleProvider(new BQModuleProvider() {
             @Override
             public BQModule module() {
@@ -99,7 +99,7 @@ public class ConfigMetadataIT {
     }
 
     @Test
-    public void testRecursiveConfig() {
+    public void recursiveConfig() {
         BQRuntime runtime = appManager.runtime(Bootique.app().moduleProvider(new BQModuleProvider() {
             @Override
             public BQModule module() {
@@ -161,7 +161,7 @@ public class ConfigMetadataIT {
 
 
     @Test
-    public void testValueObjectConfig() {
+    public void valueObjectConfig() {
         BQRuntime runtime = appManager.runtime(Bootique.app()
                 .module(b -> BQCoreModule.extend(b).addValueObjectDescriptor(TestVO.class, new ValueObjectDescriptor("Test Value Object")))
                 .moduleProvider(new BQModuleProvider() {
@@ -215,7 +215,7 @@ public class ConfigMetadataIT {
     }
 
     @Test
-    public void testSampleValue() {
+    public void sampleValue() {
         ConfigValueMetadata valueMetadata = new ConfigValueMetadata();
         assertEquals("<int>", valueMetadata.getSampleValue(Integer.class));
         assertEquals("<int>", valueMetadata.getSampleValue(Integer.TYPE));
@@ -231,19 +231,19 @@ public class ConfigMetadataIT {
     }
 
     @Test
-    public void testGetValueLabel() {
+    public void getValueLabel() {
         ConfigValueMetadata valueMetadata = ConfigValueMetadata.builder().valueLabel("Test Label").build();
         assertEquals("<Test Label>", valueMetadata.getValueLabel());
     }
 
     @Test
-    public void testNoTypeValueLabel() {
+    public void noTypeValueLabel() {
         ConfigValueMetadata valueMetadata = new ConfigValueMetadata();
         assertEquals("?", valueMetadata.getValueLabel());
     }
 
     @Test
-    public void testTypeValueLabel() {
+    public void typeValueLabel() {
         ConfigValueMetadata valueMetadata = ConfigValueMetadata.builder().type(E.class).build();
         assertEquals("<a|B|Cd>", valueMetadata.getValueLabel());
     }

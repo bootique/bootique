@@ -62,7 +62,7 @@ public class CommandDecoratorIT {
     }
 
     @Test
-    public void testAlsoRun_Instance() {
+    public void alsoRun_Instance() {
 
         Command cmd = mock(Command.class);
         when(cmd.run(any())).thenReturn(CommandOutcome.succeeded());
@@ -74,7 +74,7 @@ public class CommandDecoratorIT {
     }
 
     @Test
-    public void testAlsoRun_NameRef() {
+    public void alsoRun_NameRef() {
 
         CommandDecorator decorator = CommandDecorator.alsoRun("s");
 
@@ -84,7 +84,7 @@ public class CommandDecoratorIT {
     }
 
     @Test
-    public void testAlsoRun_NameRef_WithArgs() {
+    public void alsoRun_NameRef_WithArgs() {
 
         CommandDecorator decorator = CommandDecorator.alsoRun("s", "--sflag");
 
@@ -94,7 +94,7 @@ public class CommandDecoratorIT {
     }
 
     @Test
-    public void testAlsoRun_TypeRef() {
+    public void alsoRun_TypeRef() {
 
         CommandDecorator decorator = CommandDecorator.alsoRun(SuccessfulCommand.class);
 
@@ -104,7 +104,7 @@ public class CommandDecoratorIT {
     }
 
     @Test
-    public void testAlsoRun_TypeRef_WithArgs() {
+    public void alsoRun_TypeRef_WithArgs() {
 
         CommandDecorator decorator = CommandDecorator.alsoRun(SuccessfulCommand.class, "--sflag");
 
@@ -114,7 +114,7 @@ public class CommandDecoratorIT {
     }
 
     @Test
-    public void testBeforeRun_Instance() {
+    public void beforeRun_Instance() {
 
         Command cmd = mock(Command.class);
         when(cmd.run(any())).thenReturn(CommandOutcome.succeeded());
@@ -126,7 +126,7 @@ public class CommandDecoratorIT {
     }
 
     @Test
-    public void testBeforeRun_Failure_NameRef() {
+    public void beforeRun_Failure_NameRef() {
 
         CommandDecorator decorator = CommandDecorator.beforeRun("f");
 
@@ -134,7 +134,7 @@ public class CommandDecoratorIT {
     }
 
     @Test
-    public void testBeforeRun_Failure_NameRef_WithArgs() {
+    public void beforeRun_Failure_NameRef_WithArgs() {
 
         CommandDecorator decorator = CommandDecorator.beforeRun("f", "--fflag");
 
@@ -143,14 +143,14 @@ public class CommandDecoratorIT {
     }
 
     @Test
-    public void testBeforeRun_Failure_TypeRef() {
+    public void beforeRun_Failure_TypeRef() {
         CommandDecorator decorator = CommandDecorator.beforeRun(FailingCommand.class);
 
         new AppRunner(decorator).runExpectingFailure();
     }
 
     @Test
-    public void testBeforeRun_Failure_TypeRef_WithArgs() {
+    public void beforeRun_Failure_TypeRef_WithArgs() {
         CommandDecorator decorator = CommandDecorator.beforeRun(FailingCommand.class, "--fflag");
         new AppRunner(decorator).runExpectingFailure();
 
@@ -158,7 +158,7 @@ public class CommandDecoratorIT {
     }
 
     @Test
-    public void testBeforeAndAlsoRun() {
+    public void beforeAndAlsoRun() {
 
         Command c1 = mock(Command.class);
         when(c1.run(any())).thenReturn(CommandOutcome.succeeded());
@@ -187,7 +187,7 @@ public class CommandDecoratorIT {
     }
 
     @Test
-    public void testMultipleDecoratorsForTheSameCommand() {
+    public void multipleDecoratorsForTheSameCommand() {
 
         Command c1 = mock(Command.class);
         when(c1.run(any())).thenReturn(CommandOutcome.succeeded());

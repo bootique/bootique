@@ -41,13 +41,13 @@ public class BQTestFactoryIT {
     public BQTestFactory testFactory = new BQTestFactory();
 
     @Test
-    public void testCreateRuntime_Injection() {
+    public void createRuntime_Injection() {
         BQRuntime runtime = testFactory.app("-x").autoLoadModules().createRuntime();
         assertArrayEquals(new String[]{"-x"}, runtime.getArgs());
     }
 
     @Test
-    public void testCreateRuntime_Streams_NoTrace() {
+    public void createRuntime_Streams_NoTrace() {
 
         TestIO io = TestIO.noTrace();
 
@@ -64,7 +64,7 @@ public class BQTestFactoryIT {
     }
 
     @Test
-    public void testConfigEnvExcludes_System() {
+    public void configEnvExcludes_System() {
         System.setProperty("bq.a", "bq_a");
         System.setProperty("bq.c.m.k", "bq_c_m_k");
         System.setProperty("bq.c.m.l", "bq_c_m_l");

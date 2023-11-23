@@ -36,7 +36,7 @@ public class DefaultCommandManagerTest {
     private Command c3 = new C3();
 
     @Test
-    public void testLookupByType() {
+    public void lookupByType() {
 
         Map<String, ManagedCommand> map = new HashMap<>();
         map.put("x", ManagedCommand.forCommand(c1));
@@ -50,7 +50,7 @@ public class DefaultCommandManagerTest {
     }
 
     @Test
-    public void testLookupByType_Missing() {
+    public void lookupByType_Missing() {
 
         Map<String, ManagedCommand> map = new HashMap<>();
         map.put("x", ManagedCommand.builder(c1).build());
@@ -60,7 +60,7 @@ public class DefaultCommandManagerTest {
     }
 
     @Test
-    public void testLookupByName() {
+    public void lookupByName() {
 
         Map<String, ManagedCommand> map = new HashMap<>();
         map.put("c1", ManagedCommand.forCommand(c1));
@@ -74,7 +74,7 @@ public class DefaultCommandManagerTest {
     }
 
     @Test
-    public void testLookupByName_Missing() {
+    public void lookupByName_Missing() {
 
         Map<String, ManagedCommand> map = new HashMap<>();
         map.put("c1", ManagedCommand.forCommand(c1));

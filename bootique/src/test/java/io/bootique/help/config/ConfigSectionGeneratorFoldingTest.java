@@ -28,7 +28,7 @@ public class ConfigSectionGeneratorFoldingTest {
 
 
     @Test
-    public void testVisitObjectConfig() {
+    public void visitObjectConfig() {
 
         ConfigValueMetadata px = ConfigValueMetadata.builder("px")
                 .type(Bootique.class)

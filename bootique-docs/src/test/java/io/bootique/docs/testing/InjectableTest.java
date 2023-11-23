@@ -21,7 +21,7 @@ public class InjectableTest {
             .createRuntime();
 
     @Test
-    public void testService() {
+    public void service() {
         MyService service = app.getInstance(MyService.class);
         assertEquals("xyz", service.someMethod());
     }

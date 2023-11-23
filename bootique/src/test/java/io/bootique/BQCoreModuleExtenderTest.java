@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class BQCoreModuleExtenderTest {
 
     @Test
-    public void testSetProperties() {
+    public void setProperties() {
 
         Injector i = DIBootstrap.createInjector(b -> {
 
@@ -51,7 +51,7 @@ public class BQCoreModuleExtenderTest {
     }
 
     @Test
-    public void testSetOptions() {
+    public void setOptions() {
         OptionMetadata o1 = OptionMetadata.builder("o1").build();
         OptionMetadata o2 = OptionMetadata.builder("o2").build();
 

@@ -45,17 +45,17 @@ public class PolymorphicConfigurationCheckerIT {
     }
 
     @Test
-    public void test_Success() {
+    public void success() {
         PolymorphicConfigurationChecker.test(C3.class, C4.class, C5.class);
     }
 
     @Test
-    public void test_Success_AbstractSuper() {
+    public void success_AbstractSuper() {
         PolymorphicConfigurationChecker.test(C12.class, C13.class);
     }
 
     @Test
-    public void testNoDefault_Success() {
+    public void noDefault_Success() {
         PolymorphicConfigurationChecker.testNoDefault(C6.class, C7.class, C8.class);
     }
 

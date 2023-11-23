@@ -29,25 +29,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class PercentValueYamlDeserializerIT extends DeserializerTestBase {
 
     @Test
-    public void testDeserialization_AsPercent() throws Exception {
+    public void deserialization_AsPercent() throws Exception {
         Percent p = deserialize(Percent.class, "5%");
         assertEquals(5, p.getPercent(), 0.00001);
     }
 
     @Test
-    public void testDeserialization_AsDouble() throws Exception {
+    public void deserialization_AsDouble() throws Exception {
         Percent p = deserialize(Percent.class, "5.0");
         assertEquals(500., p.getPercent(), 0.00001);
     }
 
     @Test
-    public void testDeserialization_AsInt() throws Exception {
+    public void deserialization_AsInt() throws Exception {
         Percent p = deserialize(Percent.class, "5");
         assertEquals(500., p.getPercent(), 0.00001);
     }
 
     @Test
-    public void testDeserialization_Object() throws IOException {
+    public void deserialization_Object() throws IOException {
         Bean p = deserialize(Bean.class, "percent: -5.%");
         assertEquals(-5., p.percent.getPercent(), 0.00001);
     }

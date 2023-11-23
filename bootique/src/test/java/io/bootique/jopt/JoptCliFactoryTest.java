@@ -48,7 +48,7 @@ public class JoptCliFactoryTest {
     }
 
     @Test
-    public void testGet_HasOption() {
+    public void get_HasOption() {
 
         addMockCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me")));
 
@@ -59,28 +59,28 @@ public class JoptCliFactoryTest {
     }
 
     @Test
-    public void testOptionStrings_Short() {
+    public void optionStrings_Short() {
         addMockCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me").valueOptional(null)));
 
         assertEquals(createCli("-m v4").optionStrings("me"), "v4");
     }
 
     @Test
-    public void testOptionStrings_Long_Equals() {
+    public void optionStrings_Long_Equals() {
         addMockCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me").valueOptional(null)));
 
         assertEquals(createCli("--me=v4").optionStrings("me"), "v4");
     }
 
     @Test
-    public void testOptionStrings_Long_Space() {
+    public void optionStrings_Long_Space() {
         addMockCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me").valueOptional(null)));
 
         assertEquals(createCli("--me v4").optionStrings("me"), "v4");
     }
 
     @Test
-    public void testOptionStrings_Single_Mixed() {
+    public void optionStrings_Single_Mixed() {
 
         addMockCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me").valueOptional(null))
                 .addOption(OptionMetadata.builder("other").valueOptional(null)));
@@ -89,7 +89,7 @@ public class JoptCliFactoryTest {
     }
 
     @Test
-    public void testOptionStrings_Multiple_Mixed() {
+    public void optionStrings_Multiple_Mixed() {
         addMockCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me").valueOptional(null))
                 .addOption(OptionMetadata.builder("other").valueOptional(null))
                 .addOption(OptionMetadata.builder("n").valueOptional(null)).addOption(OptionMetadata.builder("yes")));
@@ -98,7 +98,7 @@ public class JoptCliFactoryTest {
     }
 
     @Test
-    public void testStandaloneArguments_Mix() {
+    public void standaloneArguments_Mix() {
         addMockCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me").valueOptional(null))
                 .addOption(OptionMetadata.builder("other").valueOptional(null)).addOption(OptionMetadata.builder("yes")));
 
@@ -106,7 +106,7 @@ public class JoptCliFactoryTest {
     }
 
     @Test
-    public void testStandaloneArguments_DashDash() {
+    public void standaloneArguments_DashDash() {
         addMockCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me").valueOptional(null))
                 .addOption(OptionMetadata.builder("other").valueOptional(null)));
 

@@ -44,7 +44,7 @@ public class ApplicationMetadataIT {
     final TestAppManager appManager = new TestAppManager();
 
     @Test
-    public void testDefault() {
+    public void basic() {
         BQRuntime runtime = appManager.runtime(Bootique.app());
 
         ApplicationMetadata md = runtime.getInstance(ApplicationMetadata.class);
@@ -57,7 +57,7 @@ public class ApplicationMetadataIT {
     }
 
     @Test
-    public void testCustomDescription() {
+    public void customDescription() {
         BQRuntime runtime = appManager.runtime(Bootique.app()
                 .module(b -> BQCoreModule.extend(b).setApplicationDescription("app desc")));
 
@@ -71,7 +71,7 @@ public class ApplicationMetadataIT {
     }
 
     @Test
-    public void testUnboundVar() {
+    public void unboundVar() {
         BQRuntime runtime = appManager.runtime(Bootique.app()
                 .module(b -> BQCoreModule.extend(b).declareVar("x.p1", "UNBOUND_VAR")));
 
@@ -84,7 +84,7 @@ public class ApplicationMetadataIT {
     }
 
     @Test
-    public void testBoundVar() {
+    public void boundVar() {
         BQModuleProvider provider = new BQModuleProvider() {
             @Override
             public BQModule module() {

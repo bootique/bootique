@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class JUnit5Test {
 
     @Test
-    public void testMe() {
+    public void me() {
         assertTrue(2 == 2);
     }
 }

@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class OffsetTimeDeserializerIT extends DeserializerTestBase {
 
     @Test
-    public void testDeserialization01() throws Exception {
+    public void deserialization01() throws Exception {
         OffsetTime offsetTime = OffsetTime.of(10, 15, 30, 0, ZoneOffset.ofHours(1));
 
         OffsetTime value = deserialize(OffsetTime.class, "\"" + offsetTime + "\"");
@@ -42,7 +42,7 @@ public class OffsetTimeDeserializerIT extends DeserializerTestBase {
     }
 
     @Test
-    public void testDeserialization02() throws Exception {
+    public void deserialization02() throws Exception {
         OffsetTime offsetTime = OffsetTime.of(10, 15, 30, 0, ZoneOffset.ofHours(1));
 
         OffsetTime value = deserialize(OffsetTime.class, "\"10:15:30+01:00\"");
@@ -52,7 +52,7 @@ public class OffsetTimeDeserializerIT extends DeserializerTestBase {
     }
 
     @Test
-    public void testDeserialization03() throws IOException {
+    public void deserialization03() throws IOException {
         Bean1 bean1 = deserialize(Bean1.class, "a: \"x\"\n" +
                 "c:\n" +
                 "  offsetTime: 10:15:30+01:00");
@@ -60,7 +60,7 @@ public class OffsetTimeDeserializerIT extends DeserializerTestBase {
     }
 
     @Test
-    public void testDeserializationWithTypeInfo01() throws Exception {
+    public void deserializationWithTypeInfo01() throws Exception {
         OffsetTime offsetTime = OffsetTime.of(10, 15, 30, 0, ZoneOffset.ofHours(1));
 
         ObjectMapper mapper = createMapper();

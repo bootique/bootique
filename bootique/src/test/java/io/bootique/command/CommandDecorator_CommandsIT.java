@@ -45,7 +45,7 @@ public class CommandDecorator_CommandsIT {
     }
 
     @Test
-    public void testAlsoRun_DecorateWithPrivate() {
+    public void alsoRun_DecorateWithPrivate() {
 
         // use private "-s" command in decorator
         BQModuleProvider commandsOverride = Commands.builder().add(MainCommand.class).noModuleCommands().build();
@@ -62,7 +62,7 @@ public class CommandDecorator_CommandsIT {
     }
 
     @Test
-    public void testBeforeRun_DecorateWithPrivate() {
+    public void beforeRun_DecorateWithPrivate() {
 
         // use private "-s" command in decorator
         BQModuleProvider commandsOverride = Commands.builder().add(MainCommand.class).noModuleCommands().build();

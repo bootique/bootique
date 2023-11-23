@@ -44,7 +44,7 @@ public class JsonConfigurationFactoryTest {
     }
 
     @Test
-    public void testConfig() {
+    public void config() {
         Bean1 b1 = factory("s: SS\ni: 55").config(Bean1.class, "");
         assertNotNull(b1);
         assertEquals("SS", b1.s);
@@ -52,7 +52,7 @@ public class JsonConfigurationFactoryTest {
     }
 
     @Test
-    public void testConfig_Nested() {
+    public void config_Nested() {
         Bean2 b2 = factory("b1:\n  s: SS\n  i: 55").config(Bean2.class, "");
         assertNotNull(b2);
         assertNotNull(b2.getB1());
@@ -61,7 +61,7 @@ public class JsonConfigurationFactoryTest {
     }
 
     @Test
-    public void testConfig_Subconfig() {
+    public void config_Subconfig() {
         Bean1 b1 = factory("b1:\n  s: SS\n  i: 55").config(Bean1.class, "b1");
         assertNotNull(b1);
         assertEquals("SS", b1.getS());
@@ -69,7 +69,7 @@ public class JsonConfigurationFactoryTest {
     }
 
     @Test
-    public void testConfig_Subconfig_MultiLevel() {
+    public void config_Subconfig_MultiLevel() {
 
         Bean1 b1 = factory("b0:\n  b1:\n    s: SS\n    i: 55").config(Bean1.class, "b0.b1");
         assertNotNull(b1);
@@ -78,7 +78,7 @@ public class JsonConfigurationFactoryTest {
     }
 
     @Test
-    public void testConfig_Subconfig_Missing() {
+    public void config_Subconfig_Missing() {
         Bean1 b1 = factory("b1:\n  s: SS\n  i: 55").config(Bean1.class, "no.such.path");
         assertNotNull(b1);
         assertEquals(null, b1.getS());
@@ -86,7 +86,7 @@ public class JsonConfigurationFactoryTest {
     }
 
     @Test
-    public void testList_SingleLevel() {
+    public void list_SingleLevel() {
 
         List<Object> l = factory("- SS\n- 55").config(new TypeRef<List<Object>>() {
         }, "");
@@ -97,7 +97,7 @@ public class JsonConfigurationFactoryTest {
     }
 
     @Test
-    public void testList_MultiLevel() {
+    public void list_MultiLevel() {
 
         List<List<Object>> l = factory("-\n  - SS\n  - 55\n-\n  - X")
                 .config(new TypeRef<List<List<Object>>>() {
@@ -117,7 +117,7 @@ public class JsonConfigurationFactoryTest {
     }
 
     @Test
-    public void testMap_SingleLevel() {
+    public void map_SingleLevel() {
         Map<String, Object> m = factory("b1: SS\ni: 55").config(new TypeRef<Map<String, Object>>() {
         }, "");
 
@@ -127,7 +127,7 @@ public class JsonConfigurationFactoryTest {
     }
 
     @Test
-    public void testMap_MultiLevel() {
+    public void map_MultiLevel() {
 
         Map<String, Map<String, Object>> m = factory("b1:\n  k1: SS\n  i: 55")
                 .config(new TypeRef<Map<String, Map<String, Object>>>() {
@@ -142,14 +142,14 @@ public class JsonConfigurationFactoryTest {
     }
 
     @Test
-    public void testConfig_Polimorphic_Super() {
+    public void config_Polimorphic_Super() {
 
         BeanSuper b1 = factory("type: sup1").config(BeanSuper.class, "");
         assertEquals(BeanSuper.class, b1.getClass());
     }
 
     @Test
-    public void testConfig_Polimorphic_Sub1() {
+    public void config_Polimorphic_Sub1() {
 
         BeanSuper b1 = factory("type: sub1\np1: p111").config(BeanSuper.class, "");
         assertEquals(BeanSub1.class, b1.getClass());
@@ -157,7 +157,7 @@ public class JsonConfigurationFactoryTest {
     }
 
     @Test
-    public void testConfig_Polimorphic_Sub2() {
+    public void config_Polimorphic_Sub2() {
 
         BeanSuper b1 = factory("type: sub2\np2: p222").config(BeanSuper.class, "");
         assertEquals(BeanSub2.class, b1.getClass());
@@ -165,7 +165,7 @@ public class JsonConfigurationFactoryTest {
     }
 
     @Test
-    public void testConfig_ResourceFactory() throws IOException {
+    public void config_ResourceFactory() throws IOException {
 
         ResourceFactoryHolder rfh = factory("resourceFactory: classpath:io/bootique/config/resourcefactory.txt")
                 .config(ResourceFactoryHolder.class, "");

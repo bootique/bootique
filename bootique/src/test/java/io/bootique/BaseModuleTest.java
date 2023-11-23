@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 public class BaseModuleTest {
 
     @Test
-    public void testModule() {
+    public void module() {
         BaseModule m = new BaseModule() {};
         assertSame(m, m.module());
     }

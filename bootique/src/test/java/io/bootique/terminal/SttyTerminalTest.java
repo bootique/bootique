@@ -40,27 +40,27 @@ public class SttyTerminalTest {
     }
 
     @Test
-    public void testParseLine_OSX() {
+    public void parseLine_OSX() {
         String line = "speed 9600 baud; 39 rows; 136 columns;";
         assertEquals(new Integer(136), terminal.parseLine(line));
     }
 
     @Test
-    public void testParseColumns_OSX() {
+    public void parseColumns_OSX() {
         String line = "speed 9600 baud; 39 rows; 136 columns;";
         BufferedReader in = new BufferedReader(new StringReader(line));
         assertEquals(new Integer(136), terminal.parseColumns(in));
     }
 
     @Test
-    public void testParseLine_Linux() {
+    public void parseLine_Linux() {
         // from Centos 7:
         String line = "speed 9600 baud; rows 40; columns 148; line = 0;";
         assertEquals(new Integer(148), terminal.parseLine(line));
     }
 
     @Test
-    public void testParseLine_Docker_Ubuntu() {
+    public void parseLine_Docker_Ubuntu() {
 
         // docker  run -t ubuntu:latest stty -a
         // same as any lunux, except the value is 0
@@ -70,7 +70,7 @@ public class SttyTerminalTest {
     }
 
     @Test
-    public void testParseLine_Invalid() {
+    public void parseLine_Invalid() {
 
         String line = "not a valid line";
         assertNull(terminal.parseLine(line));

@@ -55,7 +55,7 @@ public class ConfigMetadataCompilerTest {
     }
 
     @Test
-    public void testCompile() {
+    public void compile() {
 
         ConfigObjectMetadata md = (ConfigObjectMetadata) createCompiler().compile("prefix", Config1.class);
         assertNotNull(md);
@@ -110,7 +110,7 @@ public class ConfigMetadataCompilerTest {
     }
 
     @Test
-    public void testCompile_Cycle() {
+    public void compile_Cycle() {
 
         ConfigObjectMetadata md = (ConfigObjectMetadata) createCompiler().compile("prefix", Config3.class);
         assertNotNull(md);
@@ -126,7 +126,7 @@ public class ConfigMetadataCompilerTest {
     }
 
     @Test
-    public void testCompile_Inheritance() {
+    public void compile_Inheritance() {
 
         ConfigObjectMetadata c5 = (ConfigObjectMetadata) createCompiler(t -> {
 
@@ -172,7 +172,7 @@ public class ConfigMetadataCompilerTest {
     }
 
     @Test
-    public void testCompile_Map() {
+    public void compile_Map() {
 
         TypeRef<Map<String, BigDecimal>> tr1 = new TypeRef<Map<String, BigDecimal>>() {
         };
@@ -190,7 +190,7 @@ public class ConfigMetadataCompilerTest {
     }
 
     @Test
-    public void testCompile_Map_Inheritance() {
+    public void compile_Map_Inheritance() {
 
         TypeRef<Map<String, Config5>> tr1 = new TypeRef<Map<String, Config5>>() {
         };
@@ -247,7 +247,7 @@ public class ConfigMetadataCompilerTest {
     }
 
     @Test
-    public void testCompile_InheritanceFromInterface() {
+    public void compile_InheritanceFromInterface() {
 
         ConfigObjectMetadata c9 = (ConfigObjectMetadata) createCompiler(t -> {
 

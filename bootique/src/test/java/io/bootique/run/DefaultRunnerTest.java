@@ -64,7 +64,7 @@ public class DefaultRunnerTest {
     }
 
     @Test
-    public void testRun() {
+    public void run() {
 
         when(mockCli.commandName()).thenReturn("c1");
 
@@ -84,7 +84,7 @@ public class DefaultRunnerTest {
     }
 
     @Test
-    public void testRun_ReverseOrder() {
+    public void run_ReverseOrder() {
 
         when(mockCli.commandName()).thenReturn("c2");
 
@@ -104,7 +104,7 @@ public class DefaultRunnerTest {
     }
 
     @Test
-    public void testRun_NoMatch() {
+    public void run_NoMatch() {
 
         when(mockCli.commandName()).thenReturn("c3");
 
@@ -118,7 +118,7 @@ public class DefaultRunnerTest {
     }
 
     @Test
-    public void testRun_NullName_Default() {
+    public void run_NullName_Default() {
 
         when(mockCli.commandName()).thenReturn(null);
 
@@ -138,7 +138,7 @@ public class DefaultRunnerTest {
     }
 
     @Test
-    public void testRun_NullName_Help() {
+    public void run_NullName_Help() {
 
         when(mockCli.commandName()).thenReturn(null);
 
@@ -156,7 +156,7 @@ public class DefaultRunnerTest {
     }
 
     @Test
-    public void testRun_NullName_NoFallback() {
+    public void run_NullName_NoFallback() {
 
         when(mockCli.commandName()).thenReturn(null);
 
@@ -171,7 +171,7 @@ public class DefaultRunnerTest {
     }
 
     @Test
-    public void testRun_Failure() {
+    public void run_Failure() {
 
         when(mockCli.commandName()).thenReturn("c1");
 

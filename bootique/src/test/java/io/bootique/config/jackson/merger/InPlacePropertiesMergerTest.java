@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 public class InPlacePropertiesMergerTest {
 
     @Test
-    public void testApply_InPlace() {
+    public void apply_InPlace() {
 
         Map<String, String> props = Collections.singletonMap("a", "50");
         InPlacePropertiesMerger overrider = new InPlacePropertiesMerger(props);
@@ -45,7 +45,7 @@ public class InPlacePropertiesMergerTest {
     }
 
     @Test
-    public void testApply() {
+    public void apply() {
 
         Map<String, String> props = Collections.singletonMap("a", "50");
         InPlacePropertiesMerger overrider = new InPlacePropertiesMerger(props);
@@ -57,7 +57,7 @@ public class InPlacePropertiesMergerTest {
     }
 
     @Test
-    public void testApply_Nested() {
+    public void apply_Nested() {
 
         Map<String, String> props = Collections.singletonMap("a.b", "50");
         InPlacePropertiesMerger overrider = new InPlacePropertiesMerger(props);
@@ -69,7 +69,7 @@ public class InPlacePropertiesMergerTest {
     }
 
     @Test
-    public void testApply_MissingRecreated() {
+    public void apply_MissingRecreated() {
 
         Map<String, String> props = Collections.singletonMap("a.b", "50");
         InPlacePropertiesMerger overrider = new InPlacePropertiesMerger(props);
@@ -81,7 +81,7 @@ public class InPlacePropertiesMergerTest {
     }
 
     @Test
-    public void testApply_ObjectArray() {
+    public void apply_ObjectArray() {
 
         Map<String, String> props = Collections.singletonMap("a[1]", "50");
         InPlacePropertiesMerger overrider = new InPlacePropertiesMerger(props);
@@ -100,7 +100,7 @@ public class InPlacePropertiesMergerTest {
     }
 
     @Test
-    public void testApply_ObjectArray_PastEnd() {
+    public void apply_ObjectArray_PastEnd() {
 
         Map<String, String> props = Collections.singletonMap("a[2]", "50");
         InPlacePropertiesMerger overrider = new InPlacePropertiesMerger(props);

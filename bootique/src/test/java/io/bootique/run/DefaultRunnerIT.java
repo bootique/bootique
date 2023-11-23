@@ -49,7 +49,7 @@ public class DefaultRunnerIT {
     }
 
     @Test
-    public void testRun_Explicit() {
+    public void run_Explicit() {
 
         Bootique.app("-x")
                 .module(b -> BQCoreModule.extend(b).addCommand(XCommand.class))
@@ -61,7 +61,7 @@ public class DefaultRunnerIT {
     }
 
     @Test
-    public void testRun_Implicit_Default() {
+    public void run_Implicit_Default() {
 
         Bootique.app()
                 .module(b -> BQCoreModule.extend(b).setDefaultCommand(XCommand.class))
@@ -73,7 +73,7 @@ public class DefaultRunnerIT {
     }
 
     @Test
-    public void testRun_Implicit_Help() {
+    public void run_Implicit_Help() {
 
         Bootique.app()
                 .module(b -> BQCoreModule.extend(b).addCommand(XCommand.class))
@@ -89,7 +89,7 @@ public class DefaultRunnerIT {
     }
 
     @Test
-    public void testRun_Implicit_NoModuleCommands_NoHelp() {
+    public void run_Implicit_NoModuleCommands_NoHelp() {
 
         Bootique.app()
                 .module(b -> BQCoreModule.extend(b).addCommand(XCommand.class))
@@ -102,7 +102,7 @@ public class DefaultRunnerIT {
     }
 
     @Test
-    public void testRun_Implicit_NoModuleCommands_HelpAllowed() {
+    public void run_Implicit_NoModuleCommands_HelpAllowed() {
 
         Bootique.app()
                 .module(b -> BQCoreModule.extend(b).addCommand(XCommand.class))
@@ -123,7 +123,7 @@ public class DefaultRunnerIT {
 
 
     @Test
-    public void testRun_Implicit_HelpRedefined() {
+    public void run_Implicit_HelpRedefined() {
 
         Bootique.app()
                 .module(b -> BQCoreModule.extend(b).addCommand(XCommand.class))
@@ -139,7 +139,7 @@ public class DefaultRunnerIT {
     }
 
     @Test
-    public void testRun_Implicit_Default_NoModuleCommands() {
+    public void run_Implicit_Default_NoModuleCommands() {
 
         Bootique.app()
                 .module(b -> BQCoreModule.extend(b).setDefaultCommand(XCommand.class))

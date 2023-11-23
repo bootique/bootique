@@ -40,7 +40,7 @@ public class BQDaemonTestFactoryIT {
     public BQDaemonTestFactory testFactory = new BQDaemonTestFactory();
 
     @Test
-    public void test_GetOutcome() throws InterruptedException {
+    public void getOutcome() throws InterruptedException {
 
         BQRuntime runtime = testFactory.app().createRuntime();
 
@@ -51,7 +51,7 @@ public class BQDaemonTestFactoryIT {
     }
 
     @Test
-    public void testStart_StartupFailure() {
+    public void start_StartupFailure() {
 
         CommandOutcome failed = CommandOutcome.failed(-1, "Intended failure");
 
@@ -69,7 +69,7 @@ public class BQDaemonTestFactoryIT {
     }
 
     @Test
-    public void testStart_RuntimeFailure() {
+    public void start_RuntimeFailure() {
         CommandOutcome failed = CommandOutcome.failed(-1, "Intended failure");
         try {
             testFactory.app("")
@@ -86,7 +86,7 @@ public class BQDaemonTestFactoryIT {
     }
 
     @Test
-    public void test_StartupAndWait() {
+    public void startupAndWait() {
         BQRuntime r1 = testFactory.app("a1", "a2").startupAndWaitCheck().start();
         assertArrayEquals(new String[]{"a1", "a2"}, r1.getArgs());
 
@@ -96,7 +96,7 @@ public class BQDaemonTestFactoryIT {
     }
 
     @Test
-    public void testStart_Streams_NoTrace() {
+    public void start_Streams_NoTrace() {
 
         TestIO io = TestIO.noTrace();
 
@@ -112,7 +112,7 @@ public class BQDaemonTestFactoryIT {
     }
 
     @Test
-    public void testStart_Streams_Trace() {
+    public void start_Streams_Trace() {
 
         TestIO io = TestIO.trace();
 

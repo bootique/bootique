@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class BytesTest {
 
     @Test
-    public void testParse_byte() {
+    public void parse_byte() {
         String checkString = 5 + " " + BYTES.getName();
         assertEquals(checkString, new Bytes("5b").toString());
         assertEquals(checkString, new Bytes("5 b").toString());
@@ -38,7 +38,7 @@ public class BytesTest {
     }
 
     @Test
-    public void testParse_KB() {
+    public void parse_KB() {
         assertEquals(5 + " " + KB.getName(),  new Bytes("5kb").toString());
         assertEquals(5120, new Bytes("5kb").getBytes());
         assertEquals(5120, new Bytes("5KB").getBytes());
@@ -50,7 +50,7 @@ public class BytesTest {
     }
 
     @Test
-    public void testParse_MB() {
+    public void parse_MB() {
         assertEquals(5 + " " + MB.getName(),  new Bytes("5mb").toString());
         assertEquals(5242880, new Bytes("5mb").getBytes());
         assertEquals(5242880, new Bytes("5MB").getBytes());
@@ -62,7 +62,7 @@ public class BytesTest {
     }
 
     @Test
-    public void testParse_GB() {
+    public void parse_GB() {
         assertEquals(5 + " " + GB.getName(),  new Bytes("5gb").toString());
         assertEquals(5368709120L, new Bytes("5gb").getBytes());
         assertEquals(5368709120L, new Bytes("5GB").getBytes());
@@ -74,27 +74,27 @@ public class BytesTest {
     }
 
     @Test
-    public void testParse_Null() {
+    public void parse_Null() {
         assertThrows(NullPointerException.class, () -> new Bytes(null));
     }
 
     @Test
-    public void testParse_Empty() {
+    public void parse_Empty() {
         assertThrows(IllegalArgumentException.class, () -> new Bytes(""));
     }
 
     @Test
-    public void testParse_Invalid1() {
+    public void parse_Invalid1() {
         assertThrows(IllegalArgumentException.class, () -> new Bytes("4 nosuchthing"));
     }
 
     @Test
-    public void testParse_Invalid2() {
+    public void parse_Invalid2() {
         assertThrows(IllegalArgumentException.class, () -> new Bytes("not_a_number sec"));
     }
 
     @Test
-    public void testCompareTo() {
+    public void compareTo() {
         Bytes b1 = new Bytes("1b");
         Bytes b2 = new Bytes("2b");
         Bytes b3 = new Bytes("2 bytes");
@@ -113,7 +113,7 @@ public class BytesTest {
     }
 
     @Test
-    public void testEquals() {
+    public void equals() {
         Bytes b1 = new Bytes("5kb");
         Bytes b2 = new Bytes("5368709120b");
         Bytes b3 = new Bytes("5gb");
@@ -126,7 +126,7 @@ public class BytesTest {
     }
 
     @Test
-    public void testHashCode() {
+    public void hashCodeTest() {
         Bytes b1 = new Bytes("5kb");
         Bytes b2 = new Bytes("5368709120b");
         Bytes b3 = new Bytes("5gb");
@@ -138,7 +138,7 @@ public class BytesTest {
     }
 
     @Test
-    public void testUnitConversion() {
+    public void unitConversion() {
         assertEquals(5120, new Bytes("5kb").valueOfUnit(BYTES));
         assertEquals(5, new Bytes("5kb").valueOfUnit(KB));
         assertEquals(5, new Bytes("5mb").valueOfUnit(MB));

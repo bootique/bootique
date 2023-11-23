@@ -43,38 +43,38 @@ public class Bootique_CliOptionsIT {
     final TestAppManager appManager = new TestAppManager();
 
     @Test
-    public void testConfigOption() {
+    public void configOption() {
         BQRuntime runtime = appManager.runtime(Bootique.app("--config=abc.yml"));
         assertCollectionsEquals(runtime.getInstance(Cli.class).optionStrings(CliConfigurationLoader.CONFIG_OPTION), "abc.yml");
     }
 
     @Test
-    public void testConfigOptions() {
+    public void configOptions() {
         BQRuntime runtime = appManager.runtime(Bootique.app("--config=abc.yml", "--config=xyz.yml"));
         assertCollectionsEquals(runtime.getInstance(Cli.class).optionStrings(CliConfigurationLoader.CONFIG_OPTION), "abc.yml",
                 "xyz.yml");
     }
 
     @Test
-    public void testHelpOption() {
+    public void helpOption() {
         BQRuntime runtime = appManager.runtime(Bootique.app("--help"));
         assertTrue(runtime.getInstance(Cli.class).hasOption("help"));
     }
 
     @Test
-    public void testHelpOption_Short() {
+    public void helpOption_Short() {
         BQRuntime runtime = appManager.runtime(Bootique.app("-h"));
         assertTrue(runtime.getInstance(Cli.class).hasOption("help"));
     }
 
     @Test
-    public void testNoHelpOption() {
+    public void noHelpOption() {
         BQRuntime runtime = appManager.runtime(Bootique.app("a", "b"));
         assertFalse(runtime.getInstance(Cli.class).hasOption("help"));
     }
 
     @Test
-    public void testOverlappingOptions() {
+    public void overlappingOptions() {
         BQRuntime runtime = appManager.runtime(Bootique.app("--o1")
                 .module(b -> BQCoreModule.extend(b).addOptions(
                         OptionMetadata.builder("o1").build(),
@@ -85,7 +85,7 @@ public class Bootique_CliOptionsIT {
     }
 
     @Test
-    public void testNameConflict_TwoOptions() {
+    public void nameConflict_TwoOptions() {
         assertThrows(DIRuntimeException.class, () -> appManager.runtime(Bootique.app()
                         .module(b -> BQCoreModule.extend(b)
                                 .addOptions(
@@ -95,7 +95,7 @@ public class Bootique_CliOptionsIT {
     }
 
     @Test
-    public void testNameConflict_TwoCommands() {
+    public void nameConflict_TwoCommands() {
         assertThrows(DIRuntimeException.class, () -> appManager.runtime(Bootique.app()
                         .module(b -> BQCoreModule.extend(b)
                                 .addCommand(Xd1Command.class)
@@ -119,7 +119,7 @@ public class Bootique_CliOptionsIT {
     // TODO: Same name of option and command should be disallowed.
     //  This test is broken, it is here just to document current behaviour.
     @Test
-    public void testCommandWithOptionNameOverlap() {
+    public void commandWithOptionNameOverlap() {
         BQRuntime runtime = appManager.runtime(Bootique.app("-x")
                 .module(b -> BQCoreModule.extend(b)
                         .addCommand(Xd1Command.class)
@@ -130,35 +130,35 @@ public class Bootique_CliOptionsIT {
     }
 
     @Test
-    public void testCommand_IllegalShort() {
+    public void command_IllegalShort() {
         BQRuntime runtime = appManager.runtime(Bootique.app("-x")
                 .module(b -> BQCoreModule.extend(b).addCommand(XaCommand.class)));
         assertThrows(DIRuntimeException.class, () -> runtime.getInstance(Cli.class));
     }
 
     @Test
-    public void testCommand_ExplicitShort() {
+    public void command_ExplicitShort() {
         BQRuntime runtime = appManager.runtime(Bootique.app("-A")
                 .module(b -> BQCoreModule.extend(b).addCommand(XaCommand.class)));
         assertTrue(runtime.getInstance(Cli.class).hasOption("xa"));
     }
 
     @Test
-    public void testOverlappingCommands_IllegalShort() {
+    public void overlappingCommands_IllegalShort() {
         BQRuntime runtime = appManager.runtime(Bootique.app("-x")
                 .module(b -> BQCoreModule.extend(b).addCommand(XaCommand.class).addCommand(XbCommand.class)));
         assertThrows(DIRuntimeException.class, () -> runtime.getInstance(Cli.class));
     }
 
     @Test
-    public void testIllegalAbbreviation() {
+    public void illegalAbbreviation() {
         BQRuntime runtime = appManager.runtime(Bootique.app("--xc")
                 .module(b -> BQCoreModule.extend(b).addCommand(XccCommand.class)));
         assertThrows(DIRuntimeException.class, () -> runtime.getInstance(Cli.class));
     }
 
     @Test
-    public void testOverlappingCommands_Short() {
+    public void overlappingCommands_Short() {
         BQRuntime runtime = appManager.runtime(Bootique.app("-A")
                 .module(b -> BQCoreModule.extend(b).addCommand(XaCommand.class).addCommand(XbCommand.class)));
 
@@ -167,7 +167,7 @@ public class Bootique_CliOptionsIT {
     }
 
     @Test
-    public void testDefaultCommandOptions() {
+    public void defaultCommandOptions() {
         BQRuntime runtime = appManager.runtime(Bootique.app("-l", "x", "--long=y", "-s")
                 .module(b -> BQCoreModule.extend(b).setDefaultCommand(TestCommand.class)));
 
@@ -179,7 +179,7 @@ public class Bootique_CliOptionsIT {
     }
 
     @Test
-    public void testOption_OverrideConfig() {
+    public void option_OverrideConfig() {
         BQRuntime runtime = appManager.runtime(Bootique.app("--config=classpath:io/bootique/config/test4.yml", "--opt-1=x")
                 .module(b -> BQCoreModule
                         .extend(b)
@@ -196,7 +196,7 @@ public class Bootique_CliOptionsIT {
     }
 
     @Test
-    public void testOptionPathAbsentInYAML() {
+    public void optionPathAbsentInYAML() {
         BQRuntime runtime = appManager.runtime(Bootique.app("--config=classpath:io/bootique/config/test4.yml", "--opt-1=x")
                 .module(b -> BQCoreModule
                         .extend(b)
@@ -208,7 +208,7 @@ public class Bootique_CliOptionsIT {
     }
 
     @Test
-    public void testOptionsCommandAndModuleOverlapping() {
+    public void optionsCommandAndModuleOverlapping() {
         BQRuntime runtime = appManager.runtime(Bootique.app("--config=classpath:io/bootique/config/test4.yml", "--cmd-1", "--opt-1")
                 .module(binder -> BQCoreModule.extend(binder)
                         .addOption(OptionMetadata.builder("opt-1").valueOptionalWithDefault("2").build())
@@ -224,7 +224,7 @@ public class Bootique_CliOptionsIT {
     }
 
     @Test
-    public void testOptionsOrder_OnCLI() {
+    public void optionsOrder_OnCLI() {
         BQRuntime runtime = appManager.runtime(Bootique.app("--config=classpath:io/bootique/config/test4.yml", "--file-opt-1",
                         "--opt-2=y", "--opt-1=x")
                 .module(b -> BQCoreModule.extend(b)
@@ -245,7 +245,7 @@ public class Bootique_CliOptionsIT {
     }
 
     @Test
-    public void testOptionsWithOverlappingPath_OverrideConfig() {
+    public void optionsWithOverlappingPath_OverrideConfig() {
         BQRuntime runtime = appManager.runtime(Bootique.app("--config=classpath:io/bootique/config/test4.yml", "--opt-2", "--opt-3")
                 .module(b -> BQCoreModule.extend(b)
                         .addOptions(OptionMetadata.builder("opt-1").valueOptional().build(),
@@ -260,7 +260,7 @@ public class Bootique_CliOptionsIT {
     }
 
     @Test
-    public void testOptionWithNotMappedConfigPath() {
+    public void optionWithNotMappedConfigPath() {
         BQRuntime runtime = appManager.runtime(Bootique.app("--config=classpath:io/bootique/config/test4.yml", "--opt-1=x")
                 .module(b -> BQCoreModule.extend(b)
                         .mapConfigPath("opt-1", "c.m.k.x")));
@@ -269,7 +269,7 @@ public class Bootique_CliOptionsIT {
     }
 
     @Test
-    public void testOptionConfigFile_OverrideConfig() {
+    public void optionConfigFile_OverrideConfig() {
         BQRuntime runtime = appManager.runtime(Bootique.app("--config=classpath:io/bootique/config/test4.yml", "--file-opt")
                 .module(b -> BQCoreModule.extend(b)
                         .addOption(OptionMetadata.builder("file-opt").build())
@@ -280,7 +280,7 @@ public class Bootique_CliOptionsIT {
     }
 
     @Test
-    public void testMultipleOptionsConfigFiles_OverrideInCLIOrder() {
+    public void multipleOptionsConfigFiles_OverrideInCLIOrder() {
         BQRuntime runtime = appManager.runtime(Bootique.app("--config=classpath:io/bootique/config/test4.yml", "--file-opt-2", "--file-opt-1")
                 .module(b -> BQCoreModule.extend(b)
                         .addOptions(OptionMetadata.builder("file-opt-1").build(),
@@ -295,7 +295,7 @@ public class Bootique_CliOptionsIT {
     }
 
     @Test
-    public void testOptionDefaultValue() {
+    public void optionDefaultValue() {
         BQRuntime runtime = appManager.runtime(Bootique.app("--option")
                 .module(b -> BQCoreModule.extend(b).addOptions(
                         OptionMetadata.builder("option").valueOptionalWithDefault("val").build()
@@ -306,7 +306,7 @@ public class Bootique_CliOptionsIT {
     }
 
     @Test
-    public void testMissingOptionDefaultValue() {
+    public void missingOptionDefaultValue() {
         BQRuntime runtime = appManager.runtime(Bootique.app()
                 .module(b -> BQCoreModule.extend(b).addOptions(
                         OptionMetadata.builder("option").valueOptionalWithDefault("val").build()
@@ -318,7 +318,7 @@ public class Bootique_CliOptionsIT {
     }
 
     @Test
-    public void testCommandWithOptionWithDefaultValue() {
+    public void commandWithOptionWithDefaultValue() {
         BQRuntime runtime = appManager.runtime(Bootique.app("-cmd", "--option")
                 .module(b -> BQCoreModule.extend(b).addCommand(CommandWithDefaultOptionValue.class)));
 

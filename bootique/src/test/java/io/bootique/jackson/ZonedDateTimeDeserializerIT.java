@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ZonedDateTimeDeserializerIT extends DeserializerTestBase {
     @Test
-    public void testDeserialization01() throws Exception {
+    public void deserialization01() throws Exception {
         ZonedDateTime zonedDateTime = ZonedDateTime.of(2017, 9, 2, 10, 15, 30, 0, ZoneOffset.ofHours(1));
 
         ZonedDateTime value = deserialize(ZonedDateTime.class, "\"" + zonedDateTime.toString() + "\"");
@@ -41,7 +41,7 @@ public class ZonedDateTimeDeserializerIT extends DeserializerTestBase {
     }
 
     @Test
-    public void testDeserialization02() throws Exception {
+    public void deserialization02() throws Exception {
         ZonedDateTime zonedDateTime = ZonedDateTime.of(2017, 9, 2, 10, 15, 30, 0, ZoneOffset.ofHours(1));
 
         ZonedDateTime value = deserialize(ZonedDateTime.class, "\"2017-09-02T10:15:30+01:00\"");
@@ -51,7 +51,7 @@ public class ZonedDateTimeDeserializerIT extends DeserializerTestBase {
     }
 
     @Test
-    public void testDeserialization03() throws IOException {
+    public void deserialization03() throws IOException {
         Bean1 bean1 = deserialize(Bean1.class, "a: \"x\"\n" +
                 "c:\n" +
                 "  zonedDateTime: 2017-09-02T10:15:30+01:00");
@@ -59,7 +59,7 @@ public class ZonedDateTimeDeserializerIT extends DeserializerTestBase {
     }
 
     @Test
-    public void testDeserializationWithTypeInfo01() throws Exception {
+    public void deserializationWithTypeInfo01() throws Exception {
         ZonedDateTime zonedDateTime = ZonedDateTime.of(2017, 9, 2, 10, 15, 30, 0, ZoneOffset.ofHours(1));
 
         ObjectMapper mapper = createMapper();

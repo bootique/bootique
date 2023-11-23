@@ -25,7 +25,7 @@ import static org.junit.Assert.assertTrue;
 public class JUnit4Test {
 
     @Test
-    public void testMe() {
+    public void me() {
         assertTrue(2 == 2);
     }
 }

@@ -39,13 +39,13 @@ public class BootiqueIT {
     private String[] args = new String[]{"a", "b", "c"};
 
     @Test
-    public void testExec() {
+    public void exec() {
         CommandOutcome outcome = Bootique.app(args).exec();
         assertTrue(outcome.isSuccess());
     }
 
     @Test
-    public void testExec_Failure() {
+    public void exec_Failure() {
         CommandOutcome outcome = Bootique.app("-a").module(b ->
                 BQCoreModule.extend(b).addCommand(new Command() {
                     @Override
@@ -66,7 +66,7 @@ public class BootiqueIT {
     }
 
     @Test
-    public void testExec_Exception() {
+    public void exec_Exception() {
         CommandOutcome outcome = Bootique.app("-a").module(b ->
                 BQCoreModule.extend(b).addCommand(new Command() {
                     @Override
@@ -88,7 +88,7 @@ public class BootiqueIT {
     }
 
     @Test
-    public void testAutoLoadedProviders() {
+    public void autoLoadedProviders() {
         Collection<BQModuleProvider> autoLoaded = Bootique.app(args).autoLoadedProviders();
 
         assertEquals(1, autoLoaded.size());
@@ -96,7 +96,7 @@ public class BootiqueIT {
     }
 
     @Test
-    public void testCreateInjector() {
+    public void createInjector() {
         Injector i = Bootique.app(args).createInjector();
 
         String[] args = i.getInstance(Key.get(String[].class, Args.class));
@@ -104,7 +104,7 @@ public class BootiqueIT {
     }
 
     @Test
-    public void testApp_Collection() {
+    public void app_Collection() {
         Injector i = Bootique.app(asList(args)).createInjector();
 
         String[] args = i.getInstance(Key.get(String[].class, Args.class));

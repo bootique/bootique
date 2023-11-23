@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class PercentTest {
 
     @Test
-    public void testEquals() {
+    public void equals() {
         Percent p1 = new Percent(1);
         Percent p2 = new Percent(2);
         Percent p3 = new Percent(1);
@@ -42,7 +42,7 @@ public class PercentTest {
     }
 
     @Test
-    public void testHashCode() {
+    public void hashCodeTest() {
         Percent p1 = new Percent(1);
         Percent p2 = new Percent(2);
         Percent p3 = new Percent(1);
@@ -58,7 +58,7 @@ public class PercentTest {
     }
 
     @Test
-    public void testCompareTo() {
+    public void compareTo() {
         Percent p1 = new Percent(1);
         Percent p2 = new Percent(2);
         Percent p4 = new Percent(1.000);
@@ -71,22 +71,22 @@ public class PercentTest {
     }
 
     @Test
-    public void testParse_Null() {
+    public void parse_Null() {
         assertThrows(NullPointerException.class, () -> Percent.parse(null));
     }
 
     @Test
-    public void testParse_Empty() {
+    public void parse_Empty() {
         assertThrows(IllegalArgumentException.class, () -> Percent.parse(""));
     }
 
     @Test
-    public void testParse_NotANumber() {
+    public void parse_NotANumber() {
         assertThrows(NumberFormatException.class, () -> Percent.parse("abc%"));
     }
 
     @Test
-    public void testParse() {
+    public void parse() {
         assertEquals(4., Percent.parse("4"), 0.0001);
         assertEquals(4., Percent.parse("4."), 0.0001);
         assertEquals(4., Percent.parse("4%"), 0.0001);
@@ -94,31 +94,31 @@ public class PercentTest {
     }
 
     @Test
-    public void testParse_Negative() {
+    public void parse_Negative() {
         assertEquals(-4., Percent.parse("-4"), 0.0001);
         assertEquals(-4., Percent.parse("-4%"), 0.0001);
     }
 
     @Test
-    public void testParse_Zero() {
+    public void parse_Zero() {
         assertEquals(0., Percent.parse("0"), 0.0001);
         assertEquals(0., Percent.parse("0.0%"), 0.0001);
         assertEquals(0., Percent.parse("-0.%"), 0.0001);
     }
 
     @Test
-    public void testParse_Hundred() {
+    public void parse_Hundred() {
         assertEquals(100., Percent.parse("100"), 0.0001);
         assertEquals(100., Percent.parse("100.0%"), 0.0001);
     }
 
     @Test
-    public void testParse_Large() {
+    public void parse_Large() {
         assertEquals(10001.0005, Percent.parse("10001.0005"), 0.000000001);
     }
 
     @Test
-    public void testToString_Precision() {
+    public void toString_Precision() {
         assertEquals("0.000124%", new Percent("0.0001237%").toString(3));
         assertEquals("1.01%", new Percent("1.0111111%").toString(3));
         assertEquals("1.012%", new Percent("1.011811%").toString(4));

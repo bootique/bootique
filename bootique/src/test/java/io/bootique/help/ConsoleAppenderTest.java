@@ -28,12 +28,12 @@ public class ConsoleAppenderTest {
 
     // TODO: what's the point of hardcoded min line width?
     @Test
-    public void testConstructorMinWidth() {
+    public void constructorMinWidth() {
         assertThrows(IllegalArgumentException.class, () -> new ConsoleAppender(new StringBuilder(), ConsoleAppender.MIN_LINE_WIDTH - 2));
     }
 
     @Test
-    public void testPrintln() {
+    public void println() {
         StringBuilder out = new StringBuilder();
         ConsoleAppender appender = new ConsoleAppender(out, 20);
 
@@ -42,7 +42,7 @@ public class ConsoleAppenderTest {
     }
 
     @Test
-    public void testPrintln_Offset() {
+    public void println_Offset() {
         StringBuilder out = new StringBuilder();
         ConsoleAppender appender = new ConsoleAppender(out, 20).withOffset(3);
 
@@ -51,7 +51,7 @@ public class ConsoleAppenderTest {
     }
 
     @Test
-    public void testPrintln_Long() {
+    public void println_Long() {
         StringBuilder out = new StringBuilder();
         ConsoleAppender appender = new ConsoleAppender(out, 20);
 
@@ -60,7 +60,7 @@ public class ConsoleAppenderTest {
     }
 
     @Test
-    public void testFoldPrintln() {
+    public void foldPrintln() {
         StringBuilder out = new StringBuilder();
         ConsoleAppender appender = new ConsoleAppender(out, 20);
 
@@ -69,7 +69,7 @@ public class ConsoleAppenderTest {
     }
 
     @Test
-    public void testFoldPrintln_Long() {
+    public void foldPrintln_Long() {
         StringBuilder out = new StringBuilder();
         ConsoleAppender appender = new ConsoleAppender(out, 20);
 
@@ -80,7 +80,7 @@ public class ConsoleAppenderTest {
     }
 
     @Test
-    public void testFoldPrintln_Long_NoSpace() {
+    public void foldPrintln_Long_NoSpace() {
         StringBuilder out = new StringBuilder();
         ConsoleAppender appender = new ConsoleAppender(out, 20);
 
@@ -90,7 +90,7 @@ public class ConsoleAppenderTest {
     }
 
     @Test
-    public void testFoldPrintln_OffsetInt() {
+    public void foldPrintln_OffsetInt() {
         StringBuilder out = new StringBuilder();
         ConsoleAppender appender = new ConsoleAppender(out, 20).withOffset(3);
 
@@ -101,7 +101,7 @@ public class ConsoleAppenderTest {
     }
 
     @Test
-    public void testFoldPrintln_OffsetString() {
+    public void foldPrintln_OffsetString() {
         StringBuilder out = new StringBuilder();
         ConsoleAppender appender = new ConsoleAppender(out, 20).withOffset("xyz");
 
@@ -112,7 +112,7 @@ public class ConsoleAppenderTest {
     }
 
     @Test
-    public void testFoldPrintln_FullLine() {
+    public void foldPrintln_FullLine() {
         StringBuilder out = new StringBuilder();
 
         // this is a magic proportion - 12 char line with a 12 char word. Used to throw out of bounds in the past

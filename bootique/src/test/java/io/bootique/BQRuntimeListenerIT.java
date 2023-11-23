@@ -39,7 +39,7 @@ public class BQRuntimeListenerIT {
     }
 
     @Test
-    public void test_CreateRuntime() {
+    public void createRuntime() {
 
         Listener l1 = new Listener();
         Listener l2 = new Listener();
@@ -61,7 +61,7 @@ public class BQRuntimeListenerIT {
     }
 
     @Test
-    public void test_Exec() {
+    public void exec() {
 
         Listener l1 = new Listener();
         XCommand c1 = new XCommand();

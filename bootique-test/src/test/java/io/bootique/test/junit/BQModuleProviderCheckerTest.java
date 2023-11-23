@@ -27,7 +27,7 @@ import org.junit.Test;
 public class BQModuleProviderCheckerTest {
 
     @Test
-    public void testMatchingProvider() {
+    public void matchingProvider() {
         BQModuleProvider p = new BQModuleProviderChecker(P1.class).matchingProvider();
 
         Assert.assertNotNull(p);
@@ -35,7 +35,7 @@ public class BQModuleProviderCheckerTest {
     }
 
     @Test
-    public void testTestMetadata() {
+    public void metadata() {
         new BQModuleProviderChecker(P1.class).testMetadata();
     }
 

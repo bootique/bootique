@@ -41,7 +41,7 @@ public class MultiFormatJsonNodeParserTest {
     }
 
     @Test
-    public void testParserForUrl() throws MalformedURLException {
+    public void parserForUrl() throws MalformedURLException {
         MultiFormatJsonNodeParser parser = new MultiFormatJsonNodeParser(createParsersSet());
 
         assertSame(jsonParser, parser.parserForUrl(new URL("http://example.org/test.json"), ""));

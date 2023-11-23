@@ -32,7 +32,7 @@ public class BQRuntimeCheckerTest {
     public BQTestFactory testFactory = new BQTestFactory();
 
     @Test
-    public void testTestModulesLoaded() {
+    public void modulesLoaded() {
         final BQRuntime runtime = testFactory.app().createRuntime();
         BQRuntimeChecker.testModulesLoaded(runtime, BQCoreModule.class);
     }

@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ZoneOffSetDeserializerIT extends DeserializerTestBase {
     @Test
-    public void testDeserialization01() throws Exception {
+    public void deserialization01() throws Exception {
         ZoneOffset zoneOffset = ZoneOffset.ofHoursMinutes(17, 10);
 
         ZoneOffset value = deserialize(ZoneOffset.class, "\"+17:10\"");
@@ -40,7 +40,7 @@ public class ZoneOffSetDeserializerIT extends DeserializerTestBase {
     }
 
     @Test
-    public void testDeserialization02() throws Exception {
+    public void deserialization02() throws Exception {
         ZoneOffset zoneOffset = ZoneOffset.of("+17:10");
 
         ZoneOffset value = deserialize(ZoneOffset.class, "\"" + zoneOffset.toString() + "\"");
@@ -50,7 +50,7 @@ public class ZoneOffSetDeserializerIT extends DeserializerTestBase {
     }
 
     @Test
-    public void testDeserialization03() throws Exception {
+    public void deserialization03() throws Exception {
         ZoneOffset zoneOffset = ZoneOffset.ofHoursMinutes(17, 10);
 
         ZoneOffset value = deserialize(ZoneOffset.class, "\"" + zoneOffset.toString() + "\"");
@@ -60,7 +60,7 @@ public class ZoneOffSetDeserializerIT extends DeserializerTestBase {
     }
 
     @Test
-    public void testDeserialization04() throws IOException {
+    public void deserialization04() throws IOException {
         Bean1 bean1 = deserialize(Bean1.class, "a: \"x\"\n" +
                 "c:\n" +
                 "  zoneOffset: +17:10");
@@ -68,7 +68,7 @@ public class ZoneOffSetDeserializerIT extends DeserializerTestBase {
     }
 
     @Test
-    public void testDeserializationWithTypeInfo01() throws Exception {
+    public void deserializationWithTypeInfo01() throws Exception {
         ZoneOffset zoneOffset = ZoneOffset.ofHoursMinutes(17, 10);
 
         ObjectMapper mapper = createMapper();

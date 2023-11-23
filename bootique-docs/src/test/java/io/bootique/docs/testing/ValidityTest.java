@@ -7,7 +7,7 @@ public class ValidityTest {
 
     // tag::Testing[]
     @Test
-    public void testAutoLoadable() {
+    public void autoLoadable() {
         BQModuleProviderChecker.testAutoLoadable(MyModuleProvider.class);
     }
     // end::Testing[]

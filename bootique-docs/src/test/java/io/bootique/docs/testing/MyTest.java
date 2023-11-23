@@ -22,7 +22,7 @@ public class MyTest {
     @Disabled("Fake command, will fail")
     // tag::TestAbc[]
     @Test
-    public void testAbc() {
+    public void abc() {
 
         CommandOutcome result = testFactory.app("--server")
                 // ensure all classpath modules are included
@@ -37,7 +37,7 @@ public class MyTest {
 
 // tag::TestXyz[]
     @Test
-    public void testXyz() {
+    public void xyz() {
 
         BQRuntime app = testFactory.app("--server")
                 .autoLoadModules()

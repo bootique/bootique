@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class PolymorphicConfigurationCheckerIT {
 
     @Test
-    public void test_NotPolymorphicConfiguration() {
+    public void notPolymorphicConfiguration() {
 
         // intentionally tricking Java type boundary checks
         Class c1 = C1.class;

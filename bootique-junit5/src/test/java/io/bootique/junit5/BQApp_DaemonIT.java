@@ -49,7 +49,7 @@ public class BQApp_DaemonIT {
             .createRuntime();
 
     @Test
-    public void testStillRunning() {
+    public void stillRunning() {
         assertEquals(1, XCommand.runCount);
         assertFalse(app.getInstance(XCommand.class).isStopped());
     }

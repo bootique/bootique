@@ -32,19 +32,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class YearMonthDeserializerIT extends DeserializerTestBase {
 
     @Test
-    public void testDeserialization_Value1() throws Exception {
+    public void deserialization_Value1() throws Exception {
         YearMonth ym = deserialize(YearMonth.class, "\"1986-01\"");
         assertEquals(YearMonth.of(1986, Month.JANUARY), ym);
     }
 
     @Test
-    public void testDeserialization_Value2() throws Exception {
+    public void deserialization_Value2() throws Exception {
         YearMonth ym = deserialize(YearMonth.class, "\"2013-08\"");
         assertEquals(YearMonth.of(2013, Month.AUGUST), ym);
     }
 
     @Test
-    public void testDeserialization_Pattern() throws Exception {
+    public void deserialization_Pattern() throws Exception {
         YM_Pattern ym = deserialize(YM_Pattern.class, "yearMonth: \"1308\"");
         assertEquals(YearMonth.of(2013, Month.AUGUST), ym.yearMonth);
     }

@@ -61,7 +61,7 @@ public class ConfigSectionGeneratorTest {
     }
 
     @Test
-    public void testVisitObjectConfig() {
+    public void visitObjectConfig() {
 
         ConfigObjectMetadata m1Config = ConfigObjectMetadata
                 .builder("m1root")
@@ -90,7 +90,7 @@ public class ConfigSectionGeneratorTest {
     }
 
     @Test
-    public void testVisitListOfValues() {
+    public void visitListOfValues() {
 
         ConfigValueMetadata listMd1 = ConfigValueMetadata.builder().type(Integer.TYPE).build();
 
@@ -117,7 +117,7 @@ public class ConfigSectionGeneratorTest {
     }
 
     @Test
-    public void testVisitListOfObjects() {
+    public void visitListOfObjects() {
 
         ConfigObjectMetadata listMd2 = ConfigObjectMetadata.builder()
                 .type(ConfigRoot2.class)
@@ -155,7 +155,7 @@ public class ConfigSectionGeneratorTest {
     }
 
     @Test
-    public void testVisitMapOfValues() throws NoSuchFieldException {
+    public void visitMapOfValues() throws NoSuchFieldException {
 
         Type genericMapType = ConfigRoot2.class.getField("map").getGenericType();
 
@@ -188,7 +188,7 @@ public class ConfigSectionGeneratorTest {
     }
 
     @Test
-    public void testVisitObjectWithMapOfObjects() {
+    public void visitObjectWithMapOfObjects() {
 
         ConfigObjectMetadata mapMd = ConfigObjectMetadata.builder()
                 .type(ConfigRoot2.class)
@@ -225,7 +225,7 @@ public class ConfigSectionGeneratorTest {
     }
 
     @Test
-    public void testVisitMapOfMapsOfObjects() {
+    public void visitMapOfMapsOfObjects() {
 
         ConfigObjectMetadata objectMd = ConfigObjectMetadata.builder()
                 .type(ConfigRoot2.class)
@@ -269,7 +269,7 @@ public class ConfigSectionGeneratorTest {
     }
 
     @Test
-    public void testVisitMapOfListsOfObjects() {
+    public void visitMapOfListsOfObjects() {
 
         ConfigObjectMetadata objectMd = ConfigObjectMetadata.builder()
                 .type(ConfigRoot2.class)
@@ -312,7 +312,7 @@ public class ConfigSectionGeneratorTest {
     }
 
     @Test
-    public void testVisitObjectConfig_Inheritance() {
+    public void visitObjectConfig_Inheritance() {
 
         ConfigObjectMetadata sub1 = ConfigObjectMetadata.builder()
                 .type(Config3.class)
@@ -369,7 +369,7 @@ public class ConfigSectionGeneratorTest {
     }
 
     @Test
-    public void testVisitMapConfig_ValueInheritance() throws NoSuchFieldException {
+    public void visitMapConfig_ValueInheritance() throws NoSuchFieldException {
 
         Type genericMapType = ConfigRoot2.class.getField("mapOfRoot1").getGenericType();
 
@@ -438,7 +438,7 @@ public class ConfigSectionGeneratorTest {
 
 
     @Test
-    public void testVisitMapConfig_ValueInheritance_AbstractProps() throws NoSuchFieldException {
+    public void visitMapConfig_ValueInheritance_AbstractProps() throws NoSuchFieldException {
 
         Type genericMapType = ConfigRoot2.class.getField("mapOfRoot1").getGenericType();
 
@@ -488,7 +488,7 @@ public class ConfigSectionGeneratorTest {
     }
 
     @Test
-    public void testTypeLabel() throws NoSuchFieldException {
+    public void typeLabel() throws NoSuchFieldException {
         ConfigSectionGenerator generator = new ConfigSectionGenerator(mock(ConsoleAppender.class), new HashSet<>());
         assertEquals("int", generator.typeLabel(Integer.class));
         assertEquals("int", generator.typeLabel(Integer.TYPE));

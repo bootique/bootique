@@ -30,28 +30,28 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CommandMetadataTest {
 
     @Test
-    public void testGetShortName() {
+    public void getShortName() {
         CommandMetadata md = CommandMetadata.builder(MyCommand.class).shortName('M').build();
         assertEquals("my", md.getName());
         assertEquals("M", md.getShortName());
     }
 
     @Test
-    public void testGetName() {
+    public void getName() {
         CommandMetadata md = CommandMetadata.builder(MyCommand.class).build();
         assertEquals("my", md.getName());
         assertEquals("m", md.getShortName());
     }
 
     @Test
-    public void testGetName_CamelCase() {
+    public void getName_CamelCase() {
         CommandMetadata md = CommandMetadata.builder(MyCamelCaseCommand.class).build();
         assertEquals("my-camel-case", md.getName());
         assertEquals("m", md.getShortName());
     }
 
     @Test
-    public void testGetName_UpperCase() {
+    public void getName_UpperCase() {
         CommandMetadata md = CommandMetadata.builder(MYXCommand.class).build();
         assertEquals("myx", md.getName());
         assertEquals("m", md.getShortName());

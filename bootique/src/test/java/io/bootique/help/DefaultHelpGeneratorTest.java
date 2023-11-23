@@ -43,7 +43,7 @@ public class DefaultHelpGeneratorTest {
     }
 
     @Test
-    public void testGenerate_Name() {
+    public void generate_Name() {
 
         ApplicationMetadata app = ApplicationMetadata.builder("myapp").build();
 
@@ -54,7 +54,7 @@ public class DefaultHelpGeneratorTest {
     }
 
     @Test
-    public void testGenerate_Name_Description() {
+    public void generate_Name_Description() {
 
         ApplicationMetadata app = ApplicationMetadata.builder("myapp", "this is my app").build();
 
@@ -66,7 +66,7 @@ public class DefaultHelpGeneratorTest {
     }
 
     @Test
-    public void testGenerate_Name_Options() {
+    public void generate_Name_Options() {
 
         OptionMetadata listOpt = OptionMetadata.builder("list", "Lists everything").build();
         OptionMetadata runOpt = OptionMetadata.builder("run", "Runs specified command").valueRequired().build();
@@ -96,7 +96,7 @@ public class DefaultHelpGeneratorTest {
     }
 
     @Test
-    public void testGenerate_Name_ShortOptions() {
+    public void generate_Name_ShortOptions() {
 
         OptionMetadata listOpt = OptionMetadata.builder("l", "Lists everything").build();
         OptionMetadata runOpt = OptionMetadata.builder("r", "Runs specified command").valueRequired().build();
@@ -126,7 +126,7 @@ public class DefaultHelpGeneratorTest {
     }
 
     @Test
-    public void testGenerate_Name_Options_ShortNameConflict() {
+    public void generate_Name_Options_ShortNameConflict() {
 
         OptionMetadata resetOpt = OptionMetadata.builder("reset", "Resets everything").build();
         OptionMetadata listOpt = OptionMetadata.builder("list", "Lists everything").build();
@@ -155,7 +155,7 @@ public class DefaultHelpGeneratorTest {
     }
 
     @Test
-    public void testGenerate_Name_Options_ShortAliases() {
+    public void generate_Name_Options_ShortAliases() {
 
         OptionMetadata resetOpt = OptionMetadata.builder("reset", "Resets everything").build();
         OptionMetadata listOpt = OptionMetadata.builder("list", "Lists everything").build();
@@ -185,7 +185,7 @@ public class DefaultHelpGeneratorTest {
     }
 
     @Test
-    public void testGenerate_Name_Command_ShortAliases() {
+    public void generate_Name_Command_ShortAliases() {
 
         CommandMetadata resetOpt = CommandMetadata.builder("reset").description("Resets everything").build();
         CommandMetadata runOpt = CommandMetadata.builder("reset-for-real")
@@ -211,7 +211,7 @@ public class DefaultHelpGeneratorTest {
     }
 
     @Test
-    public void testGenerate_TrimSpace() {
+    public void generate_TrimSpace() {
 
         OptionMetadata opt1 = OptionMetadata.builder("a1", "  Word1 word2 \t\n").build();
 
@@ -231,7 +231,7 @@ public class DefaultHelpGeneratorTest {
     }
 
     @Test
-    public void testGenerate_LineFolding() {
+    public void generate_LineFolding() {
 
         OptionMetadata opt1 = OptionMetadata.builder("a1", "Word1 word2 word3 word4 longword5 longerword6 morewords7").build();
         OptionMetadata opt2 = OptionMetadata.builder("b1", "Word8 word9 word10 word11 longword12 longerword13 morewords14").build();
@@ -269,7 +269,7 @@ public class DefaultHelpGeneratorTest {
     }
 
     @Test
-    public void testGenerate_LineFolding_VeryLongWord() {
+    public void generate_LineFolding_VeryLongWord() {
 
         OptionMetadata opt1 = OptionMetadata.builder("a1", "Word1_word2_word3_word4_longword5_longerword6_morewords7").build();
         OptionMetadata opt2 = OptionMetadata.builder("b1", "Word1 word2_word3_word4_longword5_longerword6_morewords7").build();
@@ -303,7 +303,7 @@ public class DefaultHelpGeneratorTest {
     }
 
     @Test
-    public void testGenerate_LineFolding_BigDisplay() {
+    public void generate_LineFolding_BigDisplay() {
 
         OptionMetadata opt1 = OptionMetadata.builder("a1", "Word1_word2_word3_word4_longword5_longerword6_morewords7").build();
         OptionMetadata opt2 = OptionMetadata.builder("b1", "Word1 word2_word3_word4_longword5_longerword6_morewords7").build();
@@ -336,7 +336,7 @@ public class DefaultHelpGeneratorTest {
     }
 
     @Test
-    public void testGenerate_EnvironmentSection() {
+    public void generate_EnvironmentSection() {
 
         ConfigValueMetadata var1 = ConfigValueMetadata.builder("VAR1").description("var1 description").build();
         ConfigValueMetadata var2 = ConfigValueMetadata.builder("VAR2").description("var2 description.").build();

@@ -33,7 +33,7 @@ public class NetworkTest {
     @Disabled("No real Jersey module available")
     // tag::Testing[]
     @Test
-    public void testServer() {
+    public void server() {
         Response response = jetty.getTarget().path("/somepath").request().get();
         JettyTester.assertOk(response);
     }

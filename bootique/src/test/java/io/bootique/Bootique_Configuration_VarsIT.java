@@ -44,7 +44,7 @@ public class Bootique_Configuration_VarsIT {
     }
 
     @Test
-    public void testOverrideValue() {
+    public void overrideValue() {
         BQRuntime runtime = app(b -> BQCoreModule.extend(b)
                 .addConfig("classpath:io/bootique/Bootique_Configuration_VarsIT.yml")
                 .declareVar("testOverrideValue.c.m.l", "MY_VAR")
@@ -55,7 +55,7 @@ public class Bootique_Configuration_VarsIT {
     }
 
     @Test
-    public void testOverrideValueArray() {
+    public void overrideValueArray() {
         BQRuntime runtime = app(b -> BQCoreModule.extend(b)
                 .addConfig("classpath:io/bootique/Bootique_Configuration_VarsIT.yml")
                 .declareVar("testOverrideValueArray.h[1]", "MY_VAR")
@@ -69,7 +69,7 @@ public class Bootique_Configuration_VarsIT {
     }
 
     @Test
-    public void testOverrideValueDotsInKey() {
+    public void overrideValueDotsInKey() {
         BQRuntime runtime = app(b -> BQCoreModule.extend(b)
                 .addConfig("classpath:io/bootique/Bootique_Configuration_VarsIT.yml")
                 .declareVar("testOverrideValueDotsInKey.a\\.b\\.c.f\\.g", "MY_VAR")
@@ -87,7 +87,7 @@ public class Bootique_Configuration_VarsIT {
     }
 
     @Test
-    public void testDeclareVar_ConfigPathCaseSensitivity() {
+    public void declareVar_ConfigPathCaseSensitivity() {
         BQRuntime runtime = app(b -> BQCoreModule.extend(b)
                 .declareVar("m.propCamelCase", "MY_VAR")
                 .setVar("MY_VAR", "myValue"));
@@ -98,7 +98,7 @@ public class Bootique_Configuration_VarsIT {
     }
 
     @Test
-    public void testDeclareVar_NameCaseSensitivity() {
+    public void declareVar_NameCaseSensitivity() {
         BQRuntime runtime = app(b -> BQCoreModule.extend(b)
                 .declareVar("m.propCamelCase", "MY_VAR")
                 .setVar("my_var", "myValue"));
@@ -108,7 +108,7 @@ public class Bootique_Configuration_VarsIT {
     }
 
     @Test
-    public void testDeclareVar_SameVarTwoPaths() {
+    public void declareVar_SameVarTwoPaths() {
         BQRuntime runtime = app(b -> BQCoreModule.extend(b)
                 .declareVar("p1", "MY_VAR")
                 .declareVar("p3", "MY_VAR")
@@ -122,7 +122,7 @@ public class Bootique_Configuration_VarsIT {
     }
 
     @Test
-    public void testDeclareVar_SameVarTwoIdenticalPaths() {
+    public void declareVar_SameVarTwoIdenticalPaths() {
         BQRuntime runtime = app(b -> BQCoreModule.extend(b)
                 .declareVar("p1", "MY_VAR")
                 .declareVar("p1", "MY_VAR")

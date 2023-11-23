@@ -31,7 +31,7 @@ public class BQApp_SkipRunIT {
             .createRuntime();
 
     @Test
-    public void testDidNotRun() {
+    public void didNotRun() {
         assertDoesNotThrow(() -> app.getInstance(XCommand.class));
         assertEquals(0, XCommand.runCount);
     }

@@ -47,13 +47,13 @@ public class DefaultConfigHelpGeneratorTest {
     }
 
     @Test
-    public void testGenerate_Empty() {
+    public void generate_Empty() {
         ModulesMetadata modules = ModulesMetadata.builder().build();
         assertLines(new DefaultConfigHelpGenerator(modules, 300));
     }
 
     @Test
-    public void testGenerate_Name() {
+    public void generate_Name() {
 
         ModuleMetadata module1 = ModuleMetadata.builder("M1").build();
         ModulesMetadata modules = ModulesMetadata.builder(module1).build();
@@ -65,7 +65,7 @@ public class DefaultConfigHelpGeneratorTest {
     }
 
     @Test
-    public void testGenerate_Name_MultiModule() {
+    public void generate_Name_MultiModule() {
 
         ModuleMetadata module1 = ModuleMetadata.builder("M1").build();
         ModuleMetadata module2 = ModuleMetadata.builder("M2").build();
@@ -80,7 +80,7 @@ public class DefaultConfigHelpGeneratorTest {
     }
 
     @Test
-    public void testGenerate_Name_MultiModule_Sorting() {
+    public void generate_Name_MultiModule_Sorting() {
 
         ModuleMetadata module0 = ModuleMetadata.builder("MB").build();
         ModuleMetadata module1 = ModuleMetadata.builder("MA").build();
@@ -98,7 +98,7 @@ public class DefaultConfigHelpGeneratorTest {
     }
 
     @Test
-    public void testGenerate_Name_Description() {
+    public void generate_Name_Description() {
 
         ModuleMetadata module1 = ModuleMetadata.builder("M1").description("Module called M1").build();
         ModuleMetadata module2 = ModuleMetadata.builder("M2").build();
@@ -114,7 +114,7 @@ public class DefaultConfigHelpGeneratorTest {
     }
 
     @Test
-    public void testGenerate_Configs() {
+    public void generate_Configs() {
 
         ConfigObjectMetadata m1Config = ConfigObjectMetadata
                 .builder("m1root")

@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class ApplicationIntrospectorTest {
 
     @Test
-    public void testMainClass() {
+    public void mainClass() {
 
         Class<?> mainClass = ApplicationIntrospector.mainClass();
 
@@ -41,7 +41,7 @@ public class ApplicationIntrospectorTest {
     }
 
     @Test
-    public void testAppNameFromRuntime() {
+    public void appNameFromRuntime() {
 
         String name = ApplicationIntrospector.appNameFromRuntime();
 

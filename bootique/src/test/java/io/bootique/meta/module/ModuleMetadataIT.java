@@ -40,7 +40,7 @@ public class ModuleMetadataIT {
     final TestAppManager appManager = new TestAppManager();
 
     @Test
-    public void testDefault() {
+    public void basic() {
         ModulesMetadata md = appManager.runtime(Bootique.app()).getInstance(ModulesMetadata.class);
 
         assertEquals(1, md.getModules().size(), "Expected BQCoreModule");
@@ -54,7 +54,7 @@ public class ModuleMetadataIT {
     }
 
     @Test
-    public void testCustomModule() {
+    public void customModule() {
         ModulesMetadata md = appManager.runtime(Bootique.app()
                         .module(b -> {
                         }))
@@ -64,7 +64,7 @@ public class ModuleMetadataIT {
     }
 
     @Test
-    public void testCustomNamedModule() {
+    public void customNamedModule() {
         BQRuntime runtime = appManager.runtime(Bootique.app().moduleProvider(new BQModuleProvider() {
             @Override
             public BQModule module() {
@@ -91,7 +91,7 @@ public class ModuleMetadataIT {
     }
 
     @Test
-    public void testProvider() {
+    public void provider() {
         ModulesMetadata md = appManager.runtime(Bootique.app()
                 .moduleProvider(new M1Provider())).getInstance(ModulesMetadata.class);
 

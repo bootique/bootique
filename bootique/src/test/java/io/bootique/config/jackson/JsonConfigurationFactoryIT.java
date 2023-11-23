@@ -39,28 +39,28 @@ public class JsonConfigurationFactoryIT {
     final TestAppManager appManager = new TestAppManager();
 
     @Test
-    public void test_NoConfig() {
+    public void noConfig() {
         BQRuntime runtime = appManager.runtime(Bootique.app());
         JsonConfigurationFactory configFactory = (JsonConfigurationFactory) runtime.getInstance(ConfigurationFactory.class);
         assertEquals("{}", configFactory.rootNode.toString());
     }
 
     @Test
-    public void test_Yaml() {
+    public void yaml() {
         BQRuntime runtime = appManager.runtime(Bootique.app("--config=http://127.0.0.1:12025/test1.yml"));
         JsonConfigurationFactory configFactory = (JsonConfigurationFactory) runtime.getInstance(ConfigurationFactory.class);
         assertEquals("{\"a\":\"b\"}", configFactory.rootNode.toString());
     }
 
     @Test
-    public void test_Json() {
+    public void json() {
         BQRuntime runtime = appManager.runtime(Bootique.app("--config=http://127.0.0.1:12025/test1.json"));
         JsonConfigurationFactory configFactory = (JsonConfigurationFactory) runtime.getInstance(ConfigurationFactory.class);
         assertEquals("{\"x\":1}", configFactory.rootNode.toString());
     }
 
     @Test
-    public void test_JsonYaml() {
+    public void jsonYaml() {
 
         BQRuntime runtime = appManager.runtime(Bootique.app(
                 "--config=http://127.0.0.1:12025/test1.json",
@@ -71,7 +71,7 @@ public class JsonConfigurationFactoryIT {
     }
 
     @Test
-    public void test_YamlProps() {
+    public void yamlProps() {
         BQRuntime runtime = appManager.runtime(Bootique.app("--config=http://127.0.0.1:12025/test1.yml")
                 .module(b -> BQCoreModule.extend(b).setProperty("bq.a", "B")));
         JsonConfigurationFactory configFactory = (JsonConfigurationFactory) runtime.getInstance(ConfigurationFactory.class);
@@ -79,7 +79,7 @@ public class JsonConfigurationFactoryIT {
     }
 
     @Test
-    public void test_YamlNestedProps() {
+    public void yamlNestedProps() {
         BQRuntime runtime = appManager.runtime(Bootique.app("--config=http://127.0.0.1:12025/test3.yml")
                 .module(b -> BQCoreModule.extend(b).setProperty("bq.c.m.k", "67")));
         JsonConfigurationFactory configFactory = (JsonConfigurationFactory) runtime.getInstance(ConfigurationFactory.class);

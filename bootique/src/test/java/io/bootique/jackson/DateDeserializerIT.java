@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class DateDeserializerIT extends DeserializerTestBase {
 
     @Test
-    public void testDeserialize() throws Exception {
+    public void deserialize() throws Exception {
         Date date = deserialize(Date.class, "\"1999-10-12T13:45:05\"");
         assertNotNull(date);
 

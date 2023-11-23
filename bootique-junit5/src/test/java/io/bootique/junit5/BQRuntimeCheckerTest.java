@@ -32,13 +32,13 @@ public class BQRuntimeCheckerTest {
     final BQTestFactory testFactory = new BQTestFactory();
 
     @Test
-    public void testTestModulesLoaded() {
+    public void modulesLoaded() {
         BQRuntime runtime = testFactory.app().createRuntime();
         BQRuntimeChecker.testModulesLoaded(runtime, BQCoreModule.class);
     }
 
     @Test
-    public void testTestModulesNotLoaded() {
+    public void modulesNotLoaded() {
         BQRuntime runtime = testFactory.app().createRuntime();
         Assertions.assertThrows(AssertionError.class,
                 () -> BQRuntimeChecker.testModulesLoaded(runtime, NonLoadedModule.class));

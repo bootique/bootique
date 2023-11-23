@@ -43,7 +43,7 @@ public class Bootique_ModuleOverridesIT {
     private String[] args = new String[]{"a", "b", "c"};
 
     @Test
-    public void testCreateInjector_Overrides() {
+    public void createInjector_Overrides() {
         Injector i = Bootique.app(args)
                 .override(BQCoreModule.class)
                 .with(M0.class)
@@ -54,7 +54,7 @@ public class Bootique_ModuleOverridesIT {
     }
 
     @Test
-    public void testCreateInjector_Overrides_Multi_Level() {
+    public void createInjector_Overrides_Multi_Level() {
         Injector i = Bootique.app(args)
                 .override(BQCoreModule.class).with(M0.class)
                 .override(M0.class).with(M1.class)
@@ -65,7 +65,7 @@ public class Bootique_ModuleOverridesIT {
     }
 
     @Test
-    public void testCreateInjector_OverridesWithProvider() {
+    public void createInjector_OverridesWithProvider() {
         BQModuleProvider provider = new BQModuleProvider() {
 
             @Override
@@ -86,7 +86,7 @@ public class Bootique_ModuleOverridesIT {
     }
 
     @Test
-    public void testCreateInjector_Override_TwoLevelTree() {
+    public void createInjector_Override_TwoLevelTree() {
 
         M5.configCalls = 0;
         M3.configCalls = 0;
@@ -110,7 +110,7 @@ public class Bootique_ModuleOverridesIT {
     }
 
     @Test
-    public void testCreateInjector_Override_ThreeLevelTree() {
+    public void createInjector_Override_ThreeLevelTree() {
 
         M3.configCalls = 0;
         M4.configCalls = 0;
@@ -152,7 +152,7 @@ public class Bootique_ModuleOverridesIT {
     }
 
     @Test
-    public void testCreateInjector_Overrides_OriginalModuleServices() {
+    public void createInjector_Overrides_OriginalModuleServices() {
         Injector i = Bootique.app()
                 .module(M2.class)
                 .override(M2.class).with(SubM2.class)
@@ -163,7 +163,7 @@ public class Bootique_ModuleOverridesIT {
     }
 
     @Test
-    public void testCreateInjector_Overrides_Multi_Level_OriginalModuleServices() {
+    public void createInjector_Overrides_Multi_Level_OriginalModuleServices() {
         Injector i = Bootique.app()
                 .module(M2.class)
                 .override(M2.class).with(SubM2.class)

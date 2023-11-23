@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class BootiqueExceptionsHandlerIT {
 
     @Test
-    public void testCli_BadOption() {
+    public void cli_BadOption() {
         CommandOutcome out = Bootique.app("-x").exec();
 
         assertEquals(1, out.getExitCode());
@@ -50,7 +50,7 @@ public class BootiqueExceptionsHandlerIT {
     }
 
     @Test
-    public void testCli_TwoCommands() {
+    public void cli_TwoCommands() {
         CommandOutcome out = Bootique.app("-x", "-y")
                 .module(b -> BQCoreModule.extend(b)
                         .addCommand(new Command() {
@@ -86,7 +86,7 @@ public class BootiqueExceptionsHandlerIT {
     }
 
     @Test
-    public void testConfig_FileNotFound() {
+    public void config_FileNotFound() {
         CommandOutcome out = Bootique.app("-c", "com/foo/no_such_config.yml", "-t")
                 .module(b -> b.bind(ConfigDependent.class))
                 .module(b -> BQCoreModule.extend(b).addCommand(TestCommand.class))
@@ -99,7 +99,7 @@ public class BootiqueExceptionsHandlerIT {
     }
 
     @Test
-    public void testConfig_BadUrl() {
+    public void config_BadUrl() {
         CommandOutcome out = Bootique.app("-c", "nosuchprotocol://myconfig", "-t")
                 .module(b -> b.bind(ConfigDependent.class))
                 .module(b -> BQCoreModule.extend(b).addCommand(TestCommand.class))
@@ -111,7 +111,7 @@ public class BootiqueExceptionsHandlerIT {
     }
 
     @Test
-    public void testConfig_BadUrlProtocol() {
+    public void config_BadUrlProtocol() {
         // underscores in protocol name cause IllegalArgumentException in URI
         CommandOutcome out = Bootique.app("-c", "no_such_protocol://myconfig", "-t")
                 .module(b -> b.bind(ConfigDependent.class))
@@ -124,7 +124,7 @@ public class BootiqueExceptionsHandlerIT {
     }
 
     @Test
-    public void testDI_ProviderMethodBqException() {
+    public void dI_ProviderMethodBqException() {
         CommandOutcome out = Bootique.app("-m")
                 .module(new ModuleWithProviderMethodBqException())
                 .exec();
@@ -135,7 +135,7 @@ public class BootiqueExceptionsHandlerIT {
     }
 
     @Test
-    public void testDI_ProviderMethodNPException() {
+    public void dI_ProviderMethodNPException() {
         CommandOutcome out = Bootique.app("-m")
                 .module(new ModuleWithProviderMethodNPException())
                 .exec();
@@ -146,7 +146,7 @@ public class BootiqueExceptionsHandlerIT {
     }
 
     @Test
-    public void testModules_CircularOverrides() {
+    public void modules_CircularOverrides() {
         CommandOutcome out = Bootique.app()
                 .moduleProvider(new ModuleProviderWithOverride1())
                 .moduleProvider(new ModuleProviderWithOverride2())
@@ -164,7 +164,7 @@ public class BootiqueExceptionsHandlerIT {
     }
 
     @Test
-    public void testModules_MultipleOverrides() {
+    public void modules_MultipleOverrides() {
         CommandOutcome out = Bootique.app()
                 .moduleProvider(new CoreOverrideProvider1())
                 .moduleProvider(new CoreOverrideProvider2())
@@ -177,7 +177,7 @@ public class BootiqueExceptionsHandlerIT {
     }
 
     @Test
-    public void testDI_TwoCommandsSameName() {
+    public void dI_TwoCommandsSameName() {
         CommandOutcome out = Bootique.app("-x")
                 .module(b -> BQCoreModule.extend(b)
                         .addCommand(new Command() {

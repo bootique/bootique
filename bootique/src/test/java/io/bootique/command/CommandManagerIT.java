@@ -44,7 +44,7 @@ public class CommandManagerIT {
     final TestAppManager appManager = new TestAppManager();
 
     @Test
-    public void testHelpAndModuleCommands() {
+    public void helpAndModuleCommands() {
         BQRuntime runtime = appManager.runtime(Bootique.app().modules(M0.class, M1.class));
 
         CommandManager commandManager = runtime.getInstance(CommandManager.class);
@@ -58,7 +58,7 @@ public class CommandManagerIT {
     }
 
     @Test
-    public void testDefaultAndHelpAndModuleCommands() {
+    public void defaultAndHelpAndModuleCommands() {
 
         Command defaultCommand = cli -> CommandOutcome.succeeded();
         BQModule defaultCommandModule = binder -> BQCoreModule.extend(binder).setDefaultCommand(defaultCommand);
@@ -75,7 +75,7 @@ public class CommandManagerIT {
     }
 
     @Test
-    public void testHiddenCommands() {
+    public void hiddenCommands() {
 
         Command hiddenCommand = new Command() {
             @Override
@@ -102,7 +102,7 @@ public class CommandManagerIT {
     }
 
     @Test
-    public void testDefaultCommandWithMetadata() {
+    public void defaultCommandWithMetadata() {
 
         Command defaultCommand = new Command() {
             @Override
@@ -138,7 +138,7 @@ public class CommandManagerIT {
     }
 
     @Test
-    public void testDefaultCommandViaProvidesMethod() {
+    public void defaultCommandViaProvidesMethod() {
         CommandOutcome o = appManager.run(Bootique.app().modules(M2.class));
         assertFalse(o.isSuccess());
         assertEquals("m2-command-label", o.getMessage());
