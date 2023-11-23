@@ -4,6 +4,7 @@
 * #335 Simple API for creating command metadata
 * #337 BQRuntime: expose metadata and environment objects as methods
 * #338 ModuleMetadata - track BQModule type
+* #339 Uncluttered lambda-style BQModuleProvider
 
 ## 3.0.M2
 
