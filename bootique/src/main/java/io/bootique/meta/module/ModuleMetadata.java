@@ -62,13 +62,21 @@ public class ModuleMetadata implements MetadataNode {
                 }
             };
 
-    private String name;
-    private String providerName;
-    private String description;
-    private Collection<ConfigMetadataNode> configs;
+    private final String name;
+    private final String providerName;
+    private final String description;
+    private final Collection<ConfigMetadataNode> configs;
 
-    private ModuleMetadata() {
-        this.configs = new ArrayList<>();
+    private ModuleMetadata(
+            String name,
+            String providerName,
+            String description,
+            Collection<ConfigMetadataNode> configs) {
+
+        this.name = name;
+        this.providerName = providerName;
+        this.description = description;
+        this.configs = configs;
     }
 
     public static Builder builder() {
@@ -119,13 +127,13 @@ public class ModuleMetadata implements MetadataNode {
     protected Optional<ConfigMetadataNode> findConfig(ConfigMetadataNode root, String configPath) {
         Objects.requireNonNull(root);
 
-        if (configPath.length() == 0) {
+        if (configPath.isEmpty()) {
             return Optional.of(root);
         }
 
         String[] split = splitFirstComponent(configPath);
 
-        return root.accept(new ConfigMetadataVisitor<Optional<ConfigMetadataNode>>() {
+        return root.accept(new ConfigMetadataVisitor<>() {
 
             @Override
             public Optional<ConfigMetadataNode> visitObjectMetadata(ConfigObjectMetadata metadata) {
@@ -178,38 +186,41 @@ public class ModuleMetadata implements MetadataNode {
 
     public static class Builder {
 
-        private ModuleMetadata moduleMetadata;
+        private String name;
+        private String providerName;
+        private String description;
+        private final Collection<ConfigMetadataNode> configs;
 
         private Builder() {
-            this.moduleMetadata = new ModuleMetadata();
+            this.configs = new ArrayList<>();
         }
 
         public ModuleMetadata build() {
-            return moduleMetadata;
+            return new ModuleMetadata(name, providerName, description, configs);
         }
 
         public Builder name(String name) {
-            moduleMetadata.name = name;
+            this.name = name;
             return this;
         }
 
         public Builder providerName(String name) {
-            moduleMetadata.providerName = name;
+            this.providerName = name;
             return this;
         }
 
         public Builder description(String description) {
-            moduleMetadata.description = description;
+            this.description = description;
             return this;
         }
 
         public Builder addConfig(ConfigObjectMetadata config) {
-            moduleMetadata.configs.add(config);
+            this.configs.add(config);
             return this;
         }
 
         public Builder addConfigs(Collection<ConfigMetadataNode> configs) {
-            moduleMetadata.configs.addAll(configs);
+            this.configs.addAll(configs);
             return this;
         }
     }
