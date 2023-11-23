@@ -19,76 +19,34 @@
 
 package io.bootique;
 
+import io.bootique.bootstrap.BuiltModule;
 import io.bootique.di.BQModule;
 
-import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
 
 /**
- * A provider of a DI module of a given kind. Central to Bootique module auto-loading and metadata discovery.
- * Bootique modules normally supply "META-INF/services/io.bootique.BQModuleProvider" file packaged in the .jar containing
- * the name of the provider.
+ * A provider of a DI module of a given kind. Central to Bootique module autoloading and metadata discovery.
+ * Autoloaded modules supply "META-INF/services/io.bootique.BQModuleProvider" file packaged in the .jar containing
+ * the name of the provider. Note that modules themselves can be their own providers by implementing this interface.
  *
  * @see Bootique#autoLoadModules()
  */
 public interface BQModuleProvider {
 
     /**
-     * Creates and returns a DI module specific to this provider.
-     */
-    BQModule module();
-
-    /**
-     * Returns a new instance of {@link BQModuleMetadata.Builder} initialized with module for this provider.
-     * Subclasses can invoke extra builder methods to provide metadata, etc.
+     * Creates and returns a new instance of {@link BuiltModule}. Subclasses should override this method with their own
+     * module logic, using a builder provided by {@link BuiltModule#of(BQModule)}.
      *
-     * @return a new instance of {@link BQModuleMetadata} specific to this provider.
+     * @see BuiltModule.Builder
+     * @since 3.0
      */
-    default BQModuleMetadata.Builder moduleBuilder() {
-        return BQModuleMetadata
-                .builder(module())
-                .overrides(overrides())
-                .providerName(name())
-                .configs(configs());
-    }
-
-    /**
-     * A potentially empty map of configuration types supported by this module, keyed by default configuration
-     * prefix.
-     *
-     * @return a potentially empty map of configuration types supported by this module, keyed by default configuration
-     * prefix.
-     */
-    default Map<String, Type> configs() {
-        return Collections.emptyMap();
-    }
-
-    /**
-     * Returns a potentially empty Collection with the types of the module
-     * overridden by this Module.
-     *
-     * @return a potentially empty collection of modules overridden by the
-     * Module created by this provider.
-     */
-    default Collection<Class<? extends BQModule>> overrides() {
-        return Collections.emptyList();
-    }
-
-    /**
-     * Returns a human-readable name of the provider.
-     *
-     * @return a human-readable name of the provider. Equals to the "simple" class name by default.
-     */
-    default String name() {
-        return getClass().getSimpleName();
-    }
+    BuiltModule buildModule();
 
     /**
      * Returns a collection of providers of modules on which this provider's module depends. Concrete providers can
      * optionally define dependencies on other modules through this method. This allows to load app modules with
-     * dependencies without relying on auto-loading.
+     * dependencies without relying on autoloading.
      *
      * @return collection of bootique module providers on which the current module depends.
      */

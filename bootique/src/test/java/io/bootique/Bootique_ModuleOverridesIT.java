@@ -19,11 +19,8 @@
 package io.bootique;
 
 import io.bootique.annotation.Args;
-import io.bootique.di.BQModule;
-import io.bootique.di.Binder;
-import io.bootique.di.Injector;
-import io.bootique.di.Key;
-import io.bootique.di.Provides;
+import io.bootique.bootstrap.BuiltModule;
+import io.bootique.di.*;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Qualifier;
@@ -32,8 +29,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.Collection;
-import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -66,18 +61,7 @@ public class Bootique_ModuleOverridesIT {
 
     @Test
     public void createInjector_OverridesWithProvider() {
-        BQModuleProvider provider = new BQModuleProvider() {
-
-            @Override
-            public BQModule module() {
-                return new M0();
-            }
-
-            @Override
-            public Collection<Class<? extends BQModule>> overrides() {
-                return Collections.singleton(BQCoreModule.class);
-            }
-        };
+        BQModuleProvider provider = () -> BuiltModule.of(new M0()).overrides(BQCoreModule.class).build();
 
         Injector i = Bootique.app(args).moduleProvider(provider).createInjector();
 

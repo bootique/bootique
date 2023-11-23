@@ -16,21 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package io.bootique;
+package io.bootique.bootstrap;
 
 import io.bootique.di.BQModule;
 import io.bootique.di.Binder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class BQModuleIdTest {
+public class BuiltModuleIdTest {
 
     @Test
     public void innerStaticClass() {
-        BQModuleId moduleId1 = BQModuleId.of(new MyStaticModule());
-        BQModuleId moduleId2 = BQModuleId.of(new MyStaticModule());
-        BQModuleId moduleId3 = BQModuleId.of(new MyStaticModule2());
+        BuiltModuleId moduleId1 = BuiltModuleId.of(new MyStaticModule());
+        BuiltModuleId moduleId2 = BuiltModuleId.of(new MyStaticModule());
+        BuiltModuleId moduleId3 = BuiltModuleId.of(new MyStaticModule2());
 
         assertEquals(moduleId1, moduleId1);
         assertEquals(moduleId1.hashCode(), moduleId1.hashCode());
@@ -50,9 +51,9 @@ public class BQModuleIdTest {
 
     @Test
     public void innerClass() {
-        BQModuleId moduleId1 = BQModuleId.of(new MyModule());
-        BQModuleId moduleId2 = BQModuleId.of(new MyModule());
-        BQModuleId moduleId3 = BQModuleId.of(new MyModule2());
+        BuiltModuleId moduleId1 = BuiltModuleId.of(new MyModule());
+        BuiltModuleId moduleId2 = BuiltModuleId.of(new MyModule());
+        BuiltModuleId moduleId3 = BuiltModuleId.of(new MyModule2());
 
         assertEquals(moduleId1, moduleId1);
         assertEquals(moduleId1.hashCode(), moduleId1.hashCode());
@@ -72,9 +73,9 @@ public class BQModuleIdTest {
 
     @Test
     public void methodRef() {
-        BQModuleId moduleId1 = BQModuleId.of(BQModuleIdTest::configure);
-        BQModuleId moduleId2 = BQModuleId.of(BQModuleIdTest::configure);
-        BQModuleId moduleId3 = BQModuleId.of(BQModuleIdTest::configure2);
+        BuiltModuleId moduleId1 = BuiltModuleId.of(BuiltModuleIdTest::configure);
+        BuiltModuleId moduleId2 = BuiltModuleId.of(BuiltModuleIdTest::configure);
+        BuiltModuleId moduleId3 = BuiltModuleId.of(BuiltModuleIdTest::configure2);
 
         assertEquals(moduleId1, moduleId1);
         assertEquals(moduleId1.hashCode(), moduleId1.hashCode());
@@ -93,8 +94,8 @@ public class BQModuleIdTest {
 
     @Test
     public void lambda() {
-        BQModuleId moduleId1 = BQModuleId.of(binder -> binder.bindSet(String.class).addInstance("lambda"));
-        BQModuleId moduleId2 = BQModuleId.of(binder -> binder.bindSet(String.class).addInstance("lambda 2"));
+        BuiltModuleId moduleId1 = BuiltModuleId.of(binder -> binder.bindSet(String.class).addInstance("lambda"));
+        BuiltModuleId moduleId2 = BuiltModuleId.of(binder -> binder.bindSet(String.class).addInstance("lambda 2"));
 
         assertEquals(moduleId1, moduleId1);
         assertEquals(moduleId1.hashCode(), moduleId1.hashCode());
@@ -107,8 +108,8 @@ public class BQModuleIdTest {
 
     @Test
     public void lambdaFactory() {
-        BQModuleId moduleId1 = BQModuleId.of(createModule("lambda factory"));
-        BQModuleId moduleId2 = BQModuleId.of(createModule("lambda factory 2"));
+        BuiltModuleId moduleId1 = BuiltModuleId.of(createModule("lambda factory"));
+        BuiltModuleId moduleId2 = BuiltModuleId.of(createModule("lambda factory 2"));
 
         assertEquals(moduleId1, moduleId1);
         assertEquals(moduleId1.hashCode(), moduleId1.hashCode());
@@ -122,9 +123,9 @@ public class BQModuleIdTest {
 
     @Test
     public void mix() {
-        BQModuleId moduleId1 = BQModuleId.of(new MyModule());
-        BQModuleId moduleId2 = BQModuleId.of(BQModuleIdTest::configure);
-        BQModuleId moduleId3 = BQModuleId.of(createModule("lambda factory"));
+        BuiltModuleId moduleId1 = BuiltModuleId.of(new MyModule());
+        BuiltModuleId moduleId2 = BuiltModuleId.of(BuiltModuleIdTest::configure);
+        BuiltModuleId moduleId3 = BuiltModuleId.of(createModule("lambda factory"));
 
         assertEquals(moduleId1, moduleId1);
         assertEquals(moduleId1.hashCode(), moduleId1.hashCode());

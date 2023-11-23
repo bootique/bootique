@@ -20,13 +20,12 @@
 package io.bootique.it;
 
 import io.bootique.BQModuleProvider;
-import io.bootique.di.BQModule;
+import io.bootique.bootstrap.BuiltModule;
 
 public class ItestModuleProvider implements BQModuleProvider {
 
 	@Override
-	public BQModule module() {
-		return new ItestModule();
+	public BuiltModule buildModule() {
+		return BuiltModule.of(new ItestModule()).provider(this).build();
 	}
-
 }

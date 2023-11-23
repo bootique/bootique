@@ -16,24 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package io.bootique;
-
-import java.util.Objects;
+package io.bootique.bootstrap;
 
 import io.bootique.di.BQModule;
 
+import java.util.Objects;
+
 /**
- * An abstract {@link BQModule} identifier, generally is a thin wrapper around module {@link Class}.
+ * An abstract identifier of LoadedModule used to infer module identity.
  */
-class BQModuleId {
+class BuiltModuleId {
 
     private final Class<? extends BQModule> moduleClass;
 
-    static BQModuleId of(BQModule module) {
-        return new BQModuleId(module.getClass());
+    static BuiltModuleId of(BQModule module) {
+        return new BuiltModuleId(module.getClass());
     }
 
-    BQModuleId(Class<? extends BQModule> moduleClass) {
+    private BuiltModuleId(Class<? extends BQModule> moduleClass) {
         this.moduleClass = Objects.requireNonNull(moduleClass);
     }
 
@@ -42,13 +42,16 @@ class BQModuleId {
         if (this == o) {
             return true;
         }
+
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        if(moduleClass.isSynthetic()) {
+
+        if (moduleClass.isSynthetic()) {
             return false;
         }
-        BQModuleId that = (BQModuleId) o;
+
+        BuiltModuleId that = (BuiltModuleId) o;
         return moduleClass.equals(that.moduleClass);
     }
 

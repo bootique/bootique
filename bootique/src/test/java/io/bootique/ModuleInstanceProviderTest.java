@@ -18,6 +18,7 @@
  */
 package io.bootique;
 
+import io.bootique.bootstrap.BuiltModule;
 import io.bootique.di.BQModule;
 import io.bootique.di.Binder;
 import org.junit.jupiter.api.Test;
@@ -27,26 +28,21 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ModuleInstanceProviderTest {
 
     @Test
-    public void module() {
+    public void buildModule() {
         M1 m1 = new M1();
-        assertSame(m1, new ModuleInstanceProvider(m1).module());
+        BuiltModule bm = new ModuleInstanceProvider(m1).buildModule();
+        assertSame(m1, bm.getModule());
+        assertEquals("M1", bm.getModuleName());
+        assertNull(bm.getDescription());
+        assertEquals("ModuleInstanceProvider", bm.getProviderName());
+        assertFalse(bm.isDeprecated());
     }
 
     @Test
-    public void moduleBuilder() {
-        M1 m1 = new M1();
-        BQModuleMetadata md = new ModuleInstanceProvider(m1).moduleBuilder().build();
-        assertEquals("M1", md.getName());
-        assertNull(md.getDescription());
-        assertEquals("ModuleInstanceProvider", md.getProviderName());
-        assertFalse(md.isDeprecated());
-    }
-
-    @Test
-    public void moduleBuilder_deprecatedAnnotation() {
+    public void buildModule_deprecatedAnnotation() {
         M2 m2 = new M2();
-        BQModuleMetadata md = new ModuleInstanceProvider(m2).moduleBuilder().build();
-        assertTrue(md.isDeprecated());
+        BuiltModule bm = new ModuleInstanceProvider(m2).buildModule();
+        assertTrue(bm.isDeprecated());
     }
 
     static class M1 implements BQModule {

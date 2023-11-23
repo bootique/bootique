@@ -42,6 +42,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * @since 2.0
@@ -99,9 +100,7 @@ public class BQModuleProviderChecker {
             testWithFactory(testFactory -> {
                 // must auto-load modules to ensure all tested module dependencies are present...
                 BQRuntime runtime = testFactory.app().autoLoadModules().createRuntime();
-
-                BQModuleProvider provider = matchingProvider();
-                String providerName = provider.name();
+                String providerName = matchingProvider().buildModule().getProviderName();
 
                 // loading metadata ensures that all annotations are properly applied...
                 Optional<ModuleMetadata> moduleMetadata = runtime
@@ -115,8 +114,7 @@ public class BQModuleProviderChecker {
                 moduleMetadata.get().getConfigs();
             });
         } catch (Exception e) {
-            Assertions.fail("Fail to test metadata.");
-            throw new RuntimeException(e);
+            fail("Metadata test failed", e);
         }
     }
 

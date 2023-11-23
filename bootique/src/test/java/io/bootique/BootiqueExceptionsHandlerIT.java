@@ -19,6 +19,7 @@
 
 package io.bootique;
 
+import io.bootique.bootstrap.BuiltModule;
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandOutcome;
@@ -33,8 +34,6 @@ import org.junit.jupiter.api.Test;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
-import java.util.Collection;
-import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -295,13 +294,8 @@ public class BootiqueExceptionsHandlerIT {
     public static class ModuleProviderWithOverride1 implements BQModuleProvider {
 
         @Override
-        public BQModule module() {
-            return new ModuleWithOverride1();
-        }
-
-        @Override
-        public Collection<Class<? extends BQModule>> overrides() {
-            return Collections.singleton(ModuleProviderWithOverride2.ModuleWithOverride2.class);
+        public BuiltModule buildModule() {
+            return BuiltModule.of(new ModuleWithOverride1()).overrides(ModuleProviderWithOverride2.ModuleWithOverride2.class).build();
         }
 
         public static class ModuleWithOverride1 implements BQModule {
@@ -315,13 +309,8 @@ public class BootiqueExceptionsHandlerIT {
     public static class ModuleProviderWithOverride2 implements BQModuleProvider {
 
         @Override
-        public BQModule module() {
-            return new ModuleWithOverride2();
-        }
-
-        @Override
-        public Collection<Class<? extends BQModule>> overrides() {
-            return Collections.singleton(ModuleProviderWithOverride1.ModuleWithOverride1.class);
+        public BuiltModule buildModule() {
+            return BuiltModule.of(new ModuleWithOverride2()).overrides(ModuleProviderWithOverride1.ModuleWithOverride1.class).build();
         }
 
         public static class ModuleWithOverride2 implements BQModule {
@@ -335,28 +324,21 @@ public class BootiqueExceptionsHandlerIT {
     public static class CoreOverrideProvider1 implements BQModuleProvider {
 
         @Override
-        public BQModule module() {
-            return b -> {
+        public BuiltModule buildModule() {
+            BQModule m = b -> {
             };
+            return BuiltModule.of(m).provider(this).overrides(BQCoreModule.class).build();
         }
 
-        @Override
-        public Collection<Class<? extends BQModule>> overrides() {
-            return Collections.singleton(BQCoreModule.class);
-        }
     }
 
     public static class CoreOverrideProvider2 implements BQModuleProvider {
 
         @Override
-        public BQModule module() {
-            return b -> {
+        public BuiltModule buildModule() {
+            BQModule m = b -> {
             };
-        }
-
-        @Override
-        public Collection<Class<? extends BQModule>> overrides() {
-            return Collections.singleton(BQCoreModule.class);
+            return BuiltModule.of(m).provider(this).overrides(BQCoreModule.class).build();
         }
     }
 }

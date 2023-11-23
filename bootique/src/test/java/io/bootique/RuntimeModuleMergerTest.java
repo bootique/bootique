@@ -19,6 +19,7 @@
 
 package io.bootique;
 
+import io.bootique.bootstrap.BuiltModule;
 import io.bootique.di.BQModule;
 import io.bootique.di.Binder;
 import io.bootique.log.BootLogger;
@@ -41,7 +42,7 @@ public class RuntimeModuleMergerTest {
 
 	private BootLogger bootLogger;
 
-	private List<BQModuleMetadata> mockBqModules;
+	private List<BuiltModule> mockBqModules;
 	private List<BQModule> testModules;
 
 	@BeforeEach
@@ -63,8 +64,8 @@ public class RuntimeModuleMergerTest {
 	}
 
 	@SafeVarargs
-	private final BQModuleMetadata createBQModule(BQModule m, Class<? extends BQModule>... overrides) {
-		BQModuleMetadata bqModuleMock = mock(BQModuleMetadata.class);
+	private final BuiltModule createBQModule(BQModule m, Class<? extends BQModule>... overrides) {
+		BuiltModule bqModuleMock = mock(BuiltModule.class);
 		when(bqModuleMock.getModule()).thenReturn(m);
 		when(bqModuleMock.getOverrides()).thenReturn(Arrays.asList(overrides));
 		return bqModuleMock;
@@ -78,7 +79,7 @@ public class RuntimeModuleMergerTest {
 	@Test
     public void getModules_One() {
 
-		Collection<BQModuleMetadata> bqModules = Arrays.asList(mockBqModules.get(2));
+		Collection<BuiltModule> bqModules = Arrays.asList(mockBqModules.get(2));
 
 		Collection<BQModule> modules = new RuntimeModuleMerger(bootLogger).toDIModules(bqModules);
 		assertEquals(1, modules.size());
@@ -89,7 +90,7 @@ public class RuntimeModuleMergerTest {
 	@Test
     public void getModules_Two() {
 
-		Collection<BQModuleMetadata> bqModules = Arrays.asList(mockBqModules.get(2), mockBqModules.get(1));
+		Collection<BuiltModule> bqModules = Arrays.asList(mockBqModules.get(2), mockBqModules.get(1));
 
 		Collection<BQModule> modules = new RuntimeModuleMerger(bootLogger).toDIModules(bqModules);
 		assertEquals(2, modules.size());
@@ -101,7 +102,7 @@ public class RuntimeModuleMergerTest {
 	@Test
     public void getModules_Three_Dupes() {
 
-		Collection<BQModuleMetadata> bqModules = Arrays.asList(mockBqModules.get(2), mockBqModules.get(1), mockBqModules.get(2));
+		Collection<BuiltModule> bqModules = Arrays.asList(mockBqModules.get(2), mockBqModules.get(1), mockBqModules.get(2));
 
 		Collection<BQModule> modules = new RuntimeModuleMerger(bootLogger).toDIModules(bqModules);
 		assertEquals(2, modules.size());
@@ -116,7 +117,7 @@ public class RuntimeModuleMergerTest {
 		// 0 overrides 3
 		mockBqModules.set(0, createBQModule(testModules.get(0), M3.class));
 
-		Collection<BQModuleMetadata> bqModules = Arrays.asList(mockBqModules.get(0), mockBqModules.get(3));
+		Collection<BuiltModule> bqModules = Arrays.asList(mockBqModules.get(0), mockBqModules.get(3));
 		Collection<BQModule> modules = new RuntimeModuleMerger(bootLogger).toDIModules(bqModules);
 		assertEquals(2, modules.size());
 
@@ -130,7 +131,7 @@ public class RuntimeModuleMergerTest {
 		mockBqModules.set(0, createBQModule(testModules.get(0), M3.class));
 		mockBqModules.set(3, createBQModule(testModules.get(3), M4.class));
 
-		Collection<BQModuleMetadata> bqModules = Arrays.asList(mockBqModules.get(4), mockBqModules.get(0),
+		Collection<BuiltModule> bqModules = Arrays.asList(mockBqModules.get(4), mockBqModules.get(0),
 				mockBqModules.get(1), mockBqModules.get(3));
 		Collection<BQModule> modules = new RuntimeModuleMerger(bootLogger).toDIModules(bqModules);
 		assertEquals(4, modules.size());
@@ -148,7 +149,7 @@ public class RuntimeModuleMergerTest {
 		mockBqModules.set(0, createBQModule(testModules.get(0), M3.class));
 		mockBqModules.set(3, createBQModule(testModules.get(3), M0.class));
 
-		Collection<BQModuleMetadata> bqModules = Arrays.asList(mockBqModules.get(0), mockBqModules.get(3));
+		Collection<BuiltModule> bqModules = Arrays.asList(mockBqModules.get(0), mockBqModules.get(3));
 		assertThrows(RuntimeException.class, () -> new RuntimeModuleMerger(bootLogger).toDIModules(bqModules));
 	}
 
@@ -160,7 +161,7 @@ public class RuntimeModuleMergerTest {
 		mockBqModules.set(3, createBQModule(testModules.get(3), M4.class));
 		mockBqModules.set(4, createBQModule(testModules.get(4), M0.class));
 
-		Collection<BQModuleMetadata> bqModules = Arrays.asList(mockBqModules.get(0), mockBqModules.get(4),
+		Collection<BuiltModule> bqModules = Arrays.asList(mockBqModules.get(0), mockBqModules.get(4),
 				mockBqModules.get(3));
 		assertThrows(RuntimeException.class, () -> new RuntimeModuleMerger(bootLogger).toDIModules(bqModules));
 	}
@@ -173,7 +174,7 @@ public class RuntimeModuleMergerTest {
 		mockBqModules.set(0, createBQModule(testModules.get(0), M3.class));
 		mockBqModules.set(4, createBQModule(testModules.get(4), M3.class));
 
-		Collection<BQModuleMetadata> bqModules = Arrays.asList(mockBqModules.get(0), mockBqModules.get(4),
+		Collection<BuiltModule> bqModules = Arrays.asList(mockBqModules.get(0), mockBqModules.get(4),
 				mockBqModules.get(3));
 		new RuntimeModuleMerger(bootLogger).toDIModules(bqModules);
 	}

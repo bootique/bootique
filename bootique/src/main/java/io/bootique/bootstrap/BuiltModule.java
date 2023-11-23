@@ -17,67 +17,61 @@
  * under the License.
  */
 
-package io.bootique;
+package io.bootique.bootstrap;
 
+import io.bootique.BQModuleProvider;
 import io.bootique.di.BQModule;
 import io.bootique.names.ClassToName;
 
 import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
- * A thin wrapper around Bootique DI module that helps Bootique to extract module metadata and override dependencies.
+ * A temporary module wrapper used during Bootique app bootstrap that allows Bootique runtime to figure out module
+ * overrides and extract metadata. Created with the builder obtained via {@link BuiltModule#of(BQModule)}.
  *
- * @since 2.0
+ * @since 3.0
  */
-// TODO: this is an unfortunate name, as the true module metadata is represented by io.bootique.meta.module.ModuleMetadata,
-//   and this object is only used during bootstrap, and holds a direct reference to the Module object
-public class BQModuleMetadata {
-
-    // for now module names are simple class names... maybe change this to use Maven module names?
-    protected static final ClassToName MODULE_NAME_BUILDER = ClassToName.builder().build();
+public class BuiltModule {
 
     private final BQModule module;
-    private final BQModuleId moduleId;
-    private final String name;
+    private final String moduleName;
+    private final BuiltModuleId moduleId;
     private final String description;
     private final String providerName;
     private final boolean deprecated;
     private final Collection<Class<? extends BQModule>> overrides;
     private final Map<String, Type> configs;
 
-    private BQModuleMetadata(
+    public static Builder of(BQModule module) {
+        return new Builder(module);
+    }
+
+    protected BuiltModule(
             BQModule module,
-            BQModuleId moduleId,
-            String name,
-            String description,
+            String moduleName,
             String providerName,
+            String description,
             boolean deprecated,
             Collection<Class<? extends BQModule>> overrides,
             Map<String, Type> configs) {
 
         this.module = Objects.requireNonNull(module);
-        this.moduleId = Objects.requireNonNull(moduleId);
-        this.name = name;
+        this.moduleName = Objects.requireNonNull(moduleName);
+        this.moduleId = BuiltModuleId.of(module);
+        this.providerName = Objects.requireNonNull(providerName);
         this.description = description;
-        this.providerName = providerName;
         this.deprecated = deprecated;
-        this.overrides = overrides;
-        this.configs = configs;
-    }
-
-    public static Builder builder(BQModule module) {
-        return new Builder(module);
+        this.overrides = Objects.requireNonNull(overrides);
+        this.configs = Objects.requireNonNull(configs);
     }
 
     public BQModule getModule() {
         return module;
     }
 
-    public String getName() {
-        return name;
+    public String getModuleName() {
+        return moduleName;
     }
 
     public String getDescription() {
@@ -88,9 +82,6 @@ public class BQModuleMetadata {
         return providerName;
     }
 
-    /**
-     * @since 3.0
-     */
     public boolean isDeprecated() {
         return deprecated;
     }
@@ -108,7 +99,7 @@ public class BQModuleMetadata {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        BQModuleMetadata that = (BQModuleMetadata) o;
+        BuiltModule that = (BuiltModule) o;
 
         return moduleId.equals(that.moduleId);
     }
@@ -120,34 +111,35 @@ public class BQModuleMetadata {
 
     public static class Builder {
 
-        private final BQModule module;
-        private String name;
-        private String description;
-        private String providerName;
-        private Boolean deprecated;
-        private Collection<Class<? extends BQModule>> overrides;
-        private Map<String, Type> configs;
+        // for now module names are simple class names... maybe change this to use Maven module names?
+        protected static final ClassToName MODULE_NAME_BUILDER = ClassToName.builder().build();
 
-        private Builder(BQModule module) {
+        protected String providerName;
+        protected final BQModule module;
+        protected String moduleName;
+        protected String description;
+        protected Boolean deprecated;
+        protected Collection<Class<? extends BQModule>> overrides;
+        protected Map<String, Type> configs;
+
+        protected Builder(BQModule module) {
             this.module = Objects.requireNonNull(module);
         }
 
-        public BQModuleMetadata build() {
-
-            return new BQModuleMetadata(
+        public BuiltModule build() {
+            return new BuiltModule(
                     module,
-                    BQModuleId.of(module),
-                    name != null ? name : MODULE_NAME_BUILDER.toName(module.getClass()),
+                    moduleName != null ? moduleName : MODULE_NAME_BUILDER.toName(module.getClass()),
+                    providerName != null ? providerName : "<unknown_provider>",
                     description,
-                    providerName,
                     deprecated != null ? deprecated : module.getClass().isAnnotationPresent(Deprecated.class),
-                    overrides,
-                    configs
+                    overrides != null ? overrides : Collections.emptyList(),
+                    configs != null ? configs : Collections.emptyMap()
             );
         }
 
-        public Builder name(String name) {
-            this.name = name;
+        public Builder moduleName(String name) {
+            this.moduleName = name;
             return this;
         }
 
@@ -156,14 +148,15 @@ public class BQModuleMetadata {
             return this;
         }
 
+        public Builder provider(BQModuleProvider provider) {
+            return providerName(provider.getClass().getSimpleName());
+        }
+
         public Builder providerName(String name) {
             this.providerName = name;
             return this;
         }
 
-        /**
-         * @since 3.0
-         */
         public Builder deprecated(boolean deprecated) {
             this.deprecated = deprecated;
             return this;
@@ -174,8 +167,25 @@ public class BQModuleMetadata {
             return this;
         }
 
+        @SafeVarargs
+        public final Builder overrides(Class<? extends BQModule>... overrides) {
+            this.overrides = List.of(overrides);
+            return this;
+        }
+
+        public Builder config(String path, Type configType) {
+            if (configs == null) {
+                configs = new HashMap<>();
+            }
+            this.configs.put(path, configType);
+            return this;
+        }
+
         public Builder configs(Map<String, Type> configs) {
-            this.configs = configs;
+            if (configs == null) {
+                configs = new HashMap<>();
+            }
+            this.configs.putAll(configs);
             return this;
         }
     }

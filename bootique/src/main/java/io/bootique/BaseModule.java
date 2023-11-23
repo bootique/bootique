@@ -18,13 +18,13 @@
  */
 package io.bootique;
 
-import io.bootique.di.BQModule;
+import io.bootique.bootstrap.BuiltModule;
 
 /**
- * A superclass of modules that combines functionality of a DI module with that of a module provider. For most modules
- * creating a separate class that implements {@link BQModuleProvider} is an overkill, and using this class as a superclass
- * cuts down on boilerplate code. Note that this class still requires an entry in
- * `META-INF/services/io.bootique.BQModuleProvider` file for the module to be auto-loadable.
+ * A superclass of modules that combines functionality of a DI module with that of a module provider. For many modules,
+ * creating a separate {@link BQModuleProvider} class is an overkill. Using this class as a superclass cuts down on
+ * some boilerplate code. Note that this class still requires an entry in
+ * <code>META-INF/services/io.bootique.BQModuleProvider</code> for the module to be auto-loadable.
  *
  * @since 1.1
  */
@@ -38,7 +38,7 @@ public abstract class BaseModule extends ConfigModule implements BQModuleProvide
     }
 
     @Override
-    public BQModule module() {
-        return this;
+    public BuiltModule buildModule() {
+        return BuiltModule.of(this).provider(this).build();
     }
 }

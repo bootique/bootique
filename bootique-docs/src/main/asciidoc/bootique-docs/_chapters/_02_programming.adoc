@@ -173,7 +173,7 @@ the startup sequence. Also modules themselves need to be created in a certain wa
 include::../../../../test/java/io/bootique/docs/programming/modules/MyModuleProvider.java[tags=MyModuleProvider]
 ----
 
-In fact you don't need a sperate class. The module itself can implement this interface (see a discussion of
+In fact, you don't need a separate class. The module itself can implement this interface (see a discussion of
 <<basemodule,BaseModule superclass>>).
 
 2. create a file `META-INF/services/io.bootique.BQModuleProvider` with the only line being the name of your

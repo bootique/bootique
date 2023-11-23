@@ -19,6 +19,8 @@
 
 package io.bootique;
 
+import io.bootique.bootstrap.BuiltModule;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,7 +37,7 @@ class ModuleGraph {
     /**
      * {@link LinkedHashMap} is used for supporting insertion order.
      */
-    private final Map<BQModuleMetadata, List<BQModuleMetadata>> neighbors;
+    private final Map<BuiltModule, List<BuiltModule>> neighbors;
 
     ModuleGraph(int size) {
         neighbors = new LinkedHashMap<>(size);
@@ -44,7 +46,7 @@ class ModuleGraph {
     /**
      * Add a vertex to the graph. Nothing happens if vertex is already in graph.
      */
-    void add(BQModuleMetadata vertex) {
+    void add(BuiltModule vertex) {
         neighbors.putIfAbsent(vertex, new ArrayList<>(0));
     }
 
@@ -52,7 +54,7 @@ class ModuleGraph {
      * Add an edge to the graph; if either vertex does not exist, it's added.
      * This implementation allows the creation of multi-edges and self-loops.
      */
-    void add(BQModuleMetadata from, BQModuleMetadata to) {
+    void add(BuiltModule from, BuiltModule to) {
         neighbors.computeIfAbsent(from, k -> new ArrayList<>()).add(to);
         this.add(to);
     }
@@ -60,18 +62,18 @@ class ModuleGraph {
     /**
      * Return (as a Map) the in-degree of each vertex.
      */
-    private Map<BQModuleMetadata, Integer> inDegree() {
-        Map<BQModuleMetadata, Integer> result = new LinkedHashMap<>(neighbors.size());
+    private Map<BuiltModule, Integer> inDegree() {
+        Map<BuiltModule, Integer> result = new LinkedHashMap<>(neighbors.size());
 
         neighbors.forEach((from, neighbors) -> {
             neighbors.forEach(to -> result.compute(to, (k, old) -> {
-                if(old == null) {
+                if (old == null) {
                     return 1;
                 }
-                if(old > 0) {
-                    throw new BootiqueException(1, "Module " + to.getName()
+                if (old > 0) {
+                    throw new BootiqueException(1, "Module " + to.getModuleName()
                             + " provided by " + to.getProviderName()
-                            + " is overridden twice by " + from.getName());
+                            + " is overridden twice by " + from.getModuleName());
                 }
                 return ++old;
             }));
@@ -84,25 +86,25 @@ class ModuleGraph {
     /**
      * Return (as a List) the topological sort of the vertices. Throws an exception if cycles are detected.
      */
-    List<BQModuleMetadata> topSort() {
-        Map<BQModuleMetadata, Integer> degree = inDegree();
-        Deque<BQModuleMetadata> zeroDegree = new ArrayDeque<>(neighbors.size());
-        List<BQModuleMetadata> result = new ArrayList<>(neighbors.size());
+    List<BuiltModule> topSort() {
+        Map<BuiltModule, Integer> degree = inDegree();
+        Deque<BuiltModule> zeroDegree = new ArrayDeque<>(neighbors.size());
+        List<BuiltModule> result = new ArrayList<>(neighbors.size());
 
         degree.forEach((k, v) -> {
-            if(v == 0) {
+            if (v == 0) {
                 zeroDegree.push(k);
             }
         });
 
         while (!zeroDegree.isEmpty()) {
-            BQModuleMetadata v = zeroDegree.pop();
+            BuiltModule v = zeroDegree.pop();
             result.add(v);
 
             neighbors.get(v).forEach(neighbor ->
                     degree.computeIfPresent(neighbor, (k, oldValue) -> {
                         int newValue = --oldValue;
-                        if(newValue == 0) {
+                        if (newValue == 0) {
                             zeroDegree.push(k);
                         }
                         return newValue;
@@ -112,10 +114,10 @@ class ModuleGraph {
 
         // Check that we have used the entire graph (if not, there was a cycle)
         if (result.size() != neighbors.size()) {
-            Set<BQModuleMetadata> remainingKeys = new HashSet<>(neighbors.keySet());
+            Set<BuiltModule> remainingKeys = new HashSet<>(neighbors.keySet());
             String cycleString = remainingKeys.stream()
                     .filter(o -> !result.contains(o))
-                    .map(BQModuleMetadata::getName)
+                    .map(BuiltModule::getModuleName)
                     .collect(Collectors.joining(" -> "));
             throw new BootiqueException(1, "Circular override dependency between DI modules: " + cycleString);
         }

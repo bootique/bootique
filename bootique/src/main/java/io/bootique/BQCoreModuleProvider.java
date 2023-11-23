@@ -18,7 +18,7 @@
  */
 package io.bootique;
 
-import io.bootique.di.BQModule;
+import io.bootique.bootstrap.BuiltModule;
 import io.bootique.log.BootLogger;
 import io.bootique.shutdown.ShutdownManager;
 
@@ -36,26 +36,20 @@ public class BQCoreModuleProvider implements BQModuleProvider {
             String[] args,
             BootLogger bootLogger,
             ShutdownManager shutdownManager,
-            Supplier<Collection<BQModuleMetadata>> modulesSource) {
+            Supplier<Collection<BuiltModule>> modulesSource) {
 
         // BQCoreModule requires a couple of explicit services that can not be initialized within the module itself
         this.module = new BQCoreModule(args, bootLogger, shutdownManager, modulesSource);
     }
 
+    /**
+     * @since 3.0
+     */
     @Override
-    public BQModule module() {
-        return module;
-    }
-
-    @Override
-    public String name() {
-        return "Bootique";
-    }
-
-    @Override
-    public BQModuleMetadata.Builder moduleBuilder() {
-        return BQModuleProvider.super
-                .moduleBuilder()
-                .description("The core of Bootique runtime.");
+    public BuiltModule buildModule() {
+        return BuiltModule.of(module)
+                .provider(this)
+                .providerName("Bootique")
+                .description("The core of Bootique runtime.").build();
     }
 }

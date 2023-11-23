@@ -19,6 +19,7 @@
 
 package io.bootique;
 
+import io.bootique.bootstrap.BuiltModule;
 import io.bootique.di.BQModule;
 import io.bootique.log.BootLogger;
 
@@ -32,9 +33,9 @@ class RuntimeModuleMerger {
         this.bootLogger = bootLogger;
     }
 
-    Collection<BQModule> toDIModules(Collection<BQModuleMetadata> modulesMetadata) {
+    Collection<BQModule> toDIModules(Collection<BuiltModule> modulesMetadata) {
         ModuleGraph moduleGraph = new ModuleGraph(modulesMetadata.size());
-        Map<Class<? extends BQModule>, BQModuleMetadata> moduleByClass = new HashMap<>();
+        Map<Class<? extends BQModule>, BuiltModule> moduleByClass = new HashMap<>();
         modulesMetadata.forEach(metadata -> {
             Class<? extends BQModule> moduleClass = metadata.getModule().getClass();
             moduleByClass.putIfAbsent(moduleClass, metadata);
@@ -45,7 +46,7 @@ class RuntimeModuleMerger {
         });
         modulesMetadata.forEach(metadata -> metadata.getOverrides()
                 .forEach(override -> {
-                    BQModuleMetadata overrideModule = moduleByClass.get(override);
+                    BuiltModule overrideModule = moduleByClass.get(override);
                     moduleGraph.add(metadata, overrideModule);
                     bootLogger.trace(() -> traceMessage(metadata, overrideModule));
                 }));
@@ -55,9 +56,9 @@ class RuntimeModuleMerger {
         return modules;
     }
 
-    private String traceMessage(BQModuleMetadata module, BQModuleMetadata overrides) {
+    private String traceMessage(BuiltModule module, BuiltModule overrides) {
         StringBuilder message = new StringBuilder("Loading module '")
-                .append(module.getName())
+                .append(module.getModuleName())
                 .append("'");
 
         boolean isDeprecated = module.isDeprecated();
@@ -66,21 +67,15 @@ class RuntimeModuleMerger {
         }
 
         String providerName = module.getProviderName();
-        boolean hasProvider = providerName != null && !providerName.isEmpty();
-        if (hasProvider) {
-            if (isDeprecated) {
-                message.append(",");
-            }
-
-            message.append(" provided by '").append(providerName).append("'");
+        if (isDeprecated) {
+            message.append(",");
         }
 
-        if (overrides != null) {
-            if (isDeprecated || hasProvider) {
-                message.append(",");
-            }
+        // the way 'providerName' is constructed currently, it is never null
+        message.append(" provided by '").append(providerName).append("'");
 
-            message.append(" overrides '").append(overrides.getName()).append("'");
+        if (overrides != null) {
+            message.append(", overrides '").append(overrides.getModuleName()).append("'");
         }
 
         return message.toString();

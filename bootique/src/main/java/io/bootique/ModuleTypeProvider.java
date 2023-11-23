@@ -18,6 +18,7 @@
  */
 package io.bootique;
 
+import io.bootique.bootstrap.BuiltModule;
 import io.bootique.di.BQModule;
 
 import java.lang.reflect.InvocationTargetException;
@@ -39,7 +40,11 @@ class ModuleTypeProvider implements BQModuleProvider {
     }
 
     @Override
-    public BQModule module() {
+    public BuiltModule buildModule() {
+        return BuiltModule.of(createModule()).provider(this).overrides(overrides).build();
+    }
+
+    protected BQModule createModule() {
         try {
             return moduleType.getDeclaredConstructor().newInstance();
         } catch (
@@ -49,10 +54,5 @@ class ModuleTypeProvider implements BQModuleProvider {
                 InvocationTargetException e) {
             throw new RuntimeException("Error instantiating Module of type: " + moduleType.getName(), e);
         }
-    }
-
-    @Override
-    public Collection<Class<? extends BQModule>> overrides() {
-        return overrides;
     }
 }

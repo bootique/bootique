@@ -18,6 +18,7 @@
  */
 package io.bootique;
 
+import io.bootique.bootstrap.BuiltModule;
 import io.bootique.di.BQModule;
 import io.bootique.di.Binder;
 import io.bootique.di.DIBootstrap;
@@ -29,14 +30,14 @@ public class ModuleTypeProviderTest {
 
     @Test
     public void module() {
-        BQModule m = new ModuleTypeProvider(M1.class).module();
+        BQModule m = new ModuleTypeProvider(M1.class).createModule();
         assertEquals("tm1", DIBootstrap.createInjector(m).getInstance(String.class));
     }
 
     @Test
     public void moduleBuilder() {
-        BQModuleMetadata md = new ModuleTypeProvider(M1.class).moduleBuilder().build();
-        assertEquals("M1", md.getName());
+        BuiltModule md = new ModuleTypeProvider(M1.class).buildModule();
+        assertEquals("M1", md.getModuleName());
         assertNull(md.getDescription());
         assertEquals("ModuleTypeProvider", md.getProviderName());
         assertFalse(md.isDeprecated());
@@ -44,7 +45,7 @@ public class ModuleTypeProviderTest {
 
     @Test
     public void moduleBuilder_deprecatedAnnotation() {
-        BQModuleMetadata md = new ModuleTypeProvider(M2.class).moduleBuilder().build();
+        BuiltModule md = new ModuleTypeProvider(M2.class).buildModule();
         assertTrue(md.isDeprecated());
     }
 

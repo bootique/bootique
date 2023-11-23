@@ -19,6 +19,7 @@
 
 package io.bootique;
 
+import io.bootique.bootstrap.BuiltModule;
 import io.bootique.command.CommandOutcome;
 import io.bootique.di.*;
 import io.bootique.env.DefaultEnvironment;
@@ -239,19 +240,7 @@ public class Bootique {
 
             @Override
             public Bootique with(BQModule module) {
-                providers.add(new BQModuleProvider() {
-
-                    @Override
-                    public BQModule module() {
-                        return module;
-                    }
-
-                    @Override
-                    public Collection<Class<? extends BQModule>> overrides() {
-                        return Arrays.asList(overriddenTypes);
-                    }
-                });
-
+                providers.add(() -> BuiltModule.of(module).overrides(overriddenTypes).build());
                 return Bootique.this;
             }
         };
@@ -380,18 +369,18 @@ public class Bootique {
 
     Injector createInjector() {
 
-        Collection<BQModuleMetadata> modulesMetadata = new HashSet<>();
+        Collection<BuiltModule> modulesMetadata = new HashSet<>();
         DeferredModulesSource modulesSource = new DeferredModulesSource();
 
         BQModuleProvider coreProvider = new BQCoreModuleProvider(args, bootLogger, shutdownManager, modulesSource);
 
         // note that 'moduleMetadata' is invalid at this point; it will be initialized later in this method, which
         // is safe to do, as it won't be used until the Injector is created by the method caller.
-        modulesMetadata.add(coreProvider.moduleBuilder().build());
+        modulesMetadata.add(coreProvider.buildModule());
 
         modulesMetadata.addAll(moduleProviderDependencies(providers));
         if (autoLoadModules) {
-            autoLoadedProviders().forEach(p -> modulesMetadata.add(p.moduleBuilder().build()));
+            autoLoadedProviders().forEach(p -> modulesMetadata.add(p.buildModule()));
         }
 
         // now that all modules are collected, finish 'moduleMetadata' initialization
@@ -424,16 +413,16 @@ public class Bootique {
         return merged;
     }
 
-    static Collection<BQModuleMetadata> moduleProviderDependencies(Collection<BQModuleProvider> rootSet) {
+    static Collection<BuiltModule> moduleProviderDependencies(Collection<BQModuleProvider> rootSet) {
         return moduleProviderDependencies(rootSet, new HashSet<>());
     }
 
-    private static Set<BQModuleMetadata> moduleProviderDependencies(
+    private static Set<BuiltModule> moduleProviderDependencies(
             Collection<BQModuleProvider> rootSet,
-            Set<BQModuleMetadata> metadata) {
+            Set<BuiltModule> metadata) {
 
         for (BQModuleProvider moduleProvider : rootSet) {
-            BQModuleMetadata next = moduleProvider.moduleBuilder().build();
+            BuiltModule next = moduleProvider.buildModule();
             if (metadata.add(next)) {
                 Collection<BQModuleProvider> dependencies = moduleProvider.dependencies();
                 if (!dependencies.isEmpty()) {

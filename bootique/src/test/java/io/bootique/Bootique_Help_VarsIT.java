@@ -21,6 +21,7 @@ package io.bootique;
 
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
+import io.bootique.bootstrap.BuiltModule;
 import io.bootique.command.CommandOutcome;
 import io.bootique.di.BQModule;
 import io.bootique.log.BootLogger;
@@ -31,8 +32,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.lang.reflect.Type;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -48,22 +47,12 @@ public class Bootique_Help_VarsIT {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(System.err));
-
-        BQModuleProvider configurableProvider = new BQModuleProvider() {
-            @Override
-            public BQModule module() {
-                return b -> {
-                };
-            }
-
-            @Override
-            public Map<String, Type> configs() {
-                return Collections.singletonMap("x", O2.class);
-            }
+        BQModule m = b -> {
         };
+        BQModuleProvider provider = () -> BuiltModule.of(m).config("x", O2.class).build();
 
-        CommandOutcome run = appManager.run(Bootique.app("--help")
-                .moduleProvider(configurableProvider)
+        appManager.run(Bootique.app("--help")
+                .moduleProvider(provider)
                 .bootLogger(logger)
                 .module(b -> BQCoreModule.extend(b)
                         .declareVar("x.m", "X_VALID_VAR")
@@ -81,23 +70,13 @@ public class Bootique_Help_VarsIT {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(System.err));
-
-        BQModuleProvider configMetadataProvider = new BQModuleProvider() {
-            @Override
-            public BQModule module() {
-                return b -> {
-                };
-            }
-
-            @Override
-            public Map<String, Type> configs() {
-                return Collections.singletonMap("x", O4.class);
-            }
+        BQModule m = b -> {
         };
+        BQModuleProvider provider = () -> BuiltModule.of(m).config("x", O4.class).build();
 
         CommandOutcome run = appManager.run(Bootique.app("--help")
                 .bootLogger(logger)
-                .moduleProvider(configMetadataProvider)
+                .moduleProvider(provider)
                 .module(b -> BQCoreModule.extend(b)
                         .declareVar("x.p1", "VAR1")
                         .declareVar("x.p2", "VAR1")
@@ -116,22 +95,13 @@ public class Bootique_Help_VarsIT {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(System.err));
 
-        BQModuleProvider configMetadataProvider = new BQModuleProvider() {
-            @Override
-            public BQModule module() {
-                return b -> {
-                };
-            }
-
-            @Override
-            public Map<String, Type> configs() {
-                return Collections.singletonMap("x", O4.class);
-            }
+        BQModule m = b -> {
         };
+        BQModuleProvider provider = () -> BuiltModule.of(m).config("x", O4.class).build();
 
         CommandOutcome run = appManager.run(Bootique.app("--help")
                 .bootLogger(logger)
-                .moduleProvider(configMetadataProvider)
+                .moduleProvider(provider)
                 .module(b -> BQCoreModule.extend(b)
                         .declareVar("x.p1", "VAR1", "DP1")
                         .declareVar("x.p2", "VAR1", "DP2")
@@ -151,23 +121,13 @@ public class Bootique_Help_VarsIT {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(System.err));
-
-        BQModuleProvider configMetadataProvider = new BQModuleProvider() {
-            @Override
-            public BQModule module() {
-                return b -> {
-                };
-            }
-
-            @Override
-            public Map<String, Type> configs() {
-                return Collections.singletonMap("x", O4.class);
-            }
+        BQModule m = b -> {
         };
+        BQModuleProvider provider = () -> BuiltModule.of(m).config("x", O4.class).build();
 
         CommandOutcome run = appManager.run(Bootique.app("--help")
                 .bootLogger(logger)
-                .moduleProvider(configMetadataProvider)
+                .moduleProvider(provider)
                 .module(b -> BQCoreModule.extend(b)
                         .declareVar("x.p1", "VAR1", "DP1")
                         .declareVar("x.p1", "VAR1", "DP1")
@@ -188,21 +148,12 @@ public class Bootique_Help_VarsIT {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(System.err));
 
-        BQModuleProvider configurableProvider = new BQModuleProvider() {
-            @Override
-            public BQModule module() {
-                return b -> {
-                };
-            }
-
-            @Override
-            public Map<String, Type> configs() {
-                return Collections.singletonMap("x", O2.class);
-            }
+        BQModule m = b -> {
         };
+        BQModuleProvider provider = () -> BuiltModule.of(m).config("x", O2.class).build();
 
         CommandOutcome run = appManager.run(Bootique.app("--help")
-                .moduleProvider(configurableProvider)
+                .moduleProvider(provider)
                 .bootLogger(logger)
                 .module(b -> BQCoreModule.extend(b).declareVar("x.m", "s", "New description")));
 
@@ -220,22 +171,13 @@ public class Bootique_Help_VarsIT {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         BootLogger logger = new DefaultBootLogger(true, new PrintStream(out), new PrintStream(System.err));
 
-        BQModuleProvider configurableProvider = new BQModuleProvider() {
-            @Override
-            public BQModule module() {
-                return b -> {
-                };
-            }
-
-            @Override
-            public Map<String, Type> configs() {
-                return Collections.singletonMap("x", O1.class);
-            }
+        BQModule m = b -> {
         };
+        BQModuleProvider provider = () -> BuiltModule.of(m).config("x", O1.class).build();
 
         CommandOutcome run = appManager.run(Bootique.app("--help")
                 .bootLogger(logger)
-                .moduleProvider(configurableProvider)
+                .moduleProvider(provider)
                 .module(b -> BQCoreModule.extend(b)
                         .declareVar("x.m.prop", "X_BOUND_VAR")
                         .declareVar("x.m.prop.x", "X_UNBOUND_VAR")));
@@ -253,22 +195,12 @@ public class Bootique_Help_VarsIT {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(System.err));
-
-        BQModuleProvider configurableProvider = new BQModuleProvider() {
-            @Override
-            public BQModule module() {
-                return b -> {
-                };
-            }
-
-            @Override
-            public Map<String, Type> configs() {
-                return Collections.singletonMap("x", O3.class);
-            }
+        BQModule m = b -> {
         };
+        BQModuleProvider provider = () -> BuiltModule.of(m).config("x", O3.class).build();
 
         CommandOutcome run = appManager.run(Bootique.app("--help")
-                .moduleProvider(configurableProvider)
+                .moduleProvider(provider)
                 .bootLogger(logger)
                 .module(b -> BQCoreModule.extend(b)
                         .declareVar("x.a[0]", "X_BOUND_VAR")

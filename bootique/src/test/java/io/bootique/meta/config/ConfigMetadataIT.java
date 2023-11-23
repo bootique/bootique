@@ -19,9 +19,13 @@
 
 package io.bootique.meta.config;
 
-import io.bootique.*;
+import io.bootique.BQCoreModule;
+import io.bootique.BQModuleProvider;
+import io.bootique.BQRuntime;
+import io.bootique.Bootique;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
+import io.bootique.bootstrap.BuiltModule;
 import io.bootique.di.BQModule;
 import io.bootique.help.ConsoleAppender;
 import io.bootique.help.ValueObjectDescriptor;
@@ -34,10 +38,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.Mockito;
 
-import java.lang.reflect.Type;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ConfigMetadataIT {
 
@@ -46,24 +50,12 @@ public class ConfigMetadataIT {
 
     @Test
     public void singleConfig() {
-        BQRuntime runtime = appManager.runtime(Bootique.app().moduleProvider(new BQModuleProvider() {
-            @Override
-            public BQModule module() {
-                return Mockito.mock(BQModule.class);
-            }
+        BQModuleProvider provider = () -> BuiltModule
+                .of(Mockito.mock(BQModule.class))
+                .moduleName("my")
+                .config("pf", TestConfig.class).build();
 
-            @Override
-            public Map<String, Type> configs() {
-                return Collections.singletonMap("pf", TestConfig.class);
-            }
-
-            @Override
-            public BQModuleMetadata.Builder moduleBuilder() {
-                return BQModuleProvider.super
-                        .moduleBuilder()
-                        .name("my");
-            }
-        }));
+        BQRuntime runtime = appManager.runtime(Bootique.app().moduleProvider(provider));
 
         Collection<ConfigMetadataNode> configs = runtime
                 .getInstance(ModulesMetadata.class)
@@ -100,24 +92,12 @@ public class ConfigMetadataIT {
 
     @Test
     public void recursiveConfig() {
-        BQRuntime runtime = appManager.runtime(Bootique.app().moduleProvider(new BQModuleProvider() {
-            @Override
-            public BQModule module() {
-                return Mockito.mock(BQModule.class);
-            }
+        BQModuleProvider provider = () -> BuiltModule
+                .of(Mockito.mock(BQModule.class))
+                .moduleName("my")
+                .config("pf", TestRecursiveConfig.class).build();
 
-            @Override
-            public Map<String, Type> configs() {
-                return Collections.singletonMap("pf", TestRecursiveConfig.class);
-            }
-
-            @Override
-            public BQModuleMetadata.Builder moduleBuilder() {
-                return BQModuleProvider.super
-                        .moduleBuilder()
-                        .name("my");
-            }
-        }));
+        BQRuntime runtime = appManager.runtime(Bootique.app().moduleProvider(provider));
 
         Collection<ConfigMetadataNode> configs = runtime
                 .getInstance(ModulesMetadata.class)
@@ -162,26 +142,14 @@ public class ConfigMetadataIT {
 
     @Test
     public void valueObjectConfig() {
+        BQModuleProvider provider = () -> BuiltModule
+                .of(Mockito.mock(BQModule.class))
+                .moduleName("my")
+                .config("pf", TestValueObjectConfig.class).build();
+
         BQRuntime runtime = appManager.runtime(Bootique.app()
                 .module(b -> BQCoreModule.extend(b).addValueObjectDescriptor(TestVO.class, new ValueObjectDescriptor("Test Value Object")))
-                .moduleProvider(new BQModuleProvider() {
-                    @Override
-                    public BQModule module() {
-                        return Mockito.mock(BQModule.class);
-                    }
-
-                    @Override
-                    public Map<String, Type> configs() {
-                        return Collections.singletonMap("pf", TestValueObjectConfig.class);
-                    }
-
-                    @Override
-                    public BQModuleMetadata.Builder moduleBuilder() {
-                        return BQModuleProvider.super
-                                .moduleBuilder()
-                                .name("my");
-                    }
-                }));
+                .moduleProvider(provider));
 
         Collection<ConfigMetadataNode> configs = runtime
                 .getInstance(ModulesMetadata.class)

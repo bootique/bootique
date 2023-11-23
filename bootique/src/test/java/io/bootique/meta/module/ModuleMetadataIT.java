@@ -20,6 +20,7 @@
 package io.bootique.meta.module;
 
 import io.bootique.*;
+import io.bootique.bootstrap.BuiltModule;
 import io.bootique.di.BQModule;
 import io.bootique.di.Binder;
 import io.bootique.unit.TestAppManager;
@@ -63,20 +64,8 @@ public class ModuleMetadataIT {
 
         BQModule m = b -> {
         };
-
-        BQRuntime runtime = appManager.runtime(Bootique.app().moduleProvider(new BQModuleProvider() {
-            @Override
-            public BQModule module() {
-                return m;
-            }
-
-            @Override
-            public BQModuleMetadata.Builder moduleBuilder() {
-                return BQModuleProvider.super
-                        .moduleBuilder()
-                        .name("mymodule");
-            }
-        }));
+        BQModuleProvider provider = () -> BuiltModule.of(m).moduleName("mymodule").build();
+        BQRuntime runtime = appManager.runtime(Bootique.app().moduleProvider(provider));
 
         ModulesMetadata allModules = runtime.getInstance(ModulesMetadata.class);
         assertEquals(2, allModules.getModules().size(), "Expected BQCoreModule + custom module");
@@ -185,45 +174,32 @@ public class ModuleMetadataIT {
     }
 
     static class M1Provider implements BQModuleProvider {
+
         @Override
-        public BQModule module() {
-            return new M1Module();
+        public BuiltModule buildModule() {
+            return BuiltModule.of(new M1Module()).provider(this).build();
         }
     }
 
     static class M1DeprecatedProvider implements BQModuleProvider {
-        @Override
-        public BQModule module() {
-            return new M1Module();
-        }
 
         @Override
-        public BQModuleMetadata.Builder moduleBuilder() {
-            return BQModuleProvider.super.moduleBuilder().deprecated(true);
+        public BuiltModule buildModule() {
+            return BuiltModule.of(new M1Module()).provider(this).deprecated(true).build();
         }
     }
 
     static class M2ImplicitlyDeprecatedProvider implements BQModuleProvider {
         @Override
-        public BQModule module() {
-            return new M2Module();
-        }
-
-        @Override
-        public BQModuleMetadata.Builder moduleBuilder() {
-            return BQModuleProvider.super.moduleBuilder();
+        public BuiltModule buildModule() {
+            return BuiltModule.of(new M2Module()).provider(this).build();
         }
     }
 
     static class M2UndeprecatedProvider implements BQModuleProvider {
         @Override
-        public BQModule module() {
-            return new M2Module();
-        }
-
-        @Override
-        public BQModuleMetadata.Builder moduleBuilder() {
-            return BQModuleProvider.super.moduleBuilder().deprecated(false);
+        public BuiltModule buildModule() {
+            return BuiltModule.of(new M2Module()).provider(this).deprecated(false).build();
         }
     }
 }

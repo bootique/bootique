@@ -18,9 +18,10 @@
  */
 package io.bootique;
 
+import io.bootique.bootstrap.BuiltModule;
 import io.bootique.di.BQModule;
 
-class ModuleInstanceProvider implements BQModuleProvider{
+class ModuleInstanceProvider implements BQModuleProvider {
 
     private final BQModule module;
 
@@ -29,7 +30,7 @@ class ModuleInstanceProvider implements BQModuleProvider{
     }
 
     @Override
-    public BQModule module() {
-        return module;
+    public BuiltModule buildModule() {
+        return BuiltModule.of(module).provider(this).build();
     }
 }

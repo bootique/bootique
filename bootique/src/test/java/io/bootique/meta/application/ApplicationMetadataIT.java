@@ -25,16 +25,14 @@ import io.bootique.BQRuntime;
 import io.bootique.Bootique;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
+import io.bootique.bootstrap.BuiltModule;
 import io.bootique.di.BQModule;
 import io.bootique.meta.config.ConfigValueMetadata;
 import io.bootique.unit.TestAppManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import java.lang.reflect.Type;
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -85,18 +83,9 @@ public class ApplicationMetadataIT {
 
     @Test
     public void boundVar() {
-        BQModuleProvider provider = new BQModuleProvider() {
-            @Override
-            public BQModule module() {
-                return b -> {
-                };
-            }
-
-            @Override
-            public Map<String, Type> configs() {
-                return Collections.singletonMap("x", O1.class);
-            }
+        BQModule m = b -> {
         };
+        BQModuleProvider provider = () -> BuiltModule.of(m).config("x", O1.class).build();
 
         BQRuntime runtime = appManager.runtime(Bootique.app()
                 .moduleProvider(provider)
