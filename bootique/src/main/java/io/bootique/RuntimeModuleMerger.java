@@ -60,14 +60,23 @@ class RuntimeModuleMerger {
                 .append(module.getName())
                 .append("'");
 
+        boolean isDeprecated = module.isDeprecated();
+        if (isDeprecated) {
+            message.append(" ** DEPRECATED");
+        }
+
         String providerName = module.getProviderName();
-        boolean hasProvider = providerName != null && providerName.length() > 0;
+        boolean hasProvider = providerName != null && !providerName.isEmpty();
         if (hasProvider) {
+            if (isDeprecated) {
+                message.append(",");
+            }
+
             message.append(" provided by '").append(providerName).append("'");
         }
 
         if (overrides != null) {
-            if (hasProvider) {
+            if (isDeprecated || hasProvider) {
                 message.append(",");
             }
 
