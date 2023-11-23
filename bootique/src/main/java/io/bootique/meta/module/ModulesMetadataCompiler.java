@@ -46,6 +46,7 @@ public class ModulesMetadataCompiler {
     private ModuleMetadata toModuleMetadata(BQModuleMetadata module) {
         return ModuleMetadata
                 .builder(module.getName())
+                .type(module.getModule().getClass())
                 .description(module.getDescription())
                 .providerName(module.getProviderName())
                 .deprecated(module.isDeprecated())

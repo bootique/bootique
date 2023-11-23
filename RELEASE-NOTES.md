@@ -3,6 +3,7 @@
 * #334 Explicit support for module deprecation
 * #335 Simple API for creating command metadata
 * #337 BQRuntime: expose metadata and environment objects as methods
+* #338 ModuleMetadata - track BQModule type
 
 ## 3.0.M2
 

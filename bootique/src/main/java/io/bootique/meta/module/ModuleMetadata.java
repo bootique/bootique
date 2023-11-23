@@ -19,14 +19,9 @@
 
 package io.bootique.meta.module;
 
+import io.bootique.di.BQModule;
 import io.bootique.meta.MetadataNode;
-import io.bootique.meta.config.ConfigListMetadata;
-import io.bootique.meta.config.ConfigMapMetadata;
-import io.bootique.meta.config.ConfigMetadataNode;
-import io.bootique.meta.config.ConfigMetadataVisitor;
-import io.bootique.meta.config.ConfigObjectMetadata;
-import io.bootique.meta.config.ConfigValueMetadata;
-
+import io.bootique.meta.config.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -62,6 +57,7 @@ public class ModuleMetadata implements MetadataNode {
                 }
             };
 
+    private final Class<? extends BQModule> type;
     private final String name;
     private final String providerName;
     private final String description;
@@ -69,12 +65,14 @@ public class ModuleMetadata implements MetadataNode {
     private final Collection<ConfigMetadataNode> configs;
 
     private ModuleMetadata(
+            Class<? extends BQModule> type,
             String name,
             String providerName,
             String description,
             boolean deprecated,
             Collection<ConfigMetadataNode> configs) {
 
+        this.type = type;
         this.name = name;
         this.providerName = providerName;
         this.description = description;
@@ -88,6 +86,15 @@ public class ModuleMetadata implements MetadataNode {
 
     public static Builder builder(String name) {
         return builder().name(name);
+    }
+
+    /**
+     * Returns the Java class of the target module.
+     *
+     * @since 3.0
+     */
+    public Class<?> getType() {
+        return type;
     }
 
     @Override
@@ -196,6 +203,7 @@ public class ModuleMetadata implements MetadataNode {
 
     public static class Builder {
 
+        private Class<? extends BQModule> type;
         private String name;
         private String providerName;
         private String description;
@@ -207,7 +215,21 @@ public class ModuleMetadata implements MetadataNode {
         }
 
         public ModuleMetadata build() {
-            return new ModuleMetadata(name, providerName, description, deprecated, configs);
+            return new ModuleMetadata(
+                    type != null ? type : BQModule.class,
+                    name,
+                    providerName,
+                    description,
+                    deprecated,
+                    configs);
+        }
+
+        /**
+         * @since 3.0
+         */
+        public Builder type(Class<? extends BQModule> type) {
+            this.type = type;
+            return this;
         }
 
         public Builder name(String name) {

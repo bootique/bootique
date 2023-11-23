@@ -19,10 +19,7 @@
 
 package io.bootique.meta.module;
 
-import io.bootique.BQModuleMetadata;
-import io.bootique.BQModuleProvider;
-import io.bootique.BQRuntime;
-import io.bootique.Bootique;
+import io.bootique.*;
 import io.bootique.di.BQModule;
 import io.bootique.di.Binder;
 import io.bootique.unit.TestAppManager;
@@ -40,17 +37,15 @@ public class ModuleMetadataIT {
 
     @Test
     public void basic() {
-        ModulesMetadata md = appManager.runtime(Bootique.app()).getInstance(ModulesMetadata.class);
+        ModulesMetadata allModules = appManager.runtime(Bootique.app()).getInstance(ModulesMetadata.class);
 
-        assertEquals(1, md.getModules().size(), "Expected BQCoreModule");
+        assertEquals(1, allModules.getModules().size(), "Expected BQCoreModule");
+        ModuleMetadata cmd = allModules.getModules().iterator().next();
 
-        Optional<ModuleMetadata> coreMd = md.getModules()
-                .stream()
-                .filter(m -> "BQCoreModule".equals(m.getName()))
-                .findFirst();
-        assertTrue(coreMd.isPresent());
-        assertEquals("The core of Bootique runtime.", coreMd.get().getDescription());
-        assertFalse(coreMd.get().isDeprecated());
+        assertEquals("BQCoreModule", cmd.getName());
+        assertEquals(BQCoreModule.class, cmd.getType());
+        assertEquals("The core of Bootique runtime.", cmd.getDescription());
+        assertFalse(cmd.isDeprecated());
     }
 
     @Test
@@ -65,11 +60,14 @@ public class ModuleMetadataIT {
 
     @Test
     public void customNamedModule() {
+
+        BQModule m = b -> {
+        };
+
         BQRuntime runtime = appManager.runtime(Bootique.app().moduleProvider(new BQModuleProvider() {
             @Override
             public BQModule module() {
-                return b -> {
-                };
+                return m;
             }
 
             @Override
@@ -80,14 +78,18 @@ public class ModuleMetadataIT {
             }
         }));
 
-        ModulesMetadata md = runtime.getInstance(ModulesMetadata.class);
-        assertEquals(2, md.getModules().size(), "Expected BQCoreModule + custom module");
+        ModulesMetadata allModules = runtime.getInstance(ModulesMetadata.class);
+        assertEquals(2, allModules.getModules().size(), "Expected BQCoreModule + custom module");
 
-        Optional<ModuleMetadata> myMd = md.getModules()
+        Optional<ModuleMetadata> md = allModules.getModules()
                 .stream()
-                .filter(m -> "mymodule".equals(m.getName()))
+                .filter(mdl -> "mymodule".equals(mdl.getName()))
                 .findFirst();
-        assertTrue(myMd.isPresent());
+        assertTrue(md.isPresent());
+
+        assertEquals(m.getClass(), md.get().getType());
+        assertNull(md.get().getDescription());
+        assertFalse(md.get().isDeprecated());
     }
 
     @Test
