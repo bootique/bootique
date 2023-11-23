@@ -44,6 +44,7 @@ public class BQModuleMetadata {
     private final String name;
     private final String description;
     private final String providerName;
+    private final boolean deprecated;
     private final Collection<Class<? extends BQModule>> overrides;
     private final Map<String, Type> configs;
 
@@ -53,6 +54,7 @@ public class BQModuleMetadata {
             String name,
             String description,
             String providerName,
+            boolean deprecated,
             Collection<Class<? extends BQModule>> overrides,
             Map<String, Type> configs) {
 
@@ -61,6 +63,7 @@ public class BQModuleMetadata {
         this.name = name;
         this.description = description;
         this.providerName = providerName;
+        this.deprecated = deprecated;
         this.overrides = overrides;
         this.configs = configs;
     }
@@ -83,6 +86,13 @@ public class BQModuleMetadata {
 
     public String getProviderName() {
         return providerName;
+    }
+
+    /**
+     * @since 3.0
+     */
+    public boolean isDeprecated() {
+        return deprecated;
     }
 
     public Collection<Class<? extends BQModule>> getOverrides() {
@@ -114,6 +124,7 @@ public class BQModuleMetadata {
         private String name;
         private String description;
         private String providerName;
+        private Boolean deprecated;
         private Collection<Class<? extends BQModule>> overrides;
         private Map<String, Type> configs;
 
@@ -129,6 +140,7 @@ public class BQModuleMetadata {
                     name != null ? name : MODULE_NAME_BUILDER.toName(module.getClass()),
                     description,
                     providerName,
+                    deprecated != null ? deprecated : module.getClass().isAnnotationPresent(Deprecated.class),
                     overrides,
                     configs
             );
@@ -146,6 +158,14 @@ public class BQModuleMetadata {
 
         public Builder providerName(String name) {
             this.providerName = name;
+            return this;
+        }
+
+        /**
+         * @since 3.0
+         */
+        public Builder deprecated(boolean deprecated) {
+            this.deprecated = deprecated;
             return this;
         }
 

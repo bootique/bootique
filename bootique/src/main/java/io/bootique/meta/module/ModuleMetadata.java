@@ -65,17 +65,20 @@ public class ModuleMetadata implements MetadataNode {
     private final String name;
     private final String providerName;
     private final String description;
+    private final boolean deprecated;
     private final Collection<ConfigMetadataNode> configs;
 
     private ModuleMetadata(
             String name,
             String providerName,
             String description,
+            boolean deprecated,
             Collection<ConfigMetadataNode> configs) {
 
         this.name = name;
         this.providerName = providerName;
         this.description = description;
+        this.deprecated = deprecated;
         this.configs = configs;
     }
 
@@ -99,6 +102,13 @@ public class ModuleMetadata implements MetadataNode {
     @Override
     public String getDescription() {
         return description;
+    }
+
+    /**
+     * @since 3.0
+     */
+    public boolean isDeprecated() {
+        return deprecated;
     }
 
     public Collection<ConfigMetadataNode> getConfigs() {
@@ -189,6 +199,7 @@ public class ModuleMetadata implements MetadataNode {
         private String name;
         private String providerName;
         private String description;
+        private boolean deprecated;
         private final Collection<ConfigMetadataNode> configs;
 
         private Builder() {
@@ -196,7 +207,7 @@ public class ModuleMetadata implements MetadataNode {
         }
 
         public ModuleMetadata build() {
-            return new ModuleMetadata(name, providerName, description, configs);
+            return new ModuleMetadata(name, providerName, description, deprecated, configs);
         }
 
         public Builder name(String name) {
@@ -211,6 +222,14 @@ public class ModuleMetadata implements MetadataNode {
 
         public Builder description(String description) {
             this.description = description;
+            return this;
+        }
+
+        /**
+         * @since 3.0
+         */
+        public Builder deprecated(boolean deprecated) {
+            this.deprecated = deprecated;
             return this;
         }
 

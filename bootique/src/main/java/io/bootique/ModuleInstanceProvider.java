@@ -16,30 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 package io.bootique;
 
-import io.bootique.di.Binder;
-import io.bootique.di.DIBootstrap;
 import io.bootique.di.BQModule;
-import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+class ModuleInstanceProvider implements BQModuleProvider{
 
-public class BootiqueStaticsTest {
+    private final BQModule module;
 
-	@Test
-    public void createModule() {
-		BQModule m = Bootique.createModule(TestModule.class);
-		assertEquals("tm1", DIBootstrap.createInjector(m).getInstance(String.class));
-	}
+    public ModuleInstanceProvider(BQModule module) {
+        this.module = module;
+    }
 
-	static class TestModule implements BQModule {
-
-		@Override
-		public void configure(Binder binder) {
-			binder.bind(String.class).toInstance("tm1");
-		}
-	}
-
+    @Override
+    public BQModule module() {
+        return module;
+    }
 }

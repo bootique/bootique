@@ -27,7 +27,6 @@ import io.bootique.log.DefaultBootLogger;
 import io.bootique.shutdown.DefaultShutdownManager;
 import io.bootique.shutdown.ShutdownManager;
 
-import java.lang.reflect.InvocationTargetException;
 import java.time.Duration;
 import java.util.*;
 
@@ -60,15 +59,6 @@ public class Bootique {
         this.autoLoadModules = false;
         this.bootLogger = createBootLogger();
         this.shutdownManager = createShutdownManager();
-    }
-
-    static BQModule createModule(Class<? extends BQModule> moduleType) {
-        try {
-            return moduleType.getDeclaredConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException |
-                 NoSuchMethodException | InvocationTargetException e) {
-            throw new RuntimeException("Error instantiating Module of type: " + moduleType.getName(), e);
-        }
     }
 
     /**
@@ -177,7 +167,7 @@ public class Bootique {
      */
     public Bootique module(Class<? extends BQModule> moduleType) {
         Objects.requireNonNull(moduleType);
-        providers.add(() -> createModule(moduleType));
+        providers.add(new ModuleTypeProvider(moduleType));
         return this;
     }
 
@@ -201,7 +191,7 @@ public class Bootique {
 
     public Bootique module(BQModule m) {
         Objects.requireNonNull(m);
-        providers.add(() -> m);
+        providers.add(new ModuleInstanceProvider(m));
         return this;
     }
 
@@ -243,20 +233,7 @@ public class Bootique {
 
             @Override
             public Bootique with(Class<? extends BQModule> moduleType) {
-
-                providers.add(new BQModuleProvider() {
-
-                    @Override
-                    public BQModule module() {
-                        return createModule(moduleType);
-                    }
-
-                    @Override
-                    public Collection<Class<? extends BQModule>> overrides() {
-                        return Arrays.asList(overriddenTypes);
-                    }
-                });
-
+                providers.add(new ModuleTypeProvider(moduleType, Arrays.asList(overriddenTypes)));
                 return Bootique.this;
             }
 

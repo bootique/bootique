@@ -48,6 +48,7 @@ public class ModulesMetadataCompiler {
                 .builder(module.getName())
                 .description(module.getDescription())
                 .providerName(module.getProviderName())
+                .deprecated(module.isDeprecated())
                 .addConfigs(toConfigs(module))
                 .build();
     }

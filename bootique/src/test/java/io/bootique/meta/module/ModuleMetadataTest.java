@@ -32,6 +32,24 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ModuleMetadataTest {
 
     @Test
+    public void builder() {
+        ModuleMetadata md = ModuleMetadata
+                .builder("x")
+                .description("desc")
+                .providerName("P")
+                .addConfig(ConfigObjectMetadata.builder("c1").type(Object.class).build())
+                .addConfig(ConfigObjectMetadata.builder("c2").type(Object.class).build())
+                .deprecated(true)
+                .build();
+
+        assertEquals("x", md.getName());
+        assertEquals("desc", md.getDescription());
+        assertEquals("P", md.getProviderName());
+        assertEquals(2, md.getConfigs().size());
+        assertTrue(md.isDeprecated());
+    }
+
+    @Test
     public void findConfig_NotFound() {
 
         ConfigValueMetadata c1 = ConfigValueMetadata
