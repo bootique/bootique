@@ -20,6 +20,48 @@
 
 # UPGRADE INSTRUCTIONS
 
+## 3.0-M3
+
+* [bootique #339](https://github.com/bootique/bootique/issues/339): `BQModuleProvider` API was simplified, replacing
+a bunch of methods with a single `buildModule()` method, and a helper builder obtained via `BuiltModule.of(module)`. 
+If you get compile errors in your own providers, repalce all those methods with a single `buildModule()`. E.g. 
+consider the following provider:
+```java
+public class MyModuleProvider implements BQModuleProvider {
+
+  @Override
+  public BQModule module() {
+    return new MyModule();
+  }
+
+  @Override
+  public Map<String, Type> configs() {
+    return Collections.singletonMap("my", MyFactory.class);
+  }
+
+  @Override
+  public BQModuleMetadata.Builder moduleBuilder() {
+    return BQModuleProvider.super
+            .moduleBuilder()
+            .description("Provides a very important function");
+  }
+}
+```
+It should be rewritten like this (which is much easier for comprehension) :
+```java
+public class MyModuleProvider implements BQModuleProvider {
+    
+  @Override
+  public BuiltModule buildModule() {
+    return BuiltModule.of(new MyModule())
+            .provider(this)
+            .description("Provides a very important function")
+            .config("my", MyFactory.class)
+            .build();
+  }
+}
+```
+
 ## 3.0.M2
 
 * [bootique-linkmove #54](https://github.com/bootique/bootique-linkmove/issues/54): LinkMove 3.0 simplified its earlier
