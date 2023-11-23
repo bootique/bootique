@@ -35,8 +35,8 @@ import java.util.*;
  */
 public class Commands implements BQModule {
 
-    private Collection<Class<? extends Command>> commandTypes;
-    private Collection<Command> commands;
+    private final Collection<Class<? extends Command>> commandTypes;
+    private final Collection<Command> commands;
     private boolean noModuleCommands;
 
     private Commands() {
@@ -89,7 +89,7 @@ public class Commands implements BQModule {
 
     public static class Builder {
 
-        private Commands commands;
+        private final Commands commands;
 
         private Builder() {
             this.commands = new Commands();
@@ -118,18 +118,12 @@ public class Commands implements BQModule {
 
         @SafeVarargs
         public final Builder add(Class<? extends Command>... commandTypes) {
-            for (Class<? extends Command> ct : commandTypes) {
-                commands.commandTypes.add(ct);
-            }
-
+            Collections.addAll(commands.commandTypes, commandTypes);
             return this;
         }
 
         public final Builder add(Command... commands) {
-            for (Command c : commands) {
-                this.commands.commands.add(c);
-            }
-
+            Collections.addAll(this.commands.commands, commands);
             return this;
         }
 

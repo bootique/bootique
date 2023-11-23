@@ -42,6 +42,6 @@ public interface Command {
      * @return metadata object describing the current command
      */
     default CommandMetadata getMetadata() {
-        return CommandMetadata.builder(getClass()).build();
+        return CommandMetadata.of(getClass());
     }
 }

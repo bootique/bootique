@@ -38,6 +38,26 @@ public class CommandMetadata implements MetadataNode {
         this.options = new ArrayList<>();
     }
 
+    /**
+     * Creates command metadata based on the command class, applying default naming algorithm. If you need to provide
+     * custom metadata parameters, such as description, use {@link #builder(Class)} instead.
+     *
+     * @since 3.0
+     */
+    public static CommandMetadata of(Class<? extends Command> commandType) {
+        return new Builder().commandType(commandType).build();
+    }
+
+    /**
+     * Creates command metadata with provided command name. If you need to provide more custom metadata parameters,
+     * such as description, use {@link #builder(String)} instead.
+     *
+     * @since 3.0
+     */
+    public static CommandMetadata of(String commandName) {
+        return new Builder().name(commandName).build();
+    }
+
     public static Builder builder(Class<? extends Command> commandType) {
         return new Builder().commandType(commandType);
     }
@@ -159,7 +179,7 @@ public class CommandMetadata implements MetadataNode {
                 throw new IllegalArgumentException("Null 'name'");
             }
 
-            if (name.length() == 0) {
+            if (name.isEmpty()) {
                 throw new IllegalArgumentException("Empty 'name'");
             }
 

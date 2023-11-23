@@ -133,7 +133,7 @@ public class BQTestFactory_PerClass_IT {
 
         @Inject
         public XCommand(BootLogger logger) {
-            super(CommandMetadata.builder(XCommand.class));
+            super(CommandMetadata.of(XCommand.class));
             this.logger = logger;
         }
 

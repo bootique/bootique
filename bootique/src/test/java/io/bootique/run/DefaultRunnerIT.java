@@ -161,7 +161,7 @@ public class DefaultRunnerIT {
         @Inject
         public XHelpCommand(BootLogger logger) {
             // use meta from X
-            super(CommandMetadata.builder(HelpCommand.class));
+            super(CommandMetadata.of(HelpCommand.class));
             this.logger = logger;
         }
 
@@ -178,7 +178,7 @@ public class DefaultRunnerIT {
 
         @Inject
         public XCommand(BootLogger logger) {
-            super(CommandMetadata.builder(XCommand.class));
+            super(CommandMetadata.of(XCommand.class));
             this.logger = logger;
         }
 
@@ -196,7 +196,7 @@ public class DefaultRunnerIT {
         @Inject
         public X1Command(BootLogger logger) {
             // use meta from X
-            super(CommandMetadata.builder(XCommand.class));
+            super(CommandMetadata.of(XCommand.class));
             this.logger = logger;
         }
 
@@ -213,7 +213,7 @@ public class DefaultRunnerIT {
 
         @Inject
         public YCommand(BootLogger logger) {
-            super(CommandMetadata.builder(YCommand.class));
+            super(CommandMetadata.of(YCommand.class));
             this.logger = logger;
         }
 

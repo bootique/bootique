@@ -1,3 +1,7 @@
+## 3.0-M3
+
+* #335 Simple API for creating command metadata
+
 ## 3.0.M2
 
 * #318 Declared vars not matching an existing config path are excluded from help

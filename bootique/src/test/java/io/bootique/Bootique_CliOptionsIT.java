@@ -336,7 +336,7 @@ public class Bootique_CliOptionsIT {
         public TestCommand() {
             super(CommandMetadata.builder(TestCommand.class)
                     .addOption(OptionMetadata.builder("long").valueRequired())
-                    .addOption(OptionMetadata.builder("s")));
+                    .addOption(OptionMetadata.builder("s")).build());
         }
 
         @Override
@@ -348,7 +348,7 @@ public class Bootique_CliOptionsIT {
     static final class XaCommand extends CommandWithMetadata {
 
         public XaCommand() {
-            super(CommandMetadata.builder(XaCommand.class).shortName('A'));
+            super(CommandMetadata.builder(XaCommand.class).shortName('A').build());
         }
 
         @Override
@@ -360,7 +360,7 @@ public class Bootique_CliOptionsIT {
     static final class XbCommand extends CommandWithMetadata {
 
         public XbCommand() {
-            super(CommandMetadata.builder(XbCommand.class).shortName('B'));
+            super(CommandMetadata.builder(XbCommand.class).shortName('B').build());
         }
 
         @Override
@@ -372,7 +372,7 @@ public class Bootique_CliOptionsIT {
     static final class XccCommand extends CommandWithMetadata {
 
         public XccCommand() {
-            super(CommandMetadata.builder(XccCommand.class).shortName('B'));
+            super(CommandMetadata.builder(XccCommand.class).shortName('B').build());
         }
 
         @Override
@@ -384,7 +384,7 @@ public class Bootique_CliOptionsIT {
     static final class Xd1Command extends CommandWithMetadata {
 
         public Xd1Command() {
-            super(CommandMetadata.builder("xd"));
+            super(CommandMetadata.of("xd"));
         }
 
         @Override
@@ -396,7 +396,7 @@ public class Bootique_CliOptionsIT {
     static final class Xd2Command extends CommandWithMetadata {
 
         public Xd2Command() {
-            super(CommandMetadata.builder("xd"));
+            super(CommandMetadata.of("xd"));
         }
 
         @Override
@@ -409,7 +409,7 @@ public class Bootique_CliOptionsIT {
 
         public XeCommand() {
             super(CommandMetadata.builder("xe")
-                    .addOption(OptionMetadata.builder("opt1").build()));
+                    .addOption(OptionMetadata.builder("opt1").build()).build());
         }
 
         @Override
@@ -423,7 +423,7 @@ public class Bootique_CliOptionsIT {
         public TestOptionCommand1() {
             super(CommandMetadata.builder(TestOptionCommand1.class)
                     .name("cmd-1")
-                    .addOption(OptionMetadata.builder("opt-1").build()));
+                    .addOption(OptionMetadata.builder("opt-1").build()).build());
         }
 
         @Override
@@ -436,7 +436,7 @@ public class Bootique_CliOptionsIT {
 
         public CommandWithDefaultOptionValue() {
             super(CommandMetadata.builder("cmd")
-                    .addOption(OptionMetadata.builder("option").valueOptionalWithDefault("val").build()));
+                    .addOption(OptionMetadata.builder("option").valueOptionalWithDefault("val").build()).build());
         }
 
         @Override

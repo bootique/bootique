@@ -27,21 +27,25 @@ import io.bootique.cli.Cli;
  */
 public abstract class CommandWithMetadata implements Command {
 
-	private CommandMetadata metadata;
+    private final CommandMetadata metadata;
 
-	public CommandWithMetadata(CommandMetadata.Builder metadataBuilder) {
-		this(metadataBuilder.build());
-	}
-	
-	public CommandWithMetadata(CommandMetadata metadata) {
-		this.metadata = metadata;
-	}
+    /**
+     * @deprecated in favor of {@link CommandWithMetadata#CommandWithMetadata(CommandMetadata)}
+     */
+    @Deprecated(since = "3.0", forRemoval = true)
+    public CommandWithMetadata(CommandMetadata.Builder metadataBuilder) {
+        this(metadataBuilder.build());
+    }
 
-	@Override
-	public CommandMetadata getMetadata() {
-		return metadata;
-	}
+    public CommandWithMetadata(CommandMetadata metadata) {
+        this.metadata = metadata;
+    }
 
-	@Override
-	public abstract CommandOutcome run(Cli cli);
+    @Override
+    public CommandMetadata getMetadata() {
+        return metadata;
+    }
+
+    @Override
+    public abstract CommandOutcome run(Cli cli);
 }

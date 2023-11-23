@@ -19,15 +19,14 @@
 
 package io.bootique.help.config;
 
-import javax.inject.Provider;
-
-import io.bootique.meta.MetadataNode;
-import io.bootique.meta.application.CommandMetadata;
 import io.bootique.cli.Cli;
 import io.bootique.command.CommandOutcome;
 import io.bootique.command.CommandWithMetadata;
 import io.bootique.log.BootLogger;
+import io.bootique.meta.MetadataNode;
+import io.bootique.meta.application.CommandMetadata;
 
+import javax.inject.Provider;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -40,7 +39,8 @@ public class HelpConfigCommand extends CommandWithMetadata {
         super(CommandMetadata
                 .builder(HelpConfigCommand.class)
                 .description("Prints information about application modules and their configuration options.")
-                .shortName('H'));
+                .shortName('H')
+                .build());
 
         this.bootLogger = bootLogger;
         this.helpGeneratorProvider = helpGeneratorProvider;

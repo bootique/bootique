@@ -228,7 +228,7 @@ public class BootiqueExceptionsHandlerIT {
         Provider<ConfigDependent> configDependent;
 
         public TestCommand() {
-            super(CommandMetadata.builder("test"));
+            super(CommandMetadata.of("test"));
         }
 
         @Override
