@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BootiqueStaticsTest {
 
 	@Test
-	public void testCreateModule() {
+    public void createModule() {
 		BQModule m = Bootique.createModule(TestModule.class);
 		assertEquals("tm1", DIBootstrap.createInjector(m).getInstance(String.class));
 	}

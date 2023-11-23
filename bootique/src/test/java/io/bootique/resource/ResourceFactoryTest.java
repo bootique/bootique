@@ -55,48 +55,48 @@ public class ResourceFactoryTest {
 	}
 
 	@Test
-	public void testGetCanonicalFile() throws IOException {
+    public void getCanonicalFile() throws IOException {
 		File file = new ResourceFactory("").getCanonicalFile("./src/test/resources/io/bootique/config/test1.yml");
 		File expected = new File(System.getProperty("user.dir") + "/src/test/resources/io/bootique/config/test1.yml");
 		assertEquals(expected, file);
 	}
 
 	@Test
-	public void testGetUrl_File() throws IOException {
+    public void getUrl_File() throws IOException {
 		assertEquals("a: b", resourceContents("src/test/resources/io/bootique/config/test1.yml"));
 	}
 
 	@Test
-	public void testGetUrl_File_DotSlash() throws IOException {
+    public void getUrl_File_DotSlash() throws IOException {
 		assertEquals("a: b", resourceContents("./src/test/resources/io/bootique/config/test1.yml"));
 	}
 
 	@Test
-	public void testGetUrl_FileUrl() throws IOException {
+    public void getUrl_FileUrl() throws IOException {
 		String fileUrl = fileUrl("src/test/resources/io/bootique/config/test2.yml");
 		assertEquals("c: d", resourceContents(fileUrl));
 	}
 
 	@Test
-	public void testGetUrl_JarUrl() throws IOException {
+    public void getUrl_JarUrl() throws IOException {
 		String jarUrl = jarEntryUrl("src/test/resources/io/bootique/config/test3.jar", "com/foo/test3.yml");
 		assertEquals("e: f", resourceContents(jarUrl));
 	}
 
 	@Test
-	public void testGetUrl_ClasspathUrl() throws IOException {
+    public void getUrl_ClasspathUrl() throws IOException {
 		String cpUrl = "classpath:io/bootique/config/test2.yml";
 		assertEquals("c: d", resourceContents(cpUrl));
 	}
 
 	@Test
-	public void testGetUrl_ClasspathUrlWithSlash() throws IOException {
+    public void getUrl_ClasspathUrlWithSlash() throws IOException {
 		String cpUrl = "classpath:/io/bootique/config/test2.yml";
 		assertThrows(RuntimeException.class, () -> resourceContents(cpUrl));
 	}
 
 	@Test
-	public void testGetUrls_ClasspathUrl() {
+    public void getUrls_ClasspathUrl() {
 		Collection<URL> urls = new ResourceFactory("classpath:io/bootique/config/test2.yml").getUrls();
 		assertEquals(1, urls.size());
 		String u1 = urls.iterator().next().toString();
@@ -104,7 +104,7 @@ public class ResourceFactoryTest {
 	}
 
 	@Test
-	public void testGetUrls_File() {
+    public void getUrls_File() {
 		Collection<URL> urls = new ResourceFactory("src/test/resources/io/bootique/config/test1.yml").getUrls();
 		assertEquals(1, urls.size());
 		String u1 = urls.iterator().next().toString();

@@ -39,7 +39,7 @@ public class DefaultShutdownManagerIT {
 	}
 
 	@Test
-	public void testShutdown() throws Exception {
+    public void shutdown() throws Exception {
 		Duration timeout = Duration.ofMillis(10000l);
 		DefaultShutdownManager shutdownManager = new DefaultShutdownManager(timeout);
 
@@ -53,7 +53,7 @@ public class DefaultShutdownManagerIT {
 	}
 
 	@Test
-	public void testShutdown_Unresponsive_Timeout() throws Exception {
+    public void shutdown_Unresponsive_Timeout() throws Exception {
 		Duration timeout = Duration.ofMillis(500l);
 		DefaultShutdownManager shutdownManager = new DefaultShutdownManager(timeout);
 

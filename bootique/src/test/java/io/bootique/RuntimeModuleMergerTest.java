@@ -24,6 +24,7 @@ import io.bootique.di.Binder;
 import io.bootique.log.BootLogger;
 import io.bootique.log.DefaultBootLogger;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -70,12 +71,12 @@ public class RuntimeModuleMergerTest {
 	}
 
 	@Test
-	public void testGetModules_Empty() {
+    public void getModules_Empty() {
 		assertTrue(new RuntimeModuleMerger(bootLogger).toDIModules(Collections.emptyList()).isEmpty());
 	}
 
 	@Test
-	public void testGetModules_One() {
+    public void getModules_One() {
 
 		Collection<BQModuleMetadata> bqModules = Arrays.asList(mockBqModules.get(2));
 
@@ -86,7 +87,7 @@ public class RuntimeModuleMergerTest {
 	}
 
 	@Test
-	public void testGetModules_Two() {
+    public void getModules_Two() {
 
 		Collection<BQModuleMetadata> bqModules = Arrays.asList(mockBqModules.get(2), mockBqModules.get(1));
 
@@ -98,7 +99,7 @@ public class RuntimeModuleMergerTest {
 	}
 
 	@Test
-	public void testGetModules_Three_Dupes() {
+    public void getModules_Three_Dupes() {
 
 		Collection<BQModuleMetadata> bqModules = Arrays.asList(mockBqModules.get(2), mockBqModules.get(1), mockBqModules.get(2));
 
@@ -110,7 +111,7 @@ public class RuntimeModuleMergerTest {
 	}
 
 	@Test
-	public void testGetModules_Overrides() {
+    public void getModules_Overrides() {
 
 		// 0 overrides 3
 		mockBqModules.set(0, createBQModule(testModules.get(0), M3.class));
@@ -123,7 +124,7 @@ public class RuntimeModuleMergerTest {
 	}
 
 	@Test
-	public void testGetModules_Overrides_Chain() {
+    public void getModules_Overrides_Chain() {
 
 		// 0 overrides 3 ; 3 overrides 4
 		mockBqModules.set(0, createBQModule(testModules.get(0), M3.class));
@@ -141,7 +142,7 @@ public class RuntimeModuleMergerTest {
 	}
 
 	@Test
-	public void testGetModules_OverrideCycle() {
+    public void getModules_OverrideCycle() {
 
 		// 0 replaces 3 ; 3 replaces 0
 		mockBqModules.set(0, createBQModule(testModules.get(0), M3.class));
@@ -152,7 +153,7 @@ public class RuntimeModuleMergerTest {
 	}
 
 	@Test
-	public void testGetModules_OverrideIndirectCycle() {
+    public void getModules_OverrideIndirectCycle() {
 
 		// 0 replaces 3 ; 3 replaces 4 ; 4 replaces 0
 		mockBqModules.set(0, createBQModule(testModules.get(0), M3.class));
@@ -164,8 +165,9 @@ public class RuntimeModuleMergerTest {
 		assertThrows(RuntimeException.class, () -> new RuntimeModuleMerger(bootLogger).toDIModules(bqModules));
 	}
 
-//	@Test(expected = RuntimeException.class)
-	public void testGetModules_OverrideDupe() {
+	@Test
+	@Disabled("TODO: what was this about? it was expected to throw?")
+	public void getModules_OverrideDupe() {
 
 		// 0 overrides 3 ; 4 overrides 3
 		mockBqModules.set(0, createBQModule(testModules.get(0), M3.class));

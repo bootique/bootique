@@ -42,18 +42,18 @@ public class DefaultShutdownManagerTest {
 	}
 	
 	@Test
-	public void testShutdownAll_Empty() throws Exception {
+    public void shutdownAll_Empty() throws Exception {
 		shutdownManager.shutdownAll();
 	}
 
 	@Test
-	public void testShutdownOne() throws Exception {
+    public void shutdownOne() throws Exception {
 		shutdownManager.shutdownOne(mockCloseable1);
 		verify(mockCloseable1).close();
 	}
 
 	@Test
-	public void testShutdownAll() throws Exception {
+    public void shutdownAll() throws Exception {
 		shutdownManager.addShutdownHook(mockCloseable1);
 		shutdownManager.addShutdownHook(mockCloseable2);
 		shutdownManager.shutdownAll();

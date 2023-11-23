@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class JsonConfigurationFormatParserTest {
 
 	@Test
-	public void testParse() {
+    public void parse() {
 		InputStream in = new ByteArrayInputStream("{\"a\":\"b\",\"b\": \"c\"}".getBytes());
 		JacksonService jacksonService = new DefaultJacksonService();
 
@@ -49,7 +49,7 @@ public class JsonConfigurationFormatParserTest {
 	}
 
 	@Test
-	public void testShouldParse() throws MalformedURLException {
+    public void shouldParse() throws MalformedURLException {
 		JacksonService jacksonService = new DefaultJacksonService();
 		ConfigurationFormatParser parser = new JsonConfigurationFormatParser(jacksonService);
 

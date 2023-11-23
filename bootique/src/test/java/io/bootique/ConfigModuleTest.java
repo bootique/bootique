@@ -31,19 +31,19 @@ import static org.mockito.Mockito.when;
 public class ConfigModuleTest {
 
 	@Test
-	public void testDefaultConfigPrefix() {
+    public void defaultConfigPrefix() {
 		assertEquals("testxyz", new TestXyzModule().defaultConfigPrefix());
 		assertEquals("xyz", new Xyz().defaultConfigPrefix());
 	}
 
 	@Test
-	public void testConfigPrefix() {
+    public void configPrefix() {
 		assertEquals("testxyz", new TestXyzModule().configPrefix);
 		assertEquals("custom-prefix", new TestXyzModule("custom-prefix").configPrefix);
 	}
 
 	@Test
-	public void testConfigConfig() {
+    public void configConfig() {
 
 		ConfigurationFactory f = mock(ConfigurationFactory.class);
 		when(f.config(any(Class.class), anyString()))

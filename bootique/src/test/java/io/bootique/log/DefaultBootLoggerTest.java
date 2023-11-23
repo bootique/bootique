@@ -38,7 +38,7 @@ public class DefaultBootLoggerTest {
 	}
 
 	@Test
-	public void testStdout() {
+    public void stdout() {
 
 		DefaultBootLogger logger = new DefaultBootLogger(true, mockStdout, mockStderr);
 
@@ -48,7 +48,7 @@ public class DefaultBootLoggerTest {
 	}
 	
 	@Test
-	public void testStderr() {
+    public void stderr() {
 
 		DefaultBootLogger logger = new DefaultBootLogger(true, mockStdout, mockStderr);
 
@@ -58,7 +58,7 @@ public class DefaultBootLoggerTest {
 	}
 	
 	@Test
-	public void testTrace() {
+	public void trace() {
 
 		DefaultBootLogger logger = new DefaultBootLogger(true, mockStdout, mockStderr);
 
@@ -68,7 +68,7 @@ public class DefaultBootLoggerTest {
 	}
 	
 	@Test
-	public void testNoTrace() {
+	public void noTrace() {
 
 		DefaultBootLogger logger = new DefaultBootLogger(false, mockStdout, mockStderr);
 

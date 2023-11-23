@@ -67,7 +67,7 @@ public class BQApp_MethodIT implements AfterEachCallback {
     }
 
     @RepeatedTest(3)
-    public void testRepeated() {
+    public void repeated() {
         methodApp.getInstance(DaemonCommand.class).assertStarted();
         methodApp.getInstance(DaemonCommand.class).assertNotStopped();
     }

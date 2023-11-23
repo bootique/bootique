@@ -45,7 +45,7 @@ public class InPlaceLeftHandMergerTest {
 	}
 
 	@Test
-	public void testApply_MergeMap() {
+    public void apply_MergeMap() {
 
 		JsonNode target = parse("{\"a\":1}");
 		JsonNode source = parse("{\"b\":{\"c\":2}}");
@@ -56,7 +56,7 @@ public class InPlaceLeftHandMergerTest {
 	}
 
 	@Test
-	public void testApply_MergeList_Replace() {
+    public void apply_MergeList_Replace() {
 
 		JsonNode target = parse("[1,2,5]");
 		JsonNode source = parse("[4,6]");
@@ -66,7 +66,7 @@ public class InPlaceLeftHandMergerTest {
 	}
 
 	@Test
-	public void testApply_OverrideValues() {
+    public void apply_OverrideValues() {
 
 		JsonNode target = parse("{\"a\":true,\"b\":\"string\",\"c\":5,\"d\":\"unchanged\"}");
 		JsonNode source = parse("{\"a\":false,\"b\":\"string1\",\"c\":6}");
@@ -76,7 +76,7 @@ public class InPlaceLeftHandMergerTest {
 	}
 
 	@Test
-	public void testApply_OverrideValues_Null() {
+    public void apply_OverrideValues_Null() {
 
 		JsonNode target = parse("{\"a\":null,\"b\":\"not_null\",\"c\":null}");
 		JsonNode source = parse("{\"a\":\"not_null\",\"b\":null,\"c\":null}");
@@ -86,7 +86,7 @@ public class InPlaceLeftHandMergerTest {
 	}
 
 	@Test
-	public void testApply_MergeSubMap() {
+    public void apply_MergeSubMap() {
 
 		JsonNode target = parse("{\"a\":{\"b\":2}}");
 		JsonNode source = parse("{\"a\":{\"c\":3}}");
@@ -96,7 +96,7 @@ public class InPlaceLeftHandMergerTest {
 	}
 
 	@Test
-	public void testApply_MergeSubList_Replace() {
+    public void apply_MergeSubList_Replace() {
 
 		JsonNode target = parse("{\"a\":[1,3,5]}");
 		JsonNode source = parse("{\"a\":[4,6]}");
@@ -106,7 +106,7 @@ public class InPlaceLeftHandMergerTest {
 	}
 	
 	@Test
-	public void testApply_MultiMerge() {
+    public void apply_MultiMerge() {
 
 		JsonNode target = parse("{\"a\":{\"b\":2},\"e\":6}");
 		JsonNode source1 = parse("{\"a\":{\"b\":3,\"c\":true,\"d\":5}}");

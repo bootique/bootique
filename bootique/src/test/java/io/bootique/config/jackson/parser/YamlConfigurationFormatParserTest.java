@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class YamlConfigurationFormatParserTest {
 
 	@Test
-	public void testParse() {
+    public void parse() {
 
 		InputStream in = new ByteArrayInputStream("a: b\nb: c".getBytes());
 		JacksonService jacksonService = new DefaultJacksonService();
@@ -50,7 +50,7 @@ public class YamlConfigurationFormatParserTest {
 	}
 
 	@Test
-	public void testShouldParse() throws MalformedURLException {
+    public void shouldParse() throws MalformedURLException {
 		JacksonService jacksonService = new DefaultJacksonService();
 		ConfigurationFormatParser parser = new YamlConfigurationFormatParser(jacksonService);
 

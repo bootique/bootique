@@ -40,7 +40,7 @@ public class JoptCliTest {
 	}
 
 	@Test
-	public void testStringsFor_Missing() {
+    public void stringsFor_Missing() {
 
 		when(mockParsed.valueOf(anyString())).thenReturn(Collections.emptyList());
 
@@ -50,7 +50,7 @@ public class JoptCliTest {
 	}
 
 	@Test
-	public void testCommandName() {
+    public void commandName() {
 		JoptCli o1 = new JoptCli(mockParsed, "aname");
 		assertEquals("aname", o1.commandName());
 

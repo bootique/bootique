@@ -107,7 +107,7 @@ public class Bootique_CliOptionsIT {
     //       JOpt should detect conflicting options and throw an exception. Instead JOpts triggers second option.
     @Test
     @Disabled
-    public void testOverlappingOptions_Short() {
+    public void overlappingOptions_Short() {
         BQRuntime runtime = appManager.runtime(Bootique.app("-o")
                 .module(b -> BQCoreModule.extend(b).addOptions(
                         OptionMetadata.builder("o1").build(),
