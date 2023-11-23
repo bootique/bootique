@@ -96,7 +96,7 @@ public class Bootique {
             args = Collections.emptyList();
         }
 
-        return app(BootiqueUtils.toArray(Objects.requireNonNull(args)));
+        return app(Objects.requireNonNull(args).toArray(new String[0]));
     }
 
     /**
@@ -129,7 +129,7 @@ public class Bootique {
      */
     public Bootique args(String... args) {
         if (args != null) {
-            this.args = BootiqueUtils.mergeArrays(this.args, args);
+            this.args = mergeArrays(this.args, args);
         }
         return this;
     }
@@ -142,7 +142,7 @@ public class Bootique {
      */
     public Bootique args(Collection<String> args) {
         if (args != null) {
-            this.args = BootiqueUtils.mergeArrays(this.args, BootiqueUtils.toArray(args));
+            this.args = mergeArrays(this.args, args.toArray(new String[0]));
         }
         return this;
     }
@@ -392,7 +392,7 @@ public class Bootique {
         // is safe to do, as it won't be used until the Injector is created by the method caller.
         modulesMetadata.add(new BQCoreModuleProvider(coreModule).moduleBuilder().build());
 
-        modulesMetadata.addAll(BootiqueUtils.moduleProviderDependencies(builderProviders()));
+        modulesMetadata.addAll(moduleProviderDependencies(providers));
         if (autoLoadModules) {
             autoLoadedProviders().forEach(p -> modulesMetadata.add(p.moduleBuilder().build()));
         }
@@ -405,13 +405,46 @@ public class Bootique {
         return DIBootstrap.injectorBuilder(modules).build();
     }
 
-    private Collection<BQModuleProvider> builderProviders() {
-        return providers;
-    }
-
     Collection<BQModuleProvider> autoLoadedProviders() {
         Collection<BQModuleProvider> modules = new ArrayList<>();
         ServiceLoader.load(BQModuleProvider.class).forEach(modules::add);
         return modules;
+    }
+
+    static String[] mergeArrays(String[] a1, String[] a2) {
+        if (a1.length == 0) {
+            return a2;
+        }
+
+        if (a2.length == 0) {
+            return a1;
+        }
+
+        String[] merged = new String[a1.length + a2.length];
+        System.arraycopy(a1, 0, merged, 0, a1.length);
+        System.arraycopy(a2, 0, merged, a1.length, a2.length);
+
+        return merged;
+    }
+
+    static Collection<BQModuleMetadata> moduleProviderDependencies(Collection<BQModuleProvider> rootSet) {
+        return moduleProviderDependencies(rootSet, new HashSet<>());
+    }
+
+    private static Set<BQModuleMetadata> moduleProviderDependencies(
+            Collection<BQModuleProvider> rootSet,
+            Set<BQModuleMetadata> metadata) {
+
+        for (BQModuleProvider moduleProvider : rootSet) {
+            BQModuleMetadata next = moduleProvider.moduleBuilder().build();
+            if (metadata.add(next)) {
+                Collection<BQModuleProvider> dependencies = moduleProvider.dependencies();
+                if (!dependencies.isEmpty()) {
+                    metadata.addAll(moduleProviderDependencies(dependencies, metadata));
+                }
+            }
+        }
+
+        return metadata;
     }
 }
