@@ -26,11 +26,7 @@ import io.bootique.meta.config.ConfigMetadataNode;
 import io.bootique.meta.module.ModuleMetadata;
 import io.bootique.meta.module.ModulesMetadata;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -55,7 +51,7 @@ public class DefaultConfigHelpGenerator implements ConfigHelpGenerator {
     }
 
     /**
-     * @param out Appendable that will be used to append data to
+     * @param out       Appendable that will be used to append data to
      * @param predicate The predicate to configure stream filter
      * @since 2.0
      */
@@ -89,7 +85,7 @@ public class DefaultConfigHelpGenerator implements ConfigHelpGenerator {
         }
 
         out.printSectionName("MODULES");
-        modules.forEach(m -> printModuleName(out, m.getName(), m.getDescription()));
+        modules.forEach(m -> printModuleName(out, m));
     }
 
     protected void printConfigurations(HelpAppender out, List<ConfigMetadataNode> configs) {
@@ -105,7 +101,7 @@ public class DefaultConfigHelpGenerator implements ConfigHelpGenerator {
         ConfigSectionGenerator generator = new ConfigSectionGenerator(out.getAppender().withOffset(DEFAULT_OFFSET), new HashSet<>());
         ConfigMetadataNode last = configs.get(configs.size() - 1);
 
-        for(ConfigMetadataNode c : configs) {
+        for (ConfigMetadataNode c : configs) {
             printConfiguration(generator, c);
 
             if (c != last) {
@@ -114,14 +110,25 @@ public class DefaultConfigHelpGenerator implements ConfigHelpGenerator {
         }
     }
 
-    protected void printModuleName(HelpAppender out, String moduleName, String description) {
+    protected void printModuleName(HelpAppender out, ModuleMetadata metadata) {
+        Objects.requireNonNull(metadata);
+
+        String moduleName = metadata.getName();
         Objects.requireNonNull(moduleName);
 
-        if (description != null) {
-            out.printSubsectionHeader(moduleName, ": ", description);
-        } else {
-            out.printSubsectionHeader(moduleName);
+        List<String> parts = new ArrayList<>(4);
+        parts.add(moduleName);
+
+        if (metadata.isDeprecated()) {
+            parts.add(": ** DEPRECATED.");
         }
+
+        if (metadata.getDescription() != null) {
+            parts.add(parts.size() == 1 ? ": " : " ");
+            parts.add(metadata.getDescription());
+        }
+
+        out.printSubsectionHeader(parts);
     }
 
     protected void printConfiguration(ConfigSectionGenerator generator, ConfigMetadataNode node) {

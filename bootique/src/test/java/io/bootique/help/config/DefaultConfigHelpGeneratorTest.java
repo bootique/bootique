@@ -114,6 +114,22 @@ public class DefaultConfigHelpGeneratorTest {
     }
 
     @Test
+    public void generate_Name_Description_Deprecation() {
+
+        ModuleMetadata module1 = ModuleMetadata.builder("M1").description("Module called M1").deprecated(true).build();
+        ModuleMetadata module2 = ModuleMetadata.builder("M2").deprecated(true).build();
+
+        ModulesMetadata modules = ModulesMetadata.builder(module1, module2).build();
+
+        assertLines(new DefaultConfigHelpGenerator(modules, 300),
+                "MODULES",
+                "      M1: ** DEPRECATED. Module called M1",
+                "",
+                "      M2: ** DEPRECATED."
+        );
+    }
+
+    @Test
     public void generate_Configs() {
 
         ConfigObjectMetadata m1Config = ConfigObjectMetadata
