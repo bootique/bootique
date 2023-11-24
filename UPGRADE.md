@@ -62,6 +62,13 @@ public class MyModuleProvider implements BQModuleProvider {
 }
 ```
 
+* [bootique-jdbc #132](https://github.com/bootique/bootique-jdbc/issues/132): Tomcat DataSource support got deprecated,
+with the advice to switch to Hikari DataSource. This requires a couple of steps: (1) replace Tomcat modules with
+`bootique-jdbc-hikiricp` or `bootique-jdbc-hikiricp-instrumented`, (2) check your app configurations for DataSources,
+as Hikari uses different property names. Namely, `url` should be renamed to `jdbcUrl`, but all the other pool parameters
+also need to be renamed. Run your app with `-H` to see the available config properties, and refer to HikariCP docs for
+in-depth explanation.
+
 ## 3.0.M2
 
 * [bootique-linkmove #54](https://github.com/bootique/bootique-linkmove/issues/54): LinkMove 3.0 simplified its earlier
