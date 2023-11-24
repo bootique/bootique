@@ -49,7 +49,10 @@ public interface BQModuleProvider {
      * dependencies without relying on autoloading.
      *
      * @return collection of bootique module providers on which the current module depends.
+     * @deprecated due to low reliability of this feature. Consider using module autoloading instead. If you still have
+     * to load modules explicitly, you will have to list all modules and their dependencies.
      */
+    @Deprecated(since = "3.0", forRemoval = true)
     default Collection<BQModuleProvider> dependencies() {
         return Collections.emptyList();
     }
