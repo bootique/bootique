@@ -65,10 +65,9 @@ class BuiltModulesMerger {
     }
 
     private String deprecationMessage(BuiltModule module) {
-        return new StringBuilder("** Deprecation alert for '")
+        return new StringBuilder("** Deprecation alert - ")
                 .append(module.getModuleName())
-                .append("'.")
-                .append(module.getDescription() != null ? " " : "")
+                .append(module.getDescription() != null ? ": " : ".")
                 .append(module.getDescription() != null ? module.getDescription() : "")
                 .toString();
     }
