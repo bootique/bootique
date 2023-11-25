@@ -31,7 +31,7 @@ import java.util.Set;
  * A source of Bootique app configuration. Multiple loaders are chained together to load configuration from
  * multiple sources via the {@link #load(Set)} method.
  *
- * @since 2.0.B1
+ * @since 2.0
  */
 public interface JsonConfigurationLoader {
 

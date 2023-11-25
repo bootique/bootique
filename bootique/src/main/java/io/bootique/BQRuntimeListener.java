@@ -22,7 +22,7 @@ package io.bootique;
  * A callback invoked after BQRuntime is created, but before any commands are run. Used primarily by the test tools
  * and such to manage lifecycles external to Bootique. Most regular apps do not require this callback.
  *
- * @since 3.0.M1
+ * @since 3.0
  */
 @FunctionalInterface
 public interface BQRuntimeListener {

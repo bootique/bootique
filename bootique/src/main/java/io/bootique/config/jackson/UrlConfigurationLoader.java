@@ -32,7 +32,7 @@ import java.util.Objects;
  * Configuration loader for a set of config URLs. Subclasses define where the URLs come from and the order of
  * priority for a particular loader.
  *
- * @since 2.0.B1
+ * @since 2.0
  */
 public abstract class UrlConfigurationLoader implements JsonConfigurationLoader {
 

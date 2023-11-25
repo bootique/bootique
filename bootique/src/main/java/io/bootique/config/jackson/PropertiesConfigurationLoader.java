@@ -26,7 +26,7 @@ import javax.inject.Inject;
 import java.util.Map;
 
 /**
- * @since 2.0.B1
+ * @since 2.0
  */
 public class PropertiesConfigurationLoader implements JsonConfigurationLoader {
 

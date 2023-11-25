@@ -36,7 +36,7 @@ import java.io.IOException;
  * {@link ConfigurationFactory} based on Jackson {@link JsonNode} data
  * structure. The actual configuration can come from JSON, YAML, XML, etc.
  *
- * @since 2.0.B1
+ * @since 2.0
  */
 public class JsonConfigurationFactory implements ConfigurationFactory {
 

@@ -23,7 +23,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.util.function.BinaryOperator;
 
 /**
- * @since 2.0.B1
+ * @since 2.0
  */
 public interface JsonConfigurationMerger extends BinaryOperator<JsonNode> {
 

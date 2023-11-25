@@ -304,7 +304,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * comprehensive set of strategies to load configuration from config files and URLs, so you'd rarely need to
      * specify your own strategy.
      *
-     * @since 2.0.B1
+     * @since 2.0
      */
     public BQCoreModuleExtender addConfigLoader(JsonConfigurationLoader loader) {
         contributeConfigurationLoaders().addInstance(loader);
@@ -316,7 +316,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * comprehensive set of strategies to load configuration from config files and URLs, so you'd rarely need to
      * specify your own strategy.
      *
-     * @since 2.0.B1
+     * @since 2.0
      */
     public BQCoreModuleExtender addConfigLoader(Class<? extends JsonConfigurationLoader> loaderType) {
         contributeConfigurationLoaders().add(loaderType);
@@ -327,7 +327,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * Adds parser for the configuration file format.
      * Bootique supports JSON and YAML configuration formats out of the box.
      *
-     * @since 2.0.B1
+     * @since 2.0
      */
     public BQCoreModuleExtender addConfigFormatParser(Class<? extends ConfigurationFormatParser> parserType) {
         contributeConfigurationFormatParsers().add(parserType);
@@ -338,7 +338,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * Adds a callback that is invoked once BQRuntime is created, but before any commands are run. Used primarily by
      * the test tools and such to manage lifecycles external to Bootique. Most regular apps do not require this callback.
      *
-     * @since 3.0.M1
+     * @since 3.0
      */
     public BQCoreModuleExtender addRuntimeListener(BQRuntimeListener listener) {
         contributeRuntimeListeners().addInstance(listener);
@@ -349,7 +349,7 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * Adds a callback that is invoked once BQRuntime is created, but before any commands are run. Used primarily by
      * the test tools and such to manage lifecycles external to Bootique. Most regular apps do not require this callback.
      *
-     * @since 3.0.M1
+     * @since 3.0
      */
     public BQCoreModuleExtender addRuntimeListener(Class<? extends BQRuntimeListener> listenerTypes) {
         contributeRuntimeListeners().add(listenerTypes).inSingletonScope();

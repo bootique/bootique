@@ -19,7 +19,7 @@
 package io.bootique.config.jackson.parser;
 
 /**
- * @since 2.0.B1
+ * @since 2.0
  */
 public enum ParserType {
     YAML, JSON

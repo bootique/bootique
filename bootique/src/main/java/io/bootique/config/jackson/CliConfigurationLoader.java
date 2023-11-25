@@ -28,7 +28,7 @@ import javax.inject.Inject;
 /**
  * Loads and merges configuration passed via CLI "--config" option.
  *
- * @since 2.0.B1
+ * @since 2.0
  */
 public class CliConfigurationLoader extends UrlConfigurationLoader {
 

@@ -23,7 +23,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.net.URL;
 
 /**
- * @since 2.0.B1
+ * @since 2.0
  */
 public interface JsonConfigurationParser {
 

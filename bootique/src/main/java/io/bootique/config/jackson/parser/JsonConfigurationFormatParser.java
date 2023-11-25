@@ -29,7 +29,7 @@ import java.net.URL;
 import javax.inject.Inject;
 
 /**
- * @since 2.0.B1
+ * @since 2.0
  */
 public class JsonConfigurationFormatParser implements ConfigurationFormatParser {
 

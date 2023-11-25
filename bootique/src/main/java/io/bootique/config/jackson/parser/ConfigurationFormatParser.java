@@ -27,7 +27,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 /**
  * Interface for the specific configuration format parser.
  *
- * @since 2.0.B1
+ * @since 2.0
  */
 public interface ConfigurationFormatParser {
 

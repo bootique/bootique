@@ -27,7 +27,7 @@ import javax.inject.Inject;
 import java.util.Set;
 
 /**
- * @since 2.0.B1
+ * @since 2.0
  */
 public class DIConfigurationLoader extends UrlConfigurationLoader {
 

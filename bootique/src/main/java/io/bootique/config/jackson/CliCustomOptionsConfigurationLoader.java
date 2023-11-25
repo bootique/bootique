@@ -37,7 +37,7 @@ import java.util.Set;
  * Loads and merges configuration passed via custom CLI options other than "--config". Custom CLI options can
  * be linked to configuration paths or configuration URLs.
  *
- * @since 2.0.B1
+ * @since 2.0
  */
 public class CliCustomOptionsConfigurationLoader implements JsonConfigurationLoader {
 
