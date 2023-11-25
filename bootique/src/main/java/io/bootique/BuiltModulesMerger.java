@@ -25,11 +25,11 @@ import io.bootique.log.BootLogger;
 
 import java.util.*;
 
-class RuntimeModuleMerger {
+class BuiltModulesMerger {
 
     private final BootLogger bootLogger;
 
-    RuntimeModuleMerger(BootLogger bootLogger) {
+    BuiltModulesMerger(BootLogger bootLogger) {
         this.bootLogger = bootLogger;
     }
 
@@ -67,8 +67,6 @@ class RuntimeModuleMerger {
     private String deprecationMessage(BuiltModule module) {
         return new StringBuilder("** Module '")
                 .append(module.getModuleName())
-                .append("' provided by '")
-                .append(module.getProviderName())
                 .append("' is deprecated")
                 .append(module.getDescription() != null ? ". Module details: " : ".")
                 .append(module.getDescription() != null ? module.getDescription() : "")

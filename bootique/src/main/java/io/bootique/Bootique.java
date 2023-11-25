@@ -387,7 +387,7 @@ public class Bootique {
         modulesSource.init(modulesMetadata);
 
         // convert to DI modules respecting overrides, etc.
-        Collection<BQModule> modules = new RuntimeModuleMerger(bootLogger).toDIModules(modulesMetadata);
+        Collection<BQModule> modules = new BuiltModulesMerger(bootLogger).toDIModules(modulesMetadata);
         return DIBootstrap.injectorBuilder(modules).build();
     }
 

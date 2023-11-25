@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class RuntimeModuleMergerTest {
+public class BuiltModulesMergerTest {
 
 	private BootLogger bootLogger;
 
@@ -73,7 +73,7 @@ public class RuntimeModuleMergerTest {
 
 	@Test
     public void getModules_Empty() {
-		assertTrue(new RuntimeModuleMerger(bootLogger).toDIModules(Collections.emptyList()).isEmpty());
+		assertTrue(new BuiltModulesMerger(bootLogger).toDIModules(Collections.emptyList()).isEmpty());
 	}
 
 	@Test
@@ -81,7 +81,7 @@ public class RuntimeModuleMergerTest {
 
 		Collection<BuiltModule> bqModules = Arrays.asList(mockBqModules.get(2));
 
-		Collection<BQModule> modules = new RuntimeModuleMerger(bootLogger).toDIModules(bqModules);
+		Collection<BQModule> modules = new BuiltModulesMerger(bootLogger).toDIModules(bqModules);
 		assertEquals(1, modules.size());
 
 		assertTrue(modules.contains(testModules.get(2)));
@@ -92,7 +92,7 @@ public class RuntimeModuleMergerTest {
 
 		Collection<BuiltModule> bqModules = Arrays.asList(mockBqModules.get(2), mockBqModules.get(1));
 
-		Collection<BQModule> modules = new RuntimeModuleMerger(bootLogger).toDIModules(bqModules);
+		Collection<BQModule> modules = new BuiltModulesMerger(bootLogger).toDIModules(bqModules);
 		assertEquals(2, modules.size());
 
 		assertTrue(modules.contains(testModules.get(1)));
@@ -104,7 +104,7 @@ public class RuntimeModuleMergerTest {
 
 		Collection<BuiltModule> bqModules = Arrays.asList(mockBqModules.get(2), mockBqModules.get(1), mockBqModules.get(2));
 
-		Collection<BQModule> modules = new RuntimeModuleMerger(bootLogger).toDIModules(bqModules);
+		Collection<BQModule> modules = new BuiltModulesMerger(bootLogger).toDIModules(bqModules);
 		assertEquals(2, modules.size());
 
 		assertTrue(modules.contains(testModules.get(1)));
@@ -118,7 +118,7 @@ public class RuntimeModuleMergerTest {
 		mockBqModules.set(0, createBQModule(testModules.get(0), M3.class));
 
 		Collection<BuiltModule> bqModules = Arrays.asList(mockBqModules.get(0), mockBqModules.get(3));
-		Collection<BQModule> modules = new RuntimeModuleMerger(bootLogger).toDIModules(bqModules);
+		Collection<BQModule> modules = new BuiltModulesMerger(bootLogger).toDIModules(bqModules);
 		assertEquals(2, modules.size());
 
 //		assertOverrideModule(modules.iterator().next());
@@ -133,7 +133,7 @@ public class RuntimeModuleMergerTest {
 
 		Collection<BuiltModule> bqModules = Arrays.asList(mockBqModules.get(4), mockBqModules.get(0),
 				mockBqModules.get(1), mockBqModules.get(3));
-		Collection<BQModule> modules = new RuntimeModuleMerger(bootLogger).toDIModules(bqModules);
+		Collection<BQModule> modules = new BuiltModulesMerger(bootLogger).toDIModules(bqModules);
 		assertEquals(4, modules.size());
 
 		assertTrue(modules.contains(testModules.get(4)));
@@ -150,7 +150,7 @@ public class RuntimeModuleMergerTest {
 		mockBqModules.set(3, createBQModule(testModules.get(3), M0.class));
 
 		Collection<BuiltModule> bqModules = Arrays.asList(mockBqModules.get(0), mockBqModules.get(3));
-		assertThrows(RuntimeException.class, () -> new RuntimeModuleMerger(bootLogger).toDIModules(bqModules));
+		assertThrows(RuntimeException.class, () -> new BuiltModulesMerger(bootLogger).toDIModules(bqModules));
 	}
 
 	@Test
@@ -163,7 +163,7 @@ public class RuntimeModuleMergerTest {
 
 		Collection<BuiltModule> bqModules = Arrays.asList(mockBqModules.get(0), mockBqModules.get(4),
 				mockBqModules.get(3));
-		assertThrows(RuntimeException.class, () -> new RuntimeModuleMerger(bootLogger).toDIModules(bqModules));
+		assertThrows(RuntimeException.class, () -> new BuiltModulesMerger(bootLogger).toDIModules(bqModules));
 	}
 
 	@Test
@@ -176,7 +176,7 @@ public class RuntimeModuleMergerTest {
 
 		Collection<BuiltModule> bqModules = Arrays.asList(mockBqModules.get(0), mockBqModules.get(4),
 				mockBqModules.get(3));
-		new RuntimeModuleMerger(bootLogger).toDIModules(bqModules);
+		new BuiltModulesMerger(bootLogger).toDIModules(bqModules);
 	}
 
 	class M0 implements BQModule {
