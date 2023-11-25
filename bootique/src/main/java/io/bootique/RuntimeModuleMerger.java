@@ -33,27 +33,46 @@ class RuntimeModuleMerger {
         this.bootLogger = bootLogger;
     }
 
-    Collection<BQModule> toDIModules(Collection<BuiltModule> modulesMetadata) {
-        ModuleGraph moduleGraph = new ModuleGraph(modulesMetadata.size());
+    Collection<BQModule> toDIModules(Collection<BuiltModule> builtModules) {
+        ModuleGraph moduleGraph = new ModuleGraph(builtModules.size());
         Map<Class<? extends BQModule>, BuiltModule> moduleByClass = new HashMap<>();
-        modulesMetadata.forEach(metadata -> {
-            Class<? extends BQModule> moduleClass = metadata.getModule().getClass();
-            moduleByClass.putIfAbsent(moduleClass, metadata);
-            moduleGraph.add(metadata);
-            if (metadata.getOverrides().isEmpty()) {
-                bootLogger.trace(() -> traceMessage(metadata, null));
+
+        for (BuiltModule bm : builtModules) {
+            Class<? extends BQModule> moduleClass = bm.getModule().getClass();
+            moduleByClass.putIfAbsent(moduleClass, bm);
+            moduleGraph.add(bm);
+
+            if (bm.getOverrides().isEmpty()) {
+                bootLogger.trace(() -> traceMessage(bm, null));
             }
-        });
-        modulesMetadata.forEach(metadata -> metadata.getOverrides()
-                .forEach(override -> {
-                    BuiltModule overrideModule = moduleByClass.get(override);
-                    moduleGraph.add(metadata, overrideModule);
-                    bootLogger.trace(() -> traceMessage(metadata, overrideModule));
-                }));
+
+            if (bm.isDeprecated()) {
+                bootLogger.stderr(deprecationMessage(bm));
+            }
+        }
+
+        for (BuiltModule bm : builtModules) {
+            for (Class<? extends BQModule> o : bm.getOverrides()) {
+                BuiltModule overrideModule = moduleByClass.get(o);
+                moduleGraph.add(bm, overrideModule);
+                bootLogger.trace(() -> traceMessage(bm, overrideModule));
+            }
+        }
 
         List<BQModule> modules = new ArrayList<>(moduleByClass.size());
         moduleGraph.topSort().forEach(moduleClass -> modules.add(moduleClass.getModule()));
         return modules;
+    }
+
+    private String deprecationMessage(BuiltModule module) {
+        return new StringBuilder("** Module '")
+                .append(module.getModuleName())
+                .append("' provided by '")
+                .append(module.getProviderName())
+                .append("' is deprecated")
+                .append(module.getDescription() != null ? ". Module details: " : ".")
+                .append(module.getDescription() != null ? module.getDescription() : "")
+                .toString();
     }
 
     private String traceMessage(BuiltModule module, BuiltModule overrides) {
@@ -63,16 +82,10 @@ class RuntimeModuleMerger {
 
         boolean isDeprecated = module.isDeprecated();
         if (isDeprecated) {
-            message.append(" ** DEPRECATED");
+            message.append(" ** DEPRECATED, ");
         }
 
-        String providerName = module.getProviderName();
-        if (isDeprecated) {
-            message.append(",");
-        }
-
-        // the way 'providerName' is constructed currently, it is never null
-        message.append(" provided by '").append(providerName).append("'");
+        message.append(" provided by '").append(module.getProviderName()).append("'");
 
         if (overrides != null) {
             message.append(", overrides '").append(overrides.getModuleName()).append("'");
