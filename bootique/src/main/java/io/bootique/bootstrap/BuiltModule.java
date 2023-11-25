@@ -27,8 +27,8 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 /**
- * A temporary module wrapper used during Bootique app bootstrap that allows Bootique runtime to figure out module
- * overrides and extract metadata. Created with the builder obtained via {@link BuiltModule#of(BQModule)}.
+ * An intermediate module wrapper used during app bootstrap that allows the runtime to figure out module overrides and
+ * extract metadata. Created using the builder API: {@link BuiltModule#of(BQModule)}.
  *
  * @since 3.0
  */
@@ -190,6 +190,7 @@ public class BuiltModule {
             if (this.configs == null) {
                 this.configs = new HashMap<>();
             }
+
             this.configs.putAll(configs);
             return this;
         }
