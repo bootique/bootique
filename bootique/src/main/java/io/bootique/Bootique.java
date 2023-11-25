@@ -28,6 +28,7 @@ import io.bootique.log.DefaultBootLogger;
 import io.bootique.shutdown.DefaultShutdownManager;
 import io.bootique.shutdown.ShutdownManager;
 
+import java.lang.reflect.InvocationTargetException;
 import java.time.Duration;
 import java.util.*;
 
@@ -47,6 +48,8 @@ import java.util.*;
  * </pre>
  */
 public class Bootique {
+
+    private static final String CORE_PROVIDER_NAME = "Bootique";
 
     private final Collection<BQModuleProvider> providers;
     private String[] args;
@@ -168,7 +171,7 @@ public class Bootique {
      */
     public Bootique module(Class<? extends BQModule> moduleType) {
         Objects.requireNonNull(moduleType);
-        providers.add(new ModuleTypeProvider(moduleType));
+        providers.add(() -> BuiltModule.of(moduleForType(moduleType)).providerName(CORE_PROVIDER_NAME).build());
         return this;
     }
 
@@ -192,7 +195,7 @@ public class Bootique {
 
     public Bootique module(BQModule m) {
         Objects.requireNonNull(m);
-        providers.add(new ModuleInstanceProvider(m));
+        providers.add(() -> BuiltModule.of(m).providerName(CORE_PROVIDER_NAME).build());
         return this;
     }
 
@@ -234,7 +237,10 @@ public class Bootique {
 
             @Override
             public Bootique with(Class<? extends BQModule> moduleType) {
-                providers.add(new ModuleTypeProvider(moduleType, Arrays.asList(overriddenTypes)));
+                providers.add(() -> BuiltModule.of(moduleForType(moduleType))
+                        .providerName(CORE_PROVIDER_NAME)
+                        .overrides(overriddenTypes)
+                        .build());
                 return Bootique.this;
             }
 
@@ -369,25 +375,29 @@ public class Bootique {
 
     Injector createInjector() {
 
-        Collection<BuiltModule> modulesMetadata = new HashSet<>();
+        Collection<BuiltModule> builtModules = new HashSet<>();
         DeferredModulesSource modulesSource = new DeferredModulesSource();
 
-        BQModuleProvider coreProvider = new BQCoreModuleProvider(args, bootLogger, shutdownManager, modulesSource);
+        // BQCoreModule requires a couple of explicit services that can not be initialized within the module itself
+        BQCoreModule coreModule = new BQCoreModule(args, bootLogger, shutdownManager, modulesSource);
 
-        // note that 'moduleMetadata' is invalid at this point; it will be initialized later in this method, which
-        // is safe to do, as it won't be used until the Injector is created by the method caller.
-        modulesMetadata.add(coreProvider.buildModule());
+        // note that the core BuiltModule is invalid at this point; it will be initialized below, which
+        // is safe to do, as it won't be used until the Injector is returned to the method caller.
+        builtModules.add(BuiltModule.of(coreModule)
+                .providerName(CORE_PROVIDER_NAME)
+                .description("The core of Bootique runtime.")
+                .build());
 
-        modulesMetadata.addAll(moduleProviderDependencies(providers));
+        builtModules.addAll(moduleProviderDependencies(providers));
         if (autoLoadModules) {
-            autoLoadedProviders().forEach(p -> modulesMetadata.add(p.buildModule()));
+            autoLoadedProviders().forEach(p -> builtModules.add(p.buildModule()));
         }
 
         // now that all modules are collected, finish 'moduleMetadata' initialization
-        modulesSource.init(modulesMetadata);
+        modulesSource.init(builtModules);
 
         // convert to DI modules respecting overrides, etc.
-        Collection<BQModule> modules = new BuiltModulesMerger(bootLogger).toDIModules(modulesMetadata);
+        Collection<BQModule> modules = new BuiltModulesMerger(bootLogger).toDIModules(builtModules);
         return DIBootstrap.injectorBuilder(modules).build();
     }
 
@@ -413,24 +423,36 @@ public class Bootique {
         return merged;
     }
 
-    static Collection<BuiltModule> moduleProviderDependencies(Collection<BQModuleProvider> rootSet) {
-        return moduleProviderDependencies(rootSet, new HashSet<>());
+    static Collection<BuiltModule> moduleProviderDependencies(Collection<BQModuleProvider> providers) {
+        return moduleProviderDependencies(providers, new HashSet<>());
     }
 
     private static Set<BuiltModule> moduleProviderDependencies(
-            Collection<BQModuleProvider> rootSet,
-            Set<BuiltModule> metadata) {
+            Collection<BQModuleProvider> providers,
+            Set<BuiltModule> builtModules) {
 
-        for (BQModuleProvider moduleProvider : rootSet) {
+        for (BQModuleProvider moduleProvider : providers) {
             BuiltModule next = moduleProvider.buildModule();
-            if (metadata.add(next)) {
+            if (builtModules.add(next)) {
                 Collection<BQModuleProvider> dependencies = moduleProvider.dependencies();
                 if (!dependencies.isEmpty()) {
-                    metadata.addAll(moduleProviderDependencies(dependencies, metadata));
+                    builtModules.addAll(moduleProviderDependencies(dependencies, builtModules));
                 }
             }
         }
 
-        return metadata;
+        return builtModules;
+    }
+
+    static BQModule moduleForType(Class<? extends BQModule> moduleType) {
+        try {
+            return moduleType.getDeclaredConstructor().newInstance();
+        } catch (
+                InstantiationException |
+                IllegalAccessException |
+                NoSuchMethodException |
+                InvocationTargetException e) {
+            throw new RuntimeException("Error instantiating Module of type: " + moduleType.getName(), e);
+        }
     }
 }

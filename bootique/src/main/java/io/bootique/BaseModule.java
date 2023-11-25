@@ -39,6 +39,6 @@ public abstract class BaseModule extends ConfigModule implements BQModuleProvide
 
     @Override
     public BuiltModule buildModule() {
-        return BuiltModule.of(this).provider(this).build();
+        return BuiltModule.of(this).build();
     }
 }

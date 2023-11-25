@@ -130,7 +130,10 @@ public class BuiltModule {
             return new BuiltModule(
                     module,
                     moduleName != null ? moduleName : MODULE_NAME_BUILDER.toName(module.getClass()),
-                    providerName != null ? providerName : "<unknown_provider>",
+                    providerName != null
+                            ? providerName
+                            // "<self>" is a guess. We have no idea who provided the module unless explicitly told
+                            : module instanceof BQModuleProvider ? "<self>" : "<unknown>",
                     description,
                     deprecated != null ? deprecated : module.getClass().isAnnotationPresent(Deprecated.class),
                     overrides != null ? overrides : Collections.emptyList(),
