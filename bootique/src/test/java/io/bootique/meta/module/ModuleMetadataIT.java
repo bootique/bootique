@@ -96,6 +96,38 @@ public class ModuleMetadataIT {
     }
 
     @Test
+    public void module_byType_selfProvider() {
+        ModulesMetadata md = appManager
+                .runtime(Bootique.app().module(M3ModuleAndProvider.class))
+                .getInstance(ModulesMetadata.class);
+
+        assertEquals(2, md.getModules().size(), "Expected BQCoreModule + custom module");
+
+        Optional<ModuleMetadata> cmd = md.getModules()
+                .stream()
+                .filter(m -> "N3".equals(m.getName()))
+                .findFirst();
+        assertTrue(cmd.isPresent());
+        assertEquals("P3", cmd.get().getProviderName());
+    }
+
+    @Test
+    public void module_byInstance_selfProvider() {
+        ModulesMetadata md = appManager
+                .runtime(Bootique.app().module(new M3ModuleAndProvider()))
+                .getInstance(ModulesMetadata.class);
+
+        assertEquals(2, md.getModules().size(), "Expected BQCoreModule + custom module");
+
+        Optional<ModuleMetadata> cmd = md.getModules()
+                .stream()
+                .filter(m -> "N3".equals(m.getName()))
+                .findFirst();
+        assertTrue(cmd.isPresent());
+        assertEquals("P3", cmd.get().getProviderName());
+    }
+
+    @Test
     public void deprecatedViaProviderMetadata() {
         ModulesMetadata md = appManager
                 .runtime(Bootique.app().moduleProvider(new M1DeprecatedProvider()))
@@ -172,6 +204,19 @@ public class ModuleMetadataIT {
         public void configure(Binder binder) {
         }
     }
+
+    public static class M3ModuleAndProvider implements BQModule, BQModuleProvider {
+
+        @Override
+        public BuiltModule buildModule() {
+            return BuiltModule.of(this).moduleName("N3").providerName("P3").build();
+        }
+
+        @Override
+        public void configure(Binder binder) {
+        }
+    }
+
 
     static class M1Provider implements BQModuleProvider {
 

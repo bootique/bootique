@@ -171,7 +171,7 @@ public class Bootique {
      */
     public Bootique module(Class<? extends BQModule> moduleType) {
         Objects.requireNonNull(moduleType);
-        providers.add(() -> BuiltModule.of(moduleForType(moduleType)).providerName(CORE_PROVIDER_NAME).build());
+        providers.add(moduleProviderForType(moduleType));
         return this;
     }
 
@@ -195,7 +195,7 @@ public class Bootique {
 
     public Bootique module(BQModule m) {
         Objects.requireNonNull(m);
-        providers.add(() -> BuiltModule.of(m).providerName(CORE_PROVIDER_NAME).build());
+        providers.add(moduleProviderForModule(m));
         return this;
     }
 
@@ -237,10 +237,7 @@ public class Bootique {
 
             @Override
             public Bootique with(Class<? extends BQModule> moduleType) {
-                providers.add(() -> BuiltModule.of(moduleForType(moduleType))
-                        .providerName(CORE_PROVIDER_NAME)
-                        .overrides(overriddenTypes)
-                        .build());
+                providers.add(moduleProviderForType(moduleType, overriddenTypes));
                 return Bootique.this;
             }
 
@@ -442,6 +439,26 @@ public class Bootique {
         }
 
         return builtModules;
+    }
+
+    static BQModuleProvider moduleProviderForModule(BQModule module) {
+        // very often modules are also self-providers and can give us meaningful metadata
+        return module instanceof BQModuleProvider
+                ? (BQModuleProvider) module
+                : () -> BuiltModule.of(module).providerName(CORE_PROVIDER_NAME).build();
+    }
+
+    static BQModuleProvider moduleProviderForType(Class<? extends BQModule> moduleType) {
+        // very often modules are also self-providers and can give us meaningful metadata
+        return BQModuleProvider.class.isAssignableFrom(moduleType)
+                ? (BQModuleProvider) moduleForType(moduleType)
+                : () -> BuiltModule.of(moduleForType(moduleType)).providerName(CORE_PROVIDER_NAME).build();
+    }
+
+    static BQModuleProvider moduleProviderForType(Class<? extends BQModule> moduleType, Class<? extends BQModule>... overriddenTypes) {
+        return () -> BuiltModule
+                .of(moduleProviderForType(moduleType).buildModule())
+                .overrides(overriddenTypes).build();
     }
 
     static BQModule moduleForType(Class<? extends BQModule> moduleType) {

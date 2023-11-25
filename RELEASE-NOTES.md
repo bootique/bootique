@@ -6,6 +6,7 @@
 * #338 ModuleMetadata - track BQModule type
 * #339 Uncluttered lambda-style BQModuleProvider
 * #340 Deprecate module dependency tracking
+* #341 Recognize "self-provided" modules and preserve their metadata
 
 ## 3.0.M2
 

@@ -47,6 +47,19 @@ public class BuiltModule {
         return new Builder(module);
     }
 
+    /**
+     * A factory method that clones another BuiltModule, allowing to override some of its properties.
+     */
+    public static Builder of(BuiltModule proto) {
+        return BuiltModule.of(proto.getModule())
+                .moduleName(proto.getModuleName())
+                .description(proto.getDescription())
+                .providerName(proto.getProviderName())
+                .deprecated(proto.isDeprecated())
+                .overrides(proto.getOverrides())
+                .configs(proto.configs);
+    }
+
     protected BuiltModule(
             BQModule module,
             String moduleName,
