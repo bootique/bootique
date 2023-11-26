@@ -49,7 +49,7 @@ import java.util.*;
  */
 public class Bootique {
 
-    private static final String CORE_PROVIDER_NAME = "Bootique";
+    static final String CORE_PROVIDER_NAME = "Bootique";
 
     private final Collection<BQModuleProvider> providers;
     private String[] args;
@@ -378,12 +378,9 @@ public class Bootique {
         // BQCoreModule requires a couple of explicit services that can not be initialized within the module itself
         BQCoreModule coreModule = new BQCoreModule(args, bootLogger, shutdownManager, modulesSource);
 
-        // note that the core BuiltModule is invalid at this point; it will be initialized below, which
-        // is safe to do, as it won't be used until the Injector is returned to the method caller.
-        builtModules.add(BuiltModule.of(coreModule)
-                .providerName(CORE_PROVIDER_NAME)
-                .description("The core of Bootique runtime.")
-                .build());
+        // Note that the core BuiltModule is invalid at this point due to uninitialized "modulesSource". It will be
+        // initialized below, which is safe to do, as it won't be used until the Injector is returned to the method caller.
+        builtModules.add(coreModule.buildModule());
 
         builtModules.addAll(moduleProviderDependencies(providers));
         if (autoLoadModules) {
