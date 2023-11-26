@@ -450,7 +450,11 @@ public class Bootique {
                 : () -> ModuleCrate.of(moduleForType(moduleType)).providerName(CORE_PROVIDER_NAME).build();
     }
 
-    static BQModuleProvider moduleProviderForType(Class<? extends BQModule> moduleType, Class<? extends BQModule>... overriddenTypes) {
+    @SafeVarargs
+    static BQModuleProvider moduleProviderForType(
+            Class<? extends BQModule> moduleType,
+            Class<? extends BQModule>... overriddenTypes) {
+        
         return () -> ModuleCrate
                 .of(moduleProviderForType(moduleType).moduleCrate())
                 .overrides(overriddenTypes).build();
