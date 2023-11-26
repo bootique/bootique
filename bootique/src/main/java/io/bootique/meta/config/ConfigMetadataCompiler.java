@@ -23,10 +23,12 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.help.ValueObjectDescriptor;
+import io.bootique.log.BootLogger;
 
 import java.lang.reflect.*;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -41,14 +43,20 @@ public class ConfigMetadataCompiler {
 
     private static final Pattern SETTER = Pattern.compile("^set([A-Z].*)$");
 
+    private final BootLogger logger;
     private final Function<Class<?>, Stream<Class<?>>> subclassProvider;
     private final Map<Type, ConfigObjectMetadata> seen;
     private final Map<Class<?>, ValueObjectDescriptor> descriptorMap;
 
-    public ConfigMetadataCompiler(Function<Class<?>, Stream<Class<?>>> subclassProvider, Map<Class<?>, ValueObjectDescriptor> descriptorMap) {
+    public ConfigMetadataCompiler(
+            BootLogger logger,
+            Function<Class<?>, Stream<Class<?>>> subclassProvider,
+            Map<Class<?>, ValueObjectDescriptor> descriptorMap) {
+
+        this.logger = logger;
         this.subclassProvider = subclassProvider;
-        this.seen = new ConcurrentHashMap<>();
         this.descriptorMap = descriptorMap;
+        this.seen = new ConcurrentHashMap<>();
     }
 
     private static Type propertyTypeFromSetter(Method maybeSetter) {
@@ -63,11 +71,11 @@ public class ConfigMetadataCompiler {
         return paramTypes[0];
     }
 
-    private static Type propertyTypeFromConstructor(Constructor maybeConstructor) {
+    private static Type propertyTypeFromDelegatedConstructor(Constructor maybeConstructor) {
         Type[] paramTypes = maybeConstructor.getGenericParameterTypes();
         if (paramTypes.length != 1) {
             throw new IllegalStateException("Constructor '" + maybeConstructor
-                    + "' is annotated with @BQConfigProperty, but does not match expected signature."
+                    + "' is annotated with @BQConfig, but does not match the expected delegated constructor signature."
                     + " It must take exactly one parameter");
         }
 
@@ -107,6 +115,18 @@ public class ConfigMetadataCompiler {
 
     protected ConfigMetadataNode compileObjectMetadata(Descriptor descriptor) {
 
+        // check for "delegated" constructors before building anything new
+        for (Constructor<?> c : descriptor.getTypeClass().getConstructors()) {
+            BQConfig configProperty = c.getAnnotation(BQConfig.class);
+            if (configProperty != null) {
+                Type propType = propertyTypeFromDelegatedConstructor(c);
+
+                return compile(Descriptor.forDelegatedConfig(descriptor, configProperty, propType));
+            }
+        }
+
+        // TODO: ^^ report on other matching delegated Constructors?
+
         // to avoid compile cycles, track seen types and prevent any further descent into child properties for them.
         // Still use the name and description from the given Descriptor.
         ConfigObjectMetadata seenNode = seen.get(descriptor.getType());
@@ -131,6 +151,7 @@ public class ConfigMetadataCompiler {
                 .abstractType(isAbstract(descriptor.getTypeClass()))
                 .typeLabel(extractTypeLabel(descriptor.getTypeClass()));
 
+
         // The root config object known to Bootique doesn't require BQConfig annotation (though it would help in
         // determining description). Objects nested within the root config do. Otherwise, they will be treated as
         // "value" properties.
@@ -147,11 +168,40 @@ public class ConfigMetadataCompiler {
             }
         }
 
+        // TODO: what if multiple annotated constructors are encountered? Currently, adding them all together
         for (Constructor<?> c : descriptor.getTypeClass().getConstructors()) {
-            BQConfigProperty configProperty = c.getAnnotation(BQConfigProperty.class);
-            if (configProperty != null) {
-                Type propType = propertyTypeFromConstructor(c);
-                builder.addProperty(compile(Descriptor.forNestedConfig(descriptor.getTypeClass().getSimpleName().toLowerCase(), configProperty, propType)));
+
+            Parameter[] params = c.getParameters();
+            int len = params.length;
+
+            Descriptor[] descriptors = null;
+            Type[] types = null;
+            int i = 0;
+            for (; i < len; i++) {
+
+                BQConfigProperty configProperty = params[i].getAnnotation(BQConfigProperty.class);
+                if (configProperty == null) {
+                    break;
+                }
+
+                if ("".equals(configProperty.property())) {
+                    logger.stderr("Ignoring @BQConfigProperty on constructor parameter of " + descriptor.getTypeClass() + ", as it has no 'property' set");
+                    break;
+                }
+
+                if (i == 0) {
+                    descriptors = new Descriptor[len];
+                    types = c.getGenericParameterTypes();
+                }
+
+                descriptors[i] = Descriptor.forConstructorParamConfig(configProperty, types[i]);
+            }
+
+            // only load constructor properties if all Constructor parameters are annotated
+            if (descriptors != null && i == len) {
+                for (Descriptor d : descriptors) {
+                    builder.addProperty(compile(d));
+                }
             }
         }
 
@@ -262,8 +312,31 @@ public class ConfigMetadataCompiler {
 
         public static Descriptor forNestedConfig(String name, BQConfigProperty description, Type type) {
             return new Descriptor(
-                    name,
+                    name, // TODO: name from description.property()
                     description != null ? description.value() : null,
+                    typeClass(type),
+                    type
+            );
+        }
+
+        public static Descriptor forDelegatedConfig(Descriptor parent, BQConfig description, Type type) {
+            Class<?> typeClass = typeClass(type);
+
+            return new Descriptor(
+                    parent.name,
+                    parent.description != null && !parent.description.isEmpty() ? parent.description : description != null ? description.value() : null,
+                    typeClass,
+                    type
+            );
+        }
+
+        public static Descriptor forConstructorParamConfig(BQConfigProperty description, Type type) {
+
+            Objects.requireNonNull(description);
+
+            return new Descriptor(
+                    description.property(),
+                    description.value(),
                     typeClass(type),
                     type
             );

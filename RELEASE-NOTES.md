@@ -7,6 +7,7 @@
 * #339 Uncluttered lambda-style BQModuleProvider
 * #340 Deprecate module dependency tracking
 * #341 Recognize "self-provided" modules and preserve their metadata
+* #342 @BQConfigProperty incorrectly interpreted on constructors
 
 ## 3.0.M2
 

@@ -26,9 +26,9 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation for documenting configuration property of a type annotated with {@link BQConfig}. Should be applied to
- * setters.
+ * setters or to constructor parameters.
  */
-@Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
+@Target({ElementType.METHOD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface BQConfigProperty {
 
@@ -38,4 +38,11 @@ public @interface BQConfigProperty {
      * @return a String representing a human-readable property description.
      */
     String value() default "";
+
+    /**
+     * Overrides the name of the annotated property. Optional for setters, but required for Constructor parameters.
+     *
+     * @since 3.0
+     */
+    String property() default "";
 }

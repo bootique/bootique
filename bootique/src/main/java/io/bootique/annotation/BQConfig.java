@@ -25,9 +25,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation for documenting configuration type.
+ * Annotation for documenting configuration type. If placed on the type, that type will be used for documentation.
+ * If placed on a single-argument constructor, that argument (and not the constructor parent type) will be used for
+ * documentation.
  */
-@Target({ElementType.TYPE})
+@Target({ElementType.TYPE, ElementType.CONSTRUCTOR})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface BQConfig {
 

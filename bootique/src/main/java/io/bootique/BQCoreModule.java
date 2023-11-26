@@ -297,11 +297,12 @@ public class BQCoreModule implements BQModule, BQModuleProvider {
     @Provides
     @Singleton
     ModulesMetadata provideModulesMetadata(
+            BootLogger logger,
             ConfigHierarchyResolver hierarchyResolver,
             Map<Class<?>, ValueObjectDescriptor> valueObjectDescriptors) {
 
         ConfigMetadataCompiler configCompiler =
-                new ConfigMetadataCompiler(hierarchyResolver::directSubclasses, valueObjectDescriptors);
+                new ConfigMetadataCompiler(logger, hierarchyResolver::directSubclasses, valueObjectDescriptors);
         Collection<ModuleCrate> modules = modulesSource.get();
         return new ModulesMetadataCompiler(configCompiler).compile(modules);
     }

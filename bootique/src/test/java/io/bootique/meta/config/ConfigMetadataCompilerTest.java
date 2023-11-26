@@ -19,15 +19,23 @@
 
 package io.bootique.meta.config;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.config.PolymorphicConfiguration;
+import io.bootique.jackson.DefaultJacksonService;
+import io.bootique.log.DefaultBootLogger;
 import io.bootique.meta.MetadataNode;
 import io.bootique.type.TypeRef;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -38,20 +46,28 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ConfigMetadataCompilerTest {
+
+    private final ObjectMapper mapper = new DefaultJacksonService().newObjectMapper();
+
+    // ensure that an object for which we are compiling metadata can actually be deserialized
+    private <T> T parseYaml(Class<T> type, String yaml) {
+        try {
+            YAMLParser parser = new YAMLFactory().createParser(yaml);
+            return mapper.readValue(parser, type);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private ConfigMetadataCompiler createCompiler() {
         return createCompiler(t -> Stream.empty());
     }
 
     private ConfigMetadataCompiler createCompiler(Function<Class<?>, Stream<Class<?>>> subclassProvider) {
-        return new ConfigMetadataCompiler(subclassProvider, Collections.emptyMap());
+        return new ConfigMetadataCompiler(new DefaultBootLogger(true), subclassProvider, Collections.emptyMap());
     }
 
     @Test
@@ -64,16 +80,12 @@ public class ConfigMetadataCompilerTest {
         assertEquals("Describes Config1", md.getDescription());
         assertEquals(Config1.class, md.getType());
 
-        assertEquals(10, md.getProperties().size());
+        assertEquals(9, md.getProperties().size());
 
         Map<String, ConfigMetadataNode> propMap = md
                 .getProperties()
                 .stream()
                 .collect(Collectors.toMap(MetadataNode::getName, Function.identity()));
-
-        ConfigValueMetadata config1 = (ConfigValueMetadata) propMap.get("config1");
-        assertEquals(String.class, config1.getType());
-        assertEquals("constructor with params", config1.getDescription());
 
         ConfigValueMetadata p1 = (ConfigValueMetadata) propMap.get("p1");
         assertEquals(Integer.TYPE, p1.getType());
@@ -107,6 +119,62 @@ public class ConfigMetadataCompilerTest {
                 p7.getType().getTypeName());
         assertEquals(Integer.class, p7.getKeysType());
         assertEquals(Config2.class, p7.getValuesType().getType());
+    }
+
+    @Test
+    public void compile_DelegateBased_Constructor() {
+
+        Config12 c = parseYaml(Config12.class, "abc");
+        assertEquals("abc", c.value, "Unexpected deserialization structure");
+
+        ConfigValueMetadata md = (ConfigValueMetadata) createCompiler().compile("prefix", Config12.class);
+        assertNotNull(md);
+
+        assertEquals("prefix", md.getName());
+        assertEquals("Describes Config12", md.getDescription());
+        assertEquals(String.class, md.getType());
+    }
+
+    @Test
+    public void compile_DelegateBased_Constructor_NoParentDesc() {
+
+        Config12A c = parseYaml(Config12A.class, "abc");
+        assertEquals("abc", c.value, "Unexpected deserialization structure");
+
+        ConfigValueMetadata md = (ConfigValueMetadata) createCompiler().compile("prefix", Config12A.class);
+        assertNotNull(md);
+
+        assertEquals("prefix", md.getName());
+        assertEquals("Delegated description to constructor param", md.getDescription());
+        assertEquals(String.class, md.getType());
+    }
+
+    @Test
+    public void compile_PropertyBased_Constructor() {
+
+        Config13 c = parseYaml(Config13.class, "one: abc\ntwo: 56");
+        assertEquals("abc", c.v1, "Unexpected deserialization structure");
+        assertEquals(56, c.v2, "Unexpected deserialization structure");
+
+        ConfigObjectMetadata md = (ConfigObjectMetadata) createCompiler().compile("prefix", Config13.class);
+        assertNotNull(md);
+
+        assertEquals("prefix", md.getName());
+        assertEquals("Describes Config13", md.getDescription());
+        assertEquals(Config13.class, md.getType());
+
+        Map<String, ConfigMetadataNode> propMap = md
+                .getProperties()
+                .stream()
+                .collect(Collectors.toMap(MetadataNode::getName, Function.identity()));
+
+        assertEquals(2, propMap.size());
+
+        ConfigValueMetadata p1 = (ConfigValueMetadata) propMap.get("one");
+        assertEquals(String.class, p1.getType());
+
+        ConfigValueMetadata p2 = (ConfigValueMetadata) propMap.get("two");
+        assertEquals(Integer.TYPE, p2.getType());
     }
 
     @Test
@@ -283,15 +351,11 @@ public class ConfigMetadataCompilerTest {
 
     @BQConfig
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
-    public static interface Config9 extends PolymorphicConfiguration {
+    public interface Config9 extends PolymorphicConfiguration {
     }
 
     @BQConfig("Describes Config1")
     public static class Config1 {
-
-        @BQConfigProperty("constructor with params")
-        public Config1(String s){
-        }
 
         @BQConfigProperty
         public void setP1(int v) {
@@ -413,4 +477,45 @@ public class ConfigMetadataCompilerTest {
         }
     }
 
+    @BQConfig("Describes Config12")
+    public static class Config12 {
+
+        final String value;
+
+        @BQConfig("Delegated description to constructor param")
+        @JsonCreator
+        public Config12(String value) {
+            this.value = value;
+        }
+    }
+
+    @BQConfig()
+    public static class Config12A {
+
+        final String value;
+
+        @BQConfig("Delegated description to constructor param")
+        @JsonCreator
+        public Config12A(String value) {
+            this.value = value;
+        }
+    }
+
+    @BQConfig("Describes Config13")
+    public static class Config13 {
+
+        final String v1;
+        final int v2;
+
+
+        public Config13(
+                @BQConfigProperty(property = "one")
+                @JsonProperty("one") String v1,
+
+                @BQConfigProperty(property = "two")
+                @JsonProperty("two") int v2) {
+            this.v1 = v1;
+            this.v2 = v2;
+        }
+    }
 }
