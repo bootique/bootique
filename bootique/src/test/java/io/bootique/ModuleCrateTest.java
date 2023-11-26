@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package io.bootique.bootstrap;
+package io.bootique;
 
 import io.bootique.di.BQModule;
 import io.bootique.di.Binder;
@@ -25,13 +25,13 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-public class BuiltModuleIdTest {
+public class ModuleCrateTest {
 
     @Test
     public void innerStaticClass() {
-        BuiltModuleId moduleId1 = BuiltModuleId.of(new MyStaticModule());
-        BuiltModuleId moduleId2 = BuiltModuleId.of(new MyStaticModule());
-        BuiltModuleId moduleId3 = BuiltModuleId.of(new MyStaticModule2());
+        ModuleCrate moduleId1 = ModuleCrate.of(new MyStaticModule()).build();
+        ModuleCrate moduleId2 = ModuleCrate.of(new MyStaticModule()).build();
+        ModuleCrate moduleId3 = ModuleCrate.of(new MyStaticModule2()).build();
 
         assertEquals(moduleId1, moduleId1);
         assertEquals(moduleId1.hashCode(), moduleId1.hashCode());
@@ -51,9 +51,9 @@ public class BuiltModuleIdTest {
 
     @Test
     public void innerClass() {
-        BuiltModuleId moduleId1 = BuiltModuleId.of(new MyModule());
-        BuiltModuleId moduleId2 = BuiltModuleId.of(new MyModule());
-        BuiltModuleId moduleId3 = BuiltModuleId.of(new MyModule2());
+        ModuleCrate moduleId1 = ModuleCrate.of(new MyModule()).build();
+        ModuleCrate moduleId2 = ModuleCrate.of(new MyModule()).build();
+        ModuleCrate moduleId3 = ModuleCrate.of(new MyModule2()).build();
 
         assertEquals(moduleId1, moduleId1);
         assertEquals(moduleId1.hashCode(), moduleId1.hashCode());
@@ -73,9 +73,9 @@ public class BuiltModuleIdTest {
 
     @Test
     public void methodRef() {
-        BuiltModuleId moduleId1 = BuiltModuleId.of(BuiltModuleIdTest::configure);
-        BuiltModuleId moduleId2 = BuiltModuleId.of(BuiltModuleIdTest::configure);
-        BuiltModuleId moduleId3 = BuiltModuleId.of(BuiltModuleIdTest::configure2);
+        ModuleCrate moduleId1 = ModuleCrate.of(ModuleCrateTest::configure).build();
+        ModuleCrate moduleId2 = ModuleCrate.of(ModuleCrateTest::configure).build();
+        ModuleCrate moduleId3 = ModuleCrate.of(ModuleCrateTest::configure2).build();
 
         assertEquals(moduleId1, moduleId1);
         assertEquals(moduleId1.hashCode(), moduleId1.hashCode());
@@ -94,8 +94,8 @@ public class BuiltModuleIdTest {
 
     @Test
     public void lambda() {
-        BuiltModuleId moduleId1 = BuiltModuleId.of(binder -> binder.bindSet(String.class).addInstance("lambda"));
-        BuiltModuleId moduleId2 = BuiltModuleId.of(binder -> binder.bindSet(String.class).addInstance("lambda 2"));
+        ModuleCrate moduleId1 = ModuleCrate.of(binder -> binder.bindSet(String.class).addInstance("lambda")).build();
+        ModuleCrate moduleId2 = ModuleCrate.of(binder -> binder.bindSet(String.class).addInstance("lambda 2")).build();
 
         assertEquals(moduleId1, moduleId1);
         assertEquals(moduleId1.hashCode(), moduleId1.hashCode());
@@ -108,8 +108,8 @@ public class BuiltModuleIdTest {
 
     @Test
     public void lambdaFactory() {
-        BuiltModuleId moduleId1 = BuiltModuleId.of(createModule("lambda factory"));
-        BuiltModuleId moduleId2 = BuiltModuleId.of(createModule("lambda factory 2"));
+        ModuleCrate moduleId1 = ModuleCrate.of(createModule("lambda factory")).build();
+        ModuleCrate moduleId2 = ModuleCrate.of(createModule("lambda factory 2")).build();
 
         assertEquals(moduleId1, moduleId1);
         assertEquals(moduleId1.hashCode(), moduleId1.hashCode());
@@ -123,9 +123,9 @@ public class BuiltModuleIdTest {
 
     @Test
     public void mix() {
-        BuiltModuleId moduleId1 = BuiltModuleId.of(new MyModule());
-        BuiltModuleId moduleId2 = BuiltModuleId.of(BuiltModuleIdTest::configure);
-        BuiltModuleId moduleId3 = BuiltModuleId.of(createModule("lambda factory"));
+        ModuleCrate moduleId1 = ModuleCrate.of(new MyModule()).build();
+        ModuleCrate moduleId2 = ModuleCrate.of(ModuleCrateTest::configure).build();
+        ModuleCrate moduleId3 = ModuleCrate.of(createModule("lambda factory")).build();
 
         assertEquals(moduleId1, moduleId1);
         assertEquals(moduleId1.hashCode(), moduleId1.hashCode());

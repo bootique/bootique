@@ -19,7 +19,6 @@
 package io.bootique;
 
 import io.bootique.annotation.Args;
-import io.bootique.bootstrap.BuiltModule;
 import io.bootique.di.*;
 import org.junit.jupiter.api.Test;
 
@@ -61,7 +60,7 @@ public class Bootique_ModuleOverridesIT {
 
     @Test
     public void createInjector_OverridesWithProvider() {
-        BQModuleProvider provider = () -> BuiltModule.of(new M0()).overrides(BQCoreModule.class).build();
+        BQModuleProvider provider = () -> ModuleCrate.of(new M0()).overrides(BQCoreModule.class).build();
 
         Injector i = Bootique.app(args).moduleProvider(provider).createInjector();
 

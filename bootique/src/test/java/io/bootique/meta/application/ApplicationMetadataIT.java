@@ -25,7 +25,7 @@ import io.bootique.BQRuntime;
 import io.bootique.Bootique;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
-import io.bootique.bootstrap.BuiltModule;
+import io.bootique.ModuleCrate;
 import io.bootique.di.BQModule;
 import io.bootique.meta.config.ConfigValueMetadata;
 import io.bootique.unit.TestAppManager;
@@ -85,7 +85,7 @@ public class ApplicationMetadataIT {
     public void boundVar() {
         BQModule m = b -> {
         };
-        BQModuleProvider provider = () -> BuiltModule.of(m).config("x", O1.class).build();
+        BQModuleProvider provider = () -> ModuleCrate.of(m).config("x", O1.class).build();
 
         BQRuntime runtime = appManager.runtime(Bootique.app()
                 .moduleProvider(provider)

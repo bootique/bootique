@@ -19,8 +19,6 @@
 
 package io.bootique;
 
-import io.bootique.bootstrap.BuiltModule;
-
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,7 +35,7 @@ class ModuleGraph {
     /**
      * {@link LinkedHashMap} is used for supporting insertion order.
      */
-    private final Map<BuiltModule, List<BuiltModule>> neighbors;
+    private final Map<ModuleCrate, List<ModuleCrate>> neighbors;
 
     ModuleGraph(int size) {
         neighbors = new LinkedHashMap<>(size);
@@ -46,7 +44,7 @@ class ModuleGraph {
     /**
      * Add a vertex to the graph. Nothing happens if vertex is already in graph.
      */
-    void add(BuiltModule vertex) {
+    void add(ModuleCrate vertex) {
         neighbors.putIfAbsent(vertex, new ArrayList<>(0));
     }
 
@@ -54,7 +52,7 @@ class ModuleGraph {
      * Add an edge to the graph; if either vertex does not exist, it's added.
      * This implementation allows the creation of multi-edges and self-loops.
      */
-    void add(BuiltModule from, BuiltModule to) {
+    void add(ModuleCrate from, ModuleCrate to) {
         neighbors.computeIfAbsent(from, k -> new ArrayList<>()).add(to);
         this.add(to);
     }
@@ -62,8 +60,8 @@ class ModuleGraph {
     /**
      * Return (as a Map) the in-degree of each vertex.
      */
-    private Map<BuiltModule, Integer> inDegree() {
-        Map<BuiltModule, Integer> result = new LinkedHashMap<>(neighbors.size());
+    private Map<ModuleCrate, Integer> inDegree() {
+        Map<ModuleCrate, Integer> result = new LinkedHashMap<>(neighbors.size());
 
         neighbors.forEach((from, neighbors) -> {
             neighbors.forEach(to -> result.compute(to, (k, old) -> {
@@ -86,10 +84,10 @@ class ModuleGraph {
     /**
      * Return (as a List) the topological sort of the vertices. Throws an exception if cycles are detected.
      */
-    List<BuiltModule> topSort() {
-        Map<BuiltModule, Integer> degree = inDegree();
-        Deque<BuiltModule> zeroDegree = new ArrayDeque<>(neighbors.size());
-        List<BuiltModule> result = new ArrayList<>(neighbors.size());
+    List<ModuleCrate> topSort() {
+        Map<ModuleCrate, Integer> degree = inDegree();
+        Deque<ModuleCrate> zeroDegree = new ArrayDeque<>(neighbors.size());
+        List<ModuleCrate> result = new ArrayList<>(neighbors.size());
 
         degree.forEach((k, v) -> {
             if (v == 0) {
@@ -98,7 +96,7 @@ class ModuleGraph {
         });
 
         while (!zeroDegree.isEmpty()) {
-            BuiltModule v = zeroDegree.pop();
+            ModuleCrate v = zeroDegree.pop();
             result.add(v);
 
             neighbors.get(v).forEach(neighbor ->
@@ -114,10 +112,10 @@ class ModuleGraph {
 
         // Check that we have used the entire graph (if not, there was a cycle)
         if (result.size() != neighbors.size()) {
-            Set<BuiltModule> remainingKeys = new HashSet<>(neighbors.keySet());
+            Set<ModuleCrate> remainingKeys = new HashSet<>(neighbors.keySet());
             String cycleString = remainingKeys.stream()
                     .filter(o -> !result.contains(o))
-                    .map(BuiltModule::getModuleName)
+                    .map(ModuleCrate::getModuleName)
                     .collect(Collectors.joining(" -> "));
             throw new BootiqueException(1, "Circular override dependency between DI modules: " + cycleString);
         }

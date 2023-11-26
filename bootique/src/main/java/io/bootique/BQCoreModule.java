@@ -22,7 +22,6 @@ package io.bootique;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.bootique.annotation.*;
-import io.bootique.bootstrap.BuiltModule;
 import io.bootique.cli.Cli;
 import io.bootique.cli.CliFactory;
 import io.bootique.command.*;
@@ -87,13 +86,13 @@ public class BQCoreModule implements BQModule, BQModuleProvider {
     private final String[] args;
     private final BootLogger bootLogger;
     private final ShutdownManager shutdownManager;
-    private final Supplier<Collection<BuiltModule>> modulesSource;
+    private final Supplier<Collection<ModuleCrate>> modulesSource;
 
     protected BQCoreModule(
             String[] args,
             BootLogger bootLogger,
             ShutdownManager shutdownManager,
-            Supplier<Collection<BuiltModule>> modulesSource) {
+            Supplier<Collection<ModuleCrate>> modulesSource) {
 
         this.args = Objects.requireNonNull(args);
         this.bootLogger = Objects.requireNonNull(bootLogger);
@@ -127,8 +126,8 @@ public class BQCoreModule implements BQModule, BQModuleProvider {
      * @since 3.0
      */
     @Override
-    public BuiltModule buildModule() {
-        return BuiltModule.of(this)
+    public ModuleCrate moduleCrate() {
+        return ModuleCrate.of(this)
                 .providerName(Bootique.CORE_PROVIDER_NAME)
                 .description("The core of Bootique runtime.")
                 .build();
@@ -303,7 +302,7 @@ public class BQCoreModule implements BQModule, BQModuleProvider {
 
         ConfigMetadataCompiler configCompiler =
                 new ConfigMetadataCompiler(hierarchyResolver::directSubclasses, valueObjectDescriptors);
-        Collection<BuiltModule> modules = modulesSource.get();
+        Collection<ModuleCrate> modules = modulesSource.get();
         return new ModulesMetadataCompiler(configCompiler).compile(modules);
     }
 

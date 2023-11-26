@@ -19,7 +19,7 @@
 
 package io.bootique.meta.module;
 
-import io.bootique.bootstrap.BuiltModule;
+import io.bootique.ModuleCrate;
 import io.bootique.meta.config.ConfigMetadataCompiler;
 import io.bootique.meta.config.ConfigMetadataNode;
 
@@ -37,13 +37,13 @@ public class ModulesMetadataCompiler {
         this.configCompiler = configCompiler;
     }
 
-    public ModulesMetadata compile(Collection<BuiltModule> modules) {
+    public ModulesMetadata compile(Collection<ModuleCrate> modules) {
         ModulesMetadata.Builder builder = ModulesMetadata.builder();
         modules.forEach(m -> builder.addModule(toModuleMetadata(m)));
         return builder.build();
     }
 
-    private ModuleMetadata toModuleMetadata(BuiltModule module) {
+    private ModuleMetadata toModuleMetadata(ModuleCrate module) {
         return ModuleMetadata
                 .builder(module.getModuleName())
                 .type(module.getModule().getClass())
@@ -54,7 +54,7 @@ public class ModulesMetadataCompiler {
                 .build();
     }
 
-    private Collection<ConfigMetadataNode> toConfigs(BuiltModule module) {
+    private Collection<ConfigMetadataNode> toConfigs(ModuleCrate module) {
 
         Map<String, Type> configTypes = module.getConfigs();
         if (configTypes.isEmpty()) {

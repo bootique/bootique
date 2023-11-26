@@ -19,7 +19,6 @@
 
 package io.bootique;
 
-import io.bootique.bootstrap.BuiltModule;
 import io.bootique.di.BQModule;
 
 import java.util.Collection;
@@ -35,13 +34,13 @@ import java.util.Collections;
 public interface BQModuleProvider {
 
     /**
-     * Creates and returns a new instance of {@link BuiltModule}. Subclasses should override this method with their own
-     * module logic, using a builder provided by {@link BuiltModule#of(BQModule)}.
+     * Creates a module wrapped in a {@link ModuleCrate} that contains bootstrap metadata. Implementors should use
+     * the builder provided by {@link ModuleCrate#of(BQModule)} to generate a crate.
      *
-     * @see BuiltModule.Builder
+     * @see ModuleCrate#of(BQModule)
      * @since 3.0
      */
-    BuiltModule buildModule();
+    ModuleCrate moduleCrate();
 
     /**
      * Returns a collection of providers of modules on which this provider's module depends. Concrete providers can

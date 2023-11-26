@@ -27,6 +27,6 @@ public class BaseModuleTest {
     @Test
     public void buildModule() {
         BaseModule m = new BaseModule() {};
-        assertSame(m, m.buildModule().getModule());
+        assertSame(m, m.moduleCrate().getModule());
     }
 }

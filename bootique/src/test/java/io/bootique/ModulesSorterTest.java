@@ -19,7 +19,6 @@
 
 package io.bootique;
 
-import io.bootique.bootstrap.BuiltModule;
 import io.bootique.di.BQModule;
 import io.bootique.di.Binder;
 import io.bootique.log.DefaultBootLogger;
@@ -36,7 +35,7 @@ public class ModulesSorterTest {
     // using real logger to better understand what's going on in the tests
     final ModulesSorter sorter = new ModulesSorter(new DefaultBootLogger(true));
     final List<BQModule> testModules = List.of(new M0(), new M1(), new M2(), new M3(), new M4());
-    final List<BuiltModule> builtModules = testModules.stream().map(m -> BuiltModule.of(m).build()).collect(Collectors.toList());
+    final List<ModuleCrate> builtModules = testModules.stream().map(m -> ModuleCrate.of(m).build()).collect(Collectors.toList());
 
     @Test
     public void getModules_Empty() {
@@ -79,7 +78,7 @@ public class ModulesSorterTest {
     @Test
     public void getModules_Overrides() {
 
-        BuiltModule bm0 = BuiltModule.of(testModules.get(0)).overrides(M3.class).build();
+        ModuleCrate bm0 = ModuleCrate.of(testModules.get(0)).overrides(M3.class).build();
         BQModule[] modules = sorter.modulesInLoadOrder(List.of(
                 bm0,
                 builtModules.get(3)
@@ -93,8 +92,8 @@ public class ModulesSorterTest {
     @Test
     public void getModules_Overrides_Chain() {
 
-        BuiltModule bm0 = BuiltModule.of(testModules.get(0)).overrides(M3.class).build();
-        BuiltModule bm3 = BuiltModule.of(testModules.get(3)).overrides(M4.class).build();
+        ModuleCrate bm0 = ModuleCrate.of(testModules.get(0)).overrides(M3.class).build();
+        ModuleCrate bm3 = ModuleCrate.of(testModules.get(3)).overrides(M4.class).build();
 
         BQModule[] modules = sorter.modulesInLoadOrder(List.of(
                 builtModules.get(4),
@@ -114,8 +113,8 @@ public class ModulesSorterTest {
     public void getModules_OverrideCycle() {
 
         // 0 replaces 3 ; 3 replaces 0
-        BuiltModule bm0 = BuiltModule.of(testModules.get(0)).overrides(M3.class).build();
-        BuiltModule bm3 = BuiltModule.of(testModules.get(3)).overrides(M0.class).build();
+        ModuleCrate bm0 = ModuleCrate.of(testModules.get(0)).overrides(M3.class).build();
+        ModuleCrate bm3 = ModuleCrate.of(testModules.get(3)).overrides(M0.class).build();
 
         assertThrows(RuntimeException.class, () -> sorter.modulesInLoadOrder(List.of(bm0, bm3)));
     }
@@ -124,9 +123,9 @@ public class ModulesSorterTest {
     public void getModules_OverrideIndirectCycle() {
 
         // 0 replaces 3 ; 3 replaces 4 ; 4 replaces 0
-        BuiltModule bm0 = BuiltModule.of(testModules.get(0)).overrides(M3.class).build();
-        BuiltModule bm3 = BuiltModule.of(testModules.get(3)).overrides(M4.class).build();
-        BuiltModule bm4 = BuiltModule.of(testModules.get(4)).overrides(M0.class).build();
+        ModuleCrate bm0 = ModuleCrate.of(testModules.get(0)).overrides(M3.class).build();
+        ModuleCrate bm3 = ModuleCrate.of(testModules.get(3)).overrides(M4.class).build();
+        ModuleCrate bm4 = ModuleCrate.of(testModules.get(4)).overrides(M0.class).build();
 
         assertThrows(RuntimeException.class, () -> sorter.modulesInLoadOrder(List.of(bm0, bm4, bm3)));
     }
@@ -135,8 +134,8 @@ public class ModulesSorterTest {
     public void getModules_OverrideDupe() {
 
         // 0 overrides 3 ; 4 overrides 3
-        BuiltModule bm0 = BuiltModule.of(testModules.get(0)).overrides(M3.class).build();
-        BuiltModule bm4 = BuiltModule.of(testModules.get(4)).overrides(M3.class).build();
+        ModuleCrate bm0 = ModuleCrate.of(testModules.get(0)).overrides(M3.class).build();
+        ModuleCrate bm4 = ModuleCrate.of(testModules.get(4)).overrides(M3.class).build();
 
         assertThrows(RuntimeException.class, () -> sorter.modulesInLoadOrder(List.of(bm4, bm0, builtModules.get(3))));
     }

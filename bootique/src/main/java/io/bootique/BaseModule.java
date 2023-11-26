@@ -18,8 +18,6 @@
  */
 package io.bootique;
 
-import io.bootique.bootstrap.BuiltModule;
-
 /**
  * A superclass of modules that combines functionality of a DI module with that of a module provider. For many modules,
  * creating a separate {@link BQModuleProvider} class is an overkill. Using this class as a superclass cuts down on
@@ -38,7 +36,7 @@ public abstract class BaseModule extends ConfigModule implements BQModuleProvide
     }
 
     @Override
-    public BuiltModule buildModule() {
-        return BuiltModule.of(this).build();
+    public ModuleCrate moduleCrate() {
+        return ModuleCrate.of(this).build();
     }
 }

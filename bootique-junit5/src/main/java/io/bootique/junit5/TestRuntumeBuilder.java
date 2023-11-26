@@ -23,7 +23,7 @@ import io.bootique.BQModuleOverrideBuilder;
 import io.bootique.BQModuleProvider;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
-import io.bootique.bootstrap.BuiltModule;
+import io.bootique.ModuleCrate;
 import io.bootique.command.CommandOutcome;
 import io.bootique.di.BQModule;
 import io.bootique.log.BootLogger;
@@ -78,7 +78,7 @@ public class TestRuntumeBuilder {
 
     protected BQModuleProvider createPropertiesProvider() {
         BQModule module = b -> BQCoreModule.extend(b).setProperties(properties);
-        return () -> BuiltModule.of(module).providerName("TestRuntimeBuilder:properties").build();
+        return () -> ModuleCrate.of(module).providerName("TestRuntimeBuilder:properties").build();
     }
 
     /**

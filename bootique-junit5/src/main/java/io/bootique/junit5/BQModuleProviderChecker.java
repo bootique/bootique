@@ -100,7 +100,7 @@ public class BQModuleProviderChecker {
             testWithFactory(testFactory -> {
                 // must auto-load modules to ensure all tested module dependencies are present...
                 BQRuntime runtime = testFactory.app().autoLoadModules().createRuntime();
-                String providerName = matchingProvider().buildModule().getProviderName();
+                String providerName = matchingProvider().moduleCrate().getProviderName();
 
                 // loading metadata ensures that all annotations are properly applied...
                 Optional<ModuleMetadata> moduleMetadata = runtime

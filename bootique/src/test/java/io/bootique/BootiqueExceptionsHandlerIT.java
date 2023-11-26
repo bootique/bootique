@@ -19,7 +19,6 @@
 
 package io.bootique;
 
-import io.bootique.bootstrap.BuiltModule;
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandOutcome;
@@ -294,8 +293,8 @@ public class BootiqueExceptionsHandlerIT {
     public static class ModuleProviderWithOverride1 implements BQModuleProvider {
 
         @Override
-        public BuiltModule buildModule() {
-            return BuiltModule.of(new ModuleWithOverride1()).overrides(ModuleProviderWithOverride2.ModuleWithOverride2.class).build();
+        public ModuleCrate moduleCrate() {
+            return ModuleCrate.of(new ModuleWithOverride1()).overrides(ModuleProviderWithOverride2.ModuleWithOverride2.class).build();
         }
 
         public static class ModuleWithOverride1 implements BQModule {
@@ -309,8 +308,8 @@ public class BootiqueExceptionsHandlerIT {
     public static class ModuleProviderWithOverride2 implements BQModuleProvider {
 
         @Override
-        public BuiltModule buildModule() {
-            return BuiltModule.of(new ModuleWithOverride2()).overrides(ModuleProviderWithOverride1.ModuleWithOverride1.class).build();
+        public ModuleCrate moduleCrate() {
+            return ModuleCrate.of(new ModuleWithOverride2()).overrides(ModuleProviderWithOverride1.ModuleWithOverride1.class).build();
         }
 
         public static class ModuleWithOverride2 implements BQModule {
@@ -324,10 +323,10 @@ public class BootiqueExceptionsHandlerIT {
     public static class CoreOverrideProvider1 implements BQModuleProvider {
 
         @Override
-        public BuiltModule buildModule() {
+        public ModuleCrate moduleCrate() {
             BQModule m = b -> {
             };
-            return BuiltModule.of(m).provider(this).overrides(BQCoreModule.class).build();
+            return ModuleCrate.of(m).provider(this).overrides(BQCoreModule.class).build();
         }
 
     }
@@ -335,10 +334,10 @@ public class BootiqueExceptionsHandlerIT {
     public static class CoreOverrideProvider2 implements BQModuleProvider {
 
         @Override
-        public BuiltModule buildModule() {
+        public ModuleCrate moduleCrate() {
             BQModule m = b -> {
             };
-            return BuiltModule.of(m).provider(this).overrides(BQCoreModule.class).build();
+            return ModuleCrate.of(m).provider(this).overrides(BQCoreModule.class).build();
         }
     }
 }

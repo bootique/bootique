@@ -20,7 +20,7 @@
 package io.bootique.meta.module;
 
 import io.bootique.*;
-import io.bootique.bootstrap.BuiltModule;
+import io.bootique.ModuleCrate;
 import io.bootique.di.BQModule;
 import io.bootique.di.Binder;
 import io.bootique.unit.TestAppManager;
@@ -64,7 +64,7 @@ public class ModuleMetadataIT {
 
         BQModule m = b -> {
         };
-        BQModuleProvider provider = () -> BuiltModule.of(m).moduleName("mymodule").build();
+        BQModuleProvider provider = () -> ModuleCrate.of(m).moduleName("mymodule").build();
         BQRuntime runtime = appManager.runtime(Bootique.app().moduleProvider(provider));
 
         ModulesMetadata allModules = runtime.getInstance(ModulesMetadata.class);
@@ -208,8 +208,8 @@ public class ModuleMetadataIT {
     public static class M3ModuleAndProvider implements BQModule, BQModuleProvider {
 
         @Override
-        public BuiltModule buildModule() {
-            return BuiltModule.of(this).moduleName("N3").providerName("P3").build();
+        public ModuleCrate moduleCrate() {
+            return ModuleCrate.of(this).moduleName("N3").providerName("P3").build();
         }
 
         @Override
@@ -221,30 +221,30 @@ public class ModuleMetadataIT {
     static class M1Provider implements BQModuleProvider {
 
         @Override
-        public BuiltModule buildModule() {
-            return BuiltModule.of(new M1Module()).provider(this).build();
+        public ModuleCrate moduleCrate() {
+            return ModuleCrate.of(new M1Module()).provider(this).build();
         }
     }
 
     static class M1DeprecatedProvider implements BQModuleProvider {
 
         @Override
-        public BuiltModule buildModule() {
-            return BuiltModule.of(new M1Module()).provider(this).deprecated(true).build();
+        public ModuleCrate moduleCrate() {
+            return ModuleCrate.of(new M1Module()).provider(this).deprecated(true).build();
         }
     }
 
     static class M2ImplicitlyDeprecatedProvider implements BQModuleProvider {
         @Override
-        public BuiltModule buildModule() {
-            return BuiltModule.of(new M2Module()).provider(this).build();
+        public ModuleCrate moduleCrate() {
+            return ModuleCrate.of(new M2Module()).provider(this).build();
         }
     }
 
     static class M2UndeprecatedProvider implements BQModuleProvider {
         @Override
-        public BuiltModule buildModule() {
-            return BuiltModule.of(new M2Module()).provider(this).deprecated(false).build();
+        public ModuleCrate moduleCrate() {
+            return ModuleCrate.of(new M2Module()).provider(this).deprecated(false).build();
         }
     }
 }

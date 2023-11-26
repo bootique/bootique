@@ -21,7 +21,6 @@ package io.bootique;
 
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
-import io.bootique.bootstrap.BuiltModule;
 import io.bootique.command.CommandOutcome;
 import io.bootique.di.BQModule;
 import io.bootique.log.BootLogger;
@@ -49,7 +48,7 @@ public class Bootique_Help_VarsIT {
         BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(System.err));
         BQModule m = b -> {
         };
-        BQModuleProvider provider = () -> BuiltModule.of(m).config("x", O2.class).build();
+        BQModuleProvider provider = () -> ModuleCrate.of(m).config("x", O2.class).build();
 
         appManager.run(Bootique.app("--help")
                 .moduleProvider(provider)
@@ -72,7 +71,7 @@ public class Bootique_Help_VarsIT {
         BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(System.err));
         BQModule m = b -> {
         };
-        BQModuleProvider provider = () -> BuiltModule.of(m).config("x", O4.class).build();
+        BQModuleProvider provider = () -> ModuleCrate.of(m).config("x", O4.class).build();
 
         CommandOutcome run = appManager.run(Bootique.app("--help")
                 .bootLogger(logger)
@@ -97,7 +96,7 @@ public class Bootique_Help_VarsIT {
 
         BQModule m = b -> {
         };
-        BQModuleProvider provider = () -> BuiltModule.of(m).config("x", O4.class).build();
+        BQModuleProvider provider = () -> ModuleCrate.of(m).config("x", O4.class).build();
 
         CommandOutcome run = appManager.run(Bootique.app("--help")
                 .bootLogger(logger)
@@ -123,7 +122,7 @@ public class Bootique_Help_VarsIT {
         BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(System.err));
         BQModule m = b -> {
         };
-        BQModuleProvider provider = () -> BuiltModule.of(m).config("x", O4.class).build();
+        BQModuleProvider provider = () -> ModuleCrate.of(m).config("x", O4.class).build();
 
         CommandOutcome run = appManager.run(Bootique.app("--help")
                 .bootLogger(logger)
@@ -150,7 +149,7 @@ public class Bootique_Help_VarsIT {
 
         BQModule m = b -> {
         };
-        BQModuleProvider provider = () -> BuiltModule.of(m).config("x", O2.class).build();
+        BQModuleProvider provider = () -> ModuleCrate.of(m).config("x", O2.class).build();
 
         CommandOutcome run = appManager.run(Bootique.app("--help")
                 .moduleProvider(provider)
@@ -173,7 +172,7 @@ public class Bootique_Help_VarsIT {
 
         BQModule m = b -> {
         };
-        BQModuleProvider provider = () -> BuiltModule.of(m).config("x", O1.class).build();
+        BQModuleProvider provider = () -> ModuleCrate.of(m).config("x", O1.class).build();
 
         CommandOutcome run = appManager.run(Bootique.app("--help")
                 .bootLogger(logger)
@@ -197,7 +196,7 @@ public class Bootique_Help_VarsIT {
         BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(System.err));
         BQModule m = b -> {
         };
-        BQModuleProvider provider = () -> BuiltModule.of(m).config("x", O3.class).build();
+        BQModuleProvider provider = () -> ModuleCrate.of(m).config("x", O3.class).build();
 
         CommandOutcome run = appManager.run(Bootique.app("--help")
                 .moduleProvider(provider)

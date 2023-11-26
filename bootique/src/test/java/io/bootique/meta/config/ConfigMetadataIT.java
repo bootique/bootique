@@ -25,7 +25,7 @@ import io.bootique.BQRuntime;
 import io.bootique.Bootique;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
-import io.bootique.bootstrap.BuiltModule;
+import io.bootique.ModuleCrate;
 import io.bootique.di.BQModule;
 import io.bootique.help.ConsoleAppender;
 import io.bootique.help.ValueObjectDescriptor;
@@ -50,7 +50,7 @@ public class ConfigMetadataIT {
 
     @Test
     public void singleConfig() {
-        BQModuleProvider provider = () -> BuiltModule
+        BQModuleProvider provider = () -> ModuleCrate
                 .of(Mockito.mock(BQModule.class))
                 .moduleName("my")
                 .config("pf", TestConfig.class).build();
@@ -92,7 +92,7 @@ public class ConfigMetadataIT {
 
     @Test
     public void recursiveConfig() {
-        BQModuleProvider provider = () -> BuiltModule
+        BQModuleProvider provider = () -> ModuleCrate
                 .of(Mockito.mock(BQModule.class))
                 .moduleName("my")
                 .config("pf", TestRecursiveConfig.class).build();
@@ -142,7 +142,7 @@ public class ConfigMetadataIT {
 
     @Test
     public void valueObjectConfig() {
-        BQModuleProvider provider = () -> BuiltModule
+        BQModuleProvider provider = () -> ModuleCrate
                 .of(Mockito.mock(BQModule.class))
                 .moduleName("my")
                 .config("pf", TestValueObjectConfig.class).build();

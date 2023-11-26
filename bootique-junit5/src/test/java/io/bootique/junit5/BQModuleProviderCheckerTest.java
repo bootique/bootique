@@ -19,7 +19,7 @@
 package io.bootique.junit5;
 
 import io.bootique.BQModuleProvider;
-import io.bootique.bootstrap.BuiltModule;
+import io.bootique.ModuleCrate;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -43,8 +43,8 @@ public class BQModuleProviderCheckerTest {
     public static class P1 implements BQModuleProvider {
 
         @Override
-        public BuiltModule buildModule() {
-            return BuiltModule.of(b -> {
+        public ModuleCrate moduleCrate() {
+            return ModuleCrate.of(b -> {
             }).provider(this).build();
         }
     }

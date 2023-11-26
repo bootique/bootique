@@ -22,7 +22,7 @@ package io.bootique.command;
 import io.bootique.BQCoreModule;
 import io.bootique.BQModuleProvider;
 import io.bootique.annotation.DefaultCommand;
-import io.bootique.bootstrap.BuiltModule;
+import io.bootique.ModuleCrate;
 import io.bootique.di.*;
 import io.bootique.help.HelpCommand;
 import io.bootique.log.BootLogger;
@@ -97,7 +97,7 @@ public class Commands implements BQModule {
         }
 
         public BQModuleProvider build() {
-            return () -> BuiltModule.of(commands).overrides(BQCoreModule.class).moduleName("Commands.Builder").build();
+            return () -> ModuleCrate.of(commands).overrides(BQCoreModule.class).moduleName("Commands.Builder").build();
         }
 
         @SafeVarargs

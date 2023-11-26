@@ -17,9 +17,8 @@
  * under the License.
  */
 
-package io.bootique.bootstrap;
+package io.bootique;
 
-import io.bootique.BQModuleProvider;
 import io.bootique.di.BQModule;
 import io.bootique.names.ClassToName;
 
@@ -27,16 +26,16 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 /**
- * An intermediate module wrapper used during app bootstrap that allows the runtime to figure out module overrides and
- * extract metadata. Created using the builder API: {@link BuiltModule#of(BQModule)}.
+ * A container of a single {@link BQModule} that holds the module itself and its metadata, including name, description,
+ * references to overridden modules, etc. It is a temporary representation of module during Bootique app startup. It
+ * can be created using the builder API. See {@link ModuleCrate#of(BQModule)}.
  *
  * @since 3.0
  */
-public class BuiltModule {
+public class ModuleCrate {
 
     private final BQModule module;
     private final String moduleName;
-    private final BuiltModuleId moduleId;
     private final String description;
     private final String providerName;
     private final boolean deprecated;
@@ -48,10 +47,10 @@ public class BuiltModule {
     }
 
     /**
-     * A factory method that clones another BuiltModule, allowing to override some of its properties.
+     * A factory method that clones a ModuleCrate, allowing to override some of its properties and produce a new crate.
      */
-    public static Builder of(BuiltModule proto) {
-        return BuiltModule.of(proto.getModule())
+    public static Builder of(ModuleCrate proto) {
+        return ModuleCrate.of(proto.getModule())
                 .moduleName(proto.getModuleName())
                 .description(proto.getDescription())
                 .providerName(proto.getProviderName())
@@ -60,7 +59,7 @@ public class BuiltModule {
                 .configs(proto.configs);
     }
 
-    protected BuiltModule(
+    protected ModuleCrate(
             BQModule module,
             String moduleName,
             String providerName,
@@ -71,7 +70,6 @@ public class BuiltModule {
 
         this.module = Objects.requireNonNull(module);
         this.moduleName = Objects.requireNonNull(moduleName);
-        this.moduleId = BuiltModuleId.of(module);
         this.providerName = Objects.requireNonNull(providerName);
         this.description = description;
         this.deprecated = deprecated;
@@ -112,14 +110,25 @@ public class BuiltModule {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        BuiltModule that = (BuiltModule) o;
-
-        return moduleId.equals(that.moduleId);
+        ModuleCrate that = (ModuleCrate) o;
+        return typesEqual(module.getClass(), that.module.getClass());
     }
 
     @Override
     public int hashCode() {
-        return moduleId.hashCode();
+        return module.getClass().hashCode();
+    }
+
+    private static boolean typesEqual(Class<?> c1, Class<?> c2) {
+
+        // lambdas are assumed non-equal by default as we can't compare their closure values
+        if (c1.isSynthetic()) {
+            return false;
+        }
+
+        // Class inherits "equals" from Object, the second check is redundant. Keeping it here in case something changes
+        // in the JDK in the future
+        return c1 == c2 || c1.equals(c2);
     }
 
     public static class Builder {
@@ -139,8 +148,8 @@ public class BuiltModule {
             this.module = Objects.requireNonNull(module);
         }
 
-        public BuiltModule build() {
-            return new BuiltModule(
+        public ModuleCrate build() {
+            return new ModuleCrate(
                     module,
                     moduleName != null ? moduleName : MODULE_NAME_BUILDER.toName(module.getClass()),
                     providerName != null

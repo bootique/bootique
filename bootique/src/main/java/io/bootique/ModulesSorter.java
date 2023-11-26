@@ -19,7 +19,6 @@
 
 package io.bootique;
 
-import io.bootique.bootstrap.BuiltModule;
 import io.bootique.di.BQModule;
 import io.bootique.log.BootLogger;
 
@@ -34,15 +33,15 @@ class ModulesSorter {
     }
 
     /**
-     * Extract BQModules in the desired load order with respect to overrides.
+     * Extract BQModules from the crates in the desired load order with respect to overrides.
      */
-    BQModule[] modulesInLoadOrder(Collection<BuiltModule> builtModules) {
+    BQModule[] modulesInLoadOrder(Collection<ModuleCrate> crates) {
 
-        int inLen = builtModules.size();
+        int inLen = crates.size();
         ModuleGraph moduleGraph = new ModuleGraph(inLen);
-        Map<Class<? extends BQModule>, BuiltModule> moduleByClass = new HashMap<>((int) Math.ceil(inLen / 0.9f), 0.9f);
+        Map<Class<? extends BQModule>, ModuleCrate> moduleByClass = new HashMap<>((int) Math.ceil(inLen / 0.9f), 0.9f);
 
-        for (BuiltModule bm : builtModules) {
+        for (ModuleCrate bm : crates) {
             Class<? extends BQModule> moduleClass = bm.getModule().getClass();
             moduleByClass.putIfAbsent(moduleClass, bm);
             moduleGraph.add(bm);
@@ -56,15 +55,15 @@ class ModulesSorter {
             }
         }
 
-        for (BuiltModule bm : builtModules) {
+        for (ModuleCrate bm : crates) {
             for (Class<? extends BQModule> o : bm.getOverrides()) {
-                BuiltModule overrideModule = moduleByClass.get(o);
+                ModuleCrate overrideModule = moduleByClass.get(o);
                 moduleGraph.add(bm, overrideModule);
                 bootLogger.trace(() -> traceMessage(bm, overrideModule));
             }
         }
 
-        List<BuiltModule> sortedList = moduleGraph.topSort();
+        List<ModuleCrate> sortedList = moduleGraph.topSort();
 
         // "outLen" may be smaller than "inLen" in case of duplicate modules
         int outLen = sortedList.size();
@@ -76,7 +75,7 @@ class ModulesSorter {
         return sorted;
     }
 
-    private String deprecationMessage(BuiltModule module) {
+    private String deprecationMessage(ModuleCrate module) {
         return new StringBuilder("** Deprecation alert - ")
                 .append(module.getModuleName())
                 .append(module.getDescription() != null ? ": " : ".")
@@ -84,7 +83,7 @@ class ModulesSorter {
                 .toString();
     }
 
-    private String traceMessage(BuiltModule module, BuiltModule overrides) {
+    private String traceMessage(ModuleCrate module, ModuleCrate overrides) {
         StringBuilder message = new StringBuilder("Loading module '")
                 .append(module.getModuleName())
                 .append("'");

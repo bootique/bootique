@@ -19,18 +19,16 @@
 
 package io.bootique;
 
-import io.bootique.bootstrap.BuiltModule;
-
 import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-class DeferredModulesSource implements Supplier<Collection<BuiltModule>> {
+class DeferredModulesSource implements Supplier<Collection<ModuleCrate>> {
 
-    private Collection<BuiltModule> modules;
+    private Collection<ModuleCrate> modules;
 
     @Override
-    public Collection<BuiltModule> get() {
+    public Collection<ModuleCrate> get() {
 
         if (modules == null) {
             throw new IllegalStateException("DeferredModuleMetadataSupplier is not initialized");
@@ -40,7 +38,7 @@ class DeferredModulesSource implements Supplier<Collection<BuiltModule>> {
     }
 
     // this method must be called exactly once before 'get' can be invoked....
-    void init(Collection<BuiltModule> modules) {
+    void init(Collection<ModuleCrate> modules) {
 
         if (this.modules != null) {
             throw new IllegalStateException("DeferredModuleMetadataSupplier is already initialized");

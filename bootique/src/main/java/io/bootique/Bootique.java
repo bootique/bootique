@@ -19,7 +19,6 @@
 
 package io.bootique;
 
-import io.bootique.bootstrap.BuiltModule;
 import io.bootique.command.CommandOutcome;
 import io.bootique.di.*;
 import io.bootique.env.DefaultEnvironment;
@@ -243,7 +242,7 @@ public class Bootique {
 
             @Override
             public Bootique with(BQModule module) {
-                providers.add(() -> BuiltModule.of(module).overrides(overriddenTypes).build());
+                providers.add(() -> ModuleCrate.of(module).overrides(overriddenTypes).build());
                 return Bootique.this;
             }
         };
@@ -372,25 +371,25 @@ public class Bootique {
 
     Injector createInjector() {
 
-        Collection<BuiltModule> builtModules = new HashSet<>();
+        Collection<ModuleCrate> crates = new HashSet<>();
         DeferredModulesSource modulesSource = new DeferredModulesSource();
 
         // BQCoreModule requires a couple of explicit services that can not be initialized within the module itself
         BQCoreModule coreModule = new BQCoreModule(args, bootLogger, shutdownManager, modulesSource);
 
-        // Note that the core BuiltModule is invalid at this point due to uninitialized "modulesSource". It will be
+        // Note that BQCoreModule is invalid at this point due to uninitialized "modulesSource". It will be
         // initialized below, which is safe to do, as it won't be used until the Injector is returned to the method caller.
-        builtModules.add(coreModule.buildModule());
+        crates.add(coreModule.moduleCrate());
 
-        builtModules.addAll(moduleProviderDependencies(providers));
+        crates.addAll(moduleProviderDependencies(providers));
         if (autoLoadModules) {
-            autoLoadedProviders().forEach(p -> builtModules.add(p.buildModule()));
+            autoLoadedProviders().forEach(p -> crates.add(p.moduleCrate()));
         }
 
         // now that all modules are collected, finish 'moduleMetadata' initialization
-        modulesSource.init(builtModules);
+        modulesSource.init(crates);
 
-        BQModule[] modules = new ModulesSorter(bootLogger).modulesInLoadOrder(builtModules);
+        BQModule[] modules = new ModulesSorter(bootLogger).modulesInLoadOrder(crates);
         return DIBootstrap.injectorBuilder(modules).build();
     }
 
@@ -416,44 +415,44 @@ public class Bootique {
         return merged;
     }
 
-    static Collection<BuiltModule> moduleProviderDependencies(Collection<BQModuleProvider> providers) {
+    static Collection<ModuleCrate> moduleProviderDependencies(Collection<BQModuleProvider> providers) {
         return moduleProviderDependencies(providers, new HashSet<>());
     }
 
-    private static Set<BuiltModule> moduleProviderDependencies(
+    private static Set<ModuleCrate> moduleProviderDependencies(
             Collection<BQModuleProvider> providers,
-            Set<BuiltModule> builtModules) {
+            Set<ModuleCrate> crates) {
 
         for (BQModuleProvider moduleProvider : providers) {
-            BuiltModule next = moduleProvider.buildModule();
-            if (builtModules.add(next)) {
+            ModuleCrate next = moduleProvider.moduleCrate();
+            if (crates.add(next)) {
                 Collection<BQModuleProvider> dependencies = moduleProvider.dependencies();
                 if (!dependencies.isEmpty()) {
-                    builtModules.addAll(moduleProviderDependencies(dependencies, builtModules));
+                    crates.addAll(moduleProviderDependencies(dependencies, crates));
                 }
             }
         }
 
-        return builtModules;
+        return crates;
     }
 
     static BQModuleProvider moduleProviderForModule(BQModule module) {
         // very often modules are also self-providers and can give us meaningful metadata
         return module instanceof BQModuleProvider
                 ? (BQModuleProvider) module
-                : () -> BuiltModule.of(module).providerName(CORE_PROVIDER_NAME).build();
+                : () -> ModuleCrate.of(module).providerName(CORE_PROVIDER_NAME).build();
     }
 
     static BQModuleProvider moduleProviderForType(Class<? extends BQModule> moduleType) {
         // very often modules are also self-providers and can give us meaningful metadata
         return BQModuleProvider.class.isAssignableFrom(moduleType)
                 ? (BQModuleProvider) moduleForType(moduleType)
-                : () -> BuiltModule.of(moduleForType(moduleType)).providerName(CORE_PROVIDER_NAME).build();
+                : () -> ModuleCrate.of(moduleForType(moduleType)).providerName(CORE_PROVIDER_NAME).build();
     }
 
     static BQModuleProvider moduleProviderForType(Class<? extends BQModule> moduleType, Class<? extends BQModule>... overriddenTypes) {
-        return () -> BuiltModule
-                .of(moduleProviderForType(moduleType).buildModule())
+        return () -> ModuleCrate
+                .of(moduleProviderForType(moduleType).moduleCrate())
                 .overrides(overriddenTypes).build();
     }
 

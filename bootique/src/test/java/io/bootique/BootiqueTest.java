@@ -19,7 +19,6 @@
 
 package io.bootique;
 
-import io.bootique.bootstrap.BuiltModule;
 import io.bootique.di.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -77,16 +76,16 @@ public class BootiqueTest {
 
         when(testModuleProvider1.dependencies()).thenReturn(asList(testModuleProvider2, testModuleProvider3));
 
-        BuiltModule m1 = mock(BuiltModule.class);
-        when(testModuleProvider1.buildModule()).thenReturn(m1);
+        ModuleCrate m1 = mock(ModuleCrate.class);
+        when(testModuleProvider1.moduleCrate()).thenReturn(m1);
 
-        BuiltModule m2 = mock(BuiltModule.class);
-        when(testModuleProvider2.buildModule()).thenReturn(m2);
+        ModuleCrate m2 = mock(ModuleCrate.class);
+        when(testModuleProvider2.moduleCrate()).thenReturn(m2);
 
-        BuiltModule m3 = mock(BuiltModule.class);
-        when(testModuleProvider3.buildModule()).thenReturn(m3);
+        ModuleCrate m3 = mock(ModuleCrate.class);
+        when(testModuleProvider3.moduleCrate()).thenReturn(m3);
 
-        Collection<BuiltModule> BuiltModule =
+        Collection<ModuleCrate> BuiltModule =
                 Bootique.moduleProviderDependencies(singletonList(testModuleProvider1));
 
         assertEquals(3, BuiltModule.size());
@@ -95,11 +94,11 @@ public class BootiqueTest {
         assertTrue(BuiltModule.contains(m3));
 
         verify(testModuleProvider1, times(1)).dependencies();
-        verify(testModuleProvider1, times(1)).buildModule();
+        verify(testModuleProvider1, times(1)).moduleCrate();
         verify(testModuleProvider2, times(1)).dependencies();
-        verify(testModuleProvider2, times(1)).buildModule();
+        verify(testModuleProvider2, times(1)).moduleCrate();
         verify(testModuleProvider3, times(1)).dependencies();
-        verify(testModuleProvider3, times(1)).buildModule();
+        verify(testModuleProvider3, times(1)).moduleCrate();
 
         verifyNoMoreInteractions(testModuleProvider1, testModuleProvider2, testModuleProvider3);
     }
@@ -112,16 +111,16 @@ public class BootiqueTest {
 
         when(testModuleProvider1.dependencies()).thenReturn(asList(testModuleProvider2, testModuleProvider3));
 
-        BuiltModule m1 = mock(BuiltModule.class);
-        when(testModuleProvider1.buildModule()).thenReturn(m1);
+        ModuleCrate m1 = mock(ModuleCrate.class);
+        when(testModuleProvider1.moduleCrate()).thenReturn(m1);
 
-        BuiltModule m2 = mock(BuiltModule.class);
-        when(testModuleProvider2.buildModule()).thenReturn(m2);
+        ModuleCrate m2 = mock(ModuleCrate.class);
+        when(testModuleProvider2.moduleCrate()).thenReturn(m2);
 
-        BuiltModule m3 = mock(BuiltModule.class);
-        when(testModuleProvider3.buildModule()).thenReturn(m3);
+        ModuleCrate m3 = mock(ModuleCrate.class);
+        when(testModuleProvider3.moduleCrate()).thenReturn(m3);
 
-        Collection<BuiltModule> BuiltModule =
+        Collection<ModuleCrate> BuiltModule =
                 Bootique.moduleProviderDependencies(singletonList(testModuleProvider1));
 
         assertEquals(3, BuiltModule.size());
@@ -130,11 +129,11 @@ public class BootiqueTest {
         assertTrue(BuiltModule.contains(m3));
 
         verify(testModuleProvider1, times(1)).dependencies();
-        verify(testModuleProvider1, times(1)).buildModule();
+        verify(testModuleProvider1, times(1)).moduleCrate();
         verify(testModuleProvider2, times(1)).dependencies();
-        verify(testModuleProvider2, times(1)).buildModule();
+        verify(testModuleProvider2, times(1)).moduleCrate();
         verify(testModuleProvider3, times(1)).dependencies();
-        verify(testModuleProvider3, times(1)).buildModule();
+        verify(testModuleProvider3, times(1)).moduleCrate();
 
         verifyNoMoreInteractions(testModuleProvider1, testModuleProvider2, testModuleProvider3);
     }
@@ -147,16 +146,16 @@ public class BootiqueTest {
 
         when(testModuleProvider1.dependencies()).thenReturn(asList(testModuleProvider2, testModuleProvider3));
 
-        BuiltModule m1 = mock(BuiltModule.class);
-        when(testModuleProvider1.buildModule()).thenReturn(m1);
+        ModuleCrate m1 = mock(ModuleCrate.class);
+        when(testModuleProvider1.moduleCrate()).thenReturn(m1);
 
-        BuiltModule m2 = mock(BuiltModule.class);
-        when(testModuleProvider2.buildModule()).thenReturn(m2);
+        ModuleCrate m2 = mock(ModuleCrate.class);
+        when(testModuleProvider2.moduleCrate()).thenReturn(m2);
 
-        BuiltModule m3 = mock(BuiltModule.class);
-        when(testModuleProvider3.buildModule()).thenReturn(m3);
+        ModuleCrate m3 = mock(ModuleCrate.class);
+        when(testModuleProvider3.moduleCrate()).thenReturn(m3);
 
-        Collection<BuiltModule> BuiltModule =
+        Collection<ModuleCrate> BuiltModule =
                 Bootique.moduleProviderDependencies(singletonList(testModuleProvider1));
 
         assertEquals(3, BuiltModule.size());
@@ -165,11 +164,11 @@ public class BootiqueTest {
         assertTrue(BuiltModule.contains(m3));
 
         verify(testModuleProvider1, times(1)).dependencies();
-        verify(testModuleProvider1, times(1)).buildModule();
+        verify(testModuleProvider1, times(1)).moduleCrate();
         verify(testModuleProvider2, times(1)).dependencies();
-        verify(testModuleProvider2, times(1)).buildModule();
+        verify(testModuleProvider2, times(1)).moduleCrate();
         verify(testModuleProvider3, times(1)).dependencies();
-        verify(testModuleProvider3, times(1)).buildModule();
+        verify(testModuleProvider3, times(1)).moduleCrate();
 
         verifyNoMoreInteractions(testModuleProvider1, testModuleProvider2, testModuleProvider3);
     }
