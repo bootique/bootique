@@ -25,17 +25,22 @@ import io.bootique.log.BootLogger;
 
 import java.util.*;
 
-class BuiltModulesMerger {
+class ModulesSorter {
 
     private final BootLogger bootLogger;
 
-    BuiltModulesMerger(BootLogger bootLogger) {
+    ModulesSorter(BootLogger bootLogger) {
         this.bootLogger = bootLogger;
     }
 
-    Collection<BQModule> toDIModules(Collection<BuiltModule> builtModules) {
-        ModuleGraph moduleGraph = new ModuleGraph(builtModules.size());
-        Map<Class<? extends BQModule>, BuiltModule> moduleByClass = new HashMap<>();
+    /**
+     * Extract BQModules in the desired load order with respect to overrides.
+     */
+    BQModule[] modulesInLoadOrder(Collection<BuiltModule> builtModules) {
+
+        int inLen = builtModules.size();
+        ModuleGraph moduleGraph = new ModuleGraph(inLen);
+        Map<Class<? extends BQModule>, BuiltModule> moduleByClass = new HashMap<>((int) Math.ceil(inLen / 0.9f), 0.9f);
 
         for (BuiltModule bm : builtModules) {
             Class<? extends BQModule> moduleClass = bm.getModule().getClass();
@@ -59,9 +64,16 @@ class BuiltModulesMerger {
             }
         }
 
-        List<BQModule> modules = new ArrayList<>(moduleByClass.size());
-        moduleGraph.topSort().forEach(moduleClass -> modules.add(moduleClass.getModule()));
-        return modules;
+        List<BuiltModule> sortedList = moduleGraph.topSort();
+
+        // "outLen" may be smaller than "inLen" in case of duplicate modules
+        int outLen = sortedList.size();
+        BQModule[] sorted = new BQModule[outLen];
+        for (int i = 0; i < outLen; i++) {
+            sorted[i] = sortedList.get(i).getModule();
+        }
+
+        return sorted;
     }
 
     private String deprecationMessage(BuiltModule module) {
