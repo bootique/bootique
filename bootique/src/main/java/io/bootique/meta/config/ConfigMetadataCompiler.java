@@ -107,25 +107,15 @@ public class ConfigMetadataCompiler {
         } else if (Map.class.isAssignableFrom(typeClass)) {
             return compileMapMetadata(descriptor);
         } else if (typeClass.isAnnotationPresent(BQConfig.class)) {
-            return compileObjectMetadata(descriptor);
+            ConfigMetadataNode delegated = compileDelegatedConstructorMetadata(descriptor);
+            return delegated != null ? delegated : compileObjectMetadata(descriptor);
         } else {
-            return compileValueMetadata(descriptor);
+            ConfigMetadataNode delegated = compileDelegatedConstructorMetadata(descriptor);
+            return delegated != null ? delegated : compileValueMetadata(descriptor);
         }
     }
 
     protected ConfigMetadataNode compileObjectMetadata(Descriptor descriptor) {
-
-        // check for "delegated" constructors before building anything new
-        for (Constructor<?> c : descriptor.getTypeClass().getConstructors()) {
-            BQConfig configProperty = c.getAnnotation(BQConfig.class);
-            if (configProperty != null) {
-                Type propType = propertyTypeFromDelegatedConstructor(c);
-
-                return compile(Descriptor.forDelegatedConfig(descriptor, configProperty, propType));
-            }
-        }
-
-        // TODO: ^^ report on other matching delegated Constructors?
 
         // to avoid compile cycles, track seen types and prevent any further descent into child properties for them.
         // Still use the name and description from the given Descriptor.
@@ -212,6 +202,21 @@ public class ConfigMetadataCompiler {
                 .forEach(builder::addSubConfig);
 
         return builder.build();
+    }
+
+    protected ConfigMetadataNode compileDelegatedConstructorMetadata(Descriptor descriptor) {
+        // check for "delegated" constructors before building anything new
+        for (Constructor<?> c : descriptor.getTypeClass().getConstructors()) {
+            BQConfig configProperty = c.getAnnotation(BQConfig.class);
+            if (configProperty != null) {
+                Type propType = propertyTypeFromDelegatedConstructor(c);
+
+                return compile(Descriptor.forDelegatedConfig(descriptor, configProperty, propType));
+            }
+        }
+
+        // TODO: ^^ report on other matching delegated Constructors?
+        return null;
     }
 
     protected String extractTypeLabel(Class<?> type) {

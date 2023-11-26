@@ -136,12 +136,26 @@ public class ConfigMetadataCompilerTest {
     }
 
     @Test
-    public void compile_DelegateBased_Constructor_NoParentDesc() {
+    public void compile_DelegateBased_Constructor_NoTypeDesc() {
 
         Config12A c = parseYaml(Config12A.class, "abc");
         assertEquals("abc", c.value, "Unexpected deserialization structure");
 
         ConfigValueMetadata md = (ConfigValueMetadata) createCompiler().compile("prefix", Config12A.class);
+        assertNotNull(md);
+
+        assertEquals("prefix", md.getName());
+        assertEquals("Delegated description to constructor param", md.getDescription());
+        assertEquals(String.class, md.getType());
+    }
+
+    @Test
+    public void compile_DelegateBased_Constructor_NoTypeAnnotation() {
+
+        Config12B c = parseYaml(Config12B.class, "abc");
+        assertEquals("abc", c.value, "Unexpected deserialization structure");
+
+        ConfigValueMetadata md = (ConfigValueMetadata) createCompiler().compile("prefix", Config12B.class);
         assertNotNull(md);
 
         assertEquals("prefix", md.getName());
@@ -489,7 +503,7 @@ public class ConfigMetadataCompilerTest {
         }
     }
 
-    @BQConfig()
+    @BQConfig
     public static class Config12A {
 
         final String value;
@@ -497,6 +511,17 @@ public class ConfigMetadataCompilerTest {
         @BQConfig("Delegated description to constructor param")
         @JsonCreator
         public Config12A(String value) {
+            this.value = value;
+        }
+    }
+
+    public static class Config12B {
+
+        final String value;
+
+        @BQConfig("Delegated description to constructor param")
+        @JsonCreator
+        public Config12B(String value) {
             this.value = value;
         }
     }
