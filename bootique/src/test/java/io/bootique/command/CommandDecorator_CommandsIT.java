@@ -20,9 +20,9 @@
 package io.bootique.command;
 
 import io.bootique.BQCoreModule;
-import io.bootique.BQModuleProvider;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
+import io.bootique.BQModule;
 import io.bootique.unit.TestAppManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -34,21 +34,21 @@ public class CommandDecorator_CommandsIT {
     @RegisterExtension
     final TestAppManager appManager = new TestAppManager();
 
-    private BQRuntime createRuntime(BQModuleProvider commandsOverride, CommandDecorator decorator) {
+    private BQRuntime createRuntime(BQModule commandsOverride, CommandDecorator decorator) {
         return appManager.runtime(Bootique
                 .app("--a")
                 .module(b -> BQCoreModule.extend(b)
                         .addCommand(MainCommand.class)
                         .addCommand(SuccessfulCommand.class)
                         .decorateCommand(MainCommand.class, decorator))
-                .moduleProvider(commandsOverride));
+                .module(commandsOverride));
     }
 
     @Test
     public void alsoRun_DecorateWithPrivate() {
 
         // use private "-s" command in decorator
-        BQModuleProvider commandsOverride = Commands.builder().add(MainCommand.class).noModuleCommands().build();
+        BQModule commandsOverride = Commands.builder().add(MainCommand.class).noModuleCommands().module();
         CommandDecorator decorator = CommandDecorator.alsoRun("s");
 
         BQRuntime runtime = createRuntime(commandsOverride, decorator);
@@ -65,7 +65,7 @@ public class CommandDecorator_CommandsIT {
     public void beforeRun_DecorateWithPrivate() {
 
         // use private "-s" command in decorator
-        BQModuleProvider commandsOverride = Commands.builder().add(MainCommand.class).noModuleCommands().build();
+        BQModule commandsOverride = Commands.builder().add(MainCommand.class).noModuleCommands().module();
         CommandDecorator decorator = CommandDecorator.beforeRun("s");
 
         BQRuntime runtime = createRuntime(commandsOverride, decorator);

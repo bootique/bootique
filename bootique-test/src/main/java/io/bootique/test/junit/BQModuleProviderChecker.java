@@ -45,9 +45,9 @@ import static org.junit.Assert.fail;
  * }
  * </pre>
  *
- * @deprecated since 3.0.M1, as we are we phasing out JUnit 4 support in favor of JUnit 5
+ * @deprecated as we are we phasing out JUnit 4 support in favor of JUnit 5. Also, BQModuleProvider itself is deprecated.
  */
-@Deprecated
+@Deprecated(since = "3.0", forRemoval = true)
 public class BQModuleProviderChecker {
 
     private Class<? extends BQModuleProvider> provider;
@@ -105,7 +105,7 @@ public class BQModuleProviderChecker {
         testWithFactory(testFactory -> {
             // must auto-load modules to ensure all tested module dependencies are present...
             BQRuntime runtime = testFactory.app().autoLoadModules().createRuntime();
-            String providerName =  matchingProvider().moduleCrate().getProviderName();
+            String providerName = matchingProvider().name();
 
             // loading metadata ensures that all annotations are properly applied...
             Optional<ModuleMetadata> moduleMetadata = runtime

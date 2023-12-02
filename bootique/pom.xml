@@ -44,11 +44,6 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>io.bootique.di</groupId>
-				<artifactId>bootique-di</artifactId>
-				<version>${bootique.version}</version>
-			</dependency>
-			<dependency>
 				<groupId>net.sf.jopt-simple</groupId>
 				<artifactId>jopt-simple</artifactId>
 				<version>${jopt.version}</version>
@@ -83,8 +78,8 @@
 	<dependencies>
 		<!-- Compile dependencies -->
 		<dependency>
-			<groupId>io.bootique.di</groupId>
-			<artifactId>bootique-di</artifactId>
+			<groupId>javax.inject</groupId>
+			<artifactId>javax.inject</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>

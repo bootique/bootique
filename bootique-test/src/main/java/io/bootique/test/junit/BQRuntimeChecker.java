@@ -20,7 +20,7 @@
 package io.bootique.test.junit;
 
 import io.bootique.BQRuntime;
-import io.bootique.di.BQModule;
+import io.bootique.BQModule;
 import io.bootique.meta.module.ModuleMetadata;
 import io.bootique.meta.module.ModulesMetadata;
 
@@ -34,9 +34,9 @@ import static org.junit.Assert.assertThat;
 /**
  * A helper class for writing test assertions against a {@link BQRuntime}.
  *
- * @deprecated since 3.0.M1, as we are we phasing out JUnit 4 support in favor of JUnit 5
+ * @deprecated as we are we phasing out JUnit 4 support in favor of JUnit 5
  */
-@Deprecated
+@Deprecated(since = "3.0", forRemoval = true)
 public class BQRuntimeChecker {
 
     /**

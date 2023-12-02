@@ -19,7 +19,7 @@
 
 package io.bootique.meta.module;
 
-import io.bootique.di.BQModule;
+import io.bootique.BQModule;
 import io.bootique.meta.MetadataNode;
 import io.bootique.meta.config.*;
 
@@ -59,6 +59,8 @@ public class ModuleMetadata implements MetadataNode {
 
     private final Class<? extends BQModule> type;
     private final String name;
+
+    @Deprecated
     private final String providerName;
     private final String description;
     private final boolean deprecated;
@@ -102,6 +104,10 @@ public class ModuleMetadata implements MetadataNode {
         return name;
     }
 
+    /**
+     * @deprecated since {@link io.bootique.BQModuleProvider} is deprecated
+     */
+    @Deprecated(since = "3.0", forRemoval = true)
     public String getProviderName() {
         return providerName;
     }
@@ -205,6 +211,7 @@ public class ModuleMetadata implements MetadataNode {
 
         private Class<? extends BQModule> type;
         private String name;
+        @Deprecated
         private String providerName;
         private String description;
         private boolean deprecated;
@@ -237,6 +244,10 @@ public class ModuleMetadata implements MetadataNode {
             return this;
         }
 
+        /**
+         * @deprecated since {@link io.bootique.BQModuleProvider} is deprecated
+         */
+        @Deprecated(since = "3.0", forRemoval = true)
         public Builder providerName(String name) {
             this.providerName = name;
             return this;

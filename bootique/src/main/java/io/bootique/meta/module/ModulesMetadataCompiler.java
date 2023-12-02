@@ -43,14 +43,14 @@ public class ModulesMetadataCompiler {
         return builder.build();
     }
 
-    private ModuleMetadata toModuleMetadata(ModuleCrate module) {
+    private ModuleMetadata toModuleMetadata(ModuleCrate crate) {
         return ModuleMetadata
-                .builder(module.getModuleName())
-                .type(module.getModule().getClass())
-                .description(module.getDescription())
-                .providerName(module.getProviderName())
-                .deprecated(module.isDeprecated())
-                .addConfigs(toConfigs(module))
+                .builder(crate.getModuleName())
+                .type(crate.getModule().getClass())
+                .description(crate.getDescription())
+                .providerName(crate.getProviderName())
+                .deprecated(crate.isDeprecated())
+                .addConfigs(toConfigs(crate))
                 .build();
     }
 

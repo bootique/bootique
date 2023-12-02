@@ -20,7 +20,7 @@
 package io.bootique.it;
 
 import io.bootique.di.Binder;
-import io.bootique.di.BQModule;
+import io.bootique.BQModule;
 
 public class ItestModule implements BQModule {
 

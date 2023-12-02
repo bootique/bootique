@@ -1,7 +1,7 @@
 package io.bootique.docs.programming.configuration.properties;
 
 import io.bootique.BQCoreModule;
-import io.bootique.di.BQModule;
+import io.bootique.BQModule;
 import io.bootique.di.Binder;
 
 // tag::MyModule[]

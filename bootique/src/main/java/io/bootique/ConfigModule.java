@@ -21,7 +21,6 @@ package io.bootique;
 
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.di.Binder;
-import io.bootique.di.BQModule;
 import io.bootique.names.ClassToName;
 import io.bootique.type.TypeRef;
 

@@ -18,7 +18,6 @@
  */
 package io.bootique;
 
-import io.bootique.di.BQModule;
 import io.bootique.di.Binder;
 import org.junit.jupiter.api.Test;
 

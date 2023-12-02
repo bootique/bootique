@@ -18,7 +18,7 @@
  */
 package io.bootique.jetty;
 
-import io.bootique.di.BQModule;
+import io.bootique.BQModule;
 
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
@@ -40,6 +40,7 @@ public class JettyTester {
     }
 
     public BQModule moduleReplacingConnectors() {
-        return mock(BQModule.class);
+        return b -> {
+        };
     }
 }

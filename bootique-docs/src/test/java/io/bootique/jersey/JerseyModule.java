@@ -1,6 +1,6 @@
 package io.bootique.jersey;
 
-import io.bootique.di.BQModule;
+import io.bootique.BQModule;
 import io.bootique.di.Binder;
 
 // fake JerseyModule for docs

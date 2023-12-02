@@ -25,11 +25,13 @@ import io.bootique.command.Command;
 import io.bootique.command.CommandOutcome;
 import io.bootique.di.Injector;
 import io.bootique.di.Key;
+import io.bootique.it.ItestModule2;
 import io.bootique.it.ItestModuleProvider;
 import io.bootique.meta.application.CommandMetadata;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
+import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.*;
@@ -87,12 +89,21 @@ public class BootiqueIT {
         assertEquals("test exception", outcome.getException().getMessage());
     }
 
+    @Deprecated
     @Test
     public void autoLoadedProviders() {
         Collection<BQModuleProvider> autoLoaded = Bootique.app(args).autoLoadedProviders();
 
         assertEquals(1, autoLoaded.size());
         autoLoaded.forEach(m -> assertTrue(m instanceof ItestModuleProvider));
+    }
+
+    @Test
+    public void autoLoadedModules() {
+        List<BQModule> autoLoaded = Bootique.app(args).autoLoadedModules();
+
+        assertEquals(1, autoLoaded.size());
+        autoLoaded.forEach(m -> assertTrue(m instanceof ItestModule2));
     }
 
     @Test

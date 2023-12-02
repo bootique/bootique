@@ -23,7 +23,7 @@ import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
 import io.bootique.cli.Cli;
-import io.bootique.di.BQModule;
+import io.bootique.BQModule;
 import io.bootique.di.Binder;
 import io.bootique.di.Provides;
 import io.bootique.help.HelpCommand;

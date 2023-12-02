@@ -4,7 +4,7 @@ package com.foo;
 
 import io.bootique.Bootique;
 // end::Main[]
-import io.bootique.di.BQModule;
+import io.bootique.BQModule;
 import io.bootique.jersey.JerseyModule;
 // tag::Main[]
 

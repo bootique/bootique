@@ -20,6 +20,7 @@
 package io.bootique.command;
 
 import io.bootique.BQCoreModule;
+import io.bootique.BQModule;
 import io.bootique.BQModuleProvider;
 import io.bootique.annotation.DefaultCommand;
 import io.bootique.ModuleCrate;
@@ -66,6 +67,11 @@ public class Commands implements BQModule {
     }
 
     @Override
+    public ModuleCrate crate() {
+        return ModuleCrate.of(this).overrides(BQCoreModule.class).moduleName("Commands.Builder").build();
+    }
+
+    @Override
     public void configure(Binder binder) {
         SetBuilder<Command> extraCommandsBinder = Commands.contributeExtraCommands(binder);
         commandTypes.forEach(extraCommandsBinder::add);
@@ -96,8 +102,16 @@ public class Commands implements BQModule {
             this.commands = new Commands();
         }
 
+        public Commands module() {
+            return commands;
+        }
+
+        /**
+         * @deprecated in favor of {@link #module()}
+         */
+        @Deprecated(since = "3.0", forRemoval = true)
         public BQModuleProvider build() {
-            return () -> ModuleCrate.of(commands).overrides(BQCoreModule.class).moduleName("Commands.Builder").build();
+            return () -> commands;
         }
 
         @SafeVarargs

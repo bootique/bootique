@@ -60,9 +60,8 @@ public class Bootique_ModuleOverridesIT {
 
     @Test
     public void createInjector_OverridesWithProvider() {
-        BQModuleProvider provider = () -> ModuleCrate.of(new M0()).overrides(BQCoreModule.class).build();
-
-        Injector i = Bootique.app(args).moduleProvider(provider).createInjector();
+        ModuleCrate crate = ModuleCrate.of(new M0()).overrides(BQCoreModule.class).build();
+        Injector i = Bootique.app(args).crate(crate).createInjector();
 
         String[] args = i.getInstance(Key.get(String[].class, Args.class));
         assertSame(M0.ARGS, args);

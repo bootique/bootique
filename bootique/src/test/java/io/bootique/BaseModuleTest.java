@@ -22,11 +22,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 
+@Deprecated
 public class BaseModuleTest {
 
     @Test
     public void buildModule() {
         BaseModule m = new BaseModule() {};
-        assertSame(m, m.moduleCrate().getModule());
+        assertSame(m, m.crate().getModule());
     }
 }

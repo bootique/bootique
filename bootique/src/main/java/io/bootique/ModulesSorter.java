@@ -19,7 +19,6 @@
 
 package io.bootique;
 
-import io.bootique.di.BQModule;
 import io.bootique.log.BootLogger;
 
 import java.util.*;
@@ -84,10 +83,8 @@ class ModulesSorter {
             message.append(" ** DEPRECATED, ");
         }
 
-        message.append(" provided by '").append(module.getProviderName()).append("'");
-
         if (overrides != null) {
-            message.append(", overrides '").append(overrides.getModuleName()).append("'");
+            message.append(" overrides '").append(overrides.getModuleName()).append("'");
         }
 
         return message.toString();

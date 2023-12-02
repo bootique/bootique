@@ -20,7 +20,7 @@ package io.bootique.junit5;
 
 import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
-import io.bootique.di.BQModule;
+import io.bootique.BQModule;
 import io.bootique.di.Binder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

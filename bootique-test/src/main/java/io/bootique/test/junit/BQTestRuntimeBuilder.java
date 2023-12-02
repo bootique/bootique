@@ -24,7 +24,7 @@ import io.bootique.BQModuleOverrideBuilder;
 import io.bootique.BQModuleProvider;
 import io.bootique.Bootique;
 import io.bootique.ModuleCrate;
-import io.bootique.di.BQModule;
+import io.bootique.BQModule;
 import io.bootique.log.BootLogger;
 
 import java.util.Collection;
@@ -50,14 +50,13 @@ public abstract class BQTestRuntimeBuilder<T extends BQTestRuntimeBuilder<T>> {
     protected BQTestRuntimeBuilder(String[] args) {
 
         this.properties = new HashMap<>();
-        this.bootique = Bootique.app(args).moduleProvider(createPropertiesProvider());
+        this.bootique = Bootique.app(args).module(createPropertiesModule());
 
         property(EXCLUDE_SYSTEM_PROPERTIES, "true").property(EXCLUDE_SYSTEM_VARIABLES, "true");
     }
 
-    protected BQModuleProvider createPropertiesProvider() {
-        BQModule module = b -> BQCoreModule.extend(b).setProperties(properties);
-        return () -> ModuleCrate.of(module).providerName("BQTestRuntimeBuilder:properties").build();
+    protected BQModule createPropertiesModule() {
+        return b -> BQCoreModule.extend(b).setProperties(properties);
     }
 
     /**

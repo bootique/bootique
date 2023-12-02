@@ -22,7 +22,7 @@ package io.bootique.test.junit;
 import io.bootique.BQCoreModule;
 import io.bootique.BQRuntime;
 import io.bootique.di.Binder;
-import io.bootique.di.BQModule;
+import io.bootique.BQModule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -33,13 +33,13 @@ public class BQRuntimeCheckerTest {
 
     @Test
     public void modulesLoaded() {
-        final BQRuntime runtime = testFactory.app().createRuntime();
+        BQRuntime runtime = testFactory.app().createRuntime();
         BQRuntimeChecker.testModulesLoaded(runtime, BQCoreModule.class);
     }
 
     @Test(expected = AssertionError.class)
     public void testModulesNotLoaded() {
-        final BQRuntime runtime = testFactory.app().createRuntime();
+        BQRuntime runtime = testFactory.app().createRuntime();
         BQRuntimeChecker.testModulesLoaded(runtime, NonLoadedModule.class);
     }
 

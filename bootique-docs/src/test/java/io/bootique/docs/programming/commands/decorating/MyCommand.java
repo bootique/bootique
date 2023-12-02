@@ -2,7 +2,7 @@ package io.bootique.docs.programming.commands.decorating;
 
 import io.bootique.BQCoreModule;
 import io.bootique.command.CommandDecorator;
-import io.bootique.di.BQModule;
+import io.bootique.BQModule;
 import io.bootique.di.Binder;
 
 public class MyCommand implements BQModule {

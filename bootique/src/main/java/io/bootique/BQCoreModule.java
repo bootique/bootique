@@ -73,7 +73,7 @@ import java.util.function.Supplier;
  * The main {@link BQModule} of Bootique DI runtime. Declares a minimal set of services needed for a Bootique app to
  * start: parsing command line, reading configuration, findings and running a Command.
  */
-public class BQCoreModule implements BQModule, BQModuleProvider {
+public class BQCoreModule implements BQModule {
 
     private static final int TTY_MIN_COLUMNS = 40;
     private static final int TTY_DEFAULT_COLUMNS = 80;
@@ -126,9 +126,8 @@ public class BQCoreModule implements BQModule, BQModuleProvider {
      * @since 3.0
      */
     @Override
-    public ModuleCrate moduleCrate() {
+    public ModuleCrate crate() {
         return ModuleCrate.of(this)
-                .providerName(Bootique.CORE_PROVIDER_NAME)
                 .description("The core of Bootique runtime.")
                 .build();
     }

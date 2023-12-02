@@ -19,8 +19,6 @@
 
 package io.bootique;
 
-import io.bootique.di.BQModule;
-
 public interface BQModuleOverrideBuilder<T> {
 
 	T with(Class<? extends BQModule> moduleType);

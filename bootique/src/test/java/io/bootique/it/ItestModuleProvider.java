@@ -20,12 +20,13 @@
 package io.bootique.it;
 
 import io.bootique.BQModuleProvider;
-import io.bootique.ModuleCrate;
+import io.bootique.BQModule;
 
+@Deprecated
 public class ItestModuleProvider implements BQModuleProvider {
 
 	@Override
-	public ModuleCrate moduleCrate() {
-		return ModuleCrate.of(new ItestModule()).provider(this).build();
+	public BQModule module() {
+		return new ItestModule();
 	}
 }

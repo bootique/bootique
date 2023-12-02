@@ -70,8 +70,7 @@ class ModuleGraph {
                 }
                 if (old > 0) {
                     throw new BootiqueException(1, "Module " + to.getModuleName()
-                            + " provided by " + to.getProviderName()
-                            + " is overridden twice by " + from.getModuleName());
+                            + " is overridden more than once. Last overriding module: " + from.getModuleName());
                 }
                 return ++old;
             }));

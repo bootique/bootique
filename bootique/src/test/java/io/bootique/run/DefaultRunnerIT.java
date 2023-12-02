@@ -93,7 +93,7 @@ public class DefaultRunnerIT {
 
         Bootique.app()
                 .module(b -> BQCoreModule.extend(b).addCommand(XCommand.class))
-                .moduleProvider(Commands.builder(YCommand.class).noModuleCommands().build())
+                .module(Commands.builder(YCommand.class).noModuleCommands().module())
                 .bootLogger(new DefaultBootLogger(true, new PrintStream(out), System.err))
                 .createRuntime()
                 .run();
@@ -106,7 +106,7 @@ public class DefaultRunnerIT {
 
         Bootique.app()
                 .module(b -> BQCoreModule.extend(b).addCommand(XCommand.class))
-                .moduleProvider(Commands.builder(YCommand.class, HelpCommand.class).noModuleCommands().build())
+                .module(Commands.builder(YCommand.class, HelpCommand.class).noModuleCommands().module())
                 .bootLogger(new DefaultBootLogger(true, new PrintStream(out), System.err))
                 .createRuntime()
                 .run();
@@ -127,7 +127,7 @@ public class DefaultRunnerIT {
 
         Bootique.app()
                 .module(b -> BQCoreModule.extend(b).addCommand(XCommand.class))
-                .moduleProvider(Commands.builder(XHelpCommand.class).noModuleCommands().build())
+                .module(Commands.builder(XHelpCommand.class).noModuleCommands().module())
                 .bootLogger(new DefaultBootLogger(true, new PrintStream(out), System.err))
                 .createRuntime()
                 .run();
@@ -143,7 +143,7 @@ public class DefaultRunnerIT {
 
         Bootique.app()
                 .module(b -> BQCoreModule.extend(b).setDefaultCommand(XCommand.class))
-                .moduleProvider(Commands.builder(X1Command.class).noModuleCommands().build())
+                .module(Commands.builder(X1Command.class).noModuleCommands().module())
                 .bootLogger(new DefaultBootLogger(true, new PrintStream(out), System.err))
                 .createRuntime()
                 .run();

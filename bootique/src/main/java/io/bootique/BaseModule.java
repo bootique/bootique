@@ -19,24 +19,17 @@
 package io.bootique;
 
 /**
- * A superclass of modules that combines functionality of a DI module with that of a module provider. For many modules,
- * creating a separate {@link BQModuleProvider} class is an overkill. Using this class as a superclass cuts down on
- * some boilerplate code. Note that this class still requires an entry in
- * <code>META-INF/services/io.bootique.BQModuleProvider</code> for the module to be auto-loadable.
- *
  * @since 1.1
+ * @deprecated As module/provider API was simplified in 3.0, there's no advantage to using this class as a common
+ * superclass of custom modules.
  */
-public abstract class BaseModule extends ConfigModule implements BQModuleProvider {
+@Deprecated(since = "3.0", forRemoval = true)
+public abstract class BaseModule extends ConfigModule {
 
     protected BaseModule() {
     }
 
     protected BaseModule(String configPrefix) {
         super(configPrefix);
-    }
-
-    @Override
-    public ModuleCrate moduleCrate() {
-        return ModuleCrate.of(this).build();
     }
 }

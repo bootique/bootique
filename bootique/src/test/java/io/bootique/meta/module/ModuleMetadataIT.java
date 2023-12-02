@@ -21,7 +21,7 @@ package io.bootique.meta.module;
 
 import io.bootique.*;
 import io.bootique.ModuleCrate;
-import io.bootique.di.BQModule;
+import io.bootique.BQModule;
 import io.bootique.di.Binder;
 import io.bootique.unit.TestAppManager;
 import org.junit.jupiter.api.Test;
@@ -64,8 +64,8 @@ public class ModuleMetadataIT {
 
         BQModule m = b -> {
         };
-        BQModuleProvider provider = () -> ModuleCrate.of(m).moduleName("mymodule").build();
-        BQRuntime runtime = appManager.runtime(Bootique.app().moduleProvider(provider));
+        ModuleCrate crate = ModuleCrate.of(m).moduleName("mymodule").build();
+        BQRuntime runtime = appManager.runtime(Bootique.app().crate(crate));
 
         ModulesMetadata allModules = runtime.getInstance(ModulesMetadata.class);
         assertEquals(2, allModules.getModules().size(), "Expected BQCoreModule + custom module");
@@ -82,23 +82,9 @@ public class ModuleMetadataIT {
     }
 
     @Test
-    public void provider() {
-        ModulesMetadata md = appManager.runtime(Bootique.app()
-                .moduleProvider(new M1Provider())).getInstance(ModulesMetadata.class);
-
-        assertEquals(2, md.getModules().size(), "Expected BQCoreModule + custom module");
-
-        Optional<ModuleMetadata> m1Md = md.getModules()
-                .stream()
-                .filter(m -> "M1Module".equals(m.getName()))
-                .findFirst();
-        assertTrue(m1Md.isPresent());
-    }
-
-    @Test
-    public void module_byType_selfProvider() {
+    public void module_byType() {
         ModulesMetadata md = appManager
-                .runtime(Bootique.app().module(M3ModuleAndProvider.class))
+                .runtime(Bootique.app().module(M3Module.class))
                 .getInstance(ModulesMetadata.class);
 
         assertEquals(2, md.getModules().size(), "Expected BQCoreModule + custom module");
@@ -108,13 +94,12 @@ public class ModuleMetadataIT {
                 .filter(m -> "N3".equals(m.getName()))
                 .findFirst();
         assertTrue(cmd.isPresent());
-        assertEquals("P3", cmd.get().getProviderName());
     }
 
     @Test
-    public void module_byInstance_selfProvider() {
+    public void module_byInstance() {
         ModulesMetadata md = appManager
-                .runtime(Bootique.app().module(new M3ModuleAndProvider()))
+                .runtime(Bootique.app().module(new M3Module()))
                 .getInstance(ModulesMetadata.class);
 
         assertEquals(2, md.getModules().size(), "Expected BQCoreModule + custom module");
@@ -124,20 +109,19 @@ public class ModuleMetadataIT {
                 .filter(m -> "N3".equals(m.getName()))
                 .findFirst();
         assertTrue(cmd.isPresent());
-        assertEquals("P3", cmd.get().getProviderName());
     }
 
     @Test
-    public void deprecatedViaProviderMetadata() {
+    public void deprecatedViaCrate() {
         ModulesMetadata md = appManager
-                .runtime(Bootique.app().moduleProvider(new M1DeprecatedProvider()))
+                .runtime(Bootique.app().module(new M1Deprecated()))
                 .getInstance(ModulesMetadata.class);
 
         assertEquals(2, md.getModules().size(), "Expected BQCoreModule + custom module");
 
         Optional<ModuleMetadata> m1Md = md.getModules()
                 .stream()
-                .filter(m -> "M1Module".equals(m.getName()))
+                .filter(m -> "M1Deprecated".equals(m.getName()))
                 .findFirst();
         assertTrue(m1Md.isPresent());
         assertTrue(m1Md.get().isDeprecated());
@@ -160,32 +144,16 @@ public class ModuleMetadataIT {
     }
 
     @Test
-    public void deprecatedViaAnnotation_viaProvider() {
+    public void deprecatedViaAnnotation_UndeprecatedViaCrate() {
         ModulesMetadata md = appManager
-                .runtime(Bootique.app().moduleProvider(new M2ImplicitlyDeprecatedProvider()))
+                .runtime(Bootique.app().module(new M2Undeprecated()))
                 .getInstance(ModulesMetadata.class);
 
         assertEquals(2, md.getModules().size(), "Expected BQCoreModule + custom module");
 
         Optional<ModuleMetadata> m2Md = md.getModules()
                 .stream()
-                .filter(m -> "M2Module".equals(m.getName()))
-                .findFirst();
-        assertTrue(m2Md.isPresent());
-        assertTrue(m2Md.get().isDeprecated());
-    }
-
-    @Test
-    public void deprecatedViaAnnotation_UndeprecatedViaProvider() {
-        ModulesMetadata md = appManager
-                .runtime(Bootique.app().moduleProvider(new M2UndeprecatedProvider()))
-                .getInstance(ModulesMetadata.class);
-
-        assertEquals(2, md.getModules().size(), "Expected BQCoreModule + custom module");
-
-        Optional<ModuleMetadata> m2Md = md.getModules()
-                .stream()
-                .filter(m -> "M2Module".equals(m.getName()))
+                .filter(m -> "M2Undeprecated".equals(m.getName()))
                 .findFirst();
         assertTrue(m2Md.isPresent());
         assertFalse(m2Md.get().isDeprecated());
@@ -205,11 +173,11 @@ public class ModuleMetadataIT {
         }
     }
 
-    public static class M3ModuleAndProvider implements BQModule, BQModuleProvider {
+    public static class M3Module implements BQModule {
 
         @Override
-        public ModuleCrate moduleCrate() {
-            return ModuleCrate.of(this).moduleName("N3").providerName("P3").build();
+        public ModuleCrate crate() {
+            return ModuleCrate.of(this).moduleName("N3").build();
         }
 
         @Override
@@ -217,34 +185,28 @@ public class ModuleMetadataIT {
         }
     }
 
-
-    static class M1Provider implements BQModuleProvider {
+    static class M1Deprecated implements BQModule {
 
         @Override
-        public ModuleCrate moduleCrate() {
-            return ModuleCrate.of(new M1Module()).provider(this).build();
+        public void configure(Binder binder) {
+        }
+
+        @Override
+        public ModuleCrate crate() {
+            return ModuleCrate.of(this).deprecated(true).build();
         }
     }
 
-    static class M1DeprecatedProvider implements BQModuleProvider {
-
+    // Note to future self: this is not a real deprecation. The annotation is used to test the generated module metadata
+    @Deprecated(since = "33.0", forRemoval = true)
+    static class M2Undeprecated implements BQModule {
         @Override
-        public ModuleCrate moduleCrate() {
-            return ModuleCrate.of(new M1Module()).provider(this).deprecated(true).build();
+        public void configure(Binder binder) {
         }
-    }
 
-    static class M2ImplicitlyDeprecatedProvider implements BQModuleProvider {
         @Override
-        public ModuleCrate moduleCrate() {
-            return ModuleCrate.of(new M2Module()).provider(this).build();
-        }
-    }
-
-    static class M2UndeprecatedProvider implements BQModuleProvider {
-        @Override
-        public ModuleCrate moduleCrate() {
-            return ModuleCrate.of(new M2Module()).provider(this).deprecated(false).build();
+        public ModuleCrate crate() {
+            return ModuleCrate.of(this).deprecated(false).build();
         }
     }
 }

@@ -20,13 +20,12 @@
 package io.bootique.meta.config;
 
 import io.bootique.BQCoreModule;
-import io.bootique.BQModuleProvider;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
+import io.bootique.ModuleCrate;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
-import io.bootique.ModuleCrate;
-import io.bootique.di.BQModule;
+import io.bootique.BQModule;
 import io.bootique.help.ConsoleAppender;
 import io.bootique.help.ValueObjectDescriptor;
 import io.bootique.help.config.ConfigSectionMapGenerator;
@@ -50,12 +49,12 @@ public class ConfigMetadataIT {
 
     @Test
     public void singleConfig() {
-        BQModuleProvider provider = () -> ModuleCrate
+        ModuleCrate crate = ModuleCrate
                 .of(Mockito.mock(BQModule.class))
                 .moduleName("my")
                 .config("pf", TestConfig.class).build();
 
-        BQRuntime runtime = appManager.runtime(Bootique.app().moduleProvider(provider));
+        BQRuntime runtime = appManager.runtime(Bootique.app().crate(crate));
 
         Collection<ConfigMetadataNode> configs = runtime
                 .getInstance(ModulesMetadata.class)
@@ -92,12 +91,12 @@ public class ConfigMetadataIT {
 
     @Test
     public void recursiveConfig() {
-        BQModuleProvider provider = () -> ModuleCrate
+        ModuleCrate crate = ModuleCrate
                 .of(Mockito.mock(BQModule.class))
                 .moduleName("my")
                 .config("pf", TestRecursiveConfig.class).build();
 
-        BQRuntime runtime = appManager.runtime(Bootique.app().moduleProvider(provider));
+        BQRuntime runtime = appManager.runtime(Bootique.app().crate(crate));
 
         Collection<ConfigMetadataNode> configs = runtime
                 .getInstance(ModulesMetadata.class)
@@ -142,14 +141,14 @@ public class ConfigMetadataIT {
 
     @Test
     public void valueObjectConfig() {
-        BQModuleProvider provider = () -> ModuleCrate
+        ModuleCrate crate = ModuleCrate
                 .of(Mockito.mock(BQModule.class))
                 .moduleName("my")
                 .config("pf", TestValueObjectConfig.class).build();
 
         BQRuntime runtime = appManager.runtime(Bootique.app()
                 .module(b -> BQCoreModule.extend(b).addValueObjectDescriptor(TestVO.class, new ValueObjectDescriptor("Test Value Object")))
-                .moduleProvider(provider));
+                .crate(crate));
 
         Collection<ConfigMetadataNode> configs = runtime
                 .getInstance(ModulesMetadata.class)

@@ -8,6 +8,7 @@
 * #340 Deprecate module dependency tracking
 * #341 Recognize "self-provided" modules and preserve their metadata
 * #342 Constructor-based factories
+* #344 BQModuleProvider-free Bootique bootstrap
 
 ## 3.0.M2
 

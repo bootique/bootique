@@ -19,8 +19,8 @@
 
 package io.bootique.test.junit;
 
+import io.bootique.BQModule;
 import io.bootique.BQModuleProvider;
-import io.bootique.ModuleCrate;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -42,9 +42,9 @@ public class BQModuleProviderCheckerTest {
     public static class P1 implements BQModuleProvider {
 
         @Override
-        public ModuleCrate moduleCrate() {
-            return ModuleCrate.of(b -> {
-            }).provider(this).build();
+        public BQModule module() {
+            return b -> {
+            };
         }
     }
 }

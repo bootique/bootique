@@ -2,7 +2,7 @@ package io.bootique.docs.programming.options;
 
 import io.bootique.BQCoreModule;
 import io.bootique.cli.Cli;
-import io.bootique.di.BQModule;
+import io.bootique.BQModule;
 import io.bootique.di.Binder;
 import io.bootique.meta.application.OptionMetadata;
 

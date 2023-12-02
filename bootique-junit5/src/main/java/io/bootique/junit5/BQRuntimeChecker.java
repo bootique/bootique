@@ -19,7 +19,7 @@
 package io.bootique.junit5;
 
 import io.bootique.BQRuntime;
-import io.bootique.di.BQModule;
+import io.bootique.BQModule;
 import io.bootique.meta.module.ModuleMetadata;
 import io.bootique.meta.module.ModulesMetadata;
 

@@ -25,7 +25,7 @@ import io.bootique.BQRuntime;
 import io.bootique.Bootique;
 import io.bootique.ModuleCrate;
 import io.bootique.command.CommandOutcome;
-import io.bootique.di.BQModule;
+import io.bootique.BQModule;
 import io.bootique.log.BootLogger;
 
 import java.util.Collection;
@@ -49,7 +49,7 @@ public class TestRuntumeBuilder {
     TestRuntumeBuilder(TestRuntimesManager runtimes, String[] args) {
 
         this.properties = new HashMap<>();
-        this.bootique = Bootique.app(args).moduleProvider(createPropertiesProvider());
+        this.bootique = Bootique.app(args).module(createPropertiesModule());
         this.runtimes = runtimes;
 
         property(EXCLUDE_SYSTEM_PROPERTIES, "true").property(EXCLUDE_SYSTEM_VARIABLES, "true");
@@ -76,9 +76,8 @@ public class TestRuntumeBuilder {
         return createRuntime().run();
     }
 
-    protected BQModuleProvider createPropertiesProvider() {
-        BQModule module = b -> BQCoreModule.extend(b).setProperties(properties);
-        return () -> ModuleCrate.of(module).providerName("TestRuntimeBuilder:properties").build();
+    protected BQModule createPropertiesModule() {
+        return b -> BQCoreModule.extend(b).setProperties(properties);
     }
 
     /**

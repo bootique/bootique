@@ -22,7 +22,6 @@ package io.bootique;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
 import io.bootique.command.CommandOutcome;
-import io.bootique.di.BQModule;
 import io.bootique.log.BootLogger;
 import io.bootique.log.DefaultBootLogger;
 import io.bootique.unit.TestAppManager;
@@ -48,10 +47,9 @@ public class Bootique_Help_VarsIT {
         BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(System.err));
         BQModule m = b -> {
         };
-        BQModuleProvider provider = () -> ModuleCrate.of(m).config("x", O2.class).build();
 
         appManager.run(Bootique.app("--help")
-                .moduleProvider(provider)
+                .crate(ModuleCrate.of(m).config("x", O2.class).build())
                 .bootLogger(logger)
                 .module(b -> BQCoreModule.extend(b)
                         .declareVar("x.m", "X_VALID_VAR")
@@ -71,11 +69,10 @@ public class Bootique_Help_VarsIT {
         BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(System.err));
         BQModule m = b -> {
         };
-        BQModuleProvider provider = () -> ModuleCrate.of(m).config("x", O4.class).build();
 
         CommandOutcome run = appManager.run(Bootique.app("--help")
                 .bootLogger(logger)
-                .moduleProvider(provider)
+                .crate(ModuleCrate.of(m).config("x", O4.class).build())
                 .module(b -> BQCoreModule.extend(b)
                         .declareVar("x.p1", "VAR1")
                         .declareVar("x.p2", "VAR1")
@@ -96,11 +93,10 @@ public class Bootique_Help_VarsIT {
 
         BQModule m = b -> {
         };
-        BQModuleProvider provider = () -> ModuleCrate.of(m).config("x", O4.class).build();
 
         CommandOutcome run = appManager.run(Bootique.app("--help")
                 .bootLogger(logger)
-                .moduleProvider(provider)
+                .crate(ModuleCrate.of(m).config("x", O4.class).build())
                 .module(b -> BQCoreModule.extend(b)
                         .declareVar("x.p1", "VAR1", "DP1")
                         .declareVar("x.p2", "VAR1", "DP2")
@@ -122,11 +118,10 @@ public class Bootique_Help_VarsIT {
         BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(System.err));
         BQModule m = b -> {
         };
-        BQModuleProvider provider = () -> ModuleCrate.of(m).config("x", O4.class).build();
 
         CommandOutcome run = appManager.run(Bootique.app("--help")
                 .bootLogger(logger)
-                .moduleProvider(provider)
+                .crate(ModuleCrate.of(m).config("x", O4.class).build())
                 .module(b -> BQCoreModule.extend(b)
                         .declareVar("x.p1", "VAR1", "DP1")
                         .declareVar("x.p1", "VAR1", "DP1")
@@ -149,10 +144,9 @@ public class Bootique_Help_VarsIT {
 
         BQModule m = b -> {
         };
-        BQModuleProvider provider = () -> ModuleCrate.of(m).config("x", O2.class).build();
 
         CommandOutcome run = appManager.run(Bootique.app("--help")
-                .moduleProvider(provider)
+                .crate(ModuleCrate.of(m).config("x", O2.class).build())
                 .bootLogger(logger)
                 .module(b -> BQCoreModule.extend(b).declareVar("x.m", "s", "New description")));
 
@@ -172,11 +166,10 @@ public class Bootique_Help_VarsIT {
 
         BQModule m = b -> {
         };
-        BQModuleProvider provider = () -> ModuleCrate.of(m).config("x", O1.class).build();
 
         CommandOutcome run = appManager.run(Bootique.app("--help")
                 .bootLogger(logger)
-                .moduleProvider(provider)
+                .crate(ModuleCrate.of(m).config("x", O1.class).build())
                 .module(b -> BQCoreModule.extend(b)
                         .declareVar("x.m.prop", "X_BOUND_VAR")
                         .declareVar("x.m.prop.x", "X_UNBOUND_VAR")));
@@ -196,10 +189,9 @@ public class Bootique_Help_VarsIT {
         BootLogger logger = new DefaultBootLogger(false, new PrintStream(out), new PrintStream(System.err));
         BQModule m = b -> {
         };
-        BQModuleProvider provider = () -> ModuleCrate.of(m).config("x", O3.class).build();
 
         CommandOutcome run = appManager.run(Bootique.app("--help")
-                .moduleProvider(provider)
+                .crate(ModuleCrate.of(m).config("x", O3.class).build())
                 .bootLogger(logger)
                 .module(b -> BQCoreModule.extend(b)
                         .declareVar("x.a[0]", "X_BOUND_VAR")

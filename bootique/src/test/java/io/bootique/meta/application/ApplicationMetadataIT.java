@@ -20,13 +20,12 @@
 package io.bootique.meta.application;
 
 import io.bootique.BQCoreModule;
-import io.bootique.BQModuleProvider;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
+import io.bootique.ModuleCrate;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
-import io.bootique.ModuleCrate;
-import io.bootique.di.BQModule;
+import io.bootique.BQModule;
 import io.bootique.meta.config.ConfigValueMetadata;
 import io.bootique.unit.TestAppManager;
 import org.junit.jupiter.api.Test;
@@ -85,10 +84,9 @@ public class ApplicationMetadataIT {
     public void boundVar() {
         BQModule m = b -> {
         };
-        BQModuleProvider provider = () -> ModuleCrate.of(m).config("x", O1.class).build();
 
         BQRuntime runtime = appManager.runtime(Bootique.app()
-                .moduleProvider(provider)
+                .crate(ModuleCrate.of(m).config("x", O1.class).build())
                 .module(b -> BQCoreModule.extend(b).declareVar("x.p1", "BOUND_VAR")));
 
         ApplicationMetadata md = runtime.getInstance(ApplicationMetadata.class);

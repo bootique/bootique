@@ -24,7 +24,6 @@ import io.bootique.command.Command;
 import io.bootique.command.CommandOutcome;
 import io.bootique.command.CommandWithMetadata;
 import io.bootique.config.ConfigurationFactory;
-import io.bootique.di.BQModule;
 import io.bootique.di.Binder;
 import io.bootique.di.Provides;
 import io.bootique.meta.application.CommandMetadata;
@@ -146,8 +145,8 @@ public class BootiqueExceptionsHandlerIT {
     @Test
     public void modules_CircularOverrides() {
         CommandOutcome out = Bootique.app()
-                .moduleProvider(new ModuleProviderWithOverride1())
-                .moduleProvider(new ModuleProviderWithOverride2())
+                .module(new ModuleWithOverride1())
+                .module(new ModuleWithOverride2())
                 .exec();
 
         assertEquals(1, out.getExitCode());
@@ -164,13 +163,13 @@ public class BootiqueExceptionsHandlerIT {
     @Test
     public void modules_MultipleOverrides() {
         CommandOutcome out = Bootique.app()
-                .moduleProvider(new CoreOverrideProvider1())
-                .moduleProvider(new CoreOverrideProvider2())
+                .module(new CoreOverrideModule1())
+                .module(new CoreOverrideModule2())
                 .exec();
 
         assertEquals(1, out.getExitCode());
         assertNull(out.getException());
-        assertTrue(out.getMessage().startsWith("Module BQCoreModule provided by Bootique is overridden twice by BootiqueExceptionsHandlerIT"),
+        assertTrue(out.getMessage().startsWith("Module BQCoreModule is overridden more than once. Last overriding module:"),
                 out.getMessage());
     }
 
@@ -290,54 +289,49 @@ public class BootiqueExceptionsHandlerIT {
         }
     }
 
-    public static class ModuleProviderWithOverride1 implements BQModuleProvider {
-
+    public static class ModuleWithOverride1 implements BQModule {
         @Override
-        public ModuleCrate moduleCrate() {
-            return ModuleCrate.of(new ModuleWithOverride1()).overrides(ModuleProviderWithOverride2.ModuleWithOverride2.class).build();
+        public void configure(Binder binder) {
         }
 
-        public static class ModuleWithOverride1 implements BQModule {
-            @Override
-            public void configure(Binder binder) {
-
-            }
+        @Override
+        public ModuleCrate crate() {
+            return ModuleCrate.of(this).overrides(ModuleWithOverride2.class).build();
         }
     }
 
-    public static class ModuleProviderWithOverride2 implements BQModuleProvider {
-
+    public static class ModuleWithOverride2 implements BQModule {
         @Override
-        public ModuleCrate moduleCrate() {
-            return ModuleCrate.of(new ModuleWithOverride2()).overrides(ModuleProviderWithOverride1.ModuleWithOverride1.class).build();
+        public void configure(Binder binder) {
         }
 
-        public static class ModuleWithOverride2 implements BQModule {
-            @Override
-            public void configure(Binder binder) {
-
-            }
+        @Override
+        public ModuleCrate crate() {
+            return ModuleCrate.of(this).overrides(ModuleWithOverride1.class).build();
         }
     }
 
-    public static class CoreOverrideProvider1 implements BQModuleProvider {
+    public static class CoreOverrideModule1 implements BQModule {
 
         @Override
-        public ModuleCrate moduleCrate() {
-            BQModule m = b -> {
-            };
-            return ModuleCrate.of(m).provider(this).overrides(BQCoreModule.class).build();
+        public void configure(Binder binder) {
         }
 
+        @Override
+        public ModuleCrate crate() {
+            return ModuleCrate.of(this).overrides(BQCoreModule.class).build();
+        }
     }
 
-    public static class CoreOverrideProvider2 implements BQModuleProvider {
+    public static class CoreOverrideModule2 implements BQModule {
 
         @Override
-        public ModuleCrate moduleCrate() {
-            BQModule m = b -> {
-            };
-            return ModuleCrate.of(m).provider(this).overrides(BQCoreModule.class).build();
+        public void configure(Binder binder) {
+        }
+
+        @Override
+        public ModuleCrate crate() {
+            return ModuleCrate.of(this).overrides(BQCoreModule.class).build();
         }
     }
 }

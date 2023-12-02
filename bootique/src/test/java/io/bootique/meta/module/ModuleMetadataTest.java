@@ -36,7 +36,6 @@ public class ModuleMetadataTest {
         ModuleMetadata md = ModuleMetadata
                 .builder("x")
                 .description("desc")
-                .providerName("P")
                 .addConfig(ConfigObjectMetadata.builder("c1").type(Object.class).build())
                 .addConfig(ConfigObjectMetadata.builder("c2").type(Object.class).build())
                 .deprecated(true)
@@ -44,7 +43,6 @@ public class ModuleMetadataTest {
 
         assertEquals("x", md.getName());
         assertEquals("desc", md.getDescription());
-        assertEquals("P", md.getProviderName());
         assertEquals(2, md.getConfigs().size());
         assertTrue(md.isDeprecated());
     }
