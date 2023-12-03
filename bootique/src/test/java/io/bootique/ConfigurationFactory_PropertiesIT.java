@@ -30,7 +30,7 @@ import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class Bootique_Configuration_PropertiesIT {
+public class ConfigurationFactory_PropertiesIT {
 
     @RegisterExtension
     final TestAppManager appManager = new TestAppManager();

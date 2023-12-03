@@ -31,7 +31,7 @@ import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class Bootique_Configuration_VarsIT {
+public class ConfigurationFactory_VarsIT {
 
     @RegisterExtension
     final TestAppManager appManager = new TestAppManager();

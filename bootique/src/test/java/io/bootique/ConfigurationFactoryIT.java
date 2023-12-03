@@ -32,7 +32,7 @@ import java.util.function.Function;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class Bootique_ConfigurationIT {
+public class ConfigurationFactoryIT {
 
     @RegisterExtension
     final TestAppManager appManager = new TestAppManager();
