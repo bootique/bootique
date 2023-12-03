@@ -386,10 +386,12 @@ public class Bootique {
             autoLoadedProviders().forEach(p -> crates.add(p.moduleCrate()));
         }
 
-        // now that all modules are collected, finish 'moduleMetadata' initialization
-        modulesSource.init(crates);
+        List<ModuleCrate> sortedCrates = new ModulesSorter(bootLogger).uniqueCratesInLoadOrder(crates);
 
-        BQModule[] modules = new ModulesSorter(bootLogger).modulesInLoadOrder(crates);
+        // before returning the Injector, finish 'moduleMetadata' initialization
+        modulesSource.init(sortedCrates);
+
+        BQModule[] modules = sortedCrates.stream().map(ModuleCrate::getModule).toArray(i -> new BQModule[i]);
         return DIBootstrap.injectorBuilder(modules).build();
     }
 

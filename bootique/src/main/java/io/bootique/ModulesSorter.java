@@ -33,9 +33,9 @@ class ModulesSorter {
     }
 
     /**
-     * Extract BQModules from the crates in the desired load order with respect to overrides.
+     * Returns a list of unique crates in the correct load order with respect to overrides.
      */
-    BQModule[] modulesInLoadOrder(Collection<ModuleCrate> crates) {
+    List<ModuleCrate> uniqueCratesInLoadOrder(Collection<ModuleCrate> crates) {
 
         int inLen = crates.size();
         ModuleGraph moduleGraph = new ModuleGraph(inLen);
@@ -63,16 +63,7 @@ class ModulesSorter {
             }
         }
 
-        List<ModuleCrate> sortedList = moduleGraph.topSort();
-
-        // "outLen" may be smaller than "inLen" in case of duplicate modules
-        int outLen = sortedList.size();
-        BQModule[] sorted = new BQModule[outLen];
-        for (int i = 0; i < outLen; i++) {
-            sorted[i] = sortedList.get(i).getModule();
-        }
-
-        return sorted;
+        return moduleGraph.topSort();
     }
 
     private String deprecationMessage(ModuleCrate module) {

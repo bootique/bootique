@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,54 +40,56 @@ public class ModulesSorterTest {
 
     @Test
     public void getModules_Empty() {
-        assertEquals(0, sorter.modulesInLoadOrder(Collections.emptyList()).length);
+        assertEquals(0, sorter.uniqueCratesInLoadOrder(Collections.emptyList()).size());
     }
 
     @Test
     public void getModules_One() {
-        BQModule[] modules = sorter.modulesInLoadOrder(List.of(builtModules.get(2)));
+        List<ModuleCrate> modules = sorter.uniqueCratesInLoadOrder(List.of(builtModules.get(2)));
 
-        assertEquals(1, modules.length);
-        assertSame(testModules.get(2), modules[0]);
+        assertEquals(1, modules.size());
+        assertSame(testModules.get(2), modules.get(0).getModule());
     }
 
     @Test
     public void getModules_Two() {
 
-        BQModule[] modules = sorter.modulesInLoadOrder(List.of(
+        // the order is irrelevant, these modules don't depend on each other
+        Set<BQModule> modules = sorter.uniqueCratesInLoadOrder(List.of(
                 builtModules.get(2),
-                builtModules.get(1)));
+                builtModules.get(1))).stream().map(ModuleCrate::getModule).collect(Collectors.toSet());
 
-        assertEquals(2, modules.length);
-        assertSame(testModules.get(2), modules[0]);
-        assertSame(testModules.get(1), modules[1]);
+        assertEquals(2, modules.size());
+
+        assertTrue(modules.contains(testModules.get(2)));
+        assertTrue(modules.contains(testModules.get(1)));
     }
 
     @Test
     public void getModules_Three_Dupes() {
 
-        BQModule[] modules = sorter.modulesInLoadOrder(List.of(
+        List<ModuleCrate> modules = sorter.uniqueCratesInLoadOrder(List.of(
                 builtModules.get(2),
                 builtModules.get(1),
                 builtModules.get(2)));
 
-        assertEquals(2, modules.length);
-        assertSame(testModules.get(2), modules[0]);
-        assertSame(testModules.get(1), modules[1]);
+        assertEquals(2, modules.size());
+        assertSame(testModules.get(2), modules.get(0).getModule());
+        assertSame(testModules.get(1), modules.get(1).getModule());
     }
 
     @Test
     public void getModules_Overrides() {
 
         ModuleCrate bm0 = ModuleCrate.of(testModules.get(0)).overrides(M3.class).build();
-        BQModule[] modules = sorter.modulesInLoadOrder(List.of(
+        List<ModuleCrate> modules = sorter.uniqueCratesInLoadOrder(List.of(
                 bm0,
                 builtModules.get(3)
         ));
 
-        assertEquals(2, modules.length);
-        assertSame(testModules.get(3), modules[0]);
-        assertSame(testModules.get(0), modules[1]);
+        assertEquals(2, modules.size());
+        assertSame(testModules.get(3), modules.get(0).getModule());
+        assertSame(testModules.get(0), modules.get(1).getModule());
     }
 
     @Test
@@ -95,18 +98,18 @@ public class ModulesSorterTest {
         ModuleCrate bm0 = ModuleCrate.of(testModules.get(0)).overrides(M3.class).build();
         ModuleCrate bm3 = ModuleCrate.of(testModules.get(3)).overrides(M4.class).build();
 
-        BQModule[] modules = sorter.modulesInLoadOrder(List.of(
+        List<ModuleCrate> modules = sorter.uniqueCratesInLoadOrder(List.of(
                 builtModules.get(4),
                 bm0,
                 builtModules.get(1),
                 bm3
         ));
 
-        assertEquals(4, modules.length);
-        assertSame(testModules.get(4), modules[0]);
-        assertSame(testModules.get(3), modules[1]);
-        assertSame(testModules.get(0), modules[2]);
-        assertSame(testModules.get(1), modules[3]);
+        assertEquals(4, modules.size());
+        assertSame(testModules.get(4), modules.get(0).getModule());
+        assertSame(testModules.get(3), modules.get(1).getModule());
+        assertSame(testModules.get(0), modules.get(2).getModule());
+        assertSame(testModules.get(1), modules.get(3).getModule());
     }
 
     @Test
@@ -116,7 +119,7 @@ public class ModulesSorterTest {
         ModuleCrate bm0 = ModuleCrate.of(testModules.get(0)).overrides(M3.class).build();
         ModuleCrate bm3 = ModuleCrate.of(testModules.get(3)).overrides(M0.class).build();
 
-        assertThrows(RuntimeException.class, () -> sorter.modulesInLoadOrder(List.of(bm0, bm3)));
+        assertThrows(RuntimeException.class, () -> sorter.uniqueCratesInLoadOrder(List.of(bm0, bm3)));
     }
 
     @Test
@@ -127,7 +130,7 @@ public class ModulesSorterTest {
         ModuleCrate bm3 = ModuleCrate.of(testModules.get(3)).overrides(M4.class).build();
         ModuleCrate bm4 = ModuleCrate.of(testModules.get(4)).overrides(M0.class).build();
 
-        assertThrows(RuntimeException.class, () -> sorter.modulesInLoadOrder(List.of(bm0, bm4, bm3)));
+        assertThrows(RuntimeException.class, () -> sorter.uniqueCratesInLoadOrder(List.of(bm0, bm4, bm3)));
     }
 
     @Test
@@ -137,7 +140,7 @@ public class ModulesSorterTest {
         ModuleCrate bm0 = ModuleCrate.of(testModules.get(0)).overrides(M3.class).build();
         ModuleCrate bm4 = ModuleCrate.of(testModules.get(4)).overrides(M3.class).build();
 
-        assertThrows(RuntimeException.class, () -> sorter.modulesInLoadOrder(List.of(bm4, bm0, builtModules.get(3))));
+        assertThrows(RuntimeException.class, () -> sorter.uniqueCratesInLoadOrder(List.of(bm4, bm0, builtModules.get(3))));
     }
 
     class M0 implements BQModule {
