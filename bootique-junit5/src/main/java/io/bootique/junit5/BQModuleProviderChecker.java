@@ -46,7 +46,9 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * @since 2.0
+ * @deprecated as {@link BQModuleProvider} is deprecated. Use {@link BQModuleTester} instead.
  */
+@Deprecated(since = "3.0", forRemoval = true)
 public class BQModuleProviderChecker {
     private Class<? extends BQModuleProvider> provider;
 
