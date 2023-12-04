@@ -46,6 +46,7 @@ import static org.junit.Assert.fail;
  * </pre>
  *
  * @deprecated as we are we phasing out JUnit 4 support in favor of JUnit 5. Also, BQModuleProvider itself is deprecated.
+ * If you need to stay on JUnit 4, you may switch to {@link BQModuleTester}
  */
 @Deprecated(since = "3.0", forRemoval = true)
 public class BQModuleProviderChecker {
@@ -83,7 +84,7 @@ public class BQModuleProviderChecker {
     protected BQModuleProvider matchingProvider() {
         return matchingProviders().findFirst().get();
     }
-    
+
     protected void testAutoLoadable() {
 
         Long c = matchingProviders().collect(counting());

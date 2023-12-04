@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package io.bootique.junit5;
+package io.bootique.test.junit;
 
 import io.bootique.BQModule;
 import io.bootique.BQRuntime;
@@ -27,14 +27,16 @@ import io.bootique.meta.module.ModulesMetadata;
 import java.util.Optional;
 import java.util.ServiceLoader;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * A testing utility class for verifying auto-loading configuration, and other module aspects.
  *
  * @since 3.0
+ * @deprecated as we are we phasing out JUnit 4 support in favor of JUnit 5.
  */
+@Deprecated(since = "3.0", forRemoval = true)
 public class BQModuleTester {
 
     private final Class<? extends BQModule> moduleType;
@@ -86,7 +88,8 @@ public class BQModuleTester {
                     : Bootique.app().module(moduleType).createRuntime();
 
         } catch (Exception e) {
-            fail("Auto-loading test runtime creation failed", e);
+            e.printStackTrace();
+            fail("Auto-loading test runtime creation failed");
             return this;
         }
 
@@ -99,11 +102,12 @@ public class BQModuleTester {
                     .filter(mmd -> moduleType == mmd.getType())
                     .findFirst();
 
-            assertTrue(moduleMetadata.isPresent(), () -> "No metadata available for Module: '" + moduleType.getName() + "'");
+            assertTrue("No metadata available for Module: '" + moduleType.getName() + "'", moduleMetadata.isPresent());
             moduleMetadata.get().getConfigs();
 
         } catch (Exception e) {
-            fail("Could not resolve metadata", e);
+            e.printStackTrace();
+            fail("Could not resolve metadata");
         } finally {
             runtime.shutdown();
         }
