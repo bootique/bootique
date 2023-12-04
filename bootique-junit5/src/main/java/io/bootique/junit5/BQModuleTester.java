@@ -38,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class BQModuleTester {
 
     private final Class<? extends BQModule> moduleType;
+    private volatile Integer autoLoadCount;
 
     /**
      * Creates a tester for the provided module type.
@@ -112,6 +113,10 @@ public class BQModuleTester {
     }
 
     private int autoLoadCount() {
-        return (int) ServiceLoader.load(BQModule.class).stream().filter(p -> moduleType == p.type()).count();
+        if (autoLoadCount == null) {
+            autoLoadCount = (int) ServiceLoader.load(BQModule.class).stream().filter(p -> moduleType == p.type()).count();
+        }
+
+        return autoLoadCount;
     }
 }
