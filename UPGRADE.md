@@ -24,8 +24,8 @@
 
 * [bootique #344](https://github.com/bootique/bootique/issues/344): `bootiqie-di` was merged into Bootique core, and is no longer 
 shipped as a standalone module. This allows us to integrate it more tightly with Bootique concepts, such as module auto-loading, 
-app configuration, etc., improving user experience. For the rare cases, when `bootiqie-di` was used without Bootique, this can still
-be done. Just include `bootique` module as your dependency, and keep using `DIBootstrap` like you did before to create an `Injector`.
+app configuration, etc., improving user experience. If you have a special case that requires an Injector, but not the rest of 
+Bootique, you can still do it. Just include `bootique` module as your dependency, and keep using `DIBootstrap` like you did before to create an `Injector`. Though it will result in a few extra dependencies, like Jackson (that can probably be excluded explicitly).
 
 * [bootique #340](https://github.com/bootique/bootique/issues/340): API-based module dependency tracking is no longer supported.
 While `BQModuleProvider` (deprecated per the following note) still has a method called `dependencies()`, its output is ignored 
