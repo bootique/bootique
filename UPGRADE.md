@@ -22,10 +22,15 @@
 
 ## 3.0-M3
 
-* [bootique #339](https://github.com/bootique/bootique/issues/339): `BQModuleProvider` API was simplified, replacing
-a bunch of methods with a single `buildModule()` method, and a helper builder obtained via `BuiltModule.of(module)`. 
-If you get compile errors in your own providers, repalce all those methods with a single `buildModule()`. E.g. 
-consider the following provider:
+* [bootique #340](https://github.com/bootique/bootique/issues/340): API-based module dependency tracking is no longer supported,
+while `BQModuleProvider` (deprecated per the following note), still has a method called `dependencies()`, its output is ignored 
+by the runtime. If you relied on transitive dependenices loading, you have two choices - switch to auto-loading, or manually 
+list all upstream modules your application depends on, when assembling Bootique. 
+
+* [bootique #344](https://github.com/bootique/bootique/issues/344): `BQModuleProvider` API was deprecated. It is still supported for now,
+but it much easier to load the modules directly. Modules now support both auto-loading (from `META-INF/services/io.bootique.BQModule`),
+and providing their own metadata (via a new `BQModule.crate()` method that can be optionally implemented). E.g. consider the following 
+provider:
 ```java
 public class MyModuleProvider implements BQModuleProvider {
 
@@ -47,20 +52,21 @@ public class MyModuleProvider implements BQModuleProvider {
   }
 }
 ```
-It should be rewritten like this (which is much easier for comprehension) :
+It should be removed, and the following code added to the Module:
 ```java
-public class MyModuleProvider implements BQModuleProvider {
-    
+public class MyModule implements BQModule {
+  ...
   @Override
-  public BuiltModule buildModule() {
-    return BuiltModule.of(new MyModule())
-            .provider(this)
+  public ModuleCrate crate() {
+    return ModuleCrate.of(this)
             .description("Provides a very important function")
             .config("my", MyFactory.class)
             .build();
   }
 }
 ```
+For auto-loading, `META-INF/services/io.bootique.BQModuleProvider` file can be removed, and a new 
+`META-INF/services/io.bootique.BQModule` file created with the name of the module class.
 
 * [bootique-jdbc #132](https://github.com/bootique/bootique-jdbc/issues/132): Tomcat DataSource support got deprecated,
 with the advice to switch to Hikari DataSource. This requires a couple of steps: (1) replace Tomcat modules with

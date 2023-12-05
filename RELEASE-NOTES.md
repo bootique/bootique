@@ -5,7 +5,7 @@
 * #337 BQRuntime: expose metadata and environment objects as methods
 * #338 ModuleMetadata - track BQModule type
 * #339 Uncluttered lambda-style BQModuleProvider
-* #340 Deprecate module dependency tracking
+* #340 Remove module dependency tracking #340 
 * #341 Recognize "self-provided" modules and preserve their metadata
 * #342 Constructor-based factories
 * #344 BQModuleProvider-free Bootique bootstrap
