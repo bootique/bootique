@@ -23,7 +23,7 @@
 ## 3.0-M3
 
 * [bootique #340](https://github.com/bootique/bootique/issues/340): API-based module dependency tracking is no longer supported.
-While `BQModuleProvider` (deprecated per the following note), still has a method called `dependencies()`, its output is ignored 
+While `BQModuleProvider` (deprecated per the following note) still has a method called `dependencies()`, its output is ignored 
 by the runtime. If you relied on transitive dependenices loading, you have two choices - switch to auto-loading, or manually 
 list all upstream modules your application depends on when assembling Bootique. 
 
