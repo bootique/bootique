@@ -28,8 +28,9 @@ by the runtime. If you relied on implicit loading of transitive dependenices, yo
 list all upstream modules your application depends on when assembling Bootique. 
 
 * [bootique #344](https://github.com/bootique/bootique/issues/344): `BQModuleProvider` API was deprecated. It is still supported
-until Bootique 4.0, but it much easier to load the modules directly. Modules now can be auto-loaded like providers were (from `META-INF/services/io.bootique.BQModule` declaration), and can provide their own metadata (via a new `BQModule.crate()` method that can be optionally implemented). E.g. consider the following 
-provider:
+until Bootique 4.0, but it much easier to load your modules directly: Modules now can be auto-loaded (like providers were,
+but from `META-INF/services/io.bootique.BQModule` declarations), and can define their own metadata (via a new `BQModule.crate()` 
+method that can be optionally implemented). E.g. consider the following provider:
 ```java
 public class MyModuleProvider implements BQModuleProvider {
 
@@ -51,7 +52,7 @@ public class MyModuleProvider implements BQModuleProvider {
   }
 }
 ```
-It should be removed, and the following code added to the Module:
+It can be removed, and the following code added to the Module:
 ```java
 public class MyModule implements BQModule {
   ...
@@ -64,8 +65,9 @@ public class MyModule implements BQModule {
   }
 }
 ```
-For auto-loading, `META-INF/services/io.bootique.BQModuleProvider` file can be removed, and a new 
-`META-INF/services/io.bootique.BQModule` file created with the name of the module class.
+So we end up with one class instead of two, and with a much more compact syntax. For auto-loading, 
+create `META-INF/services/io.bootique.BQModule` file with the name of the module class, and remove
+`META-INF/services/io.bootique.BQModuleProvider`, as we no longer have a provider.
 
 * [bootique-jdbc #132](https://github.com/bootique/bootique-jdbc/issues/132): Tomcat DataSource support got deprecated,
 with the advice to switch to Hikari DataSource. This requires a couple of steps: (1) replace Tomcat modules with
