@@ -52,7 +52,7 @@ public class BQApp_SkipRunIT {
 
         @Inject
         public XCommand(ShutdownManager shutdownManager) {
-            shutdownManager.addShutdownHook(this::shutdown);
+            shutdownManager.onShutdown(this::shutdown);
         }
 
         @Override

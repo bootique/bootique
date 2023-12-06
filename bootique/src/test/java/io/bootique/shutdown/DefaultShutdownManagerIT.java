@@ -19,6 +19,8 @@
 
 package io.bootique.shutdown;
 
+import io.bootique.log.BootLogger;
+import io.bootique.log.DefaultBootLogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -28,6 +30,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class DefaultShutdownManagerIT {
+
+	static final BootLogger logger = new DefaultBootLogger(true);
 
 	private AutoCloseable mockCloseable1;
 	private AutoCloseable mockCloseable2;
@@ -41,10 +45,10 @@ public class DefaultShutdownManagerIT {
 	@Test
     public void shutdown() throws Exception {
 		Duration timeout = Duration.ofMillis(10000l);
-		DefaultShutdownManager shutdownManager = new DefaultShutdownManager(timeout);
+		DefaultShutdownManager shutdownManager = new DefaultShutdownManager(timeout, logger);
 
-		shutdownManager.addShutdownHook(mockCloseable1);
-		shutdownManager.addShutdownHook(mockCloseable2);
+		shutdownManager.onShutdown(mockCloseable1);
+		shutdownManager.onShutdown(mockCloseable2);
 
 		shutdownManager.shutdown();
 
@@ -55,7 +59,7 @@ public class DefaultShutdownManagerIT {
 	@Test
     public void shutdown_Unresponsive_Timeout() throws Exception {
 		Duration timeout = Duration.ofMillis(500l);
-		DefaultShutdownManager shutdownManager = new DefaultShutdownManager(timeout);
+		DefaultShutdownManager shutdownManager = new DefaultShutdownManager(timeout, logger);
 
 		doAnswer(i -> {
 			while (true) {
@@ -63,7 +67,7 @@ public class DefaultShutdownManagerIT {
 			}
 		}).when(mockCloseable2).close();
 
-		shutdownManager.addShutdownHook(mockCloseable2);
+		shutdownManager.onShutdown(mockCloseable2);
 
 		long t0 = System.currentTimeMillis();
 		shutdownManager.shutdown();

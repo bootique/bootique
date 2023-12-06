@@ -27,9 +27,14 @@ import io.bootique.di.Injector;
 import io.bootique.di.Key;
 import io.bootique.it.ItestModule2;
 import io.bootique.it.ItestModuleProvider;
+import io.bootique.log.BootLogger;
+import io.bootique.log.DefaultBootLogger;
 import io.bootique.meta.application.CommandMetadata;
+import io.bootique.shutdown.DefaultShutdownManager;
+import io.bootique.shutdown.ShutdownManager;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 
@@ -38,7 +43,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class BootiqueIT {
 
-    private String[] args = new String[]{"a", "b", "c"};
+    static final BootLogger logger = new DefaultBootLogger(true);
+    static final ShutdownManager shutdownManager = new DefaultShutdownManager(Duration.ofSeconds(1), logger);
+    static final String[] args = new String[]{"a", "b", "c"};
 
     @Test
     public void exec() {
@@ -108,7 +115,7 @@ public class BootiqueIT {
 
     @Test
     public void createInjector() {
-        Injector i = Bootique.app(args).createInjector();
+        Injector i = Bootique.app(args).createInjector(shutdownManager, logger);
 
         String[] args = i.getInstance(Key.get(String[].class, Args.class));
         assertSame(this.args, args);
@@ -116,7 +123,7 @@ public class BootiqueIT {
 
     @Test
     public void app_Collection() {
-        Injector i = Bootique.app(asList(args)).createInjector();
+        Injector i = Bootique.app(asList(args)).createInjector(shutdownManager, logger);
 
         String[] args = i.getInstance(Key.get(String[].class, Args.class));
         assertArrayEquals(this.args, args);

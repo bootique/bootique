@@ -102,7 +102,7 @@ public class TestWebServer implements BeforeAllCallback, AfterAllCallback {
 
             server.setHandler(handler);
 
-            shutdownManager.addShutdownHook(server::stop);
+            shutdownManager.onShutdown(server::stop);
 
             return server;
         }

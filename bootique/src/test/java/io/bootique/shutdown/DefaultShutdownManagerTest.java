@@ -19,6 +19,7 @@
 
 package io.bootique.shutdown;
 
+import io.bootique.log.DefaultBootLogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -35,27 +36,21 @@ public class DefaultShutdownManagerTest {
 
 	@BeforeEach
 	public void before() {
-		this.shutdownManager = new DefaultShutdownManager(Duration.ofMillis(1000l));
+		this.shutdownManager = new DefaultShutdownManager(Duration.ofMillis(1000l), new DefaultBootLogger(true));
 
 		this.mockCloseable1 = mock(AutoCloseable.class);
 		this.mockCloseable2 = mock(AutoCloseable.class);
 	}
 	
 	@Test
-    public void shutdownAll_Empty() throws Exception {
+    public void shutdownAll_Empty() {
 		shutdownManager.shutdownAll();
 	}
 
 	@Test
-    public void shutdownOne() throws Exception {
-		shutdownManager.shutdownOne(mockCloseable1);
-		verify(mockCloseable1).close();
-	}
-
-	@Test
     public void shutdownAll() throws Exception {
-		shutdownManager.addShutdownHook(mockCloseable1);
-		shutdownManager.addShutdownHook(mockCloseable2);
+		shutdownManager.onShutdown(mockCloseable1);
+		shutdownManager.onShutdown(mockCloseable2);
 		shutdownManager.shutdownAll();
 
 		verify(mockCloseable1).close();

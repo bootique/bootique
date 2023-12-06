@@ -20,7 +20,10 @@
 package io.bootique;
 
 import io.bootique.command.CommandOutcome;
-import io.bootique.di.*;
+import io.bootique.di.DIBootstrap;
+import io.bootique.di.DIRuntimeException;
+import io.bootique.di.Injector;
+import io.bootique.di.Key;
 import io.bootique.env.DefaultEnvironment;
 import io.bootique.log.BootLogger;
 import io.bootique.log.DefaultBootLogger;
@@ -58,8 +61,6 @@ public class Bootique {
         this.args = args;
         this.crates = new ArrayList<>();
         this.autoLoadModules = false;
-        this.bootLogger = createBootLogger();
-        this.shutdownManager = createShutdownManager();
     }
 
     /**
@@ -266,11 +267,16 @@ public class Bootique {
      * @return a new {@link BQRuntime} instance that contains all Bootique services, commands, etc.
      */
     public BQRuntime createRuntime() {
-        Injector injector = createInjector();
-        BQRuntime runtime = createRuntime(injector);
+        BootLogger logger = resolveBootLogger();
+        ShutdownManager shutdownManager = resolveShutdownManager(logger);
+        return createRuntime(shutdownManager, logger);
+    }
+
+    private BQRuntime createRuntime(ShutdownManager shutdownManager, BootLogger logger) {
+        Injector injector = createInjector(shutdownManager, logger);
+        BQRuntime runtime = new BQRuntime(injector);
 
         runtime.getInstance(Key.getSetOf(BQRuntimeListener.class)).forEach(sl -> sl.onRuntimeCreated(runtime));
-
         return runtime;
     }
 
@@ -281,14 +287,17 @@ public class Bootique {
      */
     public CommandOutcome exec() {
 
-        CommandOutcome o;
+        // late resolution to ShutdownManager and BootLogger to capture any user overrides
+        BootLogger logger = resolveBootLogger();
+        ShutdownManager shutdownManager = resolveShutdownManager(logger);
 
+        CommandOutcome o;
         try {
             // In case the app gets killed when command is running, let's use an explicit shutdown hook for cleanup.
-            Thread shutdownThread = createJVMShutdownHook();
+            Thread shutdownThread = createJVMShutdownHook(shutdownManager, logger);
             Runtime.getRuntime().addShutdownHook(shutdownThread);
             try {
-                o = createRuntime().run();
+                o = createRuntime(shutdownManager, logger).run();
 
                 // block exit if there are remaining tasks...
                 if (o.forkedToBackground()) {
@@ -301,7 +310,7 @@ public class Bootique {
 
             } finally {
                 // run shutdown explicitly...
-                shutdown(shutdownManager, bootLogger);
+                shutdown(shutdownManager, logger);
                 Runtime.getRuntime().removeShutdownHook(shutdownThread);
             }
         } catch (DIRuntimeException ce) {
@@ -314,23 +323,18 @@ public class Bootique {
         // report error
         if (!o.isSuccess()) {
             if (o.getMessage() != null) {
-                bootLogger.stderr(String.format("Error running command '%s': %s", getArgsAsString(), o.getMessage()), o.getException());
+                logger.stderr(String.format("Error running command '%s': %s", getArgsAsString(), o.getMessage()), o.getException());
             } else {
-                bootLogger.stderr(String.format("Error running command '%s'", getArgsAsString()), o.getException());
+                logger.stderr(String.format("Error running command '%s'", getArgsAsString()), o.getException());
             }
         }
 
         return o;
     }
 
-    private Thread createJVMShutdownHook() {
-
-        // resolve all services needed for shutdown eagerly and outside shutdown thread to ensure that shutdown hook
-        // will not fail due to misconfiguration, etc.
-
-        ShutdownManager shutdownManager = this.shutdownManager;
-        BootLogger logger = this.bootLogger;
-
+    // ensure all services needed for shutdown are local variables, so that shutdown thread doesn't fail due to
+    // some partial states
+    private Thread createJVMShutdownHook(ShutdownManager shutdownManager, BootLogger logger) {
         return new Thread("bootique-shutdown") {
 
             @Override
@@ -367,25 +371,13 @@ public class Bootique {
         return String.join(" ", args);
     }
 
-    private BQRuntime createRuntime(Injector injector) {
-        return new BQRuntime(injector);
-    }
-
-    private BootLogger createBootLogger() {
-        return new DefaultBootLogger(System.getProperty(DefaultEnvironment.TRACE_PROPERTY) != null);
-    }
-
-    private ShutdownManager createShutdownManager() {
-        return new DefaultShutdownManager(Duration.ofMillis(10000L));
-    }
-
-    Injector createInjector() {
+    Injector createInjector(ShutdownManager shutdownManager, BootLogger logger) {
 
         Collection<ModuleCrate> crates = new HashSet<>();
         DeferredModulesSource modulesSource = new DeferredModulesSource();
 
         // BQCoreModule requires a couple of explicit services that can not be initialized within the module itself
-        BQCoreModule coreModule = new BQCoreModule(args, bootLogger, shutdownManager, modulesSource);
+        BQCoreModule coreModule = new BQCoreModule(args, logger, shutdownManager, modulesSource);
 
         // Note that BQCoreModule is invalid at this point due to uninitialized "modulesSource". It will be
         // initialized below, which is safe to do, as it won't be used until the Injector is returned to the method caller.
@@ -397,7 +389,7 @@ public class Bootique {
             autoLoadedProviders().forEach(p -> crates.add(p.moduleBuilder().build().toCrate()));
         }
 
-        List<ModuleCrate> sortedCrates = new ModulesSorter(bootLogger).uniqueCratesInLoadOrder(crates);
+        List<ModuleCrate> sortedCrates = new ModulesSorter(logger).uniqueCratesInLoadOrder(crates);
 
         // before returning the Injector, finish 'moduleMetadata' initialization
         modulesSource.init(sortedCrates);
@@ -416,6 +408,18 @@ public class Bootique {
         List<BQModuleProvider> modules = new ArrayList<>();
         ServiceLoader.load(BQModuleProvider.class).forEach(modules::add);
         return modules;
+    }
+
+    ShutdownManager resolveShutdownManager(BootLogger logger) {
+        return shutdownManager != null
+                ? shutdownManager
+                : new DefaultShutdownManager(Duration.ofMillis(10000L), logger);
+    }
+
+    BootLogger resolveBootLogger() {
+        return bootLogger != null
+                ? bootLogger
+                : new DefaultBootLogger(System.getProperty(DefaultEnvironment.TRACE_PROPERTY) != null);
     }
 
     static String[] mergeArrays(String[] a1, String[] a2) {

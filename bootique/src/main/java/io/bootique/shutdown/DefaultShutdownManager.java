@@ -19,11 +19,10 @@
 
 package io.bootique.shutdown;
 
+import io.bootique.log.BootLogger;
+
 import java.time.Duration;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
@@ -32,6 +31,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Function;
 
 /**
  * A shutdown handler that performs a best-effort attempt to shutdown a set of {@link AutoCloseable} objects,
@@ -39,53 +39,74 @@ import java.util.concurrent.TimeoutException;
  */
 public class DefaultShutdownManager implements ShutdownManager {
 
-	private Duration timeout;
-	private ConcurrentMap<AutoCloseable, Integer> shutdownHooks;
+    private final Duration timeout;
+    private final BootLogger logger;
+    private final ConcurrentMap<ShutdownTask<?>, Integer> shutdownHooks;
 
-	public DefaultShutdownManager(Duration timeout) {
-		this.shutdownHooks = new ConcurrentHashMap<>();
-		this.timeout = timeout;
-	}
+    public DefaultShutdownManager(Duration timeout, BootLogger logger) {
+        this.timeout = timeout;
+        this.logger = logger;
+        this.shutdownHooks = new ConcurrentHashMap<>();
+    }
 
-	@Override
-	public void addShutdownHook(AutoCloseable shutdownHook) {
-		shutdownHooks.put(shutdownHook, 1);
-	}
+    @Override
+    public <T> T onShutdown(T object, ShutdownCallback<T> shutdownCallback) {
+        shutdownHooks.put(new ShutdownTask<>(object, shutdownCallback), 1);
+        return object;
+    }
 
-	@Override
-	public Map<?, ? extends Throwable> shutdown() {
+    @Override
+    public Map<?, ? extends Throwable> shutdown() {
 
-		Map<?, ? extends Throwable> shutdownErrors;
+        Map<?, ? extends Throwable> shutdownErrors;
 
-		// TODO: closing services often involves slow I/O; perhaps this needs to
-		// be done in multiple threads?
+        // TODO: closing services often involves slow I/O; perhaps this needs to
+        // be done in multiple threads?
 
-		ExecutorService executor = Executors.newSingleThreadExecutor();
-		Future<Map<?, ? extends Throwable>> future = executor.submit(() -> shutdownAll());
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Future<Map<?, ? extends Throwable>> future = executor.submit(this::shutdownAll);
 
-		try {
-			shutdownErrors = future.get(timeout.toMillis(), TimeUnit.MILLISECONDS);
-		} catch (TimeoutException | InterruptedException | ExecutionException e) {
-			shutdownErrors = Collections.singletonMap(this, e);
-		}
+        try {
+            shutdownErrors = future.get(timeout.toMillis(), TimeUnit.MILLISECONDS);
+        } catch (TimeoutException | InterruptedException | ExecutionException e) {
+            shutdownErrors = Collections.singletonMap(this, e);
+        }
 
-		executor.shutdownNow();
+        executor.shutdownNow();
 
-		return shutdownErrors;
-	}
+        return shutdownErrors;
+    }
 
-	protected Map<?, ? extends Throwable> shutdownAll() {
-		Map<Object, Throwable> errors = new HashMap<>();
-		shutdownHooks.keySet().forEach(c -> shutdownOne(c).ifPresent(e -> errors.put(c, e)));
-		return errors;
-	}
+    protected Map<?, ? extends Throwable> shutdownAll() {
+        Map<Object, Throwable> errors = new HashMap<>();
+        shutdownHooks.keySet().forEach(c -> c.shutdown(logger).ifPresent(e -> errors.put(c, e)));
+        return errors;
+    }
 
-	protected Optional<Exception> shutdownOne(AutoCloseable closeable) {
-		try {
-			closeable.close();
-			return Optional.empty();
-		} catch (Exception e) {
-			return Optional.of(e);
-		}
-	}
+    static class ShutdownTask<T> {
+        final T object;
+        final ShutdownCallback<T> shutdownCallback;
+
+        ShutdownTask(T object, ShutdownCallback<T> shutdownCallback) {
+            this.object = Objects.requireNonNull(object);
+            this.shutdownCallback = Objects.requireNonNull(shutdownCallback);
+        }
+
+        Optional<Exception> shutdown(BootLogger logger) {
+            try {
+                shutdownWithExceptions(logger);
+                return Optional.empty();
+            } catch (Exception e) {
+                return Optional.of(e);
+            }
+        }
+
+        private void shutdownWithExceptions(BootLogger logger) throws Exception {
+            logger.trace(() -> "Shutting down "
+                    + (object.getClass().isSynthetic() ? object.getClass().getName() : object.getClass().getSimpleName())
+                    + "...");
+
+            shutdownCallback.shutdown(object);
+        }
+    }
 }

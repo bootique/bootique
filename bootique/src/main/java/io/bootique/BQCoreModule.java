@@ -242,8 +242,7 @@ public class BQCoreModule implements BQModule {
 
         Provider<ExecutorService> executorProvider = () -> {
             ExecutorService service = Executors.newCachedThreadPool(new CommandDispatchThreadFactory());
-            shutdownManager.addShutdownHook(service::shutdownNow);
-            return service;
+            return shutdownManager.onShutdown(service, ExecutorService::shutdownNow);
         };
 
         Map<Class<? extends Command>, CommandDecorator> merged = ExecutionPlanBuilder.mergeDecorators(commandDecorators);

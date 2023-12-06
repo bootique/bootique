@@ -60,8 +60,7 @@ public class BQApp_Global_Base {
         @Singleton
         DaemonCommand provideDaemonCommand(ShutdownManager shutdownManager) {
             DaemonCommand command = new DaemonCommand();
-            shutdownManager.addShutdownHook(command);
-            return command;
+            return shutdownManager.onShutdown(command);
         }
     }
 

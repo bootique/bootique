@@ -50,7 +50,7 @@ public class BQTestFactory_PerClass_LifecycleIT {
         @Provides
         @Singleton
         Tester provideTester(ShutdownManager shutdownManager) {
-            shutdownManager.addShutdownHook(tester::onShutdown);
+            shutdownManager.onShutdown(tester::onShutdown);
             return tester;
         }
     }

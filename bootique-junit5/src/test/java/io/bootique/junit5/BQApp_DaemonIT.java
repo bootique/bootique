@@ -72,7 +72,7 @@ public class BQApp_DaemonIT {
 
         @Inject
         public XCommand(ShutdownManager shutdownManager) {
-            shutdownManager.addShutdownHook(this::shutdown);
+            shutdownManager.onShutdown(this::shutdown);
         }
 
         public boolean isStopped() {

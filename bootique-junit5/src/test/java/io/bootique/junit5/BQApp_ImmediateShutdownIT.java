@@ -6,8 +6,6 @@ import io.bootique.Bootique;
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandOutcome;
-import io.bootique.junit5.BQApp;
-import io.bootique.junit5.BQTest;
 import io.bootique.shutdown.ShutdownManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,7 +42,7 @@ public class BQApp_ImmediateShutdownIT {
 
         @Inject
         public XCommand(ShutdownManager shutdownManager) {
-            shutdownManager.addShutdownHook(this::shutdown);
+            shutdownManager.onShutdown(this::shutdown);
         }
 
         public boolean isStopped() {

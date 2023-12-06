@@ -20,6 +20,10 @@ package io.bootique;
 
 import io.bootique.annotation.Args;
 import io.bootique.di.*;
+import io.bootique.log.BootLogger;
+import io.bootique.log.DefaultBootLogger;
+import io.bootique.shutdown.DefaultShutdownManager;
+import io.bootique.shutdown.ShutdownManager;
 import org.junit.jupiter.api.Test;
 
 import javax.inject.Qualifier;
@@ -28,20 +32,23 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class Bootique_ModuleOverridesIT {
 
-    private String[] args = new String[]{"a", "b", "c"};
+    static final BootLogger logger = new DefaultBootLogger(true);
+    static final ShutdownManager shutdownManager = new DefaultShutdownManager(Duration.ofSeconds(1), logger);
+    static final String[] args = new String[]{"a", "b", "c"};
 
     @Test
     public void createInjector_Overrides() {
         Injector i = Bootique.app(args)
                 .override(BQCoreModule.class)
                 .with(M0.class)
-                .createInjector();
+                .createInjector(shutdownManager, logger);
 
         String[] args = i.getInstance(Key.get(String[].class, Args.class));
         assertSame(M0.ARGS, args);
@@ -52,7 +59,7 @@ public class Bootique_ModuleOverridesIT {
         Injector i = Bootique.app(args)
                 .override(BQCoreModule.class).with(M0.class)
                 .override(M0.class).with(M1.class)
-                .createInjector();
+                .createInjector(shutdownManager, logger);
 
         String[] args = i.getInstance(Key.get(String[].class, Args.class));
         assertSame(M1.ARGS, args);
@@ -61,7 +68,7 @@ public class Bootique_ModuleOverridesIT {
     @Test
     public void createInjector_OverridesWithProvider() {
         ModuleCrate crate = ModuleCrate.of(new M0()).overrides(BQCoreModule.class).build();
-        Injector i = Bootique.app(args).crate(crate).createInjector();
+        Injector i = Bootique.app(args).crate(crate).createInjector(shutdownManager, logger);
 
         String[] args = i.getInstance(Key.get(String[].class, Args.class));
         assertSame(M0.ARGS, args);
@@ -78,7 +85,7 @@ public class Bootique_ModuleOverridesIT {
                 .module(M3.class)
                 .module(M4.class)
                 .override(M3.class, M4.class).with(M5.class)
-                .createInjector();
+                .createInjector(shutdownManager, logger);
 
         assertEquals(1, M5.configCalls, "Overriding module is expected to be called once and only once");
         assertEquals(1, M3.configCalls, "Overriding module is expected to be called once and only once");
@@ -110,7 +117,7 @@ public class Bootique_ModuleOverridesIT {
                 .override(M3.class, M4.class).with(M5.class)
                 .override(M6.class, M7.class).with(M3.class)
                 .override(M8.class, M9.class).with(M4.class)
-                .createInjector();
+                .createInjector(shutdownManager, logger);
 
         assertEquals(1, M3.configCalls);
         assertEquals(1, M4.configCalls);
@@ -138,7 +145,7 @@ public class Bootique_ModuleOverridesIT {
         Injector i = Bootique.app()
                 .module(M2.class)
                 .override(M2.class).with(SubM2.class)
-                .createInjector();
+                .createInjector(shutdownManager, logger);
 
         String s2 = i.getInstance(Key.get(String.class, S2.class));
         assertEquals("sub_m2_s2_m2_s1", s2);
@@ -150,7 +157,7 @@ public class Bootique_ModuleOverridesIT {
                 .module(M2.class)
                 .override(M2.class).with(SubM2.class)
                 .override(SubM2.class).with(SubSubM2.class)
-                .createInjector();
+                .createInjector(shutdownManager, logger);
 
         String s2 = i.getInstance(Key.get(String.class, S2.class));
         assertEquals("sub_sub_m2_s2_m2_s1", s2);

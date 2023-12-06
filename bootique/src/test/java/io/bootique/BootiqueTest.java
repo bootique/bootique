@@ -20,14 +20,22 @@
 package io.bootique;
 
 import io.bootique.di.*;
+import io.bootique.log.BootLogger;
+import io.bootique.log.DefaultBootLogger;
+import io.bootique.shutdown.DefaultShutdownManager;
+import io.bootique.shutdown.ShutdownManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class BootiqueTest {
+
+    static final BootLogger logger = new DefaultBootLogger(true);
+    static final ShutdownManager shutdownManager = new DefaultShutdownManager(Duration.ofSeconds(1), logger);
 
     private Bootique bootique;
 
@@ -38,7 +46,7 @@ public class BootiqueTest {
 
     @Test
     public void createInjector_Modules_Instances() {
-        Injector i = bootique.modules(new TestModule1(), new TestModule2()).createInjector();
+        Injector i = bootique.modules(new TestModule1(), new TestModule2()).createInjector(shutdownManager, logger);
         Set<String> strings = i.getInstance(Key.get(new TypeLiteral<>(){}));
 
         assertEquals(2, strings.size());
@@ -48,7 +56,7 @@ public class BootiqueTest {
 
     @Test
     public void createInjector_Modules_Types() {
-        Injector i = bootique.modules(TestModule1.class, TestModule2.class).createInjector();
+        Injector i = bootique.modules(TestModule1.class, TestModule2.class).createInjector(shutdownManager, logger);
         Set<String> strings = i.getInstance(Key.get(new TypeLiteral<>(){}));
 
         assertEquals(2, strings.size());

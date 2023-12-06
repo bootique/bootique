@@ -83,8 +83,7 @@ public class BQApp_MethodIT implements AfterEachCallback {
         @Singleton
         DaemonCommand provideDaemonCommand(ShutdownManager shutdownManager) {
             DaemonCommand command = new DaemonCommand();
-            shutdownManager.addShutdownHook(command);
-            return command;
+            return shutdownManager.onShutdown(command);
         }
     }
 
@@ -92,7 +91,7 @@ public class BQApp_MethodIT implements AfterEachCallback {
 
         private boolean started;
         private boolean stopped;
-        private AtomicInteger counter = new AtomicInteger();
+        private final AtomicInteger counter = new AtomicInteger();
 
         @Override
         public void close() {

@@ -22,7 +22,7 @@ package io.bootique.shutdown;
 import java.util.Map;
 
 /**
- * A service that can shutdown other services when the app is exiting.
+ * A service that can shut down other services when the app is exiting.
  */
 public interface ShutdownManager {
 
@@ -30,12 +30,33 @@ public interface ShutdownManager {
      * Registers an object whose "close" method needs to be invoked during shutdown.
      *
      * @param shutdownListener an object that needs to be notified on shutdown.
+     * @deprecated in favor of one of the "onShutdown" methods.
      */
-    void addShutdownHook(AutoCloseable shutdownListener);
+    @Deprecated(since = "3.0", forRemoval = true)
+    default void addShutdownHook(AutoCloseable shutdownListener) {
+        onShutdown(shutdownListener, AutoCloseable::close);
+    }
+
+    /**
+     * Registers an object and its shutdown method to be invoked during shutdown.
+     *
+     * @since 3.0
+     */
+    default <T extends AutoCloseable> T onShutdown(T object) {
+        return onShutdown(object, AutoCloseable::close);
+    }
+
+    /**
+     * Registers an object and its shutdown method to be invoked during shutdown.
+     *
+     * @since 3.0
+     */
+    <T> T onShutdown(T object, ShutdownCallback<T> shutdownCallback);
 
     /**
      * Executes shutdown, calling "close" method of all registered listeners.
-     * @return a map of shutdown listeners to shutdown exceptions they generated, if any.
+     *
+     * @return a map of shutdown listeners to exceptions they generated, if any.
      */
     Map<?, ? extends Throwable> shutdown();
 }
