@@ -1,0 +1,43 @@
+s1:
+  a: S1A
+
+s1sub1:
+  type: sub1
+  a: S1Sub1A
+  b: S1Sub1B
+
+s1sub2:
+  type: sub2
+  a: S1Sub2A
+  c: S1Sub2C
+
+s3:
+  s1:
+    a: S1A
+
+s3sub1:
+  s1:
+    type: sub1
+    a: S1Sub1A
+    b: S1Sub1B
+
+s3sub2:
+  s1:
+    type: sub2
+    a: S1Sub2A
+    c: S1Sub2C
+
+s4: S4A
+
+s4sub:
+  type: sub
+  a: S4A
+  b: S4SubB
+
+s5:
+  a: S5A
+
+s5sub:
+  type: sub
+  a: S5A
+  b: S5SubB

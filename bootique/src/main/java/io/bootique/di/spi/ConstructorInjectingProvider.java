@@ -26,20 +26,35 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
 
-class ConstructorInjectingProvider<T> implements NamedProvider<T> {
+public class ConstructorInjectingProvider<T> implements NamedProvider<T> {
 
     private final Constructor<? extends T> constructor;
     private final DefaultInjector injector;
     private final Annotation[] bindingAnnotations;
 
-    ConstructorInjectingProvider(Class<? extends T> implementation, DefaultInjector injector) {
+    public ConstructorInjectingProvider(Class<? extends T> implementation, DefaultInjector injector) {
+        this(ConstructorInjectingProvider.findRequiredConstructor(implementation, injector), injector);
+    }
+
+    public ConstructorInjectingProvider(Constructor<? extends T> constructor, DefaultInjector injector) {
+        this.constructor = constructor;
         this.injector = injector;
-        this.constructor = findConstructor(implementation);
         this.bindingAnnotations = collectParametersQualifiers(constructor);
     }
 
-    @SuppressWarnings("unchecked")
-    private Constructor<? extends T> findConstructor(Class<? extends T> implementation) {
+    static <T> Constructor<? extends T> findRequiredConstructor(Class<? extends T> implementation, DefaultInjector injector) {
+        Constructor<?> c = findConstructor(implementation, injector);
+
+        if (c == null) {
+            return injector.throwException(
+                    "No applicable constructor is found for constructor injection in class '%s'",
+                    implementation.getName());
+        }
+
+        return (Constructor<? extends T>) c;
+    }
+
+    public static <T> Constructor<? extends T> findConstructor(Class<? extends T> implementation, DefaultInjector injector) {
 
         Constructor<?>[] constructors = implementation.getDeclaredConstructors();
         Constructor<?> lastMatch = null;
@@ -65,13 +80,10 @@ class ConstructorInjectingProvider<T> implements NamedProvider<T> {
             }
         }
 
-        if (lastMatch == null) {
-            return injector.throwException(
-                    "No applicable constructor is found for constructor injection in class '%s'",
-                    implementation.getName());
+        if (lastMatch != null) {
+            lastMatch.setAccessible(true);
         }
 
-        lastMatch.setAccessible(true);
         return (Constructor<? extends T>) lastMatch;
     }
 
@@ -81,7 +93,7 @@ class ConstructorInjectingProvider<T> implements NamedProvider<T> {
         for (int i = 0; i < annotations.length; i++) {
             Annotation[] parameterAnnotations = annotations[i];
             for (Annotation annotation : parameterAnnotations) {
-                if(injector.getPredicates().isQualifierAnnotation(annotation)) {
+                if (injector.getPredicates().isQualifierAnnotation(annotation)) {
                     result[i] = annotation;
                 }
             }

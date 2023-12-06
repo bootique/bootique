@@ -27,7 +27,7 @@ import java.util.Collection;
 
 public class DefaultJacksonService implements JacksonService {
 
-    private SubtypeResolver subtypeResolver;
+    private final SubtypeResolver subtypeResolver;
 
     /**
      * @param subtypes a collection of annotated classes to use in subclass resolution.

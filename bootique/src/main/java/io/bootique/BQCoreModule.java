@@ -20,17 +20,23 @@
 package io.bootique;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.bootique.annotation.*;
+import io.bootique.annotation.Args;
+import io.bootique.annotation.DefaultCommand;
+import io.bootique.annotation.EnvironmentProperties;
+import io.bootique.annotation.EnvironmentVariables;
 import io.bootique.cli.Cli;
 import io.bootique.cli.CliFactory;
 import io.bootique.command.*;
-import io.bootique.config.*;
+import io.bootique.config.ConfigurationFactory;
+import io.bootique.config.PolymorphicConfiguration;
+import io.bootique.config.TypesFactory;
 import io.bootique.config.jackson.*;
 import io.bootique.config.jackson.merger.InPlaceLeftHandMerger;
 import io.bootique.config.jackson.merger.JsonConfigurationMerger;
 import io.bootique.config.jackson.parser.*;
 import io.bootique.di.*;
+import io.bootique.di.spi.DIJsonConfigurationFactory;
+import io.bootique.di.spi.DefaultInjector;
 import io.bootique.env.DeclaredVariable;
 import io.bootique.env.DefaultEnvironment;
 import io.bootique.env.Environment;
@@ -166,13 +172,18 @@ public class BQCoreModule implements BQModule {
 
     @Provides
     @Singleton
-    ConfigurationFactory provideConfigurationFactory(Set<JsonConfigurationLoader> loaders, JacksonService jackson) {
+    ConfigurationFactory provideConfigurationFactory(
+            Set<JsonConfigurationLoader> loaders,
+            TypesFactory<PolymorphicConfiguration> typesFactory,
+            Injector injector) {
 
         JsonNode root = JsonConfigurationLoader.load(loaders);
         bootLogger.trace(() -> "Merged configuration: " + root.toString());
 
-        ObjectMapper jsonToObjectMapper = jackson.newObjectMapper();
-        return new JsonConfigurationFactory(root, jsonToObjectMapper);
+        // preregister all explicitly declared polymorphic configurations for injection, as we won't be
+        // able to identify them on the fly
+        Collection injectionEnabledTypes = typesFactory.getTypes();
+        return DIJsonConfigurationFactory.of(root, (DefaultInjector) injector, injectionEnabledTypes);
     }
 
     @Provides

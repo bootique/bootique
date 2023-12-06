@@ -23,7 +23,7 @@ package io.bootique.config;
  * A tag interface that allows Bootique to resolve configuration subclasses of
  * the implementing superclass or interface. The actual resolution mechanism is
  * based on java ServiceLoader mechanism. Subclasses should be declared in
- * {@code META-INF/services/PolymorphicConfiguration}.
+ * {@code META-INF/services/io.bootique.config.PolymorphicConfiguration}.
  */
 public interface PolymorphicConfiguration {
 

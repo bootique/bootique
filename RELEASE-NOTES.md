@@ -9,6 +9,7 @@
 * #341 Recognize "self-provided" modules and preserve their metadata
 * #342 Constructor-based factories
 * #344 BQModuleProvider-free Bootique bootstrap
+* #345 DI into objects obtained via ConfigurationFactory
 * #346 Fluent, logging ShutdownManager
 
 ## 3.0.M2

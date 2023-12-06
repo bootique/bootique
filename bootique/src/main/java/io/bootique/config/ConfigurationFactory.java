@@ -62,5 +62,4 @@ public interface ConfigurationFactory {
      * @return a fully initialized object of the specified type.
      */
     <T> T config(TypeRef<? extends T> type, String prefix);
-
 }
