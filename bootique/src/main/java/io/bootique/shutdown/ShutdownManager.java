@@ -38,7 +38,7 @@ public interface ShutdownManager {
     }
 
     /**
-     * Registers an object and its shutdown method to be invoked during shutdown.
+     * Registers an AutoCloseable object to be invoked during Bootique runtime shutdown.
      *
      * @since 3.0
      */
@@ -47,16 +47,16 @@ public interface ShutdownManager {
     }
 
     /**
-     * Registers an object and its shutdown method to be invoked during shutdown.
+     * Registers an object and its shutdown callback method to be invoked during Bootique runtime shutdown.
      *
      * @since 3.0
      */
     <T> T onShutdown(T object, ShutdownCallback<T> shutdownCallback);
 
     /**
-     * Executes shutdown, calling "close" method of all registered listeners.
+     * Executes shutdown, calling shutdown methods of each registered object.
      *
-     * @return a map of shutdown listeners to exceptions they generated, if any.
+     * @return a map of registered shutdown objects to Exceptions for the objects that threw  during shutdown
      */
     Map<?, ? extends Throwable> shutdown();
 }
