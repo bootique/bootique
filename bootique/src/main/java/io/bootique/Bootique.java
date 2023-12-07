@@ -394,7 +394,7 @@ public class Bootique {
         // before returning the Injector, finish 'moduleMetadata' initialization
         modulesSource.init(sortedCrates);
 
-        BQModule[] modules = sortedCrates.stream().map(ModuleCrate::getModule).toArray(i -> new BQModule[i]);
+        BQModule[] modules = sortedCrates.stream().map(ModuleCrate::getModule).toArray(BQModule[]::new);
         return DIBootstrap.injectorBuilder(modules).build();
     }
 
