@@ -84,6 +84,12 @@ public class ConfigurationFactory_InjectionIT {
     }
 
     @Test
+    public void constructorInjectionJackson_JsonCreatorConstructor_FieldInjection() {
+        S9 s9 = withModule(M9ConstructorInjectionJacksonFieldInjection.class).getInstance(S9.class);
+        assertEquals("[S0]_S9A", s9.get());
+    }
+
+    @Test
     public void typeRefInjection() {
         Map<String, S6> map = withModule(M6TypeRefInjection.class).getInstance(
                 Key.get(TypeLiteral.of(M6TypeRefInjection.typeRef.getType())));
@@ -187,6 +193,19 @@ public class ConfigurationFactory_InjectionIT {
         @Provides
         S7 provideS7(ConfigurationFactory configurationFactory) {
             return configurationFactory.config(S7.class, "s7");
+        }
+    }
+
+    static class M9ConstructorInjectionJacksonFieldInjection implements BQModule {
+        @Override
+        public void configure(Binder binder) {
+            binder.bind(S0.class).toInstance(new S0("[S0]"));
+        }
+
+        @Singleton
+        @Provides
+        S9 provideS9(ConfigurationFactory configFactory) {
+            return configFactory.config(S9.class, "s9");
         }
     }
 
@@ -324,6 +343,24 @@ public class ConfigurationFactory_InjectionIT {
         private String a;
 
         public void setA(String a) {
+            this.a = a;
+        }
+
+        public String get() {
+            assertNotNull(s0, "'s0' was not injected");
+            return s0.val + "_" + a;
+        }
+    }
+
+    static class S9 {
+
+        @Inject
+        private S0 s0;
+
+        private final String a;
+
+        @JsonCreator
+        public S9(String a) {
             this.a = a;
         }
 

@@ -182,6 +182,12 @@ class DIJacksonDelegateInstantiator extends ValueInstantiator {
     }
 
     @Override
+    public ValueInstantiator createContextual(DeserializationContext ctxt, BeanDescription beanDesc) throws JsonMappingException {
+        // DO NOT delegate this method to the "delegate", as it will result in skipping field injection
+        return super.createContextual(ctxt, beanDesc);
+    }
+
+    @Override
     public JavaType getDelegateType(DeserializationConfig config) {
         return delegate.getDelegateType(config);
     }
@@ -189,11 +195,6 @@ class DIJacksonDelegateInstantiator extends ValueInstantiator {
     @Override
     public Class<?> getValueClass() {
         return delegate.getValueClass();
-    }
-
-    @Override
-    public ValueInstantiator createContextual(DeserializationContext ctxt, BeanDescription beanDesc) throws JsonMappingException {
-        return delegate.createContextual(ctxt, beanDesc);
     }
 
     @Override
