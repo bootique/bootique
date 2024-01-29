@@ -145,7 +145,8 @@ public class BQCoreModule implements BQModule {
                 .initAllExtensions()
                 .addValueObjectsDescriptors(createValueObjectsDescriptorsMap())
                 .addOption(createConfigOption())
-                .addCommand(HelpConfigCommand.class)
+                .addOption(createHelpConfigOption())
+//                .addCommand(HelpConfigCommand.class)
 
                 // standard config formats
                 .addConfigFormatParser(JsonConfigurationFormatParser.class)
@@ -168,6 +169,16 @@ public class BQCoreModule implements BQModule {
                 .builder(CliConfigurationLoader.CONFIG_OPTION,
                         "Specifies YAML config location, which can be a file path or a URL.")
                 .valueRequired("yaml_location").build();
+    }
+
+    OptionMetadata createHelpConfigOption() {
+        return OptionMetadata
+                .builder("help-config",
+                        "Prints information about application modules and their configuration options. "
+                                + "Optionally, you can provide a config path to limit the printed config to only the children of that path.")
+                .valueOptional("module_path")
+                .shortName('H')
+                .build();
     }
 
     @Provides
