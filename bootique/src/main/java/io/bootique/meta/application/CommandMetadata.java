@@ -34,6 +34,8 @@ public class CommandMetadata implements MetadataNode {
     private boolean hidden;
     private final Collection<OptionMetadata> options;
     private CommandValueCardinality valueCardinality;
+    private String valueName;
+    private String defaultValue;
 
     public CommandMetadata() {
         this.options = new ArrayList<>();
@@ -104,6 +106,20 @@ public class CommandMetadata implements MetadataNode {
 
     public CommandValueCardinality getValueCardinality() {
         return valueCardinality;
+    }
+
+    public String getValueName() {
+        return valueName;
+    }
+
+    /**
+     * Returns the default value for this command. I.e. the value that will be used if the command is provided on
+     * command line without an explicit value.
+     *
+     * @return the default value for this option.
+     */
+    public String getDefaultValue() {
+        return defaultValue;
     }
 
     /**
