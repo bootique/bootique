@@ -33,6 +33,7 @@ public class CommandMetadata implements MetadataNode {
     private String shortName;
     private boolean hidden;
     private final Collection<OptionMetadata> options;
+    private CommandValueCardinality valueCardinality;
 
     public CommandMetadata() {
         this.options = new ArrayList<>();
@@ -99,6 +100,10 @@ public class CommandMetadata implements MetadataNode {
      */
     public String getShortName() {
         return (shortName != null) ? shortName : name.substring(0, 1);
+    }
+
+    public CommandValueCardinality getValueCardinality() {
+        return valueCardinality;
     }
 
     /**
