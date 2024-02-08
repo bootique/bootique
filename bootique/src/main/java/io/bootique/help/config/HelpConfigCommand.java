@@ -38,7 +38,8 @@ public class HelpConfigCommand extends CommandWithMetadata {
     public HelpConfigCommand(BootLogger bootLogger, Provider<ConfigHelpGenerator> helpGeneratorProvider) {
         super(CommandMetadata
                 .builder(HelpConfigCommand.class)
-                .description("Prints information about application modules and their configuration options.")
+                .description("Prints information about application modules and their configuration options. "
+                        + "Optionally, you can provide a config path to limit the printed config to only the children of that path.")
                 .shortName('H')
                 .build());
 
