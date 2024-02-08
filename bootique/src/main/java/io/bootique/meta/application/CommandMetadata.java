@@ -116,7 +116,7 @@ public class CommandMetadata implements MetadataNode {
      * Returns the default value for this command. I.e. the value that will be used if the command is provided on
      * command line without an explicit value.
      *
-     * @return the default value for this option.
+     * @return the default value for this command.
      */
     public String getDefaultValue() {
         return defaultValue;
@@ -171,6 +171,50 @@ public class CommandMetadata implements MetadataNode {
         public Builder description(String description) {
             this.metadata.description = description;
             return this;
+        }
+
+        public CommandMetadata.Builder valueRequired() {
+            return valueRequired("");
+        }
+
+        public CommandMetadata.Builder valueRequired(String valueName) {
+            this.metadata.valueCardinality = CommandValueCardinality.REQUIRED;
+            this.metadata.valueName = valueName;
+            return this;
+        }
+
+        public CommandMetadata.Builder valueOptional() {
+            return valueOptional("");
+        }
+
+        public CommandMetadata.Builder valueOptional(String valueName) {
+            this.metadata.valueCardinality = CommandValueCardinality.OPTIONAL;
+            this.metadata.valueName = valueName;
+            return this;
+        }
+
+        /**
+         * Marks value optional and sets the default value for this command that will be used if the command is provided on
+         * command line without an explicit value.
+         *
+         * @param defaultValue a default value for the command.
+         * @return this builder instance
+         */
+        public CommandMetadata.Builder valueOptionalWithDefault(String defaultValue) {
+            return valueOptionalWithDefault("", defaultValue);
+        }
+
+        /**
+         * Marks value optional and sets the default value for this command that will be used if the command is provided on
+         * command line without an explicit value.
+         *
+         * @param valueName a description of value
+         * @param defaultValue a default value for the option.
+         * @return this builder instance
+         */
+        public CommandMetadata.Builder valueOptionalWithDefault(String valueName, String defaultValue) {
+            this.metadata.defaultValue = defaultValue;
+            return valueOptional(valueName);
         }
 
         public Builder addOption(OptionMetadata option) {
