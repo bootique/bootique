@@ -146,6 +146,7 @@ public class CommandMetadata implements MetadataNode {
 
         private Builder() {
             this.metadata = new CommandMetadata();
+            this.metadata.valueCardinality = CommandValueCardinality.NONE;
         }
 
         public CommandMetadata build() {
