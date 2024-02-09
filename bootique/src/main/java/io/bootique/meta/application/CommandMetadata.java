@@ -25,6 +25,7 @@ import io.bootique.names.ClassToName;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.function.Consumer;
 
 public class CommandMetadata implements MetadataNode {
 
@@ -87,8 +88,31 @@ public class CommandMetadata implements MetadataNode {
      */
     public OptionMetadata asOption() {
         // TODO: cache the value?
-        // using getters instead of vars ; some getters have logic
-        return OptionMetadata.builder(getName()).shortName(getShortName()).description(getDescription()).build();
+        // using getters instead of vars; some getters have logic
+
+        CommandValueCardinality cardinality = getValueCardinality();
+        String valueName = getValueName();
+
+        Consumer<OptionMetadata.Builder> optionsConsumer = builder -> {
+            switch (cardinality) {
+                case REQUIRED:
+                    builder.valueRequired(valueName);
+                    break;
+                case OPTIONAL:
+                    builder.valueOptional(valueName);
+                    break;
+                case NONE:
+                    break;
+                default:
+                    throw new IllegalStateException("Unknown command value cardinality: " + cardinality);
+            }
+        };
+
+        return OptionMetadata.builder(getName())
+                .shortName(getShortName())
+                .description(getDescription())
+                .setValueWithCardinality(optionsConsumer)
+                .build();
     }
 
     public Collection<OptionMetadata> getOptions() {

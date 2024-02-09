@@ -21,6 +21,8 @@ package io.bootique.meta.application;
 
 import io.bootique.meta.MetadataNode;
 
+import java.util.function.Consumer;
+
 /**
  * A descriptor of a command-line option.
  */
@@ -102,6 +104,11 @@ public class OptionMetadata implements MetadataNode {
 
         public Builder description(String description) {
             this.option.description = description;
+            return this;
+        }
+
+        public Builder setValueWithCardinality(Consumer<Builder> optionsConsumer) {
+            optionsConsumer.accept(this);
             return this;
         }
 
