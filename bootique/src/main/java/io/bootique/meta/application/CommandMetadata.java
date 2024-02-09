@@ -93,6 +93,16 @@ public class CommandMetadata implements MetadataNode {
         CommandValueCardinality cardinality = getValueCardinality();
         String valueName = getValueName();
 
+        Consumer<OptionMetadata.Builder> optionsConsumer = createOptionsConsumer(cardinality, valueName);
+
+        return OptionMetadata.builder(getName())
+                .shortName(getShortName())
+                .description(getDescription())
+                .setValueWithCardinality(optionsConsumer)
+                .build();
+    }
+
+    private static Consumer<OptionMetadata.Builder> createOptionsConsumer(CommandValueCardinality cardinality, String valueName) {
         Consumer<OptionMetadata.Builder> optionsConsumer = builder -> {
             switch (cardinality) {
                 case REQUIRED:
@@ -107,12 +117,7 @@ public class CommandMetadata implements MetadataNode {
                     throw new IllegalStateException("Unknown command value cardinality: " + cardinality);
             }
         };
-
-        return OptionMetadata.builder(getName())
-                .shortName(getShortName())
-                .description(getDescription())
-                .setValueWithCardinality(optionsConsumer)
-                .build();
+        return optionsConsumer;
     }
 
     public Collection<OptionMetadata> getOptions() {
