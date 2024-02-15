@@ -117,6 +117,7 @@ public class CommandMetadata implements MetadataNode {
                     throw new IllegalStateException("Unknown command value cardinality: " + cardinality);
             }
         };
+
         return optionsConsumer;
     }
 
