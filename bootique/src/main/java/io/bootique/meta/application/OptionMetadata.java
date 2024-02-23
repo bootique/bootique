@@ -107,7 +107,7 @@ public class OptionMetadata implements MetadataNode {
             return this;
         }
 
-        public Builder setValueWithCardinality(Consumer<Builder> optionsConsumer) {
+        public Builder applyCardinality(Consumer<Builder> optionsConsumer) {
             optionsConsumer.accept(this);
             return this;
         }

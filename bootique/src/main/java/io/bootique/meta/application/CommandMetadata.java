@@ -34,7 +34,7 @@ public class CommandMetadata implements MetadataNode {
     private String shortName;
     private boolean hidden;
     private final Collection<OptionMetadata> options;
-    private CommandValueCardinality valueCardinality;
+    private OptionValueCardinality valueCardinality;
     private String valueName;
     private String defaultValue;
 
@@ -87,22 +87,21 @@ public class CommandMetadata implements MetadataNode {
      * @return option representation of this command.
      */
     public OptionMetadata asOption() {
-        // TODO: cache the value?
-        // using getters instead of vars; some getters have logic
-
-        CommandValueCardinality cardinality = getValueCardinality();
+        OptionValueCardinality cardinality = getValueCardinality();
         String valueName = getValueName();
 
-        Consumer<OptionMetadata.Builder> optionsConsumer = createOptionsConsumer(cardinality, valueName);
+        Consumer<OptionMetadata.Builder> optionMetadataConsumer = createOptionsConsumer(cardinality, valueName);
 
+        // TODO: cache the value?
+        // using getters instead of vars; some getters have logic
         return OptionMetadata.builder(getName())
                 .shortName(getShortName())
                 .description(getDescription())
-                .setValueWithCardinality(optionsConsumer)
+                .applyCardinality(optionMetadataConsumer)
                 .build();
     }
 
-    private static Consumer<OptionMetadata.Builder> createOptionsConsumer(CommandValueCardinality cardinality, String valueName) {
+    private static Consumer<OptionMetadata.Builder> createOptionsConsumer(OptionValueCardinality cardinality, String valueName) {
         Consumer<OptionMetadata.Builder> optionsConsumer = builder -> {
             switch (cardinality) {
                 case REQUIRED:
@@ -134,7 +133,7 @@ public class CommandMetadata implements MetadataNode {
         return (shortName != null) ? shortName : name.substring(0, 1);
     }
 
-    public CommandValueCardinality getValueCardinality() {
+    public OptionValueCardinality getValueCardinality() {
         return valueCardinality;
     }
 
@@ -176,7 +175,7 @@ public class CommandMetadata implements MetadataNode {
 
         private Builder() {
             this.metadata = new CommandMetadata();
-            this.metadata.valueCardinality = CommandValueCardinality.NONE;
+            this.metadata.valueCardinality = OptionValueCardinality.NONE;
         }
 
         public CommandMetadata build() {
@@ -209,7 +208,7 @@ public class CommandMetadata implements MetadataNode {
         }
 
         public CommandMetadata.Builder valueRequired(String valueName) {
-            this.metadata.valueCardinality = CommandValueCardinality.REQUIRED;
+            this.metadata.valueCardinality = OptionValueCardinality.REQUIRED;
             this.metadata.valueName = valueName;
             return this;
         }
@@ -219,7 +218,7 @@ public class CommandMetadata implements MetadataNode {
         }
 
         public CommandMetadata.Builder valueOptional(String valueName) {
-            this.metadata.valueCardinality = CommandValueCardinality.OPTIONAL;
+            this.metadata.valueCardinality = OptionValueCardinality.OPTIONAL;
             this.metadata.valueName = valueName;
             return this;
         }
