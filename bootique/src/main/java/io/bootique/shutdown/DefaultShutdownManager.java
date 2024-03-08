@@ -102,7 +102,7 @@ public class DefaultShutdownManager implements ShutdownManager {
         }
 
         private void shutdownWithExceptions(BootLogger logger) throws Exception {
-            logger.trace(() -> "Shutting down "
+            logger.trace(() -> "Stopping "
                     + (object.getClass().isSynthetic() ? object.getClass().getName() : object.getClass().getSimpleName())
                     + "...");
 
