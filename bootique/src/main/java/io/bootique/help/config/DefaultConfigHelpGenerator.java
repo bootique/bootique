@@ -69,9 +69,9 @@ public class DefaultConfigHelpGenerator implements ConfigHelpGenerator {
 
         List<ConfigMetadataNode> sortedConfigs = sortedModules
                 .stream()
+                .filter(predicate)
                 .map(ModuleMetadata::getConfigs)
                 .flatMap(Collection::stream)
-                .filter(predicate)
                 .sorted(Comparator.comparing(MetadataNode::getName))
                 .collect(Collectors.toList());
 
