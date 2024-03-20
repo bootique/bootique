@@ -489,7 +489,7 @@ disambiguate the array that we are referring to.
 ==== Contributing to Other Modules
 
 // need to use an attribute for link due to special chars not parsable by asciidoc
-:link-todi-with-underscores: https://bootique.io/docs/latest/bootique-di-docs/#_collections
+:link-todi-with-underscores: https://bootique.io/docs/2.x/bootique-di-docs/#_collections
 
 Bootique DI supports {link-todi-with-underscores}[Collection bindings],
 intended to _contribute_ objects defined in a downstream module to collections/maps used by services in upstream modules.
