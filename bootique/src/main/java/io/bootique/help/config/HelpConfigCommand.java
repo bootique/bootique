@@ -32,13 +32,18 @@ import java.util.function.Predicate;
 
 public class HelpConfigCommand extends CommandWithMetadata {
 
+    public static final String HELP_CONFIG_OPTION = "help-config";
+
     private BootLogger bootLogger;
     private Provider<ConfigHelpGenerator> helpGeneratorProvider;
 
     public HelpConfigCommand(BootLogger bootLogger, Provider<ConfigHelpGenerator> helpGeneratorProvider) {
         super(CommandMetadata
                 .builder(HelpConfigCommand.class)
-                .description("Prints information about application modules and their configuration options.")
+                .description("Prints information about application modules and their configuration options. "
+                        + "Optionally, you can provide a config path to limit the printed config to only the children of that path "
+                        + "or a module name to limit the printed config to only that module.")
+                .valueOptional("path_or_module_name")
                 .shortName('H')
                 .build());
 
@@ -48,7 +53,7 @@ public class HelpConfigCommand extends CommandWithMetadata {
 
     @Override
     public CommandOutcome run(Cli cli) {
-        List<String> arguments = cli.standaloneArguments();
+        List<String> arguments = cli.optionStrings(HELP_CONFIG_OPTION);
 
         Predicate<MetadataNode> predicate = (arguments.size() == 0)
                 ? o -> true
