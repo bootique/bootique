@@ -261,4 +261,4 @@ java -jar target/myapp-1.0.jar --server --config=myconfig.yml
 
 The result should be the same as running from the IDE and the app should be still accessible at http://localhost:10001/hello[http://localhost:10001/hello]. Now your jar can be deployed in any environment that has Java 8.
 
-This concludes our simple tutorial. Now you can explore our http://bootique.io/docs/[documentation] to read more about Bootique core and individual modules.
+This concludes our simple tutorial. Now you can explore our https://bootique.io/docs/{bootique_doc_version}[documentation] to read more about Bootique core and individual modules.
