@@ -684,7 +684,7 @@ For better control over logging a standard module called `bootique-logback` is a
 </dependency>
 ----
 
-See `bootique-logback` module http://bootique.io/docs/0/bootique-logback-docs/[documentation] for further details.
+See `bootique-logback` module http://bootique.io/docs/{bootique_doc_version}/bootique-logback-docs/[documentation] for further details.
 
 ==== BootLogger
 
