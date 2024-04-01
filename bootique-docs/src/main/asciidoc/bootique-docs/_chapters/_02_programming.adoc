@@ -25,36 +25,34 @@ include::../../../../test/java/io/bootique/docs/programming/Application.java[tag
 ----
 
 <1> `Bootique` class is the "builder" of our app that allows to configure it before startup
-<2> Enables <<providers_and_authloading,module auto-loading>>
-<3> Creates a `BQRuntime` object and calls its "run()" method. The outcome depends on what modules the application
+<2> Enables <<modules_loading,module auto-loading>>
+<3> Creates a `BQRuntime` object and calls its `run()` method. The outcome depends on what modules the application
 is made of and what CLI options were passed to it on startup.
-<4> Exits the app passing the exit code that is the result of the execution to the OS shell that started the app.
+<4> Exits the app passing the exit code that is the result of the execution to the OS.
 
 This is it in a nutshell. Now let's discuss the details...
 
-=== BQRuntime and DI
+=== BQRuntime
 
-`BQRuntime` is the object representing a Bootique app. It is the entry point to everything in the app. It holds all
-other objects ("services"), configuration, commands, etc. Despite its importance, you'd rarely interact with
-`BQRuntime` directly (except when writing <<bqruntime,unit tests>>), instead it acts as a "container" for your code.
+`BQRuntime` is the object representing a Bootique app. It is the entry point to everything else. It holds all
+other objects ("services"), configuration, commands, etc. The foundation of `BQRuntime` is _dependency injection_ (DI)
+that glues things together.
 
-Foundation of `BQRuntime` functionality is _dependency injection_ (DI) that helps to glue things together even in
-most complex applications.
+NOTE: If you are familiar with other DI implementations, you will find a lot of similarities. Namely, standard
+annotations from `javax.inject` package (https://jcp.org/en/jsr/detail?id=330[JSR-330]) are supported in Bootique.
+But there are also quite a few differences.
 
-NOTE: If you are familiar with other DI implementations in Java, you will find a lot of similarities. Namely standard
-injection annotations from `javax.inject` package (https://jcp.org/en/jsr/detail?id=330[JSR-330]). But also quite a few
-differences. The closest DI implementation to Bootique is good old Guice.
-
-`BQRuntime` loads its services from "modules", so next let's discuss modules.
+Application code managed by `BQRuntime` comes via standard and custom "modules", so next let's discuss
+what modules are.
 
 === Modules
 
-Each module is a logical collection of (hopefully related) services. E.g. a standard
-"bootique-jetty" module integrates Jetty server into your application, "bootique-jdbc" provides a way to work with
+Each module is a logical collection of (hopefully related) services with their assembly instructions. E.g. a standard
+`bootique-jetty` module integrates Jetty server into your application, `bootique-jdbc` provides a way to work with
 relational databases, and so on. Bootique team maintains a constantly growing list of such modules. Your own code will
 also be organized as modules.
 
-At its core a module is simply a bunch of Java classes and resources. What makes it a module is a precense of one
+At its core, a module is simply a bunch of Java classes and resources. What makes it a module is a presence of a
 special class implementing `BQModule`. This class is an "assembly descriptor" for the objects in the library. It
 contains information used by the DI environment to create and configure them. Here is a simple module class (we'll
 explain `configure(Binder)` method a bit later):
@@ -62,18 +60,51 @@ explain `configure(Binder)` method a bit later):
 ----
 include::../../../../test/java/io/bootique/docs/programming/modules/MyModule.java[tags=MyModule]
 ----
-By convention all classes beloning to a given module are packaged in a dedicated ".jar" file, though nothing would
-prevent you to keep more than one module in a single .jar.
+
+NOTE: By convention, all classes belonging to a module are packaged in its own `.jar` file, though nothing prevents
+you from keeping multiple modules in a single `.jar`, or spreading the module code across multiple jars. Other than
+autoloading descriptors explained below, there are no special packaging requirements for modules. When they are combined
+in runtime, it is all a single classpath.
 
 NOTE: Java Platform Module System (JPMS) is logically close to Bootique modules, and we would love to fully align the
-two. Unfortunately it is our experience that forcing the users to adhere to JPMS everywhere would result in lots of
+two. Unfortunately, it is our experience that forcing the users to adhere to JPMS everywhere would result in lots of
 limitations and invariable productivity loss, so we are intentionally ignoring possible JPMS synergies.
 
-[#services]
-=== Services
+[#modules_loading]
+==== Modules (Auto) Loading
 
-As mentioned above, DI manages a subset of application objects that we informally call "services". Here is a rough list
-of DI functionality around services:
+By default, for a module to be included in `BQRuntime` it has to be explicitly mentioned when starting a Bootique app
+(`Bootique.app(args).module(MyModule.class)`), and this is highly impractical in real apps. So most often than not
+the alternative autoloading mechanism is used. To enable autoloading, call `Bootique.autoLoadModules()` as a part of
+the startup sequence. Also, each module needs an extra descriptor file called `io.bootique.BQModule` to be eligible for
+autoloading. The file should be located on classpath under `META-INF/services` and should contain a line with the
+fully-qualified name of the Module Java class. E.g.:
+[source,text]
+----
+com.foo.MyModule
+----
+
+If you have more than one Bootique module in a given Java project, you should put the names of all modules in this file,
+one name per line.
+
+NOTE: All standard Bootique modules are auto-loadable.
+
+==== Modules Metadata
+
+`BQModule` has a method called `crate()` that you can optionally implement to expose module metadata to Bootique:
+[source,java,indent=0]
+----
+include::../../../../test/java/io/bootique/docs/programming//modules/MyModuleWithCrate.java[tags=MyModuleWithCrate]
+----
+The returned "crate" can contain information about module configuration structure, its deprecation status, etc.
+While you can write modules without explicit "crates", providing a "crate" with as much information about the module
+as possible, would help Bootique to help your users (and your future self) to understand what the module does, and how
+to use it.
+
+=== Dependency Injection
+
+As mentioned above, DI manages a subset of application objects that you'd write that we informally call "services".
+Here is a rough list of DI functionality around services:
 
 * It provides a powerful mechanism to assemble service instances, with injection of dependencies, applying external
 configuration, using custom factories
@@ -86,7 +117,7 @@ NOTE: It is up to you as a programmer to decide which objects are services and w
 traits of services: (1) are singletons; (2) known to the rest of the application via their "contract" interfaces; (3)
 require complex configuration and assembly; (4) expensive to create.
 
-=== Injection and Bindings
+==== Bindings
 
 Services can annotate their fields and/or constructors with `@Inject` to indicate which internal variables they want
 to be injected by the DI container. Do demonstrate this we will show a couple of implementations of a simple "hello"
@@ -150,63 +181,11 @@ the "Hello" service. The return type (`Hello`) is used as the binding key. And w
 in use anywhere, injection in fact also happens here - all method arguments ("nameService" in this case) are injected
 by the DI environment.
 
-=== Advanced Injection
-
 ==== Injection in Collections
 TODO
 
 ==== Injection and Generics
 TODO
-
-[#providers_and_authloading]
-=== Module Providers and Auto-Loading
-
-For a module to be included in `BQRuntime`, it has be explicitly mentioned when starting a Bootique app
-(`Bootique.app(args).module(MyModule.class)`). Though this is highly impractical in real apps, and most often than not
-the alternative auto-loading mechanism is used. To enable auto-loading, call `Bootique.autoLoadModules()` as a part of
-the startup sequence. Also modules themselves need to be created in a certain way to be eligible for auto-loading:
-
-1. There must be a special per-module class that implements `io.bootique.BQModuleProvider`:
-
-[source,java,indent=0]
-----
-include::../../../../test/java/io/bootique/docs/programming/modules/MyModuleProvider.java[tags=MyModuleProvider]
-----
-
-In fact, you don't need a separate class. The module itself can implement this interface (see a discussion of
-<<basemodule,BaseModule superclass>>).
-
-2. create a file `META-INF/services/io.bootique.BQModuleProvider` with the only line being the name of your
-provider implementor. E.g.:
-
-[source,text]
-----
-com.foo.MyModuleProvider
-----
-
-NOTE: All standard Bootique modules are auto-loadable.
-
-`BQModuleProvider` has other methods that you can optionally implement that provide Bootique with extra metatada and
-other module information. Inspect the interface to see what they are.
-
-[#basemodule]
-=== BaseModule
-
-Both module and provider classes can be combined in one to reduce the boilerplate code. To do that you simply subclass
-your module from `BaseModule`:
-
-[source,java,indent=0]
-----
-include::../../../../test/java/io/bootique/docs/programming/modules/MyOtherModule.java[tag=MyOtherModule]
-----
-
-For auto-loading you'd put it in `META-INF/services/io.bootique.BQModuleProvider`:
-[source,text]
-----
-com.foo.MyOtherModule
-----
-Inheriting from `BaseModule` provides other advantages that we'll discuss in the "Configuration" section and is a
-recommended approach to writing modules since Bootique 2.0.
 
 === Configuration and Configurable Factories
 
@@ -219,7 +198,7 @@ Finally, config values may be further overridden via Java properties and/or envi
 
 ==== Configuration via YAML Files
 
-Format of configuration file can be either JSON or YAML. For simplicity we'll focus on YAML format, but the two are interchangeable.
+Format of configuration file can be either JSON or YAML. For simplicity, we'll focus on YAML format, but the two are interchangeable.
 Here is an example config file:
 
 [source,yaml]
