@@ -514,7 +514,7 @@ If all your code is packaged in auto-loadable modules (which is always a good id
 `io.bootique.Bootique` class itself declares a `main()` method and can be used as an app launcher.
 This creates some interesting possibilities.
 E.g. you can create Java projects that have no code of their own and are simply collections of modules declared as compile dependencies.
-More details on packaging are given in the "Runnable Jar" chapter.
+More details on packaging are given in the "Assembly and Deployment" chapter.
 
 === Commands
 
