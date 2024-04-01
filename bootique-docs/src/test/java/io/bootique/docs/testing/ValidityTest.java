@@ -1,6 +1,6 @@
 package io.bootique.docs.testing;
 
-import io.bootique.junit5.BQModuleProviderChecker;
+import io.bootique.junit5.BQModuleTester;
 import org.junit.jupiter.api.Test;
 
 public class ValidityTest {
@@ -8,7 +8,9 @@ public class ValidityTest {
     // tag::Testing[]
     @Test
     public void autoLoadable() {
-        BQModuleProviderChecker.testAutoLoadable(MyModuleProvider.class);
+        BQModuleTester.of(MyModule.class)
+                .testAutoLoadable()
+                .testConfig();
     }
     // end::Testing[]
 }
