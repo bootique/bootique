@@ -19,10 +19,6 @@
 
 === Bootique and Testing
 
-NOTE: Bootique provides integration for both JUnit 4 and JUnit 5. Both can even be combined in the same project via
-JUnit 5 https://junit.org/junit5/docs/current/user-guide/#migrating-from-junit4-running["vintage engine"]. This chapter
-will focus on JUnit 5 instructions. For JUnit 4 docs, please check documentation for Bootique 1.x.
-
 Bootique is uniquely suitable to be used as a test framework. Within a single test it allows you to start and stop
 multiple in-process runtimes, each with а distinct set of modules and configurations. Bootique test facilities are
 controlled with a small number of annotations: `@BQTest`, `@BQTestTool` and `@BQApp`, that will be described below.
