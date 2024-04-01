@@ -197,7 +197,7 @@ include::../../../../test/java/io/bootique/docs/testing/CommandTest.java[tag=Tes
 ==== Testing Module Validity
 
 When you are writing your own modules, you may want to check that they are configured properly for autoloading
-(i.e. `META-INF/services/io.bootique.BQModuleProvider` is present in the expected place and contains the right provider.
+(i.e. `META-INF/services/io.bootique.BQModule` is present in the expected place and contains the right provider.
 There's a helper class to check for it:
 
 [source,java,indent=0]

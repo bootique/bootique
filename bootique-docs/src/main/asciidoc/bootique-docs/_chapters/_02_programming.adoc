@@ -496,7 +496,7 @@ A class containing the `&quot;main()&quot;` method is informally called "applica
 Bootique does not impose any additional requirements on this class. You decide what to put in it.
 It can be limited to just `&quot;main()&quot;`, or be a REST API endpoint, or something else entirely.
 
-Though the most common approach is to turn the application class into a Module. After all a Bootique app is a collection
+By convention, the application class implements `BQModule`. After all, a Bootique app is a collection
 of Modules, and the application class would represent that one main Module to rule them all:
 
 [source,java,indent=0]
@@ -505,7 +505,7 @@ include::../../../../test/java/io/bootique/docs/programming/application/Applicat
 ----
 
 <1> Explicitly adds `Application` to the list of runtime modules. Since the superclass of `Application` is `BaseModule`,
-you may put the application class in `META-INF/services/io.bootique.BQModuleProvider` to make it auto-loadable and
+you may put the application class in `META-INF/services/io.bootique.BQModule` to make it auto-loadable and
 remove this line.
 
 ==== Common Main Class
