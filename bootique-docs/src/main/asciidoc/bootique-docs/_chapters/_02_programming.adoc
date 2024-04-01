@@ -74,20 +74,21 @@ limitations and invariable productivity loss, so we are intentionally ignoring p
 ==== Modules (Auto) Loading
 
 By default, for a module to be included in `BQRuntime` it has to be explicitly mentioned when starting a Bootique app
-(`Bootique.app(args).module(MyModule.class)`), and this is highly impractical in real apps. So most often than not
-the alternative autoloading mechanism is used. To enable autoloading, call `Bootique.autoLoadModules()` as a part of
-the startup sequence. Also, each module needs an extra descriptor file called `io.bootique.BQModule` to be eligible for
-autoloading. The file should be located on classpath under `META-INF/services` and should contain a line with the
-fully-qualified name of the Module Java class. E.g.:
+(`Bootique.app(args).module(MyModule.class)`), though this is rather impractical in real apps. Most often than not
+you would rely on "autoloading" enabled via a call to `Bootique.autoLoadModules()` as a part of the startup
+sequence. Additionally, for a module to be autoloadable, it needs a file called `io.bootique.BQModule`. This file should
+be placed on classpath under `META-INF/services` and should contain a line with the fully-qualified name of the Module
+Java class. E.g.:
 [source,text]
 ----
 com.foo.MyModule
 ----
+If you have more than one module in a given project, you should put all the names in this file, one per line.
 
-If you have more than one Bootique module in a given Java project, you should put the names of all modules in this file,
-one name per line.
+The result of autoloading, is that you can manage inclusion/exclusion of modules purely via the build system instead of in
+the code.
 
-NOTE: All standard Bootique modules are auto-loadable.
+NOTE: all standard Bootique modules are autoloadable.
 
 ==== Modules Metadata
 
@@ -100,6 +101,10 @@ The returned "crate" can contain information about module configuration structur
 While you can write modules without explicit "crates", providing a "crate" with as much information about the module
 as possible, would help Bootique to help your users (and your future self) to understand what the module does, and how
 to use it.
+
+==== Deprecating Modules
+
+TODO
 
 === Dependency Injection
 
