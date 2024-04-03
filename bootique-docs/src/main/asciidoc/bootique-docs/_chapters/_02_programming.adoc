@@ -674,13 +674,13 @@ Bootique merges configuration associated with options from left to right, overri
 
 ==== Loggers in the Code
 
-Standard Bootique modules use http://www.slf4j.org/[SLF4J] internally, as it is the most convenient least common denominator framework,
+Standard Bootique modules use https://www.slf4j.org/[SLF4J] internally, as it is the most convenient least common denominator framework,
 and can be easily bridged to other logging implementations. Your apps or modules are not required to use SLF4J, though if they do,
 it will likely reduce the amount of bridging needed to route all logs to a single destination.
 
 ==== Configurable Logging with Logback
 
-For better control over logging a standard module called `bootique-logback` is available, that integrates http://logback.qos.ch/[Logback framework] in the app. It seamlessly bridges SLF4J (so you keep using SLF4J in the code), and allows to configure logging via YAML config file, including appenders (file, console, etc.) and per class/package log levels. Just like any other module, `bootique-logback` can be enabled by simply adding it to the pom.xml dependencies, assuming `autoLoadModules()` is in effect:
+For better control over logging a standard module called `bootique-logback` is available, that integrates https://logback.qos.ch/[Logback framework] in the app. It seamlessly bridges SLF4J (so you keep using SLF4J in the code), and allows to configure logging via YAML config file, including appenders (file, console, etc.) and per class/package log levels. Just like any other module, `bootique-logback` can be enabled by simply adding it to the pom.xml dependencies, assuming `autoLoadModules()` is in effect:
 
 .Maven
 [%collapsible%open]
@@ -705,7 +705,7 @@ For better control over logging a standard module called `bootique-logback` is a
 ----
 ====
 
-See `bootique-logback` module http://bootique.io/docs/{bootique_doc_version}/bootique-logback-docs/[documentation] for further details.
+See `bootique-logback` module https://bootique.io/docs/{bootique_doc_version}/bootique-logback-docs/[documentation] for further details.
 
 ==== BootLogger
 
