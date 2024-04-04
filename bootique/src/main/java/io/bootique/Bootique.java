@@ -322,11 +322,19 @@ public class Bootique {
 
         // report error
         if (!o.isSuccess()) {
-            if (o.getMessage() != null) {
-                logger.stderr(String.format("Error running command '%s': %s", getArgsAsString(), o.getMessage()), o.getException());
+
+            StringBuilder message = new StringBuilder();
+            if (args != null && args.length > 0) {
+                message.append("Error running command '").append(getArgsAsString()).append("'");
             } else {
-                logger.stderr(String.format("Error running command '%s'", getArgsAsString()), o.getException());
+                message.append("Error running default command");
             }
+
+            if (o.getMessage() != null) {
+                message.append(": ").append(o.getMessage());
+            }
+
+            logger.stderr(message.toString(), o.getException());
         }
 
         return o;
