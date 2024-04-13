@@ -50,59 +50,79 @@ What objects exist in the runtime and how they are initialized is determined by 
 and loaded, so next let's discuss what modules are.
 
 === Modules
+A module is a class that implements `BQModule`. Modules serve as "blueprints" for Bootique to create application objects
+via a combination of Bootique "bindings" API and _dependency injection_ (DI).
 
-In a Bootique app, most of your code (as well as framework code) is organized into "modules". Modules are regular
-`.jar` files with some Java classes and resources logically related to each other in some way. Some examples from
-Bootique are `bootique-jetty` that integrates Jetty server into your application, `bootique-jdbc` that allows to work
-with relational databases, and so on.
+NOTE: Colloquially, the term "modules" is also applied to `.jar` files that contain those classes together with a
+bunch of "regular" classes. So we will use the word interchangeably to refer to either a specific java class implementing
+`BQModule` or the whole `.jar` that contains such a class.
 
-What makes a `.jar` file a module is the presence of a special class implementing `BQModule`. This class provides a
-"recipe" to Bootique on how to create objects ("services") from the classes present in the `.jar`. Creation of services
-is assisted by the dependency injection (DI) mechanism of Bootique (discussed later), and all the services declared in a
-given module in turn become available to be injected into other services.
+Here are two examples of the Bootique standard modules:
 
-The foundation of `BQRuntime` is _dependency injection_ (DI)
-that glues things together.
+* `bootique-jetty` that integrates Jetty server into your application
+* `bootique-jdbc` that allows to work with relational databases, and so on.
 
-NOTE: If you are familiar with other DI implementations, you will find a lot of similarities. Namely, standard
-annotations from `javax.inject` package. But there are also quite a few differences.
-
-An example of a simple module is shown below.
-We'll explain the `configure(..)` method later.
+It is helpful for you to think of your own code as being "organized into modules" as well. An example of a simple
+custom module is shown below with an example of an object binding API that will be discussed later:
 
 [source,java,indent=0]
 ----
 include::../../../../test/java/io/bootique/docs/programming/modules/MyModule.java[tags=MyModule]
 ----
 
-NOTE: By convention, all classes belonging to a module are packaged in a separate `.jar` file, though nothing prevents
-you from keeping multiple modules in a single `.jar`, or spreading the module code across multiple jars. Other than
-autoloading descriptors explained below, there are no special packaging requirements for modules. When they are combined
-in runtime, it is all a single classpath.
+NOTE: By convention, all classes logically belonging to a module are packaged in a separate `.jar`, though nothing
+prevents you from keeping multiple BQModules in a single `.jar`, or spreading the module code across multiple jars.
+Other than autoloading descriptors explained below, there are no special packaging requirements for modules. When they
+are combined in runtime, it is all a single classpath.
 
-NOTE: Java Platform Module System (JPMS) is logically close to Bootique modules, and we would love to fully align the
+NOTE: Java Platform Module System (JPMS) is conceptually close to Bootique modules, and we would love to fully align the
 two. Unfortunately, it is our experience that forcing the users to adhere to JPMS everywhere would result in lots of
 limitations and invariable productivity loss, so we are intentionally ignoring possible JPMS synergies.
 
 [#modules_loading]
 ==== Modules (Auto) Loading
 
-By default, for a module to be included in `BQRuntime` it has to be explicitly mentioned when starting a Bootique app
-(`Bootique.app(args).module(MyModule.class)`), though this is rather impractical in real apps. Most often than not
-you would rely on "autoloading" enabled via a call to `Bootique.autoLoadModules()` as a part of the startup
-sequence. Additionally, for a module to be autoloadable, it needs a file called `io.bootique.BQModule`. This file should
-be placed on classpath under `META-INF/services` and should contain a line with the fully-qualified name of the Module
-Java class. E.g.:
+When a Bootique app is started, it loads object definitions from all modules it is aware of. Those can come from two
+places:
+
+* Modules explicitly added to Bootique: `Bootique.app(args).module(MyModule.class)`
+* "Auto-loadable" modules
+
+The first category is self-explanatory and allows to manually specify which modules should be in the app:
+
+[source,java,indent=0]
+----
+include::../../../../test/java/io/bootique/docs/programming/Modules.java[tags=explicitModules]
+----
+
+<1> Adding a module by `BQModule` type
+<2> Adding a module as a lambda
+
+The second category is modules that will be discovered automatically by looking for
+`META-INF/services/io.bootique.BQModule` files on the classpath, and getting the names of modules from those files:
+
+[source,java,indent=0]
+----
+include::../../../../test/java/io/bootique/docs/programming/Modules.java[tags=autoLoadableModules]
+----
+
+<1> Module auto-loading needs to be turned on explicitly
+<2> Auto-loading can be combined with explicit modules
+
+In this example, instead of adding `JettyModule` explicitly, we turned on auto-loading allowing Bootique to locate and
+load this standard module (assuming it was added to the application as a dependency). When writing your own auto-loadable
+modules, you would add a line to `META-INF/services/io.bootique.BQModule`, containing the fully-qualified name of the
+BQModule Java class. E.g.:
+
 [source,text]
 ----
 com.foo.MyModule
 ----
-If you have more than one module in a given project, you should put all the names in this file, one per line.
 
-The result of autoloading, is that you can manage inclusion/exclusion of modules purely via the build system instead of in
-the code.
-
-NOTE: all standard Bootique modules are autoloadable.
+If you have more than one module in a given project, you should put all the names in this file, one per line. The result
+of autoloading, is that you can manage inclusion/exclusion of modules purely via the build system instead of in
+the code. Auto-loading is the recommended mechanism for assembling your app in almost all cases. All the standard
+Bootique modules are autoloadable.
 
 ==== Modules Metadata
 
