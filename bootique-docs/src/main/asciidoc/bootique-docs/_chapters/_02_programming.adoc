@@ -154,11 +154,10 @@ provider methods, and with the assistance of the dependency injection (DI) mecha
 
 ==== Dependency Injection
 
-Let's start with how you can leverage DI when creating your objects.
-
-Services can annotate their fields and/or constructors with `@Inject` to indicate which internal variables they want
-to be injected by the DI container. To demonstrate this we will show a couple of implementations of a simple "hello"
-service that returns a greeting:
+Let's start with how you can leverage DI when creating your objects. Objects can annotate their fields and/or
+constructors with `@Inject` to indicate which internal variables they want
+to be provided ("injected") by the Bootique DI environment. To demonstrate this, we will show a couple of
+implementations of a simple "hello" service that returns a greeting:
 [source,java,indent=0]
 ----
 include::../../../../test/java/io/bootique/docs/programming/injection/Hello.java[tags=hello]
@@ -176,7 +175,7 @@ And here is a constructor flavor:
 include::../../../../test/java/io/bootique/docs/programming/injection/HelloService2.java[tags=constructorInjection]
 ----
 Both flavors are identical in terms of functionality. Constructor variety is more verbose, but arguably results in a
-cleaner API, as the object can be created if needed  without a DI environment.
+cleaner API, as the object can be created if needed without a DI environment.
 
 ==== Bindings
 
@@ -201,25 +200,26 @@ include::../../../../test/java/io/bootique/docs/programming/injection/HelloServi
 ----
 include::../../../../test/java/io/bootique/docs/programming/injection/HelloModule2.java[tags=binding]
 ----
-Provider class has the same rules for injection of its own dependencies as services (either annotated fields or annotated
-constructor).
-
-==== Provider Methods
-
-The benefit of the provider is that it can implement custom assembly logic, which is separate from
+Provider class has the same rules for injection of its own dependencies as regular objects (either annotated fields or
+annotated constructor). The benefit of the provider is that it can implement custom assembly logic, which is separate from
 the service itself. It also allows the service it creates to be completely free from injection annotations. Still
 creating a provider class may be an overkill, and there is a simpler way to define small bits of assembly code -
-"provider methods" that are declared right in the module class:
+"provider methods" discussed next.
+
+==== Provider Module Methods
+
+Any method of a module class annotated with `@Provides` is treated as an object declaration. E.g.:
+
 [source,java,indent=0]
 ----
 include::../../../../test/java/io/bootique/docs/programming/injection/HelloModule3.java[tags=binding]
 ----
 <1> Provider method that does both assembly and binding of the Hello service.
-<2> "configure" method can be empty, as the service was already bound via `provideHello`. Of course, it can also contain
+<2> `configure(..)` method can be empty, as the service was already bound via `provideHello`. Of course, it can also contain
 bindings for unrelated services.
 
-A few notes on the `provideHello` method. What makes it a provider is the `@Provides` annotation. Its access modifier
-is irrelevant (can be "public", "protected", etc.). As mentioned above, this method does both assembly and binding of
+What makes `provideHello` method a "provider" is the `@Provides` annotation. The access modifier
+is irrelevant (can be "public", "protected", etc.). The method does both assembly and binding of
 the "Hello" service. The return type (`Hello`) is used as the binding key. And while there is no `@Inject` annotation
 in use anywhere, injection in fact also happens here - all method arguments ("nameService" in this case) are injected
 by the DI environment.
