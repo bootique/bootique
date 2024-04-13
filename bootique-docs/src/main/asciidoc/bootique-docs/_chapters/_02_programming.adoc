@@ -30,16 +30,17 @@ include::../../../../test/java/io/bootique/docs/programming/Application.java[tag
 <4> Executes the runtime `run()` method. The outcome depends on what options were passed to the app on the command line
 <5> Exits the app passing the exit code to the OS
 
-Actually, there is a shorter version of `main(..)` that combines creation and execution in a single call to `exec()`:
+Actually, there is a shorter version of `main(..)` that's what you'd normally do in a real app that combines creation
+and execution in a single call to `exec()`:
 [source,java,indent=0]
 ----
 include::../../../../test/java/io/bootique/docs/programming/Application1.java[tag=Application]
 ----
-That's what you'd normally do in a real app, but let's explore the `BQRuntime` object. It represents the entry
-point of the application, holding all objects (aka "services") that were created by the `Bootique` builder. For all
-intents and purposes, `BQRuntime` _is_ the "application". Here is how you can peek inside the runtime to access
-its objects (here we are retrieving a `Cli` object that is defined in Bootique and describesb the command line arguments
-our app was started with) :
+But let's explore the `BQRuntime` object. It represents the entry point of the application, holding all objects
+(aka "services") that were created by the `Bootique` builder. For all
+intents and purposes, `BQRuntime` _is_ the "application". You can peek inside the runtime to access its objects. E.g.,
+here we are retrieving a `Cli` instance that is defined in Bootique and describes the command line arguments
+our app was started with:
 
 [source,java,indent=0]
 ----
@@ -124,6 +125,11 @@ of autoloading, is that you can manage inclusion/exclusion of modules purely via
 the code. Auto-loading is the recommended mechanism for assembling your app in almost all cases. All the standard
 Bootique modules are autoloadable.
 
+If all your code is packaged in auto-loadable modules, you may not even need a custom main class.
+`io.bootique.Bootique` class itself declares a `main()` method and can be used as an app launcher.
+This creates some interesting possibilities. E.g. you can create Java projects that have no code of their own and are
+simply collections of modules declared as compile dependencies.
+
 ==== Modules Metadata
 
 `BQModule` has a method called `crate()` that you can optionally implement to expose module metadata to Bootique:
@@ -140,26 +146,18 @@ to use it.
 
 TODO
 
-=== Dependency Injection
+=== Defining Application Objects
 
-As mentioned above, DI manages a subset of application objects that you'd write that we informally call "services".
-Here is a rough list of DI functionality around services:
+As mentioned above, modules are object assembly blueprints. When implementing a module, you write Java code that
+defines how your objects should be created and initialized when the app is started. This is done via bindings and
+provider methods, and with the assistance of the dependency injection (DI) mechanism built into Bootique.
 
-* It provides a powerful mechanism to assemble service instances, with injection of dependencies, applying external
-configuration, using custom factories
-* It makes each constructed service available to be injected in other objects that depend on it
-* It enables "programming to interfaces" paradigm, decoupling dependencies from specific implementations
-* It manages each service scope (most often - singleton) and lifecycle (a shutdown callback can be executed if needed)
-* It infers the startup order to satisfy service interdependencies
+==== Dependency Injection
 
-NOTE: It is up to you as a programmer to decide which objects are services and which are just regular objects. Common
-traits of services: (1) are singletons; (2) known to the rest of the application via their "contract" interfaces; (3)
-require complex configuration and assembly; (4) expensive to create.
-
-==== Bindings
+Let's start with how you can leverage DI when creating your objects.
 
 Services can annotate their fields and/or constructors with `@Inject` to indicate which internal variables they want
-to be injected by the DI container. Do demonstrate this we will show a couple of implementations of a simple "hello"
+to be injected by the DI container. To demonstrate this we will show a couple of implementations of a simple "hello"
 service that returns a greeting:
 [source,java,indent=0]
 ----
@@ -178,7 +176,11 @@ And here is a constructor flavor:
 include::../../../../test/java/io/bootique/docs/programming/injection/HelloService2.java[tags=constructorInjection]
 ----
 Both flavors are identical in terms of functionality. Constructor variety is more verbose, but arguably results in a
-cleaner API, as the object can be created if needed  without a DI environment. Regardless of which flavor was selected,
+cleaner API, as the object can be created if needed  without a DI environment.
+
+==== Bindings
+
+Regardless of which flavor was selected,
 the implementation needs to be _bound_ in the module class:
 [source,java,indent=0]
 ----
@@ -202,6 +204,8 @@ include::../../../../test/java/io/bootique/docs/programming/injection/HelloModul
 Provider class has the same rules for injection of its own dependencies as services (either annotated fields or annotated
 constructor).
 
+==== Provider Methods
+
 The benefit of the provider is that it can implement custom assembly logic, which is separate from
 the service itself. It also allows the service it creates to be completely free from injection annotations. Still
 creating a provider class may be an overkill, and there is a simpler way to define small bits of assembly code -
@@ -211,7 +215,7 @@ creating a provider class may be an overkill, and there is a simpler way to defi
 include::../../../../test/java/io/bootique/docs/programming/injection/HelloModule3.java[tags=binding]
 ----
 <1> Provider method that does both assembly and binding of the Hello service.
-<2> "configure" method can be empty, as the service was already bound via `provideHello`. Of course it can also contain
+<2> "configure" method can be empty, as the service was already bound via `provideHello`. Of course, it can also contain
 bindings for unrelated services.
 
 A few notes on the `provideHello` method. What makes it a provider is the `@Provides` annotation. Its access modifier
@@ -522,33 +526,6 @@ include::../../../../test/java/io/bootique/docs/programming/modules/using/MyModu
 Here we obtained an extender instance via a static method on BQCoreModule.
 Most standard modules define their own extenders accessible via `&quot;extend(Binder)&quot;`.
 This is a pattern you might want to follow in your own modules.
-
-[#applicationclass]
-=== Application Class
-
-A class containing the `&quot;main()&quot;` method is informally called "application".
-Bootique does not impose any additional requirements on this class. You decide what to put in it.
-It can be limited to just `&quot;main()&quot;`, or be a REST API endpoint, or something else entirely.
-
-By convention, the application class implements `BQModule`. After all, a Bootique app is a collection
-of Modules, and the application class would represent that one main Module to rule them all:
-
-[source,java,indent=0]
-----
-include::../../../../test/java/io/bootique/docs/programming/application/Application.java[tag=Application]
-----
-
-<1> Explicitly adds `Application` to the list of runtime modules. Since the superclass of `Application` is `BaseModule`,
-you may put the application class in `META-INF/services/io.bootique.BQModule` to make it auto-loadable and
-remove this line.
-
-==== Common Main Class
-
-If all your code is packaged in auto-loadable modules (which is always a good idea), you may not even need a custom main class.
-`io.bootique.Bootique` class itself declares a `main()` method and can be used as an app launcher.
-This creates some interesting possibilities.
-E.g. you can create Java projects that have no code of their own and are simply collections of modules declared as compile dependencies.
-More details on packaging are given in the "Assembly and Deployment" chapter.
 
 === Commands
 
