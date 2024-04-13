@@ -146,7 +146,7 @@ to use it.
 
 TODO
 
-=== Defining Application Objects
+=== Application Objects
 
 As mentioned above, modules are object assembly blueprints. When implementing a module, you write Java code that
 defines how your objects should be created and initialized when the app is started. This is done via bindings and
