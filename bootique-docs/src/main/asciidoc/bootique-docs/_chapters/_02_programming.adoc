@@ -510,10 +510,7 @@ disambiguate the array that we are referring to.
 
 ==== Contributing to Other Modules
 
-// need to use an attribute for link due to special chars not parsable by asciidoc
-:link-todi-with-underscores: https://bootique.io/docs/{bootique_doc_version}/bootique-di-docs/#_collections
-
-Bootique DI supports {link-todi-with-underscores}[Collection bindings],
+Bootique DI supports Collection bindings,
 intended to _contribute_ objects defined in a downstream module to collections/maps used by services in upstream modules.
 Bootique hides DI API complexities, usually providing "extenders" in each module. E.g. the following code adds
 `MyCommand` the app set of commands:
