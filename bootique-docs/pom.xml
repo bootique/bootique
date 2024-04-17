@@ -91,6 +91,11 @@
                 <version>${asciidoctor.maven.plugin.version}</version>
                 <dependencies>
                     <dependency>
+                        <groupId>org.asciidoctor</groupId>
+                        <artifactId>asciidoctorj</artifactId>
+                        <version>${asciidoctorj.version}</version>
+                    </dependency>
+                    <dependency>
                         <groupId>io.bootique.tools</groupId>
                         <artifactId>hugo-asciidoctorj-extension</artifactId>
                         <version>${hugo.asciidoctorj.extension.version}</version>
