@@ -15,7 +15,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-:bq-header: bootique-docs/_chapters/header.html
+:hugo-header: bootique-docs/_chapters/header.html
 
 include::bootique-docs/_chapters/_01_overview.adoc[]
 include::bootique-docs/_chapters/_02_programming.adoc[]

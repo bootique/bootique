@@ -31,12 +31,11 @@
     <packaging>jar</packaging>
 
     <properties>
-        <asciidoctorj.version>2.1.0</asciidoctorj.version>
-        <asciidoctor.maven.plugin.version>2.0.0-RC.1</asciidoctor.maven.plugin.version>
-        <jruby.version>9.2.8.0</jruby.version>
+        <asciidoctorj.version>2.5.12</asciidoctorj.version>
+        <asciidoctor.maven.plugin.version>2.2.6</asciidoctor.maven.plugin.version>
+        <hugo.asciidoctorj.extension.version>1.0-M3</hugo.asciidoctorj.extension.version>
         <bootique.version>${project.version}</bootique.version>
         <bootique.parent.version>0.14</bootique.parent.version>
-        <bootique.asciidoc.extension.version>2.0.M1</bootique.asciidoc.extension.version>
     </properties>
 
     <pluginRepositories>
@@ -67,20 +66,14 @@
                 <version>${asciidoctor.maven.plugin.version}</version>
                 <dependencies>
                     <dependency>
-                        <groupId>org.jruby</groupId>
-                        <artifactId>jruby-complete</artifactId>
-                        <version>${jruby.version}</version>
-                    </dependency>
-                    <dependency>
                         <groupId>org.asciidoctor</groupId>
                         <artifactId>asciidoctorj</artifactId>
                         <version>${asciidoctorj.version}</version>
                     </dependency>
-                    <!-- Using Cayenne asciidoc extension to inject custom headers -->
                     <dependency>
-                        <groupId>io.bootique.docs</groupId>
-                        <artifactId>bootique-asciidoc-internal</artifactId>
-                        <version>${bootique.asciidoc.extension.version}</version>
+                        <groupId>io.bootique.tools</groupId>
+                        <artifactId>hugo-asciidoctorj-extension</artifactId>
+                        <version>${hugo.asciidoctorj.extension.version}</version>
                     </dependency>
                 </dependencies>
 
@@ -102,7 +95,7 @@
                             <!-- this will inject header with "front-matter" markup -->
                             <extensions>
                                 <extension>
-                                    <className>io.bootique.docs.asciidoc.BootiquePostprocessor</className>
+                                    <className>io.bootique.tools.asciidoctorj.HugoExtension</className>
                                 </extension>
                             </extensions>
                             <attributes>
