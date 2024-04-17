@@ -1,3 +1,7 @@
+## 3.0-M4
+
+* #352 Docs: switch to hugo-asciidoctorj-extension
+
 ## 3.0-M3
 
 * #334 Explicit support for module deprecation
