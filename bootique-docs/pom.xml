@@ -33,7 +33,7 @@
     <properties>
         <asciidoctorj.version>2.5.12</asciidoctorj.version>
         <asciidoctor.maven.plugin.version>2.2.6</asciidoctor.maven.plugin.version>
-        <hugo.asciidoctorj.extension.version>1.0-M2</hugo.asciidoctorj.extension.version>
+        <hugo.asciidoctorj.extension.version>1.0-M3</hugo.asciidoctorj.extension.version>
         <bootique.version>${project.version}</bootique.version>
     </properties>
 
