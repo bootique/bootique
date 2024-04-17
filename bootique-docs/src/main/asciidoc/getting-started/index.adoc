@@ -15,7 +15,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-:bq-header: getting-started/_chapters/header.html
+:hugo-header: getting-started/_chapters/header.html
 
 include::getting-started/_chapters/_01_hello_world.adoc[]
 include::getting-started/_chapters/_02_configuration.adoc[]
