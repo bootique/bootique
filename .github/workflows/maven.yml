@@ -20,6 +20,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: ${{ matrix.java }}
+          distribution: 'temurin'
 
       - name: Retrieve mvn repo cache...
         uses: actions/cache@v4
@@ -49,6 +50,7 @@ jobs:
         if: contains(env.POM_VERSION, '-SNAPSHOT')
         with:
           java-version: 11
+          distribution: 'temurin'
 
       - name: Retrieve mvn repo cache...
         uses: actions/cache@v4
