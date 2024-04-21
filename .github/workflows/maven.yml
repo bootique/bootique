@@ -21,13 +21,7 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
           distribution: 'temurin'
-
-      - name: Retrieve mvn repo cache...
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-build-v1
-          restore-keys: ${{ runner.os }}-maven
+          cache: 'maven'
 
       - name: Build and test...
         run: mvn clean verify
@@ -51,15 +45,7 @@ jobs:
         with:
           java-version: 11
           distribution: 'temurin'
-
-      - name: Retrieve mvn repo cache...
-        uses: actions/cache@v4
-        # skip this for the release versions
-        if: contains(env.POM_VERSION, '-SNAPSHOT')
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-build-v1
-          restore-keys: ${{ runner.os }}-maven
+          cache: 'maven'
 
       - name: Deploy...
         run: mvn clean source:jar-no-fork javadoc:jar deploy -DskipTests --settings .github/workflows/maven_settings.xml
