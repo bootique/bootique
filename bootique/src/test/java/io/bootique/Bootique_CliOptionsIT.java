@@ -327,6 +327,38 @@ public class Bootique_CliOptionsIT {
         assertEquals("val", cli.optionString("o"));
     }
 
+    @Test
+    public void commandRequiredValue() {
+        BQRuntime runtime = appManager.runtime(Bootique.app("-B", "bVal")
+                .module(b -> BQCoreModule.extend(b)
+                        .addCommand(CommandBWithRequiredValue.class)
+                ));
+        Cli cli = runtime.getInstance(Cli.class);
+        assertEquals("commandRequiredValue", cli.commandName());
+        assertEquals("bVal", cli.optionString("B"));
+    }
+
+    @Test
+    public void commandDefaultValue() {
+        BQRuntime runtime = appManager.runtime(Bootique.app("-A")
+                .module(b -> BQCoreModule.extend(b)
+                        .addCommand(CommandAWithDefaultValue.class)
+                ));
+        Cli cli = runtime.getInstance(Cli.class);
+        assertEquals("commandDefaultValue", cli.commandName());
+        assertEquals("commandVal", cli.optionString("A"));
+    }
+
+    @Test void missingCommandDefaultValue() {
+        BQRuntime runtime = appManager.runtime(Bootique.app()
+                .module(b -> BQCoreModule.extend(b)
+                        .addCommand(CommandAWithDefaultValue.class)
+                ));
+        Cli cli = runtime.getInstance(Cli.class);
+        assertNotEquals("command", cli.commandName());
+        assertNull(cli.optionString("option"));
+    }
+
     private void assertCollectionsEquals(Collection<String> result, String... expected) {
         assertArrayEquals(expected, result.toArray());
     }
@@ -437,6 +469,36 @@ public class Bootique_CliOptionsIT {
         public CommandWithDefaultOptionValue() {
             super(CommandMetadata.builder("cmd")
                     .addOption(OptionMetadata.builder("option").valueOptionalWithDefault("val").build()).build());
+        }
+
+        @Override
+        public CommandOutcome run(Cli cli) {
+            return CommandOutcome.succeeded();
+        }
+    }
+
+    static final class CommandAWithDefaultValue extends CommandWithMetadata {
+        public CommandAWithDefaultValue() {
+            super(CommandMetadata.builder("commandDefaultValue")
+                    .valueOptionalWithDefault("commandVal")
+                    .shortName('A')
+                    .build()
+            );
+        }
+
+        @Override
+        public CommandOutcome run(Cli cli) {
+            return CommandOutcome.succeeded();
+        }
+    }
+
+    static final class CommandBWithRequiredValue extends CommandWithMetadata {
+        public CommandBWithRequiredValue() {
+            super(CommandMetadata.builder("commandRequiredValue")
+                    .valueRequired("commandVal")
+                    .shortName('B')
+                    .build()
+            );
         }
 
         @Override
