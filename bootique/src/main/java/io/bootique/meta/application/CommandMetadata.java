@@ -92,13 +92,16 @@ public class CommandMetadata implements MetadataNode {
 
         Consumer<OptionMetadata.Builder> optionMetadataConsumer = createOptionsConsumer(cardinality, valueName);
 
-        // TODO: cache the value?
-        // using getters instead of vars; some getters have logic
-        return OptionMetadata.builder(getName())
+        OptionMetadata.Builder optionBuilder = OptionMetadata.builder(getName())
                 .shortName(getShortName())
                 .description(getDescription())
-                .applyCardinality(optionMetadataConsumer)
-                .build();
+                .applyCardinality(optionMetadataConsumer);
+
+        if (defaultValue != null) {
+            optionBuilder.valueOptionalWithDefault(valueName, defaultValue);
+        }
+
+        return optionBuilder.build();
     }
 
     private static Consumer<OptionMetadata.Builder> createOptionsConsumer(OptionValueCardinality cardinality, String valueName) {
