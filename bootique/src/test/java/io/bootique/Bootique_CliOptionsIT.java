@@ -329,7 +329,7 @@ public class Bootique_CliOptionsIT {
 
     @Test
     public void commandRequiredValue() {
-        BQRuntime runtime = appManager.runtime(Bootique.app("-B", "bVal")
+        BQRuntime runtime = appManager.runtime(Bootique.app("-B=bVal")
                 .module(b -> BQCoreModule.extend(b)
                         .addCommand(CommandBWithRequiredValue.class)
                 ));
