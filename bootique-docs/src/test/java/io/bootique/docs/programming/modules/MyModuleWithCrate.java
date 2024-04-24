@@ -11,12 +11,16 @@ public class MyModuleWithCrate implements BQModule {
     public ModuleCrate crate() {
         return ModuleCrate.of(this)
                 .description("Module that does something useful")
+                .config("mymodulewithcrate", MyConfig.class)
                 .build();
     }
     // end::MyModuleWithCrate[]
 
     @Override
     public void configure(Binder binder) {
+    }
+
+    static class MyConfig {
     }
 }
 
