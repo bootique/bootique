@@ -23,7 +23,7 @@ import javax.inject.Inject;
 // tag::constructorInjection[]
 public class HelloService2 implements Hello {
 
-    private UserNameService nameService;
+    private final UserNameService nameService;
 
     @Inject
     public HelloService2(UserNameService nameService) {

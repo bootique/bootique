@@ -1,13 +1,12 @@
 package io.bootique.docs.programming;
 
 import io.bootique.BQModule;
-import io.bootique.BaseModule;
 import io.bootique.Bootique;
 import io.bootique.di.Binder;
 import io.bootique.docs.programming.modules.service.MyService;
 import io.bootique.docs.programming.modules.service.MyServiceImpl;
 
-public class Modules extends BaseModule {
+public class Modules {
 
 
     public void explicitModules() {

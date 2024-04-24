@@ -1,7 +1,7 @@
 package io.bootique.docs.programming.configuration.yaml;
 
 import io.bootique.BQCoreModule;
-import io.bootique.BaseModule;
+import io.bootique.BQModule;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.di.Binder;
 import io.bootique.di.Provides;
@@ -11,7 +11,7 @@ import io.bootique.meta.application.OptionMetadata;
 import javax.inject.Singleton;
 
 // tag::MyModuleConfig[]
-public class MyModule extends BaseModule {
+public class MyModule implements BQModule {
 
     @Singleton
     @Provides
@@ -19,7 +19,7 @@ public class MyModule extends BaseModule {
             ConfigurationFactory configFactory,
             SomeOtherService service) {
 
-        return config(MyFactory.class, configFactory).createMyService(service);
+        return configFactory.config(MyFactory.class, "my").createMyService(service);
     }
     // end::MyModuleConfig[]
 

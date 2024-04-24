@@ -18,7 +18,8 @@
  */
 package io.bootique.junit5;
 
-import io.bootique.BaseModule;
+import io.bootique.BQModule;
+import io.bootique.di.Binder;
 import io.bootique.di.Provides;
 import io.bootique.shutdown.ShutdownManager;
 import org.junit.jupiter.api.RepeatedTest;
@@ -44,7 +45,11 @@ public class BQTestFactory_PerMethod_LifecycleIT {
         tester.run();
     }
 
-    public static class ShutdownTrackerModule extends BaseModule {
+    public static class ShutdownTrackerModule implements BQModule {
+
+        @Override
+        public void configure(Binder binder) {
+        }
 
         @Provides
         @Singleton

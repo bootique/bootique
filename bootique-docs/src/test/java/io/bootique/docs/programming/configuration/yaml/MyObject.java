@@ -3,30 +3,37 @@ package io.bootique.docs.programming.configuration.yaml;
 
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
-import io.bootique.docs.programming.configuration.MyService;
 
-// tag::MyFactory[]
-@BQConfig
-public class MyFactory {
+import javax.inject.Inject;
+
+// tag::MyObject[]
+@BQConfig // <1>
+public class MyObject {
+
+    final SomeOtherService soService;
 
     private int intProperty;
     private String stringProperty;
 
-    @BQConfigProperty
+    @Inject
+    public MyObject(SomeOtherService soService) {  // <2>
+        this.soService = soService;
+    }
+
+    @BQConfigProperty // <3>
     public void setIntProperty(int i) {
         this.intProperty = i;
     }
 
-    @BQConfigProperty
+    @BQConfigProperty // <4>
     public void setStringProperty(String s) {
         this.stringProperty = s;
     }
 
-    // factory method
-    public MyService createMyService(SomeOtherService soService) {
-        return new MyServiceImpl(soService, intProperty, stringProperty);
+    public void doSomething() {
+        // ..
     }
 }
-// end::MyFactory[]
+// end::MyObject[]
 
 

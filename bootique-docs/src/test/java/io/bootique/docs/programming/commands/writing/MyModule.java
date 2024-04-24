@@ -1,11 +1,11 @@
 package io.bootique.docs.programming.commands.writing;
 
 import io.bootique.BQCoreModule;
-import io.bootique.BaseModule;
+import io.bootique.BQModule;
 import io.bootique.di.Binder;
 
 // tag::Commands[]
-public class MyModule extends BaseModule {
+public class MyModule implements BQModule {
 
     @Override
     public void configure(Binder binder) {

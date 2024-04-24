@@ -16,28 +16,35 @@
 // under the License.
 
 == Programming
-
-A "main" class in a Bootique application might look like this:
+The simplest "main" class in a Bootique application looks like this:
 
 [source,java,indent=0]
 ----
 include::../../../../test/java/io/bootique/docs/programming/Application.java[tag=Application]
 ----
 
-<1> `Bootique` class is the "builder" of our app that allows to configure it before startup
-<2> Enables <<modules_loading,module auto-loading>>
-<3> Creates a `BQRuntime` object
-<4> Executes the runtime `run()` method. The outcome depends on what options were passed to the app on the command line
-<5> Exits the app passing the exit code to the OS
-
-Actually, there is a shorter version of `main(..)` that's what you'd normally do in a real app that combines creation
-and execution in a single call to `exec()`:
+Alternatively, if you want to customize the application structure, you can use `Bootique` builder API. Most apps would
+need to specify at least the following:
 [source,java,indent=0]
 ----
 include::../../../../test/java/io/bootique/docs/programming/Application1.java[tag=Application]
 ----
-But let's explore the `BQRuntime` object. It represents the entry point of the application, holding all objects
-(aka "services") that were created by the `Bootique` builder. For all
+
+<1> Starts the builder and captures startup arguments (usually passed from the surrounding environment)
+<2> Enables <<modules_loading,module auto-loading>>
+<3> Creates Bootique runtime and executes it. The action executed depends on the startup arguments above
+<4> Exits the JVM passing the exit code to the OS
+
+Step 3 (the `exec(..)` method) is actually two steps combined in one for convenience. Let's expand it further to
+demonstrate the `BQRuntime` object, that is the entry point of the application:
+[source,java,indent=0]
+----
+include::../../../../test/java/io/bootique/docs/programming/Application2.java[tag=Application]
+----
+<1> Creates a `BQRuntime` object
+<2> Executes the runtime `run()` method
+
+`BQRuntime` holds all app objects (often called "services") created by Bootique. For all
 intents and purposes, `BQRuntime` _is_ the "application". You can peek inside the runtime to access its objects. E.g.,
 here we are retrieving a `Cli` instance that is defined in Bootique and describes the command line arguments
 our app was started with:
@@ -46,24 +53,22 @@ our app was started with:
 ----
 include::../../../../test/java/io/bootique/docs/programming/Runtime.java[tag=getInstance]
 ----
-
-What objects exist in the runtime and how they are initialized is determined by what "modules" `Bootique` discovered
-and loaded, so next let's discuss what modules are.
+What objects exist in the runtime and how they are initialized is determined by the "modules" discovered and loaded by
+`Bootique`, so next let's discuss what modules are.
 
 === Modules
 A module is a class that implements `BQModule`. Modules serve as "blueprints" for Bootique to create application objects
-via a combination of Bootique "bindings" API and _dependency injection_ (DI).
+via the "bindings" API and _dependency injection_ (DI).
 
 NOTE: Colloquially, the term "modules" is also applied to `.jar` files that contain those classes together with a
-bunch of "regular" classes. So we will use the word interchangeably to refer to either a specific java class implementing
-`BQModule` or the whole `.jar` that contains such a class.
+bunch of "regular" classes. So we will use the word interchangeably.
 
 Here are two examples of the Bootique standard modules:
 
 * `bootique-jetty` that integrates Jetty server into your application
-* `bootique-jdbc` that allows to work with relational databases, and so on.
+* `bootique-jdbc` that allows to work with relational databases
 
-It is helpful for you to think of your own code as being "organized into modules" as well. An example of a simple
+It is helpful for you to think of your own code as being "organized into modules" as well. A simple
 custom module is shown below with an example of an object binding API that will be discussed later:
 
 [source,java,indent=0]
@@ -71,10 +76,10 @@ custom module is shown below with an example of an object binding API that will 
 include::../../../../test/java/io/bootique/docs/programming/modules/MyModule.java[tags=MyModule]
 ----
 
-NOTE: By convention, all classes logically belonging to a module are packaged in a separate `.jar`, though nothing
-prevents you from keeping multiple BQModules in a single `.jar`, or spreading the module code across multiple jars.
-Other than autoloading descriptors explained below, there are no special packaging requirements for modules. When they
-are combined in runtime, it is all a single classpath.
+NOTE: By convention, all classes that logically belong to a module are packaged in a separate `.jar`. Though nothing
+prevents you from keeping multiple BQModules in a single `.jar`, or spreading your code across multiple jars.
+Other than autoloading descriptors explained below, there are no special packaging requirements for modules. They are
+all loaded into a single `BQRuntime`.
 
 NOTE: Java Platform Module System (JPMS) is conceptually close to Bootique modules, and we would love to fully align the
 two. Unfortunately, it is our experience that forcing the users to adhere to JPMS everywhere would result in lots of
@@ -125,11 +130,6 @@ of autoloading, is that you can manage inclusion/exclusion of modules purely via
 the code. Auto-loading is the recommended mechanism for assembling your app in almost all cases. All the standard
 Bootique modules are autoloadable.
 
-If all your code is packaged in auto-loadable modules, you may not even need a custom main class.
-`io.bootique.Bootique` class itself declares a `main()` method and can be used as an app launcher.
-This creates some interesting possibilities. E.g. you can create Java projects that have no code of their own and are
-simply collections of modules declared as compile dependencies.
-
 ==== Modules Metadata
 
 `BQModule` has a method called `crate()` that you can optionally implement to expose module metadata to Bootique:
@@ -146,11 +146,12 @@ to use it.
 
 TODO
 
-=== Application Objects
+=== Objects "Assembly"
 
-As mentioned above, modules are object assembly blueprints. When implementing a module, you write Java code that
-defines how your objects should be created and initialized when the app is started. This is done via bindings and
-provider methods, and with the assistance of the dependency injection (DI) mechanism built into Bootique.
+As mentioned above, `BQRuntime` is a holder of all application objects, and modules are blueprints to create those
+objects. You'd write your own module code to define how your objects should be created and initialized. This is done
+via bindings and "provider" methods, and with the assistance of the dependency injection (DI) mechanism built into
+Bootique.
 
 ==== Dependency Injection
 
@@ -189,34 +190,17 @@ This creates a permanent association between `Hello` interface and a specific im
 into other services. A single instance of `HelloService2` is created automatically by the DI container, with a real
 object transparently provided for the "nameService".
 
-If the service construction requires additional logic, instead of binding service implementation, you can create and
-bind a Java class that implements `Provider<Service>`. E.g.:
+==== Provider Methods in Modules
 
-[source,java,indent=0]
-----
-include::../../../../test/java/io/bootique/docs/programming/injection/HelloService3Provider.java[tags=provider]
-----
-[source,java,indent=0]
-----
-include::../../../../test/java/io/bootique/docs/programming/injection/HelloModule2.java[tags=binding]
-----
-Provider class has the same rules for injection of its own dependencies as regular objects (either annotated fields or
-annotated constructor). The benefit of the provider is that it can implement custom assembly logic, which is separate from
-the service itself. It also allows the service it creates to be completely free from injection annotations. Still
-creating a provider class may be an overkill, and there is a simpler way to define small bits of assembly code -
-"provider methods" discussed next.
-
-==== Provider Module Methods
-
-Any method of a module class annotated with `@Provides` is treated as an object declaration. E.g.:
+If the service construction requires additional assembly logic, you can create simple "provider" methods in the module
+class. Any method of a module class annotated with `@Provides` is treated a "provider" method. E.g.:
 
 [source,java,indent=0]
 ----
 include::../../../../test/java/io/bootique/docs/programming/injection/HelloModule3.java[tags=binding]
 ----
 <1> Provider method that does both assembly and binding of the Hello service.
-<2> `configure(..)` method can be empty, as the service was already bound via `provideHello`. Of course, it can also contain
-bindings for unrelated services.
+<2> `configure(..)` method may be empty, or contain other bindings
 
 What makes `provideHello` method a "provider" is the `@Provides` annotation. The access modifier
 is irrelevant (can be "public", "protected", etc.). The method does both assembly and binding of
@@ -224,26 +208,41 @@ the "Hello" service. The return type (`Hello`) is used as the binding key. And w
 in use anywhere, injection in fact also happens here - all method arguments ("nameService" in this case) are injected
 by the DI environment.
 
+==== Provider Objects
+
+If more complex logic or lots of dependencies are required, instead of a provider method, you can create a provider
+class that implements `Provider<MyService>`. E.g.:
+
+[source,java,indent=0]
+----
+include::../../../../test/java/io/bootique/docs/programming/injection/HelloService3Provider.java[tags=provider]
+----
+It needs to be bound to an object declaration via `toProvider(..)` method;
+[source,java,indent=0]
+----
+include::../../../../test/java/io/bootique/docs/programming/injection/HelloModule2.java[tags=binding]
+----
+Provider object has the same rules for injection of its own dependencies as regular objects, i.e. either via annotated
+fields or an annotated constructor.
+
 ==== Injection in Collections
 TODO
 
 ==== Injection and Generics
 TODO
 
-=== Configuration and Configurable Factories
+=== Configuration
 
-Bootique Modules obtain their configuration in a form of "factory objects". We'll show some examples shortly.
-For now let's focus on the big picture, namely the fact that Bootique app configuration is multi-layered and
-roughly follows the sequence of "code - config files (contributed) - config files (CLI) - overrides".
-"Code" is the default values that are provided in constructors of factory objects. Config files overlay those defaults with their own values.
-Config files can be either contributed in the code, or specified on the command line. Files is where the bulk of configuration usually stored.
-Finally, config values may be further overridden via Java properties and/or environment variables.
+Bootique app can accept external configuration in different forms, coming from different sources. Internally, all
+configuration sources are combined following the rules described below into a single JSON-like tree object, that is
+used to initialize properties of some application objects.
 
-==== Configuration via YAML Files
+Common configuration formats are JSON or YAML. For simplicity, we'll focus on YAML, but the two are interchangeable.
+Other sources are shell variables, Java properties and even cloud secrets managers. No matter which
+source (or combination of them) you use, all of them end up in a single tree object whose nodes match the structures
+of the application Java objects they will ultimately be converted to.
 
-Format of configuration file can be either JSON or YAML. For simplicity, we'll focus on YAML format, but the two are interchangeable.
-Here is an example config file:
-
+Here is an example YAML file:
 [source,yaml]
 ----
 log:
@@ -259,31 +258,15 @@ jetty:
     - port: 12009
 ----
 
-While not strictly required, as a rule the top-level keys in the file belong to configuration objects of individual modules.
-In the example above "log" subtree configures `bootique-logback` module, while "jetty" subtree configures `bootique-jetty`.
-For standard modules refer to module-specific documentation on the structure of the supported configuration
-(or run your app `-H` flag to print supported config to the console). Here we'll discuss how to build your own configuration-aware module.
+By convention, the top-level keys correspond to the names of modules that use a given configuration.
+In the example above, `log` subtree configures `bootique-logback` module, while `jetty` configures `bootique-jetty`.
 
-Bootique allows each Module to read its specific configuration subtree as an object of the type defined in the Module.
-Very often such an object is written as a factory that contains a bunch of setters for configuration properties,
-and a factory method to produce some "service" a Module is interested in. Here is an example factory:
+NOTE: For most standard modules, configuration formats are described in the module documentation. But each
+Bootique application contains a `-H` command that displays the full config structure for that
+app's collection of modules. The output of this command is always the most accurate reference.
 
-[source,java,indent=0]
-----
-include::../../../../test/java/io/bootique/docs/programming/configuration/yaml/MyFactory.java[tag=MyFactory]
-----
-
-The factory contains configuration property declarations, as well as public setters for these properties. (You may
-create getters as well. It is not required, but may be useful for unit tests, etc.). Now let's take a look at the
-Module class:
-
-[source,java,indent=0]
-----
-include::../../../../test/java/io/bootique/docs/programming/configuration/yaml/MyModule.java[tag=MyModuleConfig]
-----
-
-A sample configuration that will work with our module may look like this:
-
+==== Configuration Basics
+Consider the following YAML:
 [source,yaml]
 ----
 my:
@@ -291,64 +274,88 @@ my:
   stringProperty: 'Hello, world!'
 ----
 
-A few points to note here:
+and the following object with matching property names:
 
-* Subclassing from `BaseModule` provides a few utilities, such as a shorter "config" method and a default configuration
-key ("my" in this case. See the next bullet).
-* Calling our module "MyModule" and extending from `BaseModule` gives it access to the protected "configPrefix"
-property that is initialized to the value of "my" based on the module class name. The naming convention here is to use
-the Module simple class name without the "Module" suffix and converted to lowercase.
-* `@Provides` annotation is a Bootique DI way of marking a `BQModule` method as a "provider" for a certain type of injectable
-service. All its parameters are themselves injectable objects.
-* `ConfigurationFactory` is the class used to bind a subtree of the app YAML configuration to a given Java object
-(in our case - MyFactory). The structure of MyFactory is very simple here, but it can be as complex as needed,
+[source,java,indent=0]
+----
+include::../../../../test/java/io/bootique/docs/programming/configuration/yaml/MyObject.java[tag=MyObject]
+----
+<1> The optional `BQConfig` annotation helps to include this object in the output of the `-H` command
+<2> Objects created from configuration can also inject any dependencies just like other Bootique objects
+<3> A setter used to load `intProperty` into the object. The optional `BQConfigProperty` annotation ensures the property
+is included in the output of the `-H` command
+<4> A setter used to load `stringProperty` into the object. The optional `BQConfigProperty` annotation ensures the property
+is included in the output of the `-H` command
+
+To create `MyObject` and load configuration values into it, we can use the following API:
+
+[source,java,indent=0]
+----
+include::../../../../test/java/io/bootique/docs/programming/configuration/yaml/MyObjectModule.java[tag=MyObject]
+----
+In this example, `MyObject` obtains its properties separately from constructor injection and configuration. `ConfigurationFactory`
+is the object available in the core Bootique that holds the main config tree and serves as a factory for
+configuration-aware objects. The structure of `MyObject` is very simple, but it can be as complex as needed,
 containing nested objects, arrays, maps, etc. Internally Bootique uses
-https://github.com/FasterXML/jackson[Jackson framework] to bind YAML to a Java class, so all the features of Jackson
-can be used to craft configuration.
+Jackson framework to bind YAML/JSON to Java objects, so all the features of
+Jackson can be used to craft configuration.
 
-==== Configuration File Loading
+==== Object Factories
 
-A config file can be passed to a Bootique app via DI (those are usually coming from classpath) or on the command line:
+Very often configuration-aware objects are not retained by the app, but are created only to serve as _factories_
+of other objects, and then discarded. For instance, we can turn `MyObject` above into `MyFactory` that creates an object
+called `MyService`:
 
-* Contributing a config file via DI:
-+
+[source,java,indent=0]
+----
+include::../../../../test/java/io/bootique/docs/programming/configuration/yaml/MyFactory.java[tag=MyFactory]
+----
+
+[source,java,indent=0]
+----
+include::../../../../test/java/io/bootique/docs/programming/configuration/yaml/MyFactoryModule.java[tag=MyFactory]
+----
+Also, here instead of injecting `SomeOtherService` into the factory, we injected it in the provider method. This is just
+another flavor. This is not specific to factories of course.
+
+NOTE: All configuration-aware objects in Bootique standard modules are factories. We think this is the best pattern, and
+we recommend it to everyone, as it separates the actual application object from its configuration and factory code. This
+results in more "compact" and fully immutable objects. Though of course, the choice is ultimately left to the user.
+
+==== Configuration Loading
+
+Configuration is multi-layered and can come from different sources:
+
+* Config files (defined in the module code or passed on the command line)
+* Java properties
+* Environment variables
+* Cloud secrets managers
+* Custom configuration loaders
+
+The load sequence of the sources is roughly this: _(1) config files from modules
+-> (2) config files from command line -> (3) properties -> (4) env variables_. The sources with the higher load order
+override values from the sources with the lower order.
+
+==== Configuration Files from Modules
+
+One way to pass a config file to a Bootique app in the code.
 [source,java,indent=0]
 ----
 include::../../../../test/java/io/bootique/docs/programming/configuration/fileLoading/MyModule.java[tag=MyModuleExtendBinder]
 ----
-+
-A primary motivation for this style is to provide application default configuration, with YAML files often embedded in
-the app and read from the classpath (as suggested by the "classpath:.." URL in the example). More than one configuration
-can be contributed. E.g. individual modules might load their own defaults. Multiple configs are combined in a single
-config tree by the runtime. The order in which this combination happens is undefined, so make sure there are no conflicts
-between them. If there are, consider replacing multiple conflicting configs with a single config.
+Such configuration should be known at compile time and is usually embedded in the app, and referenced via the special
+`classpath:...` URL. A primary motivation for this style is to provide application default configuration. More than
+one configuration can be contributed. Individual modules might load their own defaults independently of each other.
+The order of multiple configs loaded via this mechanism is undefined and should not be relied upon.
 
-* Conditionally contributing a config file via DI. It is possible to make DI configuration inclusion conditional on the
-presence of a certain command line option:
-+
-[source,java,indent=0]
-----
-include::../../../../test/java/io/bootique/docs/programming/configuration/fileLoading/MyModule.java[tag=MyModuleQAOption]
-----
+==== Configuration Files from CLI
 
-* Specifying a config file on the command line. Each Bootique app supports `--config` option that takes a configuration
-file as parameter. To specify more than one file, use `--config` option multiple times. Configurations will be loaded
-and merged together in the order of their appearance on the command line.
+Config files can be specified on the command line with the `--config` option. It takes a file (or a URL)
+as a parameter. You can use `--config` multiple times to specify more than one file. The files will be loaded in
+the order of their appearance on the command line.
 
-* Specifying a single config value via a custom option:
-+
-[source,java,indent=0]
-----
-include::../../../../test/java/io/bootique/docs/programming/configuration/fileLoading/MyModule.java[tag=MyModuleDBOption]
-----
-+
-This adds a new `--db` option to the app that can be used to set JDBC URL of a datasource called "mydb". If value is
-not specified, the default one will be used.
-
-==== Configuration via Properties
-
+==== Configuration Properties
 YAML file can be thought of as a set of nested properties. E.g. the following config
-
 [source,yaml]
 ----
 my:
@@ -356,45 +363,41 @@ my:
   prop2: val2
 ----
 
-can be represented as two properties ("my.prop1", "my.prop2") being assigned some values.
-Bootique takes advantage of this structural equivalence and allows defining configuration via properties as an alternative
-(or more frequently - an addition) to YAML.
-If the same "key" is defined in both YAML file and a property, `ConfigurationFactory` would use the value of the property
-(in other words properties override YAML values).
+can be represented as two properties (`my.prop1`, `my.prop2`) that are assigned some values.
+Bootique takes advantage of this structural equivalence and allows to defined individual configuration values via Java
+properties. All configuration properties are prefixed with `bq.`. This "namespace" helps to avoid random naming
+conflicts with properties otherwise present in the system.
 
-To turn a given property into a configuration property, you need to prefix it with "`bq.`".
-This "namespace" makes configuration explicit and helps to avoid random naming conflicts with properties otherwise present in the system.
-
-Properties can be provided to Bootique via BQCoreModule extender:
+Properties can be provided via `BQCoreModule` extender:
 
 [source,java,indent=0]
 ----
 include::../../../../test/java/io/bootique/docs/programming/configuration/properties/MyModule.java[tag=MyModule]
 ----
 
-Alternatively they can be loaded from system properties. E.g.:
-
+or come from system properties:
 [source,bash]
 ----
 java -Dbq.my.prop1=valX -Dbq.my.prop2=valY -jar myapp.jar
 ----
 
-Though generally this approach is sneered upon, as the authors of Bootique are striving to make Java apps look minimally "weird" in deployment,
-and "-D" is one of those unintuitive "Java-only" things. Often a better alternative is to define the bulk of configuration in YAML,
-and pass values for a few environment-specific properties via shell variables (see the next section) or bind them to CLI flags.
+NOTE: According to the Bootique authors' opinion, properties is the worst mechanism for app configuration, as there are
+so many better options. However, there is a common valid use case for them - building configurations dynamically in the
+code.
 
-==== Configuration via Environment Variables
+==== Configuration Environment Variables
 
-Bootique allows to use _environment variables_ to specify/override configuration values. While variables work similar to JVM properties,
-using them has advantages in certain situations:
+Bootique allows to use _environment variables_ to specify/override configuration values. Variables work similar
+to JVM properties, but have a number of advantages:
 
-* They may be used to configure credentials, as unlike YAML they won't end up in version control, and unlike Java properties,
-they won't be visible in the process list.
-* They provide customized application environment without changing the launch script and are ideal for containerized and other virtual environments.
-* They are more user-friendly and appear in the app help.
+* Provide customized application environment without changing the launch script
+* A natural approach for CI/CD, container and cloud environments
+* Good for credentials. Unlike YAML, vars usually don't end up in version control, and unlike Java properties,
+they are not visible in the process list
+* Appear explicitly in the app help
 
-To declare variables associated with configuration values, use the following API
-(notice that no "bq." prefix is necessary here to identify the configuration value):
+To declare variables associated with configuration values, use the following API (notice that no `bq.` prefix is
+necessary here to identify the configuration value):
 
 [source,java,indent=0]
 ----
@@ -410,9 +413,6 @@ export P2=valY
 ----
 
 Moreover, explicitly declared vars will automatically appear in the application help, assisting the admins in configuring your app
-
-_(TODO: document BQConfig and BQConfigProperty config factory annotations required for the help generation to work)_
-
 [source,bash]
 ----
 $ java -jar myapp-1.0.jar --help
@@ -424,6 +424,23 @@ ENVIRONMENT
       P2
            Sets value of some other property.
 ----
+
+==== CLI Configuration Aliases
+
+It is possible to make fixed configuration inclusion conditional on the presence of a certain command line option:
+[source,java,indent=0]
+----
+include::../../../../test/java/io/bootique/docs/programming/configuration/fileLoading/MyModule.java[tag=MyModuleQAOption]
+----
+
+Also, it is possible to link a single configuration value to a named CLI option:
+[source,java,indent=0]
+----
+include::../../../../test/java/io/bootique/docs/programming/configuration/fileLoading/MyModule.java[tag=MyModuleDBOption]
+----
+This adds a new `--db` option to the app that can be used to set JDBC URL of a datasource called "mydb". If value is
+not specified, the default one will be used.
+
 
 ==== Polymorphic Configuration Objects
 
