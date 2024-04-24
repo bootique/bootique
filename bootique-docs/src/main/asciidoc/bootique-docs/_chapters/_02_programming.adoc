@@ -501,46 +501,6 @@ include::../../../../test/java/io/bootique/docs/programming/configuration/polymo
 If another module decides to create yet another subclass of BaseType, it will need to create its own
 `META-INF/service/io.bootique.config.PolymorphicConfiguration` file and add a new factory name there.
 
-=== Using Modules
-
-Modules often depend on other "upstream" modules. They can interact with upstream modules in a few ways:
-
-* Use upstream services - inject objects defined in an upstream module in this module objects
-* Contribute extensions - inject module's objects to collections and maps from the upstream module, thus extending
-upstream module behavior.
-
-Let's use https://github.com/bootique/bootique/blob/master/bootique/src/main/java/io/bootique/BQCoreModule.java[BQCoreModule]
-as an example of an upstream module, as it is available in all apps.
-
-==== Injecting Other Module's Services
-
-You can inject any services declared in other modules. E.g. `BQCoreModule` defines an array of CLI arguments passed to
-the `main()` method, that can be injected in our module:
-
-[source,java,indent=0]
-----
-include::../../../../test/java/io/bootique/docs/programming/modules/using/MyService.java[tag=MyService]
-----
-
-<1> Since there can potentially be more than one `String[]` in a DI container, Bootique `@Args` annotation is used to
-disambiguate the array that we are referring to.
-
-==== Contributing to Other Modules
-
-Bootique DI supports Collection bindings,
-intended to _contribute_ objects defined in a downstream module to collections/maps used by services in upstream modules.
-Bootique hides DI API complexities, usually providing "extenders" in each module. E.g. the following code adds
-`MyCommand` the app set of commands:
-
-[source,java,indent=0]
-----
-include::../../../../test/java/io/bootique/docs/programming/modules/using/MyModule.java[tag=MyModule]
-----
-
-Here we obtained an extender instance via a static method on BQCoreModule.
-Most standard modules define their own extenders accessible via `&quot;extend(Binder)&quot;`.
-This is a pattern you might want to follow in your own modules.
-
 === Commands
 
 Bootique runtime contains a set of commands coming from Bootique core and from all the modules currently in effect in the app.
