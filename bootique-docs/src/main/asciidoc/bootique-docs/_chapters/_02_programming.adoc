@@ -146,7 +146,7 @@ to use it.
 
 TODO
 
-=== Objects "Assembly"
+=== Objects Assembly
 
 As mentioned above, `BQRuntime` is a holder of all application objects, and modules are blueprints to create those
 objects. You'd write your own module code to define how your objects should be created and initialized. This is done
