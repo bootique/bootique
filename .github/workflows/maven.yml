@@ -24,7 +24,7 @@ jobs:
           cache: 'maven'
 
       - name: Build and test...
-        run: mvn clean verify
+        run: mvn -ntp clean verify
 
   deploy:
     needs: build
@@ -48,7 +48,7 @@ jobs:
           cache: 'maven'
 
       - name: Deploy...
-        run: mvn clean source:jar-no-fork javadoc:jar deploy -DskipTests --settings .github/workflows/maven_settings.xml
+        run: mvn -ntp clean source:jar-no-fork javadoc:jar deploy -DskipTests --settings .github/workflows/maven_settings.xml
         # skip this for the release versions
         if: contains(env.POM_VERSION, '-SNAPSHOT')
         env:
