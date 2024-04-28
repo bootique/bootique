@@ -335,8 +335,9 @@ public class Bootique_CliOptionsIT {
 
         public TestCommand() {
             super(CommandMetadata.builder(TestCommand.class)
-                    .addOption(OptionMetadata.builder("long").valueRequired())
-                    .addOption(OptionMetadata.builder("s")).build());
+                    .addOption(OptionMetadata.builder("long").valueRequired().build())
+                    .addOption(OptionMetadata.builder("s").build())
+                    .build());
         }
 
         @Override

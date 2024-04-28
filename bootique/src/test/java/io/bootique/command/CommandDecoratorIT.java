@@ -268,7 +268,7 @@ public class CommandDecoratorIT {
 
         private static CommandMetadata buildMetadata(String commandName, Optional<String> flagOption) {
             CommandMetadata.Builder builder = CommandMetadata.builder(commandName);
-            flagOption.ifPresent(o -> builder.addOption(OptionMetadata.builder(o)));
+            flagOption.ifPresent(o -> builder.addOption(OptionMetadata.builder(o).build()));
             return builder.build();
         }
 

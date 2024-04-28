@@ -20,19 +20,14 @@
 package io.bootique.run;
 
 import io.bootique.cli.Cli;
-import io.bootique.command.Command;
-import io.bootique.command.CommandManager;
-import io.bootique.command.CommandOutcome;
-import io.bootique.command.DefaultCommandManager;
-import io.bootique.command.ExecutionPlanBuilder;
-import io.bootique.command.ManagedCommand;
+import io.bootique.command.*;
 import io.bootique.meta.application.CommandMetadata;
 import io.bootique.meta.application.OptionMetadata;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -48,7 +43,7 @@ public class DefaultRunnerTest {
     private static Command mockCommand(String name, CommandOutcome outcome, String... options) {
 
         CommandMetadata.Builder builder = CommandMetadata.builder(name);
-        Arrays.asList(options).forEach(opt -> builder.addOption(OptionMetadata.builder(opt)));
+        List.of(options).forEach(opt -> builder.addOption(OptionMetadata.builder(opt).build()));
         CommandMetadata md = builder.build();
 
         Command mock = mock(Command.class);

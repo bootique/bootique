@@ -50,7 +50,7 @@ public class JoptCliFactoryTest {
     @Test
     public void get_HasOption() {
 
-        addMockCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me")));
+        addMockCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me").build()));
 
         assertTrue(createCli("-m").hasOption("me"));
         assertTrue(createCli("--me").hasOption("me"));
@@ -60,21 +60,21 @@ public class JoptCliFactoryTest {
 
     @Test
     public void optionStrings_Short() {
-        addMockCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me").valueOptional(null)));
+        addMockCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me").valueOptional(null).build()));
 
         assertEquals(createCli("-m v4").optionStrings("me"), "v4");
     }
 
     @Test
     public void optionStrings_Long_Equals() {
-        addMockCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me").valueOptional(null)));
+        addMockCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me").valueOptional(null).build()));
 
         assertEquals(createCli("--me=v4").optionStrings("me"), "v4");
     }
 
     @Test
     public void optionStrings_Long_Space() {
-        addMockCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me").valueOptional(null)));
+        addMockCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me").valueOptional(null).build()));
 
         assertEquals(createCli("--me v4").optionStrings("me"), "v4");
     }
@@ -82,33 +82,37 @@ public class JoptCliFactoryTest {
     @Test
     public void optionStrings_Single_Mixed() {
 
-        addMockCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me").valueOptional(null))
-                .addOption(OptionMetadata.builder("other").valueOptional(null)));
+        addMockCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me").valueOptional(null).build())
+                .addOption(OptionMetadata.builder("other").valueOptional(null).build()));
 
         assertEquals(createCli("--other v2 --me=v4").optionStrings("me"), "v4");
     }
 
     @Test
     public void optionStrings_Multiple_Mixed() {
-        addMockCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me").valueOptional(null))
-                .addOption(OptionMetadata.builder("other").valueOptional(null))
-                .addOption(OptionMetadata.builder("n").valueOptional(null)).addOption(OptionMetadata.builder("yes")));
+        addMockCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me").valueOptional(null).build())
+                .addOption(OptionMetadata.builder("other").valueOptional(null).build())
+                .addOption(OptionMetadata.builder("n").valueOptional(null).build())
+                .addOption(OptionMetadata.builder("yes").build()));
 
         assertEquals(createCli("--me=v1 --other v2 -n v3 --me v4 --yes").optionStrings("me"), "v1", "v4");
     }
 
     @Test
     public void standaloneArguments_Mix() {
-        addMockCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me").valueOptional(null))
-                .addOption(OptionMetadata.builder("other").valueOptional(null)).addOption(OptionMetadata.builder("yes")));
+        addMockCommand(CommandMetadata.builder("c1")
+                .addOption(OptionMetadata.builder("me").valueOptional(null).build())
+                .addOption(OptionMetadata.builder("other").valueOptional(null).build())
+                .addOption(OptionMetadata.builder("yes").build()));
 
         assertEquals(createCli("a --me=v1 --other v2 b --me v4 --yes c d").standaloneArguments(), "a", "b", "c", "d");
     }
 
     @Test
     public void standaloneArguments_DashDash() {
-        addMockCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me").valueOptional(null))
-                .addOption(OptionMetadata.builder("other").valueOptional(null)));
+        addMockCommand(CommandMetadata.builder("c1")
+                .addOption(OptionMetadata.builder("me").valueOptional(null).build())
+                .addOption(OptionMetadata.builder("other").valueOptional(null).build()));
 
         assertEquals(createCli("a --me=v1 -- --other v2").standaloneArguments(), "a", "--other", "v2");
     }

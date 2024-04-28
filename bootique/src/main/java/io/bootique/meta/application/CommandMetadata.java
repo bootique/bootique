@@ -162,6 +162,10 @@ public class CommandMetadata implements MetadataNode {
             return this;
         }
 
+        /**
+         * @deprecated in favor of {@link #addOption(OptionMetadata)}
+         */
+        @Deprecated(since = "3.0", forRemoval = true)
         public Builder addOption(OptionMetadata.Builder optionBuilder) {
             return addOption(optionBuilder.build());
         }

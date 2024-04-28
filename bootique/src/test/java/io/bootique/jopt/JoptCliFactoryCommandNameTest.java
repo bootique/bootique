@@ -30,8 +30,8 @@ import io.bootique.meta.application.OptionMetadata;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -84,7 +84,7 @@ public class JoptCliFactoryCommandNameTest {
         // name
 
         CommandMetadata.Builder builder = CommandMetadata.builder(name);
-        Arrays.asList(options).forEach(opt -> builder.addOption(OptionMetadata.builder(opt)));
+        List.of(options).forEach(opt -> builder.addOption(OptionMetadata.builder(opt).build()));
 
         CommandMetadata md = builder.build();
 
