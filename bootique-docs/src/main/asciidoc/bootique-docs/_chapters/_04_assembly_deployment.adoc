@@ -39,7 +39,7 @@ a single "fat" runnable jar. In Maven this can be accomplished with `maven-shade
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
+                <version>3.5.3</version>
                 <configuration>
                     <createDependencyReducedPom>true</createDependencyReducedPom>
                     <filters>
@@ -65,6 +65,8 @@ a single "fat" runnable jar. In Maven this can be accomplished with `maven-shade
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>${main.class}</mainClass>
                                 </transformer>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheLicenseResourceTransformer"/>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ApacheNoticeResourceTransformer"/>
                             </transformers>
                         </configuration>
                     </execution>
