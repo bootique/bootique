@@ -1,7 +1,10 @@
+## 3.0-M5
+
+* #354 Restore backwards compatibility of the deprecated BaseModule
+
 ## 3.0-M4
 
 * #352 Docs: switch to hugo-asciidoctorj-extension
-* #354 Restore backwards compatibility of the deprecated BaseModule
 
 ## 3.0-M3
 
