@@ -24,12 +24,17 @@ package io.bootique;
  * superclass of custom modules.
  */
 @Deprecated(since = "3.0", forRemoval = true)
-public abstract class BaseModule extends ConfigModule {
+public abstract class BaseModule extends ConfigModule implements BQModuleProvider {
 
     protected BaseModule() {
     }
 
     protected BaseModule(String configPrefix) {
         super(configPrefix);
+    }
+
+    @Override
+    public BQModule module() {
+        return this;
     }
 }
