@@ -23,7 +23,7 @@ import io.bootique.meta.application.CommandMetadata;
 import io.bootique.cli.Cli;
 
 /**
- * An abstract superlcass of commands that provide their own metadata.
+ * An abstract superclass of commands that provide their own metadata.
  */
 public abstract class CommandWithMetadata implements Command {
 
