@@ -20,20 +20,33 @@
 
 # UPGRADE INSTRUCTIONS
 
+## 3.0-M5
+
+* [bootique-job #124](https://github.com/bootique/bootique-job/issues/124): As a part of alignment of the Job outcome 
+object with Bootique Command API, the `Job.run()` now returns `JobOutcome` instead of `JobResult`. This part is 
+backwards-compatible (as `JobResult` is deprecated but preserved and inherits from `JobOutcome`). However, there `enum JobOutcome`, 
+got renamed (without deprecation) to `enum JobStatus`, so if you used `JobResult.getOutcome()` you may get a compilation
+error. Here is how to fix it:
+
+```java
+// JobOutcome o = job.run().getOutcome();
+JobStatus o = job.run().getStatus();
+```
+
 ## 3.0-M3
 
 * [bootique #344](https://github.com/bootique/bootique/issues/344): `bootiqie-di` was merged into Bootique core, and is no longer 
-shipped as a standalone module. This allows us to integrate it more tightly with Bootique concepts, such as module auto-loading, 
+shipped as a standalone module. This allows us to integrate it more tightly with Bootique concepts, such as module autoloading, 
 app configuration, etc., improving user experience. If you have a special case that requires an Injector, but not the rest of 
 Bootique, you can still do it. Just include `bootique` module as your dependency, and keep using `DIBootstrap` like you did before to create an `Injector`. Though it will result in a few extra dependencies, like Jackson (that can probably be excluded explicitly).
 
 * [bootique #340](https://github.com/bootique/bootique/issues/340): API-based module dependency tracking is no longer supported.
 While `BQModuleProvider` (deprecated per the following note) still has a method called `dependencies()`, its output is ignored 
-by the runtime. If you relied on implicit loading of transitive dependenices, you have two choices - switch to auto-loading, or manually 
+by the runtime. If you relied on implicit loading of transitive dependenices, you have two choices - switch to autoloading, or manually 
 list all upstream modules your application depends on when assembling Bootique. 
 
 * [bootique #344](https://github.com/bootique/bootique/issues/344): `BQModuleProvider` API was deprecated. It is still supported
-until Bootique 4.0, but it much easier to load your modules directly: Modules now can be auto-loaded (like providers were,
+until Bootique 4.0, but it much easier to load your modules directly: Modules now can be autoloaded (like providers were,
 but from `META-INF/services/io.bootique.BQModule` declarations), and can define their own metadata (via a new `BQModule.crate()` 
 method that can be optionally implemented). E.g. consider the following provider:
 ```java
@@ -70,7 +83,7 @@ public class MyModule implements BQModule {
   }
 }
 ```
-So we end up with one class instead of two, and with a much more compact syntax. For auto-loading, 
+So we end up with one class instead of two, and with a much more compact syntax. For autoloading, 
 create `META-INF/services/io.bootique.BQModule` file with the name of the module class, and remove
 `META-INF/services/io.bootique.BQModuleProvider`, as we no longer have a provider.
 
