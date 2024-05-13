@@ -32,8 +32,6 @@ import java.util.function.Predicate;
 
 public class HelpConfigCommand extends CommandWithMetadata {
 
-    public static final String HELP_CONFIG_OPTION = "help-config";
-
     private BootLogger bootLogger;
     private Provider<ConfigHelpGenerator> helpGeneratorProvider;
 
@@ -52,7 +50,7 @@ public class HelpConfigCommand extends CommandWithMetadata {
 
     @Override
     public CommandOutcome run(Cli cli) {
-        List<String> arguments = cli.optionStrings(HELP_CONFIG_OPTION);
+        List<String> arguments = cli.optionStrings(getMetadata().getName());
 
         Predicate<MetadataNode> predicate = (arguments.size() == 0)
                 ? o -> true
