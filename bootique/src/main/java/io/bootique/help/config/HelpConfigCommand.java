@@ -39,8 +39,8 @@ public class HelpConfigCommand extends CommandWithMetadata {
         super(CommandMetadata
                 .builder(HelpConfigCommand.class)
                 .description("Prints information about application modules and their configuration options. "
-                        + "Optionally, you can provide a configName to print only that config.")
-                .valueOptional("configName")
+                        + "Optionally, you can provide a 'prefix' argument to print only the specified config.")
+                .valueOptional("prefix")
                 .shortName('H')
                 .build());
 

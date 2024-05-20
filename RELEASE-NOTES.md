@@ -1,5 +1,6 @@
 ## 3.0-M5
 
+* #348 Allow commands to take args
 * #354 Restore backwards compatibility of the deprecated BaseModule
 
 ## 3.0-M4
