@@ -90,37 +90,28 @@ public class CommandMetadata implements MetadataNode {
         OptionValueCardinality cardinality = getValueCardinality();
         String valueName = getValueName();
 
-        Consumer<OptionMetadata.Builder> optionMetadataConsumer = createOptionsConsumer(cardinality, valueName);
-
         OptionMetadata.Builder optionBuilder = OptionMetadata.builder(getName())
                 .shortName(getShortName())
-                .description(getDescription())
-                .applyCardinality(optionMetadataConsumer);
+                .description(getDescription());
+
+        switch (cardinality) {
+            case REQUIRED:
+                optionBuilder.valueRequired(valueName);
+                break;
+            case OPTIONAL:
+                optionBuilder.valueOptional(valueName);
+                break;
+            case NONE:
+                break;
+            default:
+                throw new IllegalStateException("Unknown command value cardinality: " + cardinality);
+        }
 
         if (defaultValue != null) {
             optionBuilder.valueOptionalWithDefault(valueName, defaultValue);
         }
 
         return optionBuilder.build();
-    }
-
-    private static Consumer<OptionMetadata.Builder> createOptionsConsumer(OptionValueCardinality cardinality, String valueName) {
-        Consumer<OptionMetadata.Builder> optionsConsumer = builder -> {
-            switch (cardinality) {
-                case REQUIRED:
-                    builder.valueRequired(valueName);
-                    break;
-                case OPTIONAL:
-                    builder.valueOptional(valueName);
-                    break;
-                case NONE:
-                    break;
-                default:
-                    throw new IllegalStateException("Unknown command value cardinality: " + cardinality);
-            }
-        };
-
-        return optionsConsumer;
     }
 
     public Collection<OptionMetadata> getOptions() {
