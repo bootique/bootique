@@ -133,7 +133,7 @@ public class JoptCliFactory implements CliFactory {
 
         Set<String> matches = new HashSet<>(3);
         getCommandManager().getAllCommands().forEach((name, mc) -> {
-            if (!mc.isHidden() && !mc.isDefault() && optionSet.has(name) && !optionSet.hasArgument(name)) {
+            if (!mc.isHidden() && !mc.isDefault() && optionSet.has(name)) {
                 matches.add(name);
             }
         });

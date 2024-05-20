@@ -25,6 +25,7 @@ import io.bootique.names.ClassToName;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.function.Consumer;
 
 public class CommandMetadata implements MetadataNode {
 
@@ -33,6 +34,9 @@ public class CommandMetadata implements MetadataNode {
     private String shortName;
     private boolean hidden;
     private final Collection<OptionMetadata> options;
+    private OptionValueCardinality valueCardinality;
+    private String valueName;
+    private String defaultValue;
 
     public CommandMetadata() {
         this.options = new ArrayList<>();
@@ -83,9 +87,31 @@ public class CommandMetadata implements MetadataNode {
      * @return option representation of this command.
      */
     public OptionMetadata asOption() {
-        // TODO: cache the value?
-        // using getters instead of vars ; some getters have logic
-        return OptionMetadata.builder(getName()).shortName(getShortName()).description(getDescription()).build();
+        OptionValueCardinality cardinality = getValueCardinality();
+        String valueName = getValueName();
+
+        OptionMetadata.Builder optionBuilder = OptionMetadata.builder(getName())
+                .shortName(getShortName())
+                .description(getDescription());
+
+        switch (cardinality) {
+            case REQUIRED:
+                optionBuilder.valueRequired(valueName);
+                break;
+            case OPTIONAL:
+                optionBuilder.valueOptional(valueName);
+                break;
+            case NONE:
+                break;
+            default:
+                throw new IllegalStateException("Unknown command value cardinality: " + cardinality);
+        }
+
+        if (defaultValue != null) {
+            optionBuilder.valueOptionalWithDefault(valueName, defaultValue);
+        }
+
+        return optionBuilder.build();
     }
 
     public Collection<OptionMetadata> getOptions() {
@@ -99,6 +125,24 @@ public class CommandMetadata implements MetadataNode {
      */
     public String getShortName() {
         return (shortName != null) ? shortName : name.substring(0, 1);
+    }
+
+    public OptionValueCardinality getValueCardinality() {
+        return valueCardinality;
+    }
+
+    public String getValueName() {
+        return valueName;
+    }
+
+    /**
+     * Returns the default value for this command. I.e. the value that will be used if the command is provided on
+     * command line without an explicit value.
+     *
+     * @return the default value for this command.
+     */
+    public String getDefaultValue() {
+        return defaultValue;
     }
 
     /**
@@ -125,6 +169,7 @@ public class CommandMetadata implements MetadataNode {
 
         private Builder() {
             this.metadata = new CommandMetadata();
+            this.metadata.valueCardinality = OptionValueCardinality.NONE;
         }
 
         public CommandMetadata build() {
@@ -150,6 +195,50 @@ public class CommandMetadata implements MetadataNode {
         public Builder description(String description) {
             this.metadata.description = description;
             return this;
+        }
+
+        public CommandMetadata.Builder valueRequired() {
+            return valueRequired("");
+        }
+
+        public CommandMetadata.Builder valueRequired(String valueName) {
+            this.metadata.valueCardinality = OptionValueCardinality.REQUIRED;
+            this.metadata.valueName = valueName;
+            return this;
+        }
+
+        public CommandMetadata.Builder valueOptional() {
+            return valueOptional("");
+        }
+
+        public CommandMetadata.Builder valueOptional(String valueName) {
+            this.metadata.valueCardinality = OptionValueCardinality.OPTIONAL;
+            this.metadata.valueName = valueName;
+            return this;
+        }
+
+        /**
+         * Marks value optional and sets the default value for this command that will be used if the command is provided on
+         * command line without an explicit value.
+         *
+         * @param defaultValue a default value for the command.
+         * @return this builder instance
+         */
+        public CommandMetadata.Builder valueOptionalWithDefault(String defaultValue) {
+            return valueOptionalWithDefault("", defaultValue);
+        }
+
+        /**
+         * Marks value optional and sets the default value for this command that will be used if the command is provided on
+         * command line without an explicit value.
+         *
+         * @param valueName a description of value
+         * @param defaultValue a default value for the option.
+         * @return this builder instance
+         */
+        public CommandMetadata.Builder valueOptionalWithDefault(String valueName, String defaultValue) {
+            this.metadata.defaultValue = defaultValue;
+            return valueOptional(valueName);
         }
 
         public Builder addOption(OptionMetadata option) {

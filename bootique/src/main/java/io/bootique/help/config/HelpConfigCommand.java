@@ -38,7 +38,9 @@ public class HelpConfigCommand extends CommandWithMetadata {
     public HelpConfigCommand(BootLogger bootLogger, Provider<ConfigHelpGenerator> helpGeneratorProvider) {
         super(CommandMetadata
                 .builder(HelpConfigCommand.class)
-                .description("Prints information about application modules and their configuration options.")
+                .description("Prints information about application modules and their configuration options. "
+                        + "Optionally, you can provide a configName to print only that config.")
+                .valueOptional("configName")
                 .shortName('H')
                 .build());
 
@@ -48,7 +50,7 @@ public class HelpConfigCommand extends CommandWithMetadata {
 
     @Override
     public CommandOutcome run(Cli cli) {
-        List<String> arguments = cli.standaloneArguments();
+        List<String> arguments = cli.optionStrings(getMetadata().getName());
 
         Predicate<MetadataNode> predicate = (arguments.size() == 0)
                 ? o -> true

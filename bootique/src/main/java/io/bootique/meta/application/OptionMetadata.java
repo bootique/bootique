@@ -21,6 +21,8 @@ package io.bootique.meta.application;
 
 import io.bootique.meta.MetadataNode;
 
+import java.util.function.Consumer;
+
 /**
  * A descriptor of a command-line option.
  */
