@@ -38,7 +38,6 @@
 
 	<properties>
 		<jopt.version>5.0.3</jopt.version>
-		<bootique.version>${project.version}</bootique.version>
 	</properties>
 
 	<dependencyManagement>
