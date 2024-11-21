@@ -124,7 +124,7 @@
                                 <sectnums />
                                 <icons>font</icons>
                                 <toc>auto</toc>
-                                <bootique_version>3.0-M4</bootique_version>
+                                <bootique_version>3.0-M6</bootique_version>
                                 <bootique_doc_version>3.x</bootique_doc_version>
                             </attributes>
                         </configuration>
