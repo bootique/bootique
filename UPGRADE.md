@@ -20,7 +20,7 @@
 
 # UPGRADE INSTRUCTIONS
 
-## 3.0-M5
+## 3.0-M6
 
 * [bootique-job #124](https://github.com/bootique/bootique-job/issues/124): As a part of alignment of the Job outcome 
 object with Bootique Command API, the `Job.run()` now returns `JobOutcome` instead of `JobResult`. This part is 
