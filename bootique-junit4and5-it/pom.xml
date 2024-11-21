@@ -24,7 +24,7 @@
     <parent>
         <groupId>io.bootique</groupId>
         <artifactId>bootique-framework-parent</artifactId>
-        <version>3.0-M6</version>
+        <version>3.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>bootique-junit4and5-it</artifactId>
