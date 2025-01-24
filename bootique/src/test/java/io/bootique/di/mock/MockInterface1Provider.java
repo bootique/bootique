@@ -21,7 +21,7 @@
 package io.bootique.di.mock;
 
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 
 public class MockInterface1Provider implements Provider<MockInterface1> {
 

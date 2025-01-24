@@ -27,11 +27,10 @@ import io.bootique.config.ConfigurationFactory;
 import io.bootique.di.Binder;
 import io.bootique.di.Provides;
 import io.bootique.meta.application.CommandMetadata;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
+import jakarta.inject.Singleton;
 import org.junit.jupiter.api.Test;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.inject.Singleton;
 
 import static org.junit.jupiter.api.Assertions.*;
 

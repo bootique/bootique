@@ -20,7 +20,7 @@
 
 package io.bootique.di.mock;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class MockInterface1_Decorator3 implements MockInterface1 {
 

@@ -21,10 +21,14 @@ package io.bootique.di.spi;
 
 import io.bootique.di.Key;
 import io.bootique.di.TypeLiteral;
+import jakarta.inject.Provider;
 
-import javax.inject.Provider;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.*;
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.function.Predicate;
 
 class FieldInjectingProvider<T> extends MemberInjectingProvider<T> {

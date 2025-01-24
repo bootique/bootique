@@ -20,8 +20,7 @@
 package io.bootique.di.spi;
 
 import io.bootique.di.DIRuntimeException;
-
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 
 /**
  * A provider that provides scoping for other providers.

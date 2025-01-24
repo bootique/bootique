@@ -30,11 +30,11 @@ import io.bootique.di.Provides;
 import io.bootique.di.TypeLiteral;
 import io.bootique.type.TypeRef;
 import io.bootique.unit.TestAppManager;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.util.Map;
 import java.util.Set;
 

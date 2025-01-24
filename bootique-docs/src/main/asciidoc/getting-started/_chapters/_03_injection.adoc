@@ -28,7 +28,7 @@ Let's extend our resource to include those arguments in the output:
 include::../../../../test/java/com/foo/HelloResource.java[tags=HelloInjectResource]
 ----
 
-As you see, we declared a variable of type `String[]` and annotated it with `@javax.inject.Inject` and `@io.bootique.annotation.Args`.
+As you see, we declared a variable of type `String[]` and annotated it with `@jakarta.inject.Inject` and `@io.bootique.annotation.Args`.
 `@Inject` ensures that the value is initialized via injection,
 and `@Args` tells Bootique which one of possibly many String[] instances from the DI container we are expecting here.
 

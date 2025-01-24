@@ -21,8 +21,7 @@ package io.bootique.di.tck.accessories;
 
 import io.bootique.di.tck.FuelTank;
 import io.bootique.di.tck.Tire;
-
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class SpareTire extends Tire {
 

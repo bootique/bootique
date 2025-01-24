@@ -23,10 +23,9 @@ import io.bootique.di.Binder;
 import io.bootique.di.Provides;
 import io.bootique.junit5.scope.BQAfterScopeCallback;
 import io.bootique.shutdown.ShutdownManager;
+import jakarta.inject.Singleton;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.extension.ExtensionContext;
-
-import javax.inject.Singleton;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

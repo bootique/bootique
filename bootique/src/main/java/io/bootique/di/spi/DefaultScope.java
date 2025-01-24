@@ -21,8 +21,8 @@ package io.bootique.di.spi;
 
 import io.bootique.di.BeforeScopeEnd;
 import io.bootique.di.Scope;
+import jakarta.inject.Provider;
 
-import javax.inject.Provider;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Collection;

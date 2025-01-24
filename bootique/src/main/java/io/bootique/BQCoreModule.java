@@ -68,8 +68,8 @@ import io.bootique.value.Bytes;
 import io.bootique.value.Duration;
 import io.bootique.value.Percent;
 
-import javax.inject.Provider;
-import javax.inject.Singleton;
+import jakarta.inject.Provider;
+import jakarta.inject.Singleton;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

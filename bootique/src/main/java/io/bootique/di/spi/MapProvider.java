@@ -19,7 +19,8 @@
 
 package io.bootique.di.spi;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;

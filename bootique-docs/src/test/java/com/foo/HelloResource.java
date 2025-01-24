@@ -3,8 +3,8 @@
 package com.foo;
 
 import io.bootique.annotation.Args;
+import jakarta.inject.Inject;
 
-import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 

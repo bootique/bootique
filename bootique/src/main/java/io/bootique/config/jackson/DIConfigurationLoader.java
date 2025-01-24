@@ -22,8 +22,8 @@ import io.bootique.annotation.DIConfigs;
 import io.bootique.config.jackson.merger.JsonConfigurationMerger;
 import io.bootique.config.jackson.parser.JsonConfigurationParser;
 import io.bootique.log.BootLogger;
+import jakarta.inject.Inject;
 
-import javax.inject.Inject;
 import java.util.Set;
 
 /**

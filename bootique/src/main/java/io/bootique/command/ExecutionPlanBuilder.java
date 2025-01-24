@@ -21,8 +21,8 @@ package io.bootique.command;
 
 import io.bootique.cli.CliFactory;
 import io.bootique.log.BootLogger;
+import jakarta.inject.Provider;
 
-import javax.inject.Provider;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;

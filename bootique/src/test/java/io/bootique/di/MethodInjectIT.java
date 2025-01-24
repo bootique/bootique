@@ -19,10 +19,10 @@
 
 package io.bootique.di;
 
+import jakarta.inject.Inject;
+import jakarta.inject.Qualifier;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
-import javax.inject.Qualifier;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Objects;

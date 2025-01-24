@@ -19,7 +19,8 @@
 
 package io.bootique.di.spi;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
+
 import java.util.Objects;
 
 class InstanceProvider<T> implements Provider<T> {

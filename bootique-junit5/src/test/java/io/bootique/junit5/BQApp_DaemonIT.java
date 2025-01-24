@@ -25,14 +25,14 @@ import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandOutcome;
 import io.bootique.shutdown.ShutdownManager;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

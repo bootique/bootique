@@ -24,8 +24,7 @@ import io.bootique.command.CommandOutcome;
 import io.bootique.command.CommandWithMetadata;
 import io.bootique.log.BootLogger;
 import io.bootique.meta.application.CommandMetadata;
-
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 
 /**
  * A built-in command that prints dynamically-create application help in a format similar to UNIX man pages.

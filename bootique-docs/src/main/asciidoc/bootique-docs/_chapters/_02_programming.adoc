@@ -564,7 +564,7 @@ include::../../../../test/java/io/bootique/docs/programming/commands/writing/MyC
 Commands can inject services, just like most other classes in Bootique. There are some specifics though.
 Since commands are sometimes instantiated, but not executed (e.g. when `--help` is run that lists all commands),
 it is often desirable to avoid immediate instantiation of all dependencies of a given command.
-So a common pattern with commands is to inject `javax.inject.Provider` instead of direct dependency:
+So a common pattern with commands is to inject `jakarta.inject.Provider` instead of direct dependency:
 
 [source,java,indent=0]
 ----

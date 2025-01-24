@@ -19,8 +19,9 @@
 
 package io.bootique.di.mock;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

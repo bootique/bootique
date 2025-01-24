@@ -22,12 +22,11 @@ import io.bootique.BQModule;
 import io.bootique.di.Binder;
 import io.bootique.di.Provides;
 import io.bootique.shutdown.ShutdownManager;
+import jakarta.inject.Singleton;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import javax.inject.Singleton;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

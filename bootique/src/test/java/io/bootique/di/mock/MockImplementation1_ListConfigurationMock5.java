@@ -19,7 +19,8 @@
 
 package io.bootique.di.mock;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
+
 import java.util.List;
 
 public class MockImplementation1_ListConfigurationMock5 implements MockInterface1 {

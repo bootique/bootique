@@ -25,8 +25,8 @@ import io.bootique.command.CommandWithMetadata;
 import io.bootique.log.BootLogger;
 import io.bootique.meta.MetadataNode;
 import io.bootique.meta.application.CommandMetadata;
+import jakarta.inject.Provider;
 
-import javax.inject.Provider;
 import java.util.List;
 import java.util.function.Predicate;
 

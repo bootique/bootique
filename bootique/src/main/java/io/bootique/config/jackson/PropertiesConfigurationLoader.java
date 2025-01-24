@@ -21,8 +21,8 @@ package io.bootique.config.jackson;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.bootique.config.jackson.merger.InPlacePropertiesMerger;
 import io.bootique.env.Environment;
+import jakarta.inject.Inject;
 
-import javax.inject.Inject;
 import java.util.Map;
 
 /**

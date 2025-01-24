@@ -19,7 +19,7 @@
 
 package io.bootique.di.mock;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class MockImplementation1_DepOn2Constructor implements MockInterface1 {
 

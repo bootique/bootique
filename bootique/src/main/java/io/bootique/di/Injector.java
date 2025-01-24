@@ -19,7 +19,8 @@
 
 package io.bootique.di;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
+
 import java.util.Collection;
 
 /**

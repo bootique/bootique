@@ -27,10 +27,9 @@ import io.bootique.command.CommandOutcome;
 import io.bootique.command.CommandWithMetadata;
 import io.bootique.log.BootLogger;
 import io.bootique.meta.application.CommandMetadata;
+import jakarta.inject.Inject;
 import org.junit.Rule;
 import org.junit.Test;
-
-import javax.inject.Inject;
 
 import static org.junit.Assert.*;
 

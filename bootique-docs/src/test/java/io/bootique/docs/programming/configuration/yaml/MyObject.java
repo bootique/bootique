@@ -3,8 +3,7 @@ package io.bootique.docs.programming.configuration.yaml;
 
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
-
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 // tag::MyObject[]
 @BQConfig // <1>

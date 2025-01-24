@@ -18,10 +18,9 @@
  */
 package io.bootique.di;
 
-import org.junit.jupiter.api.Test;
 import io.bootique.BQModule;
-
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;

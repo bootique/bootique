@@ -20,8 +20,7 @@
 package io.bootique.di.spi;
 
 import io.bootique.di.Scope;
-
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 
 final class NoScope implements Scope {
 

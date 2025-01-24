@@ -29,10 +29,10 @@ import io.bootique.help.HelpCommand;
 import io.bootique.log.BootLogger;
 import io.bootique.log.DefaultBootLogger;
 import io.bootique.meta.application.CommandMetadata;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 

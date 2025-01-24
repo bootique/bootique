@@ -1,12 +1,12 @@
 package io.bootique.docs.programming.options;
 
 import io.bootique.BQCoreModule;
-import io.bootique.cli.Cli;
 import io.bootique.BQModule;
+import io.bootique.cli.Cli;
 import io.bootique.di.Binder;
 import io.bootique.meta.application.OptionMetadata;
+import jakarta.inject.Inject;
 
-import javax.inject.Inject;
 import java.util.Collection;
 
 public class MyOption implements BQModule {

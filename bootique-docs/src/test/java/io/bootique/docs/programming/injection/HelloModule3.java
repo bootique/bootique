@@ -3,8 +3,7 @@ package io.bootique.docs.programming.injection;
 import io.bootique.BQModule;
 import io.bootique.di.Binder;
 import io.bootique.di.Provides;
-
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 // tag::binding[]
 public class HelloModule3 implements BQModule {

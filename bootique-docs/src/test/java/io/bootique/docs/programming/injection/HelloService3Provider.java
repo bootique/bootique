@@ -18,8 +18,8 @@
  */
 package io.bootique.docs.programming.injection;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 
 // tag::provider[]
 public class HelloService3Provider implements Provider<Hello> {

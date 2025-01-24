@@ -19,13 +19,13 @@
 
 package io.bootique.annotation;
 
+import io.bootique.command.Command;
+import jakarta.inject.Qualifier;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import javax.inject.Qualifier;
-
-import io.bootique.command.Command;
 
 /**
  * A binding annotation for a failover {@link Command} that is executed when no

@@ -23,8 +23,8 @@ import io.bootique.BootiqueException;
 import io.bootique.cli.Cli;
 import io.bootique.cli.CliFactory;
 import io.bootique.log.BootLogger;
+import jakarta.inject.Provider;
 
-import javax.inject.Provider;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;

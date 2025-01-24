@@ -22,8 +22,7 @@ import io.bootique.cli.Cli;
 import io.bootique.config.jackson.merger.JsonConfigurationMerger;
 import io.bootique.config.jackson.parser.JsonConfigurationParser;
 import io.bootique.log.BootLogger;
-
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * Loads and merges configuration passed via CLI "--config" option.

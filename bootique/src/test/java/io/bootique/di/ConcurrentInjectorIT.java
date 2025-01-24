@@ -19,9 +19,9 @@
 
 package io.bootique.di;
 
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;

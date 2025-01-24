@@ -19,7 +19,7 @@
 
 package io.bootique.di.mock;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class MockImplementation2Sub1 extends MockImplementation2 {
 

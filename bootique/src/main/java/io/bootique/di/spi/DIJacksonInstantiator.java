@@ -22,8 +22,7 @@ import com.fasterxml.jackson.databind.DeserializationConfig;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.deser.std.StdValueInstantiator;
-
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 
 /**
  * A Jackson "instantiator" of a given Java type that creates objects and performs injection with Bootique DI providers.

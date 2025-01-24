@@ -27,11 +27,11 @@ import io.bootique.config.PolymorphicConfiguration;
 import io.bootique.di.Binder;
 import io.bootique.di.Provides;
 import io.bootique.unit.TestAppManager;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;

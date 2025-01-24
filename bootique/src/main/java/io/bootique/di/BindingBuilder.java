@@ -19,7 +19,7 @@
 
 package io.bootique.di;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 
 /**
  * A binding builder that helps with fluent binding creation.

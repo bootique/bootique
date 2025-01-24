@@ -19,15 +19,18 @@
 package io.bootique;
 
 import io.bootique.annotation.Args;
-import io.bootique.di.*;
+import io.bootique.di.Binder;
+import io.bootique.di.Injector;
+import io.bootique.di.Key;
+import io.bootique.di.Provides;
 import io.bootique.log.BootLogger;
 import io.bootique.log.DefaultBootLogger;
 import io.bootique.shutdown.DefaultShutdownManager;
 import io.bootique.shutdown.ShutdownManager;
+import jakarta.inject.Qualifier;
+import jakarta.inject.Singleton;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Qualifier;
-import javax.inject.Singleton;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

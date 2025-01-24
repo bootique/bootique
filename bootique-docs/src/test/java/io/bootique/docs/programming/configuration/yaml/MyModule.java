@@ -7,8 +7,7 @@ import io.bootique.di.Binder;
 import io.bootique.di.Provides;
 import io.bootique.docs.programming.configuration.MyService;
 import io.bootique.meta.application.OptionMetadata;
-
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 // tag::MyModuleConfig[]
 public class MyModule implements BQModule {

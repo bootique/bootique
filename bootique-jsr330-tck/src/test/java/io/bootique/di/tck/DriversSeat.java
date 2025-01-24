@@ -20,8 +20,7 @@
 package io.bootique.di.tck;
 
 import io.bootique.di.tck.accessories.Cupholder;
-
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class DriversSeat extends Seat {
 

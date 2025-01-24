@@ -27,10 +27,10 @@ import io.bootique.command.CommandWithMetadata;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.log.BootLogger;
 import io.bootique.meta.application.CommandMetadata;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;

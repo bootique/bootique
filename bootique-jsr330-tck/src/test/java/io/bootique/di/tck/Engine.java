@@ -20,9 +20,8 @@
 package io.bootique.di.tck;
 
 import io.bootique.di.tck.accessories.SpareTire;
-
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 public abstract class Engine {
 

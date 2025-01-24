@@ -22,8 +22,7 @@ package io.bootique.di.spi;
 import io.bootique.di.BindingBuilder;
 import io.bootique.di.Key;
 import io.bootique.di.Scope;
-
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 
 class DefaultBindingBuilder<T> implements BindingBuilder<T> {
 

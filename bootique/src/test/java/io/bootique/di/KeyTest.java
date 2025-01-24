@@ -20,9 +20,9 @@
 
 package io.bootique.di;
 
+import jakarta.inject.Qualifier;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Qualifier;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

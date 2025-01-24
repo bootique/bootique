@@ -18,7 +18,7 @@
  */
 package io.bootique.docs.programming.injection;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 // tag::fieldInjection[]
 public class HelloService1 implements Hello {

@@ -24,8 +24,8 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.deser.ValueInstantiator;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import io.bootique.annotation.BQConfig;
+import jakarta.inject.Provider;
 
-import javax.inject.Provider;
 import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;

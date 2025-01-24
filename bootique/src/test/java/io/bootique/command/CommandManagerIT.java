@@ -20,19 +20,18 @@
 package io.bootique.command;
 
 import io.bootique.BQCoreModule;
+import io.bootique.BQModule;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
 import io.bootique.cli.Cli;
-import io.bootique.BQModule;
 import io.bootique.di.Binder;
 import io.bootique.di.Provides;
 import io.bootique.help.HelpCommand;
 import io.bootique.meta.application.CommandMetadata;
 import io.bootique.unit.TestAppManager;
+import jakarta.inject.Singleton;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import javax.inject.Singleton;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;

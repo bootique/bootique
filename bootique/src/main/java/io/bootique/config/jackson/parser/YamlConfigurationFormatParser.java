@@ -24,11 +24,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
 import io.bootique.jackson.JacksonService;
+import jakarta.inject.Inject;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import javax.inject.Inject;
 
 /**
  * @since 2.0

@@ -23,10 +23,13 @@ import io.bootique.BQModule;
 import io.bootique.di.DIBootstrap;
 import io.bootique.di.Injector;
 import io.bootique.di.Key;
-import io.bootique.di.mock.*;
+import io.bootique.di.mock.MockImplementation1;
+import io.bootique.di.mock.MockImplementation1Alt;
+import io.bootique.di.mock.MockImplementation1Alt2;
+import io.bootique.di.mock.MockInterface1;
+import io.bootique.di.mock.MockInterface1Provider;
+import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
-
-import javax.inject.Inject;
 
 import static org.junit.jupiter.api.Assertions.*;
 

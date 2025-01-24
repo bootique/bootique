@@ -19,7 +19,7 @@
 
 package io.bootique.di.spi;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 
 /**
  * A helper class used by Bootique DI implementation.

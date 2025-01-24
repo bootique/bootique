@@ -19,7 +19,7 @@
 
 package io.bootique.di.tck.accessories;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class RoundThing {
 

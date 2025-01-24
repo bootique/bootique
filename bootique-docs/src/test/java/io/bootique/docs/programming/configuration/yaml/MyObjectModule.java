@@ -4,8 +4,7 @@ import io.bootique.BQModule;
 import io.bootique.config.ConfigurationFactory;
 import io.bootique.di.Binder;
 import io.bootique.di.Provides;
-
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 
 public class MyObjectModule implements BQModule {

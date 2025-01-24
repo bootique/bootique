@@ -19,9 +19,14 @@
 
 package io.bootique.di;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
+
 import java.lang.annotation.Annotation;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * An object that encapsulates a key used to store and lookup DI bindings. Key is made of

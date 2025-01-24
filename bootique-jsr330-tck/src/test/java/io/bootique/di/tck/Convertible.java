@@ -21,10 +21,9 @@ package io.bootique.di.tck;
 
 import io.bootique.di.tck.accessories.Cupholder;
 import io.bootique.di.tck.accessories.SpareTire;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Provider;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.inject.Provider;
 
 public class Convertible implements Car {
 

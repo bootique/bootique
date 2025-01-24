@@ -19,11 +19,11 @@
 
 package io.bootique.di;
 
-import org.junit.jupiter.api.Test;
 import io.bootique.BQModule;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
+import org.junit.jupiter.api.Test;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
 import java.util.List;
 import java.util.Map;
 

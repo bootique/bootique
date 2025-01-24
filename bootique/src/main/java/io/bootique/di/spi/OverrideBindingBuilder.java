@@ -20,8 +20,7 @@
 package io.bootique.di.spi;
 
 import io.bootique.di.Key;
-
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 
 class OverrideBindingBuilder<T> extends DefaultBindingBuilder<T> {
 

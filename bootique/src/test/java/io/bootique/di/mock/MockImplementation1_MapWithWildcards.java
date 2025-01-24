@@ -19,7 +19,8 @@
 
 package io.bootique.di.mock;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
+
 import java.util.Map;
 
 public class MockImplementation1_MapWithWildcards implements MockInterface1 {

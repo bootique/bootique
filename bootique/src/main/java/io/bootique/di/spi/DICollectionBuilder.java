@@ -22,8 +22,7 @@ package io.bootique.di.spi;
 import io.bootique.di.Key;
 import io.bootique.di.Scope;
 import io.bootique.di.ScopeBuilder;
-
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 
 /**
  * A superclass of DI List and Map builders.

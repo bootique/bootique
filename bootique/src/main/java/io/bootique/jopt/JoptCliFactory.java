@@ -26,9 +26,13 @@ import io.bootique.cli.NoArgsCli;
 import io.bootique.command.CommandManager;
 import io.bootique.meta.application.ApplicationMetadata;
 import io.bootique.meta.application.OptionMetadata;
-import joptsimple.*;
+import jakarta.inject.Provider;
+import joptsimple.ArgumentAcceptingOptionSpec;
+import joptsimple.OptionException;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+import joptsimple.OptionSpecBuilder;
 
-import javax.inject.Provider;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;

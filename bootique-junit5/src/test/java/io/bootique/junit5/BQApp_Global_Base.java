@@ -19,17 +19,16 @@
 package io.bootique.junit5;
 
 import io.bootique.BQCoreModule;
+import io.bootique.BQModule;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandOutcome;
-import io.bootique.BQModule;
 import io.bootique.di.Binder;
 import io.bootique.di.Provides;
 import io.bootique.shutdown.ShutdownManager;
-
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;

@@ -19,7 +19,7 @@
 
 package io.bootique.di;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 
 /**
  * Defines the scope of the instances created by the DI container. I.e. whether instances

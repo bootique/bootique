@@ -20,14 +20,24 @@
 package io.bootique.di.spi;
 
 import io.bootique.BQModule;
-import io.bootique.di.*;
+import io.bootique.di.DIRuntimeException;
+import io.bootique.di.InjectionTraceElement;
+import io.bootique.di.Injector;
+import io.bootique.di.Key;
+import io.bootique.di.Scope;
+import jakarta.inject.Provider;
 
-import javax.inject.Provider;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 

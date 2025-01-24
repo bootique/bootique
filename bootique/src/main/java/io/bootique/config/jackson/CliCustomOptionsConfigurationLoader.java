@@ -26,9 +26,9 @@ import io.bootique.config.jackson.merger.InPlacePropertiesMerger;
 import io.bootique.config.jackson.merger.JsonConfigurationMerger;
 import io.bootique.config.jackson.parser.JsonConfigurationParser;
 import io.bootique.meta.application.OptionMetadata;
+import jakarta.inject.Inject;
 import joptsimple.OptionSpec;
 
-import javax.inject.Inject;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;

@@ -21,8 +21,8 @@ package io.bootique.di.tck;
 
 import io.bootique.di.tck.accessories.RoundThing;
 import io.bootique.di.tck.accessories.SpareTire;
+import jakarta.inject.Inject;
 
-import javax.inject.Inject;
 import java.util.LinkedHashSet;
 import java.util.Set;
 

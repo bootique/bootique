@@ -19,10 +19,9 @@
 
 package io.bootique.di;
 
-import org.junit.jupiter.api.Test;
 import io.bootique.BQModule;
-
-import javax.inject.Inject;
+import jakarta.inject.Inject;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

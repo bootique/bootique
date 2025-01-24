@@ -21,8 +21,8 @@ package io.bootique.di.spi;
 
 import io.bootique.di.Key;
 import io.bootique.di.Scope;
+import jakarta.inject.Provider;
 
-import javax.inject.Provider;
 import java.util.List;
 
 /**

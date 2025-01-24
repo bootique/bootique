@@ -19,16 +19,19 @@
 package io.bootique.unit;
 
 import io.bootique.BQCoreModule;
+import io.bootique.BQModule;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandOutcome;
-import io.bootique.BQModule;
 import io.bootique.di.Binder;
 import io.bootique.di.Provides;
 import io.bootique.resource.ResourceFactory;
 import io.bootique.shutdown.ShutdownManager;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
+import jakarta.inject.Singleton;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.DefaultServlet;
@@ -37,10 +40,6 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.inject.Singleton;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

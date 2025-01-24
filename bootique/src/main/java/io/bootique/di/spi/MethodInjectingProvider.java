@@ -21,8 +21,8 @@ package io.bootique.di.spi;
 
 import io.bootique.di.Key;
 import io.bootique.di.TypeLiteral;
+import jakarta.inject.Provider;
 
-import javax.inject.Provider;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Injection provider that performs injection into object methods annotate with {@link javax.inject.Inject}
+ * Injection provider that performs injection into object methods annotate with {@link jakarta.inject.Inject}
  * This provider correctly resolves and injects object supertypes' methods.
  *
  * @param <T> type of object for which we perform injection

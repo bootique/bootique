@@ -22,8 +22,8 @@ package io.bootique.di.spi;
 import io.bootique.di.DIRuntimeException;
 import io.bootique.di.Key;
 import io.bootique.di.MapBuilder;
+import jakarta.inject.Provider;
 
-import javax.inject.Provider;
 import java.util.Map;
 import java.util.Map.Entry;
 

@@ -35,7 +35,7 @@ public interface ScopeBuilder {
     /**
      * Sets the scope of a bound instance to "no scope". This means that a new instance of
      * an object will be created on every call to {@link Injector#getInstance(Class)} or
-     * to {@link javax.inject.Provider} of this instance.
+     * to {@link jakarta.inject.Provider} of this instance.
      */
     void withoutScope();
 

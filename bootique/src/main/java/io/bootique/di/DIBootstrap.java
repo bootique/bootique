@@ -22,8 +22,8 @@ package io.bootique.di;
 import io.bootique.BQModule;
 import io.bootique.di.spi.DefaultInjector;
 import io.bootique.di.spi.InjectorPredicates;
+import jakarta.inject.Provider;
 
-import javax.inject.Provider;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.AnnotatedElement;
@@ -176,7 +176,7 @@ public class DIBootstrap {
 
         /**
          * Set custom inject predicate.
-         * Default predicate test constructors, methods and fields for {@link javax.inject.Inject} annotation.
+         * Default predicate test constructors, methods and fields for {@link jakarta.inject.Inject} annotation.
          *
          * @param injectPredicate inject predicate
          * @return this
@@ -200,7 +200,7 @@ public class DIBootstrap {
 
         /**
          * Set custom predicate for qualifying annotations.
-         * By default tests for {@link javax.inject.Qualifier} annotation.
+         * By default tests for {@link jakarta.inject.Qualifier} annotation.
          *
          * @param qualifierPredicate qualifier predicate
          * @return this
@@ -212,7 +212,7 @@ public class DIBootstrap {
 
         /**
          * Set custom singleton scope predicate.
-         * By default tests for {@link javax.inject.Singleton} annotation.
+         * By default tests for {@link jakarta.inject.Singleton} annotation.
          *
          * @param singletonPredicate singleton predicate
          * @return this

@@ -22,8 +22,8 @@ package io.bootique.di.spi;
 import io.bootique.di.Key;
 import io.bootique.di.Scope;
 import io.bootique.di.TypeLiteral;
+import jakarta.inject.Provider;
 
-import javax.inject.Provider;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;

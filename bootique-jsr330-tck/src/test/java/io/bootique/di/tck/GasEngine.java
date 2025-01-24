@@ -19,7 +19,7 @@
 
 package io.bootique.di.tck;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public abstract class GasEngine extends Engine {
 
