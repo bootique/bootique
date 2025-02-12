@@ -41,6 +41,7 @@
         <module>bootique-junit5</module>
         <module>bootique-junit5-badspi-it</module>
         <module>bootique-junit4and5-it</module>
+        <module>bootique-jsr330-javax-tck</module>
         <module>bootique-jsr330-tck</module>
         <module>bootique-docs</module>
     </modules>
@@ -54,6 +55,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>javax.inject</groupId>
+                <artifactId>javax.inject</artifactId>
+                <version>1</version>
+            </dependency>
             <dependency>
                 <groupId>jakarta.inject</groupId>
                 <artifactId>jakarta.inject-api</artifactId>
