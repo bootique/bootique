@@ -109,7 +109,7 @@ public class DIErrorsIT {
         @Override
         public void configure(Binder binder) {
             binder.bind(Foo.class).to(FooImpl.class);
-            binder.bind(Bar.class).toProvider(BarProvider.class);
+            binder.bind(Bar.class).toJakartaProvider(BarProvider.class);
             binder.bindMap(String.class, Object.class)
                     .putInstance("key1", new Object())
                     .put("key2", Key.get(Qux.class));

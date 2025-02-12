@@ -81,7 +81,7 @@ public class DefaultInjectorBindingTest {
     public void providerBinding() {
         BQModule module = binder -> binder
                 .bind(MockInterface1.class)
-                .toProvider(MockInterface1Provider.class);
+                .toJakartaProvider(MockInterface1Provider.class);
 
         DefaultInjector injector = new DefaultInjector(module);
 

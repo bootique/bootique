@@ -44,12 +44,17 @@ import java.util.function.Predicate;
 public class InjectorPredicates {
 
     // Default predicates, based on jakarta.inject
-    private Predicate<AccessibleObject> injectPredicate = o ->
-            o.isAnnotationPresent(Inject.class) || o.isAnnotationPresent(BQInject.class);
+    private Predicate<AccessibleObject> injectPredicate = o
+            -> o.isAnnotationPresent(Inject.class)
+            || o.isAnnotationPresent(BQInject.class)
+            || o.isAnnotationPresent(javax.inject.Inject.class);
     private Predicate<Method> providesMethodPredicate = m -> m.isAnnotationPresent(Provides.class);
-    private Predicate<AnnotatedElement> singletonPredicate = o -> o.isAnnotationPresent(Singleton.class);
-    private Predicate<Class<? extends Annotation>> qualifierPredicate = c -> c.isAnnotationPresent(Qualifier.class);
-    private Predicate<Type> providerPredicate = Provider.class::equals;
+    private Predicate<AnnotatedElement> singletonPredicate = o -> o.isAnnotationPresent(Singleton.class)
+            || o.isAnnotationPresent(javax.inject.Singleton.class);
+    private Predicate<Class<? extends Annotation>> qualifierPredicate = c -> c.isAnnotationPresent(Qualifier.class)
+            || c.isAnnotationPresent(javax.inject.Qualifier.class);
+    private Predicate<Type> providerPredicate = ((Predicate<Type>) Provider.class::equals)
+            .or(javax.inject.Provider.class::equals);
 
     private Function<Provider<?>, Provider<?>> providerFunction = Function.identity();
     private ExceptionProvider<?> exceptionProvider = DIRuntimeException::new;
@@ -79,7 +84,7 @@ public class InjectorPredicates {
 
     @SuppressWarnings("unchecked")
     public <T> void setProviderFunction(Function<Provider<T>, Provider<T>> providerFunction) {
-        this.providerFunction = (Function)providerFunction;
+        this.providerFunction = (Function) providerFunction;
     }
 
     public void setExceptionProvider(ExceptionProvider<?> exceptionProvider) {
@@ -108,7 +113,12 @@ public class InjectorPredicates {
 
     @SuppressWarnings("unchecked")
     <T> Provider<T> wrapProvider(Provider<T> provider) {
-        return (Provider<T>)providerFunction.apply(provider);
+        return (Provider<T>) providerFunction.apply(provider);
+    }
+
+    javax.inject.Provider<?> wrapJavaxProvider(Provider<?> scoped) {
+        Provider<?> provider = wrapProvider(scoped);
+        return provider::get;
     }
 
     Predicate<Method> getProvidesMethodPredicate() {

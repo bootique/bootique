@@ -298,6 +298,17 @@ public class DefaultInjector implements Injector {
         return predicates.wrapProvider(binding.getScoped());
     }
 
+    Object getJavaxInjectCompatibleProvider(Key<?> key, Class<?> requiredType) {
+        Binding<?> binding = getBinding(key);
+        if (binding == null || binding.getOriginal() == null) {
+            binding = createDynamicBinding(key);
+        }
+        if(javax.inject.Provider.class.isAssignableFrom(requiredType)) {
+            return predicates.wrapJavaxProvider(binding.getScoped());
+        }
+        return predicates.wrapProvider(binding.getScoped());
+    }
+
     @Override
     public boolean hasProvider(Class<?> type) {
         return hasProvider(Key.get(type));

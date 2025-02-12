@@ -150,7 +150,7 @@ public class DefaultInjectorScopeTest {
 
         BQModule module = binder -> binder
                 .bind(MockInterface1.class)
-                .toProvider(MockImplementation1_Provider.class)
+                .toJakartaProvider(MockImplementation1_Provider.class)
                 .inSingletonScope();
 
         DefaultInjector injector = new DefaultInjector(module);
@@ -172,7 +172,7 @@ public class DefaultInjectorScopeTest {
 
         BQModule module = binder -> binder
                 .bind(MockInterface1.class)
-                .toProvider(MockImplementation1_Provider.class).withoutScope();
+                .toJakartaProvider(MockImplementation1_Provider.class).withoutScope();
 
         DefaultInjector injector = new DefaultInjector(module);
 

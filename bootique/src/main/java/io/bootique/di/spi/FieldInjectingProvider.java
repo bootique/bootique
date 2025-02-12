@@ -78,6 +78,9 @@ class FieldInjectingProvider<T> extends MemberInjectingProvider<T> {
     }
 
     protected Object value(Field field, TypeLiteral<?> fieldType, Annotation bindingAnnotation) {
+        // TODO: need to support older javax.inject.Provider
+        //      1. detection part could be done directly in in the predicate on the next line
+        //      2. however, returned object should be refitted from jakarta to javax Provider
         if (injector.getPredicates().isProviderType(fieldType.getRawType())) {
             Type parameterType = GenericTypesUtils.getGenericParameterType(field.getGenericType());
 
@@ -86,7 +89,7 @@ class FieldInjectingProvider<T> extends MemberInjectingProvider<T> {
                         , field.getDeclaringClass().getName(), field.getName());
             }
 
-            return injector.getProvider(Key.get(TypeLiteral.of(parameterType), bindingAnnotation));
+            return injector.getJavaxInjectCompatibleProvider(Key.get(TypeLiteral.of(parameterType), bindingAnnotation), fieldType.getRawType());
         } else {
             Key<?> key = Key.get(fieldType, bindingAnnotation);
             return injector.getInstanceWithCycleProtection(key);

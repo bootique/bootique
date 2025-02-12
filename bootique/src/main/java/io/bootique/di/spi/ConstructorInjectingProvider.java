@@ -130,7 +130,7 @@ public class ConstructorInjectingProvider<T> implements NamedProvider<T> {
                 return injector.throwException("Constructor provider parameter %s must be "
                         + "parameterized to be usable for injection", parameter.getName());
             }
-            return injector.getProvider(Key.get(TypeLiteral.of(parameterType), bindingAnnotation));
+            return injector.getJavaxInjectCompatibleProvider(Key.get(TypeLiteral.of(parameterType), bindingAnnotation), parameter);
         } else {
             Key<?> key = Key.get(TypeLiteral.of(genericType), bindingAnnotation);
             return injector.getInstanceWithCycleProtection(key);
