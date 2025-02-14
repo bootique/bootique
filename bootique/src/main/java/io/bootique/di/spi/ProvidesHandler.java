@@ -136,7 +136,7 @@ class ProvidesHandler {
 
             if (isProviderType(params[i])) {
                 // will resolve to provider of provider
-                providers[i] = () -> injector.getProvider(key);
+                providers[i] = () -> injector.getJakartaProvider(key);
             } else {
                 // resolve the actual provider lazily
                 providers[i] = () -> injector.getInstance(key);

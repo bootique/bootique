@@ -42,9 +42,13 @@ public interface Injector {
      */
     <T> T getInstance(Key<T> key) throws DIRuntimeException;
 
-    <T> Provider<T> getProvider(Class<T> type) throws DIRuntimeException;
+    <T> javax.inject.Provider<T> getProvider(Class<T> type) throws DIRuntimeException;
 
-    <T> Provider<T> getProvider(Key<T> key) throws DIRuntimeException;
+    <T> Provider<T> getJakartaProvider(Class<T> type) throws DIRuntimeException;
+
+    <T> javax.inject.Provider<T> getProvider(Key<T> key) throws DIRuntimeException;
+
+    <T> Provider<T> getJakartaProvider(Key<T> key) throws DIRuntimeException;
 
     /**
      * @param type binding type to check

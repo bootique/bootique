@@ -68,7 +68,7 @@ class DefaultBindingBuilder<T> implements BindingBuilder<T> {
             injector.putBinding(implementationKey, (Provider) null);
             addBinding(() -> {
                 injector.trace(() -> "Target implementation is " + implementationKey);
-                return injector.getProvider(implementationKey).get();
+                return injector.getJakartaProvider(implementationKey).get();
             });
         }
         return this;

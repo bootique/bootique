@@ -63,7 +63,7 @@ public class BQRuntime {
         if (!injector.hasProvider(diKey)) {
             throw new NullPointerException("No binding for key: " + diKey);
         }
-        return injector.getProvider(diKey).get();
+        return injector.getJakartaProvider(diKey).get();
     }
 
     public BootLogger getBootLogger() {

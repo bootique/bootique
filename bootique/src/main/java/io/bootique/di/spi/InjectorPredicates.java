@@ -116,8 +116,8 @@ public class InjectorPredicates {
         return (Provider<T>) providerFunction.apply(provider);
     }
 
-    javax.inject.Provider<?> wrapJavaxProvider(Provider<?> scoped) {
-        Provider<?> provider = wrapProvider(scoped);
+    <T> javax.inject.Provider<T> wrapJavaxProvider(Provider<T> scoped) {
+        Provider<T> provider = wrapProvider(scoped);
         return provider::get;
     }
 
