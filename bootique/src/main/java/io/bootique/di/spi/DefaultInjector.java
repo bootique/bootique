@@ -25,6 +25,7 @@ import io.bootique.di.InjectionTraceElement;
 import io.bootique.di.Injector;
 import io.bootique.di.Key;
 import io.bootique.di.Scope;
+import io.bootique.log.BootLogger;
 import jakarta.inject.Provider;
 
 import java.lang.reflect.InvocationHandler;
@@ -393,6 +394,13 @@ public class DefaultInjector implements Injector {
     @Override
     public <T> Collection<Key<T>> getKeysByType(Class<T> type) {
         return (List)keysByRawType.getOrDefault(type, Collections.emptyList());
+    }
+
+    @Override
+    public void reportWarnings(BootLogger logger) {
+        if(getPredicates().isJavaxInjectPresent()) {
+            logger.stderr("** Deprecation alert - `javax.inject` annotations are deprecated, can be replaced with `jakarta.inject`.");
+        }
     }
 
     DefaultScope getSingletonScope() {

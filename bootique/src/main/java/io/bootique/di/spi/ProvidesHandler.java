@@ -32,7 +32,7 @@ import java.util.function.Predicate;
 
 /**
  * Resolves provider methods to a set of bindings. Provider methods are a part of a module class, each annotated
- * with a specified annotation. Usually this annotations is {@link io.bootique.di.Provides @Provides}.
+ * with a specified annotation. Usually this annotation is {@link io.bootique.di.Provides @Provides}.
  */
 class ProvidesHandler {
 
@@ -50,7 +50,6 @@ class ProvidesHandler {
             if (providesMethodPredicate.test(m)) {
                 validateProvidesMethod(module, m);
                 m.setAccessible(true);
-                // change to mutable array on first match
                 createBinding(module, m);
             }
         }
@@ -133,10 +132,11 @@ class ProvidesHandler {
         for (int i = 0; i < len; i++) {
             Annotation qualifier = extractQualifier(method, paramAnnotations[i]);
             Key<?> key = createKey(params[i], qualifier);
+            Class<?> type = TypeLiteral.of(params[i]).getRawType();
 
             if (isProviderType(params[i])) {
                 // will resolve to provider of provider
-                providers[i] = () -> injector.getJakartaProvider(key);
+                providers[i] = () -> injector.getJavaxInjectCompatibleProvider(key, type);
             } else {
                 // resolve the actual provider lazily
                 providers[i] = () -> injector.getInstance(key);

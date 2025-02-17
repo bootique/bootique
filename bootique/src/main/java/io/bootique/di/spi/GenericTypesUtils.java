@@ -66,7 +66,6 @@ public class GenericTypesUtils {
         }
 
         ParameterizedType parameterizedSuperType = (ParameterizedType) genericSuperclass;
-        parameterizedSuperType.getRawType();
         Type actualType = parameterizedSuperType.getActualTypeArguments()[idx];
         return TypeLiteral.of(actualType);
     }

@@ -277,6 +277,7 @@ public class Bootique {
         BQRuntime runtime = new BQRuntime(injector);
 
         runtime.getInstance(Key.getSetOf(BQRuntimeListener.class)).forEach(sl -> sl.onRuntimeCreated(runtime));
+        injector.reportWarnings(logger);
         return runtime;
     }
 

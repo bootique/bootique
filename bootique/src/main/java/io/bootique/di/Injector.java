@@ -19,6 +19,7 @@
 
 package io.bootique.di;
 
+import io.bootique.log.BootLogger;
 import jakarta.inject.Provider;
 
 import java.util.Collection;
@@ -90,4 +91,12 @@ public interface Injector {
      * @return collection of keys bound to given type
      */
     <T> Collection<Key<T>> getKeysByType(Class<T> type);
+
+    /**
+     * Report any warnings found in the injector
+     *
+     * @param logger to send warning to
+     * @since 3.0-M2
+     */
+    void reportWarnings(BootLogger logger);
 }

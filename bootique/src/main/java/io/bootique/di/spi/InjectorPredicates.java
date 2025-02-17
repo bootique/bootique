@@ -45,19 +45,42 @@ public class InjectorPredicates {
 
     // Default predicates, based on jakarta.inject
     private Predicate<AccessibleObject> injectPredicate = o
-            -> o.isAnnotationPresent(Inject.class)
-            || o.isAnnotationPresent(BQInject.class)
-            || o.isAnnotationPresent(javax.inject.Inject.class);
+            -> {
+        if(o.isAnnotationPresent(javax.inject.Inject.class)) {
+            javaxInjectPresent = true;
+            return true;
+        }
+        return o.isAnnotationPresent(Inject.class)
+                || o.isAnnotationPresent(BQInject.class);
+    };
     private Predicate<Method> providesMethodPredicate = m -> m.isAnnotationPresent(Provides.class);
-    private Predicate<AnnotatedElement> singletonPredicate = o -> o.isAnnotationPresent(Singleton.class)
-            || o.isAnnotationPresent(javax.inject.Singleton.class);
-    private Predicate<Class<? extends Annotation>> qualifierPredicate = c -> c.isAnnotationPresent(Qualifier.class)
-            || c.isAnnotationPresent(javax.inject.Qualifier.class);
+    private Predicate<AnnotatedElement> singletonPredicate = o -> {
+        if(o.isAnnotationPresent(javax.inject.Singleton.class)) {
+            javaxInjectPresent = true;
+            return true;
+        }
+        return o.isAnnotationPresent(Singleton.class);
+    };
+    private Predicate<Class<? extends Annotation>> qualifierPredicate = c -> {
+        if(c.isAnnotationPresent(javax.inject.Qualifier.class)) {
+            javaxInjectPresent = true;
+            return true;
+        }
+        return c.isAnnotationPresent(Qualifier.class);
+    };
     private Predicate<Type> providerPredicate = ((Predicate<Type>) Provider.class::equals)
-            .or(javax.inject.Provider.class::equals);
+            .or(obj -> {
+                if(javax.inject.Provider.class.equals(obj)) {
+                    javaxInjectPresent = true;
+                    return true;
+                }
+                return false;
+            });
 
     private Function<Provider<?>, Provider<?>> providerFunction = Function.identity();
     private ExceptionProvider<?> exceptionProvider = DIRuntimeException::new;
+
+    private volatile boolean javaxInjectPresent;
 
     public InjectorPredicates() {
     }
@@ -111,12 +134,17 @@ public class InjectorPredicates {
         return providerPredicate.test(type);
     }
 
+    boolean isJavaxInjectPresent() {
+        return javaxInjectPresent;
+    }
+
     @SuppressWarnings("unchecked")
     <T> Provider<T> wrapProvider(Provider<T> provider) {
         return (Provider<T>) providerFunction.apply(provider);
     }
 
     <T> javax.inject.Provider<T> wrapJavaxProvider(Provider<T> scoped) {
+        javaxInjectPresent = true;
         Provider<T> provider = wrapProvider(scoped);
         return provider::get;
     }
