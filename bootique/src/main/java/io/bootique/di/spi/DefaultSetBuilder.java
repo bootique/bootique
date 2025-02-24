@@ -52,14 +52,26 @@ class DefaultSetBuilder<T> extends DICollectionBuilder<Set<T>, T> implements Set
     }
 
     @Override
-    public SetBuilder<T> addProviderInstance(Provider<? extends T> provider) {
+    public SetBuilder<T> addJakartaProviderInstance(Provider<? extends T> provider) {
         findOrCreateSetProvider().add(provider);
         return this;
     }
 
     @Override
-    public SetBuilder<T> addProvider(Class<? extends Provider<? extends T>> providerType) {
+    public SetBuilder<T> addJakartaProvider(Class<? extends Provider<? extends T>> providerType)  {
         findOrCreateSetProvider().add(createProviderProvider(providerType));
+        return this;
+    }
+
+    @Override
+    public SetBuilder<T> addProviderInstance(javax.inject.Provider<? extends T> provider) {
+        findOrCreateSetProvider().add(provider::get);
+        return this;
+    }
+
+    @Override
+    public SetBuilder<T> addProvider(Class<? extends javax.inject.Provider<? extends T>> providerType) {
+        findOrCreateSetProvider().add(createJavaxProviderProvider(providerType));
         return this;
     }
 

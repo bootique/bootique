@@ -53,7 +53,9 @@ public class InjectorPredicates {
         return o.isAnnotationPresent(Inject.class)
                 || o.isAnnotationPresent(BQInject.class);
     };
+
     private Predicate<Method> providesMethodPredicate = m -> m.isAnnotationPresent(Provides.class);
+
     private Predicate<AnnotatedElement> singletonPredicate = o -> {
         if(o.isAnnotationPresent(javax.inject.Singleton.class)) {
             javaxInjectPresent = true;
@@ -61,13 +63,11 @@ public class InjectorPredicates {
         }
         return o.isAnnotationPresent(Singleton.class);
     };
-    private Predicate<Class<? extends Annotation>> qualifierPredicate = c -> {
-        if(c.isAnnotationPresent(javax.inject.Qualifier.class)) {
-            javaxInjectPresent = true;
-            return true;
-        }
-        return c.isAnnotationPresent(Qualifier.class);
-    };
+
+    private Predicate<Class<? extends Annotation>> qualifierPredicate = c
+            -> c.isAnnotationPresent(javax.inject.Qualifier.class)
+            || c.isAnnotationPresent(Qualifier.class);
+
     private Predicate<Type> providerPredicate = ((Predicate<Type>) Provider.class::equals)
             .or(obj -> {
                 if(javax.inject.Provider.class.equals(obj)) {
@@ -78,6 +78,7 @@ public class InjectorPredicates {
             });
 
     private Function<Provider<?>, Provider<?>> providerFunction = Function.identity();
+
     private ExceptionProvider<?> exceptionProvider = DIRuntimeException::new;
 
     private volatile boolean javaxInjectPresent;

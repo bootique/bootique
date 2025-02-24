@@ -75,6 +75,32 @@ public abstract class DICollectionBuilder<K, E> implements ScopeBuilder {
         return provider4;
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected Provider<E> createJavaxProviderProvider(Class<? extends javax.inject.Provider<? extends E>> providerType) {
+        Key<? extends javax.inject.Provider<? extends E>> providerKey = Key.get(providerType);
+        Provider<javax.inject.Provider<? extends E>> providerProvider = () -> {
+            injector.trace(() -> "Resolving custom provider of type " + providerType);
+            if(!injector.hasProvider(providerKey)) {
+                // create new provider
+                Provider<javax.inject.Provider<? extends E>> provider0 = new ConstructorInjectingProvider<>(providerType, injector);
+                Provider<javax.inject.Provider<? extends E>> provider1 = new FieldInjectingProvider<>(provider0, injector);
+                if(injector.isMethodInjectionEnabled()) {
+                    provider1 = new MethodInjectingProvider<>(provider1, injector);
+                }
+                injector.putBinding((Key)providerKey, provider1);
+            }
+            // get existing provider
+            return injector.getInstance(providerKey);
+        };
+
+        Provider<E> provider3 = new CustomJavaxProvidersProvider<>(injector, providerType, providerProvider);
+        Provider<E> provider4 = new FieldInjectingProvider<>(provider3, injector);
+        if(injector.isMethodInjectionEnabled()) {
+            provider4 = new MethodInjectingProvider<>(provider4, injector);
+        }
+        return provider4;
+    }
+
     protected <SubT extends E> Provider<SubT> getByTypeProvider(Class<SubT> interfaceType) {
         return getByKeyProvider(Key.get(interfaceType));
     }
