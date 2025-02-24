@@ -44,9 +44,20 @@ public interface MapBuilder<K, V> extends ScopeBuilder {
     /**
      * @since 2.0
      */
-    MapBuilder<K, V> putProviderInstance(K key, Provider<? extends V> value) throws DIRuntimeException;
+    MapBuilder<K, V> putProviderInstance(K key, javax.inject.Provider<? extends V> value) throws DIRuntimeException;
 
-    MapBuilder<K, V> putProvider(K key, Class<? extends Provider<? extends V>> value) throws DIRuntimeException;
+    MapBuilder<K, V> putProvider(K key, Class<? extends javax.inject.Provider<? extends V>> value) throws DIRuntimeException;
+
+    /**
+     * @since 3.0
+     */
+    MapBuilder<K, V> putJakartaProviderInstance(K key, Provider<? extends V> value) throws DIRuntimeException;
+
+    /**
+     * @since 3.0
+     */
+    MapBuilder<K, V> putJakartaProvider(K key, Class<? extends Provider<? extends V>> value) throws DIRuntimeException;
+
 
     /**
      * @since 2.0
@@ -62,10 +73,10 @@ public interface MapBuilder<K, V> extends ScopeBuilder {
     }
 
     /**
-     * @deprecated since 2.0.B1 in favor of {@link #putProviderInstance(Object, Provider)} to avoid ambiguity
+     * @deprecated since 2.0.B1 in favor of {@link #putProviderInstance(Object, javax.inject.Provider)} to avoid ambiguity
      */
     @Deprecated
-    default MapBuilder<K, V> putProvider(K key, Provider<? extends V> value) throws DIRuntimeException {
+    default MapBuilder<K, V> putProvider(K key, javax.inject.Provider<? extends V> value) throws DIRuntimeException {
         return putProviderInstance(key, value);
     }
 

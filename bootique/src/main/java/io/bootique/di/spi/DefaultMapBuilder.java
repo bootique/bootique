@@ -58,13 +58,24 @@ class DefaultMapBuilder<K, V> extends DICollectionBuilder<Map<K, V>, V> implemen
     }
 
     @Override
-    public MapBuilder<K, V> putProviderInstance(K key, Provider<? extends V> value) throws DIRuntimeException {
+    public MapBuilder<K, V> putProviderInstance(K key, javax.inject.Provider<? extends V> value) throws DIRuntimeException {
+        return putJakartaProviderInstance(key, value::get);
+    }
+
+    @Override
+    public MapBuilder<K, V> putProvider(K key, Class<? extends javax.inject.Provider<? extends V>> value) throws DIRuntimeException {
+        findOrCreateMapProvider().put(key, createJavaxProviderProvider(value));
+        return this;
+    }
+
+    @Override
+    public MapBuilder<K, V> putJakartaProviderInstance(K key, Provider<? extends V> value) throws DIRuntimeException {
         findOrCreateMapProvider().put(key, value);
         return this;
     }
 
     @Override
-    public MapBuilder<K, V> putProvider(K key, Class<? extends Provider<? extends V>> value) throws DIRuntimeException {
+    public MapBuilder<K, V> putJakartaProvider(K key, Class<? extends Provider<? extends V>> value) throws DIRuntimeException {
         findOrCreateMapProvider().put(key, createProviderProvider(value));
         return this;
     }
