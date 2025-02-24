@@ -34,10 +34,16 @@ public interface BindingBuilder<T> extends ScopeBuilder {
 
     ScopeBuilder toInstance(T instance) throws DIRuntimeException;
 
+    /**
+     * @since 3.0
+     */
     ScopeBuilder toJakartaProvider(Class<? extends Provider<? extends T>> providerType) throws DIRuntimeException;
 
     ScopeBuilder toProvider(Class<? extends javax.inject.Provider<? extends T>> providerType) throws DIRuntimeException;
 
+    /**
+     * @since 3.0
+     */
     ScopeBuilder toJakartaProviderInstance(Provider<? extends T> provider) throws DIRuntimeException;
 
     ScopeBuilder toProviderInstance(javax.inject.Provider<? extends T> provider) throws DIRuntimeException;

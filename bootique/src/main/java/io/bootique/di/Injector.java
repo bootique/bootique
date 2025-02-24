@@ -45,10 +45,16 @@ public interface Injector {
 
     <T> javax.inject.Provider<T> getProvider(Class<T> type) throws DIRuntimeException;
 
+    /**
+     * @since 3.0
+     */
     <T> Provider<T> getJakartaProvider(Class<T> type) throws DIRuntimeException;
 
     <T> javax.inject.Provider<T> getProvider(Key<T> key) throws DIRuntimeException;
 
+    /**
+     * @since 3.0
+     */
     <T> Provider<T> getJakartaProvider(Key<T> key) throws DIRuntimeException;
 
     /**
@@ -96,7 +102,7 @@ public interface Injector {
      * Report any warnings found in the injector
      *
      * @param logger to send warning to
-     * @since 3.0-M2
+     * @since 3.0
      */
     void reportWarnings(BootLogger logger);
 }

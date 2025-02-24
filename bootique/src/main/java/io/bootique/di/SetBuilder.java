@@ -45,11 +45,16 @@ public interface SetBuilder<T> extends ScopeBuilder {
      */
     SetBuilder<T> addProviderInstance(javax.inject.Provider<? extends T> value) throws DIRuntimeException;
 
+    /**
+     * @since 3.0
+     */
     SetBuilder<T> addJakartaProviderInstance(Provider<? extends T> value) throws DIRuntimeException;
 
     SetBuilder<T> addProvider(Class<? extends javax.inject.Provider<? extends T>> value) throws DIRuntimeException;
 
-
+    /**
+     * @since 3.0
+     */
     SetBuilder<T> addJakartaProvider(Class<? extends Provider<? extends T>> value) throws DIRuntimeException;
 
     /**
