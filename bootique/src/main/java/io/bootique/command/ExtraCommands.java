@@ -29,6 +29,7 @@ import java.lang.annotation.Target;
 @Target({ ElementType.PARAMETER, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 @Qualifier
+@javax.inject.Qualifier
 @interface ExtraCommands {
 
 }
