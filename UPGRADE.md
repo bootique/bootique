@@ -24,13 +24,11 @@
 
 * [bootique #349](https://github.com/bootique/bootique/issues/349): `jakarta.inject` annotations
   (`jakarta.inject.Inject`, etc.) and DI-related interfaces (`jakarta.inject.Provider`) are now a preferred flavor in
-  Bootique core dependency-injection, preferred over `javax.inject`. Unlike other modules, like Jetty, that ship `javax`
-  and `jakarta` flavors as two separate modules that can be included in the app independently, Bootique core is supports
-  both flavors in the same codebase. Meaning you can still use `javax.inject.Inject`, until Bootique 4.0, but this will 
-  result in warnings printed in the logs, Also, you should heed the deprecation warnings in `BindingBuilder.toProvider(..)`, 
-  `BindingBuilder.toProviderInstance(..)` and `Injector.getProvider()`. We recommend replacing them with 
-  `BindingBuilder.toJakartaProvider(..)`, `BindingBuilder.toJakartaProviderInstance(..)`, `Injector.getJakartaProvider()`.
-
+  Bootique dependency injection instead of `javax.inject`. Unlike other modules (e.g. Jetty), that ship `javax`
+  and `jakarta` flavors as two separate modules that can be included in the app independently, Bootique core supports
+  (for now) both `jakarta.inject` and `javax.inject` in the same codebase. Meaning you can keep using 
+  `javax.inject.Inject`, `javax.inject.Provider`, etc. until at least 4.0. But this will result in deprecation warnings 
+  in IDE and runtime logs. We suggest that you heed those warnings and switch to the Jakarta whenever you can.
 
 ## 3.0-M6
 
