@@ -43,6 +43,10 @@ public interface Injector {
      */
     <T> T getInstance(Key<T> key) throws DIRuntimeException;
 
+    /**
+     * @deprecated in favor of {@link #getJakartaProvider(Class)}
+     */
+    @Deprecated(forRemoval = true, since = "3.0")
     <T> javax.inject.Provider<T> getProvider(Class<T> type) throws DIRuntimeException;
 
     /**
@@ -50,6 +54,10 @@ public interface Injector {
      */
     <T> Provider<T> getJakartaProvider(Class<T> type) throws DIRuntimeException;
 
+    /**
+     * @deprecated in favor of {@link #getJakartaProvider(Key)} 
+     */
+    @Deprecated(forRemoval = true, since = "3.0")
     <T> javax.inject.Provider<T> getProvider(Key<T> key) throws DIRuntimeException;
 
     /**
@@ -82,7 +90,7 @@ public interface Injector {
     void injectMembers(Object object);
 
     /**
-     * A lifecycle method that let's the injector's services to clean up their state and
+     * A lifecycle method that lets the injector's services to clean up their state and
      * release resources. This method would normally generate a scope end event for the
      * injector's one and only singleton scope.
      */

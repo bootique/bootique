@@ -43,9 +43,15 @@ public interface MapBuilder<K, V> extends ScopeBuilder {
 
     /**
      * @since 2.0
+     * @deprecated in favor of {@link #putJakartaProviderInstance(Object, Provider)} 
      */
+    @Deprecated(forRemoval = true, since = "3.0")
     MapBuilder<K, V> putProviderInstance(K key, javax.inject.Provider<? extends V> value) throws DIRuntimeException;
 
+    /**
+     * @deprecated in favor of {@link #putJakartaProvider(Object, Class)}
+     */
+    @Deprecated(forRemoval = true, since = "3.0")
     MapBuilder<K, V> putProvider(K key, Class<? extends javax.inject.Provider<? extends V>> value) throws DIRuntimeException;
 
     /**

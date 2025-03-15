@@ -43,7 +43,7 @@ public abstract class DICollectionBuilder<K, E> implements ScopeBuilder {
     protected Provider<E> createInstanceProvider(E value) {
         Provider<E> provider0 = new InstanceProvider<>(value);
         Provider<E> provider1 = new FieldInjectingProvider<>(provider0, injector);
-        if(!injector.isMethodInjectionEnabled()) {
+        if (!injector.isMethodInjectionEnabled()) {
             return provider1;
         }
         return new MethodInjectingProvider<>(provider1, injector);
@@ -54,14 +54,14 @@ public abstract class DICollectionBuilder<K, E> implements ScopeBuilder {
         Key<? extends Provider<? extends E>> providerKey = Key.get(providerType);
         Provider<Provider<? extends E>> providerProvider = () -> {
             injector.trace(() -> "Resolving custom provider of type " + providerType);
-            if(!injector.hasProvider(providerKey)) {
+            if (!injector.hasProvider(providerKey)) {
                 // create new provider
                 Provider<Provider<? extends E>> provider0 = new ConstructorInjectingProvider<>(providerType, injector);
                 Provider<Provider<? extends E>> provider1 = new FieldInjectingProvider<>(provider0, injector);
-                if(injector.isMethodInjectionEnabled()) {
+                if (injector.isMethodInjectionEnabled()) {
                     provider1 = new MethodInjectingProvider<>(provider1, injector);
                 }
-                injector.putBinding((Key)providerKey, provider1);
+                injector.putBinding((Key) providerKey, provider1);
             }
             // get existing provider
             return injector.getInstance(providerKey);
@@ -69,25 +69,29 @@ public abstract class DICollectionBuilder<K, E> implements ScopeBuilder {
 
         Provider<E> provider3 = new CustomProvidersProvider<>(injector, providerType, providerProvider);
         Provider<E> provider4 = new FieldInjectingProvider<>(provider3, injector);
-        if(injector.isMethodInjectionEnabled()) {
+        if (injector.isMethodInjectionEnabled()) {
             provider4 = new MethodInjectingProvider<>(provider4, injector);
         }
         return provider4;
     }
 
+    /**
+     * @deprecated in favor of {@link #createProviderProvider(Class)}
+     */
+    @Deprecated(forRemoval = true, since = "3.0")
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected Provider<E> createJavaxProviderProvider(Class<? extends javax.inject.Provider<? extends E>> providerType) {
         Key<? extends javax.inject.Provider<? extends E>> providerKey = Key.get(providerType);
         Provider<javax.inject.Provider<? extends E>> providerProvider = () -> {
             injector.trace(() -> "Resolving custom provider of type " + providerType);
-            if(!injector.hasProvider(providerKey)) {
+            if (!injector.hasProvider(providerKey)) {
                 // create new provider
                 Provider<javax.inject.Provider<? extends E>> provider0 = new ConstructorInjectingProvider<>(providerType, injector);
                 Provider<javax.inject.Provider<? extends E>> provider1 = new FieldInjectingProvider<>(provider0, injector);
-                if(injector.isMethodInjectionEnabled()) {
+                if (injector.isMethodInjectionEnabled()) {
                     provider1 = new MethodInjectingProvider<>(provider1, injector);
                 }
-                injector.putBinding((Key)providerKey, provider1);
+                injector.putBinding((Key) providerKey, provider1);
             }
             // get existing provider
             return injector.getInstance(providerKey);
@@ -95,7 +99,7 @@ public abstract class DICollectionBuilder<K, E> implements ScopeBuilder {
 
         Provider<E> provider3 = new CustomJavaxProvidersProvider<>(injector, providerType, providerProvider);
         Provider<E> provider4 = new FieldInjectingProvider<>(provider3, injector);
-        if(injector.isMethodInjectionEnabled()) {
+        if (injector.isMethodInjectionEnabled()) {
             provider4 = new MethodInjectingProvider<>(provider4, injector);
         }
         return provider4;
@@ -108,7 +112,7 @@ public abstract class DICollectionBuilder<K, E> implements ScopeBuilder {
     protected <SubT extends E> Provider<SubT> getByKeyProvider(Key<SubT> key) {
         // Create a deferred provider to prevent caching the intermediate provider from the Injector.
         // The actual provider may get overridden after list builder is created.
-        if(!injector.hasProvider(key)) {
+        if (!injector.hasProvider(key)) {
             injector.putBinding(key, (Provider<SubT>) null);
         }
         return () -> injector.getInstance(key);

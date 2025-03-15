@@ -42,7 +42,9 @@ public interface SetBuilder<T> extends ScopeBuilder {
 
     /**
      * @since 2.0
+     * @deprecated in favor of {@link #addJakartaProviderInstance(Provider)} 
      */
+    @Deprecated(forRemoval = true, since = "3.0")
     SetBuilder<T> addProviderInstance(javax.inject.Provider<? extends T> value) throws DIRuntimeException;
 
     /**
@@ -50,6 +52,10 @@ public interface SetBuilder<T> extends ScopeBuilder {
      */
     SetBuilder<T> addJakartaProviderInstance(Provider<? extends T> value) throws DIRuntimeException;
 
+    /**
+     * @deprecated in favor of {@link #addJakartaProvider(Class)}
+     */
+    @Deprecated(forRemoval = true, since = "3.0")
     SetBuilder<T> addProvider(Class<? extends javax.inject.Provider<? extends T>> value) throws DIRuntimeException;
 
     /**

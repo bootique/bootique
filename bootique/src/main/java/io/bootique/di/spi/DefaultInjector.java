@@ -87,7 +87,7 @@ public class DefaultInjector implements Injector {
 
         this.singletonScope = new DefaultScope();
         this.noScope = NoScope.INSTANCE;
-        if(options.contains(Options.SINGLETON_SCOPE_BY_DEFAULT)) {
+        if (options.contains(Options.SINGLETON_SCOPE_BY_DEFAULT)) {
             this.defaultScope = singletonScope;
         } else {
             this.defaultScope = noScope;
@@ -141,7 +141,7 @@ public class DefaultInjector implements Injector {
 
     @SuppressWarnings("unchecked")
     <T> Binding<T> getBinding(Key<T> key) {
-        if(isShutdown) {
+        if (isShutdown) {
             throwException("Injector is shutdown");
         }
         // may return null - this is intentionally allowed in this non-public method
@@ -160,26 +160,26 @@ public class DefaultInjector implements Injector {
      * Override existing binding, will throw if no binding exists for given key.
      */
     <T> void overrideBinding(Key<T> bindingKey, Provider<T> provider) {
-        if(isShutdown) {
+        if (isShutdown) {
             throwException("Injector is shutdown");
         }
         Binding<T> binding = new Binding<>(bindingKey, wrapProvider(bindingKey, provider), defaultScope, false);
         Binding<?> oldBinding = bindings.put(bindingKey, binding);
-        if(oldBinding == null) {
+        if (oldBinding == null) {
             throwException("No binding to override for key %s", bindingKey);
         }
     }
 
     <T> void putBinding(Key<T> bindingKey, Binding<T> binding) {
-        if(isShutdown) {
+        if (isShutdown) {
             throwException("Injector is shutdown");
         }
         Binding<?> oldBinding = bindings.put(bindingKey, binding);
-        if(oldBinding == null) {
+        if (oldBinding == null) {
             keysByRawType.computeIfAbsent(bindingKey.getType().getRawType(), type -> new ArrayList<>(1))
                     .add(bindingKey);
         }
-        if(!canOverride(oldBinding)) {
+        if (!canOverride(oldBinding)) {
             throwException("Unable to override key %s. It is final and override is disabled.", bindingKey);
         }
     }
@@ -192,7 +192,6 @@ public class DefaultInjector implements Injector {
      * </ul>
      *
      * @param oldBinding existing binding (or null if absent) to override
-     *
      * @return can binding be overridden with new one
      */
     private boolean canOverride(Binding<?> oldBinding) {
@@ -205,10 +204,10 @@ public class DefaultInjector implements Injector {
 
     @SuppressWarnings("unchecked")
     private <T> Decoration<T> getDecoration(Key<T> bindingKey) {
-        if(isShutdown) {
+        if (isShutdown) {
             throwException("Injector is shutdown");
         }
-        return (Decoration<T>)decorations.computeIfAbsent(bindingKey, bk -> new Decoration<>());
+        return (Decoration<T>) decorations.computeIfAbsent(bindingKey, bk -> new Decoration<>());
     }
 
     <T> void putDecorationAfter(Key<T> bindingKey, DecoratorProvider<T> decoratorProvider) {
@@ -248,10 +247,10 @@ public class DefaultInjector implements Injector {
     }
 
     <T> T getInstanceWithCycleProtection(Key<T> key, boolean fromProxy) {
-        if(!injectionStack.push(key)) {
+        if (!injectionStack.push(key)) {
             // cycle detected in dependency
             // 1. try to create proxy
-            if(allowProxyCreation && !fromProxy) {
+            if (allowProxyCreation && !fromProxy) {
                 T proxy = getProxyInstance(key);
                 if (proxy != null) {
                     return proxy;
@@ -284,8 +283,8 @@ public class DefaultInjector implements Injector {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private <T> T getProxyInstance(Key<T> key) {
-        Class<T> bindingClass = (Class)key.getType().getRawType();
-        if(!bindingClass.isInterface()) {
+        Class<T> bindingClass = (Class) key.getType().getRawType();
+        if (!bindingClass.isInterface()) {
             return null;
         }
         InvocationHandler handler = new ProxyInvocationHandler<>(this, key);
@@ -319,7 +318,7 @@ public class DefaultInjector implements Injector {
         if (binding == null || binding.getOriginal() == null) {
             binding = createDynamicBinding(key);
         }
-        if(javax.inject.Provider.class.isAssignableFrom(requiredType)) {
+        if (javax.inject.Provider.class.isAssignableFrom(requiredType)) {
             return predicates.wrapJavaxProvider(binding.getScoped());
         }
         return predicates.wrapProvider(binding.getScoped());
@@ -339,21 +338,21 @@ public class DefaultInjector implements Injector {
     private <T> Binding<T> createDynamicBinding(Key<T> key) {
         // Compute new bindings for given key
         return (Binding<T>) bindings.compute(key, (k, oldBinding) -> {
-            if(oldBinding == null && !allowDynamicBinding) {
+            if (oldBinding == null && !allowDynamicBinding) {
                 throwException("DI container has no binding for key %s and dynamic bindings are disabled.", key);
             }
 
-            if(oldBinding != null && oldBinding.getOriginal() != null) {
+            if (oldBinding != null && oldBinding.getOriginal() != null) {
                 return oldBinding;
             }
 
-            Class<T> implementation = (Class<T>)key.getType().getRawType();
+            Class<T> implementation = (Class<T>) key.getType().getRawType();
             Provider<T> provider = new ConstructorInjectingProvider<>(implementation, this);
 
             Scope scope = defaultScope;
-            if(oldBinding != null && oldBinding.getScope() != defaultScope) {
+            if (oldBinding != null && oldBinding.getScope() != defaultScope) {
                 scope = oldBinding.getScope();
-            } else if(getPredicates().isSingleton(implementation)) {
+            } else if (getPredicates().isSingleton(implementation)) {
                 scope = singletonScope;
             }
 
@@ -363,7 +362,7 @@ public class DefaultInjector implements Injector {
 
     private <T> Provider<T> wrapInMemberInjectionProviders(Key<T> key, Provider<T> provider) {
         Provider<T> provider1 = new FieldInjectingProvider<>(provider, this);
-        if(isMethodInjectionEnabled()) {
+        if (isMethodInjectionEnabled()) {
             provider1 = new MethodInjectingProvider<>(provider1, this);
         }
 
@@ -373,13 +372,13 @@ public class DefaultInjector implements Injector {
     @Override
     @SuppressWarnings("unchecked")
     public void injectMembers(Object object) {
-        Key<Object> key = Key.get((Class<Object>)object.getClass());
+        Key<Object> key = Key.get((Class<Object>) object.getClass());
         wrapInMemberInjectionProviders(key, new InstanceProvider<>(object)).get();
     }
 
     @Override
     public synchronized void shutdown() {
-        if(isShutdown) {
+        if (isShutdown) {
             return;
         }
         isShutdown = true;
@@ -393,13 +392,13 @@ public class DefaultInjector implements Injector {
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public <T> Collection<Key<T>> getKeysByType(Class<T> type) {
-        return (List)keysByRawType.getOrDefault(type, Collections.emptyList());
+        return (List) keysByRawType.getOrDefault(type, Collections.emptyList());
     }
 
     @Override
     public void reportWarnings(BootLogger logger) {
-        if(getPredicates().isJavaxInjectPresent()) {
-            logger.stderr("** Deprecation alert - `javax.inject` annotations are deprecated, can be replaced with `jakarta.inject`.");
+        if (getPredicates().isJavaxInjectPresent()) {
+            logger.stderr("** Deprecation alert - `javax.inject` annotations are deprecated and should be replaced with `jakarta.inject`.");
         }
     }
 
@@ -458,7 +457,7 @@ public class DefaultInjector implements Injector {
      * Wraps provider in traceable provider if trace is enabled
      */
     <T> Provider<T> wrapProvider(Key<T> key, Provider<T> provider) {
-        if(!injectionTraceEnabled || provider == null) {
+        if (!injectionTraceEnabled || provider == null) {
             return provider;
         }
 
@@ -476,6 +475,7 @@ public class DefaultInjector implements Injector {
 
     /**
      * Push currently resolving key into trace stack
+     *
      * @param key that is resolving
      */
     void tracePush(Key<?> key) {
@@ -499,8 +499,8 @@ public class DefaultInjector implements Injector {
      * Can be used anywhere like {@code return throwException("some message");}
      *
      * @param message message
-     * @param args message format arguments
-     * @param <T> generic type to return
+     * @param args    message format arguments
+     * @param <T>     generic type to return
      * @return nothing, alwasy throws
      * @throws DIRuntimeException throws DI exception always
      */
@@ -521,9 +521,9 @@ public class DefaultInjector implements Injector {
      * </ul>
      *
      * @param message message
-     * @param cause underlying cause of this exception
-     * @param args message format arguments
-     * @param <T> generic type to return
+     * @param cause   underlying cause of this exception
+     * @param args    message format arguments
+     * @param <T>     generic type to return
      * @return nothing, always throws
      * @throws DIRuntimeException throws DI exception always
      */
@@ -545,6 +545,7 @@ public class DefaultInjector implements Injector {
 
     /**
      * Set trace (if any) to exception
+     *
      * @param ex exception
      * @return ex
      */
@@ -556,7 +557,7 @@ public class DefaultInjector implements Injector {
         InjectionTraceElement[] traceElements = new InjectionTraceElement[injectionTrace.size()];
         InjectionTraceElement element;
         int i = 0;
-        while((element = injectionTrace.pop()) != null) {
+        while ((element = injectionTrace.pop()) != null) {
             traceElements[i++] = element;
         }
 

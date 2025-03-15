@@ -23,8 +23,10 @@ import jakarta.inject.Provider;
 
 /**
  * A wrapper around a provider that itself generates providers.
+ *
  * @since 3.0
  */
+@Deprecated(forRemoval = true, since = "3.0")
 class CustomJavaxProvidersProvider<T> implements NamedProvider<T> {
 
     private final DefaultInjector injector;

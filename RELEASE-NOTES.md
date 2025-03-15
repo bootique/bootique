@@ -1,3 +1,7 @@
+## 3.0-RC1
+
+* #349 Support for jakarta.inject API
+
 ## 3.0-M6
 
 * #348 Allow commands to take args

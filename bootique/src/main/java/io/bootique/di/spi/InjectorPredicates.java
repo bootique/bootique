@@ -144,6 +144,7 @@ public class InjectorPredicates {
         return (Provider<T>) providerFunction.apply(provider);
     }
 
+    @Deprecated(since = "3.0", forRemoval = true)
     <T> javax.inject.Provider<T> wrapJavaxProvider(Provider<T> scoped) {
         javaxInjectPresent = true;
         Provider<T> provider = wrapProvider(scoped);
