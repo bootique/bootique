@@ -1,6 +1,7 @@
 ## 3.0-RC1
 
 * #349 Support for jakarta.inject API
+* #358 Upgrade to bootique-module-parents 3.0.26
 
 ## 3.0-M6
 

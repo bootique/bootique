@@ -54,7 +54,7 @@ public class DefaultBootLoggerTest {
 
 		logger.stderr("errmsg");
 		verify(mockStderr).println("errmsg");
-		verifyZeroInteractions(mockStdout);
+		verifyNoInteractions(mockStdout);
 	}
 	
 	@Test

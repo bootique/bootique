@@ -26,16 +26,15 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExecutableInvoker;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.MediaType;
 import org.junit.jupiter.api.extension.TestInstances;
+import org.junit.jupiter.api.function.ThrowingConsumer;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.ServiceLoader;
-import java.util.Set;
+import java.nio.file.Path;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -221,6 +220,19 @@ public class BQModuleProviderChecker {
         public ExecutionMode getExecutionMode() {
             // TODO: should this ever be "concurrent" ?
             return ExecutionMode.SAME_THREAD;
+        }
+
+        @Override
+        public List<Class<?>> getEnclosingTestClasses() {
+            return List.of();
+        }
+
+        @Override
+        public void publishFile(String name, MediaType mediaType, ThrowingConsumer<Path> action) {
+        }
+
+        @Override
+        public void publishDirectory(String name, ThrowingConsumer<Path> action) {
         }
     }
 }
