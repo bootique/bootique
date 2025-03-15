@@ -37,6 +37,9 @@
 you must use the Jakarta flavor of Bootique Jersey modules. The new annotations will not be recognized by the legacy
 "javax" Jersey.
 
+* `bootique-tapestry`: Only the newest `bootique-tapestry59-jakarta` module would support `jakarta.inject` annotations.
+But note that `bootique-tapestry59-jakarta` does not support `javax.inject`.
+
 ## 3.0-M6
 
 * [bootique-job #124](https://github.com/bootique/bootique-job/issues/124): As a part of alignment of the Job outcome 
