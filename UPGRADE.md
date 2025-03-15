@@ -23,7 +23,7 @@
 ## 3.0-RC1
 
 * [bootique #349](https://github.com/bootique/bootique/issues/349): `jakarta.inject` annotations
-  (`jakarta.inject.Inject`, etc.) and DI-related interfaces (`jakarta.inject.Provider`) are now a preferred flavor in
+  (`jakarta.inject.Inject`, `jakarta.inject.Singleton`, etc.) and DI-related interfaces (`jakarta.inject.Provider`) are now a preferred flavor in
   Bootique dependency injection instead of `javax.inject`. Unlike other modules (e.g. Jetty), that ship `javax`
   and `jakarta` flavors as two separate modules that can be included in the app independently, Bootique core supports
   (for now) both `jakarta.inject` and `javax.inject` in the same codebase. Meaning you can keep using 
