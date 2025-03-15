@@ -29,6 +29,8 @@
   (for now) both `jakarta.inject` and `javax.inject` in the same codebase. Meaning you can keep using 
   `javax.inject.Inject`, `javax.inject.Provider`, etc. until at least 4.0. But this will result in deprecation warnings 
   in IDE and runtime logs. We suggest that you heed those warnings and switch to the Jakarta whenever you can.
+  The upgrade is usually as simple as replacing `import javax.inject.` with `import jakarta.inject.`, and, in case you get
+  compile errors after that, changing method names in `BindingBuilder` (from `toProvider(..)` to `toJakartaProvider(..)`)
 
 ## 3.0-M6
 
