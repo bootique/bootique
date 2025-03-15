@@ -30,7 +30,12 @@
   `javax.inject.Inject`, `javax.inject.Provider`, etc. until at least 4.0. But this will result in deprecation warnings 
   in IDE and runtime logs. We suggest that you heed those warnings and switch to the Jakarta whenever you can.
   The upgrade is usually as simple as replacing `import javax.inject.` with `import jakarta.inject.`, and, in case you get
-  compile errors after that, changing method names in `BindingBuilder` (from `toProvider(..)` to `toJakartaProvider(..)`)
+  compile errors after that, changing method names in `BindingBuilder` (from `toProvider(..)` to `toJakartaProvider(..)`).
+
+* [bootique-jersey #91](https://github.com/bootique/bootique-jersey/issues/91): If you want to use the new 
+`jakarta.inject` annotations for injection into Jersey endpoints and Jersey extensions (like MessageBodyReaders, etc.),
+you must use the Jakarta flavor of Bootique Jersey modules. The new annotations will not be recognized by the legacy
+"javax" Jersey.
 
 ## 3.0-M6
 
