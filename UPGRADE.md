@@ -20,6 +20,16 @@
 
 # UPGRADE INSTRUCTIONS
 
+## 3.0-RC1
+
+* [bootique #349](https://github.com/bootique/bootique/issues/349): Bootique now uses `jakarta.inject` annotations
+  (`jakarta.inject.Inject`, etc.) and DI-related interfaces (`jakarta.inject.Provider`) for its core dependency-injection
+  functionality. The use of `javax.inject` flavor is still supported, but will result in warnings printed in the logs.
+  Also, you should heed the deprecation warnings in `BindingBuilder.toProvider(..)`, `BindingBuilder.toProviderInstance(..)`
+  and `Injector.getProvider()`, replacing those calls with Jakarta flavor: `BindingBuilder.toJakartaProvider(..)`, 
+  `BindingBuilder.toJakartaProviderInstance(..)`, `Injector.getJakartaProvider()`.
+
+
 ## 3.0-M6
 
 * [bootique-job #124](https://github.com/bootique/bootique-job/issues/124): As a part of alignment of the Job outcome 
