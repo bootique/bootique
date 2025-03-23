@@ -19,19 +19,25 @@
 
 package io.bootique.command;
 
+import io.bootique.BQCoreModule;
 import io.bootique.BQModule;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
 import io.bootique.cli.Cli;
+import io.bootique.di.Binder;
 import io.bootique.di.DIRuntimeException;
 import io.bootique.help.HelpCommand;
+import io.bootique.meta.application.ApplicationMetadata;
 import io.bootique.meta.application.CommandMetadata;
+import io.bootique.meta.application.OptionMetadata;
 import io.bootique.unit.TestAppManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.*;
@@ -69,6 +75,9 @@ public class CommandsIT {
         BQRuntime runtime = appManager.runtime(Bootique.app().module(commandsModule));
         CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
+        assertFalse(commandManager.getPublicDefaultCommand().isPresent());
+        assertFalse(commandManager.getPublicHelpCommand().isPresent());
+
         Map<String, ManagedCommand> commands = commandManager.getAllCommands();
         assertCommandKeys(commands, "help", "help-config");
 
@@ -80,6 +89,37 @@ public class CommandsIT {
         ManagedCommand helpConfig = commands.get("help-config");
         assertTrue(helpConfig.isHidden());
         assertFalse(helpConfig.isDefault());
+    }
+
+    @Test
+    public void noModuleCommands_CommandOptionsAreSuppressed() {
+        BQModule commandsModule = Commands.builder().noModuleCommands().module();
+        BQRuntime runtime = appManager.runtime(Bootique.app().module(new M1()).module(commandsModule));
+
+        ApplicationMetadata appMd = runtime.getInstance(ApplicationMetadata.class);
+
+        List<String> topOptions = appMd
+                .getOptions().stream()
+                .map(OptionMetadata::getName)
+                .sorted()
+                .collect(Collectors.toList());
+
+        assertEquals(List.of("config"), topOptions, "Top-level 'config' option should be the only one preserved");
+
+        List<String> commands = appMd
+                .getCommands().stream()
+                .map(CommandMetadata::getName)
+                .sorted()
+                .collect(Collectors.toList());
+        assertEquals(List.of(), commands);
+
+        List<String> commandOptions = appMd
+                .getCommands().stream()
+                .flatMap(c -> c.getOptions().stream())
+                .map(OptionMetadata::getName)
+                .sorted()
+                .collect(Collectors.toList());
+        assertEquals(List.of(), commandOptions);
     }
 
     @Test
@@ -163,6 +203,30 @@ public class CommandsIT {
         @Override
         public CommandMetadata getMetadata() {
             return CommandMetadata.builder("help").build();
+        }
+    }
+
+    static class M1 implements BQModule {
+
+        static class C3 implements Command {
+            @Override
+            public CommandOutcome run(Cli cli) {
+                return CommandOutcome.succeeded();
+            }
+
+            @Override
+            public CommandMetadata getMetadata() {
+                return CommandMetadata.builder(C3.class)
+                        .addOption(OptionMetadata.builder("c3a").build())
+                        .addOption(OptionMetadata.builder("c3b").build())
+                        .build();
+            }
+        }
+
+        @Override
+        public void configure(Binder binder) {
+
+            BQCoreModule.extend(binder).addCommand(C3.class);
         }
     }
 }
