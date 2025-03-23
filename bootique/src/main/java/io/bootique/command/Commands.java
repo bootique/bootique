@@ -75,7 +75,10 @@ public class Commands implements BQModule {
 
     @Override
     public ModuleCrate crate() {
-        return ModuleCrate.of(this).overrides(BQCoreModule.class).moduleName("Commands.Builder").build();
+        return ModuleCrate.of(this)
+                .overrides(BQCoreModule.class)
+                .moduleName("Commands")
+                .description("Custom command policies and overrides").build();
     }
 
     @Override
@@ -113,7 +116,9 @@ public class Commands implements BQModule {
         //  not just options. Notes:
         //   1. We don't yet support variable filtering. This would be a new feature
         //   2. Overridden commands are already hidden by "internalMetadata" because they are are marked as "hidden".
-        //      Can we change that?
+        //      To move that processing here, we'll need to reimplement command mapping in a way similar to servlets:
+        //      MappedCommand<T extends Command> to keep all commands (help, default, hidden) in a single injectable
+        //      collection
 
         Map<String, OptionMetadata> opts = new LinkedHashMap<>();
         if (!noModuleOptions) {
