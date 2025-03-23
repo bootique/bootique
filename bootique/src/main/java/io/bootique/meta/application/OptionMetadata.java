@@ -48,6 +48,25 @@ public class OptionMetadata implements MetadataNode {
         return new Builder().name(name).description(description);
     }
 
+    protected OptionMetadata() {
+    }
+
+    protected OptionMetadata(
+            String name,
+            String description,
+            String shortName,
+            OptionValueCardinality valueCardinality,
+            String valueName,
+            String defaultValue) {
+
+        this.defaultValue = defaultValue;
+        this.description = description;
+        this.name = name;
+        this.shortName = shortName;
+        this.valueCardinality = valueCardinality;
+        this.valueName = valueName;
+    }
+
     @Override
     public String getName() {
         return name;
@@ -59,10 +78,11 @@ public class OptionMetadata implements MetadataNode {
     }
 
     /**
-     * @return option short name.
+     * Returns option short name. It can be null if the short name conflicts with short names of other options (of if
+     * the app author decides to make it null).
      */
     public String getShortName() {
-        return (shortName != null) ? shortName : name.substring(0, 1);
+        return shortName;
     }
 
     public OptionValueCardinality getValueCardinality() {
@@ -85,7 +105,8 @@ public class OptionMetadata implements MetadataNode {
 
     public static class Builder {
 
-        private OptionMetadata option;
+        private final OptionMetadata option;
+        private boolean shortNameSet;
 
         protected Builder() {
             this.option = new OptionMetadata();
@@ -98,13 +119,13 @@ public class OptionMetadata implements MetadataNode {
         }
 
         public Builder shortName(String shortName) {
-            option.shortName = validateShortName(shortName);
+            option.shortName = shortName != null ? validateShortName(shortName) : null;
+            shortNameSet = true;
             return this;
         }
 
         public Builder shortName(char shortName) {
-            option.shortName = String.valueOf(shortName);
-            return this;
+            return shortName(String.valueOf(shortName));
         }
 
         public Builder description(String description) {
@@ -147,7 +168,7 @@ public class OptionMetadata implements MetadataNode {
          * Marks value optional and sets the default value for this option that will be used if the option is provided on
          * command line without an explicit value.
          *
-         * @param valueName a description of value
+         * @param valueName    a description of value
          * @param defaultValue a default value for the option.
          * @return this builder instance
          */
@@ -158,6 +179,10 @@ public class OptionMetadata implements MetadataNode {
 
         public OptionMetadata build() {
             validateName(option.name);
+            if (!shortNameSet) {
+                option.shortName = option.name.substring(0, 1);
+            }
+
             return option;
         }
 
@@ -166,7 +191,7 @@ public class OptionMetadata implements MetadataNode {
                 throw new IllegalArgumentException("Null 'name'");
             }
 
-            if (name.length() == 0) {
+            if (name.isEmpty()) {
                 throw new IllegalArgumentException("Empty 'name'");
             }
 
@@ -174,10 +199,6 @@ public class OptionMetadata implements MetadataNode {
         }
 
         private String validateShortName(String shortName) {
-            if (shortName == null) {
-                throw new IllegalArgumentException("Null 'shortName'");
-            }
-
             if (shortName.length() != 1) {
                 throw new IllegalArgumentException("'shortName' must be exactly one char long: " + shortName);
             }

@@ -20,6 +20,7 @@
 package io.bootique.help;
 
 import io.bootique.meta.application.ApplicationMetadata;
+import io.bootique.meta.application.OptionMetadata;
 import io.bootique.meta.config.ConfigValueMetadata;
 
 import java.util.*;
@@ -53,14 +54,8 @@ public class DefaultHelpGenerator implements HelpGenerator {
         HelpAppender appender = createAppender(out);
 
         printName(appender, application.getName(), application.getDescription());
-        printOptions(appender, collectOptions());
+        printOptions(appender, application.getCliOptions());
         printEnvironment(appender, application.getVariables());
-    }
-
-    protected Collection<HelpOption> collectOptions() {
-        HelpOptions helpOptions = new HelpOptions();
-        application.getCliOptions().forEach(helpOptions::add);
-        return helpOptions.getOptions();
     }
 
     protected void printName(HelpAppender out, String name, String description) {
@@ -118,14 +113,14 @@ public class DefaultHelpGenerator implements HelpGenerator {
                     if (onePlus) {
                         out.println();
                     }
-                    
+
                     onePlus = true;
                     out.printDescription(d);
                 }
         }
     }
 
-    protected void printOptions(HelpAppender out, Collection<HelpOption> options) {
+    protected void printOptions(HelpAppender out, Collection<OptionMetadata> options) {
 
         if (options.isEmpty()) {
             return;
@@ -134,17 +129,20 @@ public class DefaultHelpGenerator implements HelpGenerator {
         out.printSectionName("OPTIONS");
         options.forEach(o -> {
 
-            String valueName = o.getOption().getValueName();
+            String valueName = o.getValueName();
             if (valueName == null || valueName.isEmpty()) {
                 valueName = "val";
             }
 
             List<String> parts = new ArrayList<>();
-            if (o.isShortNameAllowed()) {
-                parts.add("-");
-                parts.add(String.valueOf(o.getOption().getShortName()));
 
-                switch (o.getOption().getValueCardinality()) {
+            String shortName = o.getShortName() != null ? o.getShortName() : (o.getName().length() == 1 ? o.getName() : null);
+
+            if (shortName != null) {
+                parts.add("-");
+                parts.add(shortName);
+
+                switch (o.getValueCardinality()) {
                     case REQUIRED:
                         parts.add(" ");
                         parts.add(valueName);
@@ -157,15 +155,15 @@ public class DefaultHelpGenerator implements HelpGenerator {
                 }
             }
 
-            if (o.isLongNameAllowed()) {
+            if (o.getName().length() > 1) {
 
                 if (!parts.isEmpty()) {
                     parts.add(", ");
                 }
 
                 parts.add("--");
-                parts.add(o.getOption().getName());
-                switch (o.getOption().getValueCardinality()) {
+                parts.add(o.getName());
+                switch (o.getValueCardinality()) {
                     case REQUIRED:
                         parts.add("=");
                         parts.add(valueName);
@@ -180,7 +178,7 @@ public class DefaultHelpGenerator implements HelpGenerator {
 
             out.printSubsectionHeader(parts);
 
-            String description = o.getOption().getDescription();
+            String description = o.getDescription();
             if (description != null) {
                 out.printDescription(description);
             }

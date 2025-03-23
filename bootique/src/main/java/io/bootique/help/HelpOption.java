@@ -25,7 +25,11 @@ import java.util.Objects;
 
 /**
  * A wrapper for {@link OptionMetadata} that handles option sorting, short names and conflicts.
+ *
+ * @deprecated unused. All the relevant options rules are now applied at the {@link io.bootique.meta.application.ApplicationMetadata}
+ * level
  */
+@Deprecated(since = "3.0", forRemoval = true)
 public class HelpOption implements Comparable<HelpOption> {
 
     private final OptionMetadata option;

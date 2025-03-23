@@ -1,6 +1,7 @@
 ## 3.0-RC1
 
 * #349 Support for jakarta.inject API
+* #355 When multiple CLI options start with the same letter, option short name should not be used
 * #357 "Commands.Builder.noModuleOptions()"
 * #358 Upgrade to bootique-module-parents 3.0.26
 * #359 Detect conflicting names between commands and options

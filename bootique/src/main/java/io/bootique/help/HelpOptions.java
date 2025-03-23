@@ -29,9 +29,13 @@ import java.util.stream.Collectors;
 
 /**
  * Helper class to collect CLI options from various models, sort them and resolve conflicts before including them in help.
+ *
+ * @deprecated unused. All the relevant options rules are now applied at the {@link io.bootique.meta.application.ApplicationMetadata}
+ * level
  */
 // TODO: this is in no way synchronized with JOpt parser, so we need extensive unit tests to verify that help behavior
 // matches the actual runtime behavior.
+@Deprecated(since = "3.0", forRemoval = true)
 public class HelpOptions {
 
     private final Map<String, List<HelpOption>> byShortName;

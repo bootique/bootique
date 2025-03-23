@@ -28,7 +28,6 @@ import io.bootique.di.DIRuntimeException;
 import io.bootique.meta.application.CommandMetadata;
 import io.bootique.meta.application.OptionMetadata;
 import io.bootique.unit.TestAppManager;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -102,10 +101,7 @@ public class Bootique_CliOptionsIT {
                 .run());
     }
 
-    // TODO: ignoring this test for now. There is a bug in JOpt 5.0.3...
-    //       JOpt should detect conflicting options and throw an exception. Instead JOpts triggers second option.
     @Test
-    @Disabled
     public void overlappingOptions_Short() {
         BQRuntime runtime = appManager.runtime(Bootique.app("-o")
                 .module(b -> BQCoreModule.extend(b).addOptions(

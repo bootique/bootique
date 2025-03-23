@@ -27,18 +27,11 @@ import io.bootique.command.CommandManager;
 import io.bootique.meta.application.ApplicationMetadata;
 import io.bootique.meta.application.OptionMetadata;
 import jakarta.inject.Provider;
-import joptsimple.ArgumentAcceptingOptionSpec;
-import joptsimple.OptionException;
-import joptsimple.OptionParser;
-import joptsimple.OptionSet;
-import joptsimple.OptionSpecBuilder;
+import joptsimple.*;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
-
-import static java.util.Arrays.asList;
 
 public class JoptCliFactory implements CliFactory {
 
@@ -91,24 +84,26 @@ public class JoptCliFactory implements CliFactory {
     }
 
     protected OptionParser createParser() {
+
         // do not allow option abbreviations, we will provide short forms explicitly
         OptionParser parser = new OptionParser(false);
+
         application.getCliOptions().forEach(o -> addOption(parser, o));
         return parser;
     }
 
     protected void addOption(OptionParser parser, OptionMetadata option) {
 
-        // ensure non-null description
-        String description = Optional.ofNullable(option.getDescription()).orElse("");
+        String description = option.getDescription() != null ? option.getDescription() : "";
+        List<String> longAndShort = option.getShortName() != null
+                ? List.of(option.getShortName(), option.getName())
+                : List.of(option.getName());
 
-        // TODO: how do we resolve short name conflicts?
-        List<String> longAndShort = asList(option.getShortName(), option.getName());
         OptionSpecBuilder optionBuilder = parser.acceptsAll(longAndShort, description);
         switch (option.getValueCardinality()) {
             case OPTIONAL:
                 ArgumentAcceptingOptionSpec<String> optionSpec = optionBuilder.withOptionalArg().describedAs(option.getValueName());
-                if(option.getDefaultValue() != null) {
+                if (option.getDefaultValue() != null) {
                     optionSpec.defaultsTo(option.getDefaultValue());
                 }
                 break;
@@ -120,11 +115,10 @@ public class JoptCliFactory implements CliFactory {
         }
     }
 
-    // using option-bound command strategy...
     protected String commandName(OptionSet optionSet) {
 
         Set<String> matches = new HashSet<>(3);
-        getCommandManager().getAllCommands().forEach((name, mc) -> {
+        commandManagerProvider.get().getAllCommands().forEach((name, mc) -> {
             if (!mc.isHidden() && !mc.isDefault() && optionSet.has(name)) {
                 matches.add(name);
             }
@@ -141,9 +135,5 @@ public class JoptCliFactory implements CliFactory {
                 String message = String.format("CLI options match multiple commands: %s.", opts);
                 throw new BootiqueException(1, message);
         }
-    }
-
-    private CommandManager getCommandManager() {
-        return commandManagerProvider.get();
     }
 }
