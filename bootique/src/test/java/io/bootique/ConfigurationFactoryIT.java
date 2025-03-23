@@ -59,6 +59,18 @@ public class ConfigurationFactoryIT {
     }
 
     @Test
+    public void configNumbersWithUnderscores() {
+        BQRuntime runtime = appManager.runtime(Bootique.app("--config=classpath:io/bootique/test5.yml"));
+        Map<String, Integer> config = runtime.
+                getInstance(ConfigurationFactory.class)
+                .config(new TypeRef<>() {
+                }, "");
+
+        assertEquals(1_000_000, config.get("a"));
+        assertEquals(2_000_000, config.get("b"));
+    }
+
+    @Test
     public void combineConfigAndEmptyConfig() {
         BQRuntime runtime = appManager.runtime(
                 Bootique.app("--config=classpath:io/bootique/test1.yml", "--config=classpath:io/bootique/empty.yml"));
