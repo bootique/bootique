@@ -28,14 +28,9 @@ import java.util.Collection;
 
 public class CommandMetadata implements MetadataNode {
 
-    private String name;
-    private String description;
-    private String shortName;
     private boolean hidden;
     private final Collection<OptionMetadata> options;
-    private OptionValueCardinality valueCardinality;
-    private String valueName;
-    private String defaultValue;
+    private OptionMetadata optionMetadata;
 
     public CommandMetadata() {
         this.options = new ArrayList<>();
@@ -71,12 +66,12 @@ public class CommandMetadata implements MetadataNode {
 
     @Override
     public String getName() {
-        return name;
+        return optionMetadata.getName();
     }
 
     @Override
     public String getDescription() {
-        return description;
+        return optionMetadata.getDescription();
     }
 
     /**
@@ -86,31 +81,7 @@ public class CommandMetadata implements MetadataNode {
      * @return option representation of this command.
      */
     public OptionMetadata asOption() {
-        OptionValueCardinality cardinality = getValueCardinality();
-        String valueName = getValueName();
-
-        OptionMetadata.Builder optionBuilder = OptionMetadata.builder(getName())
-                .shortName(getShortName())
-                .description(getDescription());
-
-        switch (cardinality) {
-            case REQUIRED:
-                optionBuilder.valueRequired(valueName);
-                break;
-            case OPTIONAL:
-                optionBuilder.valueOptional(valueName);
-                break;
-            case NONE:
-                break;
-            default:
-                throw new IllegalStateException("Unknown command value cardinality: " + cardinality);
-        }
-
-        if (defaultValue != null) {
-            optionBuilder.valueOptionalWithDefault(valueName, defaultValue);
-        }
-
-        return optionBuilder.build();
+        return optionMetadata;
     }
 
     public Collection<OptionMetadata> getOptions() {
@@ -123,21 +94,21 @@ public class CommandMetadata implements MetadataNode {
      * @return command short name.
      */
     public String getShortName() {
-        return (shortName != null) ? shortName : name.substring(0, 1);
+        return optionMetadata.getShortName();
     }
 
     /**
      * @since 3.0
      */
     public OptionValueCardinality getValueCardinality() {
-        return valueCardinality;
+        return optionMetadata.getValueCardinality();
     }
 
     /**
      * @since 3.0
      */
     public String getValueName() {
-        return valueName;
+        return optionMetadata.getValueName();
     }
 
     /**
@@ -148,7 +119,7 @@ public class CommandMetadata implements MetadataNode {
      * @since 3.0
      */
     public String getDefaultValue() {
-        return defaultValue;
+        return optionMetadata.getDefaultValue();
     }
 
     /**
@@ -172,34 +143,35 @@ public class CommandMetadata implements MetadataNode {
                 .build();
 
         private final CommandMetadata metadata;
+        private final OptionMetadata.Builder optionBuilder;
 
         private Builder() {
             this.metadata = new CommandMetadata();
-            this.metadata.valueCardinality = OptionValueCardinality.NONE;
+            this.optionBuilder = OptionMetadata.builder();
         }
 
         public CommandMetadata build() {
-            validateName(metadata.name);
+            metadata.optionMetadata = optionBuilder.build();
             return metadata;
         }
 
         public Builder commandType(Class<? extends Command> commandType) {
-            metadata.name = NAME_BUILDER.toName(commandType);
+            optionBuilder.name(NAME_BUILDER.toName(commandType));
             return this;
         }
 
         public Builder name(String name) {
-            metadata.name = validateName(name);
+            optionBuilder.name(name);
             return this;
         }
 
         public Builder shortName(char shortName) {
-            metadata.shortName = String.valueOf(shortName);
+            optionBuilder.shortName(shortName);
             return this;
         }
 
         public Builder description(String description) {
-            this.metadata.description = description;
+            optionBuilder.description(description);
             return this;
         }
 
@@ -214,8 +186,7 @@ public class CommandMetadata implements MetadataNode {
          * @since 3.0
          */
         public CommandMetadata.Builder valueRequired(String valueName) {
-            this.metadata.valueCardinality = OptionValueCardinality.REQUIRED;
-            this.metadata.valueName = valueName;
+            optionBuilder.valueRequired(valueName);
             return this;
         }
 
@@ -223,15 +194,15 @@ public class CommandMetadata implements MetadataNode {
          * @since 3.0
          */
         public CommandMetadata.Builder valueOptional() {
-            return valueOptional("");
+            optionBuilder.valueOptional();
+            return this;
         }
 
         /**
          * @since 3.0
          */
         public CommandMetadata.Builder valueOptional(String valueName) {
-            this.metadata.valueCardinality = OptionValueCardinality.OPTIONAL;
-            this.metadata.valueName = valueName;
+            optionBuilder.valueOptional(valueName);
             return this;
         }
 
@@ -244,7 +215,8 @@ public class CommandMetadata implements MetadataNode {
          * @since 3.0
          */
         public CommandMetadata.Builder valueOptionalWithDefault(String defaultValue) {
-            return valueOptionalWithDefault("", defaultValue);
+            optionBuilder.valueOptionalWithDefault(defaultValue);
+            return this;
         }
 
         /**
@@ -256,8 +228,8 @@ public class CommandMetadata implements MetadataNode {
          * @return this builder instance
          */
         public CommandMetadata.Builder valueOptionalWithDefault(String valueName, String defaultValue) {
-            this.metadata.defaultValue = defaultValue;
-            return valueOptional(valueName);
+            optionBuilder.valueOptionalWithDefault(valueName, defaultValue);
+            return this;
         }
 
         public Builder addOption(OptionMetadata option) {
@@ -284,18 +256,6 @@ public class CommandMetadata implements MetadataNode {
         public Builder hidden() {
             this.metadata.hidden = true;
             return this;
-        }
-
-        private String validateName(String name) {
-            if (name == null) {
-                throw new IllegalArgumentException("Null 'name'");
-            }
-
-            if (name.isEmpty()) {
-                throw new IllegalArgumentException("Empty 'name'");
-            }
-
-            return name;
         }
     }
 }

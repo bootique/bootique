@@ -33,6 +33,13 @@ public class OptionMetadata implements MetadataNode {
     private String valueName;
     private String defaultValue;
 
+    /**
+     * @since 3.0
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static Builder builder(String name) {
         return new Builder().name(name);
     }
