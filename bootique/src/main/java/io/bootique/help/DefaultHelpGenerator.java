@@ -58,17 +58,8 @@ public class DefaultHelpGenerator implements HelpGenerator {
     }
 
     protected Collection<HelpOption> collectOptions() {
-
         HelpOptions helpOptions = new HelpOptions();
-
-        application.getCommands().forEach(c -> {
-
-            // for now expose commands as simply options (commands are options in a default CLI parser)
-            helpOptions.add(c.getCommandOption());
-            c.getOptions().forEach(helpOptions::add);
-        });
-
-        application.getOptions().forEach(helpOptions::add);
+        application.getCliOptions().forEach(helpOptions::add);
         return helpOptions.getOptions();
     }
 

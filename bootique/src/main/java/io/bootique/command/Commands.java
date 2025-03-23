@@ -120,29 +120,17 @@ public class Commands implements BQModule {
         //      MappedCommand<T extends Command> to keep all commands (help, default, hidden) in a single injectable
         //      collection
 
-        Map<String, OptionMetadata> opts = new LinkedHashMap<>();
+        List<OptionMetadata> opts = new ArrayList<>();
         if (!noModuleOptions) {
-            for (OptionMetadata md : internalMetadata.getOptions()) {
-                opts.put(md.getName(), md);
-            }
+            internalMetadata.getOptions().forEach(opts::add);
         }
 
-        if (!this.options.isEmpty()) {
-            for (OptionMetadata md : this.options) {
-
-                OptionMetadata existing = opts.put(md.getName(), md);
-
-                // TODO: options can also conflict with command names
-                if (existing != null) {
-                    logger.trace(() -> String.format("Overriding option '%s'", md.getName()));
-                }
-            }
-        }
+        this.options.forEach(opts::add);
 
         return ApplicationMetadata
                 .builder(internalMetadata.getName())
                 .description(internalMetadata.getDescription())
-                .addOptions(opts.values())
+                .addOptions(opts)
                 .addCommands(internalMetadata.getCommands())
                 .addVariables(internalMetadata.getVariables())
                 .build();

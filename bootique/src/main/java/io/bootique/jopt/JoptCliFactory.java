@@ -91,21 +91,9 @@ public class JoptCliFactory implements CliFactory {
     }
 
     protected OptionParser createParser() {
-
-        // do not allow option abbreviations .. we will provide short forms explicitly
+        // do not allow option abbreviations, we will provide short forms explicitly
         OptionParser parser = new OptionParser(false);
-
-        application.getCommands().forEach(c -> {
-
-            c.getOptions().forEach(o -> addOption(parser, o));
-
-            // using option-bound command strategy...
-            OptionMetadata commandAsOption = c.getCommandOption();
-            addOption(parser, commandAsOption);
-        });
-
-        // load global options
-        application.getOptions().forEach(o -> addOption(parser, o));
+        application.getCliOptions().forEach(o -> addOption(parser, o));
         return parser;
     }
 
