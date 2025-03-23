@@ -100,7 +100,7 @@ public class JoptCliFactory implements CliFactory {
             c.getOptions().forEach(o -> addOption(parser, o));
 
             // using option-bound command strategy...
-            OptionMetadata commandAsOption = c.asOption();
+            OptionMetadata commandAsOption = c.getCommandOption();
             addOption(parser, commandAsOption);
         });
 

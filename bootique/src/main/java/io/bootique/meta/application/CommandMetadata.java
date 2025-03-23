@@ -30,10 +30,19 @@ public class CommandMetadata implements MetadataNode {
 
     private boolean hidden;
     private final Collection<OptionMetadata> options;
-    private OptionMetadata optionMetadata;
+    private OptionMetadata commandOption;
 
     public CommandMetadata() {
         this.options = new ArrayList<>();
+    }
+
+    /**
+     * Returns {@link OptionMetadata} for this command CLI flag.
+     *
+     * @since 3.0
+     */
+    public OptionMetadata getCommandOption() {
+        return commandOption;
     }
 
     /**
@@ -66,12 +75,12 @@ public class CommandMetadata implements MetadataNode {
 
     @Override
     public String getName() {
-        return optionMetadata.getName();
+        return commandOption.getName();
     }
 
     @Override
     public String getDescription() {
-        return optionMetadata.getDescription();
+        return commandOption.getDescription();
     }
 
     /**
@@ -79,11 +88,17 @@ public class CommandMetadata implements MetadataNode {
      * in a CLI parser.
      *
      * @return option representation of this command.
+     * @deprecated in favor of {@link #getCommandOption()}
      */
+    @Deprecated(since = "3.0", forRemoval = true)
     public OptionMetadata asOption() {
-        return optionMetadata;
+        return getCommandOption();
     }
 
+    /**
+     * Returns extra options recognized this command. The main option that activates the command is not included in
+     * this collection and is accessible via {@link #getCommandOption()}.
+     */
     public Collection<OptionMetadata> getOptions() {
         return options;
     }
@@ -92,34 +107,11 @@ public class CommandMetadata implements MetadataNode {
      * Returns the short name
      *
      * @return command short name.
+     * @deprecated in favor of <code>getCommandOption().getShortName()</code>
      */
+    @Deprecated(since = "3.0", forRemoval = true)
     public String getShortName() {
-        return optionMetadata.getShortName();
-    }
-
-    /**
-     * @since 3.0
-     */
-    public OptionValueCardinality getValueCardinality() {
-        return optionMetadata.getValueCardinality();
-    }
-
-    /**
-     * @since 3.0
-     */
-    public String getValueName() {
-        return optionMetadata.getValueName();
-    }
-
-    /**
-     * Returns the default value for this command. I.e. the value that will be used if the command is provided on
-     * command line without an explicit value.
-     *
-     * @return the default value for this command.
-     * @since 3.0
-     */
-    public String getDefaultValue() {
-        return optionMetadata.getDefaultValue();
+        return commandOption.getShortName();
     }
 
     /**
@@ -151,7 +143,7 @@ public class CommandMetadata implements MetadataNode {
         }
 
         public CommandMetadata build() {
-            metadata.optionMetadata = optionBuilder.build();
+            metadata.commandOption = optionBuilder.build();
             return metadata;
         }
 

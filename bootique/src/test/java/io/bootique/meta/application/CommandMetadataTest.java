@@ -22,7 +22,6 @@ package io.bootique.meta.application;
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandOutcome;
-import io.bootique.meta.application.CommandMetadata;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,31 +29,28 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CommandMetadataTest {
 
     @Test
-    public void getShortName() {
-        CommandMetadata md = CommandMetadata.builder(MyCommand.class).shortName('M').build();
-        assertEquals("my", md.getName());
-        assertEquals("M", md.getShortName());
-    }
-
-    @Test
     public void getName() {
         CommandMetadata md = CommandMetadata.builder(MyCommand.class).build();
         assertEquals("my", md.getName());
-        assertEquals("m", md.getShortName());
+    }
+
+    @Deprecated
+    @Test
+    public void getShortName() {
+        CommandMetadata md = CommandMetadata.builder(MyCommand.class).shortName('M').build();
+        assertEquals("M", md.getShortName());
     }
 
     @Test
     public void getName_CamelCase() {
         CommandMetadata md = CommandMetadata.builder(MyCamelCaseCommand.class).build();
         assertEquals("my-camel-case", md.getName());
-        assertEquals("m", md.getShortName());
     }
 
     @Test
     public void getName_UpperCase() {
         CommandMetadata md = CommandMetadata.builder(MYXCommand.class).build();
         assertEquals("myx", md.getName());
-        assertEquals("m", md.getShortName());
     }
 
     static class MyCommand implements Command {

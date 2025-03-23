@@ -64,7 +64,7 @@ public class DefaultHelpGenerator implements HelpGenerator {
         application.getCommands().forEach(c -> {
 
             // for now expose commands as simply options (commands are options in a default CLI parser)
-            helpOptions.add(c.asOption());
+            helpOptions.add(c.getCommandOption());
             c.getOptions().forEach(helpOptions::add);
         });
 
