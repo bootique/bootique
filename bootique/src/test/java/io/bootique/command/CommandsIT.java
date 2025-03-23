@@ -19,13 +19,14 @@
 
 package io.bootique.command;
 
+import io.bootique.BQModule;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
 import io.bootique.cli.Cli;
-import io.bootique.BQModule;
+import io.bootique.di.DIRuntimeException;
+import io.bootique.help.HelpCommand;
 import io.bootique.meta.application.CommandMetadata;
 import io.bootique.unit.TestAppManager;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -40,22 +41,15 @@ public class CommandsIT {
     @RegisterExtension
     final TestAppManager appManager = new TestAppManager();
 
-    private String[] args;
-
     private static void assertCommandKeys(Map<String, ManagedCommand> commands, String... expectedCommands) {
         assertEquals(commands.size(), expectedCommands.length);
         assertEquals(new HashSet<>(asList(expectedCommands)), commands.keySet());
     }
 
-    @BeforeEach
-    public void before() {
-        args = new String[]{"a", "b", "c"};
-    }
-
     @Test
     public void moduleCommands() {
         BQModule commandsModule = Commands.builder().module();
-        BQRuntime runtime = appManager.runtime(Bootique.app(args).module(commandsModule));
+        BQRuntime runtime = appManager.runtime(Bootique.app().module(commandsModule));
         CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
         Map<String, ManagedCommand> commands = commandManager.getAllCommands();
@@ -72,24 +66,51 @@ public class CommandsIT {
     @Test
     public void noModuleCommands() {
         BQModule commandsModule = Commands.builder().noModuleCommands().module();
-        BQRuntime runtime = appManager.runtime(Bootique.app(args).module(commandsModule));
+        BQRuntime runtime = appManager.runtime(Bootique.app().module(commandsModule));
         CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
         Map<String, ManagedCommand> commands = commandManager.getAllCommands();
         assertCommandKeys(commands, "help", "help-config");
 
-        assertTrue(commands.get("help").isHidden());
-        assertFalse(commands.get("help").isDefault());
-        assertTrue(commands.get("help").isHelp());
+        ManagedCommand help = commands.get("help");
+        assertTrue(help.isHidden());
+        assertFalse(help.isDefault());
+        assertTrue(help.isHelp());
 
-        assertTrue(commands.get("help-config").isHidden());
-        assertFalse(commands.get("help-config").isDefault());
+        ManagedCommand helpConfig = commands.get("help-config");
+        assertTrue(helpConfig.isHidden());
+        assertFalse(helpConfig.isDefault());
+    }
+
+    @Test
+    public void noModuleCommands_TryExec() {
+        BQModule commandsModule = Commands.builder().noModuleCommands().module();
+
+        BQRuntime tryHelp = appManager.runtime(Bootique.app("--help").module(commandsModule));
+        assertThrows(DIRuntimeException.class, () -> tryHelp.run());
+
+        BQRuntime tryHelpConfig = appManager.runtime(Bootique.app("--help-config").module(commandsModule));
+        assertThrows(DIRuntimeException.class, () -> tryHelpConfig.run());
+    }
+
+    @Test
+    public void noModuleCommands_ReaddHidden_TryExec() {
+        BQModule commandsModule = Commands.builder().noModuleCommands()
+                .add(HelpCommand.class)
+                .module();
+
+        BQRuntime tryHelp = appManager.runtime(Bootique.app("--help").module(commandsModule));
+        CommandOutcome helpOutcome = tryHelp.run();
+        assertTrue(helpOutcome.isSuccess());
+
+        BQRuntime tryHelpConfig = appManager.runtime(Bootique.app("--help-config").module(commandsModule));
+        assertThrows(DIRuntimeException.class, () -> tryHelpConfig.run());
     }
 
     @Test
     public void module_ExtraCommandAsType() {
         BQModule commandsModule = Commands.builder(C1.class).module();
-        BQRuntime runtime = appManager.runtime(Bootique.app(args).module(commandsModule));
+        BQRuntime runtime = appManager.runtime(Bootique.app().module(commandsModule));
         CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
         Map<String, ManagedCommand> commands = commandManager.getAllCommands();
@@ -109,7 +130,7 @@ public class CommandsIT {
     @Test
     public void module_ExtraCommandAsInstance() {
         BQModule commandsModule = Commands.builder().add(new C1()).module();
-        BQRuntime runtime = appManager.runtime(Bootique.app(args).module(commandsModule));
+        BQRuntime runtime = appManager.runtime(Bootique.app().module(commandsModule));
         CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
         Map<String, ManagedCommand> commands = commandManager.getAllCommands();
@@ -119,7 +140,7 @@ public class CommandsIT {
     @Test
     public void module_ExtraCommandOverride() {
         BQModule commandsModule = Commands.builder().add(C2_Help.class).module();
-        BQRuntime runtime = appManager.runtime(Bootique.app(args).module(commandsModule));
+        BQRuntime runtime = appManager.runtime(Bootique.app().module(commandsModule));
         CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
         Map<String, ManagedCommand> commands = commandManager.getAllCommands();

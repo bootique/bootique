@@ -41,7 +41,8 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * A helper to build a non-standard command set in an app.
+ * A builder of non-standard application command sets. It produces a Bootique module that overrides the default
+ * command set.
  */
 public class Commands implements BQModule {
 

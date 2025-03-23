@@ -51,7 +51,7 @@ public class DIRuntimeException extends RuntimeException {
     }
 
     public DIRuntimeException(String messageFormat, Throwable cause, Object... messageArgs) {
-        // we suppressing stack trace in case this exception has cause, as it is likely irrelevant
+        // we are suppressing stack trace in case this exception has cause, as it is likely irrelevant
         super(String.format(messageFormat, messageArgs), cause, true, cause == null);
     }
 
