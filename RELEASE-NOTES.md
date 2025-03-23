@@ -3,6 +3,7 @@
 * #349 Support for jakarta.inject API
 * #357 "Commands.Builder.noModuleOptions()"
 * #358 Upgrade to bootique-module-parents 3.0.26
+* #359 Detect conflicting names between commands and options
 
 ## 3.0-M6
 

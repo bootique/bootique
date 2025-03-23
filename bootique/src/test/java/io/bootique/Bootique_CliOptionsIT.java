@@ -27,7 +27,6 @@ import io.bootique.config.jackson.CliConfigurationLoader;
 import io.bootique.di.DIRuntimeException;
 import io.bootique.meta.application.CommandMetadata;
 import io.bootique.meta.application.OptionMetadata;
-import io.bootique.run.Runner;
 import io.bootique.unit.TestAppManager;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -113,27 +112,25 @@ public class Bootique_CliOptionsIT {
                         OptionMetadata.builder("o1").build(),
                         OptionMetadata.builder("o2").build()
                 )));
-        assertThrows(DIRuntimeException.class, () -> runtime.getInstance(Cli.class));
+        assertThrows(DIRuntimeException.class, () -> runtime.run());
     }
 
-    // TODO: Same name of option and command should be disallowed.
-    //  This test is broken, it is here just to document current behaviour.
     @Test
     public void commandWithOptionNameOverlap() {
         BQRuntime runtime = appManager.runtime(Bootique.app("-x")
                 .module(b -> BQCoreModule.extend(b)
-                        .addCommand(Xd1Command.class)
+                        .addCommand(new NamedCommand("xd"))
                         .addOption(OptionMetadata.builder("xd").build())
                 ));
-        runtime.run();
-        assertTrue(runtime.getInstance(Cli.class).hasOption("xd"));
+
+        assertThrows(DIRuntimeException.class, () -> runtime.run());
     }
 
     @Test
     public void command_IllegalShort() {
         BQRuntime runtime = appManager.runtime(Bootique.app("-x")
                 .module(b -> BQCoreModule.extend(b).addCommand(XaCommand.class)));
-        assertThrows(DIRuntimeException.class, () -> runtime.getInstance(Cli.class));
+        assertThrows(DIRuntimeException.class, () -> runtime.run());
     }
 
     @Test
@@ -147,14 +144,14 @@ public class Bootique_CliOptionsIT {
     public void overlappingCommands_IllegalShort() {
         BQRuntime runtime = appManager.runtime(Bootique.app("-x")
                 .module(b -> BQCoreModule.extend(b).addCommand(XaCommand.class).addCommand(XbCommand.class)));
-        assertThrows(DIRuntimeException.class, () -> runtime.getInstance(Cli.class));
+        assertThrows(DIRuntimeException.class, () -> runtime.run());
     }
 
     @Test
     public void illegalAbbreviation() {
         BQRuntime runtime = appManager.runtime(Bootique.app("--xc")
                 .module(b -> BQCoreModule.extend(b).addCommand(XccCommand.class)));
-        assertThrows(DIRuntimeException.class, () -> runtime.getInstance(Cli.class));
+        assertThrows(DIRuntimeException.class, () -> runtime.run());
     }
 
     @Test
@@ -215,12 +212,7 @@ public class Bootique_CliOptionsIT {
                         .mapConfigPath("opt-1", "c.m.k")
                         .addCommand(new TestOptionCommand1())));
 
-        Bean1 bean1 = runtime.getInstance(ConfigurationFactory.class).config(Bean1.class, "");
-        Runner runner = runtime.getInstance(Runner.class);
-
-        runner.run();
-
-        assertEquals(2, bean1.c.m.k);
+        assertThrows(DIRuntimeException.class, () -> runtime.run());
     }
 
     @Test
@@ -363,6 +355,18 @@ public class Bootique_CliOptionsIT {
         assertArrayEquals(expected, result.toArray());
     }
 
+    static final class NamedCommand extends CommandWithMetadata {
+
+        public NamedCommand(String name) {
+            super(CommandMetadata.of(name));
+        }
+
+        @Override
+        public CommandOutcome run(Cli cli) {
+            return CommandOutcome.succeeded();
+        }
+    }
+
     static final class TestCommand extends CommandWithMetadata {
 
         public TestCommand() {
@@ -430,19 +434,6 @@ public class Bootique_CliOptionsIT {
 
         public Xd2Command() {
             super(CommandMetadata.of("xd"));
-        }
-
-        @Override
-        public CommandOutcome run(Cli cli) {
-            return CommandOutcome.succeeded();
-        }
-    }
-
-    static final class XeCommand extends CommandWithMetadata {
-
-        public XeCommand() {
-            super(CommandMetadata.builder("xe")
-                    .addOption(OptionMetadata.builder("opt1").build()).build());
         }
 
         @Override

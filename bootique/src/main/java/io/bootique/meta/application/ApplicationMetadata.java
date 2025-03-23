@@ -19,6 +19,7 @@
 
 package io.bootique.meta.application;
 
+import io.bootique.BootiqueException;
 import io.bootique.meta.MetadataNode;
 import io.bootique.meta.config.ConfigValueMetadata;
 
@@ -34,13 +35,16 @@ public class ApplicationMetadata implements MetadataNode {
 
     private String name;
     private String description;
-    private Collection<CommandMetadata> commands;
-    private Collection<OptionMetadata> options;
-    private Collection<ConfigValueMetadata> variables;
+    private final Collection<CommandMetadata> commands;
+    private final Collection<OptionMetadata> options;
+    // a combination of "commands" and "options"
+    private final Collection<OptionMetadata> cliOptions;
+    private final Collection<ConfigValueMetadata> variables;
 
     private ApplicationMetadata() {
         this.commands = new ArrayList<>();
         this.options = new ArrayList<>();
+        this.cliOptions = new ArrayList<>();
         this.variables = new ArrayList<>();
     }
 
@@ -75,6 +79,16 @@ public class ApplicationMetadata implements MetadataNode {
     }
 
     /**
+     * Returns a combination of commands and options as a single collection of OptionMetadata. This is a view that
+     * the users sees on the command line.
+     *
+     * @since 3.0
+     */
+    public Collection<OptionMetadata> getCliOptions() {
+        return cliOptions;
+    }
+
+    /**
      * Returns a collection of metadata objects representing publicly exposed environment variables.
      *
      * @return a collection of metadata objects representing publicly exposed environment variables.
@@ -85,23 +99,23 @@ public class ApplicationMetadata implements MetadataNode {
 
     public static class Builder {
 
-        private ApplicationMetadata application;
+        private final ApplicationMetadata application;
 
         private Builder() {
             this.application = new ApplicationMetadata();
         }
 
         public ApplicationMetadata build() {
-            checkNameDuplicates(application.options);
+            checkCliOptionNameDuplicates();
             return application;
         }
 
-        private void checkNameDuplicates(Collection<OptionMetadata> options) {
-            if (options.size() > 1) {
+        private void checkCliOptionNameDuplicates() {
+            if (application.cliOptions.size() > 1) {
                 Set<String> distinctNames = new HashSet<>();
-                options.forEach(om -> {
+                application.cliOptions.forEach(om -> {
                     if (!distinctNames.add(om.getName())) {
-                        throw new RuntimeException("Duplicate option declaration for '" + om.getName() + "'");
+                        throw new BootiqueException(1, "Duplicate option name declaration: '" + om.getName() + "'");
                     }
                 });
             }
@@ -123,21 +137,24 @@ public class ApplicationMetadata implements MetadataNode {
 
         public Builder addCommand(CommandMetadata commandMetadata) {
             application.commands.add(commandMetadata);
+            application.cliOptions.add(commandMetadata.getCommandOption());
+            commandMetadata.getOptions().forEach(application.cliOptions::add);
             return this;
         }
 
         public Builder addCommands(Collection<CommandMetadata> commandMetadata) {
-            application.commands.addAll(commandMetadata);
+            commandMetadata.forEach(this::addCommand);
             return this;
         }
 
         public Builder addOption(OptionMetadata option) {
             application.options.add(option);
+            application.cliOptions.add(option);
             return this;
         }
 
         public Builder addOptions(Collection<OptionMetadata> options) {
-            application.options.addAll(options);
+            options.forEach(this::addOption);
             return this;
         }
 
@@ -151,5 +168,4 @@ public class ApplicationMetadata implements MetadataNode {
             return this;
         }
     }
-
 }
