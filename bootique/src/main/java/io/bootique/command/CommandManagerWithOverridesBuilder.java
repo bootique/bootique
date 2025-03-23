@@ -108,7 +108,7 @@ public class CommandManagerWithOverridesBuilder extends CommandManagerBuilder<Co
     }
 
     protected void loadBaseCommandsAsPublic(Map<String, ManagedCommand> commandMap) {
-        commands.forEach(c -> addCommandNoOverride(commandMap, c));
+        commands.forEach(c -> addCommandNoOverride(commandMap, ManagedCommand.forCommand(c)));
     }
 
     protected void loadBaseCommandsAsPrivate(Map<String, ManagedCommand> commandMap) {

@@ -60,7 +60,7 @@ public class CommandManagerBuilder<T extends CommandManagerBuilder<T>> {
     }
 
     protected void loadCommands(Map<String, ManagedCommand> commandMap) {
-        commands.forEach(c -> addCommandNoOverride(commandMap, c));
+        commands.forEach(c -> addCommandNoOverride(commandMap, ManagedCommand.forCommand(c)));
     }
 
     protected void loadHelpCommand(Map<String, ManagedCommand> commandMap) {
@@ -78,10 +78,6 @@ public class CommandManagerBuilder<T extends CommandManagerBuilder<T>> {
         Command command = managedCommand.getCommand();
         String name = command.getMetadata().getName();
         return commandMap.put(name, managedCommand);
-    }
-
-    protected void addCommandNoOverride(Map<String, ManagedCommand> commandMap, Command command) {
-        addCommandNoOverride(commandMap, ManagedCommand.forCommand(command));
     }
 
     protected void addCommandNoOverride(Map<String, ManagedCommand> commandMap, ManagedCommand managedCommand) {
