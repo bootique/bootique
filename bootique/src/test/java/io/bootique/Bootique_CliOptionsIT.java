@@ -112,6 +112,17 @@ public class Bootique_CliOptionsIT {
     }
 
     @Test
+    public void overlappingOptions_Long() {
+        BQRuntime runtime = appManager.runtime(Bootique.app("--o1")
+                .module(b -> BQCoreModule.extend(b).addOptions(
+                        OptionMetadata.builder("o1").build(),
+                        OptionMetadata.builder("o2").build()
+                )));
+        
+        assertTrue(runtime.run().isSuccess());
+    }
+
+    @Test
     public void commandWithOptionNameOverlap() {
         BQRuntime runtime = appManager.runtime(Bootique.app("-x")
                 .module(b -> BQCoreModule.extend(b)
@@ -337,7 +348,8 @@ public class Bootique_CliOptionsIT {
         assertEquals("commandVal", cli.optionString("A"));
     }
 
-    @Test void missingCommandDefaultValue() {
+    @Test
+    void missingCommandDefaultValue() {
         BQRuntime runtime = appManager.runtime(Bootique.app()
                 .module(b -> BQCoreModule.extend(b)
                         .addCommand(CommandAWithDefaultValue.class)
