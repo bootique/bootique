@@ -24,6 +24,7 @@ import io.bootique.BQModule;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
 import io.bootique.cli.Cli;
+import io.bootique.config.jackson.CliConfigurationLoader;
 import io.bootique.di.Binder;
 import io.bootique.di.DIRuntimeException;
 import io.bootique.help.HelpCommand;
@@ -104,7 +105,7 @@ public class CommandsIT {
                 .sorted()
                 .collect(Collectors.toList());
 
-        assertEquals(List.of("config"), topOptions, "Top-level 'config' option should be the only one preserved");
+        assertEquals(List.of("config"), topOptions);
 
         List<String> commands = appMd
                 .getCommands().stream()
@@ -120,6 +121,43 @@ public class CommandsIT {
                 .sorted()
                 .collect(Collectors.toList());
         assertEquals(List.of(), commandOptions);
+    }
+
+    @Test
+    public void noModuleOptions() {
+        BQModule commandsModule = Commands.builder().noModuleOptions().module();
+        BQRuntime runtime = appManager.runtime(Bootique.app().module(new M2()).module(commandsModule));
+
+        ApplicationMetadata appMd = runtime.getInstance(ApplicationMetadata.class);
+
+        List<String> topOptions = appMd
+                .getOptions().stream()
+                .map(OptionMetadata::getName)
+                .sorted()
+                .collect(Collectors.toList());
+
+        assertEquals(List.of(), topOptions);
+    }
+
+    @Test
+    public void noModuleOptions_TryExec() {
+        BQModule commandsModule = Commands.builder().noModuleOptions().module();
+        BQRuntime tryConfig = appManager.runtime(Bootique.app("--config=classpath:io/bootique/test1.yml").module(commandsModule));
+        assertThrows(DIRuntimeException.class, () -> tryConfig.run());
+    }
+
+    @Test
+    public void noModuleOptions_TryExec_ReaddHidden() {
+        BQModule commandsModule = Commands
+                .builder()
+                .noModuleOptions()
+                .addOption(OptionMetadata
+                        .builder(CliConfigurationLoader.CONFIG_OPTION).valueRequired("yaml_location").build())
+                .module();
+
+        BQRuntime tryConfig = appManager.runtime(Bootique.app("--config=classpath:io/bootique/test1.yml").module(commandsModule));
+        CommandOutcome configOutcome = tryConfig.run();
+        assertTrue(configOutcome.isSuccess());
     }
 
     @Test
@@ -227,6 +265,15 @@ public class CommandsIT {
         public void configure(Binder binder) {
 
             BQCoreModule.extend(binder).addCommand(C3.class);
+        }
+    }
+
+    static class M2 implements BQModule {
+
+        @Override
+        public void configure(Binder binder) {
+
+            BQCoreModule.extend(binder).addOption(OptionMetadata.builder("m2o").build());
         }
     }
 }

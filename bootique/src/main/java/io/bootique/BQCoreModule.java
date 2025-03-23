@@ -20,10 +20,7 @@
 package io.bootique;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.bootique.annotation.Args;
-import io.bootique.annotation.DefaultCommand;
-import io.bootique.annotation.EnvironmentProperties;
-import io.bootique.annotation.EnvironmentVariables;
+import io.bootique.annotation.*;
 import io.bootique.cli.Cli;
 import io.bootique.cli.CliFactory;
 import io.bootique.command.*;
@@ -34,7 +31,10 @@ import io.bootique.config.jackson.*;
 import io.bootique.config.jackson.merger.InPlaceLeftHandMerger;
 import io.bootique.config.jackson.merger.JsonConfigurationMerger;
 import io.bootique.config.jackson.parser.*;
-import io.bootique.di.*;
+import io.bootique.di.Binder;
+import io.bootique.di.Injector;
+import io.bootique.di.Key;
+import io.bootique.di.Provides;
 import io.bootique.di.spi.DIJsonConfigurationFactory;
 import io.bootique.di.spi.DefaultInjector;
 import io.bootique.env.DeclaredVariable;
@@ -52,10 +52,10 @@ import io.bootique.jackson.JacksonService;
 import io.bootique.jopt.JoptCliFactory;
 import io.bootique.log.BootLogger;
 import io.bootique.meta.application.ApplicationMetadata;
+import io.bootique.meta.application.ApplicationMetadataFactory;
 import io.bootique.meta.application.OptionMetadata;
 import io.bootique.meta.config.ConfigHierarchyResolver;
 import io.bootique.meta.config.ConfigMetadataCompiler;
-import io.bootique.meta.config.ConfigValueMetadata;
 import io.bootique.meta.module.ModulesMetadata;
 import io.bootique.meta.module.ModulesMetadataCompiler;
 import io.bootique.run.DefaultRunner;
@@ -67,9 +67,9 @@ import io.bootique.terminal.Terminal;
 import io.bootique.value.Bytes;
 import io.bootique.value.Duration;
 import io.bootique.value.Percent;
-
 import jakarta.inject.Provider;
 import jakarta.inject.Singleton;
+
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -318,7 +318,16 @@ public class BQCoreModule implements BQModule {
 
     @Provides
     @Singleton
-    ApplicationMetadata provideApplicationMetadata(
+    ApplicationMetadata provideApplicationMetadata(@BQInternal ApplicationMetadata internalMetadata) {
+        // separation of publicly-exposed and internal metadata allows to override it in submodules, and yet have access
+        // to the core metadata when building a custom one
+        return internalMetadata;
+    }
+
+    @BQInternal
+    @Provides
+    @Singleton
+    ApplicationMetadata provideInternalApplicationMetadata(
             BootLogger logger,
             ApplicationDescription descriptionHolder,
             CommandManager commandManager,
@@ -326,34 +335,13 @@ public class BQCoreModule implements BQModule {
             Set<DeclaredVariable> declaredVars,
             ModulesMetadata modulesMetadata) {
 
-        ApplicationMetadata.Builder builder = ApplicationMetadata
-                .builder()
-                .description(descriptionHolder.getDescription())
-                .addOptions(options);
-
-        commandManager.getAllCommands().values().forEach(mc -> {
-            if (!mc.isHidden() && !mc.isDefault()) {
-                builder.addCommand(mc.getCommand().getMetadata());
-            }
-        });
-
-        // merge default command options with top-level app options
-        commandManager.getPublicDefaultCommand().ifPresent(c -> builder.addOptions(c.getMetadata().getOptions()));
-
-        declaredVars.forEach(dv -> {
-            ConfigValueMetadata varMd = DeclaredVariableMetaCompiler.compile(dv, modulesMetadata);
-            if (varMd.isUnbound()) {
-                bootLogger.trace(() ->
-                        "Can't reliably determine whether the path '"
-                                + dv.getConfigPath()
-                                + "' linked to the env var '"
-                                + varMd.getName()
-                                + "' is valid. This is likely not an error.");
-            }
-            builder.addVariable(varMd);
-        });
-
-        return builder.build();
+        return ApplicationMetadataFactory.of(
+                logger,
+                descriptionHolder.getDescription(),
+                commandManager,
+                options,
+                declaredVars,
+                modulesMetadata);
     }
 
     @Provides

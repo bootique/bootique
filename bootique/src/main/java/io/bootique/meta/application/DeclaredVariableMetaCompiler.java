@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package io.bootique;
+package io.bootique.meta.application;
 
 import io.bootique.env.DeclaredVariable;
 import io.bootique.meta.config.ConfigMetadataNode;

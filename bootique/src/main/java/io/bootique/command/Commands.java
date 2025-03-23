@@ -23,22 +23,17 @@ import io.bootique.BQCoreModule;
 import io.bootique.BQModule;
 import io.bootique.BQModuleProvider;
 import io.bootique.ModuleCrate;
+import io.bootique.annotation.BQInternal;
 import io.bootique.annotation.DefaultCommand;
-import io.bootique.di.Binder;
-import io.bootique.di.Injector;
-import io.bootique.di.Key;
-import io.bootique.di.Provides;
-import io.bootique.di.SetBuilder;
+import io.bootique.di.*;
 import io.bootique.help.HelpCommand;
 import io.bootique.log.BootLogger;
+import io.bootique.meta.application.ApplicationMetadata;
+import io.bootique.meta.application.OptionMetadata;
 import jakarta.inject.Provider;
 import jakarta.inject.Singleton;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A builder of non-standard application command sets. It produces a Bootique module that overrides the default
@@ -48,11 +43,14 @@ public class Commands implements BQModule {
 
     private final Collection<Class<? extends Command>> commandTypes;
     private final Collection<Command> commands;
+    private final Collection<OptionMetadata> options;
     private boolean noModuleCommands;
+    private boolean noModuleOptions;
 
     private Commands() {
         this.commandTypes = new HashSet<>();
         this.commands = new HashSet<>();
+        this.options = new HashSet<>();
     }
 
     static SetBuilder<Command> contributeExtraCommands(Binder binder) {
@@ -82,6 +80,9 @@ public class Commands implements BQModule {
 
     @Override
     public void configure(Binder binder) {
+
+        // pass "commandTypes" through DI to ensure proper instantiation and injection. We don't technically need to
+        // it with "commands", but it is convenient to keep everything in a single collection
         SetBuilder<Command> extraCommandsBinder = Commands.contributeExtraCommands(binder);
         commandTypes.forEach(extraCommandsBinder::add);
         commands.forEach(extraCommandsBinder::addInstance);
@@ -89,17 +90,56 @@ public class Commands implements BQModule {
 
     @Provides
     @Singleton
-    CommandManager createManager(Set<Command> moduleCommands,
-                                 @ExtraCommands Set<Command> extraCommands,
-                                 HelpCommand helpCommand,
-                                 Injector injector,
-                                 BootLogger bootLogger) {
+    CommandManager provideCommandManager(
+            Set<Command> commands,
+            HelpCommand helpCommand,
+            Injector injector,
+            @ExtraCommands Set<Command> extraCommands,
+            BootLogger bootLogger) {
 
-        return new CommandManagerWithOverridesBuilder(moduleCommands, bootLogger)
+        return new CommandManagerWithOverridesBuilder(commands, bootLogger)
                 .defaultCommand(defaultCommand(injector))
                 .helpCommand(helpCommand)
                 .hideBaseCommands(noModuleCommands)
                 .overrideWith(extraCommands)
+                .build();
+    }
+
+    @Provides
+    @Singleton
+    ApplicationMetadata provideApplicationMetadata(@BQInternal ApplicationMetadata internalMetadata, BootLogger logger) {
+
+        // TODO: Somehow centralize spread out metadata override logic - handle overrides of commands and variables here,
+        //  not just options. Notes:
+        //   1. We don't yet support variable filtering. This would be a new feature
+        //   2. Overridden commands are already hidden by "internalMetadata" because they are are marked as "hidden".
+        //      Can we change that?
+
+        Map<String, OptionMetadata> opts = new LinkedHashMap<>();
+        if (!noModuleOptions) {
+            for (OptionMetadata md : internalMetadata.getOptions()) {
+                opts.put(md.getName(), md);
+            }
+        }
+
+        if (!this.options.isEmpty()) {
+            for (OptionMetadata md : this.options) {
+
+                OptionMetadata existing = opts.put(md.getName(), md);
+
+                // TODO: options can also conflict with command names
+                if (existing != null) {
+                    logger.trace(() -> String.format("Overriding option '%s'", md.getName()));
+                }
+            }
+        }
+
+        return ApplicationMetadata
+                .builder(internalMetadata.getName())
+                .description(internalMetadata.getDescription())
+                .addOptions(opts.values())
+                .addCommands(internalMetadata.getCommands())
+                .addVariables(internalMetadata.getVariables())
                 .build();
     }
 
@@ -134,8 +174,32 @@ public class Commands implements BQModule {
             return this;
         }
 
+        /**
+         * @since 3.0
+         */
+        public Builder addOption(OptionMetadata option) {
+            commands.options.add(option);
+            return this;
+        }
+
+        /**
+         * Hides all commands defined across application modules as well as CLI options declared by those commands.
+         * This will even hide the help command. Options declared at the module level (i.e. outside individual commands)
+         * will be preserved. To suppress the options as well, use {@link #noModuleOptions()}.
+         */
         public Builder noModuleCommands() {
             commands.noModuleCommands = true;
+            return this;
+        }
+
+        /**
+         * Hides all top-level options defined across application modules. Does not affect the options defined by
+         * commands.
+         *
+         * @since 3.0
+         */
+        public Builder noModuleOptions() {
+            commands.noModuleOptions = true;
             return this;
         }
     }
