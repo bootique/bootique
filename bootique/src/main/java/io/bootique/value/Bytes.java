@@ -54,7 +54,8 @@ public class Bytes implements Comparable<Bytes> {
         UNIT_VOCABULARY.put("gigabytes", GB);
     }
 
-    private BytesObject bytes;
+    private final long bytes;
+    private final BytesUnit unit;
 
     /**
      * Creates a Bytes instance from a String representation. The String has a numeric part, an optional space and
@@ -63,7 +64,19 @@ public class Bytes implements Comparable<Bytes> {
      * @param value a String value representing bytes.
      */
     public Bytes(String value) {
-        this.bytes = parse(value);
+        Objects.requireNonNull(value, "Null 'value' argument");
+
+        if (value.isEmpty()) {
+            throw new IllegalArgumentException("Empty 'value' argument");
+        }
+
+        Matcher matcher = TOKENIZER.matcher(value);
+        if (!matcher.matches()) {
+            throw new IllegalArgumentException("Invalid Unit format: " + value);
+        }
+
+        this.unit = parseUnit(matcher.group(2));
+        this.bytes = parseAmount(matcher.group(1)) * unit.getValue();
     }
 
     private static long parseAmount(String amount) {
@@ -83,50 +96,35 @@ public class Bytes implements Comparable<Bytes> {
         return unit;
     }
 
-    protected BytesObject parse(String value) {
-
-        Objects.requireNonNull(value, "Null 'value' argument");
-
-        if (value.length() == 0) {
-            throw new IllegalArgumentException("Empty 'value' argument");
-        }
-
-        Matcher matcher = TOKENIZER.matcher(value);
-        if (!matcher.matches()) {
-            throw new IllegalArgumentException("Invalid Unit format: " + value);
-        }
-
-        BytesUnit unit = parseUnit(matcher.group(2));
-        long amount = parseAmount(matcher.group(1));
-
-        return new BytesObject(unit, amount);
-    }
-
     @Override
-    public boolean equals(Object obj) {
-        return obj instanceof Bytes b
-                ? bytes.equals(b.getBytes())
-                : false;
+    public boolean equals(Object o) {
+        if (!(o instanceof Bytes bytes1)) return false;
+        // ignore "unit" in comparison, and just check for the normalized bytes
+        return bytes == bytes1.bytes;
     }
 
     @Override
     public int hashCode() {
-        return bytes.hashCode();
+        return Objects.hash(bytes);
     }
 
     public long getBytes() {
-        return bytes.getBytes();
+        return bytes;
     }
 
     @Override
     public int compareTo(Bytes o) {
-        return bytes.compareTo(o.bytes);
+        long cmp = Long.compare(bytes, o.getBytes());
+        if (cmp != 0) {
+            return (int) cmp;
+        }
+        return (int) (bytes - o.getBytes());
     }
 
     @Override
     @JsonValue
     public String toString() {
-        return bytes.toString();
+        return bytes / unit.getValue() + " " + unit.getName();
     }
 
     /**
@@ -136,52 +134,6 @@ public class Bytes implements Comparable<Bytes> {
      * @return value in chosen unit
      */
     public long valueOfUnit(BytesUnit bytesUnit) {
-        return bytes.getBytes() / bytesUnit.getValue();
-    }
-
-    private static class BytesObject implements Comparable<BytesObject> {
-
-        private long bytes;
-        private BytesUnit type;
-
-        public BytesObject(BytesUnit type, long value) {
-            this.type = type;
-            this.bytes = value * type.getValue();
-        }
-
-        public long getBytes() {
-            return bytes;
-        }
-
-        public BytesUnit getType() {
-            return type;
-        }
-
-        @Override
-        public int compareTo(BytesObject o) {
-            long cmp = Long.compare(bytes, o.getBytes());
-            if (cmp != 0) {
-                return (int) cmp;
-            }
-            return (int) (bytes - o.getBytes());
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(bytes, BYTES.getValue());
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || Long.class != o.getClass()) return false;
-            Long that = (Long) o;
-            return bytes == that;
-        }
-
-        @Override
-        public String toString() {
-            return bytes / type.getValue() + " " + type.getName();
-        }
+        return bytes / bytesUnit.getValue();
     }
 }

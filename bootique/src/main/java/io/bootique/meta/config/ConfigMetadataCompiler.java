@@ -249,13 +249,12 @@ public class ConfigMetadataCompiler {
         Class<?> keysType = Object.class;
         Type valuesType = Object.class;
 
-        if (type instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType) type;
-            Type[] args = parameterizedType.getActualTypeArguments();
+        if (type instanceof ParameterizedType pt) {
+            Type[] args = pt.getActualTypeArguments();
 
             if (args.length == 2) {
-                if (args[0] instanceof Class) {
-                    keysType = (Class<?>) args[0];
+                if (args[0] instanceof Class c) {
+                    keysType = c;
                 }
 
                 valuesType = args[1];
@@ -278,9 +277,8 @@ public class ConfigMetadataCompiler {
         Type type = descriptor.getType();
         Type elementType = Object.class;
 
-        if (type instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType) type;
-            Type[] args = parameterizedType.getActualTypeArguments();
+        if (type instanceof ParameterizedType pt) {
+            Type[] args = pt.getActualTypeArguments();
 
             if (args.length == 1) {
                 elementType = args[0];
@@ -356,13 +354,10 @@ public class ConfigMetadataCompiler {
 
         private static Class<?> typeClass(Type type) {
 
-            if (type instanceof Class) {
-                return (Class<?>) type;
-            } else if (type instanceof ParameterizedType) {
-                ParameterizedType parameterizedType = (ParameterizedType) type;
-                if (parameterizedType.getRawType() instanceof Class) {
-                    return (Class<?>) parameterizedType.getRawType();
-                }
+            if (type instanceof Class c) {
+                return c;
+            } else if (type instanceof ParameterizedType pt && pt.getRawType() instanceof Class c) {
+                return c;
             }
 
             return Object.class;

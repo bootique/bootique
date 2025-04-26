@@ -29,12 +29,12 @@ import io.bootique.type.TypeRef;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class JsonConfigurationFactoryTest {
 
@@ -81,14 +81,14 @@ public class JsonConfigurationFactoryTest {
     public void config_Subconfig_Missing() {
         Bean1 b1 = factory("b1:\n  s: SS\n  i: 55").config(Bean1.class, "no.such.path");
         assertNotNull(b1);
-        assertEquals(null, b1.getS());
+        assertNull(b1.getS());
         assertEquals(0, b1.getI());
     }
 
     @Test
     public void list_SingleLevel() {
 
-        List<Object> l = factory("- SS\n- 55").config(new TypeRef<List<Object>>() {
+        List<Object> l = factory("- SS\n- 55").config(new TypeRef<>() {
         }, "");
 
         assertNotNull(l);
@@ -100,7 +100,7 @@ public class JsonConfigurationFactoryTest {
     public void list_MultiLevel() {
 
         List<List<Object>> l = factory("-\n  - SS\n  - 55\n-\n  - X")
-                .config(new TypeRef<List<List<Object>>>() {
+                .config(new TypeRef<>() {
                 }, "");
 
         assertNotNull(l);
@@ -118,7 +118,7 @@ public class JsonConfigurationFactoryTest {
 
     @Test
     public void map_SingleLevel() {
-        Map<String, Object> m = factory("b1: SS\ni: 55").config(new TypeRef<Map<String, Object>>() {
+        Map<String, Object> m = factory("b1: SS\ni: 55").config(new TypeRef<>() {
         }, "");
 
         assertNotNull(m);
@@ -130,7 +130,7 @@ public class JsonConfigurationFactoryTest {
     public void map_MultiLevel() {
 
         Map<String, Map<String, Object>> m = factory("b1:\n  k1: SS\n  i: 55")
-                .config(new TypeRef<Map<String, Map<String, Object>>>() {
+                .config(new TypeRef<>() {
                 }, "");
 
         assertNotNull(m);
@@ -172,7 +172,7 @@ public class JsonConfigurationFactoryTest {
         assertNotNull(rfh);
         assertNotNull(rfh.resourceFactory);
 
-        try (Scanner scanner = new Scanner(rfh.resourceFactory.getUrl().openStream(), "UTF-8")) {
+        try (Scanner scanner = new Scanner(rfh.resourceFactory.getUrl().openStream(), StandardCharsets.UTF_8)) {
             assertEquals("resource factory worked!", scanner.useDelimiter("\\Z").nextLine());
         }
     }
