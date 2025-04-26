@@ -34,11 +34,10 @@ public class CommandMetadataTest {
         assertEquals("my", md.getName());
     }
 
-    @Deprecated
     @Test
     public void getShortName() {
         CommandMetadata md = CommandMetadata.builder(MyCommand.class).shortName('M').build();
-        assertEquals("M", md.getShortName());
+        assertEquals("M", md.getCommandOption().getShortName());
     }
 
     @Test

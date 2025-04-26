@@ -60,8 +60,6 @@ public class ModuleMetadata implements MetadataNode {
     private final Class<? extends BQModule> type;
     private final String name;
 
-    @Deprecated
-    private final String providerName;
     private final String description;
     private final boolean deprecated;
     private final Collection<ConfigMetadataNode> configs;
@@ -69,14 +67,12 @@ public class ModuleMetadata implements MetadataNode {
     private ModuleMetadata(
             Class<? extends BQModule> type,
             String name,
-            String providerName,
             String description,
             boolean deprecated,
             Collection<ConfigMetadataNode> configs) {
 
         this.type = type;
         this.name = name;
-        this.providerName = providerName;
         this.description = description;
         this.deprecated = deprecated;
         this.configs = configs;
@@ -102,14 +98,6 @@ public class ModuleMetadata implements MetadataNode {
     @Override
     public String getName() {
         return name;
-    }
-
-    /**
-     * @deprecated since {@link io.bootique.BQModuleProvider} is deprecated
-     */
-    @Deprecated(since = "3.0", forRemoval = true)
-    public String getProviderName() {
-        return providerName;
     }
 
     @Override
@@ -211,8 +199,6 @@ public class ModuleMetadata implements MetadataNode {
 
         private Class<? extends BQModule> type;
         private String name;
-        @Deprecated
-        private String providerName;
         private String description;
         private boolean deprecated;
         private final Collection<ConfigMetadataNode> configs;
@@ -225,7 +211,6 @@ public class ModuleMetadata implements MetadataNode {
             return new ModuleMetadata(
                     type != null ? type : BQModule.class,
                     name,
-                    providerName,
                     description,
                     deprecated,
                     configs);
@@ -241,15 +226,6 @@ public class ModuleMetadata implements MetadataNode {
 
         public Builder name(String name) {
             this.name = name;
-            return this;
-        }
-
-        /**
-         * @deprecated since {@link io.bootique.BQModuleProvider} is deprecated
-         */
-        @Deprecated(since = "3.0", forRemoval = true)
-        public Builder providerName(String name) {
-            this.providerName = name;
             return this;
         }
 

@@ -51,12 +51,6 @@ public class DefaultEnvironment implements Environment {
         return properties.get(name);
     }
 
-    @Deprecated
-    @Override
-    public Map<String, String> subproperties(String prefix) {
-        return filterByPrefix(properties, prefix, ".");
-    }
-
     @Override
     public Map<String, String> properties() {
         return Collections.unmodifiableMap(properties);

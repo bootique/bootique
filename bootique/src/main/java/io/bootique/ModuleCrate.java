@@ -40,9 +40,6 @@ public class ModuleCrate {
     private final Collection<Class<? extends BQModule>> overrides;
     private final Map<String, Type> configs;
 
-    @Deprecated
-    private final String providerName;
-
     public static Builder of(BQModule module) {
         return new Builder(module);
     }
@@ -65,8 +62,7 @@ public class ModuleCrate {
             String description,
             boolean deprecated,
             Collection<Class<? extends BQModule>> overrides,
-            Map<String, Type> configs,
-            String providerName) {
+            Map<String, Type> configs) {
 
         this.module = Objects.requireNonNull(module);
         this.moduleName = Objects.requireNonNull(moduleName);
@@ -74,7 +70,6 @@ public class ModuleCrate {
         this.deprecated = deprecated;
         this.overrides = Objects.requireNonNull(overrides);
         this.configs = Objects.requireNonNull(configs);
-        this.providerName = providerName;
     }
 
     public BQModule getModule() {
@@ -101,15 +96,6 @@ public class ModuleCrate {
         return configs;
     }
 
-    /**
-     * Returns a provider associated with the crate. May return null.
-     *
-     * @deprecated as BQModuleProvider itself is deprecated and will be removed.
-     */
-    @Deprecated(since = "3.0", forRemoval = true)
-    public String getProviderName() {
-        return providerName;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -148,7 +134,6 @@ public class ModuleCrate {
         protected Boolean deprecated;
         protected Collection<Class<? extends BQModule>> overrides;
         protected Map<String, Type> configs;
-        private String providerName;
 
         protected Builder(BQModule module) {
             this.module = Objects.requireNonNull(module);
@@ -161,9 +146,7 @@ public class ModuleCrate {
                     description,
                     deprecated != null ? deprecated : module.getClass().isAnnotationPresent(Deprecated.class),
                     overrides != null ? overrides : Collections.emptyList(),
-                    configs != null ? configs : Collections.emptyMap(),
-                    providerName
-            );
+                    configs != null ? configs : Collections.emptyMap());
         }
 
         public Builder moduleName(String name) {
@@ -211,15 +194,6 @@ public class ModuleCrate {
             }
 
             this.configs.putAll(configs);
-            return this;
-        }
-
-        /**
-         * @deprecated as BQModule provider itself is deprecated and will be removed.
-         */
-        @Deprecated(since = "3.0", forRemoval = true)
-        public Builder providerName(String providerName) {
-            this.providerName = providerName;
             return this;
         }
     }

@@ -27,17 +27,6 @@ import java.util.Map;
 public interface ShutdownManager {
 
     /**
-     * Registers an object whose "close" method needs to be invoked during shutdown.
-     *
-     * @param shutdownListener an object that needs to be notified on shutdown.
-     * @deprecated in favor of one of the "onShutdown" methods.
-     */
-    @Deprecated(since = "3.0", forRemoval = true)
-    default void addShutdownHook(AutoCloseable shutdownListener) {
-        onShutdown(shutdownListener, AutoCloseable::close);
-    }
-
-    /**
      * Registers an AutoCloseable object to be invoked during Bootique runtime shutdown.
      *
      * @since 3.0

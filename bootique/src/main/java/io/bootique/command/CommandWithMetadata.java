@@ -29,14 +29,6 @@ public abstract class CommandWithMetadata implements Command {
 
     private final CommandMetadata metadata;
 
-    /**
-     * @deprecated in favor of {@link CommandWithMetadata#CommandWithMetadata(CommandMetadata)}
-     */
-    @Deprecated(since = "3.0", forRemoval = true)
-    public CommandWithMetadata(CommandMetadata.Builder metadataBuilder) {
-        this(metadataBuilder.build());
-    }
-
     public CommandWithMetadata(CommandMetadata metadata) {
         this.metadata = metadata;
     }

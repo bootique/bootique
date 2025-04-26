@@ -26,7 +26,6 @@ import io.bootique.command.CommandOutcome;
 import io.bootique.di.Injector;
 import io.bootique.di.Key;
 import io.bootique.it.ItestModule2;
-import io.bootique.it.ItestModuleProvider;
 import io.bootique.log.BootLogger;
 import io.bootique.log.DefaultBootLogger;
 import io.bootique.meta.application.CommandMetadata;
@@ -35,7 +34,6 @@ import io.bootique.shutdown.ShutdownManager;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
-import java.util.Collection;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -94,15 +92,6 @@ public class BootiqueIT {
         assertEquals(1, outcome.getExitCode());
         assertNotNull(outcome.getException());
         assertEquals("test exception", outcome.getException().getMessage());
-    }
-
-    @Deprecated
-    @Test
-    public void autoLoadedProviders() {
-        Collection<BQModuleProvider> autoLoaded = Bootique.app(args).autoLoadedProviders();
-
-        assertEquals(1, autoLoaded.size());
-        autoLoaded.forEach(m -> assertTrue(m instanceof ItestModuleProvider));
     }
 
     @Test

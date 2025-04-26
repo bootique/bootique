@@ -1,3 +1,7 @@
+## 4.0-M1
+
+* #361 Removed deprecated modules and APIs
+
 ## 3.0-RC1
 
 * #349 Support for jakarta.inject API

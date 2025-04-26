@@ -20,7 +20,6 @@
 package io.bootique.command;
 
 import io.bootique.BQCoreModule;
-import io.bootique.BQModuleProvider;
 import io.bootique.Bootique;
 import io.bootique.cli.Cli;
 import io.bootique.meta.application.CommandMetadata;
@@ -324,15 +323,9 @@ public class CommandDecoratorIT {
 
     private class AppRunner {
         private CommandDecorator decorator;
-        private BQModuleProvider moduleProvider;
 
         public AppRunner(CommandDecorator decorator) {
             this.decorator = decorator;
-        }
-
-        public AppRunner module(BQModuleProvider moduleProvider) {
-            this.moduleProvider = moduleProvider;
-            return this;
         }
 
         public void runExpectingSuccess() {
@@ -359,10 +352,6 @@ public class CommandDecoratorIT {
                             .addCommand(successfulCommand)
                             .addCommand(failingCommand)
                             .decorateCommand(mainCommand.getClass(), decorator));
-
-            if (moduleProvider != null) {
-                app.moduleProvider(moduleProvider);
-            }
 
             return appManager.run(app);
         }

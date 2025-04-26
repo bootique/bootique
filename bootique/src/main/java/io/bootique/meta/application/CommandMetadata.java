@@ -84,34 +84,11 @@ public class CommandMetadata implements MetadataNode {
     }
 
     /**
-     * Returns an option representation of this command, that may be used in help generation or exposing the command
-     * in a CLI parser.
-     *
-     * @return option representation of this command.
-     * @deprecated in favor of {@link #getCommandOption()}
-     */
-    @Deprecated(since = "3.0", forRemoval = true)
-    public OptionMetadata asOption() {
-        return getCommandOption();
-    }
-
-    /**
      * Returns extra options recognized this command. The main option that activates the command is not included in
      * this collection and is accessible via {@link #getCommandOption()}.
      */
     public Collection<OptionMetadata> getOptions() {
         return options;
-    }
-
-    /**
-     * Returns the short name
-     *
-     * @return command short name.
-     * @deprecated in favor of <code>getCommandOption().getShortName()</code>
-     */
-    @Deprecated(since = "3.0", forRemoval = true)
-    public String getShortName() {
-        return commandOption.getShortName();
     }
 
     /**
@@ -232,14 +209,6 @@ public class CommandMetadata implements MetadataNode {
         public Builder addOptions(Collection<OptionMetadata> options) {
             this.metadata.options.addAll(options);
             return this;
-        }
-
-        /**
-         * @deprecated in favor of {@link #addOption(OptionMetadata)}
-         */
-        @Deprecated(since = "3.0", forRemoval = true)
-        public Builder addOption(OptionMetadata.Builder optionBuilder) {
-            return addOption(optionBuilder.build());
         }
 
         /**

@@ -48,7 +48,6 @@ public class ModulesMetadataCompiler {
                 .builder(crate.getModuleName())
                 .type(crate.getModule().getClass())
                 .description(crate.getDescription())
-                .providerName(crate.getProviderName())
                 .deprecated(crate.isDeprecated())
                 .addConfigs(toConfigs(crate))
                 .build();
