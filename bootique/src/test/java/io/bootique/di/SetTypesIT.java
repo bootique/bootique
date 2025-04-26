@@ -301,7 +301,7 @@ public class SetTypesIT {
         @Override
         public void configure(Binder binder) {
             binder.bindSet(Integer.class)
-                    .addProviderInstance(() -> 1)
+                    .addJakartaProviderInstance(() -> 1)
                     .addJakartaProvider(IntegerProvider.class)
                     .addJakartaProvider(MyIntegerProvider.class);
         }

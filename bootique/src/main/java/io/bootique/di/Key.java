@@ -179,10 +179,6 @@ public class Key<T> {
             // special case for @Named annotation
             String name = ((Named) annotationInstance).value();
             this.qualifier = !name.isEmpty() ? new NamedKeyQualifier(name) : NO_QUALIFIER;
-        } else if(annotationInstance instanceof javax.inject.Named) {
-            // special case for @Named annotation
-            String name = ((javax.inject.Named) annotationInstance).value();
-            this.qualifier = !name.isEmpty() ? new NamedKeyQualifier(name) : NO_QUALIFIER;
         } else {
             // general case
             this.qualifier = new AnnotationTypeQualifier(annotationInstance.annotationType());

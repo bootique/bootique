@@ -44,21 +44,9 @@ public interface Injector {
     <T> T getInstance(Key<T> key) throws DIRuntimeException;
 
     /**
-     * @deprecated in favor of {@link #getJakartaProvider(Class)}
-     */
-    @Deprecated(forRemoval = true, since = "3.0")
-    <T> javax.inject.Provider<T> getProvider(Class<T> type) throws DIRuntimeException;
-
-    /**
      * @since 3.0
      */
     <T> Provider<T> getJakartaProvider(Class<T> type) throws DIRuntimeException;
-
-    /**
-     * @deprecated in favor of {@link #getJakartaProvider(Key)} 
-     */
-    @Deprecated(forRemoval = true, since = "3.0")
-    <T> javax.inject.Provider<T> getProvider(Key<T> key) throws DIRuntimeException;
 
     /**
      * @since 3.0

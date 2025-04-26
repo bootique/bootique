@@ -41,22 +41,9 @@ public interface SetBuilder<T> extends ScopeBuilder {
     SetBuilder<T> add(Key<? extends T> valueKey) throws DIRuntimeException;
 
     /**
-     * @since 2.0
-     * @deprecated in favor of {@link #addJakartaProviderInstance(Provider)} 
-     */
-    @Deprecated(forRemoval = true, since = "3.0")
-    SetBuilder<T> addProviderInstance(javax.inject.Provider<? extends T> value) throws DIRuntimeException;
-
-    /**
      * @since 3.0
      */
     SetBuilder<T> addJakartaProviderInstance(Provider<? extends T> value) throws DIRuntimeException;
-
-    /**
-     * @deprecated in favor of {@link #addJakartaProvider(Class)}
-     */
-    @Deprecated(forRemoval = true, since = "3.0")
-    SetBuilder<T> addProvider(Class<? extends javax.inject.Provider<? extends T>> value) throws DIRuntimeException;
 
     /**
      * @since 3.0
@@ -67,28 +54,4 @@ public interface SetBuilder<T> extends ScopeBuilder {
      * @since 2.0
      */
     SetBuilder<T> addInstances(Collection<T> values) throws DIRuntimeException;
-
-    /**
-     * @deprecated since 2.0.B1 in favor of {@link #addInstance(Object)} to avoid ambiguity
-     */
-    @Deprecated
-    default SetBuilder<T> add(T value) throws DIRuntimeException {
-        return addInstance(value);
-    }
-
-    /**
-     * @deprecated since 2.0.B1 in favor of {@link #addProviderInstance(javax.inject.Provider)} to avoid ambiguity
-     */
-    @Deprecated
-    default SetBuilder<T> addProvider(javax.inject.Provider<? extends T> value) throws DIRuntimeException {
-        return addProviderInstance(value);
-    }
-
-    /**
-     * @deprecated since 2.0.B1 in favor of {@link #addInstances(Collection)} for naming consistency
-     */
-    @Deprecated
-    default SetBuilder<T> addAll(Collection<T> values) throws DIRuntimeException {
-        return addInstances(values);
-    }
 }

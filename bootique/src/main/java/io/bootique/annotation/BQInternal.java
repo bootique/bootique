@@ -35,6 +35,5 @@ import java.lang.annotation.Target;
 @Target({ElementType.PARAMETER, ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Qualifier
-@javax.inject.Qualifier
 public @interface BQInternal {
 }

@@ -132,11 +132,10 @@ class ProvidesHandler {
         for (int i = 0; i < len; i++) {
             Annotation qualifier = extractQualifier(method, paramAnnotations[i]);
             Key<?> key = createKey(params[i], qualifier);
-            Class<?> type = TypeLiteral.of(params[i]).getRawType();
 
             if (isProviderType(params[i])) {
                 // will resolve to provider of provider
-                providers[i] = () -> injector.getJavaxInjectCompatibleProvider(key, type);
+                providers[i] = () -> injector.getJakartaProvider(key);
             } else {
                 // resolve the actual provider lazily
                 providers[i] = () -> injector.getInstance(key);

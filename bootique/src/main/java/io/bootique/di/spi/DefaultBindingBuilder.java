@@ -119,39 +119,6 @@ class DefaultBindingBuilder<T> implements BindingBuilder<T> {
     }
 
     @Override
-    public ScopeBuilder toProvider(Class<? extends javax.inject.Provider<? extends T>> providerType) throws DIRuntimeException {
-        // This provider provides instance of a provider type `providerType`, not the final object.
-        // Actual provider instance is resolved lazily, so it could be bound to other implementation.
-        Provider<javax.inject.Provider<? extends T>> providerProvider = () -> {
-            injector.trace(() -> "Resolving custom provider of type " + providerType);
-            Binding<? extends javax.inject.Provider<? extends T>> binding = injector.getBinding(Key.get(providerType));
-            if(binding != null) {
-                // get existing provider
-                return binding.getScoped().get();
-            } else {
-                // create new provider and inject its members
-                Provider<javax.inject.Provider<? extends T>> provider0 = new ConstructorInjectingProvider<>(providerType, injector);
-                Provider<javax.inject.Provider<? extends T>> provider1 = new FieldInjectingProvider<>(provider0, injector);
-                if(injector.isMethodInjectionEnabled()) {
-                    provider1 = new MethodInjectingProvider<>(provider1, injector);
-                }
-                return provider1.get();
-            }
-        };
-
-        // this provider provides the final object:
-        Provider<T> provider3 = new CustomJavaxProvidersProvider<>(injector, providerType, providerProvider);
-        // these two providers inject members inside final object created by the provider:
-        Provider<T> provider4 = new FieldInjectingProvider<>(provider3, injector);
-        if(injector.isMethodInjectionEnabled()) {
-            provider4 = new MethodInjectingProvider<>(provider4, injector);
-        }
-
-        addBinding(provider4);
-        return this;
-    }
-
-    @Override
     public BindingBuilder<T> toJakartaProviderInstance(Provider<? extends T> provider) {
         Provider<Provider<? extends T>> provider0 = new InstanceProvider<>(provider);
         // these two providers inject members inside given provider instance
@@ -163,29 +130,6 @@ class DefaultBindingBuilder<T> implements BindingBuilder<T> {
         @SuppressWarnings("unchecked")
         Class<? extends Provider<? extends T>> providerType = (Class<? extends Provider<? extends T>>)provider.getClass();
         Provider<T> provider3 = new CustomProvidersProvider<>(injector, providerType, provider1);
-        // and these two final providers inject members inside final object created by the provider
-        Provider<T> provider4 = new FieldInjectingProvider<>(provider3, injector);
-        if(injector.isMethodInjectionEnabled()) {
-            provider4 = new MethodInjectingProvider<>(provider4, injector);
-        }
-
-        addBinding(provider4);
-        return this;
-    }
-
-    @Override
-    public ScopeBuilder toProviderInstance(javax.inject.Provider<? extends T> provider) throws DIRuntimeException {
-        Provider<javax.inject.Provider<? extends T>> provider0 = new InstanceProvider<>(provider);
-        // these two providers inject members inside given provider instance
-        Provider<javax.inject.Provider<? extends T>> provider1 = new FieldInjectingProvider<>(provider0, injector);
-        if(injector.isMethodInjectionEnabled()) {
-            provider1 = new MethodInjectingProvider<>(provider1, injector);
-        }
-
-        @SuppressWarnings("unchecked")
-        Class<? extends javax.inject.Provider<? extends T>> providerType
-                = (Class<? extends javax.inject.Provider<? extends T>>)provider.getClass();
-        Provider<T> provider3 = new CustomJavaxProvidersProvider<>(injector, providerType, provider1);
         // and these two final providers inject members inside final object created by the provider
         Provider<T> provider4 = new FieldInjectingProvider<>(provider3, injector);
         if(injector.isMethodInjectionEnabled()) {

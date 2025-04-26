@@ -44,44 +44,20 @@ import java.util.function.Predicate;
 public class InjectorPredicates {
 
     // Default predicates, based on jakarta.inject
-    private Predicate<AccessibleObject> injectPredicate = o
-            -> {
-        if(o.isAnnotationPresent(javax.inject.Inject.class)) {
-            javaxInjectPresent = true;
-            return true;
-        }
-        return o.isAnnotationPresent(Inject.class)
-                || o.isAnnotationPresent(BQInject.class);
-    };
+    private Predicate<AccessibleObject> injectPredicate = o ->
+            o.isAnnotationPresent(Inject.class) || o.isAnnotationPresent(BQInject.class);
 
     private Predicate<Method> providesMethodPredicate = m -> m.isAnnotationPresent(Provides.class);
 
-    private Predicate<AnnotatedElement> singletonPredicate = o -> {
-        if(o.isAnnotationPresent(javax.inject.Singleton.class)) {
-            javaxInjectPresent = true;
-            return true;
-        }
-        return o.isAnnotationPresent(Singleton.class);
-    };
+    private Predicate<AnnotatedElement> singletonPredicate = o -> o.isAnnotationPresent(Singleton.class);
 
-    private Predicate<Class<? extends Annotation>> qualifierPredicate = c
-            -> c.isAnnotationPresent(javax.inject.Qualifier.class)
-            || c.isAnnotationPresent(Qualifier.class);
+    private Predicate<Class<? extends Annotation>> qualifierPredicate = c -> c.isAnnotationPresent(Qualifier.class);
 
-    private Predicate<Type> providerPredicate = ((Predicate<Type>) Provider.class::equals)
-            .or(obj -> {
-                if(javax.inject.Provider.class.equals(obj)) {
-                    javaxInjectPresent = true;
-                    return true;
-                }
-                return false;
-            });
+    private Predicate<Type> providerPredicate = Provider.class::equals;
 
     private Function<Provider<?>, Provider<?>> providerFunction = Function.identity();
 
     private ExceptionProvider<?> exceptionProvider = DIRuntimeException::new;
-
-    private volatile boolean javaxInjectPresent;
 
     public InjectorPredicates() {
     }
@@ -135,20 +111,9 @@ public class InjectorPredicates {
         return providerPredicate.test(type);
     }
 
-    boolean isJavaxInjectPresent() {
-        return javaxInjectPresent;
-    }
-
     @SuppressWarnings("unchecked")
     <T> Provider<T> wrapProvider(Provider<T> provider) {
         return (Provider<T>) providerFunction.apply(provider);
-    }
-
-    @Deprecated(since = "3.0", forRemoval = true)
-    <T> javax.inject.Provider<T> wrapJavaxProvider(Provider<T> scoped) {
-        javaxInjectPresent = true;
-        Provider<T> provider = wrapProvider(scoped);
-        return provider::get;
     }
 
     Predicate<Method> getProvidesMethodPredicate() {

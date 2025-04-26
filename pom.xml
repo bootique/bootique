@@ -38,7 +38,6 @@
         <module>bootique</module>
         <module>bootique-junit5</module>
         <module>bootique-junit5-badspi-it</module>
-        <module>bootique-jsr330-javax-tck</module>
         <module>bootique-jsr330-tck</module>
         <module>bootique-docs</module>
     </modules>

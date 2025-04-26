@@ -272,11 +272,6 @@ public class DefaultInjector implements Injector {
     }
 
     @Override
-    public <T> javax.inject.Provider<T> getProvider(Class<T> type) {
-        return getProvider(Key.get(type));
-    }
-
-    @Override
     public <T> Provider<T> getJakartaProvider(Class<T> type) throws DIRuntimeException {
         return getJakartaProvider(Key.get(type));
     }
@@ -294,33 +289,12 @@ public class DefaultInjector implements Injector {
     }
 
     @Override
-    public <T> javax.inject.Provider<T> getProvider(Key<T> key) {
-        Binding<T> binding = getBinding(key);
-        if (binding == null || binding.getOriginal() == null) {
-            binding = createDynamicBinding(key);
-        }
-
-        return predicates.wrapJavaxProvider(binding.getScoped());
-    }
-
-    @Override
     public <T> Provider<T> getJakartaProvider(Key<T> key) throws DIRuntimeException {
         Binding<T> binding = getBinding(key);
         if (binding == null || binding.getOriginal() == null) {
             binding = createDynamicBinding(key);
         }
 
-        return predicates.wrapProvider(binding.getScoped());
-    }
-
-    Object getJavaxInjectCompatibleProvider(Key<?> key, Class<?> requiredType) {
-        Binding<?> binding = getBinding(key);
-        if (binding == null || binding.getOriginal() == null) {
-            binding = createDynamicBinding(key);
-        }
-        if (javax.inject.Provider.class.isAssignableFrom(requiredType)) {
-            return predicates.wrapJavaxProvider(binding.getScoped());
-        }
         return predicates.wrapProvider(binding.getScoped());
     }
 
@@ -397,9 +371,8 @@ public class DefaultInjector implements Injector {
 
     @Override
     public void reportWarnings(BootLogger logger) {
-        if (getPredicates().isJavaxInjectPresent()) {
-            logger.stderr("** Deprecation alert - `javax.inject` annotations are deprecated and should be replaced with `jakarta.inject`.");
-        }
+        // Was used to report warnings for "javax.inject" use. A noop for now, but keeping around we need it in the
+        // future
     }
 
     DefaultScope getSingletonScope() {

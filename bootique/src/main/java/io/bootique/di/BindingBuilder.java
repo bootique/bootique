@@ -40,20 +40,7 @@ public interface BindingBuilder<T> extends ScopeBuilder {
     ScopeBuilder toJakartaProvider(Class<? extends Provider<? extends T>> providerType) throws DIRuntimeException;
 
     /**
-     * @deprecated in favor of {@link #toJakartaProvider(Class)}
-     */
-    @Deprecated(forRemoval = true, since = "3.0")
-    ScopeBuilder toProvider(Class<? extends javax.inject.Provider<? extends T>> providerType) throws DIRuntimeException;
-
-    /**
      * @since 3.0
      */
     ScopeBuilder toJakartaProviderInstance(Provider<? extends T> provider) throws DIRuntimeException;
-
-    /**
-     * @deprecated in favor of {@link #toJakartaProviderInstance(Provider)}
-     */
-    @Deprecated(forRemoval = true, since = "3.0")
-    ScopeBuilder toProviderInstance(javax.inject.Provider<? extends T> provider) throws DIRuntimeException;
-
 }

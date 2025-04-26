@@ -1,5 +1,6 @@
 ## 4.0-M1
 
+* #360 Stop supporting deprecated "javax.inject"
 * #361 Removed deprecated modules and APIs
 
 ## 3.0-RC1

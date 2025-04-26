@@ -30,17 +30,6 @@ import jakarta.inject.Provider;
 public interface Scope {
 
     /**
-     * @see #scope(Provider)
-     * @deprecated in favor of {@link #scope(Provider)}
-     */
-    @Deprecated(forRemoval = true, since = "3.0")
-    default <T> javax.inject.Provider<T> scope(javax.inject.Provider<T> unscoped) {
-        // this method just performs wrapping/unwrapping of the Jakarta Provider,
-        // and is here only for the compatibility
-        return scope((Provider<T>) unscoped::get)::get;
-    }
-
-    /**
      * @since 3.0
      */
     <T> Provider<T> scope(Provider<T> unscoped);
