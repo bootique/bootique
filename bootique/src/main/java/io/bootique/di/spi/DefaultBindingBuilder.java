@@ -20,10 +20,8 @@
 package io.bootique.di.spi;
 
 import io.bootique.di.BindingBuilder;
-import io.bootique.di.DIRuntimeException;
 import io.bootique.di.Key;
 import io.bootique.di.Scope;
-import io.bootique.di.ScopeBuilder;
 import jakarta.inject.Provider;
 
 class DefaultBindingBuilder<T> implements BindingBuilder<T> {
@@ -68,7 +66,7 @@ class DefaultBindingBuilder<T> implements BindingBuilder<T> {
             injector.putBinding(implementationKey, (Provider) null);
             addBinding(() -> {
                 injector.trace(() -> "Target implementation is " + implementationKey);
-                return injector.getJakartaProvider(implementationKey).get();
+                return injector.getProvider(implementationKey).get();
             });
         }
         return this;
@@ -88,7 +86,7 @@ class DefaultBindingBuilder<T> implements BindingBuilder<T> {
     }
 
     @Override
-    public BindingBuilder<T> toJakartaProvider(Class<? extends Provider<? extends T>> providerType) {
+    public BindingBuilder<T> toProvider(Class<? extends Provider<? extends T>> providerType) {
         // Actual provider instance is resolved lazily, so it could be bound to other implementation
         Provider<Provider<? extends T>> providerProvider = () -> {
             injector.trace(() -> "Resolving custom provider of type " + providerType);
@@ -119,7 +117,7 @@ class DefaultBindingBuilder<T> implements BindingBuilder<T> {
     }
 
     @Override
-    public BindingBuilder<T> toJakartaProviderInstance(Provider<? extends T> provider) {
+    public BindingBuilder<T> toProviderInstance(Provider<? extends T> provider) {
         Provider<Provider<? extends T>> provider0 = new InstanceProvider<>(provider);
         // these two providers inject members inside given provider instance
         Provider<Provider<? extends T>> provider1 = new FieldInjectingProvider<>(provider0, injector);

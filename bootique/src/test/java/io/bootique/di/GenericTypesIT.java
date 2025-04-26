@@ -64,16 +64,16 @@ public class GenericTypesIT {
     public void providerAccess() {
         Injector injector = DIBootstrap.createInjector(new TestModule1());
 
-        Provider<List<? extends Integer>> integers = injector.getJakartaProvider(Key.get(new TypeLiteral<List<? extends Integer>>(){}));
+        Provider<List<? extends Integer>> integers = injector.getProvider(Key.get(new TypeLiteral<List<? extends Integer>>(){}));
         assertEquals(Arrays.asList(1,2,3), integers.get());
 
-        Provider<List<? super Integer>> objects = injector.getJakartaProvider(Key.get(new TypeLiteral<List<? super Integer>>(){}));
+        Provider<List<? super Integer>> objects = injector.getProvider(Key.get(new TypeLiteral<List<? super Integer>>(){}));
         assertEquals(Arrays.asList(3,4,5), objects.get());
 
-        Provider<Optional<String>> optionalString = injector.getJakartaProvider(Key.get(new TypeLiteral<Optional<String>>(){}));
+        Provider<Optional<String>> optionalString = injector.getProvider(Key.get(new TypeLiteral<Optional<String>>(){}));
         assertEquals("test", optionalString.get().orElseThrow(NullPointerException::new));
 
-        Provider<Optional<Integer>> optionalInteger = injector.getJakartaProvider(Key.get(new TypeLiteral<Optional<Integer>>(){}));
+        Provider<Optional<Integer>> optionalInteger = injector.getProvider(Key.get(new TypeLiteral<Optional<Integer>>(){}));
         assertEquals(Integer.valueOf(42), optionalInteger.get().orElseThrow(NullPointerException::new));
     }
 

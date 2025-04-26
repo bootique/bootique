@@ -42,13 +42,31 @@ public interface SetBuilder<T> extends ScopeBuilder {
 
     /**
      * @since 3.0
+     * @deprecated in favor of {@link #addProviderInstance(Provider)}
      */
-    SetBuilder<T> addJakartaProviderInstance(Provider<? extends T> value) throws DIRuntimeException;
+    @Deprecated(since = "4.0", forRemoval = true)
+    default SetBuilder<T> addJakartaProviderInstance(Provider<? extends T> value) throws DIRuntimeException {
+        return addProviderInstance(value);
+    }
+    
+    /**
+     * @since 4.0
+     */
+    SetBuilder<T> addProviderInstance(Provider<? extends T> value) throws DIRuntimeException;
 
     /**
      * @since 3.0
+     * @deprecated in favor of {@link #addProvider(Class)}
      */
-    SetBuilder<T> addJakartaProvider(Class<? extends Provider<? extends T>> value) throws DIRuntimeException;
+    @Deprecated(since = "4.0", forRemoval = true)
+    default SetBuilder<T> addJakartaProvider(Class<? extends Provider<? extends T>> value) throws DIRuntimeException {
+        return addProvider(value);
+    }
+
+    /**
+     * @since 4.0
+     */
+    SetBuilder<T> addProvider(Class<? extends Provider<? extends T>> value) throws DIRuntimeException;
 
     /**
      * @since 2.0

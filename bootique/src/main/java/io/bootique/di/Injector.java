@@ -45,13 +45,31 @@ public interface Injector {
 
     /**
      * @since 3.0
+     * @deprecated in favor of {@link #getProvider(Class)}
      */
-    <T> Provider<T> getJakartaProvider(Class<T> type) throws DIRuntimeException;
+    @Deprecated(since = "4.0", forRemoval = true)
+    default <T> Provider<T> getJakartaProvider(Class<T> type) throws DIRuntimeException {
+        return getProvider(type);
+    }
+
+    /**
+     * @since 4.0
+     */
+    <T> Provider<T> getProvider(Class<T> type) throws DIRuntimeException;
 
     /**
      * @since 3.0
+     * @deprecated in favor of {@link #getProvider(Key)} 
      */
-    <T> Provider<T> getJakartaProvider(Key<T> key) throws DIRuntimeException;
+    @Deprecated(since = "4.0", forRemoval = true)
+    default <T> Provider<T> getJakartaProvider(Key<T> key) throws DIRuntimeException {
+        return getProvider(key);
+    }
+
+    /**
+     * @since 4.0
+     */
+    <T> Provider<T> getProvider(Key<T> key) throws DIRuntimeException;
 
     /**
      * @param type binding type to check

@@ -78,7 +78,7 @@ class FieldInjectingProvider<T> extends MemberInjectingProvider<T> {
     }
 
     protected Object value(Field field, TypeLiteral<?> fieldType, Annotation bindingAnnotation) {
-       
+
         if (injector.getPredicates().isProviderType(fieldType.getRawType())) {
             Type parameterType = GenericTypesUtils.getGenericParameterType(field.getGenericType());
 
@@ -87,7 +87,7 @@ class FieldInjectingProvider<T> extends MemberInjectingProvider<T> {
                         , field.getDeclaringClass().getName(), field.getName());
             }
 
-            return injector.getJakartaProvider(Key.get(TypeLiteral.of(parameterType), bindingAnnotation));
+            return injector.getProvider(Key.get(TypeLiteral.of(parameterType), bindingAnnotation));
         } else {
             Key<?> key = Key.get(fieldType, bindingAnnotation);
             return injector.getInstanceWithCycleProtection(key);

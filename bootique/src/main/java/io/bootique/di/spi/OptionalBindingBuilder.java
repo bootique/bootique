@@ -41,7 +41,7 @@ class OptionalBindingBuilder<T> extends DefaultBindingBuilder<T> {
         }
         // add binding to Optional<T> type
         injector.putBinding(Key.getOptionalOf(bindingKey), () -> {
-            T value = injector.getJakartaProvider(bindingKey).get();
+            T value = injector.getProvider(bindingKey).get();
             return value == null ? Optional.empty() : Optional.of(value);
         });
     }

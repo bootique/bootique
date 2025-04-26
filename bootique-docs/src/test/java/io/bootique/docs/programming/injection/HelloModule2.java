@@ -9,7 +9,7 @@ public class HelloModule2 implements BQModule {
     @Override
     public void configure(Binder binder) {
         binder.bind(Hello.class)
-                .toJakartaProvider(HelloService3Provider.class)
+                .toProvider(HelloService3Provider.class)
                 .inSingletonScope();
     }
     // end::binding[]

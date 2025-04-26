@@ -265,15 +265,15 @@ public class DefaultInjector implements Injector {
         }
 
         try {
-            return getJakartaProvider(key).get();
+            return getProvider(key).get();
         } finally {
             injectionStack.pop();
         }
     }
 
     @Override
-    public <T> Provider<T> getJakartaProvider(Class<T> type) throws DIRuntimeException {
-        return getJakartaProvider(Key.get(type));
+    public <T> Provider<T> getProvider(Class<T> type) throws DIRuntimeException {
+        return getProvider(Key.get(type));
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -289,7 +289,7 @@ public class DefaultInjector implements Injector {
     }
 
     @Override
-    public <T> Provider<T> getJakartaProvider(Key<T> key) throws DIRuntimeException {
+    public <T> Provider<T> getProvider(Key<T> key) throws DIRuntimeException {
         Binding<T> binding = getBinding(key);
         if (binding == null || binding.getOriginal() == null) {
             binding = createDynamicBinding(key);

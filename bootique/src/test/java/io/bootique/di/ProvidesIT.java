@@ -301,7 +301,7 @@ public class ProvidesIT {
 
         @Override
         public void configure(Binder binder) {
-            binder.bind(Service2.class).toJakartaProvider(CustomService2Provider.class);
+            binder.bind(Service2.class).toProvider(CustomService2Provider.class);
         }
 
         @Provides

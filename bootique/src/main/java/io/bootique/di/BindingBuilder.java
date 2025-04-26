@@ -36,11 +36,29 @@ public interface BindingBuilder<T> extends ScopeBuilder {
 
     /**
      * @since 3.0
+     * @deprecated in favor of {@link #toProvider(Class)}
      */
-    ScopeBuilder toJakartaProvider(Class<? extends Provider<? extends T>> providerType) throws DIRuntimeException;
+    @Deprecated(since = "4.0", forRemoval = true)
+    default ScopeBuilder toJakartaProvider(Class<? extends Provider<? extends T>> providerType) throws DIRuntimeException {
+        return toProvider(providerType);
+    }
+
+    /**
+     * @since 4.0
+     */
+    ScopeBuilder toProvider(Class<? extends Provider<? extends T>> providerType) throws DIRuntimeException;
 
     /**
      * @since 3.0
+     * @deprecated in favor of {@link #toProviderInstance(Provider)}
      */
-    ScopeBuilder toJakartaProviderInstance(Provider<? extends T> provider) throws DIRuntimeException;
+    @Deprecated(since = "4.0", forRemoval = true)
+    default ScopeBuilder toJakartaProviderInstance(Provider<? extends T> provider) throws DIRuntimeException {
+        return toProviderInstance(provider);
+    }
+
+    /**
+     * @since 4.0
+     */
+    ScopeBuilder toProviderInstance(Provider<? extends T> provider) throws DIRuntimeException;
 }

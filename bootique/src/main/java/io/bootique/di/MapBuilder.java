@@ -43,13 +43,31 @@ public interface MapBuilder<K, V> extends ScopeBuilder {
 
     /**
      * @since 3.0
+     * @deprecated in favor of {@link #putProviderInstance(Object, Provider)}
      */
-    MapBuilder<K, V> putJakartaProviderInstance(K key, Provider<? extends V> value) throws DIRuntimeException;
+    @Deprecated(since = "4.0", forRemoval = true)
+    default MapBuilder<K, V> putJakartaProviderInstance(K key, Provider<? extends V> value) throws DIRuntimeException {
+        return putProviderInstance(key, value);
+    }
+
+    /**
+     * @since 4.0
+     */
+    MapBuilder<K, V> putProviderInstance(K key, Provider<? extends V> value) throws DIRuntimeException;
 
     /**
      * @since 3.0
+     * @deprecated in favor of {@link #putProvider(Object, Class)} 
      */
-    MapBuilder<K, V> putJakartaProvider(K key, Class<? extends Provider<? extends V>> value) throws DIRuntimeException;
+    @Deprecated(since = "4.0", forRemoval = true)
+    default MapBuilder<K, V> putJakartaProvider(K key, Class<? extends Provider<? extends V>> value) throws DIRuntimeException {
+        return putProvider(key, value);
+    }
+
+    /**
+     * @since 4.0
+     */
+    MapBuilder<K, V> putProvider(K key, Class<? extends Provider<? extends V>> value) throws DIRuntimeException;
 
 
     /**

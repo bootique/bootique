@@ -76,7 +76,7 @@ public class Commands implements BQModule {
         // default is optional, so check via injector whether it is bound...
         Key<Command> key = Key.get(Command.class, DefaultCommand.class);
         if (injector.hasProvider(key)) {
-            Provider<Command> commandProvider = injector.getJakartaProvider(key);
+            Provider<Command> commandProvider = injector.getProvider(key);
             return Optional.of(commandProvider.get());
         }
         return Optional.empty();

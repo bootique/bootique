@@ -31,7 +31,7 @@ public class ProviderIT {
     void providerImplementationFieldInjection() {
         Injector injector = DIBootstrap.createInjector(
                 binder -> {
-                    binder.bind(Service.class).toJakartaProvider(ProviderWithFieldInjection.class);
+                    binder.bind(Service.class).toProvider(ProviderWithFieldInjection.class);
                     binder.bind(Service2.class).toInstance(() -> "s2");
                 }
         );
@@ -44,7 +44,7 @@ public class ProviderIT {
     void providerInterfaceFieldInjection() {
         Injector injector = DIBootstrap.createInjector(
                 binder -> {
-                    binder.bind(Service.class).toJakartaProvider(ServiceProvider.class);
+                    binder.bind(Service.class).toProvider(ServiceProvider.class);
                     binder.bind(ServiceProvider.class).to(ProviderWithFieldInjection.class);
                     binder.bind(Service2.class).toInstance(() -> "s2");
                 }
@@ -58,7 +58,7 @@ public class ProviderIT {
     void providerImplementationConstructorInjection() {
         Injector injector = DIBootstrap.createInjector(
                 binder -> {
-                    binder.bind(Service.class).toJakartaProvider(ProviderWithConstructorInjection.class);
+                    binder.bind(Service.class).toProvider(ProviderWithConstructorInjection.class);
                     binder.bind(Service2.class).toInstance(() -> "s2");
                 }
         );
@@ -71,7 +71,7 @@ public class ProviderIT {
     void providerInterfaceConstructorInjection() {
         Injector injector = DIBootstrap.createInjector(
                 binder -> {
-                    binder.bind(Service.class).toJakartaProvider(ServiceProvider.class);
+                    binder.bind(Service.class).toProvider(ServiceProvider.class);
                     binder.bind(ServiceProvider.class).to(ProviderWithConstructorInjection.class);
                     binder.bind(Service2.class).toInstance(() -> "s2");
                 }
@@ -85,7 +85,7 @@ public class ProviderIT {
     void providerImplementationInstanceFieldInjection() {
         Injector injector = DIBootstrap.createInjector(
                 binder -> {
-                    binder.bind(Service.class).toJakartaProviderInstance(new ProviderWithFieldInjection());
+                    binder.bind(Service.class).toProviderInstance(new ProviderWithFieldInjection());
                     binder.bind(Service2.class).toInstance(() -> "s2");
                 }
         );
@@ -98,7 +98,7 @@ public class ProviderIT {
     void providerInterfaceInstanceFieldInjection() {
         Injector injector = DIBootstrap.createInjector(
                 binder -> {
-                    binder.bind(Service.class).toJakartaProvider(ServiceProvider.class);
+                    binder.bind(Service.class).toProvider(ServiceProvider.class);
                     binder.bind(ServiceProvider.class).toInstance(new ProviderWithFieldInjection());
                     binder.bind(Service2.class).toInstance(() -> "s2");
                 }
@@ -112,7 +112,7 @@ public class ProviderIT {
     void providerImplementationProvidedServiceFieldInjection() {
         Injector injector = DIBootstrap.createInjector(
                 binder -> {
-                    binder.bind(Service.class).toJakartaProvider(ProviderProvidedObjectFieldInjection.class);
+                    binder.bind(Service.class).toProvider(ProviderProvidedObjectFieldInjection.class);
                     binder.bind(Service2.class).toInstance(() -> "s2");
                 }
         );
@@ -125,7 +125,7 @@ public class ProviderIT {
     void providerImplementationInstanceProvidedServiceFieldInjection() {
         Injector injector = DIBootstrap.createInjector(
                 binder -> {
-                    binder.bind(Service.class).toJakartaProviderInstance(new ProviderProvidedObjectFieldInjection());
+                    binder.bind(Service.class).toProviderInstance(new ProviderProvidedObjectFieldInjection());
                     binder.bind(Service2.class).toInstance(() -> "s2");
                 }
         );
@@ -138,7 +138,7 @@ public class ProviderIT {
     void providerImplementationFullInjection() {
         Injector injector = DIBootstrap.createInjector(
                 binder -> {
-                    binder.bind(Service.class).toJakartaProvider(ProviderFullInjection.class);
+                    binder.bind(Service.class).toProvider(ProviderFullInjection.class);
                     binder.bind(Service2.class).toInstance(() -> "s2");
                     binder.bind(String.class).toInstance("str");
                 }
