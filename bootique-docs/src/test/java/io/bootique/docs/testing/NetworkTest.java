@@ -7,10 +7,9 @@ import io.bootique.docs.FakeServerCommand;
 import io.bootique.jetty.JettyTester;
 import io.bootique.junit5.BQApp;
 import io.bootique.junit5.BQTest;
+import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import javax.ws.rs.core.Response;
 
 @BQTest
 public class NetworkTest {

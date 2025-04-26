@@ -59,7 +59,7 @@
             <dependency>
                 <groupId>jakarta.ws.rs</groupId>
                 <artifactId>jakarta.ws.rs-api</artifactId>
-                <version>${jaxrs2.version}</version>
+                <version>${jaxrs3.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -4,9 +4,8 @@ package com.foo;
 
 import io.bootique.annotation.Args;
 import jakarta.inject.Inject;
-
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
 
 // end::HelloResource[]
 // tag::HelloResource[]

@@ -19,9 +19,8 @@
 package io.bootique.jetty;
 
 import io.bootique.BQModule;
-
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.Response;
 
 import static org.mockito.Mockito.mock;
 
