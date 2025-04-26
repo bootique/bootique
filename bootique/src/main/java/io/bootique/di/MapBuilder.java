@@ -74,20 +74,4 @@ public interface MapBuilder<K, V> extends ScopeBuilder {
      * @since 2.0
      */
     MapBuilder<K, V> putInstances(Map<K, V> map) throws DIRuntimeException;
-
-    /**
-     * @deprecated since 2.0.B1 in favor of {@link #putInstance(Object, Object)} to avoid ambiguity
-     */
-    @Deprecated
-    default MapBuilder<K, V> put(K key, V value) throws DIRuntimeException {
-        return putInstance(key, value);
-    }
-
-    /**
-     * @deprecated since 2.0.B1 in favor of {@link #putInstances(Map)} to avoid ambiguity
-     */
-    @Deprecated
-    default MapBuilder<K, V> putAll(Map<K, V> map) throws DIRuntimeException {
-        return putInstances(map);
-    }
 }
