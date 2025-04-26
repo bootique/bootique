@@ -2,6 +2,7 @@
 
 * #360 Stop supporting deprecated "javax.inject"
 * #361 Removed deprecated modules and APIs
+* #362 Require Java 21
 
 ## 3.0-RC1
 
