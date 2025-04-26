@@ -54,7 +54,6 @@ public class Key<T> {
 
     /**
      * Creates a key for a qualified by annotation binding of a given type.
-     *
      */
     public static <T> Key<T> get(Class<T> type, Class<? extends Annotation> annotationType) {
         return get(TypeLiteral.of(type), annotationType);
@@ -66,7 +65,7 @@ public class Key<T> {
 
 
     public static <T> Key<T> get(TypeLiteral<T> typeLiteral) {
-        return get(typeLiteral, (String)null);
+        return get(typeLiteral, (String) null);
     }
 
     public static <T> Key<T> get(TypeLiteral<T> typeLiteral, String bindingName) {
@@ -142,10 +141,10 @@ public class Key<T> {
      */
     public static <T> Key<Optional<T>> getOptionalOf(Key<T> key) {
         TypeLiteral<Optional<T>> type = TypeLiteral.optionalOf(key.getType());
-        if(key.getBindingName() != null) {
+        if (key.getBindingName() != null) {
             return get(type, key.getBindingName());
         }
-        if(key.getBindingAnnotation() != null) {
+        if (key.getBindingAnnotation() != null) {
             return get(type, key.getBindingAnnotation());
         }
         return get(type);
@@ -172,12 +171,12 @@ public class Key<T> {
 
     protected Key(TypeLiteral<T> type, Annotation annotationInstance) {
         this.type = TypeLiteral.normalize(type);
-        if(annotationInstance == null) {
+        if (annotationInstance == null) {
             // null annotation type treated as no qualifier
             this.qualifier = NO_QUALIFIER;
-        } else if(annotationInstance instanceof Named) {
+        } else if (annotationInstance instanceof Named n) {
             // special case for @Named annotation
-            String name = ((Named) annotationInstance).value();
+            String name = n.value();
             this.qualifier = !name.isEmpty() ? new NamedKeyQualifier(name) : NO_QUALIFIER;
         } else {
             // general case
@@ -194,15 +193,15 @@ public class Key<T> {
      * the same object type.
      */
     public String getBindingName() {
-        if (qualifier instanceof NamedKeyQualifier) {
-            return ((NamedKeyQualifier) qualifier).getName();
+        if (qualifier instanceof NamedKeyQualifier nkq) {
+            return nkq.getName();
         }
         return null;
     }
 
     public Class<? extends Annotation> getBindingAnnotation() {
-        if (qualifier instanceof AnnotationTypeQualifier) {
-            return ((AnnotationTypeQualifier) qualifier).getAnnotationType();
+        if (qualifier instanceof AnnotationTypeQualifier atq) {
+            return atq.getAnnotationType();
         }
         return null;
     }
@@ -214,8 +213,7 @@ public class Key<T> {
             return true;
         }
 
-        if (object instanceof Key<?>) {
-            Key<?> key = (Key<?>) object;
+        if (object instanceof Key<?> key) {
 
             // type is guaranteed to be not null, so skip null checking...
             if (!type.equals(key.type)) {
@@ -297,11 +295,9 @@ public class Key<T> {
                 return true;
             }
 
-            if (!(other instanceof AnnotationTypeQualifier)) {
-                return false;
-            }
-
-            return ((AnnotationTypeQualifier) other).annotationType.equals(annotationType);
+            return other instanceof AnnotationTypeQualifier atq
+                    ? atq.annotationType.equals(annotationType)
+                    : false;
         }
 
         @Override
@@ -337,11 +333,9 @@ public class Key<T> {
                 return true;
             }
 
-            if (!(other instanceof NamedKeyQualifier)) {
-                return false;
-            }
-
-            return ((NamedKeyQualifier) other).getName().equals(name);
+            return other instanceof NamedKeyQualifier nkq
+                    ? nkq.getName().equals(name)
+                    : false;
         }
 
         @Override

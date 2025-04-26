@@ -40,9 +40,7 @@ import java.util.function.Function;
 /**
  * Deserializer for Java 8 temporal {@link Instant}s, {@link OffsetDateTime}, and {@link ZonedDateTime}s.
  */
-class InstantDeserializer<T extends Temporal>
-        extends JSR310DateTimeDeserializerBase<T> {
-    private static final long serialVersionUID = 1L;
+class InstantDeserializer<T extends Temporal> extends JSR310DateTimeDeserializerBase<T> {
 
     public static final InstantDeserializer<Instant> INSTANT = new InstantDeserializer<>(
             Instant.class, DateTimeFormatter.ISO_INSTANT,
@@ -68,20 +66,18 @@ class InstantDeserializer<T extends Temporal>
             ZonedDateTime::withZoneSameInstant
     );
 
-    protected final Function<FromIntegerArguments, T> fromMilliseconds;
+    private final Function<FromIntegerArguments, T> fromMilliseconds;
+    private final Function<FromDecimalArguments, T> fromNanoseconds;
+    private final Function<TemporalAccessor, T> parsedToValue;
+    private final BiFunction<T, ZoneId, T> adjust;
 
-    protected final Function<FromDecimalArguments, T> fromNanoseconds;
-
-    protected final Function<TemporalAccessor, T> parsedToValue;
-
-    protected final BiFunction<T, ZoneId, T> adjust;
-
-    protected InstantDeserializer(Class<T> supportedType,
-                                  DateTimeFormatter parser,
-                                  Function<TemporalAccessor, T> parsedToValue,
-                                  Function<FromIntegerArguments, T> fromMilliseconds,
-                                  Function<FromDecimalArguments, T> fromNanoseconds,
-                                  BiFunction<T, ZoneId, T> adjust) {
+    private InstantDeserializer(
+            Class<T> supportedType,
+            DateTimeFormatter parser,
+            Function<TemporalAccessor, T> parsedToValue,
+            Function<FromIntegerArguments, T> fromMilliseconds,
+            Function<FromDecimalArguments, T> fromNanoseconds,
+            BiFunction<T, ZoneId, T> adjust) {
         super(supportedType, parser);
         this.parsedToValue = parsedToValue;
         this.fromMilliseconds = fromMilliseconds;
@@ -103,46 +99,43 @@ class InstantDeserializer<T extends Temporal>
         if (dtf == _formatter) {
             return this;
         }
-        return new InstantDeserializer<T>(this, dtf);
+        return new InstantDeserializer<>(this, dtf);
     }
 
     @Override
     public T deserialize(JsonParser parser, DeserializationContext context) throws IOException {
         //NOTE: Timestamps contain no timezone info, and are always in configured TZ. Only
         //string values have to be adjusted to the configured TZ.
-        switch (parser.getCurrentTokenId()) {
-            case JsonTokenId.ID_NUMBER_FLOAT: {
+        return switch (parser.getCurrentTokenId()) {
+            case JsonTokenId.ID_NUMBER_FLOAT -> {
                 BigDecimal value = parser.getDecimalValue();
                 long seconds = value.longValue();
                 int nanoseconds = DecimalUtils.extractNanosecondDecimal(value, seconds);
-                return fromNanoseconds.apply(new FromDecimalArguments(
-                        seconds, nanoseconds, getZone(context)));
+                yield fromNanoseconds.apply(
+                        new FromDecimalArguments(seconds, nanoseconds, getZone(context)));
             }
 
-            case JsonTokenId.ID_NUMBER_INT: {
+            case JsonTokenId.ID_NUMBER_INT -> {
                 long timestamp = parser.getLongValue();
-                return this.fromNanoseconds.apply(new FromDecimalArguments(
-                        timestamp, 0, this.getZone(context)
-                ));
-
+                yield this.fromNanoseconds.apply(
+                        new FromDecimalArguments(timestamp, 0, this.getZone(context)));
             }
 
-            case JsonTokenId.ID_STRING: {
+            case JsonTokenId.ID_STRING -> {
                 String string = parser.getText().trim();
-                if (string.length() == 0) {
-                    return null;
+                if (string.isEmpty()) {
+                    yield null;
                 }
-                T value;
+
                 try {
-                    TemporalAccessor acc = _formatter.parse(string);
-                    value = parsedToValue.apply(acc);
+                    yield parsedToValue.apply(_formatter.parse(string));
                 } catch (DateTimeException e) {
                     throw _peelDTE(e);
                 }
-                return value;
             }
-        }
-        throw context.mappingException("Expected type float, integer, or string.");
+
+            default -> throw context.mappingException("Expected type float, integer, or string.");
+        };
     }
 
     private ZoneId getZone(DeserializationContext context) {
@@ -150,25 +143,9 @@ class InstantDeserializer<T extends Temporal>
         return (_valueClass == Instant.class) ? null : context.getTimeZone().toZoneId();
     }
 
-    private static class FromIntegerArguments {
-        public final long value;
-        public final ZoneId zoneId;
-
-        private FromIntegerArguments(long value, ZoneId zoneId) {
-            this.value = value;
-            this.zoneId = zoneId;
-        }
+    private record FromIntegerArguments(long value, ZoneId zoneId) {
     }
 
-    private static class FromDecimalArguments {
-        public final long integer;
-        public final int fraction;
-        public final ZoneId zoneId;
-
-        private FromDecimalArguments(long integer, int fraction, ZoneId zoneId) {
-            this.integer = integer;
-            this.fraction = fraction;
-            this.zoneId = zoneId;
-        }
+    private record FromDecimalArguments(long integer, int fraction, ZoneId zoneId) {
     }
 }

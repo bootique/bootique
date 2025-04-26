@@ -34,7 +34,7 @@ public class Percent implements Comparable<Percent> {
     public static final Percent ZERO = new Percent(0.);
     public static final Percent HUNDRED = new Percent(1.);
 
-    private double percent;
+    private final double percent;
 
     /**
      * Creates a Percent instance from a String representation. The String can be either a double, in which case it
@@ -69,7 +69,7 @@ public class Percent implements Comparable<Percent> {
     static double parse(String percent) {
         Objects.requireNonNull(percent, "Null 'percent' argument");
 
-        if (percent.length() == 0) {
+        if (percent.isEmpty()) {
             throw new IllegalArgumentException("Empty 'percent' argument");
         }
 
@@ -77,7 +77,7 @@ public class Percent implements Comparable<Percent> {
             percent = percent.substring(0, percent.length() - 1);
         }
 
-        if (percent.length() == 0) {
+        if (percent.isEmpty()) {
             throw new IllegalArgumentException("Non-numeric 'percent' argument: '%'");
         }
 
@@ -107,7 +107,7 @@ public class Percent implements Comparable<Percent> {
      * A {@link #toString()} variation that returns percent string rounded to the specified precision.
      *
      * @param precision precision for the returned String.
-     * @return  percent string rounded to the specified precision.
+     * @return percent string rounded to the specified precision.
      */
     public String toString(int precision) {
         return new BigDecimal(percent, new MathContext(precision, RoundingMode.HALF_UP)) + "%";
@@ -115,12 +115,7 @@ public class Percent implements Comparable<Percent> {
 
     @Override
     public boolean equals(Object obj) {
-
-        if (obj instanceof Percent) {
-            return percent == ((Percent) obj).percent;
-        }
-
-        return false;
+        return obj instanceof Percent p && percent == p.percent;
     }
 
     @Override

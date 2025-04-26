@@ -96,11 +96,9 @@ class ProvidesHandler {
     }
 
     private boolean isProviderType(Type type) {
-        if (type instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType) type;
-            return injector.getPredicates().isProviderType(parameterizedType.getRawType());
-        }
-        return false;
+        return type instanceof ParameterizedType pt
+                ? injector.getPredicates().isProviderType(pt.getRawType())
+                : false;
     }
 
     private <T> Binding<T> createBinding(Key<T> key, Object module, Method method) {
@@ -147,6 +145,7 @@ class ProvidesHandler {
 
     /**
      * Separate class just for better error reporting.
+     *
      * @param <T> provided type
      */
     private static class ProvidesMethodProvider<T> implements NamedProvider<T> {

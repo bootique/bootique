@@ -59,22 +59,15 @@ public class InPlaceLeftHandMerger implements JsonConfigurationMerger {
                     "Can't merge incompatible node types: " + target.getNodeType() + " vs. " + source.getNodeType());
         }
 
-        switch (source.getNodeType()) {
-            case ARRAY:
-                return mergeArrays(target, source);
-            case OBJECT:
-                return mergeObjects(target, source);
-            case BINARY:
-            case BOOLEAN:
-            case NULL:
-            case NUMBER:
-            case STRING:
-                return mergeScalars(target, source);
-            default:
+        return switch (source.getNodeType()) {
+            case ARRAY -> mergeArrays(target, source);
+            case OBJECT -> mergeObjects(target, source);
+            case BINARY, BOOLEAN, NULL, NUMBER, STRING -> mergeScalars(target, source);
+            default -> {
                 bootLogger.stderr("Skipping merging of unsupported JSON node: " + source.getNodeType());
-        }
-
-        return target;
+                yield target;
+            }
+        };
     }
 
     protected JsonNode mergeArrays(JsonNode target, JsonNode source) {

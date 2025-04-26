@@ -58,8 +58,8 @@ public class Duration implements Comparable<Duration> {
         UNIT_VOCABULARY.put("days", ChronoUnit.DAYS);
     }
 
-    private java.time.Duration duration;
-    private String stringDuration;
+    private final java.time.Duration duration;
+    private final String stringDuration;
 
     /**
      * Creates a Duration instance from a String representation. The String has a numeric part, an optional space and
@@ -85,7 +85,7 @@ public class Duration implements Comparable<Duration> {
     static java.time.Duration parse(String value) {
         Objects.requireNonNull(value, "Null 'value' argument");
 
-        if (value.length() == 0) {
+        if (value.isEmpty()) {
             throw new IllegalArgumentException("Empty 'value' argument");
         }
 
@@ -125,27 +125,18 @@ public class Duration implements Comparable<Duration> {
     }
 
     private static long convert(double amount, TemporalUnit unit) {
-        switch ((ChronoUnit) unit) {
-            case DAYS:
-                return Math.round(amount * 24 * 60 * 60 * 1000);
-            case HOURS:
-                return Math.round(amount * 60 * 60 * 1000);
-            case MINUTES:
-                return Math.round(amount * 60 * 1000);
-            case SECONDS:
-                return Math.round(amount * 1000);
-            default:
-                throw new IllegalArgumentException("Invalid time amount: " + amount);
-        }
+        return switch ((ChronoUnit) unit) {
+            case DAYS -> Math.round(amount * 24 * 60 * 60 * 1000);
+            case HOURS -> Math.round(amount * 60 * 60 * 1000);
+            case MINUTES -> Math.round(amount * 60 * 1000);
+            case SECONDS -> Math.round(amount * 1000);
+            default -> throw new IllegalArgumentException("Invalid time amount: " + amount);
+        };
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Duration) {
-            return duration.equals(((Duration) obj).duration);
-        }
-
-        return false;
+        return obj instanceof Duration d && duration.equals(d.duration);
     }
 
     @Override

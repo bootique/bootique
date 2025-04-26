@@ -190,83 +190,51 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
     protected boolean isImpliedType(Type type) {
         String typeName = type.getTypeName();
 
-        switch (typeName) {
-            case "boolean":
-            case "java.lang.Boolean":
-            case "int":
-            case "java.lang.Integer":
-            case "byte":
-            case "java.lang.Byte":
-            case "double":
-            case "java.lang.Double":
-            case "float":
-            case "java.lang.Float":
-            case "short":
-            case "java.lang.Short":
-            case "long":
-            case "java.lang.Long":
-            case "java.lang.String":
-            case "io.bootique.resource.ResourceFactory":
-            case "io.bootique.resource.FolderResourceFactory":
-                return true;
-            default:
-                return false;
-        }
+        return switch (typeName) {
+            case "boolean", "java.lang.Boolean",
+                 "int", "java.lang.Integer",
+                 "byte", "java.lang.Byte",
+                 "double", "java.lang.Double",
+                 "float", "java.lang.Float",
+                 "short", "java.lang.Short",
+                 "long", "java.lang.Long",
+                 "java.lang.String",
+                 "io.bootique.resource.ResourceFactory",
+                 "io.bootique.resource.FolderResourceFactory" -> true;
+            default -> false;
+        };
     }
 
     protected String typeLabel(Type type) {
 
         String typeName = type.getTypeName();
 
-        switch (typeName) {
-            case "java.lang.Boolean":
-                return "boolean";
-            case "java.lang.Integer":
-                return "int";
-            case "java.lang.Byte":
-                return "byte";
-            case "java.lang.Double":
-                return "double";
-            case "java.lang.Float":
-                return "float";
-            case "java.lang.Short":
-                return "short";
-            case "java.lang.Long":
-                return "long";
-            case "java.lang.String":
-                return "String";
-            default:
+        return switch (typeName) {
+            case "java.lang.Boolean" -> "boolean";
+            case "java.lang.Integer" -> "int";
+            case "java.lang.Byte" -> "byte";
+            case "java.lang.Double" -> "double";
+            case "java.lang.Float" -> "float";
+            case "java.lang.Short" -> "short";
+            case "java.lang.Long" -> "long";
+            case "java.lang.String" -> "String";
+            default -> switch (type) {
+                case Class c when Map.class.isAssignableFrom(c) -> "Map";
+                // TODO: decipher collection type... for now hardcoding List type
+                case Class c when Collection.class.isAssignableFrom(c) -> "List";
+                case ParameterizedType pt -> parameterizedTypeLabel(pt);
+                default -> typeName;
+            };
+        };
+    }
 
-                if (type instanceof Class) {
-                    Class<?> classType = (Class<?>) type;
-                    if (Map.class.isAssignableFrom(classType)) {
-                        return "Map";
-                    }
-                    // TODO: decipher collection type... for now hardcoding List type
-                    else if (Collection.class.isAssignableFrom(classType)) {
-                        return "List";
-                    }
-                } else if (type instanceof ParameterizedType) {
-                    ParameterizedType parameterizedType = (ParameterizedType) type;
+    private String parameterizedTypeLabel(ParameterizedType type) {
+        String rawTypeLabel = typeLabel(type.getRawType());
+        String paramsLabel =
+                Arrays.stream(type.getActualTypeArguments())
+                        .map(this::typeLabel)
+                        .collect(Collectors.joining(", ", "<", ">"));
 
-                    StringBuilder out = new StringBuilder(typeLabel(parameterizedType.getRawType()));
-                    out.append("<");
-
-                    Type[] args = parameterizedType.getActualTypeArguments();
-                    if (args != null) {
-                        for (int i = 0; i < args.length; i++) {
-                            if (i > 0) {
-                                out.append(", ");
-                            }
-                            out.append(typeLabel(args[i]));
-                        }
-                    }
-
-                    out.append(">");
-                    return out.toString();
-                }
-
-                return typeName;
-        }
+        return rawTypeLabel + paramsLabel;
     }
 }

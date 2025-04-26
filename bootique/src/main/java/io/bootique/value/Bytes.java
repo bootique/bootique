@@ -104,11 +104,9 @@ public class Bytes implements Comparable<Bytes> {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Bytes) {
-            return bytes.equals(((Bytes) obj).getBytes());
-        }
-
-        return false;
+        return obj instanceof Bytes b
+                ? bytes.equals(b.getBytes())
+                : false;
     }
 
     @Override
@@ -133,8 +131,8 @@ public class Bytes implements Comparable<Bytes> {
 
     /**
      * Returns value in chosen bytes unit
-     * @param bytesUnit - target unit
      *
+     * @param bytesUnit - target unit
      * @return value in chosen unit
      */
     public long valueOfUnit(BytesUnit bytesUnit) {

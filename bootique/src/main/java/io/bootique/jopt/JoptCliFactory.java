@@ -124,16 +124,14 @@ public class JoptCliFactory implements CliFactory {
             }
         });
 
-        switch (matches.size()) {
-            case 0:
-                // default command should be invoked
-                return null;
-            case 1:
-                return matches.iterator().next();
-            default:
+        return switch (matches.size()) {
+            // default command should be invoked
+            case 0 -> null;
+            case 1 -> matches.iterator().next();
+            default -> {
                 String opts = String.join(", ", matches);
-                String message = String.format("CLI options match multiple commands: %s.", opts);
-                throw new BootiqueException(1, message);
-        }
+                throw new BootiqueException(1, String.format("CLI options match multiple commands: %s.", opts));
+            }
+        };
     }
 }

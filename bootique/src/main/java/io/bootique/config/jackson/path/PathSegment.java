@@ -102,7 +102,6 @@ public abstract class PathSegment<T extends JsonNode> implements Iterable<PathSe
             }
 
             if (!(node instanceof ObjectNode)) {
-
                 throw new IllegalArgumentException(
                         "Expected OBJECT node. Instead got " + node.getNodeType());
             }

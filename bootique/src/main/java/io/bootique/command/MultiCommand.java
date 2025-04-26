@@ -84,15 +84,11 @@ class MultiCommand extends CommandWithMetadata {
     }
 
     private Collection<CommandOutcome> runBlocking(Collection<CommandRefWithArgs> cmdRefs) {
-
-        switch (cmdRefs.size()) {
-            case 0:
-                return Collections.emptyList();
-            case 1:
-                return runBlockingSingle(cmdRefs.iterator().next());
-            default:
-                return runBlockingMultiple(cmdRefs);
-        }
+        return switch (cmdRefs.size()) {
+            case 0 -> Collections.emptyList();
+            case 1 -> runBlockingSingle(cmdRefs.iterator().next());
+            default -> runBlockingMultiple(cmdRefs);
+        };
     }
 
     private Collection<CommandOutcome> runBlockingSingle(CommandRefWithArgs cmdRef) {

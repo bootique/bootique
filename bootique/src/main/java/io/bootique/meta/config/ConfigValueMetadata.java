@@ -20,6 +20,8 @@
 package io.bootique.meta.config;
 
 import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /**
  * Descriptor of a configuration value property.
@@ -74,58 +76,22 @@ public class ConfigValueMetadata implements ConfigMetadataNode {
 
         String typeName = type.getTypeName();
 
-        switch (typeName) {
-            case "boolean":
-            case "java.lang.Boolean":
-                return "<true|false>";
-            case "int":
-            case "java.lang.Integer":
-                return "<int>";
-            case "byte":
-            case "java.lang.Byte":
-                return "<byte>";
-            case "double":
-            case "java.lang.Double":
-                return "<double>";
-            case "float":
-            case "java.lang.Float":
-                return "<float>";
-            case "short":
-            case "java.lang.Short":
-                return "<short>";
-            case "long":
-            case "java.lang.Long":
-                return "<long>";
-            case "char":
-            case "java.lang.Character":
-                return "<char>";
-            case "java.lang.String":
-                return "<string>";
-            case "io.bootique.resource.ResourceFactory":
-                return "<resource-uri>";
-            case "io.bootique.resource.FolderResourceFactory":
-                return "<folder-resource-uri>";
-            default:
-                if (type instanceof Class) {
-                    Class<?> classType = (Class<?>) type;
-                    if (classType.isEnum()) {
-
-                        StringBuilder out = new StringBuilder("<");
-                        Object[] values = classType.getEnumConstants();
-                        for (int i = 0; i < values.length; i++) {
-                            if (i > 0) {
-                                out.append("|");
-                            }
-                            out.append(values[i]);
-                        }
-                        out.append(">");
-                        return out.toString();
-                    }
-
-                }
-
-                return "<value>";
-        }
+        return switch (typeName) {
+            case "boolean", "java.lang.Boolean" -> "<true|false>";
+            case "int", "java.lang.Integer" -> "<int>";
+            case "byte", "java.lang.Byte" -> "<byte>";
+            case "double", "java.lang.Double" -> "<double>";
+            case "float", "java.lang.Float" -> "<float>";
+            case "short", "java.lang.Short" -> "<short>";
+            case "long", "java.lang.Long" -> "<long>";
+            case "char", "java.lang.Character" -> "<char>";
+            case "java.lang.String" -> "<string>";
+            case "io.bootique.resource.ResourceFactory" -> "<resource-uri>";
+            case "io.bootique.resource.FolderResourceFactory" -> "<folder-resource-uri>";
+            default -> (type instanceof Class c && c.isEnum())
+                    ? Arrays.stream(c.getEnumConstants()).map(Object::toString).collect(Collectors.joining("|", "<", ">"))
+                    : "<value>";
+        };
     }
 
     @Override

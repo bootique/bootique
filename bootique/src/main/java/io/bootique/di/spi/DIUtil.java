@@ -31,12 +31,8 @@ class DIUtil {
      * @return name of provider
      */
     static String getProviderName(Provider<?> provider) {
-        if(provider instanceof NamedProvider) {
-            return ((NamedProvider<?>) provider).getName();
-        }
-        return provider.getClass().getName();
+        return provider instanceof NamedProvider np
+                ? np.getName()
+                : provider.getClass().getName();
     }
-
-
-
 }

@@ -50,7 +50,7 @@ class FieldInjectingProvider<T> extends MemberInjectingProvider<T> {
         Predicate<AccessibleObject> injectPredicate = injector.getPredicates().getInjectPredicate();
 
         for (Field field : type.getDeclaredFields()) {
-            if(Modifier.isStatic(field.getModifiers())) {
+            if (Modifier.isStatic(field.getModifiers())) {
                 // skip static fields completely
                 continue;
             }
@@ -97,10 +97,10 @@ class FieldInjectingProvider<T> extends MemberInjectingProvider<T> {
     private TypeLiteral<?> getFieldType(Object object, Field field) {
         Type genericType = field.getGenericType();
         // field is defined as some generic type that should be provided by its defining class
-        if(genericType instanceof TypeVariable) {
+        if (genericType instanceof TypeVariable) {
             Class<?> objectClass = object.getClass();
             TypeLiteral<?> typeLiteral = GenericTypesUtils.resolveVariableType(objectClass, field, genericType);
-            if(typeLiteral == null) {
+            if (typeLiteral == null) {
                 return injector.throwException("Unable to resolve type parameter %s for the field %s type %s "
                         , genericType.getTypeName(), field.getName(), objectClass.getName());
             }

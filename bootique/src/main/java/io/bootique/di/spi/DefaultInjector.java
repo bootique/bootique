@@ -508,8 +508,8 @@ public class DefaultInjector implements Injector {
 
         // TODO: is assumption bellow always correct?
         // If it was other DI exception, use it. It will better point to the actual problem.
-        if (cause instanceof DIRuntimeException) {
-            throw (DIRuntimeException) cause;
+        if (cause instanceof DIRuntimeException die) {
+            throw die;
         }
 
         throw setTrace(predicates.createException(message, cause, args));

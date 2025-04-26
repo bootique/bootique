@@ -110,7 +110,7 @@ public class TypeLiteral<T> {
      */
     static <T> TypeLiteral<T> normalize(TypeLiteral<T> type) {
         Objects.requireNonNull(type, "Null type");
-        if(type.getClass() == TypeLiteral.class) {
+        if (type.getClass() == TypeLiteral.class) {
             // direct instance, pass through
             return type;
         }
@@ -158,12 +158,11 @@ public class TypeLiteral<T> {
     }
 
     private static Type getGenericSuperclassType(Class<?> subclass) {
-        Type superclass = subclass.getGenericSuperclass();
-        if (!(superclass instanceof ParameterizedType)) {
+        if (subclass.getGenericSuperclass() instanceof ParameterizedType pt) {
+            return pt.getActualTypeArguments()[0];
+        } else {
             throw new DIRuntimeException("Missing type parameter, use like this: new TypeLiteral<MyType>(){};");
         }
-        ParameterizedType parameterized = (ParameterizedType) superclass;
-        return parameterized.getActualTypeArguments()[0];
     }
 
     public Class<? super T> getRawType() {
@@ -175,15 +174,15 @@ public class TypeLiteral<T> {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof TypeLiteral)) {
-            return false;
+
+        if (o instanceof TypeLiteral tl) {
+            if (!typeName.equals(tl.typeName)) {
+                return false;
+            }
+            return Arrays.equals(argumentTypes, tl.argumentTypes);
         }
 
-        TypeLiteral<?> that = (TypeLiteral<?>) o;
-        if (!typeName.equals(that.typeName)) {
-            return false;
-        }
-        return Arrays.equals(argumentTypes, that.argumentTypes);
+        return false;
     }
 
     @Override
@@ -205,21 +204,18 @@ public class TypeLiteral<T> {
     private static Type[] getArgumentTypes(Type type) {
         if (type instanceof Class) {
             return new Type[0];
-        } else if (type instanceof ParameterizedType) {
-            return ((ParameterizedType) type).getActualTypeArguments();
-        } else if (type instanceof GenericArrayType) {
-            GenericArrayType genericArrayType = (GenericArrayType) type;
-            Type componentType = genericArrayType.getGenericComponentType();
-            if (!(componentType instanceof ParameterizedType)) {
-                throw new IllegalArgumentException("Expected ParameterizedType, got " + componentType.toString());
+        } else if (type instanceof ParameterizedType pt) {
+            return pt.getActualTypeArguments();
+        } else if (type instanceof GenericArrayType gat) {
+            if (gat.getGenericComponentType() instanceof ParameterizedType pt) {
+                return pt.getActualTypeArguments();
             }
-            return ((ParameterizedType) componentType).getActualTypeArguments();
-        } else if (type instanceof WildcardType) {
-            WildcardType wildcardType = (WildcardType) type;
-            Type[] lowerBounds = wildcardType.getLowerBounds();
-            Type[] upperBounds = wildcardType.getUpperBounds();
-            Type lower = lowerBounds.length > 0 ? wildcardType.getLowerBounds()[0] : Object.class;
-            Type upper = upperBounds.length > 0 ? wildcardType.getUpperBounds()[0] : Object.class;
+            throw new IllegalArgumentException("Expected ParameterizedType, got " + gat.getGenericComponentType());
+        } else if (type instanceof WildcardType wt) {
+            Type[] lowerBounds = wt.getLowerBounds();
+            Type[] upperBounds = wt.getUpperBounds();
+            Type lower = lowerBounds.length > 0 ? wt.getLowerBounds()[0] : Object.class;
+            Type upper = upperBounds.length > 0 ? wt.getUpperBounds()[0] : Object.class;
             return new Type[]{lower, upper};
         } else if (type instanceof TypeVariable) {
             throw new DIRuntimeException("Variable type %s can't be fully resolved", type);
@@ -231,16 +227,14 @@ public class TypeLiteral<T> {
     private static Class<?> getRawType(Type type) {
         if (type instanceof Class) {
             return (Class<?>) type;
-        } else if (type instanceof ParameterizedType) {
-            return (Class<?>) ((ParameterizedType) type).getRawType();
-        } else if (type instanceof GenericArrayType) {
-            GenericArrayType genericArrayType = (GenericArrayType) type;
-            Type componentType = genericArrayType.getGenericComponentType();
-            if (!(componentType instanceof ParameterizedType)) {
-                throw new IllegalArgumentException("Expected ParameterizedType, got " + componentType.toString());
+        } else if (type instanceof ParameterizedType pt) {
+            return (Class<?>) pt.getRawType();
+        } else if (type instanceof GenericArrayType gat) {
+            if (gat.getGenericComponentType() instanceof ParameterizedType pt) {
+                Class<?> rawType = (Class<?>) pt.getRawType();
+                return Array.newInstance(rawType, 0).getClass();
             }
-            Class<?> rawType = (Class<?>) ((ParameterizedType) componentType).getRawType();
-            return Array.newInstance(rawType, 0).getClass();
+            throw new IllegalArgumentException("Expected ParameterizedType, got " + gat.getGenericComponentType());
         } else if (type instanceof WildcardType) {
             return WILDCARD_MARKER;
         } else {
