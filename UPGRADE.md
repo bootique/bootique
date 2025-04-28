@@ -31,8 +31,7 @@ perspective is this:
 packages to `jakarta.xxx`. Your build files (`pom.xml` or gradle files) for the most part will stay unchanged.
    * If you previously switched to 3.0 `jakarta` modules, the soyrce code will stay the same, but you will need to 
 rename your Bootique dependencies in the build files, removing `-jakarta` from their names.
-
-Pay special attention to replacing `javax.inject` annotations with `jakarta.inject`. The old `javax.inject` stuff was
+  * Pay special attention to replacing `javax.inject` annotations with `jakarta.inject`. The old `javax.inject` stuff was
 still working in 3.0, even in the context of Jakarta modules, but now it will be simply ignored.
 
 * If you are using Bootique testing extension, note that deprecated JUnit 4 integrations are removed, so we'll suggest
