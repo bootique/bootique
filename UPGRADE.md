@@ -34,7 +34,7 @@ rename your Bootique dependencies in the build files, removing `-jakarta` from t
   * Pay special attention to replacing `javax.inject` annotations with `jakarta.inject`. The old `javax.inject` stuff was
 still working in 3.0, even in the context of Jakarta modules, but now it will be simply ignored.
 
-* If you are using Bootique testing extension, note that deprecated JUnit 4 integrations are removed, so we'll suggest
+* If you are using Bootique testing extensions, note that deprecated JUnit 4 integrations are removed, so we'll suggest
  switching to JUnit 5 and much more powerful JUnit 5 testing extensions.
 
 ## 3.0-RC1
