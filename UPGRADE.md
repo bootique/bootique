@@ -20,6 +20,24 @@
 
 # UPGRADE INSTRUCTIONS
 
+## 4.0-M1
+
+* Finalizing a switch to Jakarta: This affects the core and the majority of modules. "javax" based deprecated modules
+were removed, and the names of the remaining modules containing `-jakarta` where shortened. E.g. `bootique-jetty` 
+was removed, and `bootique-jetty-jakarta` was renamed back to `bootique-jetty`. What this means from the upgrade 
+perspective is this:
+
+   * If you are still using the deprecated "javax" modules, you'll need to revisit the source code and change the import 
+packages to `jakarta.xxx`. Your build files (`pom.xml` or gradle files) for the most part will stay unchanged.
+   * If you previously switched to 3.0 `jakarta` modules, the soyrce code will stay the same, but you will need to 
+rename your Bootique dependencies in the build files, removing `-jakarta` from their names.
+
+Pay special attention to replacing `javax.inject` annotations with `jakarta.inject`. The old `javax.inject` stuff was
+still working in 3.0, even in the context of Jakarta modules, but now it will be simply ignored.
+
+* If you are using Bootique testing extension, note that deprecated JUnit 4 integrations are removed, so we'll suggest
+ switching to JUnit 5 and much more powerful JUnit 5 testing extensions.
+
 ## 3.0-RC1
 
 * [bootique #349](https://github.com/bootique/bootique/issues/349): `jakarta.inject` annotations
