@@ -30,18 +30,6 @@
     <name>bootique-jsr330-tck: Dependency Injection for Java TCK</name>
     <description>Dependency Injection for Java (JSR-330) Technology Compatibility Kit</description>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <configuration>
-                    <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
     <dependencies>
         <dependency>
             <groupId>io.bootique</groupId>
