@@ -26,16 +26,27 @@
 were removed, and the names of the remaining modules containing `-jakarta` where shortened. E.g. `bootique-jetty` 
 was removed, and `bootique-jetty-jakarta` was renamed back to `bootique-jetty`. What this means from the upgrade 
 perspective is this:
-
-   * If you are still using the deprecated "javax" modules, you'll need to revisit the source code and change the import 
+  * If you are still using the deprecated "javax" modules, you'll need to revisit the source code and change the import 
 packages to `jakarta.xxx`. Your build files (`pom.xml` or gradle files) for the most part will stay unchanged.
-   * If you previously switched to 3.0 `jakarta` modules, the soyrce code will stay the same, but you will need to 
+  * If you previously switched to 3.0 `jakarta` modules, the soyrce code will stay the same, but you will need to 
 rename your Bootique dependencies in the build files, removing `-jakarta` from their names.
   * Pay special attention to replacing `javax.inject` annotations with `jakarta.inject`. The old `javax.inject` stuff was
 still working in 3.0, even in the context of Jakarta modules, but now it will be simply ignored.
 
 * If you are using Bootique testing extensions, note that deprecated JUnit 4 integrations are removed, so we'll suggest
  switching to JUnit 5 and much more powerful JUnit 5 testing extensions.
+
+* [bootique-jcache #15](https://github.com/bootique/bootique-jcache/issues/15): JCache bootstrap procedure was rewritten
+to be more "native" to Bootique. It will no longer use the static provider caches from `javax.cache.Caching`, and will
+manage `CacheManager` in the scope of a single Bootique runtime. This affects the user-visible behavior in the following
+ways:
+  * `javax.cache.spi.CachingProvider` system property will be ignored when bootstrapping the provider. This should not 
+  be an issue with most popular providers, as the implicit provider loading from `META-INF/services/javax.cache.spi.CachingProvider`
+  is fully supported and most popular third-party caches use it. But if you still need to specify the provider explicitly,
+  use `jcache.provider` Bootique config.
+  * In an unlikely event that multiple Bootique runtimes (in tests or otherwise) relied on a shared cache state crossing
+  runtime boundaries, this will no longer work, as the state is not shared (not in memory at least). Such code will need
+  to be refactored.
 
 ## 3.0-RC1
 
