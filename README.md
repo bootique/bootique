@@ -24,8 +24,7 @@ Bootique is a [minimally opinionated](https://medium.com/@andrus_a/bootique-a-mi
 java launcher and integration technology. It is intended for building container-less runnable Java applications. 
 With Bootique you can create REST services, webapps, jobs, DB migration tasks, etc. and run them as if they were 
 simple commands. No JavaEE container required! Among other things Bootique is an ideal platform for 
-Java [microservices](http://martinfowler.com/articles/microservices.html), as it allows you to create a fully-functional
-app with minimal setup.
+Java [microservices](http://martinfowler.com/articles/microservices.html), as it allows you to create a fully functional app with minimal setup.
 
 Each Bootique app is a collection of modules interacting with each other via dependency injection. This GitHub project 
 provides Bootique core. Bootique team also develops a number of important modules. A full list is available 
@@ -35,8 +34,7 @@ provides Bootique core. Bootique team also develops a number of important module
 
 * [WebSite](https://bootique.io)
 * [Getting Started](https://bootique.io/docs/2.x/getting-started/)
-* [Docs](https://bootique.io/docs/) - documentation collection for Bootique core and all standard 
-  modules.
+* [Docs](https://bootique.io/docs/) - documentation collection for Bootique core and all standard modules.
 
 ## Support
 
