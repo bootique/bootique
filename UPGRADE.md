@@ -19,6 +19,19 @@
 
 
 # UPGRADE INSTRUCTIONS
+## 4.0-M2
+
+* [bootique-jetty #129](https://github.com/bootique/bootique-jetty/issues/129): After Jetty 12 upgrade we stopped 
+collecting the `ThreadPool.QueuedRequests` metric. While Jetty still provides "queueSize" property, the number it returns 
+is not the same as the number of requests waiting in the queue, as it combines in the same count both requests and some 
+internal "jobs". So we can no longer report this accurately. Instead, this metric will always report "0" (and will be 
+removed later in 5.x). This also affects the corresponding health check (which will always succeed now). Our 
+recommendation is to stop watching this metric and watch `ThreadPool.Utlization` instead.
+
+* [bootique-jetty #129](https://github.com/bootique/bootique-jetty/issues/129): After Jetty 12 upgrade, `RequestMDCItem` 
+callback methods changed to take `org.eclipse.jetty.server.Request` as a parameter instead of `ServletContext` and 
+`ServletRequest`, as now it is invoked outside the scope of the "servlet" objects. This change will only affect your 
+code if you implemented custom "MDC items", but otherwise should be transparent.
 
 ## 4.0-M1
 
