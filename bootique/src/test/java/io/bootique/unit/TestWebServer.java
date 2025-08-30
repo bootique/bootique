@@ -32,11 +32,11 @@ import io.bootique.shutdown.ShutdownManager;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 import jakarta.inject.Singleton;
+import org.eclipse.jetty.ee10.servlet.DefaultServlet;
+import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee10.servlet.ServletHolder;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.servlet.DefaultServlet;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -97,7 +97,7 @@ public class TestWebServer implements BeforeAllCallback, AfterAllCallback {
 
             ServletHolder holder = new ServletHolder(servlet);
             handler.addServlet(holder, "/*");
-            handler.setResourceBase(new ResourceFactory(resourceBase).getUrl().toExternalForm());
+            handler.setBaseResourceAsString(new ResourceFactory(resourceBase).getUrl().toExternalForm());
 
             server.setHandler(handler);
 

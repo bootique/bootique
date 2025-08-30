@@ -23,7 +23,7 @@
     <parent>
         <groupId>io.bootique.modules.parent</groupId>
         <artifactId>bootique-modules-parent</artifactId>
-        <version>4.0.1</version>
+        <version>4.0.2</version>
     </parent>
 
     <groupId>io.bootique</groupId>
@@ -48,10 +48,6 @@
         <url>https://github.com/bootique/bootique</url>
         <tag>HEAD</tag>
     </scm>
-
-    <properties>
-        <junit5.version>5.13.4</junit5.version>
-    </properties>
 
     <dependencyManagement>
         <dependencies>
