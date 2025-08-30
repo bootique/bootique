@@ -1,3 +1,7 @@
+## 4.0-M2
+
+* #363 Upgrade to JUnit 5.13.4
+
 ## 4.0-M1
 
 * #360 Stop supporting deprecated "javax.inject"

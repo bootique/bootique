@@ -49,6 +49,10 @@
         <tag>HEAD</tag>
     </scm>
 
+    <properties>
+        <junit5.version>5.13.4</junit5.version>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
