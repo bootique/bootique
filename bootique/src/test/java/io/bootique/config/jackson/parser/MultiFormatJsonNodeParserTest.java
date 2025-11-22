@@ -19,6 +19,7 @@
 
 package io.bootique.config.jackson.parser;
 
+import io.bootique.BootiqueException;
 import io.bootique.jackson.JacksonService;
 import org.junit.jupiter.api.Test;
 
@@ -56,6 +57,6 @@ public class MultiFormatJsonNodeParserTest {
         assertSame(yamlParser, parser.parser("", new URL("http://example.org/test.yaml?test=abc")));
         assertSame(yamlParser, parser.parser("application/x-yaml", new URL("http://example.org/test")));
 
-        assertNull(parser.parser("", new URL("http://example.org/test")));
+        assertThrows(BootiqueException.class, () -> parser.parser("", new URL("http://example.org/test")));
     }
 }

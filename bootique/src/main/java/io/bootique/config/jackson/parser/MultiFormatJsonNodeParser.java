@@ -38,12 +38,9 @@ public class MultiFormatJsonNodeParser implements JsonConfigurationParser {
 
     @Override
     public JsonNode parse(URL url) {
-        URLConnection connection = openConnection(url);
 
+        URLConnection connection = openConnection(url);
         ConfigurationFormatParser parser = parser(connection.getContentType(), url);
-        if (parser == null) {
-            throw new BootiqueException(1, "Can't find suitable parser for resource " + url);
-        }
 
         try (InputStream in = connection.getInputStream()) {
             return parser.parse(in);
@@ -68,7 +65,7 @@ public class MultiFormatJsonNodeParser implements JsonConfigurationParser {
             }
         }
 
-        return null;
+        throw new BootiqueException(1, "Can't find suitable parser for resource " + url);
     }
 
     URLConnection openConnection(URL url) {
