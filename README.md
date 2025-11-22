@@ -19,7 +19,6 @@
 [![build test deploy](https://github.com/bootique/bootique/workflows/build%20test%20deploy/badge.svg)](https://github.com/bootique/bootique/actions)
 [![Maven Central](https://img.shields.io/maven-central/v/io.bootique/bootique.svg?colorB=brightgreen)](https://search.maven.org/artifact/io.bootique/bootique)
 
-
 Bootique is a [minimally opinionated](https://medium.com/@andrus_a/bootique-a-minimally-opinionated-platform-for-modern-java-apps-644194c23872#.odwmsbnbh) 
 java launcher and integration technology. It is intended for building container-less runnable Java applications. 
 With Bootique you can create REST services, webapps, jobs, DB migration tasks, etc. and run them as if they were 
