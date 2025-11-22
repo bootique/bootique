@@ -19,10 +19,10 @@
 
 package io.bootique.config.jackson.parser;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import java.io.InputStream;
 import java.net.URL;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * Interface for the specific configuration format parser.
@@ -40,10 +40,25 @@ public interface ConfigurationFormatParser {
     JsonNode parse(InputStream stream);
 
     /**
-     * @param url of the configuration resource
+     * @since 4.0
+     */
+    boolean supportsContentType(String contentType);
+
+    /**
+     * @since 4.0
+     */
+    boolean supportsLocation(URL location);
+
+
+    /**
+     * @param url         of the configuration resource
      * @param contentType of the configuration resource or null if it's unavailable
      * @return should this configuration resource be processed by this parser
+     * @deprecated in favor of {@link #supportsLocation(URL)} and {@link #supportsContentType(String)}
      */
-    boolean shouldParse(URL url, String contentType);
+    @Deprecated(since = "4.0", forRemoval = true)
+    default boolean shouldParse(URL url, String contentType) {
+        return (contentType != null && supportsContentType(contentType)) || supportsLocation(url);
+    }
 
 }

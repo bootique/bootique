@@ -24,7 +24,6 @@ import io.bootique.config.jackson.parser.JsonConfigurationParser;
 import io.bootique.log.BootLogger;
 import io.bootique.resource.ResourceFactory;
 
-import java.net.URL;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -56,14 +55,10 @@ public abstract class UrlConfigurationLoader implements JsonConfigurationLoader 
     @Override
     public JsonNode updateConfiguration(JsonNode mutableInput) {
         return locations.stream()
-                .map(this::toURL)
+                .peek(s -> bootLogger.trace(() -> "Reading configuration at " + s))
+                .map(s -> new ResourceFactory(s).getUrl())
                 .map(parser::parse)
                 .filter(n -> n != null) // is there ever a condition when the parser returns null?
                 .reduce(mutableInput, merger);
-    }
-
-    protected URL toURL(String location) {
-        bootLogger.trace(() -> "Reading configuration at " + location);
-        return new ResourceFactory(location).getUrl();
     }
 }

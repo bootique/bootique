@@ -35,30 +35,34 @@ import java.net.URL;
  */
 public class YamlConfigurationFormatParser implements ConfigurationFormatParser {
 
-	private final YAMLFactory yamlFactory;
-	private final ObjectMapper mapper;
+    private final YAMLFactory yamlFactory;
+    private final ObjectMapper mapper;
 
-	@Inject
-	public YamlConfigurationFormatParser(JacksonService jackson) {
-		this.mapper = jackson.newObjectMapper();
-		this.yamlFactory = new YAMLFactory();
-	}
+    @Inject
+    public YamlConfigurationFormatParser(JacksonService jackson) {
+        this.mapper = jackson.newObjectMapper();
+        this.yamlFactory = new YAMLFactory();
+    }
 
-	@Override
-	public JsonNode parse(InputStream stream) {
-		try {
-			YAMLParser parser = yamlFactory.createParser(stream);
-			return mapper.readTree(parser);
-		} catch (IOException e) {
-			throw new RuntimeException("Error reading config data", e);
-		}
-	}
+    @Override
+    public JsonNode parse(InputStream stream) {
+        try {
+            YAMLParser parser = yamlFactory.createParser(stream);
+            return mapper.readTree(parser);
+        } catch (IOException e) {
+            throw new RuntimeException("Error reading config data", e);
+        }
+    }
 
-	@Override
-	public boolean shouldParse(URL url, String contentType) {
-		// TODO: there's no official MIME type yet for YAML
-		return  "application/x-yaml".equals(contentType)
-				|| url.getPath().endsWith(".yml")
-				|| url.getPath().endsWith(".yaml");
-	}
+    @Override
+    public boolean supportsContentType(String contentType) {
+        // There's no official MIME type yet for YAML, but there are a few commonly used ones
+        return "application/x-yaml".equals(contentType) || "application/yaml".equals(contentType);
+    }
+
+    @Override
+    public boolean supportsLocation(URL location) {
+        return location.getPath().endsWith(".yml")
+                || location.getPath().endsWith(".yaml");
+    }
 }

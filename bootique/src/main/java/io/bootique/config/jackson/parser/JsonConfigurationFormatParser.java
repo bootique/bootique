@@ -49,9 +49,13 @@ public class JsonConfigurationFormatParser implements ConfigurationFormatParser 
 		}
 	}
 
-	@Override
-	public boolean shouldParse(URL url, String contentType) {
-		return "application/json".equals(contentType)
-				|| url.getPath().endsWith(".json");
-	}
+    @Override
+    public boolean supportsContentType(String contentType) {
+        return "application/json".equals(contentType);
+    }
+
+    @Override
+    public boolean supportsLocation(URL location) {
+        return location.getPath().endsWith(".json");
+    }
 }

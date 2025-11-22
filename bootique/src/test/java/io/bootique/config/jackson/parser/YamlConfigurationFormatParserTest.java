@@ -27,12 +27,11 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class YamlConfigurationFormatParserTest {
 
@@ -49,6 +48,7 @@ public class YamlConfigurationFormatParserTest {
 		assertEquals("c", node.get("b").asText());
 	}
 
+    @Deprecated
 	@Test
     public void shouldParse() throws MalformedURLException {
 		JacksonService jacksonService = new DefaultJacksonService();
@@ -69,5 +69,32 @@ public class YamlConfigurationFormatParserTest {
 		assertFalse(parser.shouldParse(new URL("https://example.com/test.js?query=yaml"), ""));
 		assertFalse(parser.shouldParse(new URL("https://example.com/test.js?query=yaml"), null));
 	}
+
+    @Test
+    public void supportsLocation() throws MalformedURLException, URISyntaxException {
+        JacksonService jacksonService = new DefaultJacksonService();
+        ConfigurationFormatParser parser = new YamlConfigurationFormatParser(jacksonService);
+
+        assertTrue(parser.supportsLocation(new URI("file://tmp/test.yml").toURL()));
+        assertTrue(parser.supportsLocation(new URI("file://tmp/test.yaml").toURL()));
+        assertTrue(parser.supportsLocation(new URI("file://tmp/test.yaml?query=abc").toURL()));
+
+        assertTrue(parser.supportsLocation(new URI("https://example.com/test.yaml?query=abc").toURL()));
+        assertFalse(parser.supportsLocation(new URI("https://example.com/test").toURL()));
+        assertFalse(parser.supportsLocation(new URI("https://example.com/test.y?query=abc").toURL()));
+        assertFalse(parser.supportsLocation(new URI("https://example.com/test.y?query=json").toURL()));
+    }
+
+    @Test
+    public void supportsContentType() {
+        JacksonService jacksonService = new DefaultJacksonService();
+        ConfigurationFormatParser parser = new YamlConfigurationFormatParser(jacksonService);
+
+        assertFalse(parser.supportsContentType(null));
+        assertFalse(parser.supportsContentType(""));
+        assertFalse(parser.supportsContentType("application/x-unknown"));
+        assertTrue(parser.supportsContentType("application/x-yaml"));
+        assertTrue(parser.supportsContentType("application/yaml"));
+    }
 
 }

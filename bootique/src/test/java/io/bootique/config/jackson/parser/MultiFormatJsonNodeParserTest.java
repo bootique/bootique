@@ -41,18 +41,21 @@ public class MultiFormatJsonNodeParserTest {
     }
 
     @Test
-    public void parserForUrl() throws MalformedURLException {
+    public void parser() throws MalformedURLException {
         MultiFormatJsonNodeParser parser = new MultiFormatJsonNodeParser(createParsersSet());
 
-        assertSame(jsonParser, parser.parserForUrl(new URL("http://example.org/test.json"), ""));
-        assertSame(jsonParser, parser.parserForUrl(new URL("http://example.org/test"), "application/json"));
-        assertSame(jsonParser, parser.parserForUrl(new URL("http://example.org/test.json?test=abc"), ""));
+        assertSame(jsonParser, parser.parser(null, new URL("http://example.org/test.json")));
+        assertSame(jsonParser, parser.parser("", new URL("http://example.org/test.json")));
 
-        assertSame(yamlParser, parser.parserForUrl(new URL("http://example.org/test.yml"), ""));
-        assertSame(yamlParser, parser.parserForUrl(new URL("http://example.org/test.yaml"), ""));
-        assertSame(yamlParser, parser.parserForUrl(new URL("http://example.org/test.yaml?test=abc"), ""));
-        assertSame(yamlParser, parser.parserForUrl(new URL("http://example.org/test"), "application/x-yaml"));
+        assertSame(jsonParser, parser.parser("application/json", new URL("http://example.org/test")));
+        assertSame(jsonParser, parser.parser("", new URL("http://example.org/test.json?test=abc")));
 
-        assertNull(parser.parserForUrl(new URL("http://example.org/test"), ""));
+        assertSame(yamlParser, parser.parser(null, new URL("http://example.org/test.yml")));
+        assertSame(yamlParser, parser.parser("", new URL("http://example.org/test.yml")));
+        assertSame(yamlParser, parser.parser("", new URL("http://example.org/test.yaml")));
+        assertSame(yamlParser, parser.parser("", new URL("http://example.org/test.yaml?test=abc")));
+        assertSame(yamlParser, parser.parser("application/x-yaml", new URL("http://example.org/test")));
+
+        assertNull(parser.parser("", new URL("http://example.org/test")));
     }
 }
