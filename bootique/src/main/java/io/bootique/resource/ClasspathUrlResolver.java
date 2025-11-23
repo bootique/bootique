@@ -28,7 +28,7 @@ import java.util.List;
 class ClasspathUrlResolver {
 
     public static URL resolveSingle(String resourceId) {
-        String path = resolveAsClasspath(resourceId);
+        String path = classpath(resourceId);
         URL cpUrl = ResourceFactory.class.getClassLoader().getResource(path);
         if (cpUrl == null) {
             throw new IllegalArgumentException("Classpath URL not found: " + resourceId);
@@ -39,7 +39,7 @@ class ClasspathUrlResolver {
 
     public static Collection<URL> resolveCollection(String resourceId) {
 
-        String path = resolveAsClasspath(resourceId);
+        String path = classpath(resourceId);
 
         Enumeration<URL> cpUrls;
         try {
@@ -60,11 +60,11 @@ class ClasspathUrlResolver {
         return urls;
     }
 
-    private static String resolveAsClasspath(String resourceId) {
+    private static String classpath(String resourceId) {
         String path = resourceId.substring(ResourceFactory.CLASSPATH_URL_PREFIX.length());
 
         // classpath URLs must not start with a slash. This does not work with ClassLoader.
-        // TODO: should we silently strip the leading path?
+        // TODO: should we silently strip the leading path instead?
         if (path.length() > 0 && path.charAt(0) == '/') {
             throw new RuntimeException(ResourceFactory.CLASSPATH_URL_PREFIX + " URLs must not start with a slash: " + resourceId);
         }
