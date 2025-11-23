@@ -48,7 +48,7 @@ public class InPlaceLeftHandMerger implements JsonConfigurationMerger {
             return source;
         }
 
-        if (source == null) {
+        if (source == null || source.isMissingNode()) {
             return target;
         }
 
