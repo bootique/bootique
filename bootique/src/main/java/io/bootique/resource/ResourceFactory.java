@@ -19,14 +19,8 @@
 
 package io.bootique.resource;
 
-import io.bootique.BootiqueException;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Objects;
 
 /**
@@ -95,7 +89,7 @@ public class ResourceFactory {
             return ClasspathUrlResolver.resolveCollection(resourceId);
         }
 
-        return Collections.singletonList(resolveAsUri(resourceId));
+        return UrlOrFileResolver.resolveCollection(resourceId);
     }
 
     protected URL resolveUrl(String resourceId) {
@@ -104,49 +98,7 @@ public class ResourceFactory {
             return ClasspathUrlResolver.resolveSingle(resourceId);
         }
 
-        return resolveAsUri(resourceId);
-    }
-
-    /**
-     * @deprecated unused internally
-     */
-    @Deprecated(since = "4.0", forRemoval = true)
-    protected String resolveAsClasspath(String resourceId) {
-        String path = resourceId.substring(CLASSPATH_URL_PREFIX.length());
-
-        // classpath URLs must not start with a slash. This does not work with ClassLoader.
-        // TODO: should we silently strip the leading path?
-        if (path.length() > 0 && path.charAt(0) == '/') {
-            throw new RuntimeException(CLASSPATH_URL_PREFIX + " URLs must not start with a slash: " + resourceId);
-        }
-
-        return path;
-    }
-
-    protected URL resolveAsUri(String resourceId) {
-        URI uri;
-        try {
-            uri = URI.create(resourceId);
-        } catch (IllegalArgumentException e) {
-            throw new BootiqueException(1, "Invalid config resource url: " + resourceId, e);
-        }
-        try {
-            return uri.isAbsolute() ? uri.toURL() : getCanonicalFile(resourceId).toURI().toURL();
-        } catch (IOException e) {
-            throw new BootiqueException(1, "Invalid config resource url: " + resourceId, e);
-        }
-    }
-
-    /**
-     * Converts resource ID to a canonical file.
-     *
-     * @return canonical file produced from resource id.
-     * @throws IOException
-     */
-    // using canonical file avoids downstream bugs like this:
-    // https://github.com/bootique/bootique-jetty/issues/29
-    protected File getCanonicalFile(String resourceId) throws IOException {
-        return new File(resourceId).getCanonicalFile();
+        return UrlOrFileResolver.resolveSingle(resourceId);
     }
 
     @Override

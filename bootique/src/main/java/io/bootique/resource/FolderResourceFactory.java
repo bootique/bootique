@@ -31,8 +31,7 @@ public class FolderResourceFactory extends ResourceFactory {
 
     static String normalizeResourceId(String resourceId) {
 
-        // folder resources must end with a slash. Otherwise relative URLs won't
-        // resolve properly
+        // folder resources must end with a slash. Otherwise, relative URLs won't resolve properly
 
         if (resourceId.length() == 0) {
             return normalizeResourceId(getUserDir());
@@ -51,8 +50,7 @@ public class FolderResourceFactory extends ResourceFactory {
             }
         }
 
-        return resourceId.endsWith("/")
-                ? resourceId : resourceId + "/";
+        return resourceId.endsWith("/") ? resourceId : resourceId + "/";
     }
 
     /**

@@ -53,14 +53,7 @@ public class ResourceFactoryTest {
 			return scanner.useDelimiter("\\Z").nextLine();
 		}
 	}
-
-	@Test
-    public void getCanonicalFile() throws IOException {
-		File file = new ResourceFactory("").getCanonicalFile("./src/test/resources/io/bootique/config/test1.yml");
-		File expected = new File(System.getProperty("user.dir") + "/src/test/resources/io/bootique/config/test1.yml");
-		assertEquals(expected, file);
-	}
-
+    
 	@Test
     public void getUrl_File() throws IOException {
 		assertEquals("a: b", resourceContents("src/test/resources/io/bootique/config/test1.yml"));
