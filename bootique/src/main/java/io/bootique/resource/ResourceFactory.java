@@ -33,15 +33,12 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * A value object representing a resource URL. Supports 3 common resource
- * representations:
+ * A value object representing a resource URL. Supports the following resource representations:
  * <p>
  * <ul>
- * <li>resource as a URL using protocols recognized by Java (http:, https:,
- * jar:, file:, etc).</li>
- * <li>resource as URL with "classpath:" protocol that allows to identify
- * resources on classpath in a portable manner. E.g. the same URL would identify
- * the resource regardless of whether it is packaged in a jar or resides in a
+ * <li>resource as a URL using the protocols recognized by Java (http:, https:, jar:, file:, etc).</li>
+ * <li>resource as URL with "classpath:" protocol that identifies resources on classpath in a portable manner.
+ * E.g., the same URL would identify the resource regardless of whether it is packaged in a jar or resides in a
  * source folder in an IDE.</li>
  * <li>resource as absolute or relative file path.</li>
  * </ul>
@@ -53,16 +50,11 @@ public class ResourceFactory {
     protected String resourceId;
 
     /**
-     * Creates a ResourceFactory passing it a String resource identifier. It can
-     * be one of
+     * Creates a ResourceFactory passing it a String resource identifier. It can be one of
      * <ul>
-     * <li>resource as a URL using protocols recognized by Java (http:, https:,
-     * jar:, file:, etc).</li>
-     * <li>resource as URL with "classpath:" protocol that allows to identify
-     * resources on classpath in a portable manner. E.g. the same URL would
-     * identify the resource regardless of whether it is packaged in a jar or
-     * resides in a source folder in an IDE.</li>
-     * <li>resource as absolute or relative file path.</li>
+     * <li>a URL string using the protocols recognized by Java (http:, https:, jar:, file:, etc).</li>
+     * <li>a URL string starting with "classpath:" protocol</li>
+     * <li>an absolute or relative file path.</li>
      * </ul>
      *
      * @param resourceId a String identifier of the resource.
