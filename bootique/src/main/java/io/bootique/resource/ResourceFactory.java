@@ -25,11 +25,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Enumeration;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -94,28 +91,8 @@ public class ResourceFactory {
 
     protected Collection<URL> resolveUrls(String resourceId) {
 
-        // resourceId can be either a file path or a URL or a classpath: URL
         if (resourceId.startsWith(CLASSPATH_URL_PREFIX)) {
-
-            String path = resolveAsClasspath(resourceId);
-
-            Enumeration<URL> cpUrls;
-            try {
-                cpUrls = ResourceFactory.class.getClassLoader().getResources(path);
-            } catch (IOException e) {
-                throw new RuntimeException("Can't resolve resources for path: " + path, e);
-            }
-
-            if (!cpUrls.hasMoreElements()) {
-                throw new IllegalArgumentException("Classpath URL not found: " + resourceId);
-            }
-
-            List<URL> urls = new ArrayList<>(2);
-            while (cpUrls.hasMoreElements()) {
-                urls.add(cpUrls.nextElement());
-            }
-
-            return urls;
+            return ClasspathUrlResolver.resolveCollection(resourceId);
         }
 
         return Collections.singletonList(resolveAsUri(resourceId));
@@ -123,21 +100,17 @@ public class ResourceFactory {
 
     protected URL resolveUrl(String resourceId) {
 
-        // resourceId can be either a file path or a URL or a classpath: URL
         if (resourceId.startsWith(CLASSPATH_URL_PREFIX)) {
-
-            String path = resolveAsClasspath(resourceId);
-            URL cpUrl = ResourceFactory.class.getClassLoader().getResource(path);
-            if (cpUrl == null) {
-                throw new IllegalArgumentException("Classpath URL not found: " + resourceId);
-            }
-
-            return cpUrl;
+            return ClasspathUrlResolver.resolveSingle(resourceId);
         }
 
         return resolveAsUri(resourceId);
     }
 
+    /**
+     * @deprecated unused internally
+     */
+    @Deprecated(since = "4.0", forRemoval = true)
     protected String resolveAsClasspath(String resourceId) {
         String path = resourceId.substring(CLASSPATH_URL_PREFIX.length());
 
