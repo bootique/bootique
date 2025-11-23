@@ -21,6 +21,7 @@ package io.bootique.config.jackson.parser;
 
 import io.bootique.BootiqueException;
 import io.bootique.jackson.JacksonService;
+import io.bootique.resource.ResourceFactory;
 import org.junit.jupiter.api.Test;
 
 import java.net.MalformedURLException;
@@ -51,11 +52,15 @@ public class MultiFormatJsonNodeParserTest {
         assertSame(jsonParser, parser.parser("application/json", new URL("http://example.org/test")));
         assertSame(jsonParser, parser.parser("", new URL("http://example.org/test.json?test=abc")));
 
+        assertSame(jsonParser, parser.parser("application/json", new ResourceFactory("stdin:json").getUrl()));
+
         assertSame(yamlParser, parser.parser(null, new URL("http://example.org/test.yml")));
         assertSame(yamlParser, parser.parser("", new URL("http://example.org/test.yml")));
         assertSame(yamlParser, parser.parser("", new URL("http://example.org/test.yaml")));
         assertSame(yamlParser, parser.parser("", new URL("http://example.org/test.yaml?test=abc")));
         assertSame(yamlParser, parser.parser("application/x-yaml", new URL("http://example.org/test")));
+
+        assertSame(yamlParser, parser.parser("application/x-yaml", new ResourceFactory("stdin:yaml").getUrl()));
 
         assertThrows(BootiqueException.class, () -> parser.parser("", new URL("http://example.org/test")));
     }

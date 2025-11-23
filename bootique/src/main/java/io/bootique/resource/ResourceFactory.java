@@ -31,12 +31,15 @@ import java.util.Objects;
  * <li>resource as URL with "classpath:" protocol that identifies resources on classpath in a portable manner.
  * E.g., the same URL would identify the resource regardless of whether it is packaged in a jar or resides in a
  * source folder in an IDE.</li>
+ * <li>resource as a URL with "stdin:" protocol, that allows to access standard input. Requires format specification,
+ * e.g., "stdin:json", "stdin:yaml".</li>
  * <li>resource as absolute or relative file path.</li>
  * </ul>
  */
 public class ResourceFactory {
 
     protected static final String CLASSPATH_URL_PREFIX = "classpath:";
+    protected static final String STDIN_URL_PREFIX = "stdin:";
 
     protected String resourceId;
 
@@ -45,6 +48,7 @@ public class ResourceFactory {
      * <ul>
      * <li>a URL string using the protocols recognized by Java (http:, https:, jar:, file:, etc).</li>
      * <li>a URL string starting with "classpath:" protocol</li>
+     * <li>a URL string starting with "stdin:" protocol</li>
      * <li>an absolute or relative file path.</li>
      * </ul>
      *
@@ -87,23 +91,26 @@ public class ResourceFactory {
 
         if (resourceId.startsWith(CLASSPATH_URL_PREFIX)) {
             return ClasspathUrlResolver.resolveCollection(resourceId);
+        } else if (resourceId.startsWith(STDIN_URL_PREFIX)) {
+            return StdinUrlResolver.resolveCollection(resourceId);
+        } else {
+            return UrlOrFileResolver.resolveCollection(resourceId);
         }
-
-        return UrlOrFileResolver.resolveCollection(resourceId);
     }
 
     protected URL resolveUrl(String resourceId) {
 
         if (resourceId.startsWith(CLASSPATH_URL_PREFIX)) {
             return ClasspathUrlResolver.resolveSingle(resourceId);
+        } else if (resourceId.startsWith(STDIN_URL_PREFIX)) {
+            return StdinUrlResolver.resolveSingle(resourceId);
+        } else {
+            return UrlOrFileResolver.resolveSingle(resourceId);
         }
-
-        return UrlOrFileResolver.resolveSingle(resourceId);
     }
 
     @Override
     public String toString() {
         return "ResourceFactory:" + resourceId;
     }
-
 }

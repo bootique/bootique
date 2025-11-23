@@ -19,12 +19,14 @@
 
 package io.bootique.resource;
 
+import io.bootique.BootiqueException;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Collection;
 import java.util.Scanner;
 
@@ -103,4 +105,54 @@ public class ResourceFactoryTest {
 		String u1 = urls.iterator().next().toString();
 		assertTrue(u1.endsWith("src/test/resources/io/bootique/config/test1.yml"), u1);
 	}
+
+    @Test
+    public void getUrl_StdinJson() {
+        URL url = new ResourceFactory("stdin:json").getUrl();
+        assertNotNull(url);
+        assertEquals("stdin:json", url.toString());
+    }
+
+    @Test
+    public void getUrl_StdinYaml() {
+        URL url = new ResourceFactory("stdin:yaml").getUrl();
+        assertNotNull(url);
+        assertEquals("stdin:yaml", url.toString());
+    }
+
+    @Test
+    public void getUrl_StdinYml() {
+        URL url = new ResourceFactory("stdin:yml").getUrl();
+        assertNotNull(url);
+        assertEquals("stdin:yml", url.toString());
+    }
+
+    @Test
+    public void getUrl_StdinJson_ContentType() throws IOException {
+        URL url = new ResourceFactory("stdin:json").getUrl();
+        URLConnection connection = url.openConnection();
+        assertEquals("application/json", connection.getContentType());
+    }
+
+    @Test
+    public void getUrl_StdinYaml_ContentType() throws IOException {
+        URL url = new ResourceFactory("stdin:yaml").getUrl();
+        URLConnection connection = url.openConnection();
+        assertEquals("application/x-yaml", connection.getContentType());
+    }
+
+    @Test
+    public void getUrl_StdinOther_ContentType() throws IOException {
+        URL url = new ResourceFactory("stdin:txt").getUrl();
+        URLConnection connection = url.openConnection();
+        assertEquals("application/octet-stream", connection.getContentType());
+    }
+
+    @Test
+    public void getUrl_StdinNoFormat() {
+        assertThrows(BootiqueException.class, () -> {
+            URL url = new ResourceFactory("stdin:").getUrl();
+            url.openConnection();
+        });
+    }
 }
