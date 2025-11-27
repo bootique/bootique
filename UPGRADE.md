@@ -33,6 +33,10 @@ callback methods changed to take `org.eclipse.jetty.server.Request` as a paramet
 `ServletRequest`, as now it is invoked outside the scope of the "servlet" objects. This change will only affect your 
 code if you implemented custom "MDC items", but otherwise should be transparent.
 
+* [bootique-shiro #48](https://github.com/bootique/bootique-shiro/issues/28): _Only applies if you are upgrading from
+`4.0-M1`._ JWKS and audience properties are now configured in the upstream `bootique-shiro-jwt` module. You need to 
+rename `shirowebjwt` top-level configuration key to `shirojwt`.
+
 ## 4.0-M1
 
 * Finalizing a switch to Jakarta: This affects the core and the majority of modules. "javax" based deprecated modules
