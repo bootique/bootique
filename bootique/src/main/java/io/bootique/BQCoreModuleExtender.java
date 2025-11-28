@@ -34,6 +34,7 @@ import io.bootique.di.TypeLiteral;
 import io.bootique.env.DeclaredVariable;
 import io.bootique.help.ValueObjectDescriptor;
 import io.bootique.meta.application.OptionMetadata;
+import jakarta.inject.Provider;
 
 import java.util.Map;
 import java.util.logging.Level;
@@ -131,6 +132,16 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
 
     public BQCoreModuleExtender setProperty(String name, String value) {
         contributeProperties().putInstance(name, value);
+        return this;
+    }
+
+    /**
+     * Sets a property to a provider, effectively deferring property resolution until the first access.
+     *
+     * @since 4.0
+     */
+    public BQCoreModuleExtender setPropertyProvider(String name, Provider<String> valueProvider) {
+        contributeProperties().putProviderInstance(name, valueProvider);
         return this;
     }
 

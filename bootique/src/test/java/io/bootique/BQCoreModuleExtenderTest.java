@@ -35,11 +35,26 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class BQCoreModuleExtenderTest {
 
     @Test
-    public void setProperties() {
+    public void setProperty() {
 
         Injector i = DIBootstrap.createInjector(b -> {
 
             BQCoreModule.extend(b).setProperty("a", "b").setProperty("c", "d");
+            b.bind(MapInspector.class);
+        });
+
+        MapInspector inspector = i.getInstance(MapInspector.class);
+
+        assertEquals("b", inspector.map.get("a"));
+        assertEquals("d", inspector.map.get("c"));
+    }
+
+    @Test
+    public void setPropertyProvider() {
+
+        Injector i = DIBootstrap.createInjector(b -> {
+
+            BQCoreModule.extend(b).setProperty("a", "b").setPropertyProvider("c", () -> "d");
             b.bind(MapInspector.class);
         });
 
