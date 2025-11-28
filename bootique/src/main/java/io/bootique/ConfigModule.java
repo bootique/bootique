@@ -31,7 +31,10 @@ import java.util.Objects;
  * configuration based on the module class name. So e.g. if "MyModule" extends "ConfigModule", it will resolve module
  * configs under the "my" prefix. To use this functionality subclasses need to call one of the "config" methods, e.g.
  * {@link #config(Class, ConfigurationFactory)}.
+ *
+ * @deprecated we recommend implementing {@link BQModule} directly instead of subclassing this class.
  */
+@Deprecated(since = "4.0", forRemoval = true)
 public abstract class ConfigModule implements BQModule {
 
     protected static ClassToName CONFIG_PREFIX_BUILDER = ClassToName
