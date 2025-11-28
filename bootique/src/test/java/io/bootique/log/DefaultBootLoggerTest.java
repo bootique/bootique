@@ -22,58 +22,74 @@ package io.bootique.log;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DefaultBootLoggerTest {
 
-	private PrintStream mockStdout;
-	private PrintStream mockStderr;
+    private ByteArrayOutputStream out;
+    private ByteArrayOutputStream err;
+    private PrintStream stdout;
+    private PrintStream stderr;
 
-	@BeforeEach
-	public void before() {
-		this.mockStdout = mock(PrintStream.class);
-		this.mockStderr = mock(PrintStream.class);
-	}
+    @BeforeEach
+    public void before() {
+        this.out = new ByteArrayOutputStream();
+        this.err = new ByteArrayOutputStream();
+        this.stdout = new PrintStream(out);
+        this.stderr = new PrintStream(err);
+    }
 
-	@Test
+    @Test
     public void stdout() {
 
-		DefaultBootLogger logger = new DefaultBootLogger(true, mockStdout, mockStderr);
+        DefaultBootLogger logger = new DefaultBootLogger(true, stdout, stderr);
 
-		logger.stdout("outmsg");
-		verify(mockStdout).println("outmsg");
-		verifyNoInteractions(mockStderr);
-	}
-	
-	@Test
+        logger.stdout("outmsg");
+        checkStreams("outmsg", null);
+    }
+
+    @Test
     public void stderr() {
 
-		DefaultBootLogger logger = new DefaultBootLogger(true, mockStdout, mockStderr);
+        DefaultBootLogger logger = new DefaultBootLogger(true, stdout, stderr);
 
-		logger.stderr("errmsg");
-		verify(mockStderr).println("errmsg");
-		verifyNoInteractions(mockStdout);
-	}
-	
-	@Test
-	public void trace() {
+        logger.stderr("errmsg");
+        checkStreams(null, "errmsg");
+    }
 
-		DefaultBootLogger logger = new DefaultBootLogger(true, mockStdout, mockStderr);
+    @Test
+    public void trace() {
+        DefaultBootLogger logger = new DefaultBootLogger(true, stdout, stderr);
 
-		logger.trace(() -> "mytrace");
-		verify(mockStderr).println("mytrace");
-		verifyNoInteractions(mockStdout);
-	}
-	
-	@Test
-	public void noTrace() {
+        logger.trace(() -> "mytrace");
+        checkStreams(null, "mytrace");
+    }
 
-		DefaultBootLogger logger = new DefaultBootLogger(false, mockStdout, mockStderr);
+    @Test
+    public void noTrace() {
+        DefaultBootLogger logger = new DefaultBootLogger(false, stdout, stderr);
 
-		logger.trace(() -> "mytrace");
-		verifyNoInteractions(mockStderr);
-		verifyNoInteractions(mockStdout);
-	}
+        logger.trace(() -> "mytrace");
+        checkStreams(null, null);
+    }
+
+    private void checkStreams(String expectedStdout, String expectedStderr) {
+        stdout.flush();
+        stderr.flush();
+
+        if (expectedStdout == null) {
+            assertEquals(0, out.size());
+        } else {
+            assertEquals(expectedStdout + System.lineSeparator(), out.toString());
+        }
+
+        if (expectedStderr == null) {
+            assertEquals(0, err.size());
+        } else {
+            assertEquals(expectedStderr + System.lineSeparator(), err.toString());
+        }
+    }
 }

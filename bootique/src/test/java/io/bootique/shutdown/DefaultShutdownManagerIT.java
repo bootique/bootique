@@ -21,64 +21,79 @@ package io.bootique.shutdown;
 
 import io.bootique.log.BootLogger;
 import io.bootique.log.DefaultBootLogger;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.*;
 
 public class DefaultShutdownManagerIT {
 
-	static final BootLogger logger = new DefaultBootLogger(true);
+    static final BootLogger logger = new DefaultBootLogger(true);
 
-	private AutoCloseable mockCloseable1;
-	private AutoCloseable mockCloseable2;
-
-	@BeforeEach
-	public void before() {
-		this.mockCloseable1 = mock(AutoCloseable.class);
-		this.mockCloseable2 = mock(AutoCloseable.class);
-	}
-
-	@Test
+    @Test
     public void shutdown() throws Exception {
-		Duration timeout = Duration.ofMillis(10000l);
-		DefaultShutdownManager shutdownManager = new DefaultShutdownManager(timeout, logger);
+        Duration timeout = Duration.ofMillis(10000L);
+        DefaultShutdownManager sm = new DefaultShutdownManager(timeout, logger);
 
-		shutdownManager.onShutdown(mockCloseable1);
-		shutdownManager.onShutdown(mockCloseable2);
+        CloseableTracker c1 = new CloseableTracker();
+        CloseableTracker c2 = new CloseableTracker();
 
-		shutdownManager.shutdown();
+        sm.onShutdown(c1);
+        sm.onShutdown(c2);
 
-		verify(mockCloseable1).close();
-		verify(mockCloseable2).close();
-	}
+        sm.shutdown();
 
-	@Test
-    public void shutdown_Unresponsive_Timeout() throws Exception {
-		Duration timeout = Duration.ofMillis(500l);
-		DefaultShutdownManager shutdownManager = new DefaultShutdownManager(timeout, logger);
+        assertTrue(c1.wasClosed);
+        assertTrue(c2.wasClosed);
+    }
 
-		doAnswer(i -> {
-			while (true) {
-				// spinning...
-			}
-		}).when(mockCloseable2).close();
+    @Test
+    public void shutdown_Unresponsive_Timeout() {
+        Duration timeout = Duration.ofMillis(500L);
+        DefaultShutdownManager sm = new DefaultShutdownManager(timeout, logger);
 
-		shutdownManager.onShutdown(mockCloseable2);
+        SpinningCloseableTracker c = new SpinningCloseableTracker();
 
-		long t0 = System.currentTimeMillis();
-		shutdownManager.shutdown();
+        sm.onShutdown(c);
 
-		long t1 = System.currentTimeMillis();
+        long t0 = System.currentTimeMillis();
+        sm.shutdown();
 
-		verify(mockCloseable2).close();
+        long t1 = System.currentTimeMillis();
 
-		assertTrue(t1 - t0 >= timeout.toMillis());
+        assertTrue(c.wasClosed);
+        assertTrue(t1 - t0 >= timeout.toMillis());
 
-		// too optimistic??
-		assertTrue(t1 - t0 < timeout.toMillis() + 1000);
-	}
+        // too optimistic??
+        assertTrue(t1 - t0 < timeout.toMillis() + 1000);
+    }
+
+    static class CloseableTracker implements AutoCloseable {
+        boolean wasClosed;
+
+        @Override
+        public void close() throws Exception {
+            this.wasClosed = true;
+        }
+    }
+
+    static class SpinningCloseableTracker implements AutoCloseable {
+        boolean wasClosed;
+
+        @Override
+        public void close() throws Exception {
+            this.wasClosed = true;
+            while (true) {
+
+                // spinning...
+                try {
+                    wait(1000);
+                } catch (Throwable th) {
+                }
+
+                // TODO: bad .. this will keep spinning until all tests are run
+            }
+        }
+    }
 }

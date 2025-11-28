@@ -22,6 +22,8 @@ package io.bootique.jopt;
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandManager;
+import io.bootique.command.CommandOutcome;
+import io.bootique.command.CommandWithMetadata;
 import io.bootique.command.DefaultCommandManager;
 import io.bootique.command.ManagedCommand;
 import io.bootique.meta.application.ApplicationMetadata;
@@ -35,8 +37,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class JoptCliFactoryTest {
 
@@ -50,7 +50,7 @@ public class JoptCliFactoryTest {
     @Test
     public void get_HasOption() {
 
-        addMockCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me").build()));
+        addCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me").build()));
 
         assertTrue(createCli("-m").hasOption("me"));
         assertTrue(createCli("--me").hasOption("me"));
@@ -60,21 +60,21 @@ public class JoptCliFactoryTest {
 
     @Test
     public void optionStrings_Short() {
-        addMockCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me").valueOptional(null).build()));
+        addCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me").valueOptional(null).build()));
 
         assertEquals(createCli("-m v4").optionStrings("me"), "v4");
     }
 
     @Test
     public void optionStrings_Long_Equals() {
-        addMockCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me").valueOptional(null).build()));
+        addCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me").valueOptional(null).build()));
 
         assertEquals(createCli("--me=v4").optionStrings("me"), "v4");
     }
 
     @Test
     public void optionStrings_Long_Space() {
-        addMockCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me").valueOptional(null).build()));
+        addCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me").valueOptional(null).build()));
 
         assertEquals(createCli("--me v4").optionStrings("me"), "v4");
     }
@@ -82,7 +82,7 @@ public class JoptCliFactoryTest {
     @Test
     public void optionStrings_Single_Mixed() {
 
-        addMockCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me").valueOptional(null).build())
+        addCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me").valueOptional(null).build())
                 .addOption(OptionMetadata.builder("other").valueOptional(null).build()));
 
         assertEquals(createCli("--other v2 --me=v4").optionStrings("me"), "v4");
@@ -90,7 +90,7 @@ public class JoptCliFactoryTest {
 
     @Test
     public void optionStrings_Multiple_Mixed() {
-        addMockCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me").valueOptional(null).build())
+        addCommand(CommandMetadata.builder("c1").addOption(OptionMetadata.builder("me").valueOptional(null).build())
                 .addOption(OptionMetadata.builder("other").valueOptional(null).build())
                 .addOption(OptionMetadata.builder("n").valueOptional(null).build())
                 .addOption(OptionMetadata.builder("yes").build()));
@@ -100,7 +100,7 @@ public class JoptCliFactoryTest {
 
     @Test
     public void standaloneArguments_Mix() {
-        addMockCommand(CommandMetadata.builder("c1")
+        addCommand(CommandMetadata.builder("c1")
                 .addOption(OptionMetadata.builder("me").valueOptional(null).build())
                 .addOption(OptionMetadata.builder("other").valueOptional(null).build())
                 .addOption(OptionMetadata.builder("yes").build()));
@@ -110,7 +110,7 @@ public class JoptCliFactoryTest {
 
     @Test
     public void standaloneArguments_DashDash() {
-        addMockCommand(CommandMetadata.builder("c1")
+        addCommand(CommandMetadata.builder("c1")
                 .addOption(OptionMetadata.builder("me").valueOptional(null).build())
                 .addOption(OptionMetadata.builder("other").valueOptional(null).build()));
 
@@ -121,9 +121,14 @@ public class JoptCliFactoryTest {
         assertArrayEquals(expected, result.toArray());
     }
 
-    private Command addMockCommand(CommandMetadata.Builder metadataBuilder) {
-        Command mock = mock(Command.class);
-        when(mock.getMetadata()).thenReturn(metadataBuilder.build());
+    private Command addCommand(CommandMetadata.Builder metadataBuilder) {
+        Command mock = new CommandWithMetadata(metadataBuilder.build()) {
+            @Override
+            public CommandOutcome run(Cli cli) {
+                return CommandOutcome.succeeded();
+            }
+        };
+
         commands.put(mock.getMetadata().getName(), ManagedCommand.builder(mock).build());
         return mock;
     }

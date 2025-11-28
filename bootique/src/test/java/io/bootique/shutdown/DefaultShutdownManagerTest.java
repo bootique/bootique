@@ -25,35 +25,43 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DefaultShutdownManagerTest {
 
-	private DefaultShutdownManager shutdownManager;
-	private AutoCloseable mockCloseable1;
-	private AutoCloseable mockCloseable2;
+    private DefaultShutdownManager shutdownManager;
 
-	@BeforeEach
-	public void before() {
-		this.shutdownManager = new DefaultShutdownManager(Duration.ofMillis(1000l), new DefaultBootLogger(true));
 
-		this.mockCloseable1 = mock(AutoCloseable.class);
-		this.mockCloseable2 = mock(AutoCloseable.class);
-	}
-	
-	@Test
+    @BeforeEach
+    public void before() {
+        this.shutdownManager = new DefaultShutdownManager(Duration.ofMillis(1000L), new DefaultBootLogger(true));
+    }
+
+    @Test
     public void shutdownAll_Empty() {
-		shutdownManager.shutdownAll();
-	}
+        shutdownManager.shutdownAll();
+    }
 
-	@Test
+    @Test
     public void shutdownAll() throws Exception {
-		shutdownManager.onShutdown(mockCloseable1);
-		shutdownManager.onShutdown(mockCloseable2);
-		shutdownManager.shutdownAll();
 
-		verify(mockCloseable1).close();
-		verify(mockCloseable2).close();
-	}
+        CloseableTracker c1 = new CloseableTracker();
+        CloseableTracker c2 = new CloseableTracker();
+
+        shutdownManager.onShutdown(c1);
+        shutdownManager.onShutdown(c2);
+        shutdownManager.shutdownAll();
+
+        assertTrue(c1.wasClosed);
+        assertTrue(c2.wasClosed);
+    }
+
+    static class CloseableTracker implements AutoCloseable {
+        boolean wasClosed;
+
+        @Override
+        public void close() throws Exception {
+            this.wasClosed = true;
+        }
+    }
 }

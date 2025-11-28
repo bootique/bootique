@@ -37,7 +37,6 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.mock;
 
 public class ConfigSectionGeneratorTest {
 
@@ -489,7 +488,8 @@ public class ConfigSectionGeneratorTest {
 
     @Test
     public void typeLabel() throws NoSuchFieldException {
-        ConfigSectionGenerator generator = new ConfigSectionGenerator(mock(ConsoleAppender.class), new HashSet<>());
+        ConsoleAppender appender = new ConsoleAppender(new StringBuilder(), 100);
+        ConfigSectionGenerator generator = new ConfigSectionGenerator(appender, new HashSet<>());
         assertEquals("int", generator.typeLabel(Integer.class));
         assertEquals("int", generator.typeLabel(Integer.TYPE));
         assertEquals("boolean", generator.typeLabel(Boolean.class));

@@ -25,7 +25,6 @@ import io.bootique.Bootique;
 import io.bootique.ModuleCrate;
 import io.bootique.annotation.BQConfig;
 import io.bootique.annotation.BQConfigProperty;
-import io.bootique.BQModule;
 import io.bootique.help.ConsoleAppender;
 import io.bootique.help.ValueObjectDescriptor;
 import io.bootique.help.config.ConfigSectionMapGenerator;
@@ -35,9 +34,12 @@ import io.bootique.resource.ResourceFactory;
 import io.bootique.unit.TestAppManager;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.mockito.Mockito;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -50,7 +52,8 @@ public class ConfigMetadataIT {
     @Test
     public void singleConfig() {
         ModuleCrate crate = ModuleCrate
-                .of(Mockito.mock(BQModule.class))
+                .of(b -> {
+                })
                 .moduleName("my")
                 .config("pf", TestConfig.class).build();
 
@@ -92,7 +95,8 @@ public class ConfigMetadataIT {
     @Test
     public void recursiveConfig() {
         ModuleCrate crate = ModuleCrate
-                .of(Mockito.mock(BQModule.class))
+                .of(b -> {
+                })
                 .moduleName("my")
                 .config("pf", TestRecursiveConfig.class).build();
 
@@ -142,7 +146,8 @@ public class ConfigMetadataIT {
     @Test
     public void valueObjectConfig() {
         ModuleCrate crate = ModuleCrate
-                .of(Mockito.mock(BQModule.class))
+                .of(b -> {
+                })
                 .moduleName("my")
                 .config("pf", TestValueObjectConfig.class).build();
 

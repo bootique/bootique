@@ -20,184 +20,222 @@
 package io.bootique.run;
 
 import io.bootique.cli.Cli;
-import io.bootique.command.*;
+import io.bootique.command.Command;
+import io.bootique.command.CommandManager;
+import io.bootique.command.CommandOutcome;
+import io.bootique.command.DefaultCommandManager;
+import io.bootique.command.ExecutionPlanBuilder;
+import io.bootique.command.ManagedCommand;
+import io.bootique.log.DefaultBootLogger;
 import io.bootique.meta.application.CommandMetadata;
 import io.bootique.meta.application.OptionMetadata;
-import org.junit.jupiter.api.BeforeEach;
+import joptsimple.OptionSpec;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 public class DefaultRunnerTest {
-
-    private Cli mockCli;
-
-    private static Command mockCommand(String name, CommandOutcome outcome, String... options) {
-
-        CommandMetadata.Builder builder = CommandMetadata.builder(name);
-        List.of(options).forEach(opt -> builder.addOption(OptionMetadata.builder(opt).build()));
-        CommandMetadata md = builder.build();
-
-        Command mock = mock(Command.class);
-        when(mock.run(any())).thenReturn(outcome);
-        when(mock.getMetadata()).thenReturn(md);
-
-        return mock;
-    }
-
-    @BeforeEach
-    public void before() {
-        this.mockCli = mock(Cli.class);
-    }
 
     @Test
     public void run() {
 
-        when(mockCli.commandName()).thenReturn("c1");
+        TestCommand dflt = TestCommand.of("d1");
+        TestCommand help = TestCommand.of("h1");
+        TestCommand c1 = TestCommand.of("c1", "c1o1", "c1o2");
+        TestCommand c2 = TestCommand.of("c2", "c2o1");
 
-        Command mockDefault = mockCommand("d1", CommandOutcome.succeeded());
-        Command mockHelp = mockCommand("h1", CommandOutcome.succeeded());
+        CommandOutcome outcome = run("c1", dflt, help, c1, c2);
+        assertTrue(outcome.isSuccess());
 
-        Command mockC1 = mockCommand("c1", CommandOutcome.succeeded(), "c1o1", "c1o2");
-        Command mockC2 = mockCommand("c2", CommandOutcome.succeeded(), "c2o1");
-
-        CommandOutcome result = run(Optional.of(mockDefault), Optional.of(mockHelp), mockC1, mockC2);
-        assertTrue(result.isSuccess());
-
-        verify(mockC1).run(mockCli);
-        verify(mockC2, times(0)).run(mockCli);
-        verify(mockDefault, times(0)).run(mockCli);
-        verify(mockHelp, times(0)).run(mockCli);
+        assertFalse(dflt.wasRun);
+        assertFalse(help.wasRun);
+        assertTrue(c1.wasRun);
+        assertFalse(c2.wasRun);
     }
 
     @Test
     public void run_ReverseOrder() {
 
-        when(mockCli.commandName()).thenReturn("c2");
+        TestCommand dflt = TestCommand.of("d1");
+        TestCommand help = TestCommand.of("h1");
+        TestCommand c1 = TestCommand.of("c1", "c1o1", "c1o2");
+        TestCommand c2 = TestCommand.of("c2", "c2o1");
 
-        Command mockDefault = mockCommand("d1", CommandOutcome.succeeded());
-        Command mockHelp = mockCommand("h1", CommandOutcome.succeeded());
+        CommandOutcome outcome = run("c2", dflt, help, c1, c2);
+        assertTrue(outcome.isSuccess());
 
-        Command mockC1 = mockCommand("c1", CommandOutcome.succeeded(), "c1o1", "c1o2");
-        Command mockC2 = mockCommand("c2", CommandOutcome.succeeded(), "c2o1");
-
-        CommandOutcome result = run(Optional.of(mockDefault), Optional.of(mockHelp), mockC1, mockC2);
-        assertTrue(result.isSuccess());
-
-        verify(mockC2).run(mockCli);
-        verify(mockC1, times(0)).run(mockCli);
-        verify(mockDefault, times(0)).run(mockCli);
-        verify(mockHelp, times(0)).run(mockCli);
+        assertFalse(dflt.wasRun);
+        assertFalse(help.wasRun);
+        assertFalse(c1.wasRun);
+        assertTrue(c2.wasRun);
     }
 
     @Test
     public void run_NoMatch() {
+        TestCommand dflt = TestCommand.of("d1");
+        TestCommand help = TestCommand.of("h1");
+        TestCommand c1 = TestCommand.of("c1", "c1o1", "c1o2");
+        TestCommand c2 = TestCommand.of("c2", "c2o1");
 
-        when(mockCli.commandName()).thenReturn("c3");
-
-        Command mockDefault = mockCommand("d1", CommandOutcome.succeeded());
-        Command mockHelp = mockCommand("h1", CommandOutcome.succeeded());
-
-        Command mockC1 = mockCommand("c1", CommandOutcome.succeeded(), "c1o1", "c1o2");
-        Command mockC2 = mockCommand("c2", CommandOutcome.succeeded(), "c2o1");
-
-        assertThrows(IllegalStateException.class, () -> run(Optional.of(mockDefault), Optional.of(mockHelp), mockC1, mockC2));
+        assertThrows(IllegalStateException.class, () -> run("c3", dflt, help, c1, c2));
     }
 
     @Test
     public void run_NullName_Default() {
 
-        when(mockCli.commandName()).thenReturn(null);
+        TestCommand dflt = TestCommand.of("d1");
+        TestCommand help = TestCommand.of("h1");
+        TestCommand c1 = TestCommand.of("c1", "c1o1", "c1o2");
+        TestCommand c2 = TestCommand.of("c2", "c2o1");
 
-        Command mockDefault = mockCommand("d1", CommandOutcome.succeeded());
-        Command mockHelp = mockCommand("h1", CommandOutcome.succeeded());
+        CommandOutcome outcome = run(null, dflt, help, c1, c2);
+        assertTrue(outcome.isSuccess());
 
-        Command mockC1 = mockCommand("c1", CommandOutcome.succeeded(), "c1o1", "c1o2");
-        Command mockC2 = mockCommand("c2", CommandOutcome.succeeded(), "c2o1");
-
-        CommandOutcome result = run(Optional.of(mockDefault), Optional.of(mockHelp), mockC1, mockC2);
-        assertTrue(result.isSuccess());
-
-        verify(mockC1, times(0)).run(mockCli);
-        verify(mockC2, times(0)).run(mockCli);
-        verify(mockDefault).run(mockCli);
-        verify(mockHelp, times(0)).run(mockCli);
+        assertTrue(dflt.wasRun);
+        assertFalse(help.wasRun);
+        assertFalse(c1.wasRun);
+        assertFalse(c2.wasRun);
     }
 
     @Test
     public void run_NullName_Help() {
 
-        when(mockCli.commandName()).thenReturn(null);
+        TestCommand help = TestCommand.of("h1");
+        TestCommand c1 = TestCommand.of("c1", "c1o1", "c1o2");
+        TestCommand c2 = TestCommand.of("c2", "c2o1");
 
-        Command mockHelp = mockCommand("h1", CommandOutcome.succeeded());
+        CommandOutcome outcome = run(null, null, help, c1, c2);
+        assertTrue(outcome.isSuccess());
 
-        Command mockC1 = mockCommand("c1", CommandOutcome.succeeded(), "c1o1", "c1o2");
-        Command mockC2 = mockCommand("c2", CommandOutcome.succeeded(), "c2o1");
-
-        CommandOutcome result = run(Optional.empty(), Optional.of(mockHelp), mockC1, mockC2);
-        assertTrue(result.isSuccess());
-
-        verify(mockC1, times(0)).run(mockCli);
-        verify(mockC2, times(0)).run(mockCli);
-        verify(mockHelp).run(mockCli);
+        assertTrue(help.wasRun);
+        assertFalse(c1.wasRun);
+        assertFalse(c2.wasRun);
     }
 
     @Test
     public void run_NullName_NoFallback() {
 
-        when(mockCli.commandName()).thenReturn(null);
+        TestCommand c1 = TestCommand.of("c1", "c1o1", "c1o2");
+        TestCommand c2 = TestCommand.of("c2", "c2o1");
 
-        Command mockC1 = mockCommand("c1", CommandOutcome.succeeded(), "c1o1", "c1o2");
-        Command mockC2 = mockCommand("c2", CommandOutcome.succeeded(), "c2o1");
+        CommandOutcome outcome = run(null, null, null, c1, c2);
+        assertTrue(outcome.isSuccess());
 
-        CommandOutcome result = run(Optional.empty(), Optional.empty(), mockC1, mockC2);
-        assertTrue(result.isSuccess());
-
-        verify(mockC1, times(0)).run(mockCli);
-        verify(mockC2, times(0)).run(mockCli);
+        assertFalse(c1.wasRun);
+        assertFalse(c2.wasRun);
     }
 
     @Test
     public void run_Failure() {
 
-        when(mockCli.commandName()).thenReturn("c1");
+        TestCommand c1 = TestCommand.of("c1", CommandOutcome.failed(-1, "fff"), "c1o1", "c1o2");
+        TestCommand c2 = TestCommand.of("c2", "c2o1");
 
-        Command mockC1 = mockCommand("c1", CommandOutcome.failed(-1, "fff"), "c1o1", "c1o2");
-        Command mockC2 = mockCommand("c2", CommandOutcome.succeeded(), "c2o1");
-
-        CommandOutcome result = run(Optional.empty(), Optional.empty(), mockC1, mockC2);
-        assertFalse(result.isSuccess());
-        assertEquals(-1, result.getExitCode());
-        assertEquals("fff", result.getMessage());
+        CommandOutcome outcome = run("c1", null, null, c1, c2);
+        assertFalse(outcome.isSuccess());
+        assertEquals(-1, outcome.getExitCode());
+        assertEquals("fff", outcome.getMessage());
     }
 
-    private CommandOutcome run(Optional<Command> defaultCommand, Optional<Command> helpCommand, Command... commands) {
+    private CommandOutcome run(String cliCommand, Command defaultCommand, Command helpCommand, Command... commands) {
 
         Map<String, ManagedCommand> commandMap = new HashMap<>();
         asList(commands).forEach(c -> commandMap.put(c.getMetadata().getName(), ManagedCommand.forCommand(c)));
 
-        defaultCommand.ifPresent(dc -> {
-            ManagedCommand mc = ManagedCommand.builder(dc).asDefault().build();
-            commandMap.put(dc.getMetadata().getName(), mc);
-        });
+        if (defaultCommand != null) {
+            ManagedCommand mc = ManagedCommand.builder(defaultCommand).asDefault().build();
+            commandMap.put(defaultCommand.getMetadata().getName(), mc);
+        }
 
-        helpCommand.ifPresent(hc -> {
-            ManagedCommand mc = ManagedCommand.builder(hc).asHelp().build();
-            commandMap.put(hc.getMetadata().getName(), mc);
-        });
+        if (helpCommand != null) {
+            ManagedCommand mc = ManagedCommand.builder(helpCommand).asHelp().build();
+            commandMap.put(helpCommand.getMetadata().getName(), mc);
+        }
 
         CommandManager commandManager = new DefaultCommandManager(commandMap);
-        ExecutionPlanBuilder executionPlanBuilder = mock(ExecutionPlanBuilder.class);
-        when(executionPlanBuilder.prepareForExecution(any(Command.class))).thenAnswer(i -> i.getArguments()[0]);
+        Cli cli = cli(cliCommand);
 
-        return new DefaultRunner(mockCli, commandManager, executionPlanBuilder).run();
+        ExecutionPlanBuilder planBuilder = new ExecutionPlanBuilder(
+                () -> args -> cli,
+                () -> commandManager,
+                () -> null,
+                Map.of(),
+                new DefaultBootLogger(false)
+        ) {
+            @Override
+            public Command prepareForExecution(Command mainCommand) {
+                return mainCommand;
+            }
+        };
+
+        return new DefaultRunner(cli, commandManager, planBuilder).run();
+    }
+
+    static class TestCommand implements Command {
+
+        private final CommandMetadata metadata;
+        private final CommandOutcome outcome;
+        boolean wasRun;
+
+        public static TestCommand of(String name, String... options) {
+            return new TestCommand(name, CommandOutcome.succeeded(), options);
+        }
+
+        public static TestCommand of(String name, CommandOutcome outcome, String... options) {
+            return new TestCommand(name, outcome, options);
+        }
+
+        TestCommand(String name, CommandOutcome outcome, String... options) {
+            CommandMetadata.Builder builder = CommandMetadata.builder(name);
+            List.of(options).forEach(opt -> builder.addOption(OptionMetadata.builder(opt).build()));
+            this.metadata = builder.build();
+            this.outcome = outcome;
+        }
+
+        @Override
+        public CommandOutcome run(Cli cli) {
+            this.wasRun = true;
+            return outcome;
+        }
+
+        @Override
+        public CommandMetadata getMetadata() {
+            return metadata;
+        }
+    }
+
+    private static Cli cli(String command) {
+
+        return new Cli() {
+            @Override
+            public String commandName() {
+                return command;
+            }
+
+            @Override
+            public boolean hasOption(String name) {
+                return false;
+            }
+
+            @Override
+            public List<OptionSpec<?>> detectedOptions() {
+                return List.of();
+            }
+
+            @Override
+            public List<String> optionStrings(String name) {
+                return List.of();
+            }
+
+            @Override
+            public List<String> standaloneArguments() {
+                return List.of();
+            }
+        };
     }
 }

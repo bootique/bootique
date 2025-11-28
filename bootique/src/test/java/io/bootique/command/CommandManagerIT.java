@@ -34,8 +34,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class CommandManagerIT {
 
@@ -49,8 +47,8 @@ public class CommandManagerIT {
         CommandManager commandManager = runtime.getInstance(CommandManager.class);
         assertEquals(4, commandManager.getAllCommands().size(), "help, helpconfig and module commands must be present");
 
-        assertSame(M0.mockCommand, commandManager.lookupByName("m0command").getCommand());
-        assertSame(M1.mockCommand, commandManager.lookupByName("m1command").getCommand());
+        assertSame(M0.command, commandManager.lookupByName("m0command").getCommand());
+        assertSame(M1.command, commandManager.lookupByName("m1command").getCommand());
 
         assertFalse(commandManager.getPublicDefaultCommand().isPresent());
         assertSame(runtime.getInstance(HelpCommand.class), commandManager.getPublicHelpCommand().get());
@@ -67,8 +65,8 @@ public class CommandManagerIT {
         CommandManager commandManager = runtime.getInstance(CommandManager.class);
 
         assertEquals(5, commandManager.getAllCommands().size());
-        assertSame(M0.mockCommand, commandManager.lookupByName("m0command").getCommand());
-        assertSame(M1.mockCommand, commandManager.lookupByName("m1command").getCommand());
+        assertSame(M0.command, commandManager.lookupByName("m0command").getCommand());
+        assertSame(M1.command, commandManager.lookupByName("m1command").getCommand());
         assertSame(defaultCommand, commandManager.getPublicDefaultCommand().get());
         assertSame(runtime.getInstance(HelpCommand.class), commandManager.getPublicHelpCommand().get());
     }
@@ -131,7 +129,7 @@ public class CommandManagerIT {
 
         // sanity check
         assertEquals(4, commandManager.getAllCommands().size());
-        assertSame(M1.mockCommand, commandManager.lookupByName("m1command").getCommand());
+        assertSame(M1.command, commandManager.lookupByName("m1command").getCommand());
         assertSame(runtime.getInstance(HelpCommand.class), commandManager.lookupByName("help").getCommand());
         assertSame(defaultCommand, commandManager.getPublicDefaultCommand().get());
     }
@@ -145,31 +143,21 @@ public class CommandManagerIT {
 
     public static class M0 implements BQModule {
 
-        static final Command mockCommand;
-
-        static {
-            mockCommand = mock(Command.class);
-            when(mockCommand.getMetadata()).thenReturn(CommandMetadata.builder("m0command").build());
-        }
+        static final Command command = new NamedCommand("m0command");
 
         @Override
         public void configure(Binder binder) {
-            BQCoreModule.extend(binder).addCommand(mockCommand);
+            BQCoreModule.extend(binder).addCommand(command);
         }
     }
 
     public static class M1 implements BQModule {
 
-        static final Command mockCommand;
-
-        static {
-            mockCommand = mock(Command.class);
-            when(mockCommand.getMetadata()).thenReturn(CommandMetadata.builder("m1command").build());
-        }
+        static final Command command = new NamedCommand("m1command");
 
         @Override
         public void configure(Binder binder) {
-            BQCoreModule.extend(binder).addCommand(mockCommand);
+            BQCoreModule.extend(binder).addCommand(command);
         }
     }
 
@@ -187,9 +175,9 @@ public class CommandManagerIT {
         }
     }
 
-    public static class DefaultCommand2 extends CommandWithMetadata {
+    static class DefaultCommand2 extends CommandWithMetadata {
 
-        private String message;
+        private final String message;
 
         // intentionally using non-default constructor, to ensure DI can't instantiate it without a @Provides method
         public DefaultCommand2(String message) {
@@ -200,6 +188,24 @@ public class CommandManagerIT {
         @Override
         public CommandOutcome run(Cli cli) {
             return CommandOutcome.failed(-1, message);
+        }
+    }
+
+    static class NamedCommand implements Command {
+        private final String name;
+
+        private NamedCommand(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public CommandMetadata getMetadata() {
+            return CommandMetadata.builder(name).build();
+        }
+
+        @Override
+        public CommandOutcome run(Cli cli) {
+            return CommandOutcome.succeeded();
         }
     }
 }

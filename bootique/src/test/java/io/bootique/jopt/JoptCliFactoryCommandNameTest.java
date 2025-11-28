@@ -22,6 +22,8 @@ package io.bootique.jopt;
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
 import io.bootique.command.CommandManager;
+import io.bootique.command.CommandOutcome;
+import io.bootique.command.CommandWithMetadata;
 import io.bootique.command.DefaultCommandManager;
 import io.bootique.command.ManagedCommand;
 import io.bootique.meta.application.ApplicationMetadata;
@@ -35,8 +37,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class JoptCliFactoryCommandNameTest {
 
@@ -50,7 +50,7 @@ public class JoptCliFactoryCommandNameTest {
     @Test
     public void commandName_NoMatch() {
 
-        addMockCommand("c1", "me", "them");
+        addCommand("c1", "me", "them");
 
         Cli cli = createCli("--me");
         assertNull(cli.commandName());
@@ -59,8 +59,8 @@ public class JoptCliFactoryCommandNameTest {
     @Test
     public void commandName_Match() {
 
-        addMockCommand("c1", "me", "them");
-        addMockCommand("c2", "us", "others");
+        addCommand("c1", "me", "them");
+        addCommand("c2", "us", "others");
 
         Cli cli = createCli("--me --c1");
         assertEquals("c1", cli.commandName());
@@ -69,15 +69,13 @@ public class JoptCliFactoryCommandNameTest {
     @Test
     public void commandName_MultipleMatches() {
 
-        addMockCommand("c1", "me", "them");
-        addMockCommand("c2", "us", "others");
+        addCommand("c1", "me", "them");
+        addCommand("c2", "us", "others");
 
         assertThrows(RuntimeException.class, () -> createCli("--me --c1 --c2"));
     }
 
-    private void addMockCommand(String name, String... options) {
-
-        Command mock = mock(Command.class);
+    private void addCommand(String name, String... options) {
 
         // for now JopCLiProvider adds command name as an option;
         // using this option in command line would match the original command
@@ -87,12 +85,15 @@ public class JoptCliFactoryCommandNameTest {
         List.of(options).forEach(opt -> builder.addOption(OptionMetadata.builder(opt).build()));
 
         CommandMetadata md = builder.build();
+        Command cmd = new CommandWithMetadata(md) {
+            @Override
+            public CommandOutcome run(Cli cli) {
+                return CommandOutcome.succeeded();
+            }
+        };
 
-        when(mock.getMetadata()).thenReturn(md);
-
-        ManagedCommand managedCommand  = ManagedCommand.builder(mock).build();
-
-        commands.put(mock.getMetadata().getName(), managedCommand);
+        ManagedCommand managedCommand = ManagedCommand.builder(cmd).build();
+        commands.put(cmd.getMetadata().getName(), managedCommand);
     }
 
     private Cli createCli(String args) {

@@ -19,7 +19,7 @@
 
 package io.bootique.terminal;
 
-import io.bootique.log.BootLogger;
+import io.bootique.log.DefaultBootLogger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +28,6 @@ import java.io.StringReader;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.Mockito.mock;
 
 public class SttyTerminalTest {
 
@@ -36,27 +35,27 @@ public class SttyTerminalTest {
 
     @BeforeEach
     public void before() {
-        terminal = new SttyTerminal(mock(BootLogger.class));
+        terminal = new SttyTerminal(new DefaultBootLogger(false));
     }
 
     @Test
     public void parseLine_OSX() {
         String line = "speed 9600 baud; 39 rows; 136 columns;";
-        assertEquals(new Integer(136), terminal.parseLine(line));
+        assertEquals(136, terminal.parseLine(line));
     }
 
     @Test
     public void parseColumns_OSX() {
         String line = "speed 9600 baud; 39 rows; 136 columns;";
         BufferedReader in = new BufferedReader(new StringReader(line));
-        assertEquals(new Integer(136), terminal.parseColumns(in));
+        assertEquals(136, terminal.parseColumns(in));
     }
 
     @Test
     public void parseLine_Linux() {
         // from Centos 7:
         String line = "speed 9600 baud; rows 40; columns 148; line = 0;";
-        assertEquals(new Integer(148), terminal.parseLine(line));
+        assertEquals(148, terminal.parseLine(line));
     }
 
     @Test
@@ -66,7 +65,7 @@ public class SttyTerminalTest {
         // same as any lunux, except the value is 0
 
         String line = "speed 38400 baud; rows 0; columns 0; line = 0;";
-        assertEquals(new Integer(0), terminal.parseLine(line));
+        assertEquals(0, terminal.parseLine(line));
     }
 
     @Test

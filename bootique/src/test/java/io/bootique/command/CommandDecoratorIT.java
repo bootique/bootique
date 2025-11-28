@@ -35,8 +35,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 public class CommandDecoratorIT {
 
@@ -63,13 +61,12 @@ public class CommandDecoratorIT {
     @Test
     public void alsoRun_Instance() {
 
-        Command cmd = mock(Command.class);
-        when(cmd.run(any())).thenReturn(CommandOutcome.succeeded());
+        DecoratorCommand cmd = DecoratorCommand.of();
 
         new AppRunner(CommandDecorator.alsoRun(cmd)).runAndWaitExpectingSuccess();
 
         assertTrue(mainCommand.isExecuted());
-        verify(cmd).run(any(Cli.class));
+        assertTrue(cmd.wasRun);
     }
 
     @Test
@@ -115,13 +112,11 @@ public class CommandDecoratorIT {
     @Test
     public void beforeRun_Instance() {
 
-        Command cmd = mock(Command.class);
-        when(cmd.run(any())).thenReturn(CommandOutcome.succeeded());
-
+        DecoratorCommand cmd = DecoratorCommand.of();
         CommandDecorator decorator = CommandDecorator.beforeRun(cmd);
 
         new AppRunner(decorator).runExpectingSuccess();
-        verify(cmd).run(any(Cli.class));
+        assertTrue(cmd.wasRun);
     }
 
     @Test
@@ -159,17 +154,10 @@ public class CommandDecoratorIT {
     @Test
     public void beforeAndAlsoRun() {
 
-        Command c1 = mock(Command.class);
-        when(c1.run(any())).thenReturn(CommandOutcome.succeeded());
-
-        Command c2 = mock(Command.class);
-        when(c2.run(any())).thenReturn(CommandOutcome.succeeded());
-
-        Command c3 = mock(Command.class);
-        when(c3.run(any())).thenReturn(CommandOutcome.succeeded());
-
-        Command c4 = mock(Command.class);
-        when(c4.run(any())).thenReturn(CommandOutcome.succeeded());
+        DecoratorCommand c1 = DecoratorCommand.of();
+        DecoratorCommand c2 = DecoratorCommand.of();
+        DecoratorCommand c3 = DecoratorCommand.of();
+        DecoratorCommand c4 = DecoratorCommand.of();
 
         CommandDecorator decorator = CommandDecorator
                 .builder()
@@ -179,20 +167,17 @@ public class CommandDecoratorIT {
 
         new AppRunner(decorator).runAndWaitExpectingSuccess();
         assertTrue(mainCommand.isExecuted());
-        verify(c1).run(any(Cli.class));
-        verify(c2).run(any(Cli.class));
-        verify(c3).run(any(Cli.class));
-        verify(c4).run(any(Cli.class));
+        assertTrue(c1.wasRun);
+        assertTrue(c2.wasRun);
+        assertTrue(c3.wasRun);
+        assertTrue(c4.wasRun);
     }
 
     @Test
     public void multipleDecoratorsForTheSameCommand() {
 
-        Command c1 = mock(Command.class);
-        when(c1.run(any())).thenReturn(CommandOutcome.succeeded());
-
-        Command c2 = mock(Command.class);
-        when(c2.run(any())).thenReturn(CommandOutcome.succeeded());
+        DecoratorCommand c1 = DecoratorCommand.of();
+        DecoratorCommand c2 = DecoratorCommand.of();
 
         appManager.run(Bootique.app("--a")
                 .module(b -> BQCoreModule.extend(b)
@@ -200,12 +185,35 @@ public class CommandDecoratorIT {
                         .decorateCommand(mainCommand.getClass(), CommandDecorator.beforeRun(c1))
                         .decorateCommand(mainCommand.getClass(), CommandDecorator.beforeRun(c2))));
 
-        verify(c1).run(any(Cli.class));
-        verify(c2).run(any(Cli.class));
+        assertTrue(c1.wasRun);
+        assertTrue(c2.wasRun);
         assertTrue(mainCommand.isExecuted());
     }
 
-    private static class MainCommand extends ExecutableOnceCommand {
+    static class DecoratorCommand implements Command {
+        private final CommandOutcome outcome;
+        boolean wasRun;
+
+        public static DecoratorCommand of() {
+            return new DecoratorCommand(CommandOutcome.succeeded());
+        }
+
+        public static DecoratorCommand of(CommandOutcome outcome) {
+            return new DecoratorCommand(outcome);
+        }
+
+        private DecoratorCommand(CommandOutcome outcome) {
+            this.outcome = outcome;
+        }
+
+        @Override
+        public CommandOutcome run(Cli cli) {
+            wasRun = true;
+            return outcome;
+        }
+    }
+
+    static class MainCommand extends ExecutableOnceCommand {
 
         private static final String NAME = "a";
 
@@ -214,7 +222,7 @@ public class CommandDecoratorIT {
         }
     }
 
-    private static class SuccessfulCommand extends ExecutableOnceCommand {
+    static class SuccessfulCommand extends ExecutableOnceCommand {
 
         private static final String NAME = "s";
         private static final String FLAG_OPT = "sflag";
@@ -228,7 +236,7 @@ public class CommandDecoratorIT {
         }
     }
 
-    private static class FailingCommand extends ExecutableOnceCommand {
+    static class FailingCommand extends ExecutableOnceCommand {
 
         private static final String NAME = "f";
         private static final String FLAG_OPT = "fflag";
@@ -322,7 +330,7 @@ public class CommandDecoratorIT {
     }
 
     private class AppRunner {
-        private CommandDecorator decorator;
+        private final CommandDecorator decorator;
 
         public AppRunner(CommandDecorator decorator) {
             this.decorator = decorator;

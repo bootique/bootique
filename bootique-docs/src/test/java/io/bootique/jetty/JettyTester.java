@@ -22,8 +22,6 @@ import io.bootique.BQModule;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.Response;
 
-import static org.mockito.Mockito.mock;
-
 // fake JettyTester for docs
 public class JettyTester {
 
@@ -35,7 +33,7 @@ public class JettyTester {
     }
 
     public WebTarget getTarget() {
-        return mock(WebTarget.class);
+        return null;
     }
 
     public BQModule moduleReplacingConnectors() {

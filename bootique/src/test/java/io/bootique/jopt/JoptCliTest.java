@@ -19,42 +19,30 @@
 
 package io.bootique.jopt;
 
+import joptsimple.OptionParser;
 import joptsimple.OptionSet;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class JoptCliTest {
 
-	private OptionSet mockParsed;
-
-	@BeforeEach
-	public void before() {
-		this.mockParsed = mock(OptionSet.class);
-	}
+    final OptionSet optionSet = new OptionParser(false).parse("");
 
 	@Test
     public void stringsFor_Missing() {
 
-		when(mockParsed.valueOf(anyString())).thenReturn(Collections.emptyList());
-
-		JoptCli opts = new JoptCli(mockParsed, "aname");
+		JoptCli opts = new JoptCli(optionSet, "aname");
 		assertNotNull(opts.optionStrings("no_such_opt"));
 		assertEquals(0, opts.optionStrings("no_such_opt").size());
 	}
 
 	@Test
     public void commandName() {
-		JoptCli o1 = new JoptCli(mockParsed, "aname");
+		JoptCli o1 = new JoptCli(optionSet, "aname");
 		assertEquals("aname", o1.commandName());
 
-		JoptCli o2 = new JoptCli(mockParsed, null);
+		JoptCli o2 = new JoptCli(optionSet, null);
 		assertNull(o2.commandName());
 	}
 }

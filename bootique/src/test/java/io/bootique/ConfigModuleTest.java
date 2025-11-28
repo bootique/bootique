@@ -20,53 +20,64 @@
 package io.bootique;
 
 import io.bootique.config.ConfigurationFactory;
+import io.bootique.type.TypeRef;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @Deprecated
 public class ConfigModuleTest {
 
-	@Test
+    @Test
     public void defaultConfigPrefix() {
-		assertEquals("testxyz", new TestXyzModule().defaultConfigPrefix());
-		assertEquals("xyz", new Xyz().defaultConfigPrefix());
-	}
+        assertEquals("testxyz", new TestXyzModule().defaultConfigPrefix());
+        assertEquals("xyz", new Xyz().defaultConfigPrefix());
+    }
 
-	@Test
+    @Test
     public void configPrefix() {
-		assertEquals("testxyz", new TestXyzModule().configPrefix);
-		assertEquals("custom-prefix", new TestXyzModule("custom-prefix").configPrefix);
-	}
+        assertEquals("testxyz", new TestXyzModule().configPrefix);
+        assertEquals("custom-prefix", new TestXyzModule("custom-prefix").configPrefix);
+    }
 
-	@Test
+    @Test
     public void configConfig() {
 
-		ConfigurationFactory f = mock(ConfigurationFactory.class);
-		when(f.config(any(Class.class), anyString()))
-				.then(a -> "_"+ a.getArgument(1));
+        TestConfigFactory f = new TestConfigFactory();
 
-		TestXyzModule m = new TestXyzModule();
-		String v = m.config(String.class, f);
-		assertEquals("_testxyz", v);
-	}
+        TestXyzModule m = new TestXyzModule();
+        m.config(String.class, f);
+        assertEquals("testxyz", f.passedPrefix);
+    }
 
-	class TestXyzModule extends ConfigModule {
+    class TestXyzModule extends ConfigModule {
 
-		public TestXyzModule() {
+        public TestXyzModule() {
 
-		}
+        }
 
-		public TestXyzModule(String configPrefix) {
-			super(configPrefix);
-		}
-	}
+        public TestXyzModule(String configPrefix) {
+            super(configPrefix);
+        }
+    }
 
-	class Xyz extends ConfigModule {
+    class Xyz extends ConfigModule {
 
-	}
+    }
+
+    static class TestConfigFactory implements ConfigurationFactory {
+
+        String passedPrefix;
+
+        @Override
+        public <T> T config(Class<T> type, String prefix) {
+            this.passedPrefix = prefix;
+            return null;
+        }
+
+        @Override
+        public <T> T config(TypeRef<? extends T> type, String prefix) {
+            return null;
+        }
+    }
 }
