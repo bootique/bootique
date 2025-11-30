@@ -41,7 +41,7 @@ public class CommandOutcome {
     }
 
     /**
-     * Returns a successful outcome with an indicator that that a process was left running on the background.
+     * Returns a successful outcome with an indicator that a process was left running on the background.
      *
      * @return a successful {@link CommandOutcome}.
      */
