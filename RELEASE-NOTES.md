@@ -3,6 +3,7 @@
 * #363 Upgrade to JUnit 5.13.4
 * #364 "--config=stdin:xxx" - STDIN as an extra config source
 * #365 "BQCoreModuleExtender.setPropertyProvider(..)": deferred property creation
+* #366 Upgrade Jackson to 2.19.4
 
 ## 4.0-M1
 
