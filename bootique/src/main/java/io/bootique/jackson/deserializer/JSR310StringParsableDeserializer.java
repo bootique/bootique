@@ -31,8 +31,8 @@ import java.time.ZoneOffset;
 import java.util.function.Function;
 
 /**
- * Deserializer for all Java 8 temporal {@link java.time} types that cannot be represented with numbers and that have
- * parse functions that can take {@link String}s.
+ * Deserializer for all Java temporal {@link java.time} types that cannot be represented with numbers and that have
+ * parse functions that can take a {@link String}.
  */
 class JSR310StringParsableDeserializer<T> extends JSR310DeserializerBase<T> {
 

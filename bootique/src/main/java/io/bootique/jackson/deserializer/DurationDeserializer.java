@@ -22,6 +22,7 @@ package io.bootique.jackson.deserializer;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonTokenId;
 import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -31,7 +32,6 @@ import java.time.Duration;
  * Deserializer for Java 8 temporal {@link Duration}s.
  */
 class DurationDeserializer extends JSR310DeserializerBase<Duration> {
-    private static final long serialVersionUID = 1L;
 
     public static final DurationDeserializer INSTANCE = new DurationDeserializer();
 
@@ -53,10 +53,10 @@ class DurationDeserializer extends JSR310DeserializerBase<Duration> {
 
             case JsonTokenId.ID_STRING -> {
                 String string = parser.getText().trim();
-                yield string.length() > 0 ? Duration.parse(string) : null;
+                yield !string.isEmpty() ? Duration.parse(string) : null;
             }
 
-            default -> throw context.mappingException("Expected type float, integer, or string.");
+            default -> throw JsonMappingException.from(parser, "Expected type float, integer, or string.");
         };
     }
 }

@@ -27,10 +27,10 @@ import java.time.Year;
 import java.time.format.DateTimeFormatter;
 
 /**
- * Deserializer for Java 8 temporal {@link Year}s.
+ * Deserializer for {@link Year}.
  */
 class YearDeserializer extends JSR310DeserializerBase<Year> {
-    private static final long serialVersionUID = 1L;
+
     private DateTimeFormatter formatter;
     public static final YearDeserializer INSTANCE = new YearDeserializer();
 

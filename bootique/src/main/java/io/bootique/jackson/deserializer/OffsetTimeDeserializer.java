@@ -30,10 +30,9 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 /**
- * Deserializer for Java 8 temporal {@link OffsetTime}s.
+ * Deserializer for @link OffsetTime}.
  */
 class OffsetTimeDeserializer extends JSR310DateTimeDeserializerBase<OffsetTime> {
-    private static final long serialVersionUID = 1L;
 
     public static final OffsetTimeDeserializer INSTANCE = new OffsetTimeDeserializer();
 
@@ -54,13 +53,13 @@ class OffsetTimeDeserializer extends JSR310DateTimeDeserializerBase<OffsetTime> 
     public OffsetTime deserialize(JsonParser parser, DeserializationContext context) throws IOException {
         if (parser.hasToken(JsonToken.VALUE_STRING)) {
             String string = parser.getText().trim();
-            if (string.length() == 0) {
+            if (string.isEmpty()) {
                 return null;
             }
             return OffsetTime.parse(string, _formatter);
         }
         if (!parser.isExpectedStartArrayToken()) {
-            throw context.wrongTokenException(parser, JsonToken.START_ARRAY, "Expected array or string.");
+            throw context.wrongTokenException(parser, OffsetTime.class, JsonToken.START_ARRAY, "Expected array or string.");
         }
         int hour = parser.nextIntValue(-1);
         if (hour == -1) {
@@ -101,6 +100,6 @@ class OffsetTimeDeserializer extends JSR310DateTimeDeserializerBase<OffsetTime> 
             }
             return t;
         }
-        throw context.wrongTokenException(parser, JsonToken.VALUE_STRING, "Expected string for TimeZone after numeric values");
+        throw context.wrongTokenException(parser, OffsetTime.class, JsonToken.VALUE_STRING, "Expected string for TimeZone after numeric values");
     }
 }

@@ -30,7 +30,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * Deserializer for Java 8 {@link LocalDateTime}s.
+ * Deserializer for {@link LocalDateTime}
  */
 class LocalDateTimeDeserializer extends JSR310DateTimeDeserializerBase<LocalDateTime> {
 
@@ -53,12 +53,12 @@ class LocalDateTimeDeserializer extends JSR310DateTimeDeserializerBase<LocalDate
     public LocalDateTime deserialize(JsonParser parser, DeserializationContext context) throws IOException {
         if (parser.hasTokenId(JsonTokenId.ID_STRING)) {
             String string = parser.getText().trim();
-            if (string.length() == 0) {
+            if (string.isEmpty()) {
                 return null;
             }
             return LocalDateTime.parse(string, _formatter);
         }
 
-        throw context.wrongTokenException(parser, JsonToken.START_ARRAY, "Expected array or string.");
+        throw context.wrongTokenException(parser, LocalDateTime.class, JsonToken.START_ARRAY, "Expected array or string.");
     }
 }

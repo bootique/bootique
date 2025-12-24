@@ -23,10 +23,10 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonTokenId;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.time.DateTimeException;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -127,14 +127,10 @@ class InstantDeserializer<T extends Temporal> extends JSR310DateTimeDeserializer
                     yield null;
                 }
 
-                try {
-                    yield parsedToValue.apply(_formatter.parse(string));
-                } catch (DateTimeException e) {
-                    throw _peelDTE(e);
-                }
+                yield parsedToValue.apply(_formatter.parse(string));
             }
 
-            default -> throw context.mappingException("Expected type float, integer, or string.");
+            default -> throw JsonMappingException.from(parser, "Expected type float, integer, or string.");
         };
     }
 

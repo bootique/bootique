@@ -29,7 +29,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 /**
- * Deserializer for Java 8 temporal {@link LocalDate}s.
+ * Deserializer for {@link LocalDate}
  */
 class LocalDateDeserializer extends JSR310DateTimeDeserializerBase<LocalDate> {
 
@@ -54,9 +54,11 @@ class LocalDateDeserializer extends JSR310DateTimeDeserializerBase<LocalDate> {
     public LocalDate deserialize(JsonParser parser, DeserializationContext context) throws IOException {
         if (parser.hasToken(JsonToken.VALUE_STRING)) {
             String string = parser.getText().trim();
-            if (string.length() == 0) {
+
+            if (string.isEmpty()) {
                 return null;
             }
+
             // as per [datatype-jsr310#37], only check for optional (and, incorrect...) time marker 'T'
             // if we are using default formatter
             DateTimeFormatter format = _formatter;
@@ -67,6 +69,6 @@ class LocalDateDeserializer extends JSR310DateTimeDeserializerBase<LocalDate> {
             }
             return LocalDate.parse(string, format);
         }
-        throw context.wrongTokenException(parser, JsonToken.START_ARRAY, "Expected array or string.");
+        throw context.wrongTokenException(parser, LocalDate.class, JsonToken.START_ARRAY, "Expected array or string.");
     }
 }
