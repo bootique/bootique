@@ -53,7 +53,7 @@ Add JAXB implementation dependency:
     <version>4.0.5</version>
 </dependency>
 ```
-2. Explicitly "undisable" WADL in Jersey:
+Explicitly "undisable" WADL in Jersey:
 ```java
 JerseyModule.extend(b).setProperty("jersey.config.server.wadl.disableWadl", false);
 ```
