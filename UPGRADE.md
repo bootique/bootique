@@ -41,6 +41,23 @@ described in this task (such as `scheduler.cancelTriggers(..)`, etc.)
 `4.0-M1`._ JWKS and audience properties are now configured in the upstream `bootique-shiro-jwt` module. You need to 
 rename `shirowebjwt` top-level configuration key to `shirojwt`.
 
+* [bootique-jersey #100](https://github.com/bootique/bootique-jersey/issues/100): WADL application descriptor is now
+disabled by default to avoid potential security issues. In the unlikely event that WADL is needed, it can be re-enabled
+like this:
+
+Add JAXB implementation dependency:
+```xml
+<dependency>
+    <groupId>com.sun.xml.bind</groupId>
+    <artifactId>jaxb-impl</artifactId>
+    <version>4.0.5</version>
+</dependency>
+```
+2. Explicitly "undisable" WADL in Jersey:
+```java
+JerseyModule.extend(b).setProperty("jersey.config.server.wadl.disableWadl", false);
+```
+
 ## 4.0-M1
 
 * Finalizing a switch to Jakarta: This affects the core and the majority of modules. "javax" based deprecated modules
