@@ -58,6 +58,34 @@ Explicitly "undisable" WADL in Jersey:
 JerseyModule.extend(b).setProperty("jersey.config.server.wadl.disableWadl", false);
 ```
 
+* [bootique-cayenne #119](https://github.com/bootique/bootique-cayenne/issues/119): Cayenne module configuration 
+structure has changed. If you relied on the implicit default location of the project file (`cayenne-project.xml` on
+the classpath), you will need to add it explicitly:
+```java
+CayenneModule.extend(b).addLocation("classpath:cayenne-project.xml");
+```
+If you added Cayenne projects in Java code, you will need to heed the deprecation warnings and switch to `addLocation(..)`:
+
+```java
+// old...
+// CayenneModule.extend(b).addProject("org/example/cayenne-project.xml");
+// new...
+CayenneModule.extend(b).addLocation("classpath:org/example/cayenne-project.xml");
+```
+
+If you used "cayenne.maps" configuration, you will need to provide an explicit "cayenne-project.xml" location for all
+those DataMaps. And you will still have a way to link them with Bootique DataSources:
+
+```yaml
+cayenne:
+   locations:
+      - classpath:org/example/cayenne-project.xml
+   mapDatasources:
+      m1: ds1
+      m2: ds2
+```
+
+
 ## 4.0-M1
 
 * Finalizing a switch to Jakarta: This affects the core and the majority of modules. "javax" based deprecated modules
