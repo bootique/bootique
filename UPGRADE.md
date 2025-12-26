@@ -101,7 +101,7 @@ resources are occasionally stateful (e.g., in a test, you might have a request c
 break when they become per-request. So the safest upgrade approach would be to explicitly annotate those endpoints with `@Singleton`:
 
 ```java
-@Singleton
+@Singleton  // <-- you need this to be explicit
 @Path("p")
 public class MyApi {}
 
@@ -120,7 +120,7 @@ public class MyModule implements BQModule {
     }
 
     @Provides
-    @Singleton
+    @Singleton // <-- you need this to be explicit
     MyOtherApi provideMe() {
         return new MyOtherApi();    
     }
