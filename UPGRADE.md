@@ -24,7 +24,9 @@ _Upgrade instructions to earlier versions, up to 3.0, are available [here](UPGRA
 
 ## 4.0-M2
 
-### [bootique-jetty #129](https://github.com/bootique/bootique-jetty/issues/129)
+### bootique-jetty #129
+https://github.com/bootique/bootique-jetty/issues/129
+
 After Jetty 12 upgrade we stopped collecting the `ThreadPool.QueuedRequests` metric. While Jetty still provides 
 "queueSize" property, the number it returns 
 is not the same as the number of requests waiting in the queue, as it combines in the same count both requests and some 
