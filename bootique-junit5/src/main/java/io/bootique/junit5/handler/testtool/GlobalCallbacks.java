@@ -30,9 +30,9 @@ import java.util.function.Function;
 /**
  * @since 2.0
  */
-public class GlobalCallbacks implements ExtensionContext.Store.CloseableResource {
+public class GlobalCallbacks implements AutoCloseable {
 
-    private ExtensionContext closingContext;
+    private final ExtensionContext closingContext;
     private final Map<Field, Callback> callbacks;
 
     public GlobalCallbacks(ExtensionContext closingContext) {
@@ -49,7 +49,7 @@ public class GlobalCallbacks implements ExtensionContext.Store.CloseableResource
     }
 
     @Override
-    public void close() throws Throwable {
+    public void close() throws Exception {
         for (Callback c : callbacks.values()) {
             if (c.getAfterAll() != null) {
                 c.getAfterAll().afterAll(closingContext);
