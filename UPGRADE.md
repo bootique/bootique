@@ -24,29 +24,32 @@ _Upgrade instructions to earlier versions, up to 3.0, are available [here](UPGRA
 
 ## 4.0-M2
 
-### [bootique-jetty #129](https://github.com/bootique/bootique-jetty/issues/129): After Jetty 12 upgrade we stopped 
-collecting the `ThreadPool.QueuedRequests` metric. While Jetty still provides "queueSize" property, the number it returns 
+### [bootique-jetty #129](https://github.com/bootique/bootique-jetty/issues/129)
+After Jetty 12 upgrade we stopped collecting the `ThreadPool.QueuedRequests` metric. While Jetty still provides 
+"queueSize" property, the number it returns 
 is not the same as the number of requests waiting in the queue, as it combines in the same count both requests and some 
 internal "jobs". So we can no longer report this accurately. Instead, this metric will always report "0" (and will be 
 removed later in 5.x). This also affects the corresponding health check (which will always succeed now). Our 
 recommendation is to stop watching this metric and watch `ThreadPool.Utlization` instead.
 
-### [bootique-jetty #129](https://github.com/bootique/bootique-jetty/issues/129): After Jetty 12 upgrade, `RequestMDCItem` 
+### [bootique-jetty #129](https://github.com/bootique/bootique-jetty/issues/129)
+After Jetty 12 upgrade, `RequestMDCItem` 
 callback methods changed to take `org.eclipse.jetty.server.Request` as a parameter instead of `ServletContext` and 
 `ServletRequest`, as now it is invoked outside the scope of the "servlet" objects. This change will only affect your 
 code if you implemented custom "MDC items", but otherwise should be transparent.
 
-### [bootique-job #135](https://github.com/bootique/bootique-job/issues/135): If you managed canceling and restarting
+### [bootique-job #135](https://github.com/bootique/bootique-job/issues/135)
+If you managed canceling and restarting
 job triggers via `ScheduledJob`, you will get compilation errors and will need to switch to a cleaner new API
 described in this task (such as `scheduler.cancelTriggers(..)`, etc.)
 
-### [bootique-shiro #48](https://github.com/bootique/bootique-shiro/issues/28): _Only applies if you are upgrading from
-`4.0-M1`._ JWKS and audience properties are now configured in the upstream `bootique-shiro-jwt` module. You need to 
-rename `shirowebjwt` top-level configuration key to `shirojwt`.
+### [bootique-shiro #48](https://github.com/bootique/bootique-shiro/issues/28)
+_Only applies if you are upgrading from `4.0-M1`._ JWKS and audience properties are now configured in the upstream 
+`bootique-shiro-jwt` module. You need to rename `shirowebjwt` top-level configuration key to `shirojwt`.
 
-### [bootique-jersey #100](https://github.com/bootique/bootique-jersey/issues/100): WADL application descriptor is now
-disabled by default to avoid potential security issues. In the unlikely event that WADL is needed, it can be re-enabled
-like this:
+### [bootique-jersey #100](https://github.com/bootique/bootique-jersey/issues/100): 
+WADL application descriptor is now disabled by default to avoid potential security issues. In the unlikely event that 
+WADL is needed, it can be re-enabled like this:
 
 Add JAXB implementation dependency:
 ```xml
@@ -56,14 +59,14 @@ Add JAXB implementation dependency:
     <version>4.0.5</version>
 </dependency>
 ```
-Explicitly "undisable" WADL in Jersey:
+Explicitly "un-disable" WADL in Jersey:
 ```java
 JerseyModule.extend(b).setProperty("jersey.config.server.wadl.disableWadl", false);
 ```
 
-### [bootique-cayenne #119](https://github.com/bootique/bootique-cayenne/issues/119): Cayenne module configuration 
-structure has changed. If you relied on the implicit default location of the project file (`cayenne-project.xml` on
-the classpath), you will need to add it explicitly:
+### [bootique-cayenne #119](https://github.com/bootique/bootique-cayenne/issues/119)
+Cayenne module configuration structure has changed. If you relied on the implicit default location of the project file 
+(`cayenne-project.xml` on the classpath), you will need to add it explicitly:
 ```java
 CayenneModule.extend(b).addLocation("classpath:cayenne-project.xml");
 ```
@@ -88,8 +91,8 @@ cayenne:
       m2: ds2
 ```
 
-### [bootique-jersey #101](https://github.com/bootique/bootique-jersey/issues/101): **`@Singleton` annotations started to 
-matter!!** When upgrading from the deprecated
+### [bootique-jersey #101](https://github.com/bootique/bootique-jersey/issues/101) `@Singleton` annotations started to matter!!
+When upgrading from the deprecated
 resource registration `JerseyModule.extend(b).addResource(..)` to `addApiResource(..)`, remember that the old methods
 effectively treated your API resources as singletons, regardless of whether classes (or their Bootique "provides"
 methods) were annotated with `@Singleton` or not. `addApiResource(..)` will respect the resource scope, and suddenly you 
@@ -126,7 +129,8 @@ public class MyModule implements BQModule {
 
 ## 4.0-M1
 
-### Finalizing a switch to Jakarta: This affects the core and the majority of modules. "javax" based deprecated modules
+### Finalizing a switch to Jakarta
+This affects the core and the majority of modules. "javax" based deprecated modules
 were removed, and the names of the remaining modules containing `-jakarta` where shortened. E.g. `bootique-jetty` 
 was removed, and `bootique-jetty-jakarta` was renamed back to `bootique-jetty`. What this means from the upgrade 
 perspective is this:
@@ -139,7 +143,8 @@ still working in 3.0, even in the context of Jakarta modules, but now it will be
 * If you are using Bootique testing extensions, note that deprecated JUnit 4 integrations are removed, so we'll suggest
  switching to JUnit 5 and much more powerful JUnit 5 testing extensions.
 
-### [bootique-jcache #15](https://github.com/bootique/bootique-jcache/issues/15): JCache bootstrap procedure was rewritten
+### [bootique-jcache #15](https://github.com/bootique/bootique-jcache/issues/15)
+JCache bootstrap procedure was rewritten
 to be more "native" to Bootique. It will no longer use the static provider caches from `javax.cache.Caching`, and will
 manage `CacheManager` in the scope of a single Bootique runtime. This affects the user-visible behavior in the following
 ways:
