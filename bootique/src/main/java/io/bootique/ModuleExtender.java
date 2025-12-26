@@ -101,6 +101,13 @@ public abstract class ModuleExtender<T extends ModuleExtender<T>> {
         return binder.bindMap(keyType, elementType);
     }
 
+    /**
+     * @since 4.0
+     */
+    protected <K, V> MapBuilder<K, V> newMap(TypeLiteral<K> keyType, TypeLiteral<V> elementType, String bindingName) {
+        return binder.bindMap(keyType, elementType, bindingName);
+    }
+
     protected <K, V> MapBuilder<K, V> newMap(Class<K> keyType, Class<V> elementType, Class<? extends Annotation> annotatedWith) {
         return binder.bindMap(keyType, elementType, annotatedWith);
     }
