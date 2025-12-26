@@ -22,6 +22,7 @@ package io.bootique.di.spi;
 import io.bootique.BQModule;
 import io.bootique.di.BeforeScopeEnd;
 import io.bootique.di.DIBootstrap;
+import io.bootique.di.DIRuntimeException;
 import io.bootique.di.Injector;
 import io.bootique.di.mock.*;
 import org.junit.jupiter.api.Test;
@@ -35,6 +36,8 @@ public class DefaultInjectorScopeTest {
         Injector injector = DIBootstrap
                 .injectorBuilder(b -> b.bind(MockInterface1.class).to(MockImplementation1.class).inSingletonScope())
                 .build();
+
+        assertThrows(DIRuntimeException.class, () -> injector.isSingleton(MockImplementation2.class));
 
         MockImplementation2 undeclared1 = injector.getInstance(MockImplementation2.class);
         MockImplementation2 undeclared2 = injector.getInstance(MockImplementation2.class);
@@ -50,6 +53,8 @@ public class DefaultInjectorScopeTest {
                 .defaultSingletonScope()
                 .build();
 
+        assertThrows(DIRuntimeException.class, () -> injector.isSingleton(MockImplementation2.class));
+
         MockImplementation2 undeclared1 = injector.getInstance(MockImplementation2.class);
         MockImplementation2 undeclared2 = injector.getInstance(MockImplementation2.class);
 
@@ -63,6 +68,8 @@ public class DefaultInjectorScopeTest {
         BQModule module = binder -> binder.bind(MockInterface1.class).to(MockImplementation1.class);
 
         Injector injector = DIBootstrap.injectorBuilder(module).defaultSingletonScope().build();
+
+        assertTrue(injector.isSingleton(MockInterface1.class));
 
         MockInterface1 instance1 = injector.getInstance(MockInterface1.class);
         MockInterface1 instance2 = injector.getInstance(MockInterface1.class);
@@ -86,6 +93,8 @@ public class DefaultInjectorScopeTest {
 
         DefaultInjector injector = new DefaultInjector(module);
 
+        assertFalse(injector.isSingleton(MockInterface1.class));
+
         MockInterface1 instance1 = injector.getInstance(MockInterface1.class);
         MockInterface1 instance2 = injector.getInstance(MockInterface1.class);
         MockInterface1 instance3 = injector.getInstance(MockInterface1.class);
@@ -108,6 +117,8 @@ public class DefaultInjectorScopeTest {
                 .inSingletonScope();
 
         DefaultInjector injector = new DefaultInjector(module);
+
+        assertTrue(injector.isSingleton(MockInterface1.class));
 
         MockInterface1 instance1 = injector.getInstance(MockInterface1.class);
         MockInterface1 instance2 = injector.getInstance(MockInterface1.class);
@@ -155,6 +166,8 @@ public class DefaultInjectorScopeTest {
 
         DefaultInjector injector = new DefaultInjector(module);
 
+        assertTrue(injector.isSingleton(MockInterface1.class));
+
         MockInterface1 instance1 = injector.getInstance(MockInterface1.class);
         MockInterface1 instance2 = injector.getInstance(MockInterface1.class);
         MockInterface1 instance3 = injector.getInstance(MockInterface1.class);
@@ -175,6 +188,8 @@ public class DefaultInjectorScopeTest {
                 .toProvider(MockImplementation1_Provider.class).withoutScope();
 
         DefaultInjector injector = new DefaultInjector(module);
+
+        assertFalse(injector.isSingleton(MockInterface1.class));
 
         MockInterface1 instance1 = injector.getInstance(MockInterface1.class);
         MockInterface1 instance2 = injector.getInstance(MockInterface1.class);

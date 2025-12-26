@@ -90,6 +90,22 @@ public interface Injector {
     boolean hasProvider(Key<?> key) throws DIRuntimeException;
 
     /**
+     * Returns whether a given binding key corresponds to an instance in the singleton scope.
+     *
+     * @since 4.0
+     */
+    default boolean isSingleton(Class<?> type) {
+        return isSingleton(Key.get(type));
+    }
+
+    /**
+     * Returns whether a given binding key corresponds to an instance in the singleton scope.
+     *
+     * @since 4.0
+     */
+    boolean isSingleton(Key<?> key);
+
+    /**
      * Performs field injection on a given object, ignoring constructor injection. This method is rarely used directly,
      * as objects that require dependency injection are usually themselves obtained from the injector, and have all
      * their fields already initialized.

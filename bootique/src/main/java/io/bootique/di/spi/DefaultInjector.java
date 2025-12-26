@@ -278,6 +278,16 @@ public class DefaultInjector implements Injector {
         return getBinding(key) != null;
     }
 
+    @Override
+    public boolean isSingleton(Key<?> key) {
+        Binding<?> binding = getBinding(key);
+        if (binding == null) {
+            throw new DIRuntimeException("Non-existing binding: %s", key);
+        }
+
+        return binding.getScope() == singletonScope;
+    }
+
     @SuppressWarnings("unchecked")
     private <T> Binding<T> createDynamicBinding(Key<T> key) {
         // Compute new bindings for given key
