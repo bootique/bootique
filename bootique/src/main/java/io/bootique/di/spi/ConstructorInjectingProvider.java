@@ -133,7 +133,7 @@ public class ConstructorInjectingProvider<T> implements NamedProvider<T> {
             return injector.getProvider(Key.get(TypeLiteral.of(parameterType), bindingAnnotation));
         } else {
             Key<?> key = Key.get(TypeLiteral.of(genericType), bindingAnnotation);
-            return injector.getInstanceWithCycleProtection(key);
+            return injector.getInstanceWithCycleProtection(key, false);
         }
     }
 

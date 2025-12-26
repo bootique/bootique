@@ -223,10 +223,6 @@ public class DefaultInjector implements Injector {
 
     @Override
     public <T> T getInstance(Key<T> key) {
-        return getInstanceWithCycleProtection(key);
-    }
-
-    <T> T getInstanceWithCycleProtection(Key<T> key) {
         return getInstanceWithCycleProtection(key, false);
     }
 

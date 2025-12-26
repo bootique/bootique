@@ -90,7 +90,7 @@ class FieldInjectingProvider<T> extends MemberInjectingProvider<T> {
             return injector.getProvider(Key.get(TypeLiteral.of(parameterType), bindingAnnotation));
         } else {
             Key<?> key = Key.get(fieldType, bindingAnnotation);
-            return injector.getInstanceWithCycleProtection(key);
+            return injector.getInstanceWithCycleProtection(key, false);
         }
     }
 
