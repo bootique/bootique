@@ -85,13 +85,14 @@ cayenne:
       m2: ds2
 ```
 
-* [bootique-jersey #101](https://github.com/bootique/bootique-jersey/issues/101): `@Singleton` annotations started to 
-matter!! When upgrading from the deprecated
+* [bootique-jersey #101](https://github.com/bootique/bootique-jersey/issues/101): **`@Singleton` annotations started to 
+matter!!** When upgrading from the deprecated
 resource registration `JerseyModule.extend(b).addResource(..)` to `addApiResource(..)`, remember that the old methods
-effectively treated your API resources as singletons, regardless of whether class (or their Bootique "provides"
+effectively treated your API resources as singletons, regardless of whether classes (or their Bootique "provides"
 methods) were annotated with `@Singleton` or not. `addApiResource(..)` will respect the resource scope, and suddenly you 
-may end up with lots of per-request endpoints, taking a performance hit of their constant re-creation. So the safest upgrade
-approach would be to explicitly annotate those endpoints with `@Singleton`:
+may end up with lots of per-request endpoints, taking a performance hit of their constant re-creation. Moreover, some
+resources are occasionally stateful (e.g., in a test, you might have a request counter within a resource). Those will
+break when they become per-request. So the safest upgrade approach would be to explicitly annotate those endpoints with `@Singleton`:
 
 ```java
 @Singleton
