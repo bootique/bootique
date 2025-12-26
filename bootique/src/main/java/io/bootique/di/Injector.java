@@ -34,7 +34,9 @@ public interface Injector {
      * an implementation, a provider, or a provider method, tries to create an object of this type on the fly. In that
      * case, if an object can not be created by the Injector (e.g. if it is an interface), throws {@link DIRuntimeException}.
      */
-    <T> T getInstance(Class<T> type) throws DIRuntimeException;
+    default <T> T getInstance(Class<T> type) throws DIRuntimeException {
+        return getInstance(Key.get(type));
+    }
 
     /**
      * Returns a service instance bound in the container for a specific binding key.
@@ -55,11 +57,13 @@ public interface Injector {
     /**
      * @since 4.0
      */
-    <T> Provider<T> getProvider(Class<T> type) throws DIRuntimeException;
+    default <T> Provider<T> getProvider(Class<T> type) throws DIRuntimeException {
+        return getProvider(Key.get(type));
+    }
 
     /**
      * @since 3.0
-     * @deprecated in favor of {@link #getProvider(Key)} 
+     * @deprecated in favor of {@link #getProvider(Key)}
      */
     @Deprecated(since = "4.0", forRemoval = true)
     default <T> Provider<T> getJakartaProvider(Key<T> key) throws DIRuntimeException {
@@ -75,8 +79,9 @@ public interface Injector {
      * @param type binding type to check
      * @return is provider for given type registered
      */
-    boolean hasProvider(Class<?> type) throws DIRuntimeException;
-
+    default boolean hasProvider(Class<?> type) throws DIRuntimeException {
+        return hasProvider(Key.get(type));
+    }
 
     /**
      * @param key binding key to check

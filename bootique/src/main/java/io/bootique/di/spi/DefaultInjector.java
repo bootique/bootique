@@ -222,11 +222,6 @@ public class DefaultInjector implements Injector {
     }
 
     @Override
-    public <T> T getInstance(Class<T> type) {
-        return getInstanceWithCycleProtection(Key.get(type));
-    }
-
-    @Override
     public <T> T getInstance(Key<T> key) {
         return getInstanceWithCycleProtection(key);
     }
@@ -260,11 +255,6 @@ public class DefaultInjector implements Injector {
         }
     }
 
-    @Override
-    public <T> Provider<T> getProvider(Class<T> type) throws DIRuntimeException {
-        return getProvider(Key.get(type));
-    }
-
     @SuppressWarnings({"unchecked", "rawtypes"})
     private <T> T getProxyInstance(Key<T> key) {
         Class<T> bindingClass = (Class) key.getType().getRawType();
@@ -285,11 +275,6 @@ public class DefaultInjector implements Injector {
         }
 
         return predicates.wrapProvider(binding.getScoped());
-    }
-
-    @Override
-    public boolean hasProvider(Class<?> type) {
-        return hasProvider(Key.get(type));
     }
 
     @Override
