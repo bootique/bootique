@@ -20,6 +20,7 @@
 package io.bootique.di.spi;
 
 import io.bootique.BQModule;
+import io.bootique.di.Binder;
 import io.bootique.di.DIRuntimeException;
 import io.bootique.di.InjectionTraceElement;
 import io.bootique.di.Injector;
@@ -58,14 +59,12 @@ public class DefaultInjector implements Injector {
 
     private final DefaultScope singletonScope;
     private final Scope noScope;
+    private final Scope defaultScope;
 
-    private final DefaultBinder binder;
     private final Map<Key<?>, Binding<?>> bindings;
     private final Map<Key<?>, Decoration<?>> decorations;
-    private final ProvidesHandler providesHandler;
     private final InjectionStack injectionStack;
     private final InjectionTrace injectionTrace;
-    private final Scope defaultScope;
     private final InjectorPredicates predicates;
     private final Set<Key<?>> earlySetupSet;
     private final Map<Class<?>, List<Key<?>>> keysByRawType;
@@ -87,11 +86,7 @@ public class DefaultInjector implements Injector {
 
         this.singletonScope = new DefaultScope();
         this.noScope = NoScope.INSTANCE;
-        if (options.contains(Options.SINGLETON_SCOPE_BY_DEFAULT)) {
-            this.defaultScope = singletonScope;
-        } else {
-            this.defaultScope = noScope;
-        }
+        this.defaultScope = options.contains(Options.SINGLETON_SCOPE_BY_DEFAULT) ? singletonScope : noScope;
 
         this.allowOverride = !options.contains(Options.DECLARED_OVERRIDE_ONLY);
         this.allowDynamicBinding = !options.contains(Options.DISABLE_DYNAMIC_BINDINGS);
@@ -103,16 +98,18 @@ public class DefaultInjector implements Injector {
         this.decorations = new ConcurrentHashMap<>();
         this.injectionStack = new InjectionStack();
         this.injectionTrace = injectionTraceEnabled ? new InjectionTrace() : null;
-        this.providesHandler = new ProvidesHandler(this);
-        this.binder = new DefaultBinder(this);
         this.earlySetupSet = Collections.newSetFromMap(new ConcurrentHashMap<>());
         this.keysByRawType = new ConcurrentHashMap<>();
+
+        Binder binder = new DefaultBinder(this);
 
         // bind self for injector injection...
         binder.bind(Injector.class).toInstance(this);
 
         // bind modules
         if (modules != null && modules.length > 0) {
+            ProvidesHandler providesHandler = new ProvidesHandler(this);
+
             for (BQModule module : modules) {
                 module.configure(binder);
                 providesHandler.bindingsFromAnnotatedMethods(module);
@@ -125,14 +122,6 @@ public class DefaultInjector implements Injector {
 
     InjectionStack getInjectionStack() {
         return injectionStack;
-    }
-
-    DefaultBinder getBinder() {
-        return binder;
-    }
-
-    ProvidesHandler getProvidesHandler() {
-        return providesHandler;
     }
 
     InjectorPredicates getPredicates() {
@@ -395,10 +384,6 @@ public class DefaultInjector implements Injector {
         return injectionTraceEnabled;
     }
 
-    Map<Key<?>, Binding<?>> getAllBindings() {
-        return Collections.unmodifiableMap(bindings);
-    }
-
     @SuppressWarnings({"rawtypes", "unchecked"})
     private void applyDecorators() {
         for (Entry<Key<?>, Decoration<?>> e : decorations.entrySet()) {
@@ -474,7 +459,7 @@ public class DefaultInjector implements Injector {
      * @param message message
      * @param args    message format arguments
      * @param <T>     generic type to return
-     * @return nothing, alwasy throws
+     * @return nothing, always throws
      * @throws DIRuntimeException throws DI exception always
      */
     <T> T throwException(String message, Object... args) throws DIRuntimeException {
