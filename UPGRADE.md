@@ -24,8 +24,7 @@ _Upgrade instructions to earlier versions, up to 3.0, are available [here](UPGRA
 
 ## 4.0-M2
 
-### bootique-jetty #129
-https://github.com/bootique/bootique-jetty/issues/129
+### [bootique-jetty #129](https://github.com/bootique/bootique-jetty/issues/129)
 
 * After Jetty 12 upgrade we stopped collecting the `ThreadPool.QueuedRequests` metric. While Jetty still provides 
 "queueSize" property, the number it returns 
@@ -38,8 +37,7 @@ recommendation is to stop watching this metric and watch `ThreadPool.Utlization`
 `ServletContext` and `ServletRequest`, as now it is invoked outside the scope of the "servlet" objects. This change 
 will only affect your code if you implemented custom "MDC items", but otherwise should be transparent.
 
-### bootique-job #135
-https://github.com/bootique/bootique-job/issues/135
+### [bootique-job #135](https://github.com/bootique/bootique-job/issues/135)
 
 If you managed canceling and restarting
 job triggers via `ScheduledJob`, you will get compilation errors and will need to switch to a cleaner new API
