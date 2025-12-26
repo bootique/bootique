@@ -85,6 +85,40 @@ cayenne:
       m2: ds2
 ```
 
+* [bootique-jersey #101](https://github.com/bootique/bootique-jersey/issues/101): `@Singleton` annotations started to 
+matter!! When upgrading from the deprecated
+resource registration `JerseyModule.extend(b).addResource(..)` to `addApiResource(..)`, remember that the old methods
+effectively treated your API resources as singletons, regardless of whether class (or their Bootique "provides"
+methods) were annotated with `@Singleton` or not. `addApiResource(..)` will respect the resource scope, and suddenly you 
+may end up with lots of per-request endpoints, taking a performance hit of their constant re-creation. So the safest upgrade
+approach would be to explicitly annotate those endpoints with `@Singleton`:
+
+```java
+@Singleton
+@Path("p")
+public class MyApi {}
+
+JerseyModule.extend(binder).addApiResource(MyApi.class);
+```
+
+```java
+@Path("p")
+public class MyOtherApi {}
+
+public class MyModule implements BQModule {
+    
+    @Override
+    public void configure(Binder b) {
+        JerseyModule.extend(binder).addApiResource(MyOtherApi.class);
+    }
+
+    @Provides
+    @Singleton
+    MyOtherApi provideMe() {
+        return new MyOtherApi();    
+    }
+}
+```
 
 ## 4.0-M1
 
