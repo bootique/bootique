@@ -51,7 +51,21 @@ public abstract class ModuleExtender<T extends ModuleExtender<T>> {
         return binder.bindSet(elementType);
     }
 
+    /**
+     * @since 4.0
+     */
+    protected <V> SetBuilder<V> newSet(TypeLiteral<V> elementType) {
+        return binder.bindSet(elementType);
+    }
+
     protected <V> SetBuilder<V> newSet(Class<V> elementType, Class<? extends Annotation> annotatedWith) {
+        return binder.bindSet(elementType, annotatedWith);
+    }
+
+    /**
+     * @since 4.0
+     */
+    protected <V> SetBuilder<V> newSet(TypeLiteral<V> elementType, Class<? extends Annotation> annotatedWith) {
         return binder.bindSet(elementType, annotatedWith);
     }
 
@@ -59,6 +73,13 @@ public abstract class ModuleExtender<T extends ModuleExtender<T>> {
      * @since 2.0
      */
     protected <V> SetBuilder<V> newSet(Class<V> elementType, String bindingName) {
+        return binder.bindSet(elementType, bindingName);
+    }
+
+    /**
+     * @since 4.0
+     */
+    protected <V> SetBuilder<V> newSet(TypeLiteral<V> elementType, String bindingName) {
         return binder.bindSet(elementType, bindingName);
     }
 
