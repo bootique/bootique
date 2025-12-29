@@ -70,7 +70,8 @@ Cayenne module configuration structure has changed. If you relied on the implici
 ```java
 CayenneModule.extend(b).addLocation("classpath:cayenne-project.xml");
 ```
-If you added Cayenne projects in Java code, you will need to heed the deprecation warnings and switch to `addLocation(..)`:
+If you added Cayenne projects in Java code, you will need to heed the deprecation warnings switching to `addLocation(..)`
+and use `classpath:` prefix for classpath-based resources:
 
 ```java
 // old...
@@ -78,9 +79,18 @@ If you added Cayenne projects in Java code, you will need to heed the deprecatio
 // new...
 CayenneModule.extend(b).addLocation("classpath:org/example/cayenne-project.xml");
 ```
+If you previously mixed `addProject(..)` in java code with YAML `cayenne.configs`, the presence of `addProject(..)`
+would result in `cayenne.configs` being ignored. Currently, mixing `addLocation(..)` with `cayenne.locations` will 
+result in the two being merged together. If you still want to suppress YAML locations (e.g. those coming from an external 
+jar), you might define a config with an empty locations array:
 
-If you used "cayenne.maps" configuration, you will need to provide an explicit "cayenne-project.xml" location for all
-those DataMaps. And you will still have a way to link them with Bootique DataSources:
+```yaml
+cayenne:
+   locations: []
+```
+
+If you used `cayenne.maps` configuration, you will need to provide an explicit "cayenne-project.xml" location for all
+those DataMaps. Though you will still have a way to link them with Bootique DataSources:
 
 ```yaml
 cayenne:
