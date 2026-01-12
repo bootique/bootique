@@ -28,7 +28,7 @@
 
     <groupId>io.bootique</groupId>
     <artifactId>bootique-framework-parent</artifactId>
-    <version>4.0-SNAPSHOT</version>
+    <version>4.0-M2</version>
     <packaging>pom</packaging>
 
     <name>bootique-framework-parent</name>
@@ -46,7 +46,7 @@
     <scm>
         <developerConnection>scm:git:ssh://git@github.com/bootique/bootique</developerConnection>
         <url>https://github.com/bootique/bootique</url>
-        <tag>HEAD</tag>
+        <tag>4.0-M2</tag>
     </scm>
 
     <dependencyManagement>
