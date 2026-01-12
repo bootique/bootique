@@ -43,7 +43,7 @@ If you managed canceling and restarting
 job triggers via `ScheduledJob`, you will get compilation errors and will need to switch to a cleaner new API
 described in this task (such as `scheduler.cancelTriggers(..)`, etc.)
 
-### [bootique-shiro #48](https://github.com/bootique/bootique-shiro/issues/28)
+### [bootique-shiro #48](https://github.com/bootique/bootique-shiro/issues/48)
 _Only applies if you are upgrading from `4.0-M1`._ JWKS and audience properties are now configured in the upstream 
 `bootique-shiro-jwt` module. You need to rename `shirowebjwt` top-level configuration key to `shirojwt`.
 
