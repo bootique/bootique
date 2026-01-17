@@ -1,3 +1,7 @@
+## 3.0-RC2
+
+#370 [3.x] Upgrade JUnit to 5.14.1
+
 ## 3.0-RC1
 
 * #349 Support for jakarta.inject API

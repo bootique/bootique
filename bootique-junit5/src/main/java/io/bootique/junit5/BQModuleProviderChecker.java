@@ -228,11 +228,16 @@ public class BQModuleProviderChecker {
         }
 
         @Override
-        public void publishFile(String name, MediaType mediaType, ThrowingConsumer<Path> action) {
+        public void publishDirectory(String name, ThrowingConsumer<Path> action) {
         }
 
         @Override
-        public void publishDirectory(String name, ThrowingConsumer<Path> action) {
+        public void publishFile(String name, org.junit.jupiter.api.MediaType mediaType, ThrowingConsumer<Path> action) {
+        }
+
+        @Override
+        public Store getStore(StoreScope scope, Namespace namespace) {
+            return null;
         }
     }
 }
