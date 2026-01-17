@@ -60,6 +60,6 @@ class YearMonthDeserializer extends JSR310DateTimeDeserializerBase<YearMonth> {
             }
             return YearMonth.parse(string, _formatter);
         }
-        throw context.wrongTokenException(parser, JsonToken.START_ARRAY, "Expected array or string.");
+        throw context.wrongTokenException(parser, YearMonth.class, JsonToken.START_ARRAY, "Expected array or string.");
     }
 }

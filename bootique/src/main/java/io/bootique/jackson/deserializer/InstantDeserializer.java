@@ -23,6 +23,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonTokenId;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -132,17 +133,12 @@ class InstantDeserializer<T extends Temporal>
                 if (string.length() == 0) {
                     return null;
                 }
-                T value;
-                try {
-                    TemporalAccessor acc = _formatter.parse(string);
-                    value = parsedToValue.apply(acc);
-                } catch (DateTimeException e) {
-                    throw _peelDTE(e);
-                }
-                return value;
+
+                TemporalAccessor acc = _formatter.parse(string);
+                return parsedToValue.apply(acc);
             }
         }
-        throw context.mappingException("Expected type float, integer, or string.");
+        throw JsonMappingException.from(parser, "Expected type float, integer, or string.");
     }
 
     private ZoneId getZone(DeserializationContext context) {

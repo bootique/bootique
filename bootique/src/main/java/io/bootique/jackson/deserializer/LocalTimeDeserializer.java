@@ -29,7 +29,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * Deserializer for Java 8 temporal {@link LocalTime}s.
+ * Deserializer for {@link LocalTime}.
  */
 class LocalTimeDeserializer extends JSR310DateTimeDeserializerBase<LocalTime> {
 
@@ -52,12 +52,12 @@ class LocalTimeDeserializer extends JSR310DateTimeDeserializerBase<LocalTime> {
     public LocalTime deserialize(JsonParser parser, DeserializationContext context) throws IOException {
         if (parser.hasToken(JsonToken.VALUE_STRING)) {
             String string = parser.getText().trim();
-            if (string.length() == 0) {
+            if (string.isEmpty()) {
                 return null;
             }
             return LocalTime.parse(string, _formatter);
         }
 
-        throw context.wrongTokenException(parser, JsonToken.START_ARRAY, "Expected array or string.");
+        throw context.wrongTokenException(parser, LocalTime.class, JsonToken.START_ARRAY, "Expected array or string.");
     }
 }

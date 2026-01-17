@@ -23,9 +23,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
-import com.fasterxml.jackson.databind.introspect.Annotated;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
@@ -42,10 +40,9 @@ abstract class JSR310DateTimeDeserializerBase<T> extends JSR310DeserializerBase<
     protected abstract JsonDeserializer<T> withDateFormat(DateTimeFormatter dtf);
 
     @Override
-    public JsonDeserializer<?> createContextual(DeserializationContext ctxt,
-                                                BeanProperty property) throws JsonMappingException {
+    public JsonDeserializer<?> createContextual(DeserializationContext ctxt, BeanProperty property) {
         if (property != null) {
-            JsonFormat.Value format = ctxt.getAnnotationIntrospector().findFormat((Annotated) property.getMember());
+            JsonFormat.Value format = ctxt.getAnnotationIntrospector().findFormat(property.getMember());
             if (format != null) {
                 if (format.hasPattern()) {
                     final String pattern = format.getPattern();
