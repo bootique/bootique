@@ -13,7 +13,7 @@
 * #361 Removed deprecated modules and APIs
 * #362 Require Java 21
 
-## 3.0-RC2
+## 3.0
 
 * #370 [3.x] Upgrade JUnit to 5.14.1
 * #371 [3.x] Upgrade Jackson to 2.19.4
