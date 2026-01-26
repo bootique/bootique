@@ -22,6 +22,41 @@
 
 _Upgrade instructions to earlier versions, up to 3.0, are available [here](UPGRADE-3.0.md)_ 
 
+## 4.0-M3
+
+### Upgrade to Testcontainser 2.x
+
+Public test modules that depend on Testcontainers were upgraded to the new major version - 2.0.x. This may require 
+changes in a couple of places:
+* Testcontainers finally removes JUnit 4 transitive dependency, so if you mistakenly imported JUnit 4 classes in 
+JUnit 5 tests you will get compile errors. It should be easy to clean them up, switching to JUnit 5 alternatives. 
+* Testcontainers module artifact IDs got a "testcontainers-" prefix. E.g., `org.testcontainers:mysql` became 
+`org.testcontainers:testcontainers-mysql`. Be aware of that if you are adding Testcontainers dependencies directly
+in addition to what's added via Bootique.
+
+### [bootique-shiro #50](https://github.com/bootique/bootique-shiro/issues/50)
+_Only applies if you are upgrading from `4.0-M2`._ The structure of `shirojwt` configuration was changed to support 
+more than one authorized server:
+
+```yaml
+# Old format
+shirojwt:
+  audience: a1
+  jwkExpiresIn: 1hr
+  jwkLocation: https://example.org/keys.json
+```
+```yaml
+# New format
+shirojwt:
+  jwkExpiresIn: 1hr
+  trustedServers:
+    server1:
+      audience: a1
+      jwkLocation: https://example.org/keys.json
+```
+You can add as many servers under `trustedServers` as needed.
+
+
 ## 4.0-M2
 
 ### [bootique-jetty #129](https://github.com/bootique/bootique-jetty/issues/129)
