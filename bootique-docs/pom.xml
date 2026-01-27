@@ -119,8 +119,8 @@
                                 <sectnums />
                                 <icons>font</icons>
                                 <toc>auto</toc>
-                                <bootique_version>3.0-RC1</bootique_version>
-                                <bootique_doc_version>3.x</bootique_doc_version>
+                                <bootique_version>4.0-M3</bootique_version>
+                                <bootique_doc_version>4.x</bootique_doc_version>
                             </attributes>
                         </configuration>
                     </execution>
