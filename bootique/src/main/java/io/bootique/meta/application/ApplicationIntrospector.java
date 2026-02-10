@@ -62,7 +62,7 @@ class ApplicationIntrospector {
         }
 
         int slash = urlString.lastIndexOf('/');
-        return slash < 0 && slash >= urlString.length() - 1 ? urlString : urlString.substring(slash + 1);
+        return slash == -1 ? urlString : urlString.substring(slash + 1);
     }
 
 
