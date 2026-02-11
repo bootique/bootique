@@ -22,7 +22,11 @@ package io.bootique.shutdown;
 import io.bootique.log.BootLogger;
 
 import java.time.Duration;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
@@ -31,10 +35,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.function.Function;
 
 /**
- * A shutdown handler that performs a best-effort attempt to shutdown a set of {@link AutoCloseable} objects,
+ * A shutdown handler that performs a best-effort attempt to shut down a set of {@link AutoCloseable} objects,
  * blocking no longer then the specified timeout.
  */
 public class DefaultShutdownManager implements ShutdownManager {
