@@ -22,9 +22,9 @@ package io.bootique.meta.module;
 import io.bootique.ModuleCrate;
 import io.bootique.meta.config.ConfigMetadataCompiler;
 import io.bootique.meta.config.ConfigMetadataNode;
+import io.bootique.meta.config.ConfigObjectMetadata;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -60,12 +60,64 @@ public class ModulesMetadataCompiler {
             return Collections.emptyList();
         }
 
-        Collection<ConfigMetadataNode> configs = new ArrayList<>();
+        ConfigObjectMetadata commonRoot = ConfigObjectMetadata.builder("temp_root").build();
 
-        configTypes.forEach((prefix, type) ->
-                configs.add(configCompiler.compile(prefix, type))
-        );
+        // Sort alphabetically so parent paths are always processed before their children
+        // (e.g. "parent" before "parent.child")
+        configTypes.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .forEach(e -> process(commonRoot, e.getKey(), e.getValue()));
 
-        return configs;
+        // TODO: suppose we can have a single configuration root instead of a collection? In this case we will not
+        //   need to unpack "commonRoot"
+        return commonRoot.getProperties();
     }
+
+    private void process(
+            ConfigObjectMetadata parent,
+            String path,
+            Type type) {
+
+        if (path.charAt(0) == '.') {
+            throw new IllegalArgumentException("Invalid path. Can not start with a '.': " + path);
+        }
+
+        if (path.charAt(path.length() - 1) == '.') {
+            throw new IllegalArgumentException("Invalid path. Can not end with a '.': " + path);
+        }
+
+        String[] chunks = path.split("\\.");
+        int parentLen = chunks.length - 1;
+        for (int i = 0; i < parentLen; i++) {
+            if (chunks[i].isEmpty()) {
+                throw new IllegalArgumentException("Invalid path. Can not have repeating '.': " + path);
+            }
+
+            parent = getOrCreateParent(parent, chunks[i]);
+        }
+
+        parent.getProperties().add(configCompiler.compile(chunks[parentLen], type));
+    }
+
+    private ConfigObjectMetadata getOrCreateParent(ConfigObjectMetadata grandParent, String name) {
+        ConfigMetadataNode p = grandParent
+                .getProperties()
+                .stream()
+                .filter(n -> name.equals(n.getName()))
+                .findFirst()
+                .orElse(null);
+
+        if (p == null) {
+
+            ConfigObjectMetadata np = ConfigObjectMetadata.builder(name).build();
+            grandParent.getProperties().add(np);
+
+            return np;
+        } else if (p instanceof ConfigObjectMetadata parentContainer) {
+            return parentContainer;
+        } else {
+            throw new IllegalArgumentException("Path container component '" + name + "' conflicts with an existing value path");
+        }
+    }
+
 }

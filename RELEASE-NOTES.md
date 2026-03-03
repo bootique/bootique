@@ -1,3 +1,7 @@
+## 4.0-M4
+
+* #372 Nested and overlapping config prefixes
+
 ## 4.0-M2
 
 * #363 Upgrade to JUnit 5.13.4
