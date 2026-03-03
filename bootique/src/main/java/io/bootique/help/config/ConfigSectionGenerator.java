@@ -53,20 +53,26 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
                     @Override
                     public ConfigObjectMetadata visitObjectMetadata(ConfigObjectMetadata visited) {
 
-                        // Include the root type even if it has no properties.
-                        // This ensures its header is printed in maps and lists
+                        // Include the root type even if it has no properties. This ensures its header is printed in maps and lists
                         if (metadata == visited) {
                             return visited;
                         }
 
-                        return visited.isAbstractType() || (visited.getProperties().isEmpty() && visited.getTypeLabel() == null) ? null : visited;
+                        if (visited.isAbstractType()) {
+                            return null;
+                        }
+
+                        // Include empty children that have polymorphic options
+                        return !visited.getProperties().isEmpty() || visited.getTypeLabel() != null
+                                ? visited
+                                : null;
                     }
                 }))
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                .toList();
 
         if (!selfAndSubconfigs.isEmpty()) {
-            ConfigObjectMetadata last = selfAndSubconfigs.get(selfAndSubconfigs.size() - 1);
+            ConfigObjectMetadata last = selfAndSubconfigs.getLast();
             selfAndSubconfigs.forEach(md -> {
                 printObjectNoSubclasses(md);
 
