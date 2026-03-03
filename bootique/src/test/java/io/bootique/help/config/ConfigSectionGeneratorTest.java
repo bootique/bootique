@@ -368,6 +368,57 @@ public class ConfigSectionGeneratorTest {
     }
 
     @Test
+    public void visitObjectConfig_Inheritance_NoPropertiesSubtype() {
+
+        ConfigObjectMetadata sub1 = ConfigObjectMetadata.builder()
+                .type(Config3.class)
+                .typeLabel("c3")
+                .description("Subtype desc")
+                .addProperty(ConfigValueMetadata.builder("p0").type(Boolean.class).build())
+                .addProperty(ConfigValueMetadata.builder("p1").type(String.class).build())
+                .build();
+
+        // sub2 has a typeLabel but NO properties - this is the case that is currently broken
+        ConfigObjectMetadata sub2 = ConfigObjectMetadata.builder()
+                .type(Config4.class)
+                .typeLabel("c4")
+                .build();
+
+        ConfigObjectMetadata m1Config = ConfigObjectMetadata
+                .builder("m1root")
+                .description("Root config of M1")
+                .type(ConfigRoot1.class)
+                .abstractType(true)
+                .addSubConfig(sub1)
+                .addSubConfig(sub2)
+                .build();
+
+        assertLines(m1Config, """
+                m1root:
+                      #
+                      # Root config of M1
+                      # Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$ConfigRoot1'.
+                      #
+
+                      #
+                      # Type option: c3
+                      # Subtype desc
+                      # Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$Config3'.
+                      #
+
+                      type: 'c3'
+                      p0: <true|false>
+                      p1: <string>
+
+                      #
+                      # Type option: c4
+                      # Resolved as 'io.bootique.help.config.ConfigSectionGeneratorTest$Config4'.
+                      #
+
+                      type: 'c4'""");
+    }
+
+    @Test
     public void visitMapConfig_ValueInheritance() throws NoSuchFieldException {
 
         Type genericMapType = ConfigRoot2.class.getField("mapOfRoot1").getGenericType();

@@ -59,7 +59,7 @@ class ConfigSectionGenerator implements ConfigMetadataVisitor<Object> {
                             return visited;
                         }
 
-                        return visited.isAbstractType() || visited.getProperties().isEmpty() ? null : visited;
+                        return visited.isAbstractType() || (visited.getProperties().isEmpty() && visited.getTypeLabel() == null) ? null : visited;
                     }
                 }))
                 .filter(Objects::nonNull)

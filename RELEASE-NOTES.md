@@ -1,6 +1,7 @@
 ## 4.0-M4
 
 * #372 Nested and overlapping config prefixes
+* #373 "-H" doesn't output polymorphic configs that have no properties
 
 ## 4.0-M2
 
