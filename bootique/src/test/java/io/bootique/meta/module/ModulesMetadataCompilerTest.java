@@ -160,20 +160,39 @@ public class ModulesMetadataCompilerTest {
     }
 
     @Test
+    public void nonOverlappingRoots() {
+        BQModule module = b -> {
+        };
+        ModuleCrate crate = ModuleCrate.of(module)
+                .moduleName("M1")
+                .config("config1", ParentConfig.class)
+                .config("config2", ParentConfig.class)
+                .build();
+
+        ModulesMetadata modulesMetadata = createCompiler().compile(List.of(crate));
+        ModuleMetadata moduleMetadata = modulesMetadata.getModules().iterator().next();
+        Collection<ConfigMetadataNode> configs = moduleMetadata.getConfigs();
+
+        assertEquals(2, configs.size());
+        assertTrue(configs.stream().anyMatch(c -> "config1".equals(c.getName())));
+        assertTrue(configs.stream().anyMatch(c -> "config2".equals(c.getName())));
+    }
+
+    @Test
     public void invalidPath_StartsWithDot() {
-        ModuleCrate crate = ModuleCrate.of((BQModule) b -> {}).config(".parent", ParentConfig.class).build();
+        ModuleCrate crate = ModuleCrate.of(b -> {}).config(".parent", ParentConfig.class).build();
         assertThrows(IllegalArgumentException.class, () -> createCompiler().compile(List.of(crate)));
     }
 
     @Test
     public void invalidPath_EndsWithDot() {
-        ModuleCrate crate = ModuleCrate.of((BQModule) b -> {}).config("parent.", ParentConfig.class).build();
+        ModuleCrate crate = ModuleCrate.of(b -> {}).config("parent.", ParentConfig.class).build();
         assertThrows(IllegalArgumentException.class, () -> createCompiler().compile(List.of(crate)));
     }
 
     @Test
     public void invalidPath_RepeatingDots() {
-        ModuleCrate crate = ModuleCrate.of((BQModule) b -> {}).config("parent..child", ParentConfig.class).build();
+        ModuleCrate crate = ModuleCrate.of(b -> {}).config("parent..child", ParentConfig.class).build();
         assertThrows(IllegalArgumentException.class, () -> createCompiler().compile(List.of(crate)));
     }
 
