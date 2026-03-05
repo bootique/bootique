@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Bootique runtime lifecycle manager for tests. Needed as we can't use "bootique-junit5" facilities in the core tests.
+ * Bootique runtime lifecycle manager for tests. Needed as we can't use "bootique-junit" facilities in the core tests.
  */
 public class TestAppManager implements BeforeEachCallback, AfterEachCallback {
 

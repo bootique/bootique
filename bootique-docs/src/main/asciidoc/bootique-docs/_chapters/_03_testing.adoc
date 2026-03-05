@@ -23,8 +23,8 @@ Bootique is uniquely suitable to be used as a test framework. Within a single te
 multiple in-process runtimes, each with а distinct set of modules and configurations. Bootique test facilities are
 controlled with a small number of annotations: `@BQTest`, `@BQTestTool` and `@BQApp`, that will be described below.
 
-This chapter is about the core test framework. For module-specific test APIs (e.g. `bootique-jdbc-junit5`,
-`bootique-jetty-junit5`), check documentation of those modules. They all follow the same base principles
+This chapter is about the core test framework. For module-specific test APIs (e.g. `bootique-jdbc-junit`,
+`bootique-jetty-junit`), check documentation of those modules. They all follow the same base principles
 described here.
 
 To start using Bootique test extensions, import the following module in the "test" scope:
@@ -36,7 +36,7 @@ To start using Bootique test extensions, import the following module in the "tes
 ----
 <dependency>
     <groupId>io.bootique</groupId>
-    <artifactId>bootique-junit5</artifactId>
+    <artifactId>bootique-junit</artifactId>
     <scope>test</scope>
 </dependency>
 ----
@@ -48,7 +48,7 @@ To start using Bootique test extensions, import the following module in the "tes
 [source,groovy]
 ----
 {
-  testImplementation: 'io.bootique:bootique-junit5'
+  testImplementation: 'io.bootique:bootique-junit'
 }
 ----
 ====
@@ -90,7 +90,7 @@ include::../../../../test/java/io/bootique/docs/testing/BQAppNoRunTest.java[tag=
 === Test Tools and Scopes
 
 Bootique provides a number of test tools that help you customize the apps for the test environment
-(e.g. `TcDbTester` tool from `bootique-jdbc-junit5-testcontainers` starts a test database and supplies a "module" to
+(e.g. `TcDbTester` tool from `bootique-jdbc-junit-testcontainers` starts a test database and supplies a "module" to
 the app with DataSource
 configuration to access that DB; `JettyTester` from `bootique-jetty` configures HTTP connector to listen on a random
 unoccupied port and provides a Java client to send requests to the server, etc.).

@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 public class NetworkTest {
 
     // tag::Testing[]
-    // a tool from "bootique-jetty-junit5". Doesn't require @BQTestTool,
+    // a tool from "bootique-jetty-junit". Doesn't require @BQTestTool,
     // as it has no lifecycle of its own
     static final JettyTester jetty = JettyTester.create();
 
