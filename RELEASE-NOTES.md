@@ -2,6 +2,7 @@
 
 * #372 Nested and overlapping config prefixes
 * #373 "-H" doesn't output polymorphic configs that have no properties
+* #375 Upgrade JUnit to 6.0.3
 
 ## 4.0-M2
 

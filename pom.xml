@@ -23,7 +23,7 @@
     <parent>
         <groupId>io.bootique.modules.parent</groupId>
         <artifactId>bootique-modules-parent</artifactId>
-        <version>4.0.4</version>
+        <version>4.0.5</version>
     </parent>
 
     <groupId>io.bootique</groupId>
@@ -36,9 +36,9 @@
 
     <modules>
         <module>bootique</module>
-        <module>bootique-junit5</module>
+        <module>bootique-junit</module>
         <module>bootique-testcontainers-internal</module>
-        <module>bootique-junit5-badspi-it</module>
+        <module>bootique-junit-badspi-it</module>
         <module>bootique-jsr330-tck</module>
         <module>bootique-docs</module>
     </modules>
@@ -47,6 +47,9 @@
         <commons.lang.version>3.18.0</commons.lang.version>
         <commons.compress.version>1.26.1</commons.compress.version>
         <commons.io.version>2.19.0</commons.io.version>
+
+        <!-- TODO: different from jackson-core version. Remove this property once they align again -->
+        <jackson.annotations.version>2.21</jackson.annotations.version>
     </properties>
 
     <!-- TODO: this section will be obsolete once we upgrade to bootique-modules-parent:3.0.21 -->
@@ -71,7 +74,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
-                <version>${jackson.version}</version>
+                <version>${jackson.annotations.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
@@ -86,7 +89,7 @@
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-engine</artifactId>
-                <version>${junit5.version}</version>
+                <version>${junit.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -150,7 +153,7 @@
                     <excludeArtifacts>
                         <excludeArtifact>bootique-docs</excludeArtifact>
                         <excludeArtifact>bootique-jsr330-tck</excludeArtifact>
-                        <excludeArtifact>bootique-junit5-badspi-it</excludeArtifact>
+                        <excludeArtifact>bootique-junit-badspi-it</excludeArtifact>
                     </excludeArtifacts>
                 </configuration>
             </plugin>

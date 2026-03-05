@@ -53,7 +53,7 @@
         <dependencies>
             <dependency>
                 <groupId>io.bootique</groupId>
-                <artifactId>bootique-junit5</artifactId>
+                <artifactId>bootique-junit</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -67,7 +67,7 @@
     <dependencies>
         <dependency>
             <groupId>io.bootique</groupId>
-            <artifactId>bootique-junit5</artifactId>
+            <artifactId>bootique-junit</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

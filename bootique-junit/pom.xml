@@ -25,10 +25,10 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>bootique-junit5</artifactId>
+    <artifactId>bootique-junit</artifactId>
     <packaging>jar</packaging>
 
-    <name>bootique-junit5: unit/integration test framework for Bootique apps</name>
+    <name>bootique-junit: unit/integration test framework for Bootique apps</name>
     <description>
         Provides a test framework on top of Bootique.
     </description>
