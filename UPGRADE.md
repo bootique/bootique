@@ -22,6 +22,31 @@
 
 _Upgrade instructions to earlier versions, up to 3.0, are available [here](UPGRADE-3.0.md)_ 
 
+## 4.0-M4
+
+### Upgrade to JUnit 6
+
+We switched to JUnit 6. It is mostly compatible with JUnit 5, and there are no real changes to the code. Still we had a
+lot of references to "junit5" in the code base (previously that helped to differentiate it from JUnit 4). As a part of 
+the JUnit 6 switch, we renamed them all to just "jnuit". E.g., `bootique-junit5` module became `bootique-junit`, 
+`bootique-jetty-junit5` -> `bootique-jetty-junit`, etc. You will need to rename those in your build files (`pom.xml`, 
+`build.gradle` and such):
+
+```xml
+   <dependency>
+       <groupId>io.bootique.jetty</groupId>
+-      <artifactId>bootique-jetty-junit5</artifactId>
++      artifactId>bootique-jetty-junit</artifactId>
+   </dependency>
+```
+And then you will also need to rename `junit5` package name in test imports to just `junit`. E.g.:
+
+```java
+-import io.bootique.jetty.junit5.JettyTester;
++import io.bootique.jetty.junit.JettyTester;
+```
+
+
 ## 4.0-M3
 
 ### Upgrade to Testcontainser 2.x
