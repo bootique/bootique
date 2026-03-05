@@ -16,22 +16,33 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package io.bootique.docs.testing;
+package io.bootique.junit;
 
-import io.bootique.BQRuntime;
-import io.bootique.Bootique;
-import io.bootique.junit.BQApp;
-import io.bootique.junit.BQTest;
+/**
+ * Defines scopes of Bootique test tools within JUnit 5 test execution.
+ *
+ * @since 2.0
+ */
+public enum BQTestScope {
 
-@BQTest
-public class BQAppTest {
+    /**
+     * A scope that spans the entire JUnit run, that may include multiple test classes.
+     */
+    GLOBAL,
 
-    // tag::BQApp[]
-    @BQApp
-    final static BQRuntime app = Bootique
-            .app("--server", "--config", "classpath:test.yml")
-            .autoLoadModules()
-            .createRuntime();
-    // end::BQApp[]
+    /**
+     * A scope that spans a single test class.
+     */
+    TEST_CLASS,
 
+    /**
+     * A scope that spans a single test method.
+     */
+    TEST_METHOD,
+
+    /**
+     * An implied scope based on whether the tool field is declared as a static or an instance variable. Static
+     * corresponds to {@link #TEST_CLASS} scope, while instance - to {@link #TEST_METHOD}.
+     */
+    IMPLIED;
 }

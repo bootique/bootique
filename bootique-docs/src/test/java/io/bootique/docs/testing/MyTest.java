@@ -2,9 +2,9 @@ package io.bootique.docs.testing;
 
 import io.bootique.BQRuntime;
 import io.bootique.command.CommandOutcome;
-import io.bootique.junit5.BQTest;
-import io.bootique.junit5.BQTestFactory;
-import io.bootique.junit5.BQTestTool;
+import io.bootique.junit.BQTest;
+import io.bootique.junit.BQTestFactory;
+import io.bootique.junit.BQTestTool;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 

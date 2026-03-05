@@ -16,22 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package io.bootique.docs.testing;
+package io.bootique.junit.scope;
 
-import io.bootique.BQRuntime;
-import io.bootique.Bootique;
-import io.bootique.junit.BQApp;
-import io.bootique.junit.BQTest;
+import io.bootique.junit.BQTestScope;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
-@BQTest
-public class BQAppTest {
+/**
+ * @since 2.0
+ */
+public interface BQAfterMethodCallback {
 
-    // tag::BQApp[]
-    @BQApp
-    final static BQRuntime app = Bootique
-            .app("--server", "--config", "classpath:test.yml")
-            .autoLoadModules()
-            .createRuntime();
-    // end::BQApp[]
-
+    void afterMethod(BQTestScope scope, ExtensionContext context) throws Exception;
 }

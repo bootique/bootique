@@ -18,9 +18,9 @@
  */
 package io.bootique.docs.testing;
 
-import io.bootique.junit5.BQTest;
-import io.bootique.junit5.BQTestScope;
-import io.bootique.junit5.BQTestTool;
+import io.bootique.junit.BQTest;
+import io.bootique.junit.BQTestScope;
+import io.bootique.junit.BQTestTool;
 
 @BQTest
 public class BQTestToolTest {

@@ -16,22 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package io.bootique.docs.testing;
+package io.bootique.junit;
 
-import io.bootique.BQRuntime;
-import io.bootique.Bootique;
-import io.bootique.junit.BQApp;
-import io.bootique.junit.BQTest;
+import io.bootique.junit.handler.app.BQAppHandler;
+import io.bootique.junit.handler.testtool.BQTestToolHandler;
+import org.junit.jupiter.api.extension.ExtendWith;
 
-@BQTest
-public class BQAppTest {
+import java.lang.annotation.*;
 
-    // tag::BQApp[]
-    @BQApp
-    final static BQRuntime app = Bootique
-            .app("--server", "--config", "classpath:test.yml")
-            .autoLoadModules()
-            .createRuntime();
-    // end::BQApp[]
-
+/**
+ * Registers Bootique Junit 5 extension that will manage emulated test apps in the annotated test class. Used in
+ * conjunction with fields annotated with @{@link BQApp} and @{@link BQTestTool}.
+ *
+ * @since 2.0
+ */
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+// TODO: need TestToolHandler to be run before the AppHandler.. Is there a guarantee that the order here is followed?
+@ExtendWith({BQTestToolHandler.class, BQAppHandler.class})
+@Inherited
+public @interface BQTest {
 }

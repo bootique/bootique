@@ -16,22 +16,35 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package io.bootique.docs.testing;
 
-import io.bootique.BQRuntime;
-import io.bootique.Bootique;
-import io.bootique.junit.BQApp;
-import io.bootique.junit.BQTest;
+package io.bootique.junit;
 
-@BQTest
-public class BQAppTest {
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.nio.charset.Charset;
 
-    // tag::BQApp[]
-    @BQApp
-    final static BQRuntime app = Bootique
-            .app("--server", "--config", "classpath:test.yml")
-            .autoLoadModules()
-            .createRuntime();
-    // end::BQApp[]
+public class InMemoryPrintStream extends PrintStream {
 
+	private PrintStream splitOut;
+
+	public InMemoryPrintStream(PrintStream splitOut) {
+		super(new ByteArrayOutputStream(), true);
+		this.splitOut = splitOut;
+	}
+
+	@Override
+	public void println(String x) {
+		splitOut.println(x);
+		super.println(x);
+	}
+
+	@Override
+	public void println(Object x) {
+		splitOut.println(x);
+		super.println(x);
+	}
+
+	public String toString() {
+		return new String(((ByteArrayOutputStream) out).toByteArray(), Charset.forName("UTF-8"));
+	}
 }

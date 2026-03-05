@@ -16,22 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package io.bootique.docs.testing;
+package io.bootique.junit;
 
-import io.bootique.BQRuntime;
-import io.bootique.Bootique;
-import io.bootique.junit.BQApp;
-import io.bootique.junit.BQTest;
+import org.junit.jupiter.api.Test;
 
-@BQTest
-public class BQAppTest {
+public class BQTestTool_Global2IT extends BQTestTool_Global_Base {
 
-    // tag::BQApp[]
-    @BQApp
-    final static BQRuntime app = Bootique
-            .app("--server", "--config", "classpath:test.yml")
-            .autoLoadModules()
-            .createRuntime();
-    // end::BQApp[]
-
+    @Test
+    public void test2() {
+       assertState();
+    }
 }

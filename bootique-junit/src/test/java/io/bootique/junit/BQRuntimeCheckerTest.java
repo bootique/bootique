@@ -16,33 +16,38 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package io.bootique.junit;
 
-package io.bootique.test.junit;
-
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeName;
-import io.bootique.junit.PolymorphicConfigurationChecker;
+import io.bootique.BQCoreModule;
+import io.bootique.BQRuntime;
+import io.bootique.BQModule;
+import io.bootique.di.Binder;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+@BQTest
+public class BQRuntimeCheckerTest {
 
-public class PolymorphicConfigurationCheckerIT {
+    @BQTestTool
+    final BQTestFactory testFactory = new BQTestFactory();
 
     @Test
-    public void notPolymorphicConfiguration() {
-
-        // intentionally tricking Java type boundary checks
-        Class c1 = C1.class;
-        Class c2 = C2.class;
-
-        assertThrows(AssertionError.class, ()->  PolymorphicConfigurationChecker.test(c1, c2));
+    public void modulesLoaded() {
+        BQRuntime runtime = testFactory.app().createRuntime();
+        BQRuntimeChecker.testModulesLoaded(runtime, BQCoreModule.class);
     }
 
-    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, defaultImpl = C2.class)
-    public static class C1 {
+    @Test
+    public void modulesNotLoaded() {
+        BQRuntime runtime = testFactory.app().createRuntime();
+        Assertions.assertThrows(AssertionError.class,
+                () -> BQRuntimeChecker.testModulesLoaded(runtime, NonLoadedModule.class));
     }
 
-    @JsonTypeName("c2")
-    public static class C2 extends C1 {
+    static class NonLoadedModule implements BQModule {
+
+        @Override
+        public void configure(Binder binder) {
+        }
     }
 }
