@@ -540,7 +540,7 @@ help and elsewhere:
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docs/programming/commands/custom/MyCommand.java[tag=command]
+include::../../../../test/java/io/bootique/docs/programming/commands/MyCommand.java[tag=command]
 ----
 
 The command initializes metadata in constructor and implements the "run" method to run its code.
@@ -550,14 +550,14 @@ To make the new command available to Bootique, add it to `BQCoreModule`'s extend
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docs/programming/commands/custom/MyModule.java[tag=addCommand]
+include::../../../../test/java/io/bootique/docs/programming/commands/MyModule.java[tag=addCommand]
 ----
 
 To implement a "daemon" command running forever until it receives an OS signal (e.g. a web server waiting for user requests) , do something like this:
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docs/programming/commands/custom/MyDaemonCommand.java[tag=run]
+include::../../../../test/java/io/bootique/docs/programming/commands/MyDaemonCommand.java[tag=run]
 ----
 
 ==== Injection in Commands
@@ -569,7 +569,7 @@ So a common pattern with commands is to inject `jakarta.inject.Provider` instead
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docs/programming/commands/injection/MyCommand.java[tag=Commands]
+include::../../../../test/java/io/bootique/docs/programming/commands/InjectingCommand.java[tag=inject]
 ----
 
 ==== Decorating Commands
@@ -587,7 +587,7 @@ or _in parallel_ with it). Second you "decorate" the main command with that poli
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docs/programming/commands/decorating/MyCommand.java[tag=Commands]
+include::../../../../test/java/io/bootique/docs/programming/commands/DecoratingModule.java[tag=decorate]
 ----
 
 Based on the specified policy Bootique figures out the sequence of execution and runs the main and the secondary commands.

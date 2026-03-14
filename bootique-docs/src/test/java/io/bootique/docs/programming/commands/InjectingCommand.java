@@ -1,4 +1,4 @@
-package io.bootique.docs.programming.commands.injection;
+package io.bootique.docs.programming.commands;
 
 import io.bootique.cli.Cli;
 import io.bootique.command.Command;
@@ -6,19 +6,22 @@ import io.bootique.command.CommandOutcome;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 
-public class MyCommand implements Command {
+public class InjectingCommand implements Command {
 
-    // tag::Commands[]
+    // tag::inject[]
     @Inject
     private Provider<SomeService> provider;
 
     @Override
     public CommandOutcome run(Cli cli) {
         provider.get().someMethod();
-        // end::Commands[]
-        return null;
-        // tag::Commands[]
+        return CommandOutcome.succeeded();
     }
-    // end::Commands[]
+    // end::inject[]
+
+    static class SomeService {
+        public void someMethod() {
+        }
+    }
 }
 

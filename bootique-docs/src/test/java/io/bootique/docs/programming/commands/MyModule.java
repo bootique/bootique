@@ -1,4 +1,4 @@
-package io.bootique.docs.programming.commands.custom;
+package io.bootique.docs.programming.commands;
 
 import io.bootique.BQCoreModule;
 import io.bootique.BQModule;

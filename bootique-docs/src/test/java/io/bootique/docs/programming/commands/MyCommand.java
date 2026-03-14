@@ -1,4 +1,4 @@
-package io.bootique.docs.programming.commands.custom;
+package io.bootique.docs.programming.commands;
 
 import io.bootique.cli.Cli;
 import io.bootique.command.CommandOutcome;
@@ -25,7 +25,6 @@ public class MyCommand extends CommandWithMetadata {
 
         return CommandOutcome.succeeded();
     }
-
 }
 // end::command[]
 
