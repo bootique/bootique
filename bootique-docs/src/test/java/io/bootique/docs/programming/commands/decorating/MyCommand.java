@@ -7,10 +7,11 @@ import io.bootique.di.Binder;
 
 public class MyCommand implements BQModule {
     // tag::Commands[]
-    CommandDecorator extraCommands = CommandDecorator
+    CommandDecorator extraCommands = CommandDecorator.builder()
             .beforeRun(CustomHealthcheckCommand.class)
             .alsoRun(ScheduleCommand.class)
-            .alsoRun(HeartbeatCommand.class);
+            .alsoRun(HeartbeatCommand.class)
+            .build();
 
     // end::Commands[]
 
