@@ -182,7 +182,7 @@ This will print the following:
 
 As mentioned above, `BQRuntime` is a holder of all application objects, and modules are blueprints to create those
 objects. You'd write your own module code to define how your objects should be created and initialized. This is done
-via bindings and "provider" methods, and with the assistance of the dependency injection (DI) mechanism built into
+via bindings and "provider" methods that are processed on startup by the dependency injection (DI) mechanism built into
 Bootique.
 
 ==== Dependency Injection
@@ -212,8 +212,7 @@ cleaner API, as the object can be created if needed without a DI environment.
 
 ==== Bindings
 
-Regardless of which flavor was selected,
-the implementation needs to be _bound_ in the module class:
+Regardless of which flavor was selected, the implementation needs to be _bound_ in the module class:
 [source,java,indent=0]
 ----
 include::../../../../test/java/io/bootique/docs/programming/injection/HelloModule1.java[tags=binding]
@@ -258,10 +257,55 @@ Provider object has the same rules for injection of its own dependencies as regu
 fields or an annotated constructor.
 
 ==== Injection in Collections
-TODO
+`Binder` allows to declare injectable collections (either Sets or Maps). Say you are writing your
+own web server that will dispatch requests to Java servlets (of course `bootique-jetty` already provides such a server,
+but it is still a good example):
+[source,java,indent=0]
+----
+include::../../../../test/java/io/bootique/docs/programming/injection/SetInjectionModule.java[tags=set]
+----
+<1> Starts the binding of type `Set<Servlet>`
+<2> Binds two servlets to the collection
 
-==== Injection and Generics
-TODO
+Now the `Set<Servlet>` can be injected to our web server object:
+[source,java,indent=0]
+----
+include::../../../../test/java/io/bootique/docs/programming/injection/SetInjectionModule.java[tags=injectSet]
+----
+
+A few notes on the code above:
+
+* A unique signature of the Set (`Set<Servlet>`) is used as a key to identify it during injection. So something more
+generic like `Set<String>` has a chance of multiple conflicting sets to be present in your app. To disambiguate them,
+you should use `@Named` annotation.
+
+* `Servlet1.class` and `Servlet2.class` are not simply classes, they are treated as DI keys to locate and
+inject those objects into the `Set`. E.g., a dedicated "provides" method can be defined to create `Servlet2`:
++
+[source,java,indent=0]
+----
+include::../../../../test/java/io/bootique/docs/programming/injection/SetInjectionModule.java[tags=provides]
+----
+
+`Binder.bindMap(..)` works similarly to `bindSet(..)` except, of course, it has injectable keys and values.
+
+NOTE: Collection injection may seem complicated, but it is a very powerful mechanism that turns Bootique into a
+ **plugin engine**, and modules - to "plugins". It allows "upstream" modules to define specific collections, and
+"downstream" modules - add objects to those collections.
+
+In fact the real servlet server in `bootique-jetty` does just that, but with a bit of syntactic sugar to hide some of
+the complexity of DI collection binding:
+[source,java,indent=0]
+----
+JettyModule.extend(binder)
+   .addServlet(Servlet1.class)
+   .addServlet(Servlet2.class);
+----
+
+The `addServlet(..)` method provides an convenient easy-to-understand API, but internally it still calls
+`binder.bindSet(Servlet.class).add(..)`.
+
+_TODO: collection bindings and advanced generics_
 
 === Configuration
 
