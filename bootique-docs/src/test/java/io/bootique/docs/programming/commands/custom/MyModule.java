@@ -1,10 +1,10 @@
-package io.bootique.docs.programming.commands.writing;
+package io.bootique.docs.programming.commands.custom;
 
 import io.bootique.BQCoreModule;
 import io.bootique.BQModule;
 import io.bootique.di.Binder;
 
-// tag::Commands[]
+// tag::addCommand[]
 public class MyModule implements BQModule {
 
     @Override
@@ -12,5 +12,5 @@ public class MyModule implements BQModule {
         BQCoreModule.extend(binder).addCommand(MyCommand.class);
     }
 }
-// end::Commands[]
+// end::addCommand[]
 

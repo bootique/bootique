@@ -531,15 +531,16 @@ OPTIONS
 
 ----
 
-==== Writing Commands
+==== Custom Commands
 
-Most common commands are already available in various standard modules, still often you'd need to write your own.
+Most common commands are already available in various standard modules, still often you'd need to create your own.
 To do that, first create a command class. It should implement `io.bootique.command.Command` interface,
-though usually it more practical to extend `io.bootique.command.CommandWithMetadata` and provide some metadata used in help and elsewhere:
+though usually it more practical to extend `io.bootique.command.CommandWithMetadata` and provide some metadata used in
+help and elsewhere:
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docs/programming/commands/writing/MyCommand.java[tag=Commands]
+include::../../../../test/java/io/bootique/docs/programming/commands/custom/MyCommand.java[tag=command]
 ----
 
 The command initializes metadata in constructor and implements the "run" method to run its code.
@@ -549,14 +550,14 @@ To make the new command available to Bootique, add it to `BQCoreModule`'s extend
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docs/programming/commands/writing/MyModule.java[tag=Commands]
+include::../../../../test/java/io/bootique/docs/programming/commands/custom/MyModule.java[tag=addCommand]
 ----
 
 To implement a "daemon" command running forever until it receives an OS signal (e.g. a web server waiting for user requests) , do something like this:
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docs/programming/commands/writing/MyCommand.java[tag=CommandsRun]
+include::../../../../test/java/io/bootique/docs/programming/commands/custom/MyDaemonCommand.java[tag=run]
 ----
 
 ==== Injection in Commands
