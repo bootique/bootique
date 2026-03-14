@@ -1,6 +1,6 @@
 package io.bootique.getstarted.step2;
 
-// tag::all[
+// tag::all[]
 
 import io.bootique.Bootique;
 import io.bootique.BQModule;
