@@ -17,7 +17,7 @@
 
 == Packaging
 
-Till now we've been running our app from IDE. Now let's package it as a runnable "fat" jar to be able to start it
+Till now, we've been running our app from IDE. Now let's package it as a runnable "fat" jar to be able to start it
 from command line (and potentially deploy to a remote server). This requires a bit of configuration of the Maven
 `maven-shade-plugin`:
 
@@ -75,7 +75,7 @@ Now you should set the name of the main class as property:
 [source,xml]
 ----
 <properties>
-    <main.class>com.foo.Application</main.class>
+    <main.class>io.bootique.getstarted.step2.Application</main.class>
 </properties>
 ----
 

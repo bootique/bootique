@@ -25,14 +25,14 @@ Let's extend our resource to include those arguments in the output:
 
 [source,java]
 ----
-include::../../../../test/java/com/foo/HelloResource.java[tags=HelloInjectResource]
+include::../../../../test/java/io/bootique/getstarted/step3/HelloResource.java[tags=all]
 ----
 
 As you see, we declared a variable of type `String[]` and annotated it with `@jakarta.inject.Inject` and `@io.bootique.annotation.Args`.
-`@Inject` ensures that the value is initialized via injection,
-and `@Args` tells Bootique which one of possibly many String[] instances from the DI container we are expecting here.
+`@Inject` ensures that the value is initialized via injection, and `@Args` tells Bootique which one of possibly many
+String[] instances from the DI container we are expecting here.
 
-Now you can restart the app and refresh http://localhost:10001/hello[http://localhost:10001/hello] in the browser.
+Now restart the app and refresh http://localhost:10001/hello[http://localhost:10001/hello] in the browser.
 The new output will be "Hello, world! The app was started with the following arguments: `--server --config=myconfig.yml`".
 
-Next let's discuss how to build and run the app outside the IDE...
+Next, let's build and run the app outside the IDE...

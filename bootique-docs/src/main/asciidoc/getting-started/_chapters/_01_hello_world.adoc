@@ -91,7 +91,7 @@ Those dependencies will be included by Maven automatically. Now let's create the
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/com/foo/Application.java[tags=Main]
+include::../../../../test/java/io/bootique/getstarted/step1/Application.java[tags=all]
 ----
 
 There's only one line of meaningful code inside the `main()` method, but this is already a working Bootique app.
@@ -119,38 +119,37 @@ OPTIONS
 ----
 
 So the app printed its help message telling us which commands and options it understands.
-`--server` option looks promising, but before we use it, let's actually write a REST endpoint that will answer to our requests.
-We'll use standard Java https://en.wikipedia.org/wiki/Java_API_for_RESTful_Web_Services[JAX-RS API] for that:
+`--server` option looks promising, but before we use it, let's actually write a REST endpoint that will answer to our
+requests. We'll use Jakarta https://en.wikipedia.org/wiki/Jakarta_RESTful_Web_Services[JAX-RS API] for that:
 
 [source,java]
 ----
-include::../../../../test/java/com/foo/HelloResource.java[tags=HelloResource]
+include::../../../../test/java/io/bootique/getstarted/step2/HelloResource.java[tags=all]
 ----
 
-Note that we could have placed this code straight in the Main class.
-Which makes for an effective demo (an app that can fit in one class), but not for a particularly clean design.
-So keeping the resource in its own class. Now let's amend the `Main` class to tell Bootique where to find the resource:
+Note that we could have placed this code straight in the `Application` class. Which makes for an effective demo (an app
+that can fit in one class), but not for a particularly clean design. So keeping the resource in its own class. Now
+let's amend the `Application` to tell Bootique where to find the resource:
 
 [source,java]
 ----
-include::../../../../test/java/com/foo/Application.java[tags=Application]
+include::../../../../test/java/io/bootique/getstarted/step2/Application.java[tags=all]
 ----
+<1> Here we created our own module that registers a resource with the JerseyModule.
+<2> Here we registered that "inline" module with Bootique
 
-Here we created our own module that "contributes" resource configuration to the JerseyModule.
 Now let's try to run the app with the changes. Add `--server` to the command run parameters before doing it.
-Now when the app is started, you will see different output:
+Now when the app is started, you will see a different output:
 
 [source]
 ----
-INFO main o.e.jetty.util.log: Logging initialized @1328ms
-INFO main i.b.j.s.ServerFactory: Adding listener io.bootique.jetty.servlet.DefaultServletEnvironment
 INFO main i.b.j.s.ServletFactory: Adding servlet 'jersey' mapped to /*
-INFO main i.b.j.s.ServerLifecycleLogger: Starting jetty...
-INFO main o.e.j.server.Server: jetty-9.4.19.v20190610
-INFO main o.e.j.s.h.ContextHandler: Started o.e.j.s.ServletContextHandler@27dc79f7{/,null,AVAILABLE}
-INFO main o.e.j.s.ServerConnector: Started ServerConnector@3a45c42a{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
-INFO main o.e.j.server.Server: Started @2005ms
-INFO main i.b.j.s.ServerLifecycleLogger: Started Jetty in 584 ms. Base URL: http://127.0.0.1:8080/
+INFO main i.b.j.s.ServerLifecycleLogger - Starting jetty...
+INFO main o.e.j.s.Server - jetty-12.1.7; built: 2026-03-04T00:34:02.020Z; git: 8e2e9db9edceef93d37a63814ed06b921eb7f23d; jvm 21+35-LTS
+...
+INFO main o.e.j.s.AbstractConnector - Started oejs.ServerConnector@5bcb04cb{HTTP/1.1, (http/1.1)}{0.0.0.0:8080}
+INFO main o.e.j.s.Server - Started oejs.Server@56ac5c80{STARTING}[12.1.7,sto=0] @26ms
+INFO main i.b.j.s.ServerLifecycleLogger - Started Jetty in 29 ms. Base URL: http://127.0.0.1:8080
 ----
 
 Notice that the app did not terminate immediately, and is waiting for user requests.
@@ -159,9 +158,9 @@ We should see 'Hello, world!' as request output. We just built a working REST ap
 and generally wasn't that hard to write. The takeaway here is this:
 
 * You start the app via `Bootique` class, that gives you a runnable "shell" of your future app in one line of code.
-* Declaring modules in the app dependencies and using `Bootique.autoLoadModules()`
-gives the app the ability to respond to commands from those modules
-(in our example `--server` command coming from implicit bootique-jetty module started an embedded web server ).
+* Declaring modules in the app dependencies and using `Bootique.autoLoadModules()` gives the app the ability to respond
+to commands from those modules (in our exampl,  `--server` command coming from implicit `bootique-jetty` started an
+embedded web server ).
 * You can contribute your own code to modules to build an app with desired behavior.
 
-Next we'll talk about configuration...
+Next, we'll talk about configuration...

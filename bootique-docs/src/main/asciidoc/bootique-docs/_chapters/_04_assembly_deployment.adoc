@@ -83,10 +83,11 @@ a single "fat" runnable jar. In Maven this can be accomplished with `maven-shade
 ----
 Make sure you set the `main.class` property in the POM to the appropriate class value from your application or to
 `io.bootique.Bootique`:
+
 [source,xml]
 ----
 <properties>
-    <main.class>com.foo.Application</main.class>
+    <main.class>io.bootique.getstarted.step2.Application</main.class>
 </properties>
 ----
 Once the pom is configured, you can assemble and run the jar. E.g.:
@@ -127,10 +128,11 @@ machine where the application needs to run.
 
 Creating such packaging with Maven involves `maven-jar-plugin`, `maven-dependency-plugin` and `maven-assembly-plugin`.
 First let's create the folder structure:
+
 [source,xml]
 ----
 <properties>
-    <main.class>com.foo.Application</main.class>
+    <main.class>io.bootique.getstarted.step2.Application</main.class>
 </properties>
 ...
 <build>
