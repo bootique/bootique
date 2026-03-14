@@ -141,7 +141,7 @@ include::../../../../test/java/io/bootique/getstarted/step2/Application.java[tag
 Now let's try to run the app with the changes. Add `--server` to the command run parameters before doing it.
 Now when the app is started, you will see a different output:
 
-[source]
+[source,terminaloutput]
 ----
 INFO main i.b.j.s.ServletFactory: Adding servlet 'jersey' mapped to /*
 INFO main i.b.j.s.ServerLifecycleLogger - Starting jetty...
