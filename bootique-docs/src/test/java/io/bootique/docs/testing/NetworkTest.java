@@ -4,9 +4,12 @@ import io.bootique.BQCoreModule;
 import io.bootique.BQModule;
 import io.bootique.BQRuntime;
 import io.bootique.Bootique;
-import io.bootique.docs.FakeServerCommand;
+import io.bootique.cli.Cli;
+import io.bootique.command.CommandOutcome;
+import io.bootique.command.CommandWithMetadata;
 import io.bootique.junit.BQApp;
 import io.bootique.junit.BQTest;
+import io.bootique.meta.application.CommandMetadata;
 import jakarta.ws.rs.client.WebTarget;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.Disabled;
@@ -25,7 +28,7 @@ public class NetworkTest {
             .app("--server")
             .module(jetty.moduleReplacingConnectors())
             // end::all[]
-            .module(b -> BQCoreModule.extend(b).addCommand(FakeServerCommand.class))
+            .module(b -> BQCoreModule.extend(b).addCommand(ServerCommand.class))
             // tag::all[]
             .createRuntime();
 
@@ -38,24 +41,38 @@ public class NetworkTest {
         JettyTester.assertOk(response);
     }
     // end::all[]
+
+    // fake JettyTester for docs
+    static class JettyTester {
+
+        public static JettyTester create() {
+            return new JettyTester();
+        }
+
+        public static void assertOk(Response response) {
+        }
+
+        public WebTarget getTarget() {
+            return null;
+        }
+
+        public BQModule moduleReplacingConnectors() {
+            return b -> {
+            };
+        }
+    }
+
+    // fake ServerCommand
+    static class ServerCommand extends CommandWithMetadata {
+
+        public ServerCommand() {
+            super(CommandMetadata.builder("server").build());
+        }
+
+        @Override
+        public CommandOutcome run(Cli cli) {
+            return CommandOutcome.succeeded();
+        }
+    }
 }
 
-// fake JettyTester for docs
-class JettyTester {
-
-    public static JettyTester create() {
-        return new JettyTester();
-    }
-
-    public static void assertOk(Response response) {
-    }
-
-    public WebTarget getTarget() {
-        return null;
-    }
-
-    public BQModule moduleReplacingConnectors() {
-        return b -> {
-        };
-    }
-}
