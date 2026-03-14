@@ -145,7 +145,7 @@ Now when the app is started, you will see a different output:
 ----
 INFO main i.b.j.s.ServletFactory: Adding servlet 'jersey' mapped to /*
 INFO main i.b.j.s.ServerLifecycleLogger - Starting jetty...
-INFO main o.e.j.s.Server - jetty-12.1.7; built: 2026-03-04T00:34:02.020Z; git: 8e2e9db9edceef93d37a63814ed06b921eb7f23d; jvm 21+35-LTS
+INFO main o.e.j.s.Server - jetty-12.1.7
 ...
 INFO main o.e.j.s.AbstractConnector - Started oejs.ServerConnector@5bcb04cb{HTTP/1.1, (http/1.1)}{0.0.0.0:8080}
 INFO main o.e.j.s.Server - Started oejs.Server@56ac5c80{STARTING}[12.1.7,sto=0] @26ms
