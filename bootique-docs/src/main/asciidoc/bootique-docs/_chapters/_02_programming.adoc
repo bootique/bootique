@@ -144,7 +144,39 @@ to use it.
 
 ==== Deprecating Modules
 
-TODO
+Every now and then Bootique's own or your custom module become obsolete or replaced by other modules. There are two
+interchangeable ways to tag them as "deprecated" to give a visual indication to the users to start looking for an
+alternative. The first one is the standard Java `@Deprecated` annotation:
+
+[source,java,indent=0]
+----
+include::../../../../test/java/io/bootique/docs/programming/modules/OldModule1.java[tags=deprecated]
+----
+The second is a `deprecated` flag on the `ModuleCrate`:
+
+[source,java,indent=0]
+----
+include::../../../../test/java/io/bootique/docs/programming/modules/OldModule2.java[tags=deprecated]
+----
+
+Including any one of these modules in your app will result in an error message printed on startup to `STDERR`:
+
+[source,terminaloutput]
+----
+** Deprecation alert - OldModule2.
+----
+
+You can improve this message to provide instructions to your users on how to replace the deprecated module using
+`ModuleCrate.description(..)`:
+[source,java,indent=0]
+----
+include::../../../../test/java/io/bootique/docs/programming/modules/OldModule2.java[tags=description]
+----
+This will print the following:
+[source,terminaloutput]
+----
+** Deprecation alert - OldModule2: Deprecated and should be replaced with Module3.
+----
 
 === Objects Assembly
 
