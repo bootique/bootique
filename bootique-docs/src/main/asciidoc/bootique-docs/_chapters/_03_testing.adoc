@@ -178,7 +178,7 @@ the server. E.g.:
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docs/testing/NetworkTest.java[tag=Testing]
+include::../../../../test/java/io/bootique/docs/testing/NetworkTest.java[tag=all]
 ----
 
 ==== Testing Commands
@@ -198,5 +198,5 @@ and their configuration is consistent. There's a helper class to check for it:
 
 [source,java,indent=0]
 ----
-include::../../../../test/java/io/bootique/docs/testing/ValidityTest.java[tag=Testing]
+include::../../../../test/java/io/bootique/docs/testing/BQModuleTest.java[tag=test]
 ----
