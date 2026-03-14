@@ -302,7 +302,7 @@ JettyModule.extend(binder)
    .addServlet(Servlet2.class);
 ----
 
-The `addServlet(..)` method provides an convenient easy-to-understand API, but internally it still calls
+The `addServlet(..)` method provides a convenient easy-to-understand API and internally still calls
 `binder.bindSet(Servlet.class).add(..)`.
 
 _TODO: collection bindings and advanced generics_
