@@ -2,8 +2,6 @@ package io.bootique.docs.programming.modules;
 
 import io.bootique.BQModule;
 import io.bootique.di.Binder;
-import io.bootique.docs.programming.modules.service.MyService;
-import io.bootique.docs.programming.modules.service.MyServiceImpl;
 
 // tag::MyModule[]
 public class MyModule implements BQModule {
@@ -14,3 +12,16 @@ public class MyModule implements BQModule {
     }
 }
 // end::MyModule[]
+
+interface MyService {
+
+    void doSomething();
+}
+
+class MyServiceImpl implements MyService {
+
+    @Override
+    public void doSomething() {
+
+    }
+}
