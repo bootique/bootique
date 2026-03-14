@@ -21,17 +21,11 @@ public class MyDaemonCommand extends CommandWithMetadata {
     @Override
     public CommandOutcome run(Cli cli) {
 
-        // ... start some process in a different thread ....
+        // 1. start some process in a different thread ...
+        // executor.submit(() -> /* do something */ );
 
-        // now wait till the app is stopped from another thread
-        // or the JVM is terminated
-        try {
-            Thread.currentThread().join();
-        } catch (InterruptedException e) {
-            // ignore exception or log if needed
-        }
-
-        return CommandOutcome.succeeded();
+        // 2. Tell Bootique that the process is still running
+        return CommandOutcome.succeededAndForkedToBackground();
     }
     // end::run[]
 }
