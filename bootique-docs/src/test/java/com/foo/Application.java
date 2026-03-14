@@ -14,7 +14,7 @@ public class Application {
         // end::Main[]
 
         BQModule module = binder ->
-                JerseyModule.extend(binder).addResource(HelloResource.class);
+                JerseyModule.extend(binder).addApiResource(HelloResource.class);
         // tag::Main[]
         Bootique
                 .app(args)

@@ -15,7 +15,7 @@ public class JerseyModule implements BQModule {
     }
 
     public static class Extender {
-        public void addResource(Class<?> resource) {
+        public void addApiResource(Class<?> resource) {
         }
     }
 }
