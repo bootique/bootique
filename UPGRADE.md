@@ -49,7 +49,7 @@ And then you will also need to rename `junit5` package name in test imports to j
 
 ## 4.0-M3
 
-### Upgrade to Testcontainser 2.x
+### Upgrade to Testcontainers 2.x
 
 Public test modules that depend on Testcontainers were upgraded to the new major version - 2.0.x. This may require 
 changes in a couple of places:
