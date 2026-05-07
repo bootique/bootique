@@ -34,6 +34,9 @@ import io.bootique.di.TypeLiteral;
 import io.bootique.env.DeclaredVariable;
 import io.bootique.help.ValueObjectDescriptor;
 import io.bootique.meta.application.OptionMetadata;
+import io.bootique.option.ConfigResourceOption;
+import io.bootique.option.ConfigValueOption;
+import io.bootique.option.Option;
 import jakarta.inject.Provider;
 
 import java.util.Map;
@@ -248,6 +251,19 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
         return this;
     }
 
+    public BQCoreModuleExtender addOption(Option option) {
+        if (option != null) {
+            addOption(option.getMetadata());
+
+            if (option instanceof ConfigResourceOption configResourceOption) {
+                mapConfigResource(option.getMetadata().getName(), configResourceOption.getConfigResourceId());
+            } else if (option instanceof ConfigValueOption configValueOption) {
+                mapConfigPath(option.getMetadata().getName(), configValueOption.getConfigPath());
+            }
+        }
+        return this;
+    }
+
     /**
      * Adds zero or more new options to the list of Bootique CLI options.
      *
@@ -255,6 +271,13 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @return this extender instance.
      */
     public BQCoreModuleExtender addOptions(OptionMetadata... options) {
+        if (options != null) {
+            asList(options).forEach(this::addOption);
+        }
+        return this;
+    }
+
+    public BQCoreModuleExtender addOptions(Option... options) {
         if (options != null) {
             asList(options).forEach(this::addOption);
         }
