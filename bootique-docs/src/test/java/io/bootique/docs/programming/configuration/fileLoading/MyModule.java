@@ -3,7 +3,9 @@ package io.bootique.docs.programming.configuration.fileLoading;
 import io.bootique.BQCoreModule;
 import io.bootique.BQModule;
 import io.bootique.di.Binder;
-import io.bootique.meta.application.OptionMetadata;
+import io.bootique.option.ConfigResourceOption;
+import io.bootique.option.ConfigValueOption;
+import io.bootique.option.Option;
 
 public class MyModule implements BQModule {
 
@@ -16,25 +18,21 @@ public class MyModule implements BQModule {
 
 
         // tag::MyModuleQAOption[]
-        OptionMetadata o = OptionMetadata.builder("qa")
+        ConfigResourceOption o = Option.configResource("qa", "classpath:a/b/qa.yml")
                 .description("when present, uses QA config")
                 .build();
 
-        BQCoreModule.extend(binder)
-                .addOption(o)
-                .mapConfigResource(o.getName(), "classpath:a/b/qa.yml");
+        BQCoreModule.extend(binder).addOption(o);
         // end::MyModuleQAOption[]
 
 
         // tag::MyModuleDBOption[]
-        OptionMetadata o1 = OptionMetadata.builder("db")
+        ConfigValueOption o1 = Option.configValue("db", "jdbc.mydb.url")
                 .description("specifies database URL")
                 .valueOptionalWithDefault("jdbc:mysql://127.0.0.1:3306/mydb")
                 .build();
 
-        BQCoreModule.extend(binder)
-                .addOption(o1)
-                .mapConfigPath(o1.getName(), "jdbc.mydb.url");
+        BQCoreModule.extend(binder).addOption(o1);
         // end::MyModuleDBOption[]
 
     }
