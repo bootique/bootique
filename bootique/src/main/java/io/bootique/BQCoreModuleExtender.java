@@ -218,7 +218,9 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @param configResourceId a resource path compatible with {@link io.bootique.resource.ResourceFactory} denoting
      *                         a configuration source. E.g. "a/b/my.yml", or "classpath:com/foo/another.yml".
      * @return this extender instance.
+     * @deprecated use {@link #addOption(Option)} with {@link io.bootique.option.ConfigResourceOption}
      */
+    @Deprecated(since = "4.0")
     public BQCoreModuleExtender mapConfigResource(String optionName, String configResourceId) {
         // using SetBuilder to support multiple decorators for the same option
         contributeOptionDecorators().addInstance(new OptionRefWithConfig(optionName, configResourceId));
@@ -234,7 +236,9 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @param configPath a dot-separated "path" that navigates configuration tree to the desired property.
      *                   E.g. "jdbc.myds.password".
      * @return this extender instance
+     * @deprecated use {@link #addOption(Option)} with {@link io.bootique.option.ConfigValueOption}
      */
+    @Deprecated(since = "4.0")
     public BQCoreModuleExtender mapConfigPath(String optionName, String configPath) {
         contributeOptionPathDecorators().addInstance(new OptionRefWithConfigPath(optionName, configPath));
         return this;
@@ -254,11 +258,13 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
     public BQCoreModuleExtender addOption(Option option) {
         if (option != null) {
             addOption(option.getMetadata());
-
-            if (option instanceof ConfigResourceOption configResourceOption) {
-                mapConfigResource(option.getMetadata().getName(), configResourceOption.getConfigResourceId());
-            } else if (option instanceof ConfigValueOption configValueOption) {
-                mapConfigPath(option.getMetadata().getName(), configValueOption.getConfigPath());
+            String name = option.getMetadata().getName();
+            if (option instanceof ConfigResourceOption cro) {
+                String configResourceId = cro.getConfigResourceId();
+                contributeOptionDecorators().addInstance(new OptionRefWithConfig(name, configResourceId));
+            } else if (option instanceof ConfigValueOption cvo) {
+                String configPath = cvo.getConfigPath();
+                contributeOptionPathDecorators().addInstance(new OptionRefWithConfigPath(name, configPath));
             }
         }
         return this;
