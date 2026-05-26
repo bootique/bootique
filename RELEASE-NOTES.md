@@ -1,9 +1,10 @@
 ## 4.0-M4
 
+* #274 Upgrade Jackson to 2.21.1
 * #372 Nested and overlapping config prefixes
 * #373 "-H" doesn't output polymorphic configs that have no properties
-* #274 Upgrade Jackson to 2.21.1
-* #375 Upgrade JUnit to 6.0.3 
+* #375 Upgrade JUnit to 6.0.3
+* #379 "junit-jupiter-params" bundled with "bootique-junit" 
 
 ## 4.0-M2
 

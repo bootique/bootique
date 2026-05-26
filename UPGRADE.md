@@ -24,6 +24,11 @@ _Upgrade instructions to earlier versions, up to 3.0, are available [here](UPGRA
 
 ## 4.0-M4
 
+### [bootique #379](https://github.com/bootique/bootique/issues/379) `junit-jupiter-params` is now included with `bootique-junit`
+
+`bootique-junit` now bundles `junit-jupiter-params` as a compile dependency. If you declared `junit-jupiter-params`
+explicitly in your build file alongside `bootique-junit`, you can remove it.
+
 ### Upgrade to JUnit 6
 
 We switched to JUnit 6. It is mostly compatible with JUnit 5, and there are no real changes to the code. Still we had a
