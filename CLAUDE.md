@@ -103,6 +103,11 @@ Use `@BQTest` on the test class. Inject a `BQTestFactory` with `@RegisterExtensi
 
 Apache License 2.0. All `.java` files require the standard Apache license header. 
 
+## Development Workflow
+
+* If a task exists on GitHub, upon completion it should be added to RELEASE-NOTES.md under the corresponding release section
+* Milestone release numbers do not fully align with pom.xml version. In the POM, we are using 4.0-SNAPSHOT for all milestones. So check for the previous milestone via Git tags (e.g. if the latest tag is `4.0-M3`, then the next release is `4.0-M4`)
+
 ## Anti-patterns
 
 * Jakarta EE APIs are used (`jakarta.inject.*`), not `javax.*`.
