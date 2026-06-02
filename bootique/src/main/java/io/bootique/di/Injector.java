@@ -23,6 +23,7 @@ import io.bootique.log.BootLogger;
 import jakarta.inject.Provider;
 
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * A facade to the Bootique DI container. To create an injector use {@link DIBootstrap} static methods.
@@ -132,6 +133,15 @@ public interface Injector {
      * @return collection of keys bound to given type
      */
     <T> Collection<Key<T>> getKeysByType(Class<T> type);
+
+    /**
+     * Returns an immutable collection of all keys bound to this Injector.
+     * This collection will include all dynamic keys created so far.
+     *
+     * @return collection of all bound keys
+     * @since 4.0
+     */
+    Set<Key<?>> getKeys();
 
     /**
      * Report any warnings found in the injector

@@ -31,6 +31,8 @@ import io.bootique.di.mock.MockInterface1Provider;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DefaultInjectorBindingTest {
@@ -163,6 +165,36 @@ public class DefaultInjectorBindingTest {
         assertNotSame(impl1, impl2);
         assertSame(impl1.implementation2, impl2.implementation2);
 
+    }
+
+    @Test
+    public void getKeysEmptyInjector() {
+        BQModule module = binder -> {};
+        Injector injector = DIBootstrap.injectorBuilder(module).build();
+
+        Set<Key<?>> keys = injector.getKeys();
+        // injector itself is always available
+        assertEquals(1, keys.size());
+        assertTrue(keys.contains(Key.get(Injector.class)));
+    }
+
+    @Test
+    public void getKeys() {
+        BQModule module = binder -> {
+                binder.bind(MockInterface1.class).to(MockImplementation1.class);
+                binder.bind(MockInterface1.class).to(Key.get(MockImplementation1.class, "b1"));
+                binder.bind(MockInterface1.class).to(Key.get(MockImplementation1.class, "b2"));
+        };
+        Injector injector = DIBootstrap.injectorBuilder(module).build();
+
+        Set<Key<?>> keys = injector.getKeys();
+        // every service is bound too, so we could chain bindings, plus injector itself
+        assertEquals(5, keys.size());
+        assertTrue(keys.contains(Key.get(MockInterface1.class)));
+        assertTrue(keys.contains(Key.get(Injector.class)));
+        assertTrue(keys.contains(Key.get(MockImplementation1.class)));
+        assertTrue(keys.contains(Key.get(MockImplementation1.class, "b1")));
+        assertTrue(keys.contains(Key.get(MockImplementation1.class, "b2")));
     }
 
     public static class Implementation1 {

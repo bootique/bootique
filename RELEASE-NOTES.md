@@ -5,6 +5,7 @@
 * #373 "-H" doesn't output polymorphic configs that have no properties
 * #375 Upgrade JUnit to 6.0.3
 * #379 "junit-jupiter-params" bundled with "bootique-junit" 
+* #381 Injector.getKeys()
 
 ## 4.0-M2
 

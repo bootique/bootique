@@ -350,6 +350,11 @@ public class DefaultInjector implements Injector {
     }
 
     @Override
+    public Set<Key<?>> getKeys() {
+        return Set.copyOf(bindings.keySet());
+    }
+
+    @Override
     public void reportWarnings(BootLogger logger) {
         // Was used to report warnings for "javax.inject" use. A noop for now, but keeping around we need it in the
         // future
