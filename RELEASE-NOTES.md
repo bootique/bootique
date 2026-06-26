@@ -6,6 +6,7 @@
 * #375 Upgrade JUnit to 6.0.3
 * #379 "junit-jupiter-params" bundled with "bootique-junit" 
 * #381 Injector.getKeys()
+* #382 Upgrade Jackson to 2.22.0
 
 ## 4.0-M2
 

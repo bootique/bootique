@@ -23,7 +23,7 @@
     <parent>
         <groupId>io.bootique.modules.parent</groupId>
         <artifactId>bootique-modules-parent</artifactId>
-        <version>4.0.5</version>
+        <version>4.0.7</version>
     </parent>
 
     <groupId>io.bootique</groupId>
@@ -48,9 +48,6 @@
         <commons.compress.version>1.26.1</commons.compress.version>
         <commons.io.version>2.19.0</commons.io.version>
         <jakarta.inject.version>2.0.1</jakarta.inject.version>
-
-        <!-- TODO: different from jackson-core version. Remove this property once they align again -->
-        <jackson.annotations.version>2.21</jackson.annotations.version>
     </properties>
 
     <dependencyManagement>
