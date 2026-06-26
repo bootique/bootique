@@ -20,9 +20,43 @@
 
 # UPGRADE INSTRUCTIONS
 
-_Upgrade instructions to earlier versions, up to 3.0, are available [here](UPGRADE-3.0.md)_ 
+_Upgrade instructions to earlier versions, up to and including 3.0, are available [here](UPGRADE-3.0.md)_ 
 
 ## 4.0-M4
+
+### [bootique-jetty #137](https://github.com/bootique/bootique-jetty/issues/137) CORS is now built into `bootique-jetty`, `bootique-jetty-cors` is deprecated
+
+Jetty 12 moved CORS support from the `CrossOriginFilter` (which required an extra dependency) to the
+dependency-free `CrossOriginHandler`. As a result, CORS is now configured directly in `bootique-jetty`
+under the new `jetty.cors` config block, and the separate `bootique-jetty-cors` module (with its
+`jettycors` config) is deprecated. CORS is only installed in the request handling chain when
+`jetty.cors` configuration is present, so applications that don't use it incur no overhead.
+
+To migrate, drop the `bootique-jetty-cors` dependency and move config from `jettycors` to `jetty.cors`.
+Note a few differences:
+
+* The properties that were comma-separated strings — `allowedOrigins`, `allowedTimingOrigins`,
+  `allowedMethods`, `allowedHeaders`, and `exposedHeaders` — are now YAML lists
+* `allowCredentials` now defaults to `false` (previously `true`). If your app relied on credentialed
+  cross-origin requests, set `allowCredentials: true` explicitly — and narrow `allowedOrigins` to
+  specific origins, since `*` combined with credentials is insecure (Jetty logs a warning for it).
+
+```yaml
+# before (bootique-jetty-cors)
+jettycors:
+  allowedOrigins: "https://example.com"
+  allowedMethods: "GET,POST,HEAD"
+
+# after (bootique-jetty)
+jetty:
+  cors:
+    allowedOrigins:
+      - "https://example.com"
+    allowedMethods:
+      - "GET"
+      - "POST"
+      - "HEAD"
+```
 
 ### [bootique #379](https://github.com/bootique/bootique/issues/379) `junit-jupiter-params` is now included with `bootique-junit`
 
