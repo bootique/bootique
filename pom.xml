@@ -53,13 +53,6 @@
         <jackson.annotations.version>2.21</jackson.annotations.version>
     </properties>
 
-    <!-- TODO: this section will be obsolete once we upgrade to bootique-modules-parent:3.0.21 -->
-    <scm>
-        <developerConnection>scm:git:ssh://git@github.com/bootique/bootique</developerConnection>
-        <url>https://github.com/bootique/bootique</url>
-        <tag>4.0-M2</tag>
-    </scm>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
