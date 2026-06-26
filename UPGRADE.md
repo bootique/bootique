@@ -26,15 +26,16 @@ _Upgrade instructions to earlier versions, up to and including 3.0, are availabl
 
 ### [bootique-jetty #137](https://github.com/bootique/bootique-jetty/issues/137) CORS is now built into `bootique-jetty`, `bootique-jetty-cors` is deprecated
 
-Jetty 12 moved CORS support from the `CrossOriginFilter` (which required an extra dependency) to the
-dependency-free `CrossOriginHandler`. As a result, CORS is now configured directly in `bootique-jetty`
+Jetty 12 CORS support no longer requires extra dependencies. As a result, CORS is now configured directly in `bootique-jetty`
 under the new `jetty.cors` config block, and the separate `bootique-jetty-cors` module (with its
-`jettycors` config) is deprecated. CORS is only installed in the request handling chain when
-`jetty.cors` configuration is present, so applications that don't use it incur no overhead.
+`jettycors` config) is deprecated. CORS is only installed in the request handling chain when at least
+one `jetty.cors.urlPatterns` entry is configured, so applications that don't use it incur no overhead.
 
 To migrate, drop the `bootique-jetty-cors` dependency and move config from `jettycors` to `jetty.cors`.
 Note a few differences:
 
+* CORS is activated by the presence of at least one `urlPatterns` entry (rather than by the mere
+  presence of the config block). To apply CORS to the entire context, set `urlPatterns` to `/*`.
 * The properties that were comma-separated strings — `allowedOrigins`, `allowedTimingOrigins`,
   `allowedMethods`, `allowedHeaders`, and `exposedHeaders` — are now YAML lists
 * `allowCredentials` now defaults to `false` (previously `true`). If your app relied on credentialed
@@ -50,6 +51,8 @@ jettycors:
 # after (bootique-jetty)
 jetty:
   cors:
+    urlPatterns:
+      - "/*"
     allowedOrigins:
       - "https://example.com"
     allowedMethods:
