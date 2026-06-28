@@ -54,7 +54,7 @@ For the impatient, here is how to get started with Bootique:
         <dependency>
             <groupId>io.bootique.bom</groupId>
             <artifactId>bootique-bom</artifactId>
-            <version>3.0</version>
+            <version>4.0-M4</version>
             <type>pom</type>
             <scope>import</scope>
         </dependency> 
