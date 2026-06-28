@@ -88,6 +88,38 @@ And then you will also need to rename `junit5` package name in test imports to j
 +import io.bootique.jetty.junit.JettyTester;
 ```
 
+### [bootique-linkmove #71](https://github.com/bootique/bootique-linkmove/issues/71) LinkMove 4 modules
+
+New `bootique-linkmove4` and `bootique-linkmove4-rest` modules integrate LinkMove 4 and Cayenne 5. The
+LinkMove 3 modules (`bootique-linkmove3`, `bootique-linkmove3-json`, `bootique-linkmove3-rest`) are
+deprecated. To switch:
+
+* Rename your dependencies in the build files:
+
+```xml
+   <dependency>
+       <groupId>io.bootique.linkmove</groupId>
+-      <artifactId>bootique-linkmove3</artifactId>
++      <artifactId>bootique-linkmove4</artifactId>
+   </dependency>
+```
+
+* The JSON extractor is now bundled in `bootique-linkmove4`, so there is no separate `bootique-linkmove4-json`.
+  Drop the `bootique-linkmove3-json` dependency — JSON sources work out of the box:
+
+```xml
+   <!-- no longer needed - JSON support is part of bootique-linkmove4 -->
+-  <dependency>
+-      <groupId>io.bootique.linkmove</groupId>
+-      <artifactId>bootique-linkmove3-json</artifactId>
+-  </dependency>
+```
+
+* Rename `v3` to `v4` in your imports, e.g. `import io.bootique.linkmove.v4.LinkMoveModule;`.
+
+* As `bootique-linkmove4` is built on Cayenne 5, your target app must use `bootique-cayenne50` (and project
+  XML files must be upgraded to the Cayenne 5 format via CayenneModeler).
+
 
 ## 4.0-M3
 
