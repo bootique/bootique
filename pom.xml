@@ -34,6 +34,12 @@
     <name>bootique-framework-parent</name>
     <description>Parent of Bootique core framework and Bootique docs.</description>
 
+    <scm>
+        <developerConnection>scm:git:ssh://git@github.com/bootique/bootique</developerConnection>
+        <url>https://github.com/bootique/bootique</url>
+        <tag>HEAD</tag>
+    </scm>
+
     <modules>
         <module>bootique</module>
         <module>bootique-junit</module>
