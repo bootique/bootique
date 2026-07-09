@@ -34,6 +34,9 @@ import io.bootique.di.TypeLiteral;
 import io.bootique.env.DeclaredVariable;
 import io.bootique.help.ValueObjectDescriptor;
 import io.bootique.meta.application.OptionMetadata;
+import io.bootique.option.ConfigResourceOption;
+import io.bootique.option.ConfigValueOption;
+import io.bootique.option.Option;
 import jakarta.inject.Provider;
 
 import java.util.Map;
@@ -215,7 +218,9 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @param configResourceId a resource path compatible with {@link io.bootique.resource.ResourceFactory} denoting
      *                         a configuration source. E.g. "a/b/my.yml", or "classpath:com/foo/another.yml".
      * @return this extender instance.
+     * @deprecated use {@link #addOption(Option)} with {@link io.bootique.option.ConfigResourceOption}
      */
+    @Deprecated(since = "4.0")
     public BQCoreModuleExtender mapConfigResource(String optionName, String configResourceId) {
         // using SetBuilder to support multiple decorators for the same option
         contributeOptionDecorators().addInstance(new OptionRefWithConfig(optionName, configResourceId));
@@ -231,7 +236,9 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @param configPath a dot-separated "path" that navigates configuration tree to the desired property.
      *                   E.g. "jdbc.myds.password".
      * @return this extender instance
+     * @deprecated use {@link #addOption(Option)} with {@link io.bootique.option.ConfigValueOption}
      */
+    @Deprecated(since = "4.0")
     public BQCoreModuleExtender mapConfigPath(String optionName, String configPath) {
         contributeOptionPathDecorators().addInstance(new OptionRefWithConfigPath(optionName, configPath));
         return this;
@@ -248,6 +255,21 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
         return this;
     }
 
+    public BQCoreModuleExtender addOption(Option option) {
+        if (option != null) {
+            addOption(option.getMetadata());
+            String name = option.getMetadata().getName();
+            if (option instanceof ConfigResourceOption cro) {
+                String configResourceId = cro.getConfigResourceId();
+                contributeOptionDecorators().addInstance(new OptionRefWithConfig(name, configResourceId));
+            } else if (option instanceof ConfigValueOption cvo) {
+                String configPath = cvo.getConfigPath();
+                contributeOptionPathDecorators().addInstance(new OptionRefWithConfigPath(name, configPath));
+            }
+        }
+        return this;
+    }
+
     /**
      * Adds zero or more new options to the list of Bootique CLI options.
      *
@@ -255,6 +277,13 @@ public class BQCoreModuleExtender extends ModuleExtender<BQCoreModuleExtender> {
      * @return this extender instance.
      */
     public BQCoreModuleExtender addOptions(OptionMetadata... options) {
+        if (options != null) {
+            asList(options).forEach(this::addOption);
+        }
+        return this;
+    }
+
+    public BQCoreModuleExtender addOptions(Option... options) {
         if (options != null) {
             asList(options).forEach(this::addOption);
         }

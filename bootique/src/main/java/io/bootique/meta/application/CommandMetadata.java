@@ -21,6 +21,7 @@ package io.bootique.meta.application;
 
 import io.bootique.command.Command;
 import io.bootique.meta.MetadataNode;
+import io.bootique.option.Option;
 import io.bootique.names.ClassToName;
 
 import java.util.ArrayList;
@@ -204,6 +205,10 @@ public class CommandMetadata implements MetadataNode {
         public Builder addOption(OptionMetadata option) {
             this.metadata.options.add(option);
             return this;
+        }
+
+        public Builder addOption(Option option) {
+            return addOption(option.getMetadata());
         }
 
         public Builder addOptions(Collection<OptionMetadata> options) {
