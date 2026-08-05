@@ -1,5 +1,6 @@
 ## 4.0-M5
 
+* #285 BQCoreModuleExtender.setProperty causes ArrayIndexOutOfBoundsException for multiple array indices
 * #383 Upgrade Jackson to 2.22.1
 
 ## 4.0-M4

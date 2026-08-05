@@ -27,8 +27,12 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
  */
 public class IndexPathSegment extends PathSegment<ArrayNode> {
 
-    // a symbolic index that allows to append values to array without knowing the length
-    private static final String PAST_END_INDEX = ".length";
+    /**
+     * A symbolic index that allows to append values to array without knowing the length.
+     *
+     * @since 4.0
+     */
+    public static final String PAST_END_INDEX = ".length";
 
     protected IndexPathSegment(ArrayNode node, PathSegment<?> parent, String incomingPath, String remainingPath) {
         super(node, parent, incomingPath, remainingPath);
