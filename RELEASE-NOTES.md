@@ -1,3 +1,7 @@
+## 4.0-M5
+
+* #383 Upgrade Jackson to 2.22.1
+
 ## 4.0-M4
 
 * #274 Upgrade Jackson to 2.21.1
