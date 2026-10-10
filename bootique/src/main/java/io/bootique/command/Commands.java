@@ -33,6 +33,7 @@ import io.bootique.help.HelpCommand;
 import io.bootique.log.BootLogger;
 import io.bootique.meta.application.ApplicationMetadata;
 import io.bootique.meta.application.OptionMetadata;
+import io.bootique.option.Option;
 import jakarta.inject.Provider;
 import jakarta.inject.Singleton;
 
@@ -174,6 +175,10 @@ public class Commands implements BQModule {
         public Builder addOption(OptionMetadata option) {
             commands.options.add(option);
             return this;
+        }
+
+        public Builder addOption(Option option) {
+            return addOption(option.getMetadata());
         }
 
         /**
