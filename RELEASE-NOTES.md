@@ -1,3 +1,8 @@
+## 4.0-M7
+
+* #390 Upgrade Jackson to 2.22.3
+* #391 Upgrade JUnit to 6.1.3
+
 ## 4.0-M6
 
 * #384 Replace "jopt" CLI parser with our own
