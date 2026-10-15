@@ -103,6 +103,12 @@
                 <artifactId>testcontainers</artifactId>
                 <version>${testcontainers.version}</version>
                 <exclusions>
+                    <!-- Annotations-only dependency of "duct-tape". Conflicts with the version coming from Kotlin
+                         via OpenTelemetry's OkHttp sender -->
+                    <exclusion>
+                        <groupId>org.jetbrains</groupId>
+                        <artifactId>annotations</artifactId>
+                    </exclusion>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
                         <artifactId>*</artifactId>
