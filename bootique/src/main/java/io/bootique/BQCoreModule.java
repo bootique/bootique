@@ -55,6 +55,7 @@ import io.bootique.log.BootLogger;
 import io.bootique.meta.application.ApplicationMetadata;
 import io.bootique.meta.application.ApplicationMetadataFactory;
 import io.bootique.meta.application.OptionMetadata;
+import io.bootique.option.Option;
 import io.bootique.meta.config.ConfigHierarchyResolver;
 import io.bootique.meta.config.ConfigMetadataCompiler;
 import io.bootique.meta.module.ModulesMetadata;
@@ -164,11 +165,11 @@ public class BQCoreModule implements BQModule {
         binder.bind(String[].class, Args.class).toInstance(args);
     }
 
-    OptionMetadata createConfigOption() {
-        return OptionMetadata
-                .builder(CliConfigurationLoader.CONFIG_OPTION,
-                        "Specifies YAML config location, which can be a file path or a URL.")
-                .valueRequired("yaml_location").build();
+    Option createConfigOption() {
+        return Option.valueOption(CliConfigurationLoader.CONFIG_OPTION)
+                .description("Specifies YAML config location, which can be a file path or a URL.")
+                .valueRequired("yaml_location")
+                .build();
     }
 
     @Provides
