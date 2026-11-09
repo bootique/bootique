@@ -2,6 +2,7 @@
 
 * #390 Upgrade Jackson to 2.22.3
 * #391 Upgrade JUnit to 6.1.3
+* #392 Upgrade Jackson to 2.22.4
 
 ## 4.0-M6
 
